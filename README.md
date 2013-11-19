@@ -7,7 +7,7 @@ Details :	This is the basic text based search engine where we can search a query
 	 
 Language : Python,Django,sqlite3
 
-Author : MVN Murthy	manthaappu@gmail.com
+Author : MVN Murthy	manthaappu@gmail.com,
 	 Sreyanth Chary	sreyanth@gmail.com
 	   
 	  
