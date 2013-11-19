@@ -1,0 +1,89 @@
+<html> <head> <title>Stack machine</title></head><body>In [[computer science]], a '''stack machine''' is a [[model of computation]] in which the computer's memory takes the form of one or more [[stack (data structure)|stack]]s. The term also refers to an actual computer implementing or simulating the idealized stack machine.
+
+In addition, a '''stack machine''' can also refer to a real or simulated machine with a "[[instruction set#Number of operands |0-operand]]" [[instruction set]]. In such a machine, most instructions implicitly operate on values at the top of the stack and replace those values with the result.
+Typically such machines also have a "load" and a "store" instruction that reads and writes to arbitrary RAM locations. (Like all other instructions, the "load" and "store" instructions in a typical stack machine need no operands &mdash; they always take the RAM address from the top of the stack.)
+
+One advantage of stack machines ("0-operand instruction set") over [[accumulator machine]]s ("1-operand instruction set") and [[register machine]]s ("2-operand instruction set" or a "3-operand instruction set") is that programs written for a "0-operand" instruction set generally have higher [[Instruction_set#Code_density|code density]] than equivalent programs written for other [[instruction set]]s.
+
+== Performance issues ==
+Stack machines compete against conventional register machines for market share.  Both architectures have strengths.  The following discussion is to give a feel for the relative advantages of the two architectures.
+
+Conventional references say<ref>"Computer Architecture, a Quantitative Approach", John L. Henessy, David Goldberg; See the discussion of stack machines.</ref> that stack machines are slow because the stacks are in memory, and therefore slower to access than registers.  However, this is somewhat counterbalanced by the smaller code size of a stack machine, which is faster to fetch and execute.  This is borne out by experiments with aggressive optimization of both the machine architecture and compilers<ref>[http://www.sagecertification.org/events/vee05/full_papers/p153-yunhe.pdf Virtual Machine Showdown: Stack vs. Register Machine, Yunhe Shi, David Gregg, Andrew Beatty, M. Anton Ertle]</ref> which show that register machine code has 47% fewer virtual instructions, yet is 25% larger than stack machine code.  When stacks are in memory, a register machine runs about 26.5% faster than a stack machine, in large part because of reuse of constants in registers.
+
+Registers are also said<ref>Hennessy, ibid.</ref> to provide more opportunities for parallel execution during superscalar execution. This may be because superscalar stack machines and the necessary associated optimizing compilers are not a very active area of research or commercial development.  In principle, the speed of a superscalar computer is constrained by the slow access speed of main memory, not the notation used to address intermediate results.
+
+Some stack machines<ref>[http://www.eforth.com.tw/academy-n/chips/ShBoom/ShBoom_4.htm Sh'Boom CPU description, Charles Moore]</ref><ref>[[Burroughs large systems]]</ref> cache parts of the stack in high-speed registers to speed access to the stacks and yet retain the small, fast code size.  However, this is not true of all stack machines.  
+
+Real-time latency, the time from an electronic event to the start of useful interrupt code, can be less in stack machines because the registers in a register machine have to be saved and restored so that the interrupt code does not corrupt the calculations in the background.  Some register machines, such as the [[8051]],<ref>8051 CPU Manual, Intel, 1980</ref> have multiple register sets.  The interrupt code can just change the register set index.  Unfortunately, this feature is not in all register machines.
+
+The smaller code size of a stack machine can reduce the memory size and expense of a computer.  Fewer memory accesses might increase the speed of a register machine, compared to a stack machine with stacks in memory.  By reducing the register save and restore times, a stack machine might have less overhead to respond to interrupts.
+
+== Stacks in automata theory ==
+In [[automata theory]], a stack machine has a number of stacks. The input is the initial content of stack 1; all the other stacks start empty. Each state of a stack machine is either a ''read state'' or a ''write state''; and each state specifies a stack number to read (pop) from, or write (push) onto. In addition, a write state specifies the symbol to write, and the next state to transition to. A read state specifies, for each symbol in the alphabet, what state it would transition to if that symbol were read; in addition, it also specifies what state to transition to if the stack were empty. A stack machine halts when it transitions into a special halting state.
+
+A stack machine with 1 stack is a very weak model of computation. For example, it can be shown that no 1-stack stack machine can recognize the simple language 0<sup>n</sup>1<sup>n</sup>0<sup>n</sup> (a number of 0s followed by the same number of 1s followed by the same number of 0s), via [[Pumping lemma|pumping arguments]].  The computational power of 1-stack stack machines is strictly greater than that of [[finite automaton|finite automata]], but strictly less than that of [[deterministic pushdown automaton|deterministic pushdown automata]].
+
+A stack machine with multiple stacks, on the other hand, is equivalent to a [[Turing machine]]. For example, a 2-stack machine can emulate a Turing machine by using one stack for the tape portion to the left of the Turing machine's current head position and the other stack for the portion to the right.
+
+== Practical stack machines ==
+Machines with a stack-based instruction set can have one or more stacks. Some stack machines are 2-stack machines, with the two stacks usually being a ''data stack'' and a ''return stack'', the former for operations on data and the latter for [[Return address (disambiguation)|return address]]es. Other machines use the same stack for both.
+
+A machine using [[processor register]]s for operands can easily simulate a stack machine. Such a simulation is sometimes called a ''virtual stack machine''. The advantage of a (more or less) stack-based [[instruction set]] (in hardware) over a register-based architecture, is shorter instructions, since fewer operand addresses have to be specified. This is the same as better code density and smaller compiled programs.
+
+Commercial implementations of stack machines generally include a small set of special purpose registers for addressing enclosing contexts, i.e. stack frames that are not the topmost stack frame (dynamic vs lexical scoping are two different ways of using and accessing enclosing contexts). Practical stack machines are thus not identical to the stack machines of automata theory but allows a stack based CPU to be entirely suitable for general purpose computing.
+
+Examples of commercial use of a stack machine include
+* [[instruction set architecture]]s directly executed in hardware
+** the [[Burroughs large systems]] architecture (since 1961)
+** the [[Collins Radio]] [[Collins Adaptive Processing System]] minicomputer (CAPS, since 1969) and [[Rockwell Collins]] [[Advanced Architecture Microprocessor]] (AAMP, since 1981)<ref>[http://hokiepokie.org/docs/EETimes.ps The World's First Java Processor], by David A. Greve and Matthew M. Wilding, Electronic Engineering Times, Jan. 12, 1998,</ref>.
+** the [[UCSD Pascal]] p-machine (as the [[Pascal MicroEngine]] and many others)
+** [[Tandem Computers]] T/16.
+** [[HP 3000]] (Classic, not PA-RISC)
+** the [[Atmel]] [[MARC4]] [[microcontroller]]<ref>[http://atmel.com/products/MARC4/ MARC4 4-Bit Architecture]</ref>
+** Several "Forth chips"<ref>[http://www.colorforth.com/chips.html Forth chips]</ref> such as the RTX2000, the [[RTX2010]], the Sh-Boom, the F21<ref>[http://www.ultratechnology.com/f21.html F21 Microprocessor Overview]</ref> and the PSC1000<ref>[http://www.developer.com/java/other/article.php/610041 A Java chip available &mdash; now!], by Rick Brian Slack</ref>
+**The 4stack processor by Bernd Paysan has four stacks.<ref>[http://www.jwdt.com/~paysan/4stack.html 4stack Processor]</ref>
+**The [http://www.ptsc.com/products/igniteIP_data%20sheet_20050506.pdf "Ignite"] stack machine designed by [[Charles H. Moore]] holds a leading [http://www.eembc.org/benchmark/consumer.asp?HTYPE=SIM ''functional density'' benchmark].
+** [[Saab Ericsson Space]] Thor [[radiation hardened]] microprocessor<ref>{{cite manual
+|     author = Harry Gunnarsson and Thomas Lundqvist
+|      title = Porting the GNU C Compiler to the Thor Microprocessor
+|       date = 1995 
+| accessdate = 2008-12-04
+|        url = http://www.ce.chalmers.se/~thomasl/publications/thesis95.html
+}}</ref>
+* [[virtual machine]]s interpreted in software
+** the [[UCSD Pascal]] p-machine (which closely resembled Burroughs)
+** the [[Java virtual machine]] instruction set
+** the VES ([[Virtual Execution System]]) for the CIL ([[Common Intermediate Language]]) instruction set of the ECMA 335 ([[Microsoft .NET]] environment)  
+** the [[Forth (programming language)|Forth]] programming language, in particular the [[Forth virtual machine]]
+** Adobe's [[PostScript]]
+** [[Parakeet programming language]]
+** [[Sun Microsystems]]' [[SwapDrop]] programming language for [[Sun Ray]] [[smartcard]] identification
+
+Note that the Burroughs architecture combines a stack machine with tagged memory (a few bits in every memory word to describe the data type of the operands).  Tagged memory requires fewer opcodes, e.g., a single "add" instruction works for any combination of integer and floating point operands. Requiring fewer opcodes means that the entire instruction set can fit into smaller opcodes, reducing the total instruction width.
+
+== See also ==
+*[[Register machine]]
+*[[Stack-oriented programming language]]
+*[[Forth (programming language)|Forth]]
+*[[Concatenative programming language]]
+
+== References ==
+{{reflist}}
+
+== External links ==
+*[http://www.ece.cmu.edu/~koopman/stack_computers/ ''Stack Computers: the new wave'' book by Philip J. Koopman, Jr. 1989]
+*[http://www.excamera.com/articles/20/mp3c.html Homebrew CPU in an FPGA] &mdash; homebrew stack machine using FPGA
+*[http://www.holmea.demon.co.uk/Mk1/Architecture.htm Mark 1 FORTH Computer] &mdash; homebrew stack machine using discrete logical circuits
+*[http://www.holmea.demon.co.uk/Mk2/Architecture.htm Mark 2 FORTH Computer] &mdash; homebrew stack machine using bitslice/PLD
+*[http://citeseer.ist.psu.edu/cache/papers/cs/31239/http%3AzSzzSzwww.complang.tuwien.ac.atzSzantonzSzivme03zSzproceedingszSzdavis.pdf/davis02case.pdf The Case for Virtual Register Machines], Brian Davis, Andrew Beatty, Kevin Casey, David Gregg and John Waldron
+*[http://www.eecg.utoronto.ca/~laforest/Second-Generation_Stack_Computer_Architecture.pdf Second-Generation Stack Computer Architecture] &mdash; Thesis about the history and design of stack machines.
+
+[[Category:Computational models]]
+[[Category:Stack machines]]
+
+[[cs:Zásobníkový počítač]]
+[[es:Máquina de pila]]
+[[ja:スタックマシン]]
+[[pl:Maszyna stosowa]]
+[[simple:Stack machine]]
+[[zh:堆疊結構機器]]</body> </html>

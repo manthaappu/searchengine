@@ -1,0 +1,84 @@
+<html> <head> <title>DNS hijacking</title></head><body>'''DNS hijacking''' or '''DNS redirection''' is the practice of redirecting the resolution of [[Domain Name System]] (DNS) names to other DNS servers. This is done for malicious purposes such as [[phishing]]; for self-serving purposes by [[Internet service providers]] (ISPs) to direct users' [[HTTP]] traffic via the ISP's own webservers where advertisements are served, statistics can be collected, or other purposes of the ISP; and by DNS service providers to block access to sites which the user wishes to block because they are  malicious or of an unwanted{{Who|date=December 2010}} nature.
+
+==Technical background==
+One of the functions of a DNS server is to translate a [[domain name]] into an [[IP address]] that applications need to connect to an Internet resource such as a website.  This functionality is defined in various internet standards that define the protocol in considerable detail.  DNS servers are implicitly trusted by internet-facing computers and users to correctly resolve names to the actual addresses that are registered by the owners of an internet domain.
+
+===Rogue DNS server===
+A rogue DNS server translates domain names of desirable websites (search engines, banks, brokers, etc.) into IP addresses of sites with unintended content, even malicious websites. Most users depend on DNS servers automatically assigned by their [[ISP]]s. [[Zombie computer]]s use DNS-changing [[Trojan horse (computing)|trojans]] to invisibly switch the automatic DNS server assignment by the ISP to manual DNS server assignment from rogue DNS servers.{{Citation needed|date=February 2010}} When users try to visit websites, they are instead sent to a bogus website. This attack is termed [[pharming]]. If the site they are redirected to is a malicious website, masquerading as a legitimate website, in order to fraudulently obtain sensitive information, it is termed [[phishing]].<ref>{{cite web |url=http://blog.trendmicro.com/rogue-domain-name-system-servers-5breposted5d/
+|title=Rogue Domain Name System Servers
+|accessdate=2007-12-15
+|publisher=Trend Micro
+}}</ref>
+
+===Manipulation by ISPs===
+A number of consumer ISPs such as [[Cablevision]]'s [[Optimum Online]],<ref>{{cite web|url=http://www.optimum.net/Article/DNS|title=Optimum Online DNS Assistance}}</ref> [[Comcast]],<ref>{{cite web
+|url=http://www.theregister.co.uk/2009/07/28/comcast_dns_hijacker/
+|title=Comcast trials <s>Domain Helper service</s> DNS hijacker
+|publisher=The Register
+|accessdate=7 October 2009}}</ref> [[Time Warner]], [[Cox Communications]], [[RCN]],<ref>{{cite web|url=http://infiniteedge.blogspot.com/2009/10/who-stole-my-web-browser.html|title=Who Stole My Web Browser?}}</ref> [[Rogers Hi-Speed Internet|Rogers]],<ref name="RogersDNS">{{Cite web
+  | url = http://www.dslreports.com/shownews/Rogers-Uses-Deep-Packet-Inspection-for-DNS-Redirection-96239
+  | title = Rogers Uses Deep Packet Inspection for DNS Redirection
+  | publisher = dslreports.com
+  | date = 20 July 2008
+  | accessdate = 2010-06-15
+}}</ref> [[Charter Communications]], [[Verizon]], [[Virgin Media]], [[Frontier Communications]], [[Bell Sympatico]],<ref>{{cite web|url=http://tech.slashdot.org/story/09/08/04/1512248/Bell-Starts-Hijacking-NX-Domain-Queries|title=Bell Starts Hijacking NS Domain Queries}}</ref>
+[[UPC Broadband|UPC]],<ref>{{cite web|url=http://service.upc.ie/service/?cid=123&aid=143|title=UPC FAQ about the "navigation service"}}</ref> [[T-Online]],<ref>{{cite web|url=http://foren.t-online.de/foren/read/service/browser/t-online-browser/neues-leistungsmerkmal-navigationshilfe,164,3808480,fid=84b72be.html|title=Neues Leistungsmerkmal 'Navigationshilfe'|accessdate=2 December 2009|date=2009-04-09T14:07+02:00|author=T-Home-Team|language=German|trans_title=New 'Navigation Help' Feature|quote=Ist die Navigationshilfe aktiviert, werden DNS-Server zugewiesen, die dieses Leistungsmerkmal unterstützen; ist sie deaktiviert, werden herkömmliche DNS-Server zugewiesen.}}</ref> [[Optus]],<ref>http://service1.dnsassist.optusnet.com.au/search?qh=DNS%20hijacking</ref> [[Mediacom]],<ref>{{cite web|url=http://www.reddit.com/r/programming/comments/9o3as/want_a_real_world_example_of_why_we_need_network/|title=Want a real world example of why we need network neutrality? I have one here.}}</ref> and [[Bigpond]] ([[Telstra]])<ref>http://www.crn.com.au/News/160923,bigpond-redirects-typos-to-unethical-branded-search-page.aspx</ref><ref>{{cite web
+|url=http://www.dslreports.com/forum/r17871432-Charter-Corrupting-DNS-protocol-ie-hijacking-hosts
+|title=Charter Corrupting DNS protocol ie hijacking hosts
+}}</ref><ref>{{cite web
+|url=http://jeffturner.net/2008/03/road-runner-dns-hijack-causing-slow-web-pages/
+|title=road runner dns hijack causing slow web-pages
+}}</ref><ref>{{cite web
+|url=http://www.digitalhome.ca/content/view/2689/206/
+|title=Rogers violates net neutrality by hijacking failed DNS lookups
+}}</ref> use DNS hijacking for their own purposes, such as displaying advertisements<ref name="wired-isps-error-page">{{cite web
+|url=http://blog.wired.com/27bstroke6/2008/04/isps-error-page.html
+|title=ISPs Error Page Ads Let Hackers Hijack Entire Web Researcher Discloses
+}}</ref> or collecting statistics. This practice violates the [[Request for Comments|RFC]] standard for DNS (NXDOMAIN) responses,<ref>{{cite web
+|url=https://tools.ietf.org/html/rfc2308
+|title=Negative Caching of DNS Queries
+}}</ref> and can potentially open users to [[cross-site scripting]] attacks.<ref name="wired-isps-error-page" />
+
+Redirecting can be more benign, allowing a DNS server provided by a service such as [[OpenDNS]] to intercept and block known sites known to be malicious or with content which the user wishes to block, etc. The provider of the DNS server may charge a fee for this service, or also show advertisements, collect statistics, etc.
+
+The concern with DNS hijacking has to do with this hijacking of the NXDOMAIN response. Internet and intranet applications rely on the NXDOMAIN response to describe the condition where the DNS has no entry for the specified host. If one were to query the invalid domain name (fakeexample.com), one should get a NXDOMAIN response - informing the application that the name is invalid and taking the appropriate action (for example, displaying an error or not attempting to connect to the server). However, if the domain name is queried on one of these non-compliant ISPs, one would always receive a fake IP address belonging to the ISP. In a Web browser, this behavior can be annoying or offensive as connections to this IP address display the [[ISP redirect page]] of the provider, sometimes with advertising, instead of a proper error message. However, other applications that rely on the NXDOMAIN error will instead attempt to initiate connections to this spoofed IP address, potentially exposing sensitive information.
+
+Examples of functionality that breaks when an ISP hijacks DNS:
+*Roaming laptops that are members of a [[Windows Server domain]] will falsely be led to believe that they are back on a corporate network because resources such as [[domain controller]]s, email servers and other infrastructure will appear to be available.  Applications will therefore attempt to initiate connections to these corporate servers, but fail, resulting in degraded performance, unnecessary traffic on the internet connection and timeouts.
+*Many small office and most home networks do not have their own DNS server, relying instead on [[Broadcasting (computing)|broadcast]] name resolution.  However because DNS lookups are prioritized over local broadcasts, all names will falsely resolve to a server belonging to the ISP, and local networking will not work.
+*Browsers such [[FireFox]] no longer have their 'Browse By Name' functionality (Where keywords typed in the address bar take you to the closest matching site.).<ref>{{cite web |url=http://www.earobinson.org/2009/08/01/using-firefox-noredirect-extension-to-avoid-dns-hijacking/ |title=Using Firefox + NoRedirect Extension to Avoid DNS Hijacking}}</ref>
+*The local DNS client built into modern operating systems will cache results of DNS searches for performance reasons. If a client switches between a home network and a [[Virtual private network|VPN]], false entries may remain cached, thereby creating a service outage on the VPN connection.
+*[[DNSBL]] anti-spam solutions rely on DNS; false DNS results therefore interfere with their operation.
+*Confidential user data might be leaked by applications that are tricked by the ISP into believing that the servers they wish to connect to are available.
+*User choice over which search engine to consult in the event of a URL being mistyped in a browser is removed as the ISP determines what search results are displayed to the user; functionality of applications like the [[Google Toolbar]] do not work correctly.
+*Computers configured to use a [[Split tunneling|split tunnel]] with a VPN connection will stop working because intranet names that should not be resolved outside the tunnel over the public Internet will start resolving to fictitious addresses, instead of resolving correctly over the VPN tunnel on a private DNS server when an NXDOMAIN response is received from the Internet. For example, a mail client attempting to resolve the DNS A record for an internal mail server may receive a false DNS response that directed it to a paid-results web server, with messages queued for delivery for days while retransmission was attempted in vain.<ref name="ICANN">{{cite web|url=http://www.icann.org/en/topics/new-gtlds/nxdomain-substitution-harms-24nov09-en.pdf|title=Harms Caused by NXDOMAIN Substitution in Toplevel and Other Registry-class Domain Names|date=2009-11-24|accessdate=2010-09-23|publisher=[[ICANN]]}}</ref>
+*It breaks [[Web Proxy Autodiscovery Protocol]] (WPAD) by leading web browsers to believe incorrectly that the ISP has a [[proxy server]] configured.
+
+In some cases, the ISPs provide settings to disable hijacking of NXDOMAIN responses.  Correctly implemented, such a setting reverts DNS to standard behavior.  Some ISPs, however, instead use a web browser cookie to store the preference.  In this case, the underlying behavior is not resolved: DNS queries continue to be redirected, while the ISP redirect page is replaced with a counterfeit dns error page (as exampled by charter [http://www11.charter.net/not_found here]. Notice the "Manage Opt-In settings" link).  Applications other than web-browsers cannot be opted out of the scheme using cookies as the opt-out targets only the [[HTTP]] protocol, when the scheme is actually implemented in the protocol-neutral DNS protocol.
+
+==Response==
+In the UK, the Information Commissioner's Office have acknowledged that the practice of involuntary DNS hijacking contravenes PECR, and EC Directive 95/46 on Data Protection which require explicit consent for processing of communication traffic. However they have refused to intervene, claiming that it would not be "sensible" to enforce the law because "it would not cause significant (or indeed any) demonstrable detriment to individuals".{{Citation needed|date=April 2010}}
+
+[[ICANN]], the international body responsible for administering toplevel domain names, has published a memorandum highlighting its concerns, and affirming:<ref name="ICANN"/> {{quote|"ICANN strongly discourages the use of DNS redirection, wildcards, synthesized responses and any other form of NXDOMAIN substitution in existing gTLDs, ccTLDs and any other level in the DNS tree for registry-class domain names."}}
+
+==See also==
+* [[Domain hijacking]]
+* [[Dynamic Host Configuration Protocol]]
+* [[Point-to-Point Protocol]]
+* [[Pharming]]
+* [[Phishing]]
+
+==References==
+{{Reflist}}
+
+{{Use dmy dates|date=January 2011}}
+{{DEFAULTSORT:Dns Hijacking}}
+[[Category:Domain name system]]
+[[Category:Internet fraud]]
+[[Category:Hacking (computer security)]]
+[[Category:Ethics of science and technology]]
+[[Category:Internet privacy]]
+[[Category:Internet standards]]
+
+[[de:DNS-Hijacking]]
+[[fr:Manipulation de l'espace des noms de domaine]]</body> </html>

@@ -1,0 +1,342 @@
+<html> <head> <title>Component Object Model</title></head><body>'''Component Object Model''' ('''COM''') is a [[Application Binary Interface|binary-interface]] standard for [[software componentry]] introduced by [[Microsoft]] in 1993. It is used to enable [[interprocess communication]] and dynamic [[object (computer science)|object]] creation in a large range of [[programming languages]]. The term ''COM'' is often used in the Microsoft software development industry as an [[umbrella term]] that encompasses the [[Object Linking and Embedding|OLE]], [[OLE Automation]], [[ActiveX]], COM+ and [[Distributed Component Object Model|DCOM]] technologies.
+
+==Overview==
+The essence of COM is a language-neutral way of implementing objects that can be used in environments different from the one in which they were created, even across machine boundaries. For well-authored components, COM allows reuse of objects with no knowledge of their internal implementation, as it forces component implementers to provide well-defined [[interface (computer science)|interfaces]] that are separate from the implementation. The different allocation semantics of languages are accommodated by making objects responsible for their own creation and destruction through [[reference counting|reference-counting]]. [[Type conversion|Casting]] between different interfaces of an object is achieved through the <code>QueryInterface()</code> function. The preferred method of inheritance within COM is the creation of sub-objects to which method calls are delegated.
+
+COM is an interface technology defined and implemented as standard only on [[Microsoft Windows]] and Apple's Core Foundation 1.3 and later plug-in API [http://developer.apple.com/library/mac/#documentation/CoreFoundation/Conceptual/CFPlugIns/Concepts/conceptual.html%23//apple_ref/doc/uid/20001160-102910-BAJFDFFC], that in any case implement only a subset of the whole COM interface<ref name="COM on MacOS">{{cite web | url = http://developer.apple.com/library/mac/#documentation/CoreFoundation/Conceptual/CFPlugIns/Concepts/com.html#//apple_ref/doc/uid/20001158-CJBEJBHH | title = Plug-ins and Microsoft’s COM | publisher = [[Apple Inc.]] | accessdate = 2010-10-05}}</ref>. For some applications, COM has been replaced at least to some extent by the [[.NET Framework|Microsoft .NET]] framework, and support for [[Web Services]] through the [[Windows Communication Foundation]] (WCF). However, COM objects can be used with all .NET languages through .NET [[COM Interop]].
+
+Networked DCOM uses binary [[proprietary format]]s, while WCF encourages the use of [[XML]]-based [[SOAP (protocol)|SOAP]] messaging. COM is very similar to other [[component software]] interface technologies, such as [[CORBA]] and [[Java Beans]], although each has its own strengths and weaknesses. The characteristics of COM make it most suitable for the development and deployment of desktop applications{{Citation needed|date=March 2010}}, for which it was originally designed.
+
+==History==
+
+One of the first methods of [[interprocess communication]] in Windows was [[Dynamic Data Exchange]] (DDE), first introduced in 1987, that allowed sending and receiving messages in so-called "conversations" between applications.
+
+[[Antony Williams (technologist)|Antony Williams]], one of the most notable thinkers involved in the creation of the COM architecture, later distributed two internal papers in Microsoft that embraced the concept of software components: ''Object Architecture: Dealing With the Unknown – or – Type Safety in a Dynamically Extensible Class Library'' in 1988 and ''On Inheritance: What It Means and How To Use It'' in 1990. These provided the foundation of many of the ideas behind COM.
+
+[[Object Linking and Embedding]] (OLE), Microsoft's first object-based framework, was built on top of DDE and designed specifically for [[compound document]]s. It was introduced with Word for Windows and Excel in 1991, and was later included with Windows, starting with version 3.1 in 1992.
+
+An example of a compound document is a spreadsheet embedded in a Word for Windows document: as changes are made to the spreadsheet within Excel, they appear automatically inside the Word document.
+
+In 1991, Microsoft introduced [[Visual Basic Extension]]s (VBX) with [[Visual Basic]] 1.0. A VBX is a packaged extension in the form of a [[dynamic-link library]] (DLL) that allowed objects to be graphically placed in a form and manipulated by [[property (programming)|properties]] and [[method (computer science)|methods]]. These were later adapted for use by other languages such as [[Visual C++]].
+
+In 1993, when version [[Windows 3.1x|3.1]] of Windows was released, Microsoft released OLE 2 with its underlying [[object model]]. The COM [[Application binary interface]] (ABI) was the same as the MAPI ABI, which was released in 1992. While OLE 1 was focused on compound documents, COM and OLE 2 were designed to address software components in general. Text conversations and Windows messages had proved not to be flexible enough to allow sharing application features in a robust and extensible way, so COM was created as a new foundation, and OLE changed to OLE2.
+
+In 1994 [[OLE custom control]]s (OCXs) were introduced as the successor to VBX controls. At the same time, Microsoft stated that OLE 2 would just be known as "OLE", and that OLE was no longer an acronym, but a name for all of the company's component technologies.
+
+In early 1996, Microsoft found a new use for OLE Custom Controls, expanding their Web browser's capability to present content, renamed some parts of OLE relating to the [[Internet]] '''ActiveX''', and gradually renamed all OLE technologies to ActiveX, except the compound document technology that was used in [[Microsoft Office]]. Later that year, [[Distributed Component Object Model|DCOM]] was introduced as an answer to [[CORBA]].
+
+==Related technologies==
+COM was the major software development platform for Windows and, as such, influenced development of a number of supporting technologies.
+
+===COM+===
+In order for Microsoft to provide developers with support for [[distributed transaction]]s, resource pooling, disconnected applications, event publication and subscription, better memory and processor (thread) management, as well as to position Windows as an alternative to other enterprise-level operating systems, Microsoft introduced a technology called [[Microsoft Transaction Server]] (MTS) on Windows NT 4.
+
+With Windows 2000, that significant extension to COM was incorporated into the operating system (as opposed to the series of external tools provided by [[Microsoft Transaction Server|MTS]]) and renamed '''COM+'''. At the same time, Microsoft de-emphasized [[Distributed Component Object Model|DCOM]] as a separate entity. Components that made use of COM+ services were handled more directly by the added layer of COM+, in particular by operating system support for interception. In the first release of MTS, interception was tacked on - installing an MTS component would modify the [[Windows Registry]] to call the MTS software, and not the component directly.
+
+Windows 2000 also revised the Component Services control panel application used to configure COM+ components.
+
+An advantage of COM+ was that it could be run in "component farms". Instances of a component, if coded properly, could be pooled and reused by new calls to its initializing routine without unloading it from memory. Components could also be distributed (called from another machine). COM+ and [[Microsoft Visual Studio]] provided tools to make it easy to generate client-side proxies, so although DCOM was used to actually make the remote call, it was easy to do for developers.
+
+COM+ also introduced a subscriber/publisher event mechanism called '''COM+ Events''', and provided a new way of leveraging [[Microsoft Message Queuing|MSMQ]] (inter-application asynchronous messaging) with components called '''Queued Components'''. COM+ events extend the COM+ programming model to support late-bound events or method calls between the publisher or subscriber and the event system.
+
+===.NET===
+{{Main|.NET Framework}}
+
+The COM platform has ''largely'' been superseded by the Microsoft .NET initiative, and Microsoft now focuses its [[marketing]] efforts on ''.NET.'' COM was often used to hook up complex, high performance code to front end code implemented in [[Visual Basic]] or [[Active Server Pages|ASP]].
+
+To some extent, COM is now [[deprecation|deprecated]] in favor of .NET.<ref>[http://msdn.microsoft.com/en-us/library/bb978523.aspx Integration and Migration of COM+ services to WCF]</ref> Since .NET provides rapid development tools similar to Visual Basic for both [[Windows Forms]] and [[ASP.NET|Web Forms]] with [[just-in-time compilation]], back-end code can be implemented in any .NET Language including [[C Sharp (programming language)|C#]], [[Visual Basic.NET|Visual Basic]] and [[C++/CLI]].
+
+Despite this, COM remains a viable technology with an important software base. As of 2009, Microsoft has no plans for discontinuing either COM or support for COM. It is also ideal for script control of applications such as Office or Internet Explorer since it provides an interface for calling COM object methods from a script rather than requiring knowing the API at compile time. The [[GUID]] system used by COM has wide uses any time a unique ID is needed.
+
+Several of the services that COM+ provides have been largely replaced by recent releases of .NET. For example, the System.Transactions namespace in .NET provides the TransactionScope class, which provides transaction management without resorting to COM+. Similarly, [[Queue (data structure)|queued components]] can be replaced by [[Windows Communication Foundation]] with an [[MSMQ]] transport.
+
+There is limited support for backward compatibility.  A COM object may be used in .NET by implementing a ''runtime callable wrapper'' (RCW).<ref>[http://msdn.microsoft.com/en-us/library/8bwh56xe.aspx Runtime Callable Wrapper — MSDN Library]</ref> .NET objects that conform to certain interface restrictions may be used in COM objects by calling a ''COM callable wrapper'' (CCW).<ref>[http://msdn.microsoft.com/f07c8z1c.aspx COM callable wrapper — MSDN Library]</ref> From both the COM and .NET sides, objects using the other technology appear as native objects.  See [[COM Interop]].
+
+WCF(Window Communication Foundation) solves a number of COM's remote execution shortcomings, allowing objects to be transparently marshalled by value across process or machine boundaries.
+
+==Internet security==
+Microsoft's idea of embedding active content on web pages as COM/ActiveX components (rather than e.g. Java applets) created a combination of problems in the [[Internet Explorer]] web browser that has led to an explosion of [[computer virus]], [[Trojan horse (computing)|trojan]] and [[spyware]] infections.  These [[malware]] attacks mostly depend on ActiveX for their activation and propagation to other computers.  Microsoft recognized the problem with ActiveX as far back as 1996 when Charles Fitzgerald, program manager of Microsoft's Java team said "If you want security on the 'Net', unplug your computer. … We never made the claim up front that ActiveX is intrinsically secure." [http://www.eweek.com/article2/0,1895,1622616,00.asp]
+
+As COM and ActiveX components are run as native code on the user's machine, there are fewer restrictions on what the code can do. Many of these problems have been addressed by the introduction of "Authenticode" [[code signing]] (based on [[digital signature]]s), and later by the [[.NET Framework|.NET]] platform also. Another security measure is that, before an ActiveX control is installed, the user is prompted whether to allow the installation or not, enabling the user to disallow the installation of controls from sites that the user does not trust. It is also possible to disable ActiveX controls altogether, or to allow only a selected few.
+
+==Technical details==
+COM programmers build their software using COM-aware [[software componentry|components]]. Different component types are identified by class IDs (CLSIDs), which are [[Globally Unique Identifier]]s (GUIDs). Each COM component exposes its functionality through one or more [[interface (computer science)|interfaces]]. The different interfaces supported by a component are distinguished from each other using interface IDs (IIDs), which are GUIDs too.
+
+COM interfaces have [[language binding|bindings]] in several languages, such as [[C (programming language)|C]], [[C++]], [[Visual Basic]], [[Delphi (programming language)|Delphi]], and several of the scripting languages implemented on the Windows platform. All access to components is done through the [[Method (computer science)|methods]] of the interfaces. This allows techniques such as inter-process, or even inter-computer programming (the latter using the support of [[Distributed Component Object Model|DCOM]]).
+
+===Interfaces===
+All COM components must (at the very least) implement the standard <code>[[IUnknown]]</code> interface, and thus all COM interfaces are [[Inheritance (computer science)|derived]] from <code>IUnknown</code>. The <code>IUnknown</code> interface consists of three methods: <code>AddRef()</code> and <code>Release()</code>, which implement [[reference counting]] and controls the lifetime of interfaces; and <code>QueryInterface()</code>, which by specifying an IID allows a caller to retrieve references to the different interfaces the component implements. The effect of <code>QueryInterface()</code> is similar to <code>[[dynamic_cast]]<></code> in [[C++]] or [[Type conversion|casts]] in [[Java (programming language)|Java]] and [[C Sharp (programming language)|C#]].
+
+A COM component's interfaces are required to exhibit the [[Equivalence relation|reflexive, symmetric, and transitive]] properties. The reflexive property refers to the ability for the <code>QueryInterface()</code> call on a given interface with the interface's ID to return the same instance of the interface.  The symmetric property requires that when interface B is retrieved from interface A via <code>QueryInterface()</code>, interface A is retrievable from interface B as well. The transitive property requires that if interface B is obtainable from interface A and interface C is obtainable from interface B, then interface C should be retrievable from interface A.
+
+An interface consists of a pointer to a [[Virtual method table|virtual function table]] that contains a list of pointers to the functions that implement the functions declared in the interface, in the same order that they are declared in the interface.  This technique of passing structures of function pointers is very similar to the one used by [[Object Linking and Embedding|OLE 1.0]] to communicate with its system libraries.
+
+COM specifies many other standard interfaces used to allow inter-component communication. For example, one such interface is <code>IStream</code>, which is exposed by components that have data stream [[semantics]] (e.g. a <code>FileStream</code> component used to read or write files). It has the expected <code>Read</code> and <code>Write</code> methods to perform stream reads and writes. Another standard interface is <code>IOleObject</code>, which is exposed by components that expect to be linked or embedded into a container. <code>IOleObject</code> contains methods that allow callers to determine the size of the component's bounding rectangle, whether the component supports operations like 'Open', 'Save' and so on.
+
+====Classes====
+A class is COM's language-independent way of defining a class in the object-oriented sense.
+
+A class can be a group of similar objects or a class is simply a representation of a type of object; it should be thought of as a blueprint that describes the object.
+
+A coclass supplies '''concrete''' implementation(s) of one or more interfaces. In COM, such concrete implementations can be written in any programming language that supports COM component development, e.g. [[CodeGear Delphi|Delphi]], C++, Visual Basic, etc.
+
+One of COM's major contributions to the world of Windows development is the awareness of the concept of '''separation of interface from implementation'''.  An extension of this fundamental concept is the notion of '''one interface, multiple implementations'''. This means that at runtime, an application can choose to instantiate an interface from one of many different concrete implementations.
+
+===Interface Definition Language and type libraries===
+Type libraries contain metadata that represent COM types. However, these types must first be described using [[Microsoft Interface Definition Language]].
+
+This is the common practice in the development of a COM component, i.e. to start with the definition of types using''' IDL.''' An IDL file is what COM provides that allows developers to define object-oriented classes, interfaces, structures, enumerations and other user-defined types in a language independent manner. COM IDL is similar in appearance to C/C++ declarations with the addition of keywords such as "interface" and "library" for defining interfaces and collections of classes, respectively. IDL also requires the use of bracketed attributes before declarations to provide additional information, such as the GUIDs of interfaces and the relationships between pointer parameters and length fields.
+
+The IDL file is compiled by the MIDL compiler into a pair of forms for consumption from various languages. For C/C++, the MIDL compiler generates a compiler-independent header file containing struct definitions to match the [[virtual method table|vtbl]]s of the declared interfaces and a C file containing declarations of the interface [[Globally Unique Identifier|GUIDs]]. C++ source code for a proxy module can also be generated by the MIDL compiler. This proxy contains method stubs for converting COM calls into [[Remote Procedure Call]]s, thus enabling DCOM.
+
+An IDL file may also be compiled by the [[MIDL]] compiler into a type library (.TLB file). The binary metadata contained within the type library is meant to be processed by language compilers and runtime environments (e.g. VB, Delphi, the .NET CLR etc.). The end result of such TLB processing is that language-specific constructs are produced that represent the COM class defined in the .TLB (and ultimately that which was defined in the originating IDL file).
+
+===COM as an object framework===
+The fundamental principles of COM have their roots in Object-Oriented philosophies. It is a platform for the realization of Object-Oriented Development and Deployment.
+
+Because COM is a runtime framework, types have to be individually identifiable and specifiable at runtime. To achieve this, '''globally unique identifiers''' ('''GUIDs''') are used. Each COM type is designated its own GUID for identification at runtime (versus compile time).
+
+In order for information on COM types to be accessible at both compile time and runtime, COM uses type libraries. It is through the effective use of type libraries that COM achieves its capabilities as a dynamic framework for the interaction of objects.
+
+Consider the following example coclass definition in an IDL : 
+ coclass MyObject 
+ { 
+   [default] interface IMyObject; 
+   [default, source] dispinterface _IMyObjectEvents; 
+ };
+The above code fragment declares a COM class named MyObject which must implement an interface named IMyObject and which supports (not implements) the event interface _IMyObjectEvents.
+
+Ignoring the event interface bit, this is conceptually equivalent to defining a C++ class like this:
+ class CSomeObject : public ISomeInterface 
+ { 
+   ... 
+   ... 
+   ... 
+ };
+where ISomeInterface is a C++ [[pure virtual class]].
+
+Referring once again to the MyObject COM class: once a coclass definition for it has been formalized in an IDL, and a Type Library compiled from it, the onus is on the individual language compiler to read and appropriately interpret this Type Library and then produce whatever code (in the specific compiler's language) necessary for a developer to implement and ultimately produce the binary executable code which can be deemed by COM to be of coclass MyObject.
+
+Once an implementation of a COM coclass is built and is available in the system, next comes the question of how to instantiate it. In languages like C++, we can use the CoCreateInstance() API in which we specify the CLSID (CLSID_MyObject) of the coclass as well as the interface (specified by the IID IID_IMyObject) from that coclass that we want to use to interact with that coclass. Calling CoCreateInstance() like this:
+ CoCreateInstance(CLSID_MyObject,
+     NULL,
+     CLSCTX_INPROC_SERVER,
+     IID_IMyObject,
+     (void**)&m_pIMyObject);
+is conceptually equivalent to the following C++ code:
+ ISomeInterface* pISomeInterface = new CSomeObject();
+
+In the first case, the COM sub-system is used to obtain a pointer to an object that implements the IMyObject interface and coclass CLSID_MyObject's particular implementation of this interface is required. In the second case, an instance of a C++ class CSomeObject that implements the interface ISomeInterface is created.
+
+A coclass, then, is an object-oriented class in the COM world. The main feature of the coclass is that it is (1) binary in nature and consequently (2) programming language-independent.
+
+===Registry===
+{{Main|Windows Registry}}
+In Windows, COM classes, interfaces and type libraries are listed by GUIDs in the [[Windows Registry|registry]], under HKEY_CLASSES_ROOT\CLSID for classes and HKEY_CLASSES_ROOT\Interface for interfaces.  The COM libraries use the registry to locate either the correct local libraries for each COM object or the network location for a remote service.
+
+Under the key HKCR\clsid, the following are specified: 
+ -> Inprocserver32 =  object is to be 
+                  loaded into a process        +   
+        Path to file/object and readable name   
+
+ HKCR\interface:
+  example:  ISTREAM, IRPCSTUB, IMESSAGEFILTER 
+    connects to a CLSID. You can specify 
+    NUMMETHODS and PROXYSTUB(if web-object)  
+   
+ HKCR\typelib   
+   One or more CLSID can be grouped into type library. 
+   it contains parameters for linking in COM. 
+
+  The rest of the info in the COM parts of the  
+   REGISTRY, is to give an application/object 
+    a CLSID.
+
+===Reference counting===
+The most fundamental COM interface of all, IUnknown (from which all COM interfaces must be derived), supports two main concepts: feature exploration through the '''QueryInterface''' method, and object lifetime management by including '''AddRef()''' and '''Release()'''. Reference counts and feature exploration apply to objects (not to each interface on an object) and thus must have a centralized implementation.
+
+The COM specifications require a technique called [[reference counting]] to ensure that individual objects remain alive as long as there are clients which have acquired access to one or more of its interfaces and, conversely, that the same object is properly disposed of when all code that used the object have finished with it and no longer require it. A COM object is responsible for freeing its own memory once its reference count drops to zero.
+
+For its implementation, a COM Object usually maintains an integer value that is used for reference counting. When AddRef() is called via any of object's interfaces, this integer value is incremented. When Release() is called, this integer is decremented. AddRef() and Release() are the only means by which a client of a COM object is able to influence its lifetime. The internal integer value remains a private member of the COM object and will never be directly accessible.
+
+The purpose of AddRef() is to indicate to the COM object that an additional reference to itself has been affected and hence it is necessary to remain alive as long as this reference is still valid. Conversely, the purpose of Release() is to indicate to the COM object that a client (or a part of the client's code) has no further need for it and hence if this reference count has dropped to zero, it may be time to destroy itself.
+
+Certain languages (e.g. Visual Basic) provide automatic reference counting so that COM object developers need not explicitly maintain any internal reference counter in their source codes. Using COM in C, explicit reference counting is needed. In C++, a coder may write the reference counting code or use a [[smart pointer]] that will manage all the reference counting.
+
+The following is a general guideline calling AddRef() and Release() to facilitate proper reference counting in  COM object:<!--applies to list as well-->
+*Functions (whether object methods or global functions) that return interface references (via return value or via "out" parameter) should increment the reference count of the underlying object before returning. Hence internally within the function or method, AddRef() is called on the interface reference (to be returned). An example of this is the QueryInterface() method of the IUnknown interface. Hence it is imperative that developers be aware that the returned interface reference has already been reference count incremented and not call AddRef() on the returned interface reference yet another time.
+*Release() must be called on an interface reference before that interface's pointer is overwritten or goes out of scope.
+*If a copy is made on an interface reference pointer, AddRef() should be called on that pointer. After all, in this case, we are actually creating another reference on the underlying object.
+*AddRef() and Release() must be called on the specific interface which is being referenced since an object may implement per-interface reference counts in order to allocate internal resources only for the interfaces which are being referenced.
+*Extra calls to these functions are not sent out to remote objects over the wire; a proxy keeps only one reference on the remote object and maintains its own local reference count.
+
+To facilitate and promote COM development, Microsoft introduced [[Active Template Library|ATL (Active Template Library)]] for C++ developers. ATL provides for a higher-level COM development paradigm. It also shields COM client application developers from the need to directly maintain reference counting, by providing [[smart pointer]] objects.
+
+Other libraries and languages that are COM-aware include the [[Microsoft Foundation Classes]], the [[Visual C++|VC]] Compiler COM Support, [[VBScript]], [[Visual Basic]], [[ECMAScript]] ([[JavaScript]]) and [[Borland Delphi]].
+
+===Instantiation===
+COM standardizes the instantiation (i.e. creation) process of COM objects by requiring the use of '''Class Factories'''. In order for a COM object to be created, two associated items must exist:<!--applies to list as well-->
+* A Class ID.
+* A Class Factory.
+
+Each COM Class or '''CoClass''' must be associated with a unique Class ID (a GUID). It must also be associated with its own Class Factory (that is achieved by using a centralized registry). A Class Factory is itself a COM object. It is an object that must expose the IClassFactory or IClassFactory2 (the latter with licensing support) interface. The responsibility of such an object is to create other objects.
+
+A class factory object is usually contained within the same executable code (i.e. the '''server code''') as the COM object itself. When a class factory is called upon to create a target object, this target object's class id must be provided. This is how the class factory knows which class of object to instantiate.
+
+A single class factory object may create objects of more than one class. That is, two objects of different class ids may be created by the same class factory object. However, this is transparent to the COM system.
+
+By delegating the responsibility of object creation into a separate object, a greater level of abstraction is promoted, and the developer is given greater flexibility. For example, implementation of the '''Singleton''' and other creation patterns is facilitated. Also, the calling application is shielded from the COM object's memory allocation semantics by the factory object.
+
+In order for client applications to be able to acquire class factory objects, COM servers must properly expose them. A class factory is exposed differently, depending on the nature of the server code. A server which is DLL-based must export a '''DllGetClassObject()''' global function. A server which is EXE-based registers the class factory at runtime via the '''CoRegisterClassObject()''' Windows API function.
+
+The following is a general outline of the sequence of object creation via its class factory:<!--applies to list as well-->
+<ol>
+<li>The object's class factory is obtained via the '''CoGetClassObject()''' API (a standard Windows API).<br>
+As part of the call to CoGetClassObject(), the Class ID of the object (to be created) must be supplied. The following C++ code demonstrates this:<pre>
+ IClassFactory* pIClassFactory = NULL;
+ 
+ CoGetClassObject(CLSID_SomeObject,
+     CLSCTX_ALL,
+     NULL,
+     IID_IClassFactory,
+     (LPVOID*)&pIClassFactory);</pre>The above code indicates that the Class Factory object of a COM object, which is identified by the class id CLSID_SomeObject, is required. This class factory object is returned by way of its IClassFactory interface.</li>
+<li>The returned class factory object is then requested to create an instance of the originally intended COM object. The following C++ code demonstrates this:<pre>
+ ISomeObject* pISomeObject = NULL;
+ 
+ if (pIClassFactory)
+ {
+     pIClassFactory->CreateInstance (NULL,
+         IID_ISomeObject,
+         (LPVOID*)&pISomeObject); 
+ 
+     pIClassFactory->Release();
+ 
+     pIClassFactory = NULL;
+ }</pre>The above code indicates the use of the Class Factory object's '''CreateInstance()''' method to create an object which exposes an interface identified by the IID_ISomeObject GUID. A pointer to the ISomeObject interface of this object is returned. Also note that because the class factory object is itself a COM object, it needs to be released when it is no longer required (i.e. its '''Release()''' method must be called).</li>
+</ol>
+The above demonstrates, at the most basic level, the use of a class factory to instantiate an object. Higher level constructs are also available, some of which do not even involve direct use of the Windows APIs.
+
+For example, the '''CoCreateInstance()''' API can be used by an application to directly create a COM object without acquiring the object's class factory. However, internally, the CoCreateInstance() API itself will invoke the CoGetClassObject() API to obtain the object's class factory and then use the class factory's CreateInstance() method to create the COM object.
+
+VBScript supplies the '''New''' keyword as well as the '''CreateObject()''' global function for object instantiation. These language constructs encapsulate the acquisition of the class factory object of the target object (via the CoGetClassObject() API) followed by the invocation of the IClassFactory::CreateInstance() method.
+
+Other languages, e.g. PowerBuilder's PowerScript may also provide their own high-level object creation constructs. However, CoGetClassObject() and the IClassFactory interface remain the most fundamental object creation technique.
+
+===Reflection===
+{{See also|reflection (computer science)}}
+At the time of the inception of COM technologies, the only way for a client to find out what features an object would offer was to actually create one instance and call into its QueryInterface method (part of the required IUnknown interface).  This way of exploration became awkward for many applications, including the selection of appropriate components for a certain task, and tools to help a developer understand how to use methods provided by an object.
+
+As a result, COM Type Libraries were introduced, through which components can describe themselves. A type library contains information such as the CLSID of a component, the IIDs of the interfaces the component implements, and descriptions of each of the methods of those interfaces. Type libraries are typically used by [[Rapid application development|Rapid Application Development]] (RAD) environments such as [[Visual Basic]] or [[Visual Studio]] to assist developers of client applications.
+
+===Programming===
+COM is a binary standard (also said to be '''language agnostic''') and may be developed in any programming language capable of understanding and implementing its binary defined data types and interfaces.
+
+Runtime libraries (in extreme situations, the programmers) are responsible for entering and leaving the COM environment, instantiating and reference counting COM objects, querying objects for version information, coding to take advantage of advanced object versions, and coding [[graceful degradation]] of function when newer versions are not available.
+
+===Application and network transparency===
+COM objects may be instantiated and referenced from within a process, across process boundaries within a computer, and across a network, using the DCOM technology.  [[Out-of-process]] and remote objects may use [[serialization|marshalling]] to send method calls and return values back and forth.  The marshalling is invisible to the object and the code using the object.
+
+===Threading in COM===
+In COM, threading issues are addressed by a concept known as "'''apartment models'''". Here the term "'''apartment'''" refers to an execution context wherein a single thread or a group of threads is associated with one or more '''COM objects'''.
+
+Apartments stipulate the following general guidelines for participating threads and objects:<!--applies to list as well-->
+*Each COM object is associated with one and only one apartment. This is decided at the time the object is created at runtime. After this initial setup, the object remains in that apartment throughout its lifetime.
+*A COM thread (i.e., a thread in which COM objects are created or COM method calls are made) is also associated with an apartment. Like COM objects, the apartment with which a thread is associated is also decided at initialization time. Each COM thread also remains in its designated apartment until it terminates.
+*Threads and objects which belong to the same apartment are said to follow the same thread access rules. Method calls which are made inside the same apartment are performed directly without any assistance from COM.
+*Threads and objects from different apartments are said to play by different thread access rules. Method calls made across apartments are achieved via marshalling. This requires the use of proxies and stubs.
+
+There are three types of Apartment Models in the COM world: '''[[Single threading|Single-Threaded]] Apartment (STA)''', '''Multi-Threaded Apartment (MTA)''', and '''Neutral Apartment'''. Each apartment represents one mechanism whereby an object's internal state may be synchronized across multiple threads.
+
+The Single-Threaded Apartment (STA) model is a very commonly used model. Here, a COM object stands in a position similar to a desktop application's user interface. In an STA model, a single thread is dedicated to drive an object's methods, i.e. a single thread is always used to execute the methods of the object. In such an arrangement, method calls from threads outside of the apartment are [[Marshalling (computer science)|marshalled]] and automatically queued by the system (via a standard Windows message queue). Thus, there is no worry about race conditions or lack of synchronicity because each method call of an object is always executed to completion before another is invoked.
+
+If the COM object's methods perform their own synchronization, multiple threads dedicated to calling methods on the COM object are permitted. This is termed the Multiple Threaded Apartment (MTA).  Calls to an MTA object from a thread in an STA are also marshaled. A process can consist of multiple COM objects, some of which may use STA and others of which may use MTA.  The Thread Neutral Apartment allows different threads, none of which is necessarily dedicated to calling methods on the object, to make such calls.  The only provision is that all methods on the object must be serially reentrant.
+
+==Criticisms==
+Since COM has a fairly complex implementation, programmers can be distracted by some of the "plumbing" issues.
+
+===Message pumping===
+When an STA is initialized it creates a hidden window that is used for inter-apartment and inter-process message routing. This window must have its message queue regularly pumped. This construct is known as a [[message pump]].  On earlier versions of Windows, failure to do so could cause system-wide deadlocks. This problem is especially nasty because some Windows APIs initialize COM as part of their implementation, which causes a leak of implementation details.
+
+===Reference counting===
+Reference counting within COM may cause problems if two or more objects are [[circular reference|circularly referenced]].  The design of an application must take this into account so that objects are not left orphaned.
+
+Objects may also be left with active reference counts if the COM "event sink" model is used.  Since the object that fires the event needs a reference to the object reacting to the event, the object's reference count will never reach zero.
+
+Reference cycles are typically broken using either out-of-band termination or split identities.  In the out of band termination technique, an object exposes a method which, when called, forces it to drop its references to other objects, thereby breaking the cycle.  In the split identity technique, a single implementation exposes two separate COM objects (also known as identities).  This creates a [[weak reference]] between the COM objects, preventing a reference cycle.
+
+===DLL hell===
+{{Main|DLL hell}}
+Because the location of each component is stored in a system-wide location (the [[Windows registry]]), there can be only one version of a certain component installed. This limitation can seriously complicate the deployment of COM-based applications, due to the possibility that different programs, or even different versions of the same program, may be designed to work with different versions of the same COM component.  This condition is known as [[DLL hell]].  While this condition has been known to occur with OS components, it is generally a condition created by application developers in the use of their own components.  The problem can be reduced or eliminated completely by careful [[software versioning]] and [[regression testing]].
+
+[[Windows XP]] introduced a new mode of COM object registration called "'''Registration-free COM'''". This facility makes it possible for applications that need to install COM objects to store all the required COM registry information in the application's directory, instead of in the global registry, so that, strictly speaking, only that application will ever see/use it.  DLL hell can be substantially avoided using Registration-free COM, the only limitation being it requires at least [[Windows XP]] or later Windows versions and that it must not be used for EXE COM servers or system-wide components such as [[MDAC]], [[MSXML]], [[DirectX]] or [[Internet Explorer]].
+
+==RegFree COM==
+'''RegFree COM''' (or '''Registration-Free COM''') is a technology introduced with [[Windows XP]] that allows Component Object Model (COM) [[software componentry|components]] to store activation [[metadata]] and CLSID (<code>[[Class (computing)|Class]] ID</code>) for the component without using the [[Windows Registry|registry]]. Instead, the metadata and CLSIDs of the classes implemented in the component are declared in an assembly manifest (described using [[XML]]), stored either as a resource in the executable or as a separate file installed with the component.<ref name="msdndocs">{{cite web | url = http://msdn.microsoft.com/en-us/library/aa374219(VS.85).aspx | title = Assembly Manifests | publisher = [[MSDN]] | accessdate = 2009-11-05}}</ref> This allows multiple versions of the same component to be installed in different directories, described by their own manifests, as well as [[XCOPY deployment]].<ref name="msdnmag">{{cite web | url = http://msdn.microsoft.com/en-us/magazine/cc188708.aspx | title = Simplify App Deployment with ClickOnce and Registration-Free COM | author = Dave Templin | publisher = [[MSDN]] Magazine | accessdate = 2008-04-22}}</ref>
+
+During application loading, the Windows loader searches for the manifest.<ref name="isoconcept">{{cite web | url = http://msdn.microsoft.com/en-us/library/ms235531(VS.80).aspx | title = Concepts of Isolated Applications and Side-by-side Assemblies | publisher = [[MSDN]] | accessdate = 2009-11-05}}</ref> If it is present, the loader adds information from it to the activation context <ref name="msdnmag"/> When the COM class factory tries to instantiate a class, the activation context is first checked to see if an implementation for the CLSID can be found. Only if the lookup fails is the [[Windows Registry|registry]] scanned.<ref name="msdnmag"/>
+
+== See also ==
+* [[Portable object (computing)]] cross language cross platform Object Model definition
+* [[Distributed Component Object Model]] (DCOM), extension making COM able to work in networks
+* [[Common Language Infrastructure]] current .Net cross language cross platform Object Model
+* [[CORBA]] Common Object Request Broker Architecture, open cross language cross platform object model
+* [[Freedesktop.org]] [[D-Bus]] current open cross language cross platform Object Model
+* [[GNOME]] [[Bonobo (computing)|Bonobo]] deprecated GNOME cross language Object Model
+* [[KDE]] [[DCOP]] deprecated KDE interprocess and software componentry communication system
+* [[KDE]] [[KPart]] deprecated KDE component framework
+* [[XPCOM]] Mozilla applications cross Platform Component Object Model
+* [[IBM System Object Model]] SOM, a component system from IBM used in OS/2
+* [[Java Beans]]
+* [[Java Remote Method Invocation]]
+* [[Internet Communications Engine]]
+* [[Language binding]]
+* [[Foreign function interface]]
+* [[Calling convention]]
+* [[Name mangling]]
+* [[Application programming interface]] - API
+* [[Application Binary Interface]] - ABI
+* [[Comparison of application virtual machines]]
+* [[SWIG]] opensource automatic interfaces bindings generator from many languages to other languages
+* [[D-Bus]]
+
+==References==
+{{Refimprove|date=April 2008}}
+<references />
+*{{cite web | title=COM: A Brief Introduction (powerpoint) | url=http://www.cs.ucr.edu/~dberger/Documents/Presentations/com-intro.ppt | accessdate=March 7, 2006 }}
+*{{cite book | last=Box | first=Don | authorlink=Don Box | title = Essential COM | publisher = Addison-Wesley | year = 1998 | id = ISBN 0-201-63446-5}}
+*{{cite book | last=Chappell | first=David | authorlink=David Chappell | title = Understanding ActiveX and OLE | publisher = Microsoft Press | year = 1996 | id = ISBN 978-1572312166}}
+*{{cite web | title=Integration and Migration of COM+ services to WCF | http://msdn.microsoft.com/en-us/library/bb978523.aspx | accessdate=April 15, 2010}}
+
+==External links==
+*[http://www.microsoft.com/com/ Microsoft COM Technologies]
+*[http://channel9.msdn.com/ShowPost.aspx?PostID=224935 Interview with Tony Williams, Co-Inventor of COM] (Video Webcast, August 2006)
+*[http://www.polberger.se/components/read/com.html A concise technical overview of COM] from master's thesis
+*[http://support.microsoft.com/kb/159621/en-us Info: Difference Between OLE Controls and ActiveX Controls] from Microsoft
+*[http://theircorp.byethost11.com/index.php?vw=TypeLib TypeLib Data Format Specification (unofficial)] with open source dumper utility.
+*[http://www.innovatia.com/software/papers/com.htm The COM / DCOM Glossary]
+{{Microsoft APIs}}
+{{Microsoft Windows components}}
+
+[[Category:Software components]]
+[[Category:Inter-process communication]]
+[[Category:Microsoft application programming interfaces]]
+[[Category:Object-oriented programming]]
+[[Category:Object models]]
+
+[[da:COM (software)]]
+[[de:Component Object Model]]
+[[es:Component Object Model]]
+[[fr:Component Object Model]]
+[[ko:컴포넌트 오브젝트 모델]]
+[[it:Component Object Model]]
+[[he:COM]]
+[[hu:Component Object Model]]
+[[nl:Component Object Model]]
+[[ja:Component Object Model]]
+[[pl:Component Object Model]]
+[[pt:Component Object Model]]
+[[ru:Component Object Model]]
+[[sk:Component Object Model]]
+[[sv:Component Object Model]]
+[[uk:Component Object Model]]
+[[zh:组件对象模型]]</body> </html>

@@ -1,0 +1,237 @@
+<html> <head> <title>Ping</title></head><body>{{About|the [[Internet Protocol|IP]] network utility|the social network|iTunes Ping|other uses|Ping (disambiguation)}}
+
+'''Ping''' is a [[computer network]] administration utility used to test the reachability of a [[Host (network)|host]] on an [[Internet Protocol]] (IP) network and to measure the [[round-trip time]] for messages sent from the originating host to a destination computer. The name comes from [[Sonar#Active sonar|active sonar]] terminology.
+
+''Ping'' operates by sending [[Internet Control Message Protocol]] (ICMP) ''echo request'' [[packet (information technology)|packets]] to the target host and waiting for an ICMP response. In the process it measures the time from transmission to reception (''round-trip time'')<ref name=ping /> and records any [[packet loss]]. The results of the test are printed in form of a statistical summary of the response packets received, including the minimum, maximum, and the [[average|mean]] round-trip times, and sometimes the [[standard deviation]] of the mean.
+
+''Ping'' may be run using various options (command line switches) depending on the implementation that enable special operational modes, such as to specify the packet size used as the probe, automatic repeated operation for sending a specified count of probes, time stamping options, or to perform a [[ping flood]]. Flood pinging may be abused as a simple form of [[denial-of-service attack]], in which the attacker overwhelms the victim with ICMP echo request packets.
+
+==History==
+The ping utility was authored by [[Mike Muuss]] in December 1983 as a tool to troubleshoot problems in an IP network. He named it after the sound pulses of active [[sonar]], which also involves sending a signal and measuring the time until any echo is received.<ref name=ping>{{cite web
+| author = Mike Muuss
+| authorlink = Mike Muuss
+| title=The Story of the PING Program
+| url=http://ftp.arl.mil/~mike/ping.html
+| archiveurl = http://www.webcitation.org/5saCKBpgH
+| publisher = U.S. Army Research Laboratory
+| location = Adelphi, MD, USA
+| archivedate = 08 September 2010
+| accessdate = 08 September 2010
+| quote = I named it after the sound that a sonar makes, inspired by the whole principle of echo-location.
+}}</ref><ref>{{cite book
+|last=Salus
+|first=Peter
+|authorlink=Peter Salus
+|title=A Quarter Century of UNIX
+|publisher=[[Addison-Wesley]]
+|year=1994
+|isbn=0201547775
+}}</ref>
+
+The usefulness of ''ping'' in assisting the diagnosis of Internet connectivity issues was impaired starting in 2003, when a number of [[Internet service provider]]s began filtering out ICMP Type 8 ([[ICMP Echo Request]]) messages at their network boundaries.{{Citation needed|date=December 2009}} This was partly due to the increasing use of ping for target reconnaissance, for example by [[Computer worm|Internet worms]] such as [[Welchia]] that flood the Internet with ping requests in order to locate new [[computer]]s to infect. Not only did the availability of ping responses leak information to an attacker, it added to the overall load on networks, causing problems for [[router]]s across the Internet.{{Citation needed|date=December 2009}}
+
+However ''host discovery'' or ''ping scanning'' or ''[[ping sweep]]'' is still a part of [[Network scanner|network scanning]] tools like [[nmap]], as it may give basic evidence about the existence of a remote machine.
+
+Although RFC 1122 prescribes that any host must accept an echo-request and issue an echo-reply in return, this has been characterized as a security risk.<ref>{{cite web
+|url=https://www.grc.com/x/ne.dll?bh0bkyd2
+|title=Shields Up, Firewall Test. You get a warning about the dangers of ping if your computer answers ping request
+|accessdate=4 June 2010}}</ref>
+
+==ICMP packet==
+{| class="wikitable" style="margin: 0 auto; text-align: center;border:1"
+|+ ICMP packet
+|-----
+!  
+! Bit 0 - 7
+! Bit 8 - 15 
+! colspan="2" |Bit 16 - 31
+|----- bgcolor="#e0e0ff"
+! rowspan="5" | [[IPv4#Header|IP Header]]<br>(20 bytes)
+| Version/IHL
+| Type of  service
+| colspan="2" | Length
+|----- bgcolor="#e8e8ff"
+| colspan="2" | Identification
+| colspan="2" |''flags'' and ''offset''
+|----- bgcolor="#e8e8ff"
+| Time To Live (TTL)
+| Protocol
+| colspan="2" | Checksum 
+|----- bgcolor="#e8e8ff"
+| colspan="4" | Source IP address
+|----- bgcolor="#e8e8ff"
+| colspan="4" | Destination IP address
+|----- bgcolor="#ffe8e8"
+! rowspan="3" | ICMP Payload<br>(8+ bytes)
+| Type of message
+| Code
+| colspan="2" | Checksum 
+|----- bgcolor="#ffe8e8"
+| colspan="4" | Quench
+|----- bgcolor="#ffe8e8"
+| colspan="4" | Data (''optional'')
+|}
+
+Generic composition of an ICMP packet<ref name=rfc792>RFC 792</ref>
+* Header (in blue): 
+** ''Protocol'' set to 1 and ''Type of Service'' set to 0.
+* Payload (in red):
+** Type of ICMP message (8 bits)
+** Code (8 bits)
+** Checksum (16 bits), calculated with the ICMP part of the packet (the header is not used). It is the 16-bit one's complement of the one's complement sum of the ICMP message starting with the Type field<ref name=networksorcery>{{cite web
+| title=RFC Sourcebook's page on ICMP
+| url=http://www.networksorcery.com/enp/protocol/icmp.htm#ICMP%20Header%20Checksum
+| accessdate=20 December 2010
+}}</ref>
+** The ICMP 'Quench' (32 bits) field, which in this case (ICMP echo request and replies), will be composed of identifier (16 bits) and sequence number (16 bits).
+** Data load for the different kind of answers (Can be an arbitrary length, left to implementation detail. However must be less than the maximum MTU of the network {{Citation needed|date=December 2008}}).
+* Data Transportation
+
+==Sample ping test==
+The following is a sample output of pinging <tt>en.wikipedia.org</tt> under [[Linux]] with the iputils version of ping:
+<pre>
+admin@localhost# ping en.wikipedia.org
+PING rr.pmtpa.wikimedia.org (66.230.200.100) 56(84) bytes of data.
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=1 ttl=52 time=87.7 ms
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=2 ttl=52 time=95.6 ms
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=3 ttl=52 time=85.4 ms
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=4 ttl=52 time=95.8 ms
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=5 ttl=52 time=87.0 ms
+64 bytes from rr.pmtpa.wikimedia.org (66.230.200.100): icmp_seq=6 ttl=52 time=97.6 ms 
+--- rr.pmtpa.wikimedia.org ping statistics ---
+10 packets transmitted, 10 received, 0% packet loss, time 8998ms
+rtt min/avg/max/mdev = 78.162/89.213/97.695/6.836 ms
+</pre>
+
+The output shows the results of 10 pings to 66.230.200.100 with the results summarized at the end. The program is stopped by pressing [[Ctrl-C]].
+* shortest [[round-trip delay time|round trip time]] was 78.162 milliseconds
+* average round trip time was 89.213 milliseconds
+* maximum round trip time was 97.695 milliseconds
+* [[Standard deviation]] of the round-trip time was 6.836 milliseconds
+
+==Message format==
+===Echo request===
+The ''echo request'' is an [[Internet Control Message Protocol|ICMP]] message whose data is expected to be received back in an ''echo reply'' ("ping"). The host must respond to all echo requests with an echo reply containing the exact data received in the request message.
+
+{| class="wikitable"
+! 00 || 01 || 02 || 03 || 04 || 05 || 06 || 07
+! 08 || 09 || 10 || 11 || 12 || 13 || 14 || 15
+! 16 || 17 || 18 || 19 || 20 || 21 || 22 || 23
+! 24 || 25 || 26 || 27 || 28 || 29 || 30 || 31 
+|-
+|colspan="8" align="center"| Type = 8
+|colspan="8" align="center"| Code = 0
+|colspan="16" align="center"| Header Checksum
+|-
+|colspan="16" align="center"| Identifier
+|colspan="16" align="center"| Sequence Number
+|-
+|colspan="32" align="center"| Data :::
+|}
+*The Identifier and Sequence Number can be used by the client to match the reply with the request that caused the reply. In practice, most Linux systems use a unique identifier for every ping process, and sequence number is an increasing number within that process. Windows uses a fixed identifier, which varies between Windows versions, and a sequence number that is only reset at boot time.
+*The data received by the Echo Request must be entirely included in the Echo Reply.
+
+===Echo reply===
+The ''echo reply'' is an ICMP message generated in response to an echo request, and is mandatory for all hosts and routers.
+
+{| class="wikitable"
+! 00 || 01 || 02 || 03 || 04 || 05 || 06 || 07
+! 08 || 09 || 10 || 11 || 12 || 13 || 14 || 15
+! 16 || 17 || 18 || 19 || 20 || 21 || 22 || 23
+! 24 || 25 || 26 || 27 || 28 || 29 || 30 || 31
+|-
+|colspan="8" align="center"| Type = 0
+|colspan="8" align="center"| Code = 0
+|colspan="16" align="center"| Header Checksum
+|-
+|colspan="16" align="center"| Identifier
+|colspan="16" align="center"| Sequence Number
+|-
+|colspan="32" align="center"| Data :::
+|}
+
+*''Type'' and ''code'' must be set to 0.
+*The ''identifier'' and ''sequence number'' can be used by the client to determine which echo requests are associated with the echo replies.
+*The data received in the echo request must be entirely included in the echo reply.
+
+===Other replies===
+In case of error, destination host or intermediate router will send back an ICMP error message, i.e. host unreachable or TTL exceeded in transit. In addition these messages include the first 8 bytes of original message (in this case header of ICMP echo request, including quench value), so ping utility can match it to originating query.{{Citation needed|date=September 2009}}
+
+==Payload==
+The payload of the packet is generally filled with [[ASCII]] characters, as the output of the [[tcpdump]] utility shows:
+<pre style=font-size:80%>
+16:24:47.966461 IP (tos 0x0, ttl 128, id 15103, offset 0, flags [none],
+proto: ICMP (1), length: 60) 192.168.146.22 > 192.168.144.5: ICMP echo request,
+id 1, seq 38, length 40
+       0x0000:  4500 003c 3aff 0000 8001 5c55 c0a8 9216  E..<:.....\U....
+       0x0010:  c0a8 9005 0800 4d35 0001 0026 6162 6364  ......M5...&abcd
+       0x0020:  6566 6768 696a 6b6c 6d6e 6f70 7172 7374  efghijklmnopqrst
+       0x0030:  7576 7761 6263 6465 6667 6869            uvwabcdefghi
+</pre>
+The payload includes a timestamp of when the message was sent, as well a sequence number. This allows ping to compute the round trip time in a [[stateless server|stateless]] manner without needing to record when packets were sent. In cases of no answer and no error message, most implementations of ping display nothing, or periodically print notifications about timing out.{{Citation needed|date=September 2009}}
+
+==Other types of pinging==
+The term ''ping'' is commonly used to describe the transmission of an effectively content-less message that is used for a variety of purposes. For example, a ping may be sent using the [[User Datagram Protocol]] (UDP) to a device located behind a [[network address translator]] (NAT) to keep the port binding on the NAT translator from timing out and removing the forward mapping. Other examples are short or empty [[Instant messaging|instant message]]s, emails, voice mails, or missed-call notification to indicate availability.{{Citation needed|date=May 2010}}
+===In gaming===
+{{Main|ping (video gaming)}}
+In various network multi-player games, the server notes the time it requires for a game packet to reach a client and a response to be received.  This round-trip time is usually reported as the player's 'ping'.  It is used as an effective measurement of the player's [[latency (engineering)|latency]], with lower ping times being desirable.  Note that this style of ping typically does not use ICMP packets.
+
+==See also==
+* [[List of DOS commands]]
+* [[List of Unix utilities]]
+* [[Traceroute]]
+* [[Ping of death]]
+* [[Smurf attack]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* {{man|8|ping||send ICMP ECHO_REQUEST to network hosts}}
+
+{{Unix commands}}
+{{Windows commands}}
+
+[[Category:Network analyzers]]
+[[Category:Open source network management software]]
+[[Category:Network-related software]]
+[[Category:Unix network-related software]]
+[[Category:Windows communication and services]]
+[[Category:Windows administration]]
+
+[[ar:بينج (أمر)]]
+[[ca:Ping]]
+[[cs:Ping]]
+[[da:Ping]]
+[[de:Ping (Datenübertragung)]]
+[[et:Ping (programm)]]
+[[el:Ping]]
+[[es:Ping]]
+[[eu:Ping]]
+[[fa:پینگ]]
+[[fr:Ping (logiciel)]]
+[[gl:Ping]]
+[[ko:핑]]
+[[id:Ping]]
+[[it:Ping]]
+[[he:פינג]]
+[[ka:Ping (იუნიქსი)]]
+[[lv:Ping]]
+[[lt:Ping]]
+[[hu:Ping]]
+[[mk:Ping]]
+[[ml:പിങ്]]
+[[nl:Ping (netwerk)]]
+[[ja:Ping]]
+[[pl:Ping]]
+[[pt:Ping]]
+[[ro:Ping]]
+[[ru:Ping]]
+[[sk:Ping]]
+[[fi:Ping]]
+[[sv:Ping]]
+[[th:ปิง (คอมพิวเตอร์)]]
+[[tr:Ping]]
+[[uk:Ping]]
+[[vi:Ping]]
+[[zh:Ping]]</body> </html>

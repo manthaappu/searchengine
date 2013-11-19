@@ -1,0 +1,89 @@
+<html> <head> <title>GNU Coding Standards</title></head><body>{{No footnotes|date=September 2009}}
+The '''GNU Coding Standards''' are a set of rules and guidelines for writing [[computer program|program]]s that work consistently within the [[GNU]] system.  The GNU Coding Standards were written by [[Richard Stallman]] and other GNU Project volunteers. The standards document is part of the [[GNU Project]] and is available from the GNU website [http://www.gnu.org/prep/standards/]. Though it focuses on writing [[free software]] for GNU in [[C (programming language)|C]], much of it can be applied more generally.  In particular, the GNU Project encourages its contributors to always try to follow the standards—whether or not their programs are implemented in C.  The C code formatting style is well-known within the [[free software community]], but of course, anyone can choose to follow it.
+
+==Code formatting==
+
+The GNU Coding Standards specify exactly how to format most [[C (programming language)|C programming language]] constructs.  Here is a characteristic example:
+
+<source lang="c">
+int
+main (int argc, char *argv[])
+{
+  struct gizmo foo;
+
+  fetch_gizmo (&foo, argv[1]);
+
+ check:
+  if (foo.type == MOOMIN)
+    puts ("It's a moomin.");
+  else if (foo.bar < GIZMO_SNUFKIN_THRESHOLD / 2
+           || (strcmp (foo.class_name, "snufkin") == 0)
+               && foo.bar < GIZMO_SNUFKIN_THRESHOLD)
+    puts ("It's a snufkin.");
+  else
+    {
+      char *barney;  /* Pointer to the first character after
+                        the last slash in the file name.  */
+      int wilma;     /* Approximate size of the universe.  */
+      int fred;      /* Max value of the `bar' field.  */
+
+      do
+        {
+          frobnicate (&foo, GIZMO_SNUFKIN_THRESHOLD,
+                      &barney, &wilma, &fred);
+          twiddle (&foo, barney, wilma + fred);
+        }
+      while (foo.bar >= GIZMO_SNUFKIN_THRESHOLD);
+
+      store_size (wilma);
+
+      goto check;
+    }
+
+  return 0;
+}
+</source>
+
+The consistent treatment of blocks as statements (for the purpose of indentation) is a very distinctive feature of the GNU C code formatting style; as is the mandatory space before parentheses.  All code formatted in the GNU style has the property that each closing brace, bracket or parenthesis appears ''to the right'' of its corresponding opening delimiter, or in the same column.
+
+As a general principle, [[GNU Emacs]] can be considered a reliable authority on the GNU code formatting style.  As such, it is desirable that any piece of code that looks ugly when indented by Emacs is changed into a more Emacs-friendly form—for example, by inserting additional parentheses.
+
+==Comments==
+
+The standards greatly emphasise the importance of English-language comments:
+
+<blockquote>Please write the comments in a GNU program in English, because English is the one language that nearly all programmers in all countries can read.  If you do not write English well, please write comments in English as well as you can, then ask other people to help rewrite them.  If you can't write comments in English, please find someone to work with you and translate your comments into English.</blockquote>
+
+Comments should consist of complete, capitalized sentences, each followed by two spaces (so that Emacs can tell where one sentence ends and the next begins).
+
+For long or complex preprocessor conditionals, every <code>#else</code> and <code>#endif</code> should have a comment explaining the condition for the code below (for <code>#else</code>) or above (for <code>#endif</code>).
+
+==Files==
+
+The standards require that all programs be able to operate when <code>/usr</code> and <code>/etc</code> are [[mount (computing)|mounted]] read-only.  Therefore, files that are modified for internal purposes (log files, lock files, temporary files, etc.) should not be stored in either <code>/usr</code> or <code>/etc</code>.  An exception is made for programs whose job it is to update system configuration files in <code>/etc</code>.  Another exception is made for storing files in a directory when the user has explicitly asked to modify a file in the same directory.
+
+==Portability==
+
+The GNU Coding Standards define the issue of portability in this way: portability in the [[Unix]] world means 'between Unixes'; in a GNU program this kind of portability is desirable, but not vitally important.
+
+According to the standard, portability problems are very limited as GNU programs are designed to be compiled with one compiler, the [[GNU Compiler Collection|GNU C Compiler]], and only run on one system, which is the GNU system.
+
+There is one form of portability problem though, and that is the fact that the standard makes it clear that a program should run on different [[Central processing unit|CPU]] types. The standard says that GNU doesn't and won't support 16-bit systems, but handling all the different 32- and 64-bit systems is absolutely necessary.
+
+==See also==
+{{Portal|Free software}}
+
+*[[Gnits Standards]]
+
+==External links==
+* [http://www.gnu.org/prep/standards The GNU Coding Standards] on the GNU website
+* [http://www.ronancrowley.com/Eclipse_GNU_Style.xml Eclipse Code Style Formatter for GNU Coding Standards]
+
+{{DEFAULTSORT:Gnu Coding Standards}}
+<!-- Categories -->
+[[Category:Free software culture and documents]]
+[[Category:GNU Project|Coding Standards]]
+[[Category:Source code]]
+[[Category:Articles with example C code]]
+
+[[pl:GNU Coding Standards]]</body> </html>

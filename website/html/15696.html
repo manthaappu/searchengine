@@ -1,0 +1,744 @@
+<html> <head> <title>Graph coloring</title></head><body>[[Image:Petersen graph 3-coloring.svg|thumb|right|A proper vertex coloring of the [[Petersen graph]] with 3 colors, the minimum number possible.]]
+
+In [[graph theory]], '''graph coloring''' is a special case of [[graph labeling]]; it is an assignment of labels traditionally called "colors" to elements of a [[graph (mathematics)|graph]] subject to certain constraints. In its simplest form, it is a way of coloring the vertices of a graph such that no two adjacent [[Vertex (graph theory)|vertices]] share the same color; this is called a '''vertex coloring'''. Similarly, an '''edge coloring''' assigns a color to each edge so that no two adjacent edges share the same color, and a '''face coloring''' of a planar graph assigns a color to each face or region so that no two faces that share a boundary have the same color.
+
+Vertex coloring is the starting point of the subject, and other coloring problems can be transformed into a vertex version. For example, an edge coloring of a graph is just a vertex coloring of its [[line graph]], and a face coloring of a [[planar graph]] is just a vertex coloring of its [[dual graph|planar dual]]. However, non-vertex coloring problems are often stated and studied ''as is''.  That is partly for perspective, and partly because some problems are best studied in non-vertex form, as for instance is edge coloring.
+
+The convention of using colors originates from coloring the countries of a map, where each face is literally colored.  This was generalized to coloring the faces of a graph [[Graph embedding|embedded]] in the plane.  By planar duality it became coloring the vertices, and in this form it generalizes to all graphs.  In mathematical and computer representations it is typical to use the first few positive or nonnegative integers as the "colors".  In general one can use any finite set as the "color set".  The nature of the coloring problem depends on the number of colors but not on what they are.
+
+Graph coloring enjoys many practical applications as well as theoretical challenges. Beside the classical types of problems, different limitations can also be set on the graph, or on the way a color is assigned, or even on the color itself. It has even reached popularity with the general public in the form of the popular number puzzle [[Sudoku]]. Graph coloring is still a very active field of research.
+
+''Note: Many terms used in this article are defined in [[Glossary of graph theory]].''
+
+==History==
+{{see also | History of the four color theorem | History of graph theory}}
+
+The first results about graph coloring deal almost exclusively with [[planar graphs]] in the form of the coloring of ''maps''.
+While trying to color a map of the counties of England, [[Francis Guthrie]] postulated the [[four color conjecture]], noting that four colors were sufficient to color the map so that no regions sharing a common border received the same color. Guthrie’s brother passed on the question to his mathematics teacher [[Augustus de Morgan]] at [[University College London|University College]], who mentioned it in a letter to [[William Rowan Hamilton|William Hamilton]] in 1852. [[Arthur Cayley]] raised the problem at a meeting of the [[London Mathematical Society]] in 1879. The same year, [[Alfred Kempe]] published a paper that claimed to establish the result, and for a decade the four color problem was considered solved. For his accomplishment Kempe was elected a Fellow of the [[Royal Society]] and later President of the London Mathematical Society.<ref>M. Kubale, ''History of graph coloring'', in {{harvtxt|Kubale|2004}}</ref>
+
+In 1890, [[Heawood]] pointed out that Kempe’s argument was wrong. However, in that paper he proved the [[five color theorem]], saying that every planar map can be colored with no more than ''five'' colors, using ideas of Kempe. In the following century, a vast amount of work and theories were developed to reduce the number of colors to four,  until the four color theorem was finally proved in 1976 by [[Kenneth Appel]] and [[Wolfgang Haken]]. Perhaps surprisingly, the proof went back to the ideas of Heawood and Kempe and largely disregarded the intervening developments.<ref>{{harvtxt|van Lint|Wilson|2001|loc=Chap. 33}}</ref> The proof of the four color theorem is also noteworthy for being the first major computer-aided proof.
+
+In 1912, [[George David Birkhoff]] introduced the [[chromatic polynomial]] to study the coloring problems, which was generalised to the [[Tutte polynomial]] by [[Tutte]], important structures in [[algebraic graph theory]]. Kempe had already drawn attention to the general, non-planar case in 1879,<ref>{{harvtxt|Jensen|Toft|1995}}, p. 2</ref> and many results on  generalisations of planar graph coloring to surfaces of higher order followed in the early 20th century.
+
+In 1960, [[Claude Berge]] formulated another conjecture about graph coloring, the ''strong perfect graph conjecture'', originally motivated by an [[information theory|information-theoretic]] concept called the zero-error capacity of a graph introduced by [[Claude Shannon|Shannon]]. The conjecture remained unresolved for 40 years, until it was established as the celebrated [[strong perfect graph theorem]] in 2002 by [[Maria Chudnovsky|Chudnovsky]], [[Neil Robertson (mathematician)|Robertson]], [[Paul Seymour (mathematician)|Seymour]], [[Robin Thomas (mathematician)|Thomas]] 2002.
+
+Graph coloring has been studied as an algorithmic problem since the early 1970s: the chromatic number problem is one of [[Karp’s 21 NP-complete problems]] from 1972, and at approximately the same time various exponential-time algorithms were developed based on backtracking and on the deletion-contraction recurrence of {{harvtxt|Zykov|1949}}. One of the major applications of graph coloring,  [[register allocation]] in compilers, was introduced in 1981.
+
+==Definition and terminology==<!--[[Chromatic number]] redirects here-->
+
+[[Image:Graph with all three-colourings.svg|thumb|right|This graph can be 3-colored in 12 different ways.]]
+
+===Vertex coloring===
+
+When used without any qualification, a '''coloring''' of a graph is almost always a ''proper vertex coloring'', namely a labelling of the graph’s vertices with colors such that no two vertices sharing the same [[edge (graph theory)|edge]] have the same color. Since a vertex with a [[loop (graph theory)|loop]] could never be properly colored, it is understood that graphs in this context are loopless.
+
+The terminology of using ''colors'' for vertex labels goes back to map coloring. Labels like ''red'' and ''blue'' are only used when the number of colors is small, and normally it is understood that the labels are drawn from the integers {1,2,3,...}.
+
+A coloring using at most ''k'' colors is called a (proper) ''' ''k''-coloring'''.
+The smallest number of colors needed to color a graph ''G'' is called its '''chromatic number''', χ(''G'').
+A graph that can be assigned a (proper) ''k''-coloring is ''' ''k''-colorable''', and it is ''' ''k''-chromatic''' if its chromatic number is exactly ''k''.
+A subset of vertices assigned to the same color is called a ''color class'', every such class forms an [[Independent set (graph theory)|independent set]]. Thus, a ''k''-coloring is the same as a partition of the vertex set into ''k'' independent sets, and the terms ''k-partite'' and ''k-colorable'' have the same meaning.
+
+===Chromatic polynomial===
+[[Image:Chromatic polynomial of all 3-vertex graphs.png|thumb|200px|All nonisomorphic graphs on 3 vertices and their chromatic polynomials. The empty graph ''E''<sub>3</sub> (red) admits a 1-coloring, the others admit no such colorings. The green graph admits 12 colorings with 3 colors.]]
+{{main|Chromatic polynomial}}
+
+The '''chromatic polynomial''' counts the number of ways a graph can be colored using no more than a given number of colors. For example, using three colors, the graph in the image to the right can be colored in 12 ways. With only two colors, it cannot be colored at all. With four colors, it can be colored in 24 + 4⋅12 = 72 ways: using all four colors, there are 4! = 24 valid colorings (''every'' assignment of four colors to ''any'' 4-vertex graph is a proper coloring); and for every choice of three of the four colors, there are 12 valid 3-colorings. So, for the graph in the example, a table of the number of valid colorings would start like this:
+{| class="wikitable" style="background:white;"
+|-
+|Available colors || 1 || 2 || 3 || 4 || …
+|-
+|Number of colorings || 0 || 0 || 12 || 72 || …
+|}
+
+The chromatic polynomial is a function ''P''(''G'', ''t'') that counts the number of ''t''-colorings of ''G''. As the name indicates, for a given ''G'' the function  is indeed a [[polynomial]] in ''t''. For the example graph, ''P''(''G'', ''t'') = ''t''(''t'' &minus; 1)<sup>2</sup>(''t'' &minus; 2), and indeed ''P''(''G'', 4) = 72.
+
+The chromatic polynomial includes at least as much information about the colorability of ''G'' as does the chromatic number. Indeed, χ is the smallest positive integer that is not a root of the chromatic polynomial
+
+: <math>\chi (G)=\min\{ k \colon P(G,k) > 0 \}.</math>
+
+{| class="wikitable" style="background:white;"
+|+Chromatic polynomials for certain graphs
+|-
+| Triangle ''K''<sub>3</sub> || <math>t(t-1)(t-2)</math>
+|-
+| [[Complete graph]] ''K''<sub>''n''</sub> || <math>t(t-1)(t-2) \cdots (t-(n-1))</math>
+|-
+| [[Tree graph|Tree]] with ''n'' vertices || <math>t(t-1)^{n-1}</math>
+|-
+| [[Cycle graph|Cycle]] ''C''<sub>''n''</sub>|| <math>(t-1)^n+(-1)^n(t-1)</math>
+|-
+| [[Petersen graph]] || <math>t(t-1)(t-2)(t^7-12t^6+67t^5-230t^4+529t^3-814t^2+775t-352)</math>
+|}
+
+===Edge coloring===
+{{main|Edge coloring}}
+
+An '''edge coloring''' of a graph is a  proper coloring of the ''edges'', meaning an assignment of colors to edges so that no vertex is incident to two edges of the same color. An edge coloring with ''k'' colors is called a ''k''-edge-coloring and is equivalent to the problem of partitioning the edge set into ''k'' [[Matching (graph theory)|matchings]]. The smallest number of colors needed for an edge coloring of a graph ''G'' is the '''chromatic index''', or '''edge chromatic number''', ''χ′(G)''. A '''Tait coloring''' is a 3-edge coloring of a [[cubic graph]]. The four color theorem is equivalent to the assertion that every planar cubic [[bridge (graph theory)|bridgeless]] graph admits a Tait coloring.
+
+==Properties==
+===Bounds on the chromatic number===
+Assigning distinct colors to distinct vertices always yields a proper coloring, so
+
+: <math>1 \le \chi(G) \le n.\,</math>
+
+The only graphs that can be 1-colored are [[edgeless graph]]s, and the  [[complete graph]] <math>K_n</math> of ''n'' vertices requires <math>\chi(K_n)=n</math> colors. In an optimal coloring there must be at least one of the graph‘s ''m'' edges between every pair of color classes, so
+
+: <math>\chi(G)(\chi(G)-1) \le 2m.\,</math>
+
+If ''G'' contains a [[clique (graph theory)|clique]] of size ''k'', then at least ''k'' colors are needed to color that clique; in other words, the chromatic number is at least the clique number:
+
+: <math>\chi(G) \ge \omega(G).\,</math>
+
+For [[interval graph]]s this bound is tight.
+
+The 2-colorable graphs are exactly the [[bipartite graph]]s, including [[tree (graph theory)|tree]]s and forests.
+By the four color theorem, every planar graph can be 4-colored.
+
+A [[greedy coloring]] shows that every graph can be colored with one more color than the maximum vertex [[degree (graph theory)|degree]],
+
+: <math>\chi(G) \le \Delta(G) + 1. \,</math>
+
+Complete graphs have <math>\chi(G)=n</math> and <math>\Delta(G)=n-1</math>,  and [[odd cycle]]s have <math>\chi(G)=3</math> and <math>\Delta(G)=2</math>, so for these graphs this bound is best possible. In all other cases, the bound can be slightly improved; [[Brooks’ theorem]]<ref>{{harvtxt|Brooks|1941}}</ref> states that
+: '''Brooks’ theorem: '''<math>\chi (G) \le \Delta (G) </math> for a connected, simple graph ''G'', unless ''G'' is a complete graph or an odd cycle.
+
+===Graphs with high chromatic number===
+Graphs with large cliques have high chromatic number, but the opposite is not true. The [[Grötzsch graph]] is an example of a 4-chromatic graph without a triangle, and the example can be generalised to the [[Mycielskian]]s.
+: '''Mycielski’s Theorem''' {{harvs|first=Jan|last=Mycielski|year=1955|authorlink=Jan Mycielski}}: There exist triangle-free graphs with arbitrarily high chromatic number.
+
+From Brooks’s theorem, graphs with high chromatic number must have high maximum degree. Another local property that leads to high chromatic number is the presence of a large clique. But colorability is not an entirely local phenomenon: A graph with high [[Girth (graph theory)|girth]] looks locally like a tree, because all cycles are long, but its chromatic number need not be 2:
+:'''Theorem''' (Erdős): There exist graphs of arbitrarily high girth and chromatic number.
+
+===Bounds on the chromatic index===
+An edge coloring of ''G'' is a vertex coloring of its [[line graph]] <math>L(G)</math>, and vice versa. Thus,
+
+:<math>\chi'(G)=\chi(L(G)). \, </math>
+
+There is a strong relationship between edge colorability and the graph’s maximum degree <math>\Delta(G)</math>. Since all edges incident to the same vertex need their own color, we have
+
+: <math>\chi'(G) \ge \Delta(G).\,</math>
+
+Moreover,
+
+: '''[[König's theorem (graph theory)|König’s theorem]]:''' <math>\chi'(G) = \Delta(G)</math> if ''G'' is bipartite.
+
+In general, the relationship is even stronger than what Brooks’s theorem gives for vertex coloring:
+: '''Vizing’s Theorem:''' A graph of maximal degree <math>\Delta</math> has edge-chromatic number <math>\Delta</math> or <math>\Delta+1</math>.
+
+===Other properties===
+For planar graphs, vertex colorings are essentially dual to [[nowhere-zero flows]].
+
+About infinite graphs, much less is known.
+The following is one of the few results about infinite graph coloring:
+:If all finite subgraphs of an [[infinite graph]] ''G'' are ''k''-colorable, then so is ''G'', under the assumption of the [[axiom of choice]] {{harv|de Bruijn|Erdős|1951}}.
+
+:Also, if a graph admits a full ''n''-coloring for every ''n'' ≥ ''n''<sub>0</sub>, it admits an infinite full coloring {{harv|Fawcett|1978}}.
+
+===Open problems===
+The [[Hadwiger–Nelson problem|chromatic number of the plane]], where two points are adjacent if they have unit distance, is unknown, although it is one of 4, 5, 6, or 7. Other [[unsolved problems in mathematics|open problems]] concerning the chromatic number of graphs include the [[Hadwiger conjecture (graph theory)|Hadwiger conjecture]] stating that every graph with chromatic number ''k'' has a [[complete graph]] on ''k'' vertices as a [[graph minor|minor]], the [[Erdős–Faber–Lovász conjecture]] bounding the chromatic number of unions of complete graphs that have at exactly one vertex in common to each pair, and the [[Albertson conjecture]] that among ''k''-chromatic graphs the complete graphs are the ones with smallest [[crossing number (graph theory)|crossing number]].
+
+When Birkhoff and Lewis introduced the chromatic polynomial in their attack on the four-color theorem, they conjectured that for planar graphs ''G'', the polymomial <math>P(G,t)</math> has no zeros in the region <math>[4,\infty)</math>. Although it is known that such a chromatic polynomial has no zeros in the region <math>[5,\infty)</math> and that <math>P(G,4) \neq 0</math>, their conjecture is still unresolved. It also remains an unsolved problem to characterize graphs which have the same chromatic polynomial and to determine which polynomials are chromatic.
+
+==Algorithms==
+
+<table class="infobox"
+ cellspacing="5" style="width: 22em; text-align: left; font-size: 88%; line-height: 1.5em; ">
+<tr><td colspan="2"  style="text-align:center; font-size: 125%; font-weight: bold; background: #DD9">Graph coloring</td></tr>
+<tr><td colspan="2" style="text-align:center; "> [[Image:3-coloringEx.svg]] <br />
+<tr><td colspan="2"  style="text-align:center; font-size: 125%;  background: #DD9">Decision</td></tr>
+<tr><td>Name<td>Graph coloring, vertex coloring, ''k''-coloring</tr>
+<tr><td>Input<td>Graph ''G'' with ''n'' vertices. Integer ''k''</tr>
+<tr><td>Output<td>Does ''G'' admit a proper vertex coloring with ''k'' colors?</tr>
+<tr><td>Running time<td>O(2<sup>&thinsp;''n''</sup>''n'')<ref name="bhk"/></tr>
+<tr><td>Complexity<td>[[NP-complete]]</tr>
+<tr><td>Reduction from<td>[[3SAT|3-Satisfiability]]</tr>
+<tr><td>Garey–Johnson<td>GT4</tr>
+<tr><td colspan="2"  style="text-align:center; font-size: 125%;  background: #DD9">Optimisation</td></tr>
+<tr><td>Name<td>Chromatic number</tr>
+<tr><td>Input<td>Graph ''G'' with ''n'' vertices.</tr>
+<tr><td>Output<td>χ(''G'')</tr>
+<tr><td>Complexity<td>[[NP-hard]]</tr>
+<tr><td>Approximability<td> O(''n''&thinsp;(log ''n'')<sup>&minus;3</sup>(log log ''n'')<sup>2</sup>)</tr>
+<tr><td>Inapproximability<td> O(''n''<sup>1&minus;ε</sup>) unless [[P = NP]]
+<tr><td colspan="2"  style="text-align:center; font-size: 125%;  background: #DD9">Counting problem</td></tr>
+<tr><td>Name<td>Chromatic polymomial</tr>
+<tr><td>Input<td>Graph ''G'' with ''n'' vertices. Integer ''k''</tr>
+<tr><td>Output<td>The number ''P'' (''G'',''k'') of proper ''k''-colorings of ''G''</tr>
+<tr><td>Running time<td>O(2<sup>&thinsp;''n''</sup>''n'')</tr>
+<tr><td>Complexity<td>[[Sharp-P-complete|#P-complete]]</tr>
+<tr><td>Approximability<td>[[FPRAS]] for restricted cases
+<tr><td>Inapproximability<td>No [[Polynomial-time approximation scheme|PTAS]] unless P = NP
+</table>
+
+===Polynomial time===
+Determining if a graph can be colored with 2 colors is equivalent to determining whether or not the graph is [[Bipartite graph|bipartite]], and thus computable in [[linear time]] using [[breadth-first search]]. More generally, the chromatic number and a corresponding coloring of  [[perfect graph]]s can be computed in [[polynomial time]] using [[semidefinite programming]]. Closed formulas for chromatic polynomial are known for many classes of graphs, such as forest, chordal graphs, cycles, wheels, and ladders, so these can be evaluated in polynomial time.
+
+===Exact algorithms===
+[[Brute-force search]] for a ''k''-coloring considers every of the <math>k^n</math> assignments of ''k'' colors to ''n'' vertices and checks for each if it is legal. To compute the chromatic number and the chromatic polynomial, this procedure is used for every <math>k=1,\ldots,n-1</math>, impractical for all but the smallest input graphs.
+
+Using [[dynamic programming]] and a bound on the number of [[maximal independent set]]s, ''k''-colorability can be decided in time and space <math>O(2.445^n)</math>.<ref>{{harvtxt|Lawler|1976}}</ref> Using the principle of [[inclusion–exclusion]] and [[Samuel Yates|Yates]]’s algorithm for the fast zeta transform,
+''k''-colorability can be decided in time <math>O(2^nn)</math><ref name="bhk">{{harvtxt|Björklund|Husfeldt|Koivisto|2006}}</ref> for any ''k''. Faster algorithms  are  known for 3- and 4-colorability, which can be decided in time <math>O(1.3289^n)</math> <ref>{{harvtxt|Beigel|Eppstein|2005}}</ref> and <math>O(1.7504^n)</math>,<ref>{{harvtxt|Byskov|2004}}</ref> respectively.
+
+===Contraction===
+The  [[contraction (graph theory)|contraction]] <math>G/uv</math> of graph ''G'' is the graph obtained by identifying the vertices ''u'' and ''v'', removing any edges between them, and replacing them with a single vertex ''w'' where any edges that were incident on ''u'' or ''v'' are redirected to ''w''. This operation plays a major role in the analysis of graph coloring.
+
+The chromatic number satisfies the [[recurrence relation]]:
+:<math>\chi(G) = \text{min} \{  \chi(G+uv), \chi(G/uv)\}</math>
+due to {{harvtxt|Zykov|1949}},
+where ''u'' and ''v'' are nonadjacent vertices, <math>G+uv</math> is the graph with the edge <math>uv</math> added. Several algorithms are based on evaluating this recurrence, the resulting computation tree is sometimes called a Zykov tree. The running time is based on the heuristic for choosing the vertices ''u'' and ''v''.
+
+The chromatic polynomial satisfies following recurrence relation
+:<math>P(G-uv, k)= P(G/uv, k)+ P(G, k)</math>
+where ''u'' and ''v'' are adjacent vertices and <math>G-uv</math> is the graph with the edge <math>uv</math> removed. <math>P(G - uv, k)</math> represents the number of possible proper colorings of the graph, when the vertices may have same or different colors. The number of proper colorings therefore come from the sum of two graphs. If the vertices ''u'' and ''v'' have different colors, then we can as well consider a graph, where ''u'' and ''v'' are adjacent. If ''u'' and ''v'' have the same colors, we may as well consider a graph, where ''u'' and ''v'' are contracted. [[Tutte]]’s curiosity about which other graph properties satisfied this recurrence led him to discover a bivariate generalization of the chromatic polynomial, the [[Tutte polynomial]].
+
+The expressions give rise to a recursive procedure, called the ''deletion–contraction algorithm'', which forms the basis of many algorithms for graph coloring. The running time satisfies the same recurrence relation as the [[Fibonacci numbers]], so in the worst case, the algorithm runs in time within a polynomial factor  of <math>((1+\sqrt{5})/2)^{n+m}=O(1.6180^{n+m})</math>.<ref>{{harvtxt|Wilf|1986}}</ref> The analysis can be improved to within a polynomial factor of the number  <math>t(G)</math> of [[spanning tree (mathematics)|spanning trees]] of the input graph.<ref>{{harvtxt|Sekine|Imai|Tani|1995}}</ref>
+In practice, [[branch and bound]] strategies and [[isomorphism|graph isomorphism]] rejection are employed to avoid some recursive calls, the running time depends on the heuristic used to pick the vertex pair.
+
+===Greedy coloring===
+{{main|Greedy coloring}}
+[[Image:Greedy colourings.svg|thumb|right|Two greedy colorings of the same graph using different vertex orders. The right example generalises to 2-colorable graphs with ''n'' vertices, where the greedy algorithm expends <math>n/2</math> colors.]]
+
+The  [[greedy algorithm]] considers the vertices in a specific order <math>v_1</math>,…,<math> v_n</math> and assigns to  <math>v_i</math> the smallest available color not used by <math>v_i</math>’s neighbours among <math>v_1</math>,…,<math> v_{i-1}</math>, adding a fresh color if needed. The quality of the resulting coloring depends on the chosen ordering. There exists an ordering that leads to a greedy coloring with the optimal number of <math>\chi(G)</math> colors. On the other hand, greedy colorings can be arbitrarily bad; for example, the [[crown graph]] on ''n'' vertices  can be 2-colored, but has an ordering that leads to a greedy coloring with <math>n/2</math> colors.
+
+If the vertices are ordered according to their [[degree (graph theory)|degree]]s, the resulting greedy coloring uses at most <math>\text{max}_i \text{ min}
+\{d(x_i ) + 1, i\}</math> colors, at most one more than the graph’s maximum degree. This heuristic is sometimes called the  Welsh–Powell algorithm.<ref>{{harvtxt|Welsh|Powell|1967}}</ref> Another heuristic establishes the ordering dynamically while the algorithm proceeds, choosing next  the vertex adjacent to the largest number of different colors.<ref>{{harvtxt|Brèlaz|1979}}</ref> Many other graph coloring heuristics are similarly based on greedy coloring for a specific static or dynamic strategy of ordering the vertices, these algorithms are sometimes called '''sequential coloring''' algorithms.
+
+===Parallel and distributed algorithms===
+<!-- [[Distributed graph coloring]] and [[Cole–Vishkin algorithm]] are redirects to this section -->
+
+In the field of [[distributed algorithm]]s, graph coloring is closely related to the problem of ''symmetry breaking''.  The current state-of-the-art randomized algorithms are faster for sufficiently large maximum degree Δ than deterministic algorithms. The fastest randomized algorithms employ the [[multi-trials technique]] by Schneider et al.<ref name="Schneider 2010">{{harvtxt|Schneider|2010}}</ref> 
+
+In a [[symmetric graph]], a [[deterministic algorithm|deterministic]] distributed algorithm cannot find a proper vertex coloring. Some auxiliary information is needed in order to break symmetry. A standard assumption is that initially each node has a ''unique identifier'', for example, from the set {1, 2, ..., ''n''}. Put otherwise, we assume that we are given an ''n''-coloring. The challenge is to ''reduce'' the number of colors from ''n'' to, e.g., Δ + 1. The more colors are employed, e.g. O(Δ) instead of Δ + 1, the fewer communication rounds are required.<ref name="Schneider 2010"/>
+
+A straightforward distributed version of the greedy algorithm for (Δ + 1)-coloring requires Θ(''n'') communication rounds in the worst case − information may need to be propagated from one side of the network to another side.
+
+The simplest interesting case is an ''n''-[[cycle graph|cycle]]. Richard Cole and [[Uzi Vishkin]]<ref>{{harvtxt|Cole|Vishkin|1986}}, see also {{harvtxt|Cormen|Leiserson|Rivest|1990|loc = Section 30.5}}</ref> show that there is a distributed algorithm that reduces the number of colors from ''n'' to ''O''(log ''n'') in one synchronous communication step. By iterating the same procedure, it is possible to obtain a 3-coloring of an ''n''-cycle in ''O''({{log-star}} ''n'') communication steps (assuming that we have unique node identifiers).
+
+The function {{log-star}}, [[iterated logarithm]], is an extremely slowly growing function, "almost constant". Hence the result by Cole and Vishkin raised the question of whether there is a ''constant-time'' distribute algorithm for 3-coloring an ''n''-cycle. {{harvtxt|Linial|1992}} showed that this is not possible: any deterministic distributed algorithm requires Ω({{log-star}} ''n'') communication steps to reduce an ''n''-coloring to a 3-coloring in an ''n''-cycle.
+
+The technique by Cole and Vishkin can be applied in arbitrary bounded-degree graphs as well; the running time is poly(Δ) + ''O''({{log-star}} ''n'').<ref>{{harvtxt|Goldberg|Plotkin|Shannon|1988}}</ref> The technique was extended to [[unit disk graph]]s by Schneider et al.<ref>{{harvtxt|Schneider|2008}}</ref> The fastest deterministic algorithms for (Δ + 1)-coloring for small Δ are due to Leonid Barenboim, Michael Elkin and Fabian Kuhn.<ref>{{harvtxt|Barenboim|Elkin|2009}}; {{harvtxt|Kuhn|2009}}</ref> The algorithm by Barenboim et al. runs in time ''O''(Δ) + {{log-star}}(''n'')/2, which is optimal in terms of ''n'' since the constant factor 1/2 cannot be improved due to Linial's lower bound. Panconesi et al.<ref>{{harvtxt|Panconesi|1995}}</ref> use network decompositions to compute a Δ+1 coloring in time <math> 2
+^{O(\sqrt{\log n})} </math>.
+
+The problem of edge coloring has also been studied in the distributed model. {{harvtxt|Panconesi|Rizzi|2001}} achieve a (2Δ &minus; 1)-coloring in ''O''(Δ + {{log-star}} ''n'') time in this model. The lower bound for distributed vertex coloring due to {{harvtxt|Linial|1992}} applies to the distributed edge coloring problem as well.
+
+===Decentralized algorithms===
+Decentralized algorithms are ones where no message passing is allowed (in contrast to distributed algorithms where local message passing takes places).  Somewhat surprisingly, efficient decentralized algorithms exist that will color a graph if a proper coloring exists.  These assume that a vertex is able to sense whether any of its neighbors are using the same color as the vertex i.e., whether a local conflict exists.  This is a mild assumption in many applications e.g. in wireless channel allocation it is usually reasonable to assume that a station will be able to detect whether other interfering transmitters are using the same channel (e.g. by measuring the SINR).  This sensing information is sufficient to allow algorithms based on learning automata to find a proper graph coloring with probability one, e.g. see {{harvtxt|Leith|2006}} and {{harvtxt|Duffy|2008}}.
+
+===Computational complexity===
+Graph coloring is computationally hard. It is [[NP-complete]] to decide if a given graph admits a ''k''-coloring for a given ''k'' except for the cases ''k'' = 1 and ''k'' = 2. Especially, it is NP-hard to compute the chromatic number.
+Graph coloring remains NP-complete even on [[planar graph]]s of degree 4.<ref>{{harvtxt|Dailey|1980}}</ref>
+
+The best known [[approximation algorithm]] computes a coloring of size at most within a factor O(''n''(log n)<sup>&minus;3</sup>(log log ''n'')<sup>2</sup>) of the chromatic number.<ref>{{harvtxt|Halldórsson|1993}}</ref> For all ''ε'' > 0, approximating the chromatic number within ''n''<sup>1&minus;''ε''</sup> is [[NP-hard]].<ref>{{harvtxt|Zuckerman|2007}}</ref>
+
+It is also NP-hard to color a 3-colorable graph with 4 colors<ref>{{harvtxt|Guruswami|Khanna|2000}}</ref> and a ''k''-colorable graph with ''k''<sup>(log ''k'' ) / 25</sup> colors for sufficiently large constant ''k''.<ref>{{harvtxt|Khot|2001}}</ref>
+
+Computing the coefficients of the chromatic polynomial is [[Sharp-P-complete|#P-hard]]. In fact, even computing the value of <math>\chi(G,k)</math> is #P-hard at any rational point ''k'' except for ''k'' = 1  and ''k'' = 2.<ref>{{harvtxt|Jaeger|Vertigan|Welsh|1990}}</ref> There is no [[FPRAS]] for evaluating the chromatic polynomial at any rational point ''k'' ≥ 1.5 except for ''k'' = 2 unless [[NP (complexity)|NP]] = [[RP (complexity)|RP]].<ref>{{harvtxt|Goldberg|Jerrum|2008}}</ref>
+
+For edge coloring, the proof of Vizing’s result gives an algorithm that uses at most Δ+1 colors. However, deciding between the two candidate values for the edge chromatic number is NP-complete.<ref>{{harvtxt|Holyer|1981}}</ref> In terms of approximation algorithms, Vizing’s algorithm shows that the edge chromatic number can be approximated within 4/3,
+and the hardness result shows that no (4/3 &minus; ''ε'' )-algorithm exists for any ''ε > 0'' unless [[P = NP]]. These are among the oldest results in the literature of approximation algorithms, even though neither paper makes explicit use of that notion.<ref>{{harvtxt|Crescenzi|Kann|1998}}</ref>
+
+==Applications==
+===Scheduling===
+
+Vertex coloring models to a number of scheduling problems.<ref>{{harvtxt|Marx|2004}}</ref> In the cleanest form, a given set of jobs need to be assigned to time slots, each job requires one such slot. Jobs can be scheduled in any order, but pairs of jobs may be in ''conflict'' in the sense that they may not be assigned to the same time slot, for example because they both rely on a shared resource. The corresponding graph contains a vertex for every job and an edge for every conflicting pair of jobs. The chromatic number of the graph is exactly the minimum ''makespan'', the optimal time to finish all jobs without conflicts.
+
+Details of the scheduling problem define the structure of the graph. For example, when assigning aircraft to flights, the resulting conflict graph is an [[interval graph]], so the coloring problem can be solved efficiently. In [[bandwidth allocation]] to radio stations, the resulting conflict graph is a [[unit disk graph]], so the coloring problem is 3-approximable.
+
+===Register allocation===
+{{main|Register allocation}}
+
+A [[compiler]] is a [[computer program]] that translates one [[computer language]] into another. To improve the execution time of the resulting code, one of the techniques of [[compiler optimization]] is [[register allocation]], where the most frequently used values of the compiled program are kept in the fast [[processor registers]]. Ideally, values are assigned to registers so that they can all reside in the registers when they are used.
+
+The textbook approach to this problem is to model it as a graph coloring problem.<ref>{{harvtxt|Chaitin|1982}}</ref> The compiler constructs an  ''interference graph'', where vertices are symbolic registers and an edge connects two nodes if they are needed at the same time. If the graph can be colored with ''k'' colors then the variables can be stored in ''k'' registers.
+
+===Other applications===
+
+The problem of coloring a graph has found a number of applications, including [[pattern matching]].
+
+The recreational puzzle [[Sudoku]] can be seen as completing a  9-coloring on given specific graph with 81 vertices.
+
+==Other colorings==
+===Ramsey theory===
+
+{{main|Ramsey theory}}
+
+An important class of ''improper'' coloring problems is studied in [[Ramsey theory]], where the graph’s edges are assigned to colors, and there is no restriction on the colors of incident edges. A simple example is the [[friendship theorem]] says that in any coloring of the edges of <math>K_6</math> the complete graph of six vertices there will be a monochromatic triangle; often illustrated by saying that any group of six people either has three mutual strangers or three mutual acquaintances. Ramsey theory is concerned with generalisations of this idea to seek regularity amid disorder, finding general conditions for the existence of monochromatic subgraphs with given structure.
+
+===Other colorings===
+{{multicol}}
+; [[List coloring]]: Each vertex chooses from a list of colors
+; [[List edge-coloring]]:Each edge chooses from a list of colors
+; [[Total coloring]] :Vertices and edges are colored
+; [[Harmonious coloring]] : Every pair of colors appears on at most one edge
+; [[Complete coloring]] : Every pair of colors appears on at least one edge
+; [[Exact coloring]] : Every pair of colors appears on exactly one edge
+; [[Acyclic coloring]] : Every 2-chromatic subgraph is acyclic
+; [[Star coloring]] : Every 2-chromatic subgraph is a disjoint collection of [[star (graph theory)|stars]]
+; [[Strong coloring]] : Every color appears in every partition of equal size exactly once
+; [[Strong edge coloring]] : Edges are colored such that each color class induces a matching (equivalent to coloring the square of the line graph)
+; [[Equitable coloring]] : The sizes of color classes differ by at most one
+; [[T-coloring]] : Distance between two colors of adjacent vertices must not belong to fixed set ''T''
+{{multicol-break}}
+; [[Rank coloring]] : If two vertices have the same color ''i'', then every path between them contain a vertex with color greater than ''i''
+; [[Interval edge-coloring]] : A color of edges meeting in a common vertex must be contiguous
+; [[Circular coloring]] : Motivated by task systems in which production proceeds in a cyclic way
+;  [[Path coloring]] : Models a routing problem in graphs
+; [[Fractional coloring]] : Vertices may have multiple colors, and on each edge the sum of the color parts of each vertex is not greater than one
+;  [[Oriented coloring]] : Takes into account orientation of edges of the graph
+; [[Cocoloring]] : An improper vertex coloring where every color class induces an independent set or a clique
+; [[Subcoloring]] : An improper vertex coloring where every color class induces a union of cliques
+; [[Defective coloring]] : An improper vertex coloring where every color class induces a bounded degree subgraph.
+; [[Weak coloring]] : An improper vertex coloring where every non-isolated node has at least one neighbor with a different color
+; [[Sum-coloring]] : The criterion of minimalization is the sum of colors
+{{multicol-end}}
+
+Coloring can also be considered for [[signed graphs]] and [[gain graphs]].
+
+== See also ==
+{{Commonscat}}
+* [[Circular coloring]]
+* [[Critical graph]]
+* [[Cycle rank]] - Ordered chromatic number
+* [[Graph homomorphism]]
+* [[Mathematics of Sudoku#Mathematical context|Mathematics of Sudoku]]
+* [[Uniquely colorable graph]]
+
+==Notes==
+{{reflist|4}}
+
+== References ==
+{{refbegin|2}}
+* {{Citation
+ | last1=Barenboim | first1=L.
+ | last2=Elkin | first2=M.
+ | contribution=Distributed (Δ + 1)-coloring in linear (in Δ) time
+ | pages=111–120
+ | title=Proceedings of the 41st [[Symposium on Theory of Computing]]
+ | year=2009
+ | doi=10.1145/1536414.1536432
+}}
+
+* {{Citation
+ | last1=Panconesi | first1=A.
+ | last2=Srinivasan | first2=A.
+ | contribution=On the complexity of distributed network decomposition
+ | title=Journal of Algorithms
+ | volume= 20
+ | year=1996
+}}
+
+* {{Citation
+ | last1=Schneider | first1=J.
+ | contribution=A new technique for distributed symmetry breaking
+ | title=Proceedings of the [[Symposium on Principles of Distributed Computing]]
+ | year=2010
+ | url = http://www.dcg.ethz.ch/publications/podcfp107_schneider_188.pdf
+}}
+* {{Citation
+ | last1=Schneider | first1=J.
+ | contribution=A log-star distributed maximal independent set algorithm for growth-bounded graphs
+ | title=Proceedings of the [[Symposium on Principles of Distributed Computing]]
+ | year=2008
+ | url = http://www.dcg.ethz.ch/publications/podc08SW.pdf
+}}
+
+* {{Citation
+| last1= Beigel | first1= R.
+| last2= Eppstein | first2= D. | authorlink2= David Eppstein
+|title=  3-coloring in time O(1.3289<sup>n</sup>)
+|journal= [[Journal of Algorithms]]
+|volume= 54
+|pages=168–204
+|year=2005 | issue= 2)
+| doi= 10.1016/j.jalgor.2004.06.008
+}}
+* {{Citation
+ | last1=Björklund | first1=A.
+ | last2=Husfeldt | first2=T.
+ | last3=Koivisto | first3=M.
+ | journal=[[SIAM Journal on Computing]]
+ | pages=546–563
+ | title=Set partitioning via inclusion–exclusion
+ | volume= 39
+ | year=2009
+ | doi=10.1137/070683933| issue=2
+}}
+* {{Citation
+ | last = Brèlaz | first = D.
+ | title = New methods to color the vertices of a graph
+ | journal = [[Communications of the ACM]]
+ | volume = 22
+ | year = 1979
+ | pages = 251–256
+ | doi = 10.1145/359094.359101
+}}
+* {{Citation
+ | last = Brooks | first = R. L.
+ | last2 = Tutte
+ | first2 = W. T.
+ | title = On colouring the nodes of a network
+ | journal = [[Proceedings of the Cambridge Philosophical Society]]
+ | volume = 37
+ | year = 1941
+ | pages = 194–197
+ | doi = 10.1017/S030500410002168X
+}}
+* {{Citation
+ | last1 = de Bruijn | first1 = N. G. | authorlink1 = Nicolaas Govert de Bruijn
+ | last2 = Erdős | first2 = P. | authorlink2 = Paul Erdős
+ | title = A colour problem for infinite graphs and a problem in the theory of relations
+ | journal = Nederl. Akad. Wetensch. Proc. Ser. A
+ | volume = 54
+ | year = 1951
+ | pages = 371–373
+ | url = http://www.math-inst.hu/~p_erdos/1951-01.pdf
+}} (= ''Indag. Math.'' '''13''')
+* {{Citation
+|last=Byskov|first=J.M.
+|title=Enumerating maximal independent sets with applications to graph colouring
+|journal=[[Operations Research Letters]]
+|pages=547–556
+|volume=32
+|year= 2004
+|doi=10.1016/j.orl.2004.03.002
+}}
+
+* {{Citation
+ | last = Chaitin | first = G. J.
+ | contribution = Register allocation & spilling via graph colouring
+ | title = Proc. 1982 [[SIGPLAN Symposium on Compiler Construction]]
+ | year = 1982
+ | pages = 98–105
+ | doi = 10.1145/800230.806984
+}}
+* {{Citation
+ | last1 = Cole | first1 = R.
+ | last2 = Vishkin | first2 = U.
+ | year = 1986
+ | title = Deterministic coin tossing with applications to optimal parallel list ranking
+ | journal = [[Information and Control]]
+ | volume = 70
+ | issue = 1
+ | pages = 32–53
+ | doi = 10.1016/S0019-9958(86)80023-7
+}}
+* {{Citation
+ | last1 = Cormen | first1 = T. H.
+ | last2 = Leiserson | first2 = C. E.
+ | last3 = Rivest | first3 = R. L.
+ | title = [[Introduction to Algorithms]]
+ | publisher = The MIT Press
+ | year = 1990
+ | edition = 1st
+}}
+* {{Citation
+ | last1 = Dailey | first1 = D. P.
+ | title = Uniqueness of colorability and colorability of planar 4-regular graphs are NP-complete
+ | journal = [[Discrete Mathematics (journal)|Discrete Mathematics]]
+ | volume = 30
+ | pages = 289–293
+ | year = 1980
+ | doi = 10.1016/0012-365X(80)90236-8
+}}
+* {{Citation
+| last1 = Duffy | first1 = K.
+| last2 = O'Connell | first2 = N.
+| last3 = Sapozhnikov | first3 = A.
+| title=Complexity analysis of a decentralised graph colouring algorithm
+| journal=Information Processing Letters
+| volume=107
+| pages=60–63
+| year=2008
+| url=http://www.hamilton.ie/ken_duffy/Downloads/cfl.pdf
+| doi=10.1016/j.ipl.2008.01.002
+}}
+* {{Citation
+ | last1 = Fawcett | first1 = B. W.
+ | title = On infinite full colourings of graphs
+ | journal = [[Canadian Journal of Mathematics|Can. J. Math.]]
+ | volume = XXX
+ | pages = 455–457
+ | year = 1978
+ | doi =
+}}
+* {{Citation
+ | last1 = Garey | first1 = M. R. | authorlink1 = Michael R. Garey
+ | last2 = Johnson | first2 = D. S. | authorlink2 = David S. Johnson
+ | year = 1979
+ | title = [[Computers and Intractability: A Guide to the Theory of NP-Completeness]]
+ | publisher = W.H. Freeman
+ | isbn = 0-7167-1045-5
+}}
+* {{Citation
+ | last1 = Garey | first1 = M. R. | authorlink1 = Michael R. Garey
+ | last2 = Johnson | first2 = D. S. | authorlink2 = David S. Johnson
+ | last3 = Stockmeyer | first3 = L. | authorlink3 = Larry Stockmeyer
+ | year = 1974
+ | contribution = Some simplified NP-complete problems
+ | url = http://portal.acm.org/citation.cfm?id=803884
+ | title = Proceedings of the Sixth Annual ACM Symposium on Theory of Computing
+ | pages = 47–63
+}}
+* {{Citation
+ | last1 = Goldberg | first1 = L. A.
+ | last2 = Jerrum | first2 = M. | authorlink2 = Mark Jerrum
+ | title = Inapproximability of the Tutte polynomial
+ | journal = [[Information and Computation]]
+ | volume = 206
+ |  issue= 7
+| date= July 2008
+ | pages = 908–929
+ | doi = 10.1016/j.ic.2008.04.003
+}}
+* {{Citation
+ | last1 = Goldberg | first1 = A. V.
+ | last2 = Plotkin | first2 = S. A.
+ | last3 = Shannon | first3 = G. E.
+ | year = 1988
+ | title = Parallel symmetry-breaking in sparse graphs
+ | journal = SIAM Journal on Discrete Mathematics
+ | volume = 1
+ | issue = 4
+ | pages = 434–446
+ | doi = 10.1137/0401044
+}}
+* {{Citation
+ | last1 = Guruswami | first1 = V.
+ | last2 = Khanna | first2 = S.
+ | contribution = On the hardness of 4-coloring a 3-colorable graph
+ | title = Proceedings of the 15th Annual IEEE Conference on Computational Complexity
+ | pages = 188–197
+ | year = 2000
+ | doi = 10.1109/CCC.2000.856749
+}}
+* {{Citation
+ | last = Halldórsson | first = M. M.
+ | year = 1993
+ | title = A still better performance guarantee for approximate graph coloring
+ | journal = Information Processing Letters
+ | volume = 45
+ | pages = 19–23
+ | doi = 10.1016/0020-0190(93)90246-6
+}}
+* {{Citation
+ | last = Holyer | first = I.
+ | year = 1981
+ | title = The NP-completeness of edge-coloring
+ | journal = SIAM Journal on Computing
+ | volume = 10
+ | pages = 718–720
+ | doi = 10.1137/0210055
+}}
+* {{Citation
+ | last1 = Crescenzi | first1 = P.
+ | last2 = Kann | first2 = V.
+ | title = How to find the best approximation results — a follow-up to Garey and Johnson
+ | journal = [[ACM SIGACT News]]
+ | date = December 1998
+ | doi = 10.1145/306198.306210
+ | volume = 29
+ | page = 90
+}}
+* {{Citation
+ | last1 = Jaeger | first1 = F.
+ | last2 = Vertigan | first2 = D. L.
+ | last3 = Welsh | first3 = D. J. A.
+ | year = 1990
+ | title = On the computational complexity of the Jones and Tutte polynomials
+ | journal = [[Mathematical Proceedings of the Cambridge Philosophical Society]]
+ | volume = 108
+ | pages = 35–53
+ | doi = 10.1017/S0305004100068936
+}}
+* {{Citation
+ | last1 = Jensen | first1 = T. R.
+ | last2 = Toft | first2 = B.
+ | title = Graph Coloring Problems
+ | publisher = Wiley-Interscience, New York
+ | year = 1995
+ | isbn = 0-471-02865-7
+}}
+* {{Citation
+ | last = Khot | first = S. |authorlink = Subhash Khot | year = 2001
+ | contribution = Improved inapproximability results for MaxClique, chromatic number and approximate graph coloring
+ | title = Proc. 42nd Annual [[Symposium on Foundations of Computer Science]]
+ | pages = 600–609
+ | doi = 10.1109/SFCS.2001.959936
+}}
+* {{Citation
+ | last1 = Kubale | first1 = M.
+ | title = Graph Colorings
+ | publisher = American Mathematical Society
+ | year = 2004
+ | isbn = 0-8218-3458-4
+}}
+* {{Citation
+ | last1=Kuhn | first1=F.
+ | contribution=Weak graph colorings: distributed algorithms and applications
+ | pages=138–144
+ | title=Proceedings of the 21st [[Symposium on Parallelism in Algorithms and Architectures]]
+ | year=2009
+ | doi=10.1145/1583991.1584032
+}}
+* {{Citation
+ | last1=Lawler | first1=E.L. | authorlink = Eugene Lawler
+ | title=A note on the complexity of the chromatic number problem
+ | pages=66–67
+ | journal=[[Information Processing Letters]]
+ | year=1976
+|volume= 5
+ | doi=10.1016/0020-0190(76)90065-X| issue=3
+}}
+
+* {{Citation
+ | last1 = Leith | first1 = D.J.
+ | last2 = Clifford | first2 = P.
+ | year = 2006
+ | contribution = A Self-Managed Distributed Channel Selection Algorithm for WLAN
+ | title = Proc. RAWNET 2006, Boston, MA
+ | url = http://www.hamilton.ie/peterc/downloads/rawnet06.pdf
+}}
+* {{Citation
+ | last1 = Linial | first1 = N. | authorlink = Nati Linial
+ | year = 1992
+ | title = Locality in distributed graph algorithms
+ | journal = SIAM Journal on Computing
+ | volume = 21
+ | issue = 1
+ | pages = 193–201
+ | doi = 10.1137/0221015
+}}
+* {{Citation
+ | last1 = van Lint| first1 = J. H.
+ | last2 = Wilson | first2 = R. M.
+ | title = A Course in Combinatorics
+ | year = 2001
+ | edition = 2nd
+ | publisher = Cambridge University Press
+ | isbn = 0-521-80340-3.
+}}
+* {{Citation
+ | last = Marx | first = Dániel
+ | contribution = Graph colouring problems and their applications in scheduling
+ | title = Periodica Polytechnica, Electrical Engineering
+ | year = 2004
+ | pages = 11–16
+ | volume = 48
+ |issue=1-2
+ | url = http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.4268&rep=rep1&type=pdf
+}}
+*{{citation
+ | last = Mycielski | first = J. | author-link = Jan Mycielski
+ | journal = Colloq. Math.
+ | pages = 161–162
+ | title = [http://matwbn.icm.edu.pl/ksiazki/cm/cm3/cm3119.pdf Sur le coloriage des graphes]
+ | volume = 3
+ | year = 1955}}.
+*{{Citation
+ | last1=Panconesi
+ | first1=Alessandro
+ | last2=Rizzi
+ | first2=Romeo
+ | title=Some simple distributed algorithms for sparse networks
+ | publisher=[[Springer-Verlag]]
+ | location=Berlin, New York
+ | year=2001
+ | journal=Distributed Computing
+ | issn=0178-2770
+ | volume=14
+ | issue=2
+ | pages=97–100
+ | doi=10.1007/PL00008932
+}}
+* {{Citation
+ | last1 = Sekine | first1 = K.
+ | last2 = Imai | first2 = H.
+ | last3 = Tani | first3 = S.
+ | contribution = Computing the Tutte polynomial of a graph of moderate size
+ | title = Proc. 6th International Symposium on Algorithms and Computation (ISAAC 1995)
+ | series = [[Lecture Notes in Computer Science]]
+ | volume = 1004
+ | publisher = Springer
+ | year = 1995
+ | pages = 224–233
+ | doi = 10.1007/BFb0015427
+}}
+* {{Citation
+ | last1 = Welsh | first1 = D. J. A.
+ | last2 = Powell | first2 = M. B.
+ | year = 1967
+ | title = An upper bound for the chromatic number of a graph and its application to timetabling problems
+ | journal = The Computer Journal
+ | volume = 10
+ | doi = 10.1093/comjnl/10.1.85
+ | pages = 85–86
+ | issue= 1
+}}
+* {{Citation
+ | last = West
+ | first = D. B.
+ | title = Introduction to Graph Theory
+ | year = 1996
+ | publisher = Prentice-Hall
+ | isbn = 0-13-227828-6
+}}
+* {{Citation
+ | last = Wilf | first = H. S.
+ | title = Algorithms and Complexity
+ | publisher = Prentice–Hall
+ | year = 1986
+}}
+* {{Citation
+ | last = Zuckerman | first = D.
+ | title = Linear degree extractors and the inapproximability of Max Clique and Chromatic Number
+ | journal = [[Theory of Computing (journal)|Theory of Computing]]
+ | volume = 3
+ | pages = 103–128
+ | year = 2007
+ | doi = 10.4086/toc.2007.v003a006
+}}
+* {{Citation
+ | last = Zykov
+ | first= A. A.
+ | title = О некоторых свойствах линейных комплексов (On some properties of linear complexes)
+ | language = Russian
+ | journal = Math. Sbornik.
+ | volume = 24(66) |issue=2
+ | year = 1949
+ | pages = 163–188
+ | url = http://mi.mathnet.ru/eng/msb5974
+}}
+{{refend}}
+
+== External links ==
+* [http://www.cs.ualberta.ca/~joe/Coloring/index.html ''Graph Coloring Page''] by Joseph Culberson (graph coloring programs)
+* [http://vispo.com/software ''CoLoRaTiOn''] by Jim Andrews and Mike Fellows is a graph coloring puzzle
+* [http://www.adaptivebox.net/research/bookmark/gcpcodes_link.html Links to Graph Coloring source codes]
+* [http://www.mcs.vuw.ac.nz/~djp/tutte/ Code for efficiently computing Tutte, Chromatic and Flow Polynomials] by Gary Haggard, David J. Pearce and Gordon Royle
+
+{{DEFAULTSORT:Graph Coloring}}
+[[Category:Graph theory]]
+[[Category:Graph coloring]]
+[[Category:NP-complete problems]]
+[[Category:Computational problems in graph theory]]
+
+[[ar:مشكلة تلوين المخطط]]
+[[cs:Barvení grafu]]
+[[de:Färbung (Graphentheorie)]]
+[[el:Χρωματισμός γραφήματος]]
+[[es:Coloración de grafos]]
+[[eu:Grafo koloreztaketa]]
+[[fa:رنگ‌آمیزی گراف]]
+[[fr:Coloration de graphe]]
+[[ko:그래프 색칠 문제]]
+[[he:גרף n-צביע]]
+[[lt:Grafo spalvinimas]]
+[[hu:Gráfok színezése]]
+[[ja:グラフ彩色]]
+[[pl:Kolorowanie grafu]]
+[[pt:Coloração de grafos]]
+[[ru:Хроматическое число]]
+[[sv:Graffärgning]]
+[[uk:Хроматичне число]]
+[[vi:Tô màu đồ thị]]
+[[zh:图着色问题]]</body> </html>

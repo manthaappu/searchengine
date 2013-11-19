@@ -1,0 +1,29 @@
+<html> <head> <title>Cover tree</title></head><body>The '''cover tree''' is a special type of [[data structure]] in [[computer science]] that is specifically designed to facilitate the speed-up of a [[nearest neighbor search]]. It was introduced by Alina Beygelzimer, John Langford, and Sham Kakade.
+
+The tree can be thought of as a hierarchy of levels with the top level containing the root [[point (geometry)|point]] and the bottom level containing every point in the metric space.  Each level ''C'' is associated with an integer value ''i'' that decrements by one as the tree is descended. Each level ''C'' in the cover tree has three important properties:
+
+*'''Nesting:''' <math>C_{i} \subseteq C_{i-1}</math>
+*'''Covering:''' For every point <math>p \in C_{i-1}</math>, there exists a point <math>q \in C_{i} </math> such that the distance from <math>p</math> to <math>q</math> is less than or equal to <math>2^{i}</math> and exactly one such <math>q</math> is a parent of <math>p</math>.
+*'''Separation:''' For all points <math>p,q \in C_i</math>, the distance from <math>p</math> to <math>q</math> is greater than <math>2^{i}</math>.
+
+== Complexity Analysis ==
+
+*Searches: Like other [[metric tree]]s the cover tree allows for nearest neighbor searches in O(k*log n) where k is a constant associated with the dimensionality of the dataset and n is the cardinality.  This maximum bound on search times is much better than naive linear searches which operate in O(k*n).  However, in high-dimensional [[metric space]]s the k constant is non-trivial, which means it cannot be ignored in complexity analysis.  Unlike other metric trees, the cover tree has a theoretical bound on its constant that is based on the dataset's [[expansivity constant| expansion constant]] or doubling constant.  The bound on search time is O(c<sup>12</sup> log n) where ''c'' is the expansion constant of the dataset.
+
+*Insertions: Although cover trees provide faster searches than the naive approach, this advantage must be weighed with the additional cost of maintaining the data structure.  In a naive approach adding a new point to the dataset is trivial because order does not need to be preserved, but in a cover tree it can take O(c<sup>6</sup> log n) time.  However, this is an upper-bound, and a number of techniques have been implemented that reduce the average-case time complexity.<ref>http://hunch.net/~jl/projects/cover_tree/cover_tree.html</ref>
+
+*Space: The cover tree uses implicit representation to keep track of repeated points.  Thus, it only requires O(n) space.
+
+==See also==
+*[[Nearest neighbor search]]
+*[[kd-tree]]
+
+==References==
+<references/>
+*  [http://hunch.net/~jl/projects/cover_tree/cover_tree.html JL's Cover Tree page]. John Langford's page links to papers and code.
+
+{{CS-Trees}}
+
+[[Category:Trees (structure)]]
+
+{{datastructure-stub}}</body> </html>

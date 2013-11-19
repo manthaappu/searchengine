@@ -1,0 +1,101 @@
+<html> <head> <title>Spaghetti code</title></head><body>{{Refimprove|date=June 2009}}
+[[Image:Spaghetti.jpg|thumb|A bowl of [[spaghetti]] looks twisted and tangled, which is where the name for spaghetti code comes from.]]
+
+'''Spaghetti code''' is a [[pejorative]] term for [[source code]] that has a complex and tangled [[control structure]], especially one using many [[GOTO]]s, exceptions, threads,  or other "unstructured" [[Branch (computer science)|branching]] constructs.  It is named such because program flow tends to look like a bowl of spaghetti, i.e. twisted and tangled. Spaghetti code can be caused by several factors, including inexperienced programmers and a complex program which has been continuously modified over a long life cycle.  [[Structured programming]] greatly decreased the incidence of spaghetti code.
+
+==Examples==
+Below is what would be considered a trivial example of spaghetti code in [[BASIC programming language|BASIC]]. The program prints the numbers 1 to 10 to the screen along with their square. Notice that indentation is not needed and that the program's <code>[[GOTO]]</code> statements create a reliance on [[line number]]s. Also observe the unpredictable way the flow of execution jumps from one area to another.  Real-world occurrences of spaghetti code are more complex and can add greatly to a program's maintenance costs.
+<source lang="qbasic">
+10 i = 0
+20 i = i + 1
+30 PRINT i; " squared = "; i * i
+40 IF i >= 10 THEN GOTO 60
+50 GOTO 20
+60 PRINT "Program Completed."
+70 END
+</source>
+Here is the same code written in a [[structured programming]] style:
+<source lang="qbasic">
+FOR i = 1 TO 10
+    PRINT i; " squared = "; i * i
+NEXT i
+PRINT "Program Completed."
+END
+</source>
+The program jumps from one area to another but this jumping is predictable and formal. This is because using [[for loop]]s and [[Subroutine|functions]] are standard ways of providing [[control flow|flow control]] whereas the ''goto'' statement encourages arbitrary flow control. Though this example is small, real world programs are composed of many lines of code and are difficult to maintain when written in a spaghetti code fashion.
+
+== Assembly and script languages ==
+When using the many forms of [[assembly language]] (and also the underlying [[machine code]]) the danger of writing spaghetti code is especially great.
+This is because they are [[low-level programming language]]s where equivalents for structured control flow statements such as [[for loop]]s and [[while loop]]s seldom exist.
+Many scripting languages have the same deficiencies: this applies to the batch scripting language of [[DOS]] and [[DIGITAL Command Language|DCL]] on [[OpenVMS|VMS]].
+
+Nonetheless, adopting the same discipline as in [[structured programming]] can greatly improve the readability and maintainability of such code.
+This may take the form of conventions limiting the use of <code>goto</code> to correspond to the standard structures, or use of a set of assembler macros for <code>if</code> and <code>loop</code> constructs.
+Most assembly languages also provide a [[function stack]], and [[Subroutine|function]] call mechanisms
+which can be used to gain the advantages of [[procedural programming]]. Macros can again be used to support a standardized form of parameter passing, to avoid ad hoc [[global variable]]s and the [[Action at a distance (computer science)|action at a distance]] anti-pattern.
+
+Programs written in [[High-level programming language|higher-level languages]] with high-level constructs such as ''for loops'' (as in the second example above) are often compiled into assembly or machine code. When this process occurs, the high-level constructs are translated into low-level "spaghetti code" which may resemble the first example above in terms of control flow.  But because compilers must be faithful to high-level constructs in the source code, the problems that plague relatively unstructured languages like BASIC do not haunt higher-level languages. It does, however, mean that debugging even mildly optimized code with a source-level debugger can be surprisingly confusing.
+
+== Ravioli code ==
+Ravioli code is a type of computer program structure, characterized by a number of small and (ideally) [[loose coupling|loosely-coupled]] [[software component]]s.  The term is in comparison with spaghetti code, comparing program structure to [[pasta]]; with [[ravioli]] (small pasta pouches containing cheese, meat, or vegetables) being analogous to [[object (computer science)|object]]s (which ideally are encapsulated modules consisting of both code and data).
+
+== Lasagna code ==
+{{main|Architectural layer|Layer (object-oriented design)}}
+[[Image:Lasagna NIH.jpg|200px|thumb|Lasagna code has many layered components, much like the filling and pasta of its namesake.]]
+Lasagna code is a type of program structure, characterized by several well-defined and separable ''layers'', where each layer of code accesses services in the layers below through well-defined [[interface (computer science)|interface]]s.  The term is in comparison with spaghetti code, comparing program structure to [[pasta]].  The analogy stems from the layered structure of a plate of [[lasagna]], where different ingredients (meat, sauce, vegetables, or cheese) are each separated by strips of pasta.  
+
+One common instance of lasagna code occurs at the interface between different subsystems, such as between web application code, [[business logic]], and a [[relational database]].  Another common programming technique, alternate hard and soft layers (use of different [[programming language]]s at different levels of the program architecture), tends to produce lasagna code.  In general, [[client–server]] applications are frequently lasagna code, with well-defined interfaces between client and server.
+
+Lasagna code generally enforces [[encapsulation (computer science)|encapsulation]] between the different "layers", as the subsystems in question may have no means of communication other than through a well-defined mechanism, such as [[Structured Query Language]], a [[foreign function interface]], or [[Remote Procedure Call]].  However, individual layers in the system may be highly unstructured or disorganized.  
+
+The term was coined by database [[guru]] [[Joe Celko]] in 1982.<ref>{{cite web
+ |url=http://www.dbmsmag.com/9701d06.html
+ |title=The Future of SQL Programming
+ |last=Celko
+ |first=Joe
+ |publisher=DBMS Online
+ |date=January 1997
+ |accessdate=2008-09-10
+}}</ref>
+
+==Spaghetti with meatballs==
+
+The term "spaghetti with meatballs" is a pejorative term used in computer science to describe loosely constructed [[object-oriented programming]] (OOP) that remains dependent on procedural code. It may be the result of a system whose development has transitioned over a long life-cycle, language constraints, [[Program optimization|micro-optimization]] theatre, or a lack of coherent [[Programming style|coding standards]]. 
+
+In some languages, OOP features are only available in later specifications. Notable examples of this include [[Visual Basic]],  and [[PHP]]. Other languages, like [[C (programming language)|C]], rely on [[Function pointer|function pointers]] to simulate OOP — still requiring the underlying procedural code to which they point.
+
+Using OOP does not necessarily prevent the class' code from becoming spaghetti-like. In this parlance, "spaghetti" describes twisted, tangled and unstructured code, while "meatballs" denotes the use of class structures (i.e. objects).
+
+==See also==
+{{portal|Computer science}}
+* [[Structured programming]] Coding without <code>goto</code>, e.g. using only loop, sequence and alternate structures.
+* [[International Obfuscated C Code Contest]] A competition to produce pleasingly obscure C code.
+
+==References==
+{{FOLDOC}}
+{{reflist}}
+
+==External links==
+*[http://portal.acm.org/citation.cfm?id=362929.362947 Go To Statement Considered Harmful]. The classic repudiation of spaghetti code by [[Edsger Dijkstra]].
+*[http://www.fortran.com/fortran/come_from.html ''We don't know where to GOTO if we don't know where we've COME FROM'' by  R. Lawrence Clark from DATAMATION, December, 1973]
+*[http://yost.com/computers/java/java-spaghetti/ Refactoring Java spaghetti code into Java bento code] separating out a bowl full of code from one class into seven classes
+*[http://www.remotesynthesis.com/blog/index.cfm/2006/7/12/Objects-and-Frameworks--Taking-a-Step-Back Objects and Frameworks - Taking a Step Back] by Brian Rinaldi
+
+[[Category:Anti-patterns]]
+[[Category:Articles with example BASIC code]]
+
+[[ar:رماز متشابك]]
+[[ca:Codi spaghetti]]
+[[de:Spaghetticode]]
+[[es:Código spaghetti]]
+[[fr:Programmation spaghetti]]
+[[ko:스파게티 코드]]
+[[it:Spaghetti code]]
+[[he:קוד ספגטי]]
+[[ja:スパゲティプログラム]]
+[[pl:Spaghetti code]]
+[[pt:Código espaguete]]
+[[ru:Спагетти-код]]
+[[sr:Шпагети код]]
+[[sv:Spaghettikod]]
+[[zh:面条式代码]]</body> </html>

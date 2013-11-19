@@ -1,0 +1,484 @@
+<html> <head> <title>Large eddy simulation</title></head><body>[[Image:LES Turbulent Velocity Field.png|300px|right|thumb|Large eddy simulation of a turbulent gas velocity field.]]
+
+'''Large eddy simulation''' (LES) is a mathematical model for [[turbulence]] used in [[computational fluid dynamics]]. It was initially proposed in 1963 by [[Joseph Smagorinsky]] to simulate atmospheric air currents<ref name="Smagorinsky_1963">{{Cite journal
+| last=Smagorinsky
+| first=Joseph
+| title=General Circulation Experiments with the Primitive Equations
+| journal=Monthly Weather Review
+| month=March
+| year=1963
+| volume=91
+| issue=3
+| pages=99–164}}</ref>, and many of the issues unique to LES were first explored by Deardorff (1970).<ref name="Deardorff_1970">{{Cite journal
+|last=Deardorff
+|first=James
+|title=A numerical study of three-dimensional turbulent channel flow at large Reynolds numbers
+|journal=[[Journal of Fluid Mechanics]]
+|year=1970
+|volume=41
+|issue=2
+|pages=453–480}}</ref>  LES grew rapidly and is currently applied in a wide variety of engineering applications, including combustion,<ref name="Pitsch_2006">{{Cite journal
+|last=Pitsch
+|first=Heinz
+|title=Large-Eddy Simulation of Turbulent Combustion
+|journal=Annual Review of Fluid Mechanics
+|year=2006
+|volume=38
+|pages=453–482}}</ref> acoustics,<ref name="Wagner_2007">{{cite book
+|last1=Wagner
+|first1=Claus
+|last2=Hüttl
+|first2=Thomas
+|last3=Sagaut
+|first3=Pierre
+|title=Large-Eddy Simulation for Acoustics
+|publisher=Cambridge University Press
+|year=2007
+|isbn=9780521871440
+}}</ref> and simulations of the atmospheric boundary layer.<ref name="Stoll_2008">{{cite journal
+|last1=Stoll
+|first1=Rob
+|last2=Porté-Agel
+|first2=Fernando
+|title=Large-Eddy Simulation of the Stable Atmospheric Boundary Layer using Dynamic Models with Different Averaging Schemes
+|journal=Boundary-Layer Meterology
+|year=2008
+|volume=126
+|pages=1–28
+|doi=10.1007/s10546-007-9207-4}}</ref>  LES operates on the [[Navier-Stokes equations]] to reduce the range of length scales of the solution, reducing the computational cost.
+
+The principal operation in large eddy simulation is [[Filter (signal processing)|low-pass filtering]].  This operation is applied to the Navier-Stokes equations to eliminate small scales of the solution.  This reduces the computational cost of the simulation.  The governing equations are thus transformed, and the solution is a filtered velocity field.  Which of the "small" length and time scales to eliminate are selected according to turbulence theory and available computational resources.<ref name="Pope_2000">{{cite book
+|first=Stephen
+|last=Pope
+|title=[http://www.cambridge.org/catalogue/catalogue.asp?isbn=0521598869 Turbulent Flows] 
+|publisher=Cambridge University Press 
+|year=2000 
+|isbn=9780521598866 }}</ref>
+
+Large eddy simulation resolves large scales of the flow field solution, allowing better fidelity than alternative approaches that do not resolve any scales of the solution (such as [[Reynolds-averaged Navier-Stokes equations|Reynolds-averaged Navier-Stokes]] (RANS) methods).  It also models the smallest (and most expensive <ref name="Pope_2000"/>) scales of the solution, rather than resolving them.  This makes the computational cost for practical engineering systems with complex geometry or flow configurations, such as turbulent jets, pumps, vehicles, and landing gear, attainable using [[supercomputer|supercomputers]].  In contrast, [[direct numerical simulation]], which resolves every scale of the solution, is prohibitively expensive for nearly all systems with complex geometry or flow configurations.
+
+<!--
+LES requires substantially less computational effort than [[direct numerical simulation]] (DNS), which resolves every turbulent length scale, but more effort than [[Reynolds-averaged Navier-Stokes equations]] (RANS) methods, which model all turbulent length scales. The computational demands also increase significantly in the vicinity of walls, and simulating such flows usually exceeds the limits of modern [[supercomputers]] today. For this reason, zonal approaches are often adopted, with RANS or other empirically-based models replacing LES in the wall region.
+
+The main advantage of LES over computationally cheaper RANS approaches is the increased level of detail it can deliver. While RANS methods provide time-averaged results that depend entirely upon the model used, LES is able to predict instantaneous flow characteristics and resolve turbulent flow structures that are independent of the model used.  This is important, for example, in simulations involving chemical reactions, such as the [[combustion]] of fuel in an engine. While the averaged concentration of chemical species may be too low to trigger a reaction, instantaneously there can be localized areas of high concentration in which reactions will occur. LES also offers significantly more accurate results over RANS for flows involving [[flow separation]] or [[acoustics|acoustic]] prediction.
+-->
+
+== Filter Definition and Properties ==
+
+{{Main|Filter (large eddy simulation)}}
+
+[[File:DNS Velocity Field.png|thumb|right|150px|A velocity field produced by a [[Direct numerical simulation|direct numerical simulation (DNS)]] of [[homogeneous isotropic turbulence|homogeneous decaying turbulence]].  The domain size is <math>L^3</math>.]]
+[[File:DNS Filtered Velocity Field Small.png|thumb|right|150px|The same DNS velocity field filtered using a [[Filter (large eddy simulation)#Box filter|box filter]] and <math>\Delta=L/32</math>.]]
+[[File:DNS Filtered Velocity Field Large.png|thumb|right|150px|The same DNS velocity field filtered using a [[Filter (large eddy simulation)#Box filter|box filter]] and <math>\Delta=L/16</math>.]]
+An [[Filter (large eddy simulation)|LES filter]] can be applied to a spatial and temporal field <math>\phi(\boldsymbol{x},t)</math> and perform a spatial filtering operation, a temporal filtering operation, or both.  The filtered field, denoted with a bar, is defined as:<ref name="Sagaut_2006">{{cite book
+|author=Sagaut, Pierre
+|title=Large Eddy Simulation for Incompressible Flows
+|publisher=Springer
+|year=2006
+|edition=Third Edition
+|isbn=3540263446 }}</ref><ref name="Pope_2000">{{cite book
+|first=Stephen
+|last=Pope
+|title=[http://www.cambridge.org/catalogue/catalogue.asp?isbn=0521598869 Turbulent Flows] 
+|publisher=Cambridge University Press 
+|year=2000 
+|isbn=9780521598866 }}
+</ref>
+
+:<math>
+\overline{\phi(\boldsymbol{x},t)} = \displaystyle{
+\int_{-\infty}^{\infty}} \int_{-\infty}^{\infty} \phi(\boldsymbol{r},t^{\prime}) G(\boldsymbol{x}-\boldsymbol{r},t - t^{\prime}) dt^{\prime} d \boldsymbol{r}
+</math>
+
+where <math>G</math> is the filter convolution kernel.  This can also be written as:
+
+:<math>
+\overline{\phi} = G \star \phi .
+</math>
+
+The filter kernel <math>G</math> has an associated cutoff length scale <math>\Delta</math> and cutoff time scale <math>\tau_{c}</math>.  Scales smaller than these are eliminated from <math>\overline{\phi}</math>.  Using the above filter definition, any field <math>\phi</math> may be split up into a filtered and sub-filtered (denoted with a prime) portion, as 
+
+:<math>
+\phi = \bar{\phi} + \phi^{\prime} .
+</math>
+
+It is important to note that the [[Filter (large eddy simulation)|large eddy simulation filtering operation]] does not satisfy the properties of a [[Reynolds operator]].
+
+== Filtered governing equations ==
+
+The governing equations of LES are obtained by filtering the [[partial differential equations]] governing the flow field <math>\rho \boldsymbol{v}(\boldsymbol{x},t)</math>.  There are differences between the incompressible and compressible LES governing equations, which lead to the definition of a new filtering operation.
+
+=== Incompressible flow ===
+
+For incompressible flow, the [[Continuity equation#Fluid dynamics|continuity equation]] and Navier-Stokes equations are filtered, yielding the filtered incompressible continuity equation,
+
+:<math>
+\frac{ \partial \overline{v_i} }{ \partial x_i } = 0
+</math>
+
+and the filtered Navier-Stokes equations,
+
+:<math>
+\frac{ \partial \bar{u_i} }{ \partial t }
++ \frac{ \partial }{ \partial x_j } \left( \overline{ u_i u_j } \right) 
+= - \frac{1}{\rho} \frac{ \partial \overline{p} }{ \partial x_i } 
++ \nu \frac{\partial}{\partial x_j} \left( \frac{ \partial \bar{u_i} }{ \partial x_j } + \frac{ \partial \bar{u_j} }{ \partial x_i } \right)
+= - \frac{1}{\rho} \frac{ \partial \overline{p} }{ \partial x_i } 
++ 2 \nu \frac{\partial}{\partial x_j} S_{ij},
+</math>
+
+where <math>\bar{p}</math> is the filtered pressure field and <math>S_{ij}</math> is the rate-of-strain tensor.  The [[nonlinear]] filtered advection term <math>\overline{u_i u_j}</math> is the chief cause of difficulty in LES modeling.  It requires knowledge of the unfiltered velocity field, which is unknown, so it must be modeled.  The analysis that follows illustrates the difficulty caused by the nonlinearity, namely, that it causes interaction between large and small scales, preventing separation of scales.
+
+The filtered advection term can be split up, following Leonard (1974),<ref name="Leonard_1974">{{cite journal
+|last=Leonard
+|first=A.
+|year=1974
+|title=Energy cascade in large-eddy simulations of turbulent fluid flows
+|journal=Advances in Geophysics A
+|volume=18
+|pages=237–248
+|doi=10.1016/S0065-2687(08)60464-1}}</ref> as:
+
+:<math>
+\overline{u_i u_j} = \tau_{ij}^{r} + \overline{u}_i \overline{u}_j
+</math>
+
+where <math>\tau_{ij}^{r}</math> is the residual stress tensor, so that the filtered Navier Stokes equations become
+
+:<math>
+\frac{ \partial \bar{u_i} }{ \partial t }
++ \frac{ \partial }{ \partial x_j } \left( \overline{u}_i \overline{u}_j \right) 
+= - \frac{1}{\rho} \frac{ \partial \overline{p} }{ \partial x_i } 
++ 2 \nu \frac{\partial}{\partial x_j} \bar{S}_{ij}
+- \frac{ \partial \tau_{ij}^{r} }{ \partial x_j }
+</math>
+
+with the residual stress tensor <math>\tau_{ij}^{r}</math> grouping all unclosed terms.  Leonard decomposed this stress tensor as <math>\tau_{ij}^{r} = L_{ij} + C_{ij} + R_{ij}</math> and provided physical interpretations for each term.  <math>L_{ij}</math>, the Leonard tensor, represents interactions among large scales, <math>R_{ij}</math>, the Reynolds stress-like term, represents interactions among the sub-filter scales (SFS), and <math>C_{ij}</math>, the Clark tensor,
+<ref name="Clark">{{cite journal
+|last1=Clark
+|first1=R.
+|last2=Ferziger
+|first2=J.
+|last3=Reynolds
+|first3=W.
+|year=1979
+|title=Evaluation of subgrid-scale models using an accurately simulated turbulent flow
+|journal=[[Journal of Fluid Mechanics]]
+|volume=91
+|pages=1–16}}</ref> represents cross-scale interactions between large and small scales.<ref name="Leonard_1974"/>  Modeling the unclosed term <math>\tau_{ij}^{r}</math> is the task of SFS models (also referred to as sub-grid scale, or SGS, models).  This is made challenging by the fact that the sub-filter scale stress tensor <math>\tau_{ij}^{r}</math> must account for interactions among all scales, including filtered scales with unfiltered scales.
+
+The filtered governing equation for a passive scalar <math>\phi</math>, such as mixture fraction or temperature, can be written as
+
+:<math>
+\frac{ \partial \overline{\phi} }{ \partial t }
++ \frac{\partial}{\partial x_j} \left( \overline{u}_j \overline{\phi} \right)
+= \frac{\partial \overline{J_{\phi}} }{\partial x_j} 
++ \frac{ \partial q_{ij} }{ \partial x_j }
+</math>
+
+where <math>J_{\phi}</math> is the diffusive flux of <math>\phi</math>, and <math>q_{ij}</math> is the sub-filter stress tensor for the scalar <math>\phi</math>.  The filtered diffusive flux <math>\overline{J_{\phi}}</math> is unclosed, unless a particular form is assumed for it (e.g. a gradient diffusion model <math>J_{\phi} = D_{\phi} \frac{ \partial \phi }{ \partial x_i }</math>).  <math>q_{ij}</math> is defined analogously to <math>\tau_{ij}^{r}</math>,
+
+:<math>
+q_{ij} = \bar{\phi} \overline{u}_j - \overline{\phi u_j}
+</math>
+
+and can similarly be split up into contributions from interactions between various scales.  This sub-filter tensor also requires a sub-filter model.
+
+=== Compressible governing equations ===
+
+For the governing equations of compressible flow, each equation, starting with the conservation of mass, is filtered.  This gives:
+
+:<math>
+\frac{\partial \overline{\rho}}{\partial t} + \frac{ \partial \overline{u_i \rho} }{\partial x_i} = 0
+</math>
+
+which results in an additional sub-filter term.  However, it is desirable to avoid having to model the sub-filter scales of the mass conservation equation.  For this reason, Favre <ref name="Favre_1983">{{cite journal
+|author=Favre, Alexander
+|title=Turbulence: space-time statistical properties and behavior in supersonic flows
+|year=1983
+|journal=Physics of Fluids A
+|volume=23
+|issue=10
+|pages=2851–2863}}</ref> proposed a density-weighted filtering operation, called Favre filtering, defined for an arbitrary quantity <math>\phi</math> as:
+
+:<math>
+\tilde{\phi} = \frac{ \overline{\rho \phi} }{ \overline{\rho} }
+</math>
+
+which, in the limit of incompressibility, becomes the normal filtering operation.  This makes the conservation of mass equation:
+
+:<math>
+\frac{\partial \overline{\rho}}{\partial t} + \frac{ \partial \overline{\rho} \tilde{u_i} }{ \partial x_i } = 0.
+</math>
+
+This concept can then be extended to write the Favre-filtered momentum equation for compressible flow.  Following Vreman<ref name="Vreman_1995">{{cite journal
+|author1=Vreman, Bert
+|author2=Geurts, Bernard
+|author3=Kuerten, Hans
+|journal=[[Applied Scientific Research]]
+|year=1995
+|volume=45
+|issue=3
+|doi=10.1007/BF00849116}}</ref>:
+
+:<math>
+\frac{ \partial \overline{\rho} \tilde{u_i} }{ \partial t }
++ \frac{ \partial \overline{\rho} \tilde{u_i} \tilde{u_j} }{ \partial x_j }
++ \frac{ \partial \overline{p} }{ \partial x_i }
+- \frac{ \partial \overline{\sigma_{ij}} }{ \partial x_j }
+= - \frac{ \partial \overline{\rho} \tau_{ij}^{r} }{ \partial x_j }
++ \frac{ \partial }{ \partial x_j } \left( \overline{\sigma}_{ij} - \tilde{\sigma}_{ij} \right)
+</math>
+
+where <math>\sigma_{ij}</math> is the shear stress tensor, given for a Newtonian fluid by:
+
+:<math>
+\sigma_{ij} = 2 \mu(T) S_{ij} - \frac{2}{3} \mu(T) \delta_{ij} S_{kk}
+</math>
+
+and the term <math>\frac{ \partial }{\partial x_j} \left( \overline{\sigma}_{ij} - \tilde{\sigma}_{ij} \right)</math> represents a sub-filter viscous contribution from evaluating the viscosity <math>\mu(T)</math> using the Favre-filtered temperature <math>\tilde{T}</math>.  The subgrid stress tensor for the Favre-filtered momentum field is given by
+
+:<math>
+\tau_{ij}^{r} = \overline{\rho} \left( \tilde{ u_i u_j } - \tilde{u_i} \tilde{u_j} \right).
+</math>
+
+By analogy, the Leonard decomposition may also be written for the residual stress tensor for a filtered triple product <math>\overline{\rho \phi \psi}</math>.  The triple product can be rewritten using the Favre filtering operator as <math>\overline{\rho} \tilde{\phi \psi}</math>, which is an unclosed term (it requires knowledge of the fields <math>\phi</math> and <math>\psi</math>, when only the fields <math>\tilde{\phi}</math> and <math>\tilde{\psi}</math> are known).  It can be broken up in a manner analogous to <math>\overline{u_i u_j}</math> above, which results in a sub-filter stress tensor <math>\overline{\rho} \left( \tilde{\phi \psi} - \tilde{\phi} \tilde{\psi} \right)</math>.  This sub-filter term can be split up into contributions from three types of interactions: the Leondard tensor <math>L_{ij}</math>, representing interactions among resolved scales; the Clark tensor <math>C_{ij}</math>, representing interactions between resolved and unresolved scales; and the Reynolds tensor <math>R_{ij}</math>, which represents interactions among unresolved scales.<ref name="Sagaut_2009">{{cite book
+|author1=Garnier, E. 
+|author2=Adams, N.
+|author3=Sagaut, P.
+|title=Large eddy simulation for compressible flows
+|year=2009
+|publisher=Springer
+|isbn=978-90-481-2818-1
+|doi=10.1007/978-90-481-2819-8}}</ref>
+
+=== Filtered kinetic energy equation ===
+
+In addition to the filtered mass and momentum equations, filtering the kinetic energy equation can provide additional insight.  The kinetic energy field can be filtered to yield the total filtered kinetic energy:
+
+:<math>
+\overline{E} = \frac{1}{2} \overline{ u_i u_i }
+</math>
+
+and the total filtered kinetic energy can be decomposed into two terms: the kinetic energy of the filtered velocity field <math>E_f</math>,
+
+:<math>
+E_f = \frac{1}{2} \overline{u_i} \cdot \overline{u_i}
+</math>
+
+and the residual kinetic energy <math>k_r</math>,
+
+:<math>
+k_r = \frac{1}{2} \overline{ u_i \cdot u_i } - \frac{1}{2} \overline{u_i} \cdot \overline{u_i} = \frac{1}{2} \tau_{ii}^{r}
+</math>
+
+such that <math>\overline{E} = E_f + k_r</math>.
+
+The conservation equation for <math>E_f</math> can be obtained by multiplying the filtered momentum transport equation by <math>\overline{u_i}</math> to yield:
+
+:<math>
+\frac{\partial E_f}{\partial t} 
++ \overline{u_j} \frac{\partial E_f}{\partial x_j} 
+- \frac{1}{\rho} \frac{\partial \overline{u_i} \bar{p} }{ \partial x_i }
+- \frac{\partial \overline{u_j} \tau_{ij}^{r}}{\partial x_i} 
+- 2 \nu \frac{ \partial \overline{u_i} \bar{S_{ij}} }{ \partial x_i }
+= 
+- \epsilon_{f} 
+- \Pi
+</math>
+
+where <math>\epsilon_{f} = 2 \nu \bar{S_{ij}} \bar{S_{ij}}</math> is the dissipation of kinetic energy of the filtered velocity field by viscous stress, and <math>\Pi = -\tau_{ij}^{r} \bar{S_{ij}}</math> represents the sub-filter scale (SFS) dissipation of kinetic energy.
+
+The terms on the left-hand side represent transport, and the terms on the right-hand side are sink terms that dissipate kinetic energy.<ref name="Pope_2000" />
+
+The <math>\Pi</math> SFS dissipation term is of particular interest, since it represents the transfer of energy from large resolved scales to small unresolved scales.  On average, <math>\Pi</math> transfers energy from large to small scales.  However, instantaneously <math>\Pi</math> can be positive ''or'' negative, meaning it can also act as a source term for <math>E_f</math>, the kinetic energy of the filtered velocity field.  The transfer of energy from unresolved to resolved scales is called '''backscatter''' (and likewise the transfer of energy from resolved to unresolved scales is called '''forward-scatter''').<ref name="Piomelli_1991">{{cite journal
+|author1=Piomelli, U.
+|author2=Cabot, W.
+|author3=[[Parviz Moin|Moin, P.]]
+|author4=Lee, S.
+|title=Subgrid-scale backscatter in turbulent and transitional flows
+|journal=Physics of Fluids A
+|year=1991
+|volume=3
+|issue=7
+|pages=1766–1771
+|doi=10.1063/1.857956}}</ref>
+
+== Numerical Methods for LES ==
+
+Large eddy simulation involves the solution to the discrete filtered governing equations using [[computational fluid dynamics]].  LES resolves scales from the domain size <math>L</math> down to the filter size <math>\Delta</math>, and as such a substantial portion of high wave number turbulent fluctuations must be resolved.  This requires either [[High-resolution scheme|high-order numerical schemes]], or fine grid resolution if low-order numerical schemes are used.  Chapter 13 of Pope<ref name="Pope_2000" /> addresses the question of how fine a grid resolution <math>\Delta x</math> is needed to resolve a filtered velocity field <math>\overline{u}(\boldsymbol{x})</math>.  Ghosal<ref name="Ghosal_1996">{{cite journal
+|title=An analysis of numerical errors in large-eddy simulations of turbulence
+|author=Ghosal, S.
+|year=1996
+|month=April
+|journal=[[Journal of Computational Physics]]
+|volume=125
+|issue=1
+|doi=10.1006/jcph.1996.0088}}</ref> found that for low-order discretization schemes, such as those used in finite volume methods, the truncation error can be the same order as the subfilter scale contributions, unless the filter width <math>\Delta</math> is considerably larger than the grid spacing <math>\Delta x</math>.  While even-order schemes have truncation error, they are non-dissipative,<ref name="Leveque_1992">{{cite book
+|title=Numerical Methods for Conservation Laws
+|author=Randall J. Leveque
+|year=1992
+|publisher=Birkhäuser Basel
+|edition=2nd
+|isbn=978-3764327231}}</ref> and because subfilter scale models are dissipative, even-order schemes will not affect the subfilter scale model contributions as strongly as dissipative schemes.
+
+=== Filter implementation ===
+
+The filtering operation in large eddy simulation can be implicit or explicit.  Implicit filtering recognizes that the subfilter scale model will dissipate in the same manner as many numerical schemes.  In this way, the grid, or the numerical discretization scheme, can be assumed to be the LES low-pass filter.  While this takes full advantage of the grid resolution, and eliminates the computational cost of calculating a subfilter scale model term, it is difficult to determine the shape of the LES filter that is associated with some numerical issues.  Additionally, truncation error can also become an issue.<ref name="Grinstein_2007">{{cite book
+|title=Implicit large eddy simulation
+|author1=Grinstein, Fernando
+|author2=Margolin, Len
+|author3=Rider, William
+|year=2007
+|publisher=Cambridge University Press
+|isbn=978-0-521-86982-9}}</ref>
+
+In explicit filtering, an [[Filter (large eddy simulation)|LES filter]] is applied to the discretized Navier-Stokes equations, providing a well-defined filter shape and reducing the truncation error.  However, explicit filtering requires a finer grid than implicit filtering, and the computational cost increases with <math>(\Delta x)^4</math>. Chapter 8 of Sagaut (2006) covers LES numerics in greater detail.<ref name="Sagaut_2006" />
+
+== Modeling Unresolved Scales ==
+
+To discuss the modeling of unresolved scales, first the unresolved scales must be classified.  They fall into two groups: '''resolved sub-filter scales''' (SFS), and '''sub-grid scales'''(SGS).  
+
+The resolved sub-filter scales represent the scales with wave numbers larger than the cutoff wave number <math>k_c</math>, but whose effects are dampened by the filter.  Resolved sub-filter scales only exist when filters non-local in wave-space are used (such as a [[Filter (large eddy simulation)#Box_filter|box]] or [[Filter (large eddy simulation)#Gaussian_filter|Gaussian]] filter).  These resolved sub-filter scales must be modeled using filter reconstruction.
+
+Sub-grid scales are any scales that are smaller than the cutoff filter width <math>\Delta</math>.  The form of the SGS model depends on the filter implementation.  As mentioned in the [[#Numerical methods for LES|Numerical methods for LES]] section, if the filter is implicit, there is no SGS model implemented.  Only explicit filters require SGS models.
+
+=== Sub-grid scale models ===
+
+Without a universally valid description of turbulence, some empirical information must be utilized when constructing and applying SGS models.  Two classes of SGS models exist; the first class is '''functional models''' and the second class is '''structural models'''.  Some models may be categorized as both.
+
+=== Functional (Eddy-Viscosity) Models ===
+
+Functional models are simpler than structural models, focusing only on dissipating energy at a rate that is physically correct.  These are based on an artificial eddy viscosity approach, where the effects of turbulence are lumped into a turbulent viscosity.  The approach treats dissipation of kinetic energy at sub-grid scales as analogous to molecular diffusion.  In this case, the deviatoric part of <math>\tau_{ij}</math> is modeled as:
+
+:<math>
+\tau_{ij} - \frac{1}{3} \tau_{kk} \delta_{ij} = -2 \nu_{T} \bar{S}_{ij}
+</math>
+
+where <math>\nu_{T}</math> is the turbulent eddy viscosity and <math>\bar{S}_{ij} = \frac{1}{2} \left( \frac{\partial \bar{u}_i }{\partial x_j} + \frac{\partial \bar{u}_j}{ \partial x_i} \right)</math> is the rate-of-strain tensor.
+
+Based on dimensional analysis, the eddy viscosity must have units of <math>\left[ \frac{ \text{length}^2 }{ \text{time} } \right]</math>.  Most eddy viscosity SGS models model the eddy viscosity as the product of a characteristic length scale and a characteristic velocity scale.
+
+====Smagorinsky-Lilly model====
+
+The first SGS model developed was the Smagorinsky-Lilly SGS model, which was developed by [[Joseph Smagorinsky|Smagorinsky]]<ref name="Smagorinsky_1963" /> and used in the first LES simulation by Deardorff<ref name="Deardorff_1970" />.  It models the eddy viscosity as:
+
+:<math>\nu_T 
+= (C_s \Delta_g)^2\sqrt{2\bar{S}_{ij}\bar{S}_{ij}} 
+= (C_s \Delta_g)^2 \left| S \right|
+</math>
+
+where <math>\Delta_g</math> is the grid size and <math>C_s</math> is a constant.
+
+This method assumes that the energy production and dissipation of the small scales are in equilibrium - that is, <math>\epsilon = \Pi</math>.
+
+====Germano dynamic model====
+
+Germano et al.<ref name="Germano_1991">{{cite journal
+|title=A dynamic subgrid‐scale eddy viscosity model
+|author1=Germano, M.
+|author2=Piomelli, U.
+|author3=[[Parviz Moin|Moin, P.]]
+|author4=Cabot, W.
+|journal=[[Physics of Fluids|Physics of Fluids A]]
+|volume=3
+|pages=1760–1765
+|year=1991
+|doi=doi:10.1063/1.857955}}
+</ref> identified a number of studies using the Smagorinsky model that each found different values for the Smagorinsky constant <math>C_s</math> for different flow configurations.  In an attempt to formulate a more universal approach to SGS models, Germano et al. proposed a dynamic Smagorinsky model, which utilized two filters: a grid LES filter, denoted <math>\overline{\cdot}</math>, and a test LES filter, denoted <math>\hat{\cdot}</math>.  In this case, the resolved turbulent stress tensor <math>\mathcal{L}_{ij}</math> is defined as
+
+:<math>
+\mathcal{L} = T_{ij}^{r} - \hat{\tau}_{ij}^{r}
+</math>
+
+which is also called the Germano identity.  The quantity <math>T_{ij}^r = \widehat{\overline{u_i u_j}} - \hat{\bar{u}}_i \hat{\bar{u}}_j</math> is the residual stress tensor for the test filter, and <math>\hat{\tau}_{ij}^{r} = \widehat{ \overline{u}_i \overline{u}_j } - \widehat{ \overline{ u_i u_j }}</math> is the residual stress tensor for the grid filter.
+
+<math>\mathcal{L}_{ij}</math> represents the contribution to the SGS stresses by length scales smaller than the test filter width <math>\hat{\Delta}</math> but larger than the grid filter width <math>\overline{\Delta}</math>. This allows the value of the Smagorinsky model to adapt to the instantaneous state of the flow.<reference name="Germano_1991" />
+
+The dynamic SGS model yields an equation for <math>C_s</math>:
+
+:<math>
+C_{s}^{2} = \frac{ \mathcal{L}_{ij} \mathcal{M}_{ij} }{ \mathcal{M}_{ij} \mathcal{M}_{ij} }
+</math>
+
+where <math>\mathcal{M}_{ij} 
+= 2 \overline{\Delta}^2 \left( 
+\overline{ \left| \hat{S} \right| \hat{S}_{ij} } 
+- \alpha^2 \left| \overline{\hat{S}} \right| \overline{\hat{S}}_{ij}
+\right)</math> and <math>\alpha = \hat{\Delta} / \overline{\Delta}</math>.  However, this procedure was numerically unstable, and additionally finding the value of <math>C_s</math> was complicated by the fact that it was an overdetermined problem (one equation with five unknowns).<ref name="Lilly_1992">{{cite journal
+|title=A proposed modification of the Germano subgrid-scale closure method
+|journal=Physics of Fluids A
+|year=1992
+|volume=4
+|issue=3
+|pages=633–636}}</ref>
+Because of these issues, Germano enforced the dynamic constant in an average sense, so that the equation for <math>C_s</math> was actually:
+
+:<math>
+C_{s}^{2} = \frac{ 
+\left\langle \mathcal{L}_{ij} \mathcal{M}_{ij} \right\rangle
+}{ 
+\left\langle \mathcal{M}_{ij} \mathcal{M}_{ij} \right\rangle
+}
+</math>
+
+Lilly<ref name="Lilly_1992" /> proposed a modification to the dynamic model that utilized a least squares method to find <math>C_s</math>, making the former version more stable and making the method more applicable.
+
+==Derivation==
+In [[Einstein notation]], the Navier-Stokes equations for an incompressible fluid are
+: <math> \frac{\partial u_i}{\partial x_i} = 0 </math>
+: <math> \frac{\partial u_i}{\partial t} + \frac{\partial u_iu_j}{\partial x_j}
+= - \frac{1}{\rho} \frac{\partial p}{\partial x_i}
++ \nu \frac{\partial^2 u_i}{\partial x_j \partial x_j}.
+</math>
+
+Filtering the momentum equation results in
+: <math> \overline{\frac{\partial u_i}{\partial t}} + \overline{\frac{\partial u_iu_j}{\partial x_j}}
+= - \overline{\frac{1}{\rho} \frac{\partial p}{\partial x_i}}
++ \overline{\nu \frac{\partial^2 u_i}{\partial x_j \partial x_j}}.
+</math>
+
+If we assume that filtering and differentiation commute, then
+: <math> \frac{\partial \bar{u_i}}{\partial t} + \overline{\frac{\partial u_iu_j}{\partial x_j}}
+= - \frac{1}{\rho} \frac{\partial \bar{p}}{\partial x_i}
++ \nu \frac{\partial^2 \bar{u_i}}{\partial x_j \partial x_j}.
+</math>
+
+This equation models the changes in time of the filtered variables <math>\bar{u_i}</math>.  Since the unfiltered variables <math>u_i</math> are not known, it is impossible to directly calculate <math>\overline{\frac{\partial u_iu_j}{\partial x_j}}</math>.  However, the quantity <math> \frac{\partial \bar{u_i}\bar{u_j}}{\partial x_j}</math> is known.  A substitution is made:
+: <math> \frac{\partial \bar{u_i}}{\partial t} +  \frac{\partial \bar{u_i}\bar{u_j}}{\partial x_j}
+= - \frac{1}{\rho} \frac{\partial \bar{p}}{\partial x_i}
++ \nu \frac{\partial^2 \bar{u_i}}{\partial x_j \partial x_j}
+- \left(\overline{ \frac{\partial u_iu_j}{\partial x_j}} -  \frac{\partial \bar{u_i}\bar{u_j}}{\partial x_j}\right).
+</math>
+
+Let <math>\tau_{ij} = \overline{u_i u_j} - \bar{u_i} \bar{u_j}</math>. The resulting set of equations are the LES equations:
+:<math> \frac{\partial \bar{u_i}}{\partial t} + \bar{u_j} \frac{\partial \bar{u_i}}{\partial x_j}
+= - \frac{1}{\rho} \frac{\partial \bar{p}}{\partial x_i}
++ \nu \frac{\partial^2 \bar{u_i}}{\partial x_j \partial x_j}
+- \frac{\partial\tau_{ij}}{\partial x_j}.
+</math>
+
+==Recent applications==
+A few recent applications of the large eddy simulation technique include some geophysical flows including breaking waves and tidal bores.<ref name="Lubin_et_al_2010">{{cite journal|author=Lubin, P., Glockner, S., and [[Hubert Chanson|Chanson, H.]] |title= [http://espace.library.uq.edu.au/view/UQ:194970 Numerical Simulation of a Weak Breaking Tidal Bore] |journal=Mechanics Research Communications |volume=37 |issue=1 |pages=119–121 |doi= 10.1016/j.mechrescom.2009.09.008 |year=2010 }}</ref> Large eddy simulation has also been used to study turbulence in the planetary boundary layer.<ref name="Moeng 1984">{{cite journal |last1= Moeng|first1= C.H.|year= 1984|title= A Large-Eddy Simulation Model for the Study of Planetary Boundary-Layer turbulence.|journal=J. Atmos. Sci.  |volume= 41|pages=2052–2062 }}</ref><ref name="Moeng and Sullivan 2002">{{cite book |last1= Moeng|first1=C.H. |last2= Sullivan|first2= P.P.|title= Encyclopedia of Atmospheric Sciences|year= 2002|pages= 1140–1150|chapter= Large Eddy Simulation}}</ref>
+
+==See also==
+* [[Direct numerical simulation]]
+* [[Fluid mechanics]]
+* [[Galilean invariance]] - an important property of certain types of filters
+* [[Reynolds-averaged Navier–Stokes equations]]
+* [[Turbulence]]
+
+==References==
+{{reflist}}
+
+{{DEFAULTSORT:Large Eddy Simulation}}
+[[Category:Partial differential equations]]
+[[Category:Fluid dynamics]]
+[[Category:Fluid mechanics]]
+[[Category:Turbulence]]
+[[Category:Turbulence models]]
+
+[[de:Large Eddy Simulation]]
+[[it:Formulazione LES]]
+[[ru:Метод крупных вихрей]]
+[[sv:Large eddy simulation]]</body> </html>

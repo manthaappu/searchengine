@@ -1,0 +1,161 @@
+<html> <head> <title>Oblivious transfer</title></head><body>In [[cryptography]], an '''oblivious transfer''' protocol (often abbreviated '''OT''') is a type of protocol in which a sender transfers one of potentially many pieces of information to a receiver, but remains oblivious as to what piece (if any) has been transferred.
+
+The first form of oblivious transfer was introduced in 1981 by [[Michael O. Rabin]]{{ref|Note1}}.  In this form, the sender sends a message to the receiver with [[probability]] 1/2, while the sender remains oblivious as to whether or not the receiver received the message.  Rabin's oblivious transfer scheme is based on the [[RSA]] cryptosystem.  A more useful form of oblivious transfer called '''1-2 oblivious transfer''' or "1 out of 2 oblivious transfer," was developed later by [[Shimon Even]], [[Oded Goldreich]], and [[Abraham Lempel]]{{ref|Note2}}, in order to build protocols for [[secure multiparty computation]]. It is generalized to "1 out of n oblivious transfer" where the user gets exactly one database element without the server getting to know which element was queried, and without the user knowing anything about the other elements that were not retrieved. The latter notion of oblivious transfer is a strengthening of [[private information retrieval]] where one does not care about database's privacy.
+
+[[Claude Crépeau]] showed that Rabin's oblivious transfer is equivalent to 1-2 oblivious transfer.{{ref|Note3}}
+
+Further work has revealed oblivious transfer to be a fundamental and important problem in cryptography.  It is considered one of the critical problems in the field, because of the importance of the applications that can be built based on it. In particular, it is a `complete' for [[secure multiparty computation]]: that is given an implementation of oblivious transfer it is possible
+to securely evaluate any polynomial time computable function without any additional primitive.{{ref|Note4}}
+
+==Rabin's oblivious transfer protocol==
+
+In Rabin's oblivious transfer protocol, the sender generates an RSA public modulus ''N''=''pq'' where ''p'' and ''q'' are large [[prime number]]s, and an exponent ''e'' [[relatively prime]] to (''p''-1)(''q''-1).  The sender encrypts the message ''m'' as ''m''<sup>''e''</sup> mod ''N''.  
+
+# The sender sends ''N'', ''e'', and ''m''<sup>''e''</sup> mod ''N'' to the receiver.
+# The receiver picks a random ''x'' modulo ''N'' and sends ''x''<sup>2</sup> mod ''N'' to the sender. Note that gcd(''x,N'')=1 with overwhelming probability, which ensures that there are 4 square roots of ''x''<sup>2</sup> mod ''N''.
+# The sender finds a square root ''y'' of ''x''<sup>2</sup> mod ''N'' and sends ''y'' to the receiver.
+
+If the receiver finds ''y'' is neither ''x'' nor -''x'' modulo ''N'', the receiver will be able to [[integer factorization|factor]] ''N'' and therefore decrypt ''m''<sup>''e''</sup> to recover ''m'' (see [[Rabin encryption]] for more details).  However, if ''y'' is ''x'' or -''x'' mod ''N'', the receiver will have no information about ''m'' beyond the encryption of it.  Since every [[quadratic residue]] modulo ''N'' has four square roots, the probability that the receiver learns ''m'' is 1/2.
+
+==1-2 oblivious transfer==
+
+In a 1-2 oblivious transfer protocol, the sender has two messages ''m''<sub>0</sub> and ''m''<sub>1</sub>, and the receiver has a bit ''b'', and the receiver wishes to receive ''m''<sub>''b''</sub>, without the sender learning ''b'', while the sender wants to ensure that the receiver receive only one of the two messages.
+The protocol of Even, Goldreich, and Lempel (which the authors attribute partially to [[Silvio Micali]]), is general, but can be instantiated using RSA encryption as follows.
+
+{| class="wikitable"
+! colspan=3 | Alice
+!
+! colspan=3 | Bob
+|-
+| Secret
+| Public
+| Calculus
+|
+| Secret
+| Public
+| Calculus
+|-
+| <math>m_0, m_1</math>
+|
+| Messages to be sent
+|
+|
+|
+|
+|-
+| <math>d</math>
+| <math>N, e</math>
+| Generate RSA key pair and send public portion to Bob
+| <math>\Rightarrow</math>
+|
+| <math>N, e</math>
+| Receive public key
+|-
+|
+| <math>x_0, x_1</math>
+| Generate two random messages
+| <math>\Rightarrow</math>
+
+|
+| <math>x_0, x_1</math>
+| Receive random messages
+|-
+|
+|
+|
+| 
+| <math>k, b, x_b</math>
+|
+| Choose <math>b \in (0,1)</math>, <math>x_b \in (x_0, x_1)</math> and generate random <math>k</math>
+|-
+|
+| <math>v</math>
+|
+| <math>\Leftarrow</math>
+|
+| <math>v = (x_b + k^e) \mod N</math>
+| Compute the encryption of <math>k</math>, blind with <math>x_b</math> and send to Alice
+|-
+| <math>\begin{align}k_0 & = (v - x_0)^d\mod N \\k_1 & = (v - x_1)^d \mod N\end{align}</math>
+|
+| One of these will equal <math>k</math>, but Alice does not know which.
+|
+|
+|
+|
+|-
+|
+| <math>\begin{align}m'_0 = m_0 + k_0 \\ m'_1 = m_1 + k_1\end{align}</math>
+| Send both messages to Bob
+| <math>\Rightarrow</math>
+|
+| <math>m'_0, m'_1</math>
+| Receive both messages
+|-
+|
+|
+|
+|
+| <math>m_b = m'_b - k</math>
+|
+| Bob decrypts the <math>m'_b</math> since he knows which <math>x_b</math> he selected earlier.
+|}
+
+# Alice has two messages, <math>m_0, m_1</math>, and wants to send exactly one of them to Bob, but does not want to know which Bob receives.
+# Alice generates a RSA key pair, comprising the modulus <math>N</math>, the public exponent <math>e</math> and the private exponent <math>d</math>
+# She also generates two random values, <math>x_0, x_1</math> and sends them to Bob along with her public modulus and exponent.
+# Bob picks <math>b</math> to be either 0 or 1, and selects either the first or second <math>x_b</math>.
+# He generates a random value <math>k</math> and blinds <math>x_b</math> by computing <math>v = (x_b + k^e)\mod N</math>, which he sends to Alice.
+# Alice doesn't know which of <math>x_0</math> and <math>x_1</math> Bob chose, so she attempts to unblind with both of her random messages and comes up with two possible values for <math>k</math>: <math>k_0 = (v - x_0)^d\mod N</math> and <math>k_1 = (v - x_1)^d\mod N</math>.  One of these will be equal to <math>k</math> since it will correctly decrypt, while the other will produce another random value that does not reveal any information about <math>k</math>.
+# She blinds the two secret messages with each of the possible keys, <math>m'_0 = m_0 + k_0</math> <math>m'_1 = m_1 + k_1</math>, and sends them both to Bob.
+# Bob knows which of the two messages can be unblinded with <math>k</math>, so he is able to compute exactly one of the messages <math>m_b = m'_b - k</math>
+
+==1-n oblivious transfer and k-n oblivious transfer==
+
+A 1-n oblivious transfer protocol can be defined as a natural generalization of a 1-2 oblivious transfer protocol. Specifically, a sender has ''n'' messages, and the receiver has an index ''i'', and the receiver wishes to receive the ''i''-th among the sender's messages, without the sender learning ''i'', while the sender wants to ensure that the receiver receive only one of the ''n'' messages. Intuitively, it can also be considered as the effect of adding an additional database's privacy requirement to some existing [[private information retrieval]] protocol. 
+
+The existence of 1-n oblivious transfer protocols from any private information retrieval protocol was first established by [[Giovanni Di Crescenzo]], [[Tal Malkin]] and [[Rafail Ostrovsky]] in [http://citeseer.ist.psu.edu/dicrescenzo00single.html]. Additional constructions of 1-n oblivious transfer protocols also related to private information retrieval, were proposed, e.g., by [[Moni Naor]] and [[Benny Pinkas]] [http://www.wisdom.weizmann.ac.il/~bennyp/PAPERS/ot.ps], [[William Aiello]], [[Yuval Ishai]] and [[Omer Reingold]] [http://www.wisdom.weizmann.ac.il/~reingold/publications/AIR.PS], [[Sven Laur]] and [[Helger Lipmaa]] [http://research.cyber.ee/~lipmaa/papers/ll07].
+
+[[Gilles Brassard|Brassard]], [[Claude Crépeau|Crépeau]] and [[Jean-Marc Robert|Robert]] further generalized this notion to k-n oblivious transfer{{ref|Note5}}, wherein the receiver obtains a set of "k" messages from the "n" message collection.  The set of k messages may be received simultaneously ("non-adaptively"), or they may be requested consecutively, with each request based on previous messages received{{ref|Note6}}.
+
+==Generalized oblivious transfer==
+k-n Oblivious transfer is a special case of Generalized oblivious transfer, which was presented by Ishai and Kushilevitz in {{ref|Note7}}. In that setting, the sender has a set ''U'' of ''n'' messages, and the transfer constraints are specified by a collection ''A'' of permissible subsets of ''U''.
+The receiver may obtain any subset of the messages in ''U'' that appears in the collection ''A''. The sender should remain oblivious of the selection made by the receiver, while the receiver cannot learn the value of the messages outside the subset of messages that he chose to obtain. The collection ''A'' is monotone decreasing, in the sense that it is closed under containment (i.e., if a given subset ''B'' is in the collection ''A'', so are all of the subsets of ''B'').
+The solution proposed by Ishai and Kushilevitz uses parallel invocations of 1-2 oblivious transfer while making use of a special model of private protocols. Later on, other solutions that are based on secret sharing were published --- one by Bhavani Shankar, Kannan Srinathan, and C. Pandu Rangan in {{ref|Note8}}, and another by Tamir Tassa in {{ref|Note9}}.
+
+==Origins==
+In the early seventies [[Stephen Wiesner]] introduced a primitive called '''multiplexing''' in his seminal paper "Conjugate Coding",
+which was the starting point of [[quantum cryptography]]{{ref|Note0}}. Unfortunately it took more than ten years to be published. Even though
+this primitive was equivalent to what was later called ''1-2 oblivious transfer'', Wiesner did not see its application to cryptography.
+
+
+==See also==
+* [[Secure multiparty computation]]
+* [[Zero knowledge proof]]
+
+==References==
+* {{Note|Note0}} Stephen Wiesner, "Conjugate coding", Sigact News, vol. 15, no. 1, 1983, pp. 78 - 88; original manuscript written circa 1970.
+* {{Note|Note1}} [[Michael O. Rabin]]. "How to exchange secrets by oblivious transfer." Technical Report TR-81, Aiken Computation Laboratory, Harvard University, 1981. [http://eprint.iacr.org/2005/187.pdf Paper on eprint.iacr.org archive]
+* {{Note|Note2}} S. Even, O. Goldreich, and A. Lempel, "A Randomized Protocol for Signing Contracts", [[Communications of the ACM]], Volume 28, Issue 6, pg. 637-647, 1985. [http://portal.acm.org/citation.cfm?coll=GUIDE&dl=GUIDE&id=3818 Paper at ACM portal (subscription required)]
+* {{Note|Note3}} [[Claude Crépeau]]. "Equivalence between two flavours of oblivious transfer". In Advances in Cryptology: CRYPTO '87, volume 293 of Lecture Notes in Computer Science, pages 350--354. Springer, 1988
+* {{Note|Note4}} [[Joe Kilian]].  "Founding Cryptography on Oblivious Transfer", Proceedings, 20th Annual ACM Symposium on the Theory of Computation (STOC), 1988. [http://portal.acm.org/citation.cfm?id=62215 Paper at ACM portal (subscription required)]
+* {{Note|Note5}} [[Gilles Brassard]], [[Claude Crépeau]] and [[Jean-Marc Robert]]. "All-or-nothing disclosure  of secrets." In Advances in Cryptology: CRYPTO ’86, volume 263 of LNCS, pages 234–238.  Springer, 1986.
+* {{Note|Note6}} [[Moni Naor]] and [[Benny Pinkas]].  "Oblivious transfer with adaptive queries." In Advances in Cryptology: CRYPTO ’99, volume 1666 of LNCS, pages 573–-590.  Springer, 1999.
+* {{Note|Note7}} Yuval Ishai and Eyal Kushilevitz. "Private simultaneous messages protocols with applications." In Proc. of ISTCS’97, IEEE Computer Society, pages 174–-184, 1997.
+* {{Note|Note8}}  Bhavani Shankar, Kannan Srinathan and C. Pandu Rangan. "Alternative protocols for generalized oblivious transfer". In Proc. of ICDCN’08, LNCS 4904, pages 304-–309, 2008.
+* {{Note|Note9}}  Tamir Tassa.  "Generalized oblivious transfer by secret sharing". Designs, Codes and Cryptography, Volume 58:1, pages 11-21, January 2011. [http://www.openu.ac.il/home/tamirtassa/Publications/got.pdf]
+
+==External links==
+
+
+* [http://research.cyber.ee/~lipmaa/crypto/link/protocols/oblivious.php Helger Lipmaa's collection of Web links on the topic]
+
+
+[[Category:Theory of cryptography]]
+[[Category:Cryptographic protocols]]
+[[Category:Cryptographic primitives]]
+
+[[ca:Transferència inconscient]]
+[[es:Transferencia inconsciente]]
+[[he:העברה עלומה]]
+[[ja:紛失通信プロトコル]]</body> </html>

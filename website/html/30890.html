@@ -1,0 +1,44 @@
+<html> <head> <title>Queue machine</title></head><body>A '''queue machine''' or '''queue automaton''' is a [[finite state machine]] with the ability to store and retrieve data from an infinite-memory [[queue (data structure)|queue]]. It is a model of computation equivalent to a [[Turing machine]], and therefore it can process any [[formal language]].
+
+== Theory ==
+We define a queue machine by the six-tuple
+
+:<math>M = (Q, \Sigma, \Gamma, \$, s, \delta)</math> where
+
+* <math>\,Q</math> is a finite set of ''states'';
+* <math>\,\Sigma</math> is the finite set of the ''input alphabet'';
+* <math>\,\Gamma</math> is the finite ''queue alphabet'';
+* <math>\,\$ \in \Gamma - \Sigma</math> is the ''initial queue symbol'';
+* <math>\,s \in Q</math> is the ''start state'';
+* <math>\,\delta : Q \times \Gamma \rightarrow Q \times \Gamma^*</math> is the ''transition function''.
+
+We define the current status of the machine by a ''configuration'', an ordered pair of its state and queue contents <math>\,(q,\gamma)\in Q\times\Gamma^*</math> (note <math>\,\Gamma^*</math> defines the [[Kleene closure]] or set of all supersets of <math>\,\Gamma</math>). Therefore the starting configuration on an input string <math>\,x</math> is defined as <math>\,(s,x\$)</math>, and we can define our transition as the function that, given an initial state and queue, takes the function to a new state and queue. Note the "first-in-first-out" property of the queue in the relation
+
+:<math>\,(p,A\alpha) \rightarrow_M^1 (q,\alpha\gamma)</math>
+
+where <math>\,\rightarrow_M^1</math> defines the next configuration relation, or simply the transition function from one configuration to the next.
+
+The machine accepts a string <math>\,x\in\Sigma^*</math> if after a (possibly infinite) number of transitions the starting configuration evolves to exhaust the string (reaching a null string <math>\,\epsilon</math>), or <math>\,(s,x\$)\rightarrow_M^*(q,\epsilon).</math><ref>{{cite book |last=Kozen |first=Dexter C. |editor=David Gries, Fred B. Schneider |title=Automata and Computability |origyear=1951 |format=hardcover |edition=1 |series=Undergraduate Texts in Computer Science |year=1997 |publisher=Springer-Verlag |location=New York |language=English |isbn=0-387-94907-0 |pages=368–370}}</ref>
+
+=== Turing completeness ===
+We can prove that a queue machine is equivalent to a Turing machine by showing that a queue machine can simulate a Turing machine and vice-versa. In the former case, one can see that the left-right movements along the Turing machine tape can be simulated by continuously pushing and popping from the queue, so that the whole of the tape is stored in the queue. The queue machine's alphabet only has to indicate with a new symbol those elements which are being read by the Turing machine so that it can properly transition its state.
+
+In the latter case of simulating a queue machine on a Turing machine, this is done more easily using a [[multi-tape Turing machine]], which is equivalent to a normal single-tape machine. Then one simply reads input on one tape and stores the queue in the second, with pushes and pops defined by simple transitions to the beginning and end symbols of the tape.<ref>{{cite web |url=http://www.cs.uiowa.edu/~rus/Courses/Theory/Notes/turing3.pdf |title=Variants of Turing Machines |accessdate=2007-11-06 |last=Rus |first=Teodor |date= |work=Lecture Notes Covering Theory of Computation |publisher=University of Iowa, Iowa City, IA, 52242-1419}}</ref> A formal proof of this is often an exercise in theoretical computer science courses.
+
+== Applications ==
+Queue machines offer a simple model on which to base [[computer architectures]],<ref>{{cite journal |last=Feller |first=M. |coauthors=M.D. Ercegovac |year=1981 |title=Queue machines: An organization for parallel computation |journal=Lecture Notes in Computer Science |volume= 111|issue= |pages= 37|id= |url=http://www.springerlink.com/content/m8w6x22741k5u093/ |accessdate=2007-11-06 |doi=10.1007/BFb0105108}}</ref><ref>{{cite journal |last=Schmit |first=Herman |authorlink= |coauthors=Benjamin Levine, Benjamin Ylvisaker |year= 2002|month= |title=Queue Machines: Hardware Compilation in Hardware |journal=10th Annual IEEE Symposium on Field-Programmable Custom Computing Machines (FCCM'02) |volume= |issue= |pages=152 |id= |url=http://doi.ieeecomputersociety.org/10.1109/FPGA.2002.1106670 |accessdate=2007-11-06|doi=10.1109/FPGA.2002.1106670}}</ref> [[programming languages]], or [[algorithms]].<ref>{{cite web |url=http://algo.inria.fr/seminars/sem99-00/moore1.html |title=Queues, Stacks, and Transcendentality at the Transition to Chaos |accessdate=2007-11-06 |last=Moore |first=Christopher |coauthors= |date=1999-09-20 |work=Algorithms Project's Seminar |publisher=INRIA}}</ref><ref>{{cite web |url=http://www.latrobe.edu.au/philosophy/phimvt/misc/queue.html |title=A queue machine for evaluating expressions |accessdate=2007-11-06 |last=von Thum |first=Manfred |date=2007 |publisher=LaTrobe University}}</ref>
+
+== See also ==
+* [[Computability]]
+* [[Turing machine equivalents]]
+* [[Deterministic finite-state machine]]
+* [[Pushdown automaton]]
+* [[Tag system]]
+* [http://pleasingfungus.com/ Manufactoria], a browser flash game tasking the player with implementation of various algorithms using a queue machine model.
+
+== References ==
+{{reflist}}
+
+[[Category:Automata theory]]
+
+{{comp-sci-stub}}</body> </html>

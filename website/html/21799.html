@@ -1,0 +1,51 @@
+<html> <head> <title>Linkage (software)</title></head><body>In programming languages, particularly [[C++]], '''linkage''' describes how names can or can not refer to the same entity throughout the whole program or one single [[Translation unit (programming)|translation unit]].
+
+The <code>static</code> keyword is used in C to restrict the visibility of a function or variable to its translation unit. This is also valid in C++, although C++ deprecates this usage in favor of [[anonymous namespace]]s (which are not available in C). Also, C++ implicitly treats any <code>const</code> namespace-scope variable as having internal linkage unless it is explicitly declared <code>extern</code>, unlike C.
+
+A name's linkage is related to, but distinct from, its [[scope (programming)|scope]]. The scope of a name is the part of a translation unit where it is visible. For instance, a name with global scope (which is the same as file-scope in C and the same as the global namespace-scope in C++) is visible in any part of the file. Its scope will end at the end of the translation unit, whether or not that name has been given external or internal linkage. 
+
+If the name has external linkage, the entity that name denotes may be referred to from another translation unit using a distinct declaration for that same name, and from other scopes within the same translation unit using distinct declarations. Were the name given internal linkage, such a declaration would denote a distinct entity, although using the same name, but its entity could be referred to by distinct declarations within the same translation unit. A name that has no linkage at all cannot be referred to from declarations in different scopes, not even from within the same translation unit. Examples of such names are parameters of functions and local variables. The details differ between C (where only objects and functions - but not types have linkage) and C++ and between this simplified overview.
+
+Linkage between languages must be done with some care, as different languages [[Name mangling|adorn]] their external symbols differently.
+A common idiom uses <code>[[extern "C"]]</code> to link C++ and C code.
+
+== Linkage in C ==
+Definition of 'linkage' quoted from ISO/IEC 9899:TC3 (C99 Standard). C uses the term "identifier" where this article uses name which is what C++ uses to formalize linkage:
+<blockquote>
+An identifier declared in different scopes or in the same scope more than once can be made to refer to the same object or function by a process called linkage.<ref name="C99">[http://www.open-std.org/JTC1/SC22/WG14/www/standards ISO/IEC 9899]. Official C99 documents, including technical corrigenda and a rationale. As of 2007 the latest version of the standard is {{PDFlink|[http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf ISO/IEC 9899:TC3]|3.61 [[Mebibyte|MiB]]<!-- application/pdf, 3788603 bytes -->}}</ref>
+</blockquote>
+The following is a common example of linkage:
+
+<source lang="c">
+/* file demo1.c */
+  
+/* extern */ void foo(void); /* extern optional - it's the default */
+  
+int main(void)
+{
+  foo();
+  return 0;  
+}
+</source>
+<source lang="c">  
+/* file demo2.c */
+  
+void foo(void)
+{
+  ...
+}
+</source>
+
+Function <code>foo</code> is declared in two files, with its function body defined in demo2.c. Via linkage, <code>foo</code> called in <code>main()</code> inside demo1.c refers to <code>foo</code> in demo2.c. This is an example of external linkage for a function. 
+
+== See also ==
+* [[Application binary interface]] (ABI)
+* [[Compatibility of C and C++]]
+* [[Linker (computing)]]
+* [[Name mangling]]
+
+==References==
+<references/>
+
+[[Category:Compilers]]
+[[Category:Programming language implementation]]</body> </html>

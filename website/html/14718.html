@@ -1,0 +1,185 @@
+<html> <head> <title>Gallium3D</title></head><body>{{Infobox software
+| name                   = Gallium3D
+| logo                   =
+| caption                =
+| author                 =
+| developer              = [[VMware]] (previously Tungsten Graphics)<ref name=tungsten-vmware>{{cite news |author=David Marshall |date=2008-12-16 |title=VMware's year end acquisition of Tungsten Graphics |publisher=[[InfoWorld]] |url=http://www.infoworld.com/d/virtualization/vmwares-year-end-acquisition-tungsten-graphics-196 }}</ref>
+| released               =
+| latest release version =
+| latest release date    =
+| latest preview version = 0.4<ref>cgit.freedesktop.org [http://cgit.freedesktop.org/mesa/mesa/tree/src/gallium/docs/source/conf.py Build configuration file] – Gallium documentation</ref>
+| latest preview date    = {{release date and age|2010|04|24}}
+| programming language   = [[C (programming language)|C]]
+| operating system       = [[Cross-platform]]
+| platform               =
+| status                 =
+| genre                  = [[Graphics library]]
+| license                = [[MIT License]]
+}}
+
+'''Gallium3D''' is a [[software library]] for [[3D computer graphics|3D graphics]] [[device driver]]s being developed by [[VMware]], after they acquired Tungsten Graphics<ref name=tungsten-vmware /> – the original authors.
+
+The Gallium3D library operates as a layer between the graphics [[Application programming interface|API]] and the [[operating system]] with the primary goal of making driver development easier, bundling otherwise duplicated code of several different drivers at a single point (this is done by providing a better division of labor, for example, leaving memory management to the kernel [[Direct Rendering Infrastructure|DRI]] driver) and to support modern hardware architectures. 
+
+Gallium3D has been a part of [[Mesa 3D (OpenGL)|Mesa]] since 2009<ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=news_item&px=NzA1Ng
+|title      = Gallium3D Now In Mainline Mesa Code-Base!
+|publisher  = [[Phoronix]]
+|date = 2009-02-11
+|accessdate = 2010-10-26
+}}</ref> and is currently used by the [[free and open source]] graphics driver for [[Nvidia]] ([[nouveau (graphics)|nouveau]] project),<ref>{{Cite web
+|url = http://lwn.net/Articles/270830/
+|title      = The state of Nouveau, part 2
+|publisher  = [[LWN.net]]
+|date = 2008-02-26
+|accessdate = 2008-03-07
+}}</ref><ref name=companion-36>{{Cite web
+|url = http://nouveau.freedesktop.org/wiki/Nouveau_Companion_36
+|title = Nouveau Companion 36
+|datepublished = 2008-03-07
+|accessdate = 2008-04-01
+}}</ref> ATI [[Radeon|Radeon R300-R800]]<ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=news_item&px=NzY4Ng
+|title      = ATI R300 Gallium3D DRI Support Is "Done"
+|publisher  = [[Phoronix]]
+|date = 2009-11-09
+|accessdate = 2010-11-15
+}}</ref><ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=news_item&px=ODI5NQ
+|title      = Radeon "R600g" Gallium3D Driver Merged To &#91;Mesa&#93; Master
+|publisher  = [[Phoronix]]
+|date = 2010-05-27
+|accessdate = 2010-10-26
+}}</ref><ref>{{Cite web
+|url = http://wiki.x.org/wiki/GalliumStatus
+|title      = X.Org Wiki GalliumStatus
+|publisher  = [[Xorg]]
+|date = 2010-09-22
+|accessdate = 2010-12-07
+}}</ref>and partially for Intel [[Graphics processing unit#Integrated graphics solutions|IGP]] driver too.<ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=news_item&px=ODE0OQ
+|title      = Intel & The Shortcomings Of Gallium3D
+|publisher  = [[Phoronix]]
+|date = 2010-04-13
+|accessdate = 2010-10-26
+}}</ref>
+
+== Differences from Mesa 3D ==
+Gallium3D provides a unified [[Application programming interface|API]] exposing standard hardware functions, such as [[shader]] units found on modern hardware. Thus, 3D APIs such as [[OpenGL]] 1.x/2.x, OpenGL 3.x, [[OpenVG]], [[GPGPU]] infrastructure or even [[Direct3D]] (as found in the [[Wine (software)|Wine]] compatibility layer) will need only a single front-end, called a state tracker, targeting the Gallium3D API. By contrast, [[Mesa 3D]] requires a different back-end for each hardware platform and several other APIs need translation to OpenGL at the expense of added overhead.<ref>{{Cite web
+|url = http://www.tungstengraphics.com/technologies/gallium3d.html
+|title = TG-Gallium3D
+|publisher = Tungsten Graphics
+|accessdate = 2008-04-01
+}}</ref><ref>{{Cite web
+|url = http://zrusin.blogspot.com/2008/02/gpgpu.html
+|title = GPGPU
+|author = zrusin
+|date = 2008-02-06
+|accessdate = 2008-04-01
+}}</ref><ref>{{Cite web
+|url = http://zrusin.blogspot.com/2008/02/openvg-and-accelerating-2d.html
+|title = OpenVG and accelerating 2D
+|author = zrusin
+|datepublished = 2008-02-07
+|accessdate = 2008-04-01
+}}</ref> 
+
+Under Gallium3D, [[Direct Rendering Manager]] (DRM) kernel drivers will manage the memory and [[Direct Rendering Infrastructure|Direct Rendering Interface]] (DRI2) drivers will be more GPU processing oriented. This will resolve memory management problems whose solutions are considered unfeasible under Mesa 3D.<ref>{{Cite web
+|url = http://wiki.x.org/wiki/DRI2
+|title = DRI2
+|datepublished = 2007-10-04
+|accessdate = 2008-04-01
+}}</ref>
+
+== LLVM usage==
+In addition, using the modular structure of Gallium3D, there are works underway to leverage the [[Low Level Virtual Machine|LLVM]] compiler suite and create a module to optimize [[shader]] code on the fly.<ref>{{Cite web
+|url = http://zrusin.blogspot.com/2007/11/gallium3d-llvm.html
+|title = Gallium3D LLVM
+|author = zrusin
+|datepublished = 2007-11-02
+|accessdate = 2008-04-01
+}}</ref> 
+
+The library represents each shader program using an extensible binary intermediate representation called Tungsten Graphics Shader Infrastructure (TGSI). When Gallium targets LLVM, the TGSI code is converted to the LLVM [[Low_Level_Virtual_Machine#Code_representation|instruction set]].
+
+== Current status ==
+
+The first implemented and already partially working drivers are [[Cell (microprocessor)|Cell]] SPU and [[Intel GMA|Intel GPU]] drivers. The r300g driver for ati r300-r500 cards is considered stable at this time. Work is done on ATI Radeon r600-r700, Evergreen and Northern Islands cards to provide gallium support.<ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=article&item=mesa_r300g_oct10&num=1
+|title = AMD's R300 Gallium3D Driver Is Looking Good For 2011
+|publisher = [[Phoronix]]
+|author = [[Michael Larabel]]
+|page = 1
+|datepublished = 2010-10-28
+|accessdate = 2011-01-07
+}}</ref> and the [[nouveau (graphics)|Nouveau]] team is moving development to Gallium3D, including a solution for older fixed function NVIDIA cards which lack programmable shaders.<ref name=companion-36 /><ref>{{Cite web
+|url = http://nouveau.freedesktop.org/wiki/Nouveau_Companion_37
+|title = Nouveau Companion 37
+|datepublished = 2008-03-21
+|accessdate = 2008-04-01
+}}</ref>
+
+Gallium3D is designed to be platform-independent.<ref>{{cite |author=José Fonseca |date=2008-04-27 |title=Gallium3D: Introduction |url=http://jrfonseca.blogspot.com/2008/04/gallium3d-introduction.html }}</ref> As of February 2009, Gallium3D can run on Linux as well as FreeBSD kernels.<ref>{{cite web |author=[[Michael Larabel]] |date=2009-02-25 |title=Gallium3D, EGL Now Buildable On FreeBSD |publisher=[[Phoronix]] |url=http://www.phoronix.com/scan.php?page=news_item&px=NzA5Mg }}</ref>
+
+On 11 February 2009, the gallium-0.2 branch was merged into mainline Master branch of Mesa.<ref>{{Cite web
+|url = http://www.phoronix.com/scan.php?page=news_item&px=NzA1Ng
+|title = Gallium3D Now In Mainline Mesa Code-Base!
+|datepublished = 2009-02-11
+}}</ref> Development is done in Mesa mainline.
+
+On 1 May 2009, Zack Rusin from Tungsten Graphics added the [[OpenVG]] state tracker to Mesa 3D<ref>{{Cite web
+|url = http://sourceforge.net/mailarchive/forum.php?thread_name=200905011303.10970.zackr@vmware.com&forum_name=mesa3d-dev
+|title = OpenVG state tracker is in Mesa 3D
+|datepublished = 2009-05-01
+}}</ref>, which enables [[Scalable Vector Graphics]] to be hardware-accelerated by any Gallium3D-based driver.
+
+{{As of|2008|07|13}}, Nouveau development is done exclusively for the Gallium framework. The old DRI driver was removed from the master branch of the mesa repository on Freedesktop.org.<ref>{{Cite web
+|url = http://cgit.freedesktop.org/mesa/mesa/commit/?id=93115c4b235896df097b91edec7458a8a4488c4e
+|title = nouveau: say goodbye to the old DRI driver... (cgit on FDO)
+|datepublished = 2008-07-13
+}}</ref>
+
+The first Mesa3D release including Gallium3D was version 7.5 on 17 July 2009.<ref>{{Cite web
+|url = http://www.mesa3d.org/relnotes-7.5.html
+|title = Mesa 7.5 Release Notes / 17 July 2009
+|datepublished = 2009-07-17
+}}</ref>
+
+{{As of|2010|09|21}}, There are two Gallium3D drivers for ATI hardware known as r300g and r600g for R100-R500 and R600-Evergreen GPUs respectively. Initial support for the Evergreen GPUs was added to the r600g driver on 2010-09-10.<ref>{{Cite web
+|url = http://cgit.freedesktop.org/mesa/mesa/commit/?id=50526e094f4c66957c7f74c190c35903bc82fb62
+|title = r600g: add initial evergreen support (cgit on FDO)
+|datepublished = 2010-09-10
+}}</ref>
+
+On 21 September 2010, major commits were made to the code to support Direct3D 10 and 11.<ref>{{Cite web
+|url = http://cgit.freedesktop.org/mesa/mesa/commit/?id=92617aeac109481258f0c3863d09c1b8903d438b
+|title = d3d1x: add new Direct3D 10/11 COM state tracker for Gallium
+|datepublished = 2010-09-21
+}}</ref> In time, this might offer the ability to use recent Direct3D implementations on GNU/Linux systems.
+
+==References==
+{{Reflist|2}}
+
+==External links==
+{{Portal|Free software}}
+*[http://mesa3d.sourceforge.net/ Mesa 3D official page]
+*[http://zrusin.blogspot.com/2007/09/gallium3d.html An article on Gallium3D] by Zack Rusin
+*[http://lwn.net/Articles/257417/ LWN article] by Jonathan Corbet, November 2007
+*[http://stecchino.blip.tv/file/1181861/ Presentation about Gallium3D] (video from [[Akademy]] 2008)
+*[http://www.bitblit.org/gsoc/g3dvl/ BitBlit.org: Generic GPU-Accelerated Video Decoding] (GSoC project using Gallium)
+*[http://llvm.org/ Low Level Virtual Machine] (Dynamic recompiler backend used by Gallium)
+*[http://revolf.free.fr/FOSDEM/2010/FOSDEM2010_ALTOS_007_Gallium3D.pdf Update on Gallium3d on Haiku and Aros.], FOSDEM 2010, 7th February 2010
+*[http://akademy2008.kde.org/conference/slides/zack-akademy2008.pdf Gallium3D - Graphics Done Right] Zack Rusin. Presentation at [[AKademy]] 2008
+*[http://www.lunarg.com/wordpress/technologies/gallium-3d/gallium3d-online-developers-workshop/ Gallium3D Workshop 2009] (slides and videos)
+
+{{DEFAULTSORT:Gallium3d}}
+[[Category:3D graphics software]]
+[[Category:Free system software]]
+[[Category:Graphics libraries]]
+[[Category:Freedesktop.org]]
+
+[[cs:Gallium3D]]
+[[lv:Gallium3D]]
+[[ja:Gallium3D]]
+[[pl:Gallium3D]]
+[[ru:Gallium3D]]</body> </html>

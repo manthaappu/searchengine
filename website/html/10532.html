@@ -1,0 +1,89 @@
+<html> <head> <title>Diode logic</title></head><body>'''Diode logic''' or '''diode-resistor logic''' constructs [[Boolean logic|Boolean]] [[logic gate]]s from [[diodes]] acting as electrically operated switches.  While diode logic has the advantage of simplicity, the lack of an amplifying stage in each gate limits its application.  Not all logical functions can be implemented in diode logic alone; only the non-[[inverter (logic gate)|inverting]] logical [[AND gate|AND]] and logical [[OR gate|OR]] functions can be realized by diode gates.  If several diode logic gates are cascaded, the voltage levels at each stage are significantly changed, so one-stage applications are used.
+
+
+== Diode logic gate versions ==
+
+In logic gates, logical functions are performed by parallel or series connected switches controlled by input logical variables. In diode logic, electrically operated switches are implemented by diodes: when forward biased, a diode switch is closed; when backward biased, the switch is open. There are two kinds of diode logic gates - OR and AND; it is not possible to construct NOT diode gate. The explanations below are true for positive logic (high voltage represents ''logical one''; low voltage represents ''logical zero'').
+
+=== Diode OR logic gate ===
+
+[[image:Diode-OR2.png|thumb|right|250px|In a diode OR gate, the output voltage is high if only one input voltage is high; the output voltage is low if all the input voltages are low.]]
+
+OR logic gates are implemented by parallel connected ''normally open'' switches. So, in diode OR logic gates, the input voltage sources are connected to diode anodes; diode cathodes are joined to the output (Node 1 in the figure), which is connected through the [[pull-down]] resistor R1 to ground.
+
+'''Input logical one.'''  If the voltage of a particular input voltage source is high (input logical ''1''), the according diode is forward biased and this diode switch is closed. The input source passes current through the diode and creates high voltage drop across the resistor R1 (output logical ''1''). The rest of diodes connected to low input voltage (input logical ''0s'') are backward biased and their input sources (grounds) are disconnected from the output.
+
+'''Input logical zeros.''' If all the input voltages are low (input logical ''0s''), the voltage drops across the diodes are zero; these diode switches are open and the input sources (grounds) are disconnected from the output. No current flows through the resistor; the output voltage is low (output logical ''0'') and the output resistance is R1.
+
+If two diode OR logic gates are cascaded, they behave as ''current-sourcing'' logic gates: if the first gate produces high output voltage, the second gate consumes current from the first one; if the first gate produces low output voltage, the second gate does not inject current into the output of the first one. A diode OR gate does not use its own power supply; the input sources with high voltage (logical ''1'') supply the load through the forward-biased diodes.
+
+=== Diode AND logic gate ===
+
+==== Basic idea ====
+
+AND logic gates are implemented by series connected ''normally open'' switches. So, diode AND logic gates should be implemented by series connected diode switches (like an [[NMOS|NMOS AND gate]] that is implemented by series connected transistor switches). However, in contrast to transistors, diodes are two-terminal switching elements, in which the input and output are not separated; they are the same. As a result, series connected diode switches cannot be driven by grounded input voltage sources. To solve this problem, diode AND gates are constructed in the same manner as OR diode gates - by parallel connected diode switches.<ref group="nb">The same idea is used in the input stage of [[Transistor-transistor logic|TTL logic gates]] where base-emitter junctions are connected in parallel.</ref> However, to obtain AND instead OR function according to [[De Morgan's laws]], the input and output logical variables are inverted:
+
+:''Y'' = NOT ((NOT (''X1'') OR NOT (''X2'')) = NOT (NOT (''X1'' AND ''X2'')) = ''X1'' AND ''X2'',
+
+where ''X1'' and ''X2'' are the two input logical variables; ''Y'' is the output variable.
+
+Therefore, the diode AND logic gate is a modified diode OR logic gate: ''the diode AND gate is actually a diode OR gate with inverted inputs and output''.
+
+==== Implementation ====
+
+[[image:Diode-AND2.png|thumb|right|250px|In a diode AND gate, the output voltage is high if all the input voltages are high; the output voltage is low if only one input voltage is low.]]
+
+To realize the basic idea, the diodes are ''reverse connected'' and ''forward biased'' by an additional voltage source ''+V'' (a power supply) through the [[pull-up]] resistor R1. The input voltage sources are connected in opposite direction to the supplying voltage source (traveling along the loop +V - R1 - D - Vin).
+
+'''Input logical ones.''' When all the input voltages are high, they "neutralize" the biasing supply voltage ''+V''; the voltage drops across the diodes are zero and these diode switches are open. The output voltage is high (output logical ''1'') since no current flows through the resistor and there is no voltage drop across it; the output resistance is R1. Hence, the behavior of the diode switches is reversed - whereas in diode OR logic gates diodes act as ''normally open switches'', in diode AND logic gates diodes act as ''normally closed switches''.
+
+'''Input logical zero.''' If the voltage of some input voltage source is low (input logical ''0''), the power supply passes current through the resistor, diode and the input source. The diode is forward biased (the diode switch is closed) and the output voltage drop across the diode is low (output logical ''0''); the output resistance is low and is determined by the input source. The rest of diodes connected to high input voltages (input logical ''1s'') are backward biased and their input sources are disconnected from the output Node 1.
+
+If two diode AND logic gates are cascaded, they behave as ''current-sinking'' logic gates: if the first gate produces high output voltage, the second gate does not consume current from the first one; if the first gate produces low output voltage, the second gate injects current into the output of the first one. A diode AND gate uses its own power supply to drive the load through the pull-up resistor.
+
+== Properties ==
+
+=== Non-restoring logic ===
+
+[[image:Diode Logic Problem 1.svg|thumb|right|250px|In cascaded AND-OR diode gates, the high voltage level is decreased more than two times.]]
+
+Digital logic implemented by active elements is characterized by signal restoration. ''True'' and ''false'' or ''1'' and ''0'' are represented by two specific voltage levels. If the inputs to a digital logic gate is close to their respective levels, the output will be closer or exactly equal to its desired level. Active logic gates may be integrated in large numbers because each gate tends to remove noise at its input. Diode logic gates are implemented by passive elements; so, they have two restoration problems.
+
+'''Forward voltage drop.''' The first restoration problem of diode logic is that there is a voltage drop V<sub>F</sub> about 0.6 V across the forward-biased diode. This voltage is added to or subtracted from the input of every gate so that it accumulates when identical diode gates are cascaded. In an OR gate, V<sub>F</sub> decreases the high voltage level (the logical ''1'') while in an AND gate, it increases the low voltage level (the logical ''0''). The feasible number of logic stages thus depends on the difference between the high and low voltages.
+
+'''Source resistance.''' Another problem of diode logic is the internal resistance of the input voltage sources. Together with the gate resistor, it constitues a voltage divider that worsens the voltage levels. In an OR gate, the source resistance decreases the high voltage level (the logical ''1'') while in an AND gate, it increases the low voltage level (the logical ''0''). In the cascaded AND-OR diode gates in the picture on the right, the AND high output voltages are decreased because of the internal voltage drops across the AND pull-up resistances.<ref>[http://www.play-hookey.com/digital/electronics/dl_gates.html Diode logic]</ref>
+
+=== Non-inverting logic ===
+
+Diode logic is non-inverting in both the OR and AND configurations: a diode OR gate is ''true non-inverting'' (''Y'' = ''X'' in the case of one-input OR gate) while a diode AND gate is non-inverting since it is ''double inverting'' (''Y'' = NOT ((NOT (''X'')) = ''X'' in the case of one-input AND gate; see the considerations [[#Basic idea|above]]). Diode AND gate would be inverting if the voltage drop across the resistor is taken as an output but the load would be not grounded in this case.
+
+== Applications ==
+
+Diode logic gates were used in 60's to implement [[Diode-transistor logic|diode-transistor logic gates]] (DTL).
+
+The outputs of conventional ICs (with complementary output stages) must never be directly connected together since they act as voltage sources<ref group="nb">The outputs of conventional ICs with complementary output stages may be connected together if they always are at the same voltages.</ref> However, diodes can be used to combine two or more digital (high/low) outputs from an IC such as a counter. This [[wired logic connection]] can be a useful way of producing simple logic functions without using additional logic gates<ref>[http://www.kpsec.freeuk.com/components/ic.htm Integrated Circuits (Chips)]</ref>
+
+Powerful diode OR circuits are used in the simple UPS to switch between the main and the standby supply sources. If the voltage drops across diodes can be neglected, diodes are good at forming OR gates for multiple current sources.
+
+== Notes ==
+{{reflist|group=nb}}
+
+==References==
+<references/>
+
+== See also ==
+
+* [[Logic gate]]
+* [[Wired logic connection]]
+* [[Diode-transistor logic]]
+* [[Transistor-transistor logic]]
+
+== External links ==
+
+*[http://www.robotroom.com/Joystick2.html "Joystick Controller: Using Diodes to Create OR Circuits"] by David Cook
+
+{{Logic Families}}
+
+[[Category:Logic families]]
+
+[[id:Logika dioda–resistor]]</body> </html>

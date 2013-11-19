@@ -1,0 +1,129 @@
+<html> <head> <title>QBasic</title></head><body>{{Infobox programming language
+|name = QBasic
+|logo = [[Image:QBasic Opening Screen.png|300px|The opening screen of QBasic.]]
+|paradigm =
+|year = 1991 - 2000
+|designer =
+|developer = [[Microsoft|Microsoft Corporation]]
+|latest_release_version =
+|latest_release_date =
+|typing =
+|implementations =
+|dialects =
+|influenced_by = [[QuickBASIC]], [[GW-BASIC]]
+|influenced =
+|current version =
+|operating_system = [[MS-DOS]], [[Windows 95]], [[Windows 98]], [[Windows Me]], [[PC-DOS]], [[OS/2]], [[eComStation]]
+|license = [[Microsoft|MS]]-[[EULA]]
+|website = [http://www.microsoft.com/ www.microsoft.com]
+}}
+
+'''QBasic''' is an [[integrated development environment|IDE]] and [[Interpreted language|interpreter]] for a variant of the [[BASIC programming language]] which is based on [[QuickBASIC]]. Code entered into the IDE is compiled to an intermediate form, and this intermediate form is immediately interpreted on demand within the IDE.<ref name="GBvsQB"/> It can run under nearly all versions of [[DOS]] and [[Microsoft Windows|Windows]], or through [[DOSBox]]/[[DOSEMU]], on [[Linux]] and [[FreeBSD]].<ref>{{cite web|url=http://penguinpetes.com/b2evo/index.php?title=howto_play_with_your_old_qbasic_programs|title=HOWTO Play With Your Old QBasic Programs on Linux|date=2007-03-31|accessdate=2008-06-28|author=}}</ref> For its time, QBasic provided a state-of-the-art IDE, including a [[debugger]] with features such as on-the-fly expression evaluation and code modification.
+
+Like QuickBASIC, but unlike earlier versions of Microsoft BASIC, QBasic is a [[structured programming]] language, supporting constructs such as [[subroutines]] and [[while loop]]s.<ref>{{cite web|url=http://www.qbasicnews.com/qboho/qcksub.shtml|title=QBASIC Manual: SUB...END SUB Statement QuickSCREEN|date=|accessdate=2008-06-28|author=}}</ref><ref>{{cite web|url=http://www.qbasicnews.com/qboho/qckwend.shtml|title=QBASIC Manual: WHILE...WEND Statement QuickSCREEN|date=|accessdate=2008-06-28|author=}}</ref>  [[Line number]]s, a concept often associated with BASIC, are supported for compatibility, but are not considered good form, having been replaced by descriptive [[line label]]s.<ref name="GBvsQB">{{cite web|url=http://support.microsoft.com/kb/73084|title=Differences Between GW-BASIC and QBasic|date=2003-05-12|accessdate=2008-06-28|author=}}</ref> QBasic has limited support for user-defined data types ([[record (computer science)|structures]]), and several primitive types used to contain strings of text or numeric data.<ref>{{cite web|url=http://www.qbasicnews.com/qboho/qcktype.shtml|title=QBASIC Manual: TYPE Statement QuickSCREEN|date=|accessdate=2008-06-28|author=}}</ref><ref>{{cite web|url=http://www.qbasicnews.com/qboho/qckadvr@l8207.shtml|title=QBASIC Manual: Limits - Names, Strings, and Numbers|date=|accessdate=2008-06-28|author=}}</ref>
+
+==History==
+QBasic was intended as a replacement for [[GW-BASIC]]. It was based on the earlier [[Microsoft QuickBASIC compiler|QuickBASIC]] 4.5 compiler but without QuickBASIC's compiler and linker elements.  Version 1.0 was shipped together with [[MS-DOS]] 5.0 and higher, as well as [[Windows 95]], [[Windows NT 3.1|Windows NT 3.x]], and [[Windows NT 4.0]]. [[IBM]] recompiled QBasic and included it in [[IBM PC-DOS|PC-DOS]] 5.x, as well as [[OS/2]] 2.0 onwards.<ref name="name">{{cite web|url=http://www.emsps.com/oldtools/msbasv.htm#qbasic|title=Microsoft BASIC version information|accessdate=2008-06-12}}</ref> [[eComStation]], descended from OS/2 code, includes QBasic 1.0. QBasic 1.1 is included with MS-DOS 6.x, and, without EDIT, in [[Windows 95]], [[Windows 98]] and [[Windows Me]]. Starting with [[Windows 2000]], Microsoft no longer includes QBasic with their operating systems.<ref>{{cite web|url=http://support.microsoft.com/kb/258265|title=QBasic Missing from Windows 2000|date=2007-03-01|accessdate=2008-06-12}}</ref> (However, some localized versions of [[Windows 2000]] and [[Windows XP]] still have it,and it can be given out as freeware.)
+
+QBasic (as well as the built-in [[MS-DOS Editor]]) is backward compatible with DOS releases prior to 5.0 (down to at least DOS 3.20). However, if used on any [[Intel 8088|8088]]/[[Intel 8086|8086]] computers, or on some [[Intel 80286|80286]] computers, the QBasic program may run very slowly, or perhaps not at all, due to its memory size. Until MS-DOS 7, MS-DOS Editor required QBasic. The "edit.com" program simply starts QBasic in editor mode only, and this mode can also be entered by running QBASIC.EXE with the /EDIT switch (i.e., command line "QBASIC /EDIT").
+
+==Examples==
+QBasic came complete with four pre-written example programs. These were "[[Nibbles (computer game)|Nibbles]]" (a variant of the [[Snake (video game)|Snake]] game), "[[Gorillas (computer game)|Gorillas]]", an [[Artillery game]], "MONEY MANAGER", a personal finance manager and "RemLine", a GW-BASIC code line-number-removing program.<ref name="GBvsQB"/>
+
+==="[[Hello, World!]]"===
+
+<source lang="qbasic">
+PRINT "Hello, World!"
+</source>
+
+===Simple game===
+
+This program challenges the user to guess a randomly selected number within the 1-10 range, without offering the usual hints of "higher"/"lower":
+
+<source lang="qbasic">
+CLS
+PRINT "Guess My Number"
+INPUT "Would you like to play"; choice$     'An input statement, that takes what the user inputs...
+choice$ = UCASE$(choice$)                   ' makes the input completely uppercase (fkld ---> FKLD)
+IF choice$ <> "YES" AND choice$ <> "Y" THEN ' and decides whether or not they want to play:
+       END
+END IF
+guesses% = 5                                ' Set up number of guess remaining
+RANDOMIZE TIMER                             ' Sets up the random number generator
+target% = INT(RND * 10) + 1
+WHILE guesses% > 0
+  INPUT "Guess a number: ", guess%           ' Takes user input (the guess)
+  IF guess% = target% THEN                   ' Determines if the guess was correct
+    PRINT "You win!"
+    END
+  ELSE
+    guesses% = guesses% - 1
+    PRINT "Sorry, please try again. You have ";guesses%;" guesses left."
+  END IF
+WEND
+
+PRINT "You ran out of guesses, the number was "; target%
+END
+</source>
+
+==Easter egg==
+QBasic has a little-known [[Easter egg (virtual)|Easter egg]]. To see it, press and hold {{keypress|Left CTRL|Left SHIFT|Left ALT}} and {{keypress|Right CTRL|Right SHIFT|Right ALT}} simultaneously after running QBasic at the DOS prompt but before the title screen loads: this lists ''The Team'' of programmers.<ref name="name">{{cite web|url=http://www.eeggs.com/items/817.html|title=QBasic - Developer Credits|date=1999-07-23|accessdate=2008-06-12}}</ref> Note that on modern computers, it is much too fast to perform. It is best done on an old PC (preferably one with a working [[Turbo button]], with the switch on to slow the CPU to 4.77 MHz) or in an emulator like [[Bochs]] or [[DOSBox]] which can be slowed down.
+
+==See also==
+{{wikibooks|QBasic}}
+
+* [[DarkBASIC]]
+* [[FreeBASIC]]
+* [[Just Basic]]
+* [[PowerBASIC]]
+* [[PureBasic]]
+* [[QB64]]
+* [[True Basic]]
+* [[Visual Basic]]
+* [[Blitz Basic]]
+* [[Liberty BASIC]]
+* [[Run BASIC]]
+* [[SmallBASIC]]
+
+==References==
+{{reflist|1}}
+
+==External links==
+*[http://download.microsoft.com/download/win95upg/tool_s/1.0/w95/en-us/olddos.exe Download QBASIC 1.1 from Microsoft] (included in the "Old MS-DOS Utilities" part of [http://support.microsoft.com/kb/135315 Windows 95 CD-ROM Extras])
+*[http://www.petesqbsite.com/sections/express/express.shtml QB Express - Online magazine about QBasic programming]
+*[http://www.qbasicstation.com  The QBasic Station ] - Created in 1997 by Jack Thomson, it is one of the oldest, but still active, QBasic sites on the web.
+
+{{BASIC}}
+
+[[Category:BASIC interpreters]]
+[[Category:Discontinued Microsoft BASICs]]
+[[Category:Procedural programming languages]]
+[[Category:Structured programming languages]]
+[[Category:DOS software]]
+[[Category:Articles with example BASIC code]]
+
+[[bs:QBasic]]
+[[bg:QBasic]]
+[[ca:QBasic]]
+[[cs:QBasic]]
+[[de:QBasic]]
+[[es:QBASIC]]
+[[fa:کیو بیسیک]]
+[[fr:QBasic]]
+[[ko:큐베이직]]
+[[hr:QBasic]]
+[[it:QBASIC]]
+[[ms:QBasic]]
+[[nl:QBasic]]
+[[ja:QBasic]]
+[[no:QBasic]]
+[[pl:QBasic]]
+[[pt:QBasic]]
+[[ru:QBasic]]
+[[simple:QBasic]]
+[[sr:QBasic]]
+[[fi:QBasic]]
+[[sv:QBasic]]
+[[tl:QBasic]]
+[[tg:QBASIC]]
+[[zh:QBASIC]]</body> </html>

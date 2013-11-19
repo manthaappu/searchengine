@@ -1,0 +1,111 @@
+<html> <head> <title>RenderMan Interface Specification</title></head><body>The '''RenderMan Interface Specification'''<ref>{{cite web 
+| title      = RenderMan - Developers Corner - RI Spec
+| url        = http://renderman.pixar.com/products/rispec/
+| accessdate = 2009-06-12}}</ref>, or ''RISpec'' in short, is an open [[Application programming interface|API]] developed by [[Pixar|Pixar Animation Studios]] to describe three dimensional scenes and turn them into digital [[Photorealism|photorealistic]] images. It includes the [[RenderMan Shading Language]].
+
+As Pixar's technical specification for a standard [[communications protocol]] (or [[interface (computer science)|interface]]) between modeling programs and rendering programs capable of producing photorealistic-quality images, RISpec is a similar concept to [[PostScript]] but for describing 3D [[scene]]s rather than 2D page layouts. Thus, modelling programs which understand the RenderMan Interface protocol can send data to rendering software which implements the RenderMan Interface, without caring what [[rendering (computer graphics)|rendering]] [[algorithm]]s are utilized by the latter.
+
+The interface was first published in 1988 (version 3.0) and was designed to be sufficiently [[future proof]] to encompass advances in technology for a significant number of years. The current revision is 3.2.1, released in November 2005.
+
+==RenderMan Interface Specification==
+What set the RISpec apart from other standards of the time was that it allowed using high-level geometric primitives, like quadrics or bicubic patches, to specify geometric primitives implicitly, rather than relying on a modeling application to generate polygons approximating these shapes explicitly beforehand. Another novelty introduced by the RISpec at the time was the specification of a [[shading language]] (SL).
+
+The [[RenderMan Shading Language|RenderMan shading language]] allows [[Procedural textures|material definition]]s of [[surface]]s to be described not only by adjusting a small set of parameters, but in an arbitrarily complex fashion by using a [[C (programming language)|C]]-like programming language to write [[shading]] procedures commonly known as [[procedural textures]] and [[shader]]s. Lighting, and displacements on the surface are also programmable using the [[SL]] language.  The shading language allows each statement to be executed in a [[SIMD]] manner, but does not insist on it.  Another feature that sets renderers based on the RISpec apart from many other renderers is the ability to output arbitrary variables as an image; surface normals, separate lighting passes and pretty much anything else can be output from the renderer in a single pass.
+
+RenderMan has much in common with [[OpenGL]], despite the two APIs being targeted to different sets of users (OpenGL to real-time hardware-assisted rendering and RenderMan to photorealistic off-line rendering). Both APIs take the form of a stack-based state machine with (conceptually) immediate rendering of geometric primitives. It is possible to implement either API in terms of the other.
+
+===Required capabilities===
+For a renderer, in order to call itself "RenderMan-compliant", it must implement at least the following capabilities:
+*A complete hierarchical graphics state, including the attribute and transformation stacks and the active light list.
+*[[Orthographic projection|Orthographic]] and [[Perspective projection|perspective]] viewing transformations.
+*Depth-based [[Hidden surface determination|hidden-surface]] elimination.
+*[[Signal reconstruction|Pixel filtering]] and [[anti-aliasing]].
+*[[Gamma correction]] and [[dithering]] before [[Quantization (image processing)|quantization]].
+*Output of images containing any combination of RGB, A, and Z. The resolutions of these files must be as specified by the user.
+*All of the [[geometric primitive]]s described in the specification, and provide all of the standard primitive variables applicable to each primitive.
+*The ability to perform shading calculations through user-programmable shading
+*The ability to index texture maps, environment maps, and shadow depth maps
+*The fifteen standard light source, surface, volume, displacement, and imager shaders required by the specification. Any additional shaders, and any deviations from the standard shaders presented in this specification, must be documented by providing the equivalent shader expressed in the RenderMan [[shading language]].
+
+===Optional advanced capabilities===
+Additionally, the renderer may implement any of the following optional capabilities:
+* [[Area light sources]]
+* [[Depth of field]]
+* [[Displacement mapping]]
+* [[Reflection mapping|Environment mapping]]
+* [[Global illumination]]
+* [[Level of detail]]    
+* [[Motion blur]]
+* [[Special camera projections]]
+* [[Spectral colors]]
+* [[Ray tracing (graphics)|Ray tracing]]
+* [[Solid modeling]]
+* [[Volume shading]]
+
+===Exporters===
+* For [[3D Studio Max]]: [http://www.archonus.com/ PaxRendus] by Archonus (discontinued)
+* For [[Blender (software)|Blender]]: [http://ribmosaic.wiki.sourceforge.net/ Mosaic] ([[open source]])
+
+* For [[Lightwave]]:
+** [http://www.td-grafik.de/softw/lightman.php?lang=en LightMan] by  Tim Dapper
+** [http://www.garagepost.tv/renderman.htm Light-R] by Felipe Esquivel (free)
+
+* For [[Maya (software)|Maya]]:
+** [http://www.3delight.com/en/index.php/products/3delight_for_maya/3delight_maya_overview 3Delight for Maya]
+** [http://liquidmaya.sourceforge.net/ Liquid] ([[open source]])
+** [http://www.animallogic.com/?link=Products,MayaMan MayaMan] by AnimalLogic
+** [http://renderman.pixar.com/products/tools/rfm.html RenderMan for Maya] by Pixar
+
+* For [[Softimage XSI]]:
+** [http://www.3delight.com/en/index.php/products/3delight_for_maya/3delight_xsi_overview 3Delight for XSI]
+** [http://affogato.sf.net/ Affogato] by [[Rising Sun Pictures]] ([[open source]])
+** [http://www.graphicprimitives.com/ XSIMan] by Graphic Primitives
+
+===Tools===
+* [http://renderman.pixar.com/products/tools/rms.html RenderMan Studio]
+* [http://ribkit.sourceforge.net/ RIBKit] ([[open source]], various RenderMan tools, e.g. a visual shader building tool called 'SLer')
+* [http://www.3delight.com/ZDoc/3delight_16.html RIBShrink] and [http://www.3delight.com/ZDoc/3delight_17.html RIBDepends] (tools that come with [[3Delight]]. Shrink RIBs to take less diskspace and move RIBs with dependencies to a new location and/or localize dependencies)
+* [http://code.google.com/p/shaderman/ ShaderMan.Next] ([[open source]], free shader building tool. A rewrite of [http://www.dream.com.ua/thetool.html ShaderMan])
+
+==Language bindings==
+* [http://cgkit.sourceforge.net/ Python Computer Graphics Kit] for [[Python (programming language)|Python]]
+* [http://rubyforge.org/projects/rubyman/ RubyMan] for [[Ruby (programming language)|Ruby]]
+* [http://grt.luaforge.net G&RT] for [[Lua (programming language)|Lua]]
+
+==Further reading==
+* {{cite book | authorlink = Anthony Apodaca | first = Anthony A. | last = Apodaca | coauthors = [[Larry Gritz]], [[Ronen Barzel]] | title = Advanced RenderMan: Creating CGI for Motion Pictures | year = 1999 | location = San Francisco | publisher = Morgan Kaufmann Publishers | isbn = 1-55860-618-1 | oclc = 42621055 }}
+* {{cite book | authorlink = David S. Ebert | first = David S. | last = Ebert | coauthors = [[F. Kenton Musgrave]], [[Darwyn Peachey]], [[Ken Perlin]], [[Steven Worley]] | title = Texturing and modeling: a procedural approach, 3rd ed. | year = 2003 | location = Burlington, MA | publisher = Morgan Kaufmann Publishers | isbn = 1-55860-848-6 | oclc = 52689816 }}
+* {{cite book | authorlink = Saty Raghavachary | first = Saty | last = Raghavachary | title = Rendering for Beginners: Image synthesis using RenderMan | year = 2005 | location = Burlington, MA | publisher = [[Focal Press]] | isbn = 0-240-51935-3 | oclc = 57670361 }}
+* {{cite book | authorlink = Ian Stephenson (programmer)| first = Ian | last = Stephenson | title = Essential RenderMan Fast | year = 2002 | location = London, New York | publisher = Springer | isbn = 1-85233-608-0 | oclc = 50494960 }}
+* {{cite book | first = Steve | last = Upstill | authorlink = Steve Upstill | title = The RenderMan Companion: A Programmer's Guide to Realistic Computer Graphics | year = 1990 | location = Reading, Mass| publisher = [[Addison-Wesley]] | isbn = 0-201-50868-0 | oclc = 19741379 }}
+* {{cite book | authorlink = Rudy Cortes | first = Rudy | last = Cortes | coauthors = [[Saty Raghavachary]] | title = The RenderMan Shading Language Guide | year = 2007 | publisher = Course Technology PTR | isbn = 1-598-63286-8 }}
+
+==See also==
+* [[Reyes rendering]]
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://renderman.pixar.com/products/rispec/ Pixar's RI Specs] — the official specs.
+*[http://www.renderman.org/ RenderMan Repository]
+*[http://www.fundza.com/ CG References & Tutorials] by Prof. Malcolm Kesson
+*[http://accad.osu.edu/~smay/RManNotes/rmannotes.html RenderMan Notes] (notes on shader writing)
+*[http://www.vga.hr/resources/tutorials/3d/rsl/index.htm RenderMan Shader Language] by Dominik Susmel
+*[http://www.smartcg.com/tech/cg/books/RfB Rendering for Beginners] RIB files and shaders from the book
+
+{{Renderman software}}
+
+[[Category:RenderMan]]
+[[Category:3D graphics software]]
+[[Category:3D computer graphics]]
+
+[[de:RenderMan]]
+[[es:RenderMan]]
+[[fr:RenderMan]]
+[[gl:RenderMan]]
+[[it:RenderMan]]
+[[ja:RenderMan]]
+[[pt:RenderMan]]
+[[fi:RenderMan]]
+[[sv:RenderMan]]</body> </html>

@@ -1,0 +1,91 @@
+<html> <head> <title>Motorola 88000</title></head><body>{{Infobox CPU architecture
+| name       = M88000
+| designer   = [[Motorola]]
+| bits       = 32
+| introduced = 1988
+| version    =
+| design     = RISC
+| type       = Register-Register
+| encoding   = Fixed
+| branching  = Compare and branch
+| endianness = Bi
+| extensions = Graphics instructions (88110 only)
+| open       = No
+| gpr  = 32 32-bit
+| fpr = 32 80-bit (88110 only)
+}}
+The '''88000''' ('''m88k''' for short) is a [[RISC]] [[instruction set architecture]] (ISA) developed by [[Motorola]].  The 88000 was Motorola's attempt at a home-grown RISC architecture, started in the 1980s.  The 88000 arrived on the market  some two years after the competing [[SPARC]] and [[MIPS architecture|MIPS]]. Due to the late start and extensive delays releasing the second-generation MC88110, the m88k achieved very limited success outside of the [[MVME]] platform and embedded controller environments.
+
+Though sometimes referred to as '''A88k''', the [[Apollo PRISM]] is not related to the Motorola 88000.<ref>{{cite web |title=Motorola 88000 |url=http://www.classiccmp.org/pipermail/cctalk/2001-June/172643.html |publisher=ClassicCmp |accessdate=2009-06-16}}</ref>{{-}}
+
+__TOC__{{-}}
+
+== History ==
+Originally called the 78000 as a homage to their famed [[Motorola 68000|68000]] series, the design went through a tortured development path, including the name change, before finally emerging in April 1988.
+
+In the late 1980s several companies were actively watching the 88000 for future use, including [[NeXT]], [[Apple Computer]] and [[Apollo Computer]], but all gave up by the time the 88110 was available in 1990.
+
+There was an attempt to popularize the system with the [[88open]] group, similar to what [[Sun Microsystems]] was attempting with their [[SPARC]] design. It appears to have failed in any practical sense.<ref name="Standards Wars">{{cite web |title=STANDARDS WARS: SITUATIONS, STRATEGIES AND OUTCOMES |page=7 |url=http://www.consortiuminfo.org/bulletins/pdf/mar06/feature.pdf |format=PDF |publisher=ConsortiumInfo.org |year=2006|month=March |author=Updegrove, Andrew |accessdate=2009-06-16}}</ref>
+
+In the early 1990s Motorola joined the [[AIM alliance|AIM]] effort to create a new RISC design based on the [[IBM POWER]] design. They worked a few features of the 88000 into the new [[PowerPC]] design to offer their customer base some sort of upgrade path. At that point the 88000 was dumped as soon as possible.<ref name="Electronic News">{{cite web |title=Motorola PowerPC deal with Ford raises questions on 88K RISC fate |url=http://findarticles.com/p/articles/mi_m0EKF/is_n1964_v39/ai_13901767/ |date=May 24, 1993 |publisher=Electronic News |author=Zipper, Stuart |accessdate=2009-06-16}}</ref>
+
+==Architecture==
+Like the 68000 before it, the 88000 was considered to be a very "clean" design. It was a pure 32-bit load/store architecture, using separate instruction and data caches ([[Harvard architecture]]), and separate data and address buses. It had a small but powerful command set, and, like all Motorola CPUs, did not use memory segmentation.
+
+A major architectural mistake was that both integer instructions and floating-point instructions used the same [[register file]]. This required the single register file to have sufficient read and write ports to support both the integer execution unit and the floating-point unit. The connections for each port is an additional capacitive load that must be driven by register memory cell. This made it more difficult to build high frequency superscalar implementations. {{Citation needed|date=June 2010}}
+
+== Implementations ==
+[[Image:Motorola MC88100RC20 CPU overhead view.jpg|thumb|right|250px|Motorola 88100 RISC CPU]]
+The first implementation of the 88000 ISA was the [[MC88100]] [[microprocessor]], which included an integrated [[floating point unit|FPU]]. Mated to this was the MC88200 [[Memory management unit|MMU]] and [[CPU cache|cache]] controller. The idea behind this splitting of duties was to allow [[multiprocessor]] systems to be built more easily; a single MC88200 could support up to four MC88100s. However, this also meant that building the most basic system, with a single processor, required both chips and considerable wiring between them, driving up costs. This is likely another major reason for the 88000's limited success.
+
+[[Image:Motorola XC88110RS50G CPU overhead view.jpg|thumb|left|130px|Motorola 88110 RISC CPU]]
+This was later addressed by the [[superscalar]] [[MC88110]], which combined the CPU, FPU, MMU, and [[L1 cache]] into a single package. An additional modification, made at the behest of [[Massachusetts Institute of Technology|MIT]]'s *T project, resulted in the MC88110MP, including on-chip communications for use in multi-processor systems.<ref name="*T:">{{cite web |title=*T: Integrated Building Blocks for Parallel Computing |url=http://csg.csail.mit.edu/pubs/memos/Memo-351/Memo-351.pdf |format=PDF |date=July 28, 1993 |publisher=Massachusetts Institute of Technology |author=Papadopoulos et al. |accessdate=2009-06-16}}</ref> A version capable of speeds up to 100 MHz was planned as the MC88120, but was never built.
+
+An implementation for embedded applications, the MC88300, was under development during the early 1990s, but was eventually canceled. Ford was the only design win, and they were offered a PowerPC design as a replacement, which they accepted.
+
+== Products and applications ==
+[[Image:Mvme-197le.jpg|thumb|right|[[Motorola Single Board Computers|MVME-197LE]]]]
+Motorola released a series of [[single-board computer]]s, known as the [[Motorola Single Board Computers|MVME]] series, for building "out of the box" systems based on the 88000, as well as the Series 900 ''stackable'' computers employing these MVME boards. Unlike tower or [[rack mount]] systems, the Series 900 sat on top of each other and connected to one another with bus-like cabling. The concept never caught on.
+
+[[Network Computing Devices|NCD]] used the 88100 (without the 88200) in its 88K [[X_Window_System#X_terminals|X-Terminals]].  The 88110 made it into some versions of a never released [[NeXT]] machine, the [[NeXT RISC Workstation]], but the project was canceled along with all NeXT hardware projects in 1993.  The 4-processor [[OMRON]] luna88k machines from Japan used the m88k, and were used for a short time on the [[Mach kernel]] project at [[Carnegie Mellon University]].  A number of similar smaller systems were also built, but none are widely known.
+
+In the embedded computer space, the "Tri-channel VMS Computer" in the [[F-15 S/MTD]] used three 88000s in a triply-redundant computer.<ref name="VMS">{{cite web |title=PSC Implementation and Integration |page=63 |url=http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19950026593_1995126593.pdf |format=PDF |publisher=NASA |author=Nobbs, Steven G |accessdate=2009-06-16}}</ref>
+
+Major users were limited. The only widespread third-party computer use would be in the [[Data General AViiON]] series. These were fairly popular, and remain in limited use today. [[Encore Computer]] built their Encore-91 machine on the m88k, then introduced a completely ground-up redesign as the Infinity 90 series, but it is unclear how many of these machines were sold. In the early 1990s [[Northern Telecom]] used the 88100 and 88110 as the central processor in its [[Digital Multiplex System|DMS]] SuperNode family of telephone switches. All of these users were forced to move to other processors when Motorola later gave up on the m88k; DG went to Intel, Encore to the [[DEC Alpha|Alpha]].
+
+[[GEC Computers]] used the 88100 to build the GEC 4310, one of the [[GEC 4000 series]] computers, but issues with memory management meant it didn't perform as well as their earlier [[gate array]] based and [[Am2900]] based GEC 4000 series computers, and no more GEC systems were design using the 88000 family.
+
+The [[BBN Butterfly]] model TC-2000 used the 88100 processor, and scaled to 512 CPUs.
+
+[[Linotype-Hell]] used the 88110 in their "Power" workstations running the [[Linotype-Hell DaVinci|DaVinci]] [[raster graphics editor]] for image manipulation.
+
+Dolphin Server, a spin-off from the dying Norsk Data built servers based on the 88k. Around 100 systems were shipped during 1988-1992.
+
+[[Alpha Microsystems]] originally planned to migrate to the 88K architecture from the [[Motorola 68000]], and internally created a machine around it running [[UNIX System V]], but it was later scrapped in favour of later 68K derivatives.<ref>http://ampm.floodgap.com/www/models.htm</ref>
+
+{{-}}
+
+== Operating system support ==
+Motorola released its own [[UNIX System V]] derivative, System V/88, for its 88000-based systems.  There were two major releases: Release 3.2 Version 3 and Release 4.0 Version 3.<ref name="UNIX System V/88">{{cite web |title=Motorola System V/88 R4v3.1 |url=http://alge.anart.no/projects/dolphin/comp.newprod-1991 |date=November 2, 1991 |publisher=Motorola Computer Group |author=Patterson, Barbara |accessdate=2009-06-16}}</ref>  Data General AViiON systems ran [[DG/UX]].  [[OpenBSD]] ports exist for the MVME systems<ref name="OpenBSD/mvme88k">[http://www.openbsd.org/mvme88k.html OpenBSD/mvme88k]</ref>, LUNA-88K workstations<ref name="OpenBSD/luna88k">[http://www.openbsd.org/luna88k.html OpenBSD/luna88k]</ref>, and Data General AViiON systems.<ref name="OpenBSD/aviion">[http://www.openbsd.org/aviion.html OpenBSD/aviion]</ref>  At least one unofficial experimental [[NetBSD]] port exists for the MVME systems.<ref name="NetBSD/m88k">[http://trac.gds.radiofreeomaha.net/NetBSD NetBSD/m88k] Unofficial port of NetBSD 3.x</ref>
+
+== References ==
+{{Reflist}}
+
+==External links==
+* [http://badabada.org/index.html Badabada.org] Comprehensive Motorola 88k CPU and computer information.
+
+{{Motorola_processors}}
+
+{{RISC-based processor architectures}}
+
+[[Category:Motorola microprocessors]]
+[[Category:Instruction set architectures]]
+
+[[de:Motorola 88000er-Familie]]
+[[et:88000]]
+[[es:Motorola 88000]]
+[[it:Motorola 88000]]
+[[ja:MC88000]]
+[[pl:M88000]]
+[[sv:Motorola 88000]]
+[[vi:Motorola 88000]]</body> </html>

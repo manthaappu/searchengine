@@ -1,0 +1,20 @@
+<html> <head> <title>Small world routing</title></head><body>In [[network theory]], '''small world routing''' refers to [[Network routing|routing methods]] for [[small-world network]]s. Networks of this type are peculiar in that relatively short paths exist between any two nodes. Determining these paths, however, can be a difficult problem from the perspective of an individual routing node in the network if no further information is known about the network as a whole.
+
+==Greedy Routing==
+Nearly every solution to the problem of routing in small world involves the application of [[Greedy algorithm|greedy]] routing. This sort of routing depends on a relative reference point by which any node in the path can choose the next node it believes is closest to the destination. That is, there must be something to be greedy about. For example, this could be geographic location, IP address, etc. In the case of [[Small world phenomenon|Milgram's original small-world experiment]], participants knew the location and occupation of the final recipient and could therefore forward messages based on those parameters.
+
+==Constructing a Reference Base==
+Greedy routing will not readily work when there is no obvious reference base. This can occur, for example, in [[overlay network]]s where information about the destination's location in the underlying network is not available. [[Friend to friend]] networks are a particular example of this problem. In such networks, trust is ensured by the fact that you only know underlying information about nodes with whom you are already a neighbor.
+
+One solution in this case, is to impose some sort of artificial addressing on the nodes in such a way that this addressing can be effectively used by greedy routing methods. A [http://www.math.chalmers.se/~ossa/swroute.pdf 2005 paper] by a developer of the [[Freenet|Freenet Project]] discusses how this can be accomplished in [[friend to friend]] networks. Given the assumption that these networks exhibit small world properties, often as the result of real-world or acquaintance relationships, it should be possible to recover an embedded [[Jon Kleinberg|Kleinberg]] small-world graph. This is accomplished by selecting random pairs of nodes and potentially swapping them based on an [[objective function]] that minimizes the product of all the distances between any given node and its neighbors.
+
+An important problem involved with this solution is the possibility of [[local minima]]. This can occur if nodes are in a situation that is optimal only considering a local neighborhood, while ignoring the possibility of a higher optimality resulting from swaps with distant nodes. In the above paper, the authors proposed a [[simulated annealing]] method where less-than-optimal swaps were made with a small probability. This probability was proportional to the value of making the switches. Another possible [[metaheuristic]] optimization method is a [[tabu search]], which adds a memory to the swap decision. In its most simplistic form, a limited history of past swaps is remembered so that they will be excluded from the list of possible swapping nodes.
+
+This method for constructing a reference base can also be adapted to distributed settings, where decisions can only be made at the level of individual nodes who have no knowledge of the overall network. It turns out that the only modification necessary is in the method for selecting pairs of random nodes. In a distributed setting, this is done by having each node periodically send out a [[random walk|random walker]] terminating at a node to be considered for swapping.
+
+==See also==
+* [[Social network]]
+* [[Small-world network]]
+
+
+[[Category:Network theory]]</body> </html>

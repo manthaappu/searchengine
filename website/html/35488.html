@@ -1,0 +1,76 @@
+<html> <head> <title>Stable roommates problem</title></head><body>In [[mathematics]], especially in the fields of [[game theory]] and [[combinatorics]], the '''stable roommate problem (SRP)''' OR '''LIAR (e. g.= Y. A.) roommate problem (LRP)''' is the problem of finding a '''stable matching''' &mdash; a [[Matching (graph theory)|matching]] in which there is no pair of elements, each from a different matched set, where each member of the pair prefers the other to their match.  This is different from the [[stable marriage problem]] in that the stable roommates problem does not require that a set is broken up into male and female subsets. Any person can prefer anyone in the same set.
+
+It is commonly stated as:
+: In a given instance of the Stable Roommates problem (SRP), each of ''2n'' participants ranks the others in strict order of preference. A matching is a set of ''n'' disjoint (unordered) pairs of participants. A matching ''M'' in an instance of SRP is stable if there are no two participants ''x'' and ''y'', each of whom prefers the other to his partner in ''M''. Such a pair is said to block ''M'', or to be a blocking pair with respect to ''M''.
+
+==Solution==
+
+Unlike the [[stable marriage problem]], the stable roommates may not, in general, have a solution. For a minimal counterexample, consider 4 people A, B, C and D where all prefer each other to D, and A prefers B over C, B prefers C over A, and C prefers A over B (so each of A,B,C is the most favorite of someone). In any solution, one of A,B,C must be paired with D and the other 2 with each other, yet D's partner and the one for whom D's partner is most favorite would each prefer to be with each other.
+
+==Algorithm==
+An efficient algorithm was given in {{harv|Irving|1985}}. The algorithm will determine, for any instance of the problem, whether a stable matching exists, and if so, will find such a matching.
+
+Irving's algorithm has O(''n''<sup>2</sup>) complexity, provided suitable data structures are used to facilitate manipulation of the preference lists and identification of rotations (see below).
+
+The algorithm consists of two phases. In the first phase, participants ''propose'' to each other, in a manner similar to that of the Gale Shapley algorithm for the [[stable marriage problem]]. Participants propose to each person on their preference list, in order, continuing to the next person if and when their current proposal is rejected.  A participant rejects a proposal if he already holds, or subsequently receives, a proposal from someone he prefers. In this first phase, one participant might be rejected by all of the others, an indicator that no stable matching is possible. Otherwise, Phase 1 ends with each person holding a proposal from one of the others – this situation can be represented as a set ''S'' of ordered pairs of the form (''p'',''q''), where ''q'' holds a proposal from ''p'' – we say that ''q'' is ''p'''s current ''favourite''. In the case that this set represents a matching, i.e., (''q'',''p'') is in ''S'' whenever (''p'',''q'') is, the algorithm terminates with this matching, which is bound to be stable.
+
+Otherwise the algorithm enters Phase 2, in which the set ''S'' is repeatedly changed by the application of so-called rotations. Suppose that (''p'',''q'') is in the set ''S'' but (''q'',''p'') is not. For each such ''p'' we identify his current ''second favourite'' to be the first successor of ''q'' in ''p'''s preference list who would reject the proposal that he holds in favour of ''p''. A ''rotation'' relative to ''S'' is a sequence (''p''<sub>0</sub>,''q''<sub>0</sub>), (''p''<sub>1</sub>,''q''<sub>1</sub>),. . ., (''p''<sub>''k''-1</sub>,''q''<sub>''k''-1</sub>) such that (''p''<sub>''i''</sub>,''q''<sub>''i''</sub>) is in ''S'' for each ''i'', and ''q''<sub>''i''+1</sub> is ''p''<sub>''i''</sub>'s current second favourite (where ''i'' + 1 is taken modulo ''k'').  If, such a rotation (''p''<sub>0</sub>,''q''<sub>0</sub>), . . . , (''p''<sub>2''k''</sub>,''q''<sub>2''k''</sub>), of odd length, is found such that ''p''<sub>''i''</sub> = ''q''<sub>''i''+''k''+1</sub> for all ''i'' (where ''i'' + ''k'' + 1 is taken modulo 2''k'' + 1), this is what is referred to as an  ''odd party'', which is also an indicator that there is no stable matching.  Otherwise, application of the rotation involves replacing the pairs (''p''<sub>''i''</sub>,''q''<sub>''i''</sub>), in S by the pairs (''p''<sub>''i''</sub>,''q''<sub>''i''+1</sub>), (where ''i'' + 1 is again taken modulo ''k'').
+
+Phase 2 of the algorithm can now be summarised as follows:
+
+<source lang="java">
+	S = output of Phase 1;
+	while (true) {
+	    identify a rotation r in S;
+	    if (r is an odd party)
+		return null; (there is no stable matching)
+	    else
+		apply r to S;
+	    if (S is a matching)
+		return S; (guaranteed to be stable)
+	}
+</source>
+
+====Example====
+The following are the preference lists for a Stable Roommates instance involving 6 participants ''p''<sub>1</sub>, ''p''<sub>2</sub>, ''p''<sub>3</sub>, ''p''<sub>4</sub>, ''p''<sub>5</sub>, ''p''<sub>6</sub>.
+
+''p''<sub>1</sub> : {{pad|1em}}  ''p''<sub>3</sub> {{pad|1em}}  ''p''<sub>4</sub> {{pad|1em}}  ''p''<sub>2</sub> {{pad|1em}}  ''p''<sub>6</sub>  {{pad|1em}} ''p''<sub>5</sub> <br />
+''p''<sub>2</sub> : {{pad|1em}}  ''p''<sub>6</sub> {{pad|1em}}  ''p''<sub>5</sub> {{pad|1em}}  ''p''<sub>4</sub> {{pad|1em}}  ''p''<sub>1</sub>  {{pad|1em}} ''p''<sub>3</sub> <br />
+''p''<sub>3</sub> : {{pad|1em}}  ''p''<sub>2</sub> {{pad|1em}}  ''p''<sub>4</sub> {{pad|1em}}  ''p''<sub>5</sub> {{pad|1em}}  ''p''<sub>1</sub>  {{pad|1em}} ''p''<sub>6</sub> <br />
+''p''<sub>4</sub> : {{pad|1em}}  ''p''<sub>5</sub> {{pad|1em}}  ''p''<sub>2</sub> {{pad|1em}}  ''p''<sub>3</sub> {{pad|1em}}  ''p''<sub>6</sub>  {{pad|1em}} ''p''<sub>1</sub> <br />
+''p''<sub>5</sub> : {{pad|1em}}  ''p''<sub>3</sub> {{pad|1em}}  ''p''<sub>1</sub> {{pad|1em}}  ''p''<sub>2</sub> {{pad|1em}}  ''p''<sub>4</sub>  {{pad|1em}} ''p''<sub>6</sub> <br />
+''p''<sub>6</sub> : {{pad|1em}}  ''p''<sub>5</sub> {{pad|1em}}  ''p''<sub>1</sub> {{pad|1em}}  ''p''<sub>3</sub> {{pad|1em}}  ''p''<sub>4</sub>  {{pad|1em}} ''p''<sub>2</sub> 
+
+A possible execution of Phase 1 consists of the following sequence of proposals and rejections, where  → represents ''proposes to'' and &times; represents ''rejects''.
+
+''p''<sub>1</sub> &rarr; ''p''<sub>3</sub> <br />
+''p''<sub>2</sub> &rarr; ''p''<sub>6</sub> <br />
+''p''<sub>3</sub> &rarr; ''p''<sub>2</sub> <br />
+''p''<sub>4</sub> &rarr; ''p''<sub>5</sub> <br />
+''p''<sub>5</sub> &rarr; ''p''<sub>3</sub>; {{pad|1em}} ''p''<sub>3</sub> &times; ''p''<sub>1</sub> <br />
+''p''<sub>1</sub> &rarr; ''p''<sub>4</sub> <br />
+''p''<sub>6</sub> &rarr; ''p''<sub>5</sub>; {{pad|1em}} ''p''<sub>5</sub> &times; ''p''<sub>6</sub> <br />
+''p''<sub>6</sub> &rarr; ''p''<sub>1</sub>
+
+So Phase 1 ends with the set ''S'' = {(''p''<sub>1</sub>,''p''<sub>4</sub>), (''p''<sub>2</sub>,''p''<sub>6</sub>), (''p''<sub>3</sub>,''p''<sub>2</sub>), (''p''<sub>4</sub>,''p''<sub>5</sub>), (''p''<sub>5</sub>,''p''<sub>3</sub>), (''p''<sub>6</sub>,''p''<sub>1</sub>)}.
+
+In Phase 2, the rotation ''r''<sub>1</sub> = (''p''<sub>1</sub>,''p''<sub>4</sub>), (''p''<sub>3</sub>,''p''<sub>2</sub>) is first identified. This is because ''p''<sub>2</sub> is ''p''<sub>1</sub>'s second favourite, and ''p''<sub>4</sub> is the second favourite of ''p''<sub>3</sub>. Applying ''r''<sub>1</sub> gives the new set ''S'' = {(''p''<sub>1</sub>,''p''<sub>2</sub>), (''p''<sub>2</sub>,''p''<sub>6</sub>), (''p''<sub>3</sub>,''p''<sub>4</sub>), (''p''<sub>4</sub>,''p''<sub>5</sub>), (''p''<sub>5</sub>,''p''<sub>3</sub>), (''p''<sub>6</sub>,''p''<sub>1</sub>)}. Next, the rotation ''r''<sub>2</sub> = (''p''<sub>1</sub>,''p''<sub>2</sub>), (''p''<sub>2</sub>,''p''<sub>6</sub>), (''p''<sub>4</sub>,''p''<sub>5</sub>) is identified, and application of ''r''<sub>2</sub> gives ''S'' = {(''p''<sub>1</sub>,''p''<sub>6</sub>), (''p''<sub>2</sub>,''p''<sub>5</sub>), (''p''<sub>3</sub>,''p''<sub>4</sub>), (''p''<sub>4</sub>,''p''<sub>2</sub>), (''p''<sub>5</sub>,''p''<sub>3</sub>), (''p''<sub>6</sub>,''p''<sub>1</sub>)}. Finally, the rotation ''r''<sub>3</sub> = (''p''<sub>2</sub>,''p''<sub>5</sub>), (''p''<sub>3</sub>,''p''<sub>4</sub>) is identified, application of which gives ''S'' = {(''p''<sub>1</sub>,''p''<sub>6</sub>), (''p''<sub>2</sub>,''p''<sub>4</sub>), (''p''<sub>3</sub>,''p''<sub>5</sub>), (''p''<sub>4</sub>,''p''<sub>2</sub>), (''p''<sub>5</sub>,''p''<sub>3</sub>), (''p''<sub>6</sub>,''p''<sub>1</sub>)}. This is a matching, and is guaranteed to be stable.
+
+==Applications==
+{{Empty section|date=February 2008}}
+
+==References==
+
+*{{citation | title=An efficient algorithm for the "stable roommates" problem | journal = Journal of Algorithms | volume=6 | year=1985 | pages=577–595 | first1=Robert W. | last1=Irving | doi=10.1016/0196-6774(85)90033-1 | issue=4 }}
+*{{citation | title=The Stable Roommates Problem with Ties | first1=Robert W. | last1=Irving | first2=David F. | last2=Manlove | journal=Journal of Algorithms | volume=43 | pages=85–105 | year=2002 | url=http://eprints.gla.ac.uk/11/01/SRT.pdf | doi=10.1006/jagm.2002.1219 | issue=1 }}
+
+{{game theory}}
+
+{{DEFAULTSORT:Stable Roommates Problem}}
+[[Category:Combinatorics]]
+[[Category:Game theory]]
+[[Category:Cooperative games]]
+[[Category:Matching]]
+
+[[ja:安定結婚問題]]
+[[zh:穩定婚姻問題]]</body> </html>

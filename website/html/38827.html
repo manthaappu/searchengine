@@ -1,0 +1,105 @@
+<html> <head> <title>Union of two regular languages</title></head><body>{{Orphan|date=February 2009}}
+In [[formal language]] theory, and in particular the theory of [[nondeterministic finite state machine]]s, it is known that the '''union of two regular languages''' is a [[regular language]]. This article provides a proof of that statement.
+
+==Theorem==
+
+For any regular languages <math>L_{1}</math> and <math>L_{2}</math>, language <math>L_{1}\cup L_{2}</math> is regular.''
+
+''Proof'' 
+
+Since <math>L_{1}</math> and <math>L_{2}</math> are regular, there exist NFA's <math>N_{1},\  N_{2}</math> that recognize 
+
+<math>L_{1}</math> and <math>L_{2}</math>.
+
+Let 
+
+::<math> N_{1} = (Q_{1},\ \Sigma ,\ T_{1},\ q_{1},\ A_{1})</math>
+
+::<math> N_{2} = (Q_{2},\ \Sigma ,\ T_{2},\ q_{2},\ A_{2})</math>
+  
+Construct
+
+::	<math>N = (Q,\ \Sigma ,\ T,\ q_{0},\ A_{1}\cup A_{2})</math>
+	
+where
+
+::<math>Q = Q_{1}\cup Q_{2}\cup\{q_{0}\}</math>
+
+::<math>T(q,x) = \left\{\begin{array}{lll}
+											T_{1}(q,x) & \mbox{if} & q\in Q_{1} \\
+											T_{2}(q,x) & \mbox{if} & q\in Q_{2} \\
+											\{q_{1}, q_{2}\} & \mbox{if} & q = q_{0}\ and\ x =\epsilon\\
+											\phi & \mbox{if} & q = q_{0}\ and\ x\neq\epsilon
+											\end{array}\right.
+</math>
+
+In the following, we shall use <math>p\stackrel{x,T}{\rightarrow}q</math> to denote <math>q\in E(T(p,x))</math>
+
+Let <math>w</math> be a string from <math>L_{1}\cup L_{2}</math>
+
+<math>w\in L_{1}\  or\  w\in L_{2}</math>
+
+Assume <math>w\in L_{1}</math> (Proof would be similar if <math>w\in L_{2}</math>)
+
+Let <math>w = x_{1}x_{2}\cdots x_{m}</math> where <math>m\geq 0, x_{i}\in\Sigma</math>
+
+Since <math>N_{1}</math>  accepts <math>x_{1}x_{2}\cdots x_{m}</math>, there exist <math>r_{0}, r_{1},\cdots r_{m}\in Q_{1}</math> such that
+	
+::<math>	q_{1}\stackrel{\epsilon , T_{1}}{\rightarrow}r_{0}\stackrel{x_{1} , T_{1}}{\rightarrow}r_{1}\stackrel{x_{2} , T_{1}}{\rightarrow}r_{2}\cdots r_{m-1}\stackrel{x_{m} , T_{1}}{\rightarrow}r_{m}, r_{m}\in A_{1}
+</math>
+
+Since <math>T_{1}(q,x) = T(q,x)\ \forall q\in Q_{1}\forall x\in\Sigma</math>
+
+::	<math>r_{0}\in E(T_{1}(q_{1},\epsilon ))\Rightarrow r_{0}\in E(T(q_{1},\epsilon ))</math>
+
+::	<math>r_{1}\in E(T_{1}(r_{0},x_{1} ))\Rightarrow r_{1}\in E(T(r_{0},x_{1} ))</math>
+
+::::	<math>\vdots</math>
+
+::	<math>r_{m}\in E(T_{1}(r_{m-1},x_{m} ))\Rightarrow r_{m}\in E(T(r_{m-1},x_{m} ))</math>
+
+
+We can therefore substitute <math>T</math> for <math>T_{1}</math> and rewrite the above path as
+
+
+	<math>q_{1}\stackrel{\epsilon , T}{\rightarrow}r_{0}\stackrel{x_{1} , T}{\rightarrow}r_{1}\stackrel{x_{2} , T}{\rightarrow}r_{2}\cdots r_{m-1}\stackrel{x_{m} , T}{\rightarrow}r_{m}, r_{m}\in A_{1}\cup A_{2}, r_{0}, r_{1},\cdots r_{m}\in Q</math>
+
+
+Furthermore,
+
+::	<math>
+\begin{array}{lcl}
+T(q_{0}, \epsilon) = \{q_{1}, q_{2}\} & \Rightarrow & q_{1}\in T(q_{0}, \epsilon)\\
+						\\ & \Rightarrow & q_{1}\in E(T(q_{0}, \epsilon))\\
+						\\ & \Rightarrow & q_{0}\stackrel{\epsilon , T}{\rightarrow}q_{1}
+\end{array}
+</math>
+
+and 
+
+::	<math>q_{0}\stackrel{\epsilon , T}{\rightarrow}q_{1}\stackrel{\epsilon , T}{\rightarrow}r_{0}\Rightarrow q_{0}\stackrel{\epsilon , T}{\rightarrow}r_{0}
+</math>
+
+
+The above path can be rewritten as
+
+
+:<math>q_{0}\stackrel{\epsilon , T}{\rightarrow}r_{0}\stackrel{x_{1} , T}{\rightarrow}r_{1}\stackrel{x_{2} , T}{\rightarrow}r_{2}\cdots r_{m-1}\stackrel{x_{m} , T}{\rightarrow}r_{m}, r_{m}\in A_{1}\cup A_{2}, r_{0}, r_{1},\cdots r_{m}\in Q
+</math>
+
+
+Therefore, <math>N</math> accepts <math>x_{1}x_{2}\cdots x_{m}</math> and the proof is complete.
+
+
+'''Note:'''    The idea drawn from this mathematical proof for constructing 
+
+a machine to recognize <math>L_{1}\cup L_{2}</math> is to create an initial state and connect 
+
+it to the initial states of <math>L_{1}</math> and <math>L_{2}</math> using <math>\epsilon</math> arrows.
+
+== References ==
+* Michael Sipser, ''Introduction to the Theory of Computation'' ISBN 0-534-94728-X. ''(See . Theorem 1.22, section 1.2, pg. 59.)''
+
+
+[[Category:Article proofs]]
+[[Category:Formal languages]]</body> </html>

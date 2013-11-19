@@ -1,0 +1,41 @@
+<html> <head> <title>Pseudolocalization</title></head><body>{{Unreferenced|date=June 2009}}
+'''Pseudolocalization''' is a [[software testing]] method that is used to test [[Internationalization and localization|internationalization]] aspects of software.  Specifically, it brings to light potential difficulties with localization by replacing localizable text (particularly in a [[graphical user interface]]) with text that imitates the most problematic characteristics of text from a wide variety of [[language]]s, and by forcing the application to deal with similar input text.
+
+If used properly, it provides a cheap but effective [[sanity test]] for localizability that can be helpful in the early stages of a software project.
+
+== Rationale ==
+
+If software is not designed with localizability in mind, certain problems can occur when the software is localized.  Text in a target language may tend to be significantly longer than the corresponding text in the original language of the program, causing the ends of text to be cut off if insufficient space is allocated.  Words in a target language may be longer, causing awkward line breaks.  In addition, individual characters in a target language may require more space, causing [[Diacritic|modified]] characters to be cut off vertically, for example. Even worse, characters of a target language may fail to render properly (or at all) if support for an appropriate font is not included. (This is a larger problem for legacy software than for newer programs.)  On the input side, programmers may make inappropriate assumptions about the form that user input can take.
+
+== Method ==
+
+For small changes to mature software products, for which a large amount of target text is already available, directly testing several target languages may be the best option.  For newer software (or for larger user-interface changes), however, waiting for text to be translated can introduce a significant lag into the testing schedule.  In addition, it may not be cost-effective to translate UI text early in the development cycle, as it might change and need to be retranslated.  Here, pseudolocalization can be the best option, as no real translation is needed.
+
+Typically, pseudolocalized text (pseudo-translation) for a program will be generated and used as if it were for a real [[locale]].  Pseudolocalized text should be longer than the original text (perhaps twice as long), contain longer unbroken strings of characters to test line breaking, and contain characters from different [[writing system]]s.  A tester will then inspect each element of the UI to make sure everything is displayed properly.  To make it easier for the tester to find his or her way around the UI, the text may include the original text, or perhaps characters that look similar to the original text.  For example, the string:
+
+ Edit program settings
+
+might be replaced with:
+ [!!! εÐiţ Þr0ģЯãm səTτıИğ§ !!!]
+
+The brackets on either side of the text make it easier to spot text that is cut off. This type of transformation can be performed by a simple tool and does not require a human translator, resulting in time and cost savings. 
+
+Alternatively, a [[machine translation|machine translation system]] can be used for automatically generating translated strings. This type of machine-generated pseudolocalization has the advantage of the translated strings featuring the characteristics specific to the target language and being available in real time at very low cost.
+
+One approach to automatically generating translated strings is to add non-ASCII characters at the beginning and end of the existing text. This allows the existing text to still be read, but clearly identifies what text has been externalized and what text has not been externalized and exposes UI issues such as the need to accommodate longer text strings. This allows regular QA staff to test that the code has been properly internationalized.
+
+== See also ==
+{{Portal|Software Testing}}
+
+* [[Fuzz testing]]
+
+* [[Localization testing]]
+
+==References==
+[http://blogs.msdn.com/b/e7/archive/2009/07/07/engineering-windows-7-for-a-global-market.aspx Engineering Windows 7 for a Global Market]
+{{reflist}}
+
+[[Category:Software testing]]
+[[Category:Internationalization and localization]]
+
+[[zh:偽翻譯]]</body> </html>

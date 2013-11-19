@@ -1,0 +1,102 @@
+<html> <head> <title>Proofs involving ordinary least squares</title></head><body>{{Unreferenced|date=February 2010}}
+The purpose of this page is to provide supplementary materials for the [[Ordinary least squares]] article, reducing the load of the main article with mathematics and improving its accessibility, while at the same time retaining the completeness of exposition.
+
+== Least squares estimator for ''β'' ==
+
+Using matrix notation, the sum of squared residuals is given by
+
+: <math>S(b) = (y-Xb)'(y-Xb) \,</math>
+
+Since this is a quadratic expression and ''S''(''b'') ≥ 0, the global minimum will be found by [[Matrix_calculus#Examples|differentiating]] it with respect to ''b'':
+
+: <math> 0 = \frac{dS}{db'}(\hat\beta) = \frac{d}{db'}\bigg(y'y - b'X'y - y'Xb + b'X'Xb\bigg)\bigg|_{b=\hat\beta} = -2X'y + 2X'X\hat\beta</math>
+
+By assumption matrix ''X'' has full column rank, and therefore ''X'X'' is invertible and the least squares estimator for ''β'' is given by
+
+: <math> \hat\beta = (X'X)^{-1}X'y \, </math>
+
+== Unbiasedness of β&#770; ==
+Plug ''y'' = ''Xβ'' + ''ε'' into the formula for <math>\hat\beta</math> and then use the [[Law of iterated expectation]]:
+
+: <math>\operatorname{E}[\,\hat\beta] = \operatorname{E}\Big[(X'X)^{-1}X'(X\beta+\varepsilon)\Big]
+            = \beta + \operatorname{E}\Big[(X'X)^{-1}X'\varepsilon\Big] 
+            = \beta + \operatorname{E}\Big[\operatorname{E}\Big[(X'X)^{-1}X'\varepsilon|X \Big]\Big]
+            = \beta + \operatorname{E}\Big[(X'X)^{-1}X'\operatorname{E}[\varepsilon|X]\Big] = \beta,</math>
+
+where E[''ε''|''X''] = 0 by assumptions of the model.
+
+== Expected value of σ&#770;<sup>2</sup> ==
+First we will plug in the expression for ''y'' into the estimator, and use the fact that ''X'M'' = ''MX'' = 0 (matrix ''M'' projects onto the space orthogonal to ''X''):
+
+: <math> \hat\sigma^2 = \tfrac{1}{n}y'My = \tfrac{1}{n} (X\beta+\varepsilon)'M(X\beta+\varepsilon) = \tfrac{1}{n} \varepsilon'M\varepsilon </math>
+
+Now we can recognize ''ε'Mε'' as a 1×1 matrix, such matrix is equal to its own [[trace]]. This is useful because by properties of trace operator, '''tr'''(''AB'')='''tr'''(''BA''), and we can use this to separate disturbance ''ε'' from matrix ''M'' which is a function of regressors ''X'':
+
+: <math> \operatorname{E}\,\hat\sigma^2
+         = \tfrac{1}{n}\operatorname{E}\big[\operatorname{tr}(\varepsilon'M\varepsilon)\big] 
+         = \tfrac{1}{n}\operatorname{tr}\big(\operatorname{E}[M\varepsilon\varepsilon']\big)</math>
+
+Using the [[Law of iterated expectation]] this can be written as
+
+: <math>\operatorname{E}\,\hat\sigma^2
+         = \tfrac{1}{n}\operatorname{tr}\Big(\operatorname{E}\big[M\,\operatorname{E}[\varepsilon\varepsilon'|X]\big]\Big)
+         = \tfrac{1}{n}\operatorname{tr}\big(\operatorname{E}[\sigma^2MI]\big)
+         = \tfrac{1}{n}\sigma^2\operatorname{E}\big[ \operatorname{tr}\,M \big] </math>
+
+Recall that ''M'' = ''I'' &minus; ''P'' where ''P'' is the projection onto linear space spanned by columns of matrix ''X''. By properties of a [[projection matrix]], it has ''p'' = rank(''X'') eigenvalues equal to 1, and all other eigenvalues are equal to 0. Trace of a matrix is equal to the sum of its characteristic values, thus tr(''P'')=''p'', and tr(''M'') = ''n'' &minus; ''p''. Therefore
+
+: <math>\operatorname{E}\,\hat\sigma^2 = \frac{n-p}{n} \sigma^2</math>
+
+Note: in the later section [[#Maximum_likelihood_approach|“Maximum likelihood”]] we show that under the additional assumption that errors are distributed normally, the estimator <math>\hat\sigma^2</math> is proportional to a chi-squared distribution with ''n'' – ''p'' degrees of freedom, from which the formula for expected value would immediately follow. However the result we have shown in this section is valid regardless of the distribution of the errors, and thus has importance on its own.
+
+== Consistency and asymptotic normality of β&#770; ==
+Estimator <math>\hat\beta</math> can be written as
+: <math>\hat\beta = \big(\tfrac{1}{n}X'X\big)^{-1}\tfrac{1}{n}X'y 
+                  = \beta + \big(\tfrac{1}{n}X'X\big)^{-1}\tfrac{1}{n}X'\varepsilon 
+                  = \beta\; + \;\bigg(\frac{1}{n}\sum_{i=1}^n x_ix'_i\bigg)^{\!\!-1} \bigg(\frac{1}{n}\sum_{i=1}^n x_i\varepsilon_i\bigg)</math>
+We can use the [[law of large numbers]] to establish that 
+: <math>\frac{1}{n}\sum_{i=1}^n x_ix'_i\ \xrightarrow{p}\ \operatorname{E}[x_ix_i']=Q_{xx}, \qquad 
+        \frac{1}{n}\sum_{i=1}^n x_i\varepsilon_i\ \xrightarrow{p}\ \operatorname{E}[x_i\varepsilon_i]=0</math>
+By [[Slutsky's theorem]] and [[continuous mapping theorem]] these results can be combined to establish consistency of estimator <math>\hat\beta</math>:
+: <math>\hat\beta\ \xrightarrow{p}\ \beta + Q_{xx}^{-1}\cdot 0 = \beta</math>
+
+The [[central limit theorem]] tells us that
+: <math>\frac{1}{\sqrt{n}}\sum_{i=1}^n x_i\varepsilon_i\ \xrightarrow{d}\ \mathcal{N}\big(0,\,V\big),</math> where  <math>V = \operatorname{Var}[x_i\varepsilon_i] = \operatorname{E}[\,\varepsilon_i^2x_ix'_i\,] = \operatorname{E}\big[\,\operatorname{E}[\varepsilon_i^2|x_i]\;x_ix'_i\,\big] = \sigma^2 Q_{xx}</math>
+
+Applying Slutsky's theorem again we'll have
+: <math>\sqrt{n}(\hat\beta-\beta) = \bigg(\frac{1}{n}\sum_{i=1}^n x_ix'_i\bigg)^{\!\!-1} \bigg(\frac{1}{\sqrt{n}}\sum_{i=1}^n x_i\varepsilon_i\bigg)\ \xrightarrow{d}\ Q_{xx}^{-1}\cdot\mathcal{N}\big(0,\sigma^2Q_{xx}\big) = \mathcal{N}\big(0,\sigma^2Q_{xx}^{-1}\big)</math>
+
+== Maximum likelihood approach ==
+[[Maximum likelihood estimation]] is a generic technique for estimating the unknown parameters in a statistical model by constructing a log-likelihood function corresponding to the joint distribution of the data, then maximizing this function over all possible parameter values. In order to apply this method, we have to make an assumption about the distribution of y given X so that the log-likelihood function can be constructed.  The connection of maximum likelihood estimation to OLS arises when this distribution is modeled as a [[Multivariate normal distribution|multivariate normal]].
+
+Specifically, assume that the errors ε have multivariate normal distribution with mean 0 and variance matrix ''σ''<sup>2</sup>''I''. Then the distribution of ''y'' conditionally on ''X'' is
+: <math>y|X\ \sim\ \mathcal{N}(X\beta,\, \sigma^2I)</math>
+and the log-likelihood function of the data will be
+: <math>\begin{align}
+  \mathcal{L}(\beta,\sigma^2|X) 
+    &= \ln\bigg( \frac{1}{(2\pi)^{n/2}|\sigma^2I|^{1/2}}e^{ -\frac{1}{2}(y-X\beta)'(\sigma^2I)^{-1}(y-X\beta) } \bigg) \\
+    &= -\frac{n}{2}\ln 2\pi - \frac{n}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}(y-X\beta)'(y-X\beta)
+  \end{align}</math>
+Differentiating this expression with respect to ''β'' and ''σ''<sup>2</sup> we'll find the ML estimates of these parameters:
+: <math>\begin{align}
+  & \frac{\partial\mathcal{L}}{\partial\beta'} = -\frac{1}{2\sigma^2}\Big(-2X'y + X'X\beta\Big)=0 \quad\Rightarrow\quad \hat\beta = (X'X)^{-1}X'y \\
+  & \frac{\partial\mathcal{L}}{\partial\sigma^2} = -\frac{n}{2}\frac{1}{\sigma^2} + \frac{1}{2\sigma^4}(y-X\beta)'(y-X\beta)=0 \quad\Rightarrow\quad \hat\sigma^2 = \frac{1}{n}(y-X\hat\beta)'(y-X\hat\beta) = \frac{1}{n}S(\hat\beta)
+  \end{align}</math>
+We can check that this is indeed a maximum by looking at the [[Hessian matrix]] of the log-likelihood function.
+
+=== Finite sample distribution ===
+Since we have assumed in this section that the distribution of error terms is known to be normal, it becomes possible to derive the explicit expressions for the distributions of estimators <math>\hat\beta</math> and <math>\hat\sigma^2</math>:
+: <math>\hat\beta = (X'X)^{-1}X'y = (X'X)^{-1}X'(X\beta+\varepsilon) = \beta + (X'X)^{-1}X'\mathcal{N}(0,\sigma^2I)</math>
+so that by the [[Multivariate_normal_distribution#Affine_transformation|affine transformation properties of multivariate normal distribution]]
+: <math>\hat\beta|X\ \sim\ \mathcal{N}(\beta,\, \sigma^2(X'X)^{-1}).</math>
+
+Similarly the distribution of <math>\hat\sigma^2</math> follows from
+: <math>\hat\sigma^2 = \tfrac{1}{n}(y-X(X'X)^{-1}X'y)'(y-X(X'X)^{-1}X'y) = \tfrac{1}{n}(My)'My=\tfrac{1}{n}(X\beta+\varepsilon)'M(X\beta+\varepsilon) = \tfrac{1}{n}\varepsilon'M\varepsilon,</math>
+where <math>M=I-X(X'X)^{-1}X'</math> is the symmetric [[projection matrix]] onto subspace orthogonal to ''X'', and thus ''MX = X'M = ''0. We have argued [[#Expected_value_of_.CF.83.CC.82.C2.B2|before]] that this matrix has rank of ''n–p'', and thus by properties of [[Chi-squared_distribution#Related_distributions_and_properties|chi-squared distribution]],
+: <math>\tfrac{n}{\sigma^2} \hat\sigma^2|X = (\varepsilon/\sigma)'M(\varepsilon/\sigma)\ \sim\ \chi^2_{n-p}</math>
+
+Moreover, the estimators <math>\hat\beta</math> and <math>\hat\sigma^2</math> turn out to be [[Independent random variables|independent]] (conditional on ''X''), a fact which is fundamental for construction of the classical t- and F-tests. The independence can be easily seen from following: the estimator <math>\hat\beta</math> represents coefficients of vector decomposition of <math>\hat{y}=X\hat\beta=Py=X\beta+P\varepsilon</math> by the basis of columns of ''X'', as such <math>\hat\beta</math> is a function of ''Pε''. At the same time, the estimator <math>\hat\sigma^2</math> is a norm of vector ''Mε'' divided by ''n'', and thus this estimator is a function of ''Mε''. Now, random variables ''(Pε, Mε)'' are jointly normal as a linear transformation of ''ε'', and they are also uncorrelated because ''PM = ''0. By properties of multivariate normal distribution, this means that ''Pε'' and ''Mε'' are independent, and therefore estimators <math>\hat\beta</math> and <math>\hat\sigma^2</math> will be independent as well.
+
+[[Category:Article proofs]]
+[[Category:Regression analysis]]
+[[Category:Least squares]]</body> </html>

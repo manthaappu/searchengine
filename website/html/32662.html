@@ -1,0 +1,79 @@
+<html> <head> <title>S3 Texture Compression</title></head><body>'''S3 Texture Compression''' ('''S3TC''') (sometimes also called '''DXTn''' or '''DXTC''') is a group of related [[lossy compression|lossy]] [[texture compression]] [[algorithm]]s originally developed by Iourcha et al. of [[S3 Graphics|S3 Graphics, Ltd.]] <ref>{{patent|US|5956431|"Fixed-rate block-based image compression with inferred pixel values"}}</ref> for use in their [[Savage 3D]] computer graphics accelerator. The method of compression is strikingly similar to the previously published [[Color Cell Compression]] <ref>1990 IEEE Color Cell Compression Paper[http://ieeexplore.ieee.org/iel5/498/3989/00152671.pdf]</ref> which is in turn an adaptation of [[Block Truncation Coding]] published in the late 70s. Unlike some image compression algorithms (e.g. JPEG), S3TC's fixed-rate data compression coupled with the single memory access (cf. Color Cell Compression and some [[Vector quantization|VQ]]-based schemes) made it ideally suited for use in compressing [[texture mapping|textures]] in hardware accelerated [[3D computer graphics]]. Its subsequent inclusion in [[Microsoft]]'s [[DirectX]] 6.0 led to widespread adoption of the technology among hardware and software makers. While S3 Graphics is no longer a leading competitor in the graphics accelerator market, license fees are still levied and collected for the use of S3TC technology, for example in [[game console]]s.
+
+==Codecs==
+
+There are five variations of the S3TC algorithm (named '''DXT1''' through '''DXT5''', referring to the [[FOURCC]] code assigned by Microsoft to each format), each designed for specific types of image data. All convert a 4x4 block of pixels to a 64-[[bit]] or 128-bit quantity, resulting in compression ratios of 8:1 or 4:1 with 32-bit [[RGBA]] input data. S3TC is a [[lossy data compression|lossy]] compression algorithm, resulting in image quality degradation, an effect which is minimized by the ability to increase texture resolutions while maintaining the same memory requirements. Hand-drawn cartoon-like images do not compress well, nor do [[normal map]] data, both of which usually generate [[Compression artifacts|artifacts]]. [[ATI Technologies|ATI]]'s [[3Dc]] compression algorithm is a modification of DXT5 designed to overcome S3TC's shortcomings with regard to normal maps.  [[Id Software]] worked around the normalmap compression issues in [[Doom 3]] by moving the red component into the alpha channel before compression and moving it back during rendering in the [[pixel shader]].<ref>DOOM 3 Video Requirements [http://www.gamershell.com/news/14362.html]</ref>
+
+Like many modern image compression algorithms, S3TC only specifies the method used to decompress images, allowing implementers to design the compression algorithm to suit their specific needs, although the patent still covers compression algorithms. The early compression routines were not optimal, and although since greatly improved, hindered early adoption of S3TC by developers. The nVidia GeForce 1 through to GeForce 4 cards also used 16 bit interpolation to render DXT1 textures, which resulted in banding when unpacking textures with color gradients. Again, this created an unfavorable impression of texture compression, not related to the fundamentals of the codec itself.
+
+== DXT1 ==
+DXT1 is the smallest variation of S3TC, storing 16 input pixels in 64 bits of output, consisting of two 16-bit RGB 5:6:5 color values and a 4x4 two bit lookup table.
+
+If the first color value (<math>c_0</math>) is numerically greater than the second color value (<math>c_1</math>), then two other colors are calculated, such that <math>c_2 = {2 \over 3} c_0 + {1 \over 3} c_1</math> and <math>c_3 = {1 \over 3} c_0 + {2 \over 3} c_1</math>.
+This mode operates similarly to mode 0xC0 of the [[QuickTime#QuickTime 1.x|original Apple Video codec]].<ref>Togni, Roberto, et al. "[http://wiki.multimedia.cx/index.php?title=Apple_RPZA Apple RPZA]". MultimediaWiki.</ref>
+
+Otherwise, if <math>c_0 \le c_1</math>, then <math>c_2 = {1 \over 2} c_0 + {1 \over 2} c_1</math> and <math>c_3</math> is transparent black corresponding to a [[Alpha compositing|premultiplied alpha format]].
+
+The lookup table is then consulted to determine the color value for each pixel, with a value of 0 corresponding to <math>c_0</math> and a value of 3 corresponding to <math>c_3</math>. DXT1 does not store alpha data enabling higher compression ratios.
+<br style="clear:both;" />
+
+== DXT2 and DXT3 ==
+DXT2 and DXT3 converts 16 input pixels into 128 bits of output, consisting of 64 bits of [[alpha channel]] data (four bits for each pixel) followed by 64 bits of color data, encoded the same way as DXT1 (with the exception that the 4 color version of the DXT1 algorithm is always used instead of deciding which version to use based on the relative values of <math>c_0</math> and <math>c_1</math>). In DXT2, the color data is interpreted as being premultiplied by alpha, in DXT3 it is interpreted as not having been premultiplied by alpha. Typically DXT2/3 are well suited to images with sharp alpha transitions, between translucent and opaque areas.
+<br style="clear:both;" />
+
+== DXT4 and DXT5 ==
+DXT4 and DXT5 converts 16 input pixels into 128 bits of output, consisting of 64 bits of alpha channel data (two 8 bit alpha values and a 4x4 3 bit lookup table) followed by 64 bits of color data (encoded the same way as DXT2 and DXT3).
+
+If <math>\alpha_0 > \alpha_1</math>, then six other alpha values are calculated, such that <math>\alpha_2 = {{6\alpha_0 + 1\alpha_1} \over 7}</math>, <math>\alpha_3 = {{5\alpha_0 + 2\alpha_1} \over 7}</math>, <math>\alpha_4 = {{4\alpha_0 + 3\alpha_1} \over 7}</math>, <math>\alpha_5 = {{3\alpha_0 + 4\alpha_1} \over 7}</math>, <math>\alpha_6 = {{2\alpha_0 + 5\alpha_1} \over 7}</math>, and <math>\alpha_7 = {{1\alpha_0 + 6\alpha_1} \over 7}</math>.
+
+Otherwise, if <math>\alpha_0 \le \alpha_1</math>, four other alpha values are calculated such that <math>\alpha_2 = {{4\alpha_0 + 1\alpha_1} \over 5}</math>, <math>\alpha_3 = {{3\alpha_0 + 2\alpha_1} \over 5}</math>, <math>\alpha_4 = {{2\alpha_0 + 3\alpha_1} \over 5}</math>, and <math>\alpha_5 = {{1\alpha_0 + 4\alpha_1} \over 5}</math> with <math>\alpha_6 = 0</math> and <math>\alpha_7 = 255</math>.
+
+The lookup table is then consulted to determine the alpha value for each pixel, with a value of 0 corresponding to <math>\alpha_0</math> and a value of 7 corresponding to <math>\alpha_7</math>. DXT4's color data is premultiplied by alpha, whereas DXT5's is not. Because DXT4/5 use an interpolated alpha scheme, they generally produce superior results for alpha (transparency) gradients than DXT2/3.
+<br style="clear:both;" />
+
+== S3TC Format Comparison ==
+
+{| class="wikitable"
+|----- align="center"
+! FOURCC
+! DX 10 Name
+! Description
+! Alpha premultiplied?
+! Compression ratio
+! Texture Type
+|----- align="center"
+| DXT1 || BC1    || 1-bit Alpha / Opaque || N/A || 8:1 / 6:1(for 24 bit source image) || Simple non-alpha
+|----- align="center"
+| DXT2 || (none) || Explicit alpha || Yes || 4:1 || Sharp alpha
+|----- align="center"
+| DXT3 || BC2    || Explicit alpha || No || 4:1 || Sharp alpha
+|----- align="center"
+| DXT4 || (none) ||Interpolated alpha || Yes || 4:1 || Gradient alpha
+|----- align="center"
+| DXT5 || BC3    || Interpolated alpha || No || 4:1 || Gradient alpha
+|}
+
+==See also==
+* [[3Dc]]
+* [[FXT1]]
+* [[DirectDraw Surface]]
+* [[PVRTC]]
+
+== References ==
+{{reflist}}
+
+==External links==
+*[http://developer.nvidia.com/object/nv_texture_tools.html NVIDIA Texture Tools]
+*[http://www.ati.com/developer/tools.html ATI Developer: Tools]
+*[http://www.sjbrown.co.uk/?code=squish squish], an [[MIT license|MIT-licensed]] S3TC compressor. The site also contains [http://www.sjbrown.co.uk/?article=dxt an article] giving an introduction to compression algorithms.
+*[http://homepage.hispeed.ch/rscheidegger/dri_experimental/s3tc_index.html libxtc_dxtn], a BSD licensed module for Mesa
+*[http://www.digit-life.com/articles/reviews3tcfxt1/ Comparison between S3TC and FXT1 texture compression]
+*[http://web.archive.org/web/20030618083605/www.hardwarecentral.com/hardwarecentral/reports/140/1/ The Truth about S3TC] Note: This article used an early S3TC compression engine, not nVidia's or ATI's updated codecs.
+*[http://www.colecovision.eu/graphics/texture_compression.pdf Texture compression] survey
+
+[[Category:Lossy compression algorithms]]
+[[Category:Texture compression]]
+[[Category:3D computer graphics]]
+[[de:S3 Texture Compression]]
+[[ja:DXTC]]
+[[pt:S3tc]]</body> </html>

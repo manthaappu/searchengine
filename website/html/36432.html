@@ -1,0 +1,46 @@
+<html> <head> <title>Synthetic file system</title></head><body>In [[computer science]], a '''synthetic file system''' is a hierarchical interface to non-file objects that appear as if they were regular files in the tree of the disk-based [[filesystem]]. These non-file objects may be accessed with the same [[system call]]s or [[utility program]]s as regular files and [[directory (computing)|directories]]. The common term for both regular files and the non-file objects is ''node''.
+
+The benefit of synthetic file systems is that well known file system semantics can be reused for a universal and easily implementable approach to [[interprocess communication]]. Clients can use such a file system to perform simple file operations on its nodes, and do not have to implement complex [[message passing|message encoding and passing]] methods and other aspects of protocol engineering. For most operations, common file utilities can be used, so even [[scripting]] is quite easy.
+
+==Examples==
+===/proc filesystem===
+In the [[Unix]]-world, there is commonly a special filesystem [[mount (computing)|mount]]ed at [[/proc]]. This filesystem is implemented within the [[kernel (computing)|kernel]] and publishes information about [[process (computing)|process]]es. For each process, there is a directory (named by the [[process ID]]), containing detailed information about the process: [[process status|status]], open files, [[memory-mapped file|memory maps]], mounts, etc.
+
+/proc first appeared in [http://man.cat-v.org/unix_8th/4/proc Unix 8th Edition], and its functionality was greatly expanded in [http://man.cat-v.org/plan_9/3/proc Plan 9 from Bell Labs].
+
+===Linux /sys filesystem===
+The /sys filesystem on Linux is a counterpart to /proc, which provides a lot of (non-process related) detailed information about the in-kernel status to userspace, eg. [[device file|devices]], busses and [[loadable kernel module|loaded modules]].
+
+===ObexFS===
+ObexFS is a [[Filesystem in Userspace|FUSE]]-based filesystem that provides access to [[OBEX]] objects via a filesystem. Applications can work on remote objects via the OBEX protocol as if they were simply (local) files.
+
+===Plan 9 file servers===
+On the [[Plan 9 from Bell Labs]] operating system family, the concept of [[9P]] synthetic filesystem is used as a generic [[Inter-process communication|IPC]] method. Contrary to most other operating systems, Plan 9's design is heavily distributed: while in other OS worlds, there are many (and often large) libraries and frameworks for common things, Plan 9 encapsulates them into fileservers. The most important benefit is that applications can be much simpler and that services run network and platform agnostic - they can reside on virtually any host and platform in the network, and virtually any kind of network, as long the fileserver can be mounted by the application. 
+
+Plan 9 drives this concept expansively: most operating system services, eg. hardware access and networking stack are presented as fileservers. This way it is trivial to use these resources remotely (eg. one host directly accessing another host's block devices or network interfaces) without the need of additional protocols.
+
+[http://9p.cat-v.org/implementations Other implementations of the 9P file system protocol] also exists for many other systems and environments.
+
+===Embedded systems===
+Debugging embedded systems or even system-on-chip (SoC) devices is widely known to be difficult.{{Citation needed|date=October 2009}}
+Several protocols have been implemented to provide direct access to in-chip devices, but they tend to be proprietary, complex and hard to handle.
+
+Based on [[9P]], Plan 9's network filesystem, studies suggest using synthetic filesystems as universal access scheme to those information. The major benefit is that 9P is very simple and so quite easy to implement in hardware and can be easily used and over virtually any kind of network (from a serial link up to the internet).
+
+==Arguments for using synthetic filesystems==
+The major point might be flexibility and easy access to [[service-oriented architecture]]s. Once a noticeable number of applications use this scheme, the overall overhead (code, resource consumption, maintenance work) can be reduced significantly
+
+Many general arguments for SOAs also apply here.
+
+==Arguments against synthetic filesystems==
+Filesytem semantics do not fit all application scenarios. For example complex [[remote procedure call]]s with many parameters tend to be hard to map to filesystem schemes,{{Citation needed|date=October 2009}} and may require application redesign.
+
+==External links==
+* [http://9p.cat-v.org The 9P synthetic-file-system protocol].
+* BROWN, Geoffrey: [http://www.metux.de/download/soc-filesystem.pdf On-Chip Filesystems to support Complex Embedded Systems]
+* JONES Warren, RUBALSKY Lana: [http://www.yacpos.org/Content/files/StoredPurpose_SyntheticFileSystem.html Stored Purpose Synthetic File System]
+* PISUPATI, Bhani N.: [http://www.cs.indiana.edu/pub/techreports/TR647.pdf A virtual filesystem framework to support embedded software development]
+* PATIL, Ameet; FREEMAN, Michael; GAO, Rui; BAILEY: [http://www-users.cs.york.ac.uk/~mjf/publications/12.pdf Implementing the Styx network protocol in hardware]
+* MINNICH, Ron: [http://www.cs.unm.edu/~fastos/05meeting/PLAN9NOTDEADYET.pdf Why Plan9 is not dead and we can learn from it]
+
+[[Category:Computer file systems]]</body> </html>

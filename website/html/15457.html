@@ -1,0 +1,416 @@
+<html> <head> <title>Gnutella</title></head><body>{{Dablink|Not to be confused with [[Godzilla]].}}
+{{Lead too short|date=October 2009}}
+{{Filesharing}}
+
+'''Gnutella''' ({{pronEng|nʌˈtɛlə}} with a silent ''g'', but often {{IPA|/ɡnʌˈtɛlə/}}) is a large [[peer-to-peer network]] which, at the time of its creation, was the first decentralized peer-to-peer network of its kind, leading to other, later networks adopting the model.<ref>{{cite news | last=Kushner | first=David | title=The World's Most Dangerous Geek | date=January 13, 2004 | publisher=Rolling Stone | url=http://www.rollingstone.com/news/story/5938320/the_worlds_most_dangerous_geek}}</ref> It celebrated a [[decade]] of existence on March 14, 2010 and has a user base in the millions for [[peer-to-peer file sharing]]. 
+
+In June 2005, Gnutella's population was 1.81 million computers<ref>[http://www.slyck.com/news.php?story=814 Slyck News - eDonkey2000 Nearly Double the Size of FastTrack], Thomas Mennecke for [[Slyck.com]], June 2, 2005.</ref>  increasing to over three million nodes by January 2006.<ref name="population">[http://www.barsoom.org/papers/gi-2006-long-term.pdf On the Long-term Evolution of the Two-Tier Gnutella Overlay]. Rasti, Stutzbach, Rejaie, 2006.  See Figure 2a.</ref> In late 2007, it was the most popular file sharing network on the Internet with an estimated market share of more than 40%.<ref>[http://arstechnica.com/news.ars/post/20080421-study-bittorren-sees-big-growth-limewire-still-1-p2p-app.html Ars Technica Study: BitTorrent sees big growth, LimeWire still #1 P2P app] Eric Bangeman, April 21, 2008.</ref>
+
+== History ==
+The first client was developed by [[Justin Frankel]] and [[Tom Pepper]] of [[Nullsoft]] in early 2000, soon after the company's acquisition by [[AOL]]. On March 14, the program was made available for download on Nullsoft's servers. The event was prematurely announced on [[Slashdot]], and thousands downloaded the program that day.<ref>[http://slashdot.org/article.pl?sid=00/03/14/0949234 Gnutella announcement] March 14, 2000 on [[Slashdot]]</ref><ref>[http://archives.cnn.com/2000/TECH/ptech/03/15/gnutella/index.html AOL and Gnutella] March 15, 2000 by [[CNN]]</ref> The [[source code]] was to be released later, under the [[GNU General Public License]] (GPL).
+
+The next day, AOL stopped the availability of the program over legal concerns and restrained Nullsoft from doing any further work on the project. This did not stop gnutella; after a few days, the protocol had been [[reverse engineering|reverse engineered]], and compatible [[free and open source software|free and open source]] clones began to appear. This parallel development of different clients by different groups remains the ''[[modus operandi]]'' of gnutella development today.
+
+The gnutella network is a fully distributed alternative to such semi-centralized systems as [[FastTrack]] ([[KaZaA]]) and the original [[Napster]].  Initial popularity of the network was spurred on by Napster's threatened legal demise in early 2001. This growing surge in popularity revealed the limits of the initial protocol's scalability. In early 2001, variations on the protocol (first implemented in [[proprietary software|proprietary]] and [[closed source software|closed source]] clients) allowed an improvement in scalability. Instead of treating every user as client and server, some users were now treated as "ultrapeers", routing search requests and responses for users connected to them.
+
+This allowed the network to grow in popularity. In late 2001, the gnutella client [[LimeWire|Limewire Basic]] became free and open source. In February 2002, [[Morpheus (computer program)|Morpheus]], a commercial file sharing group, abandoned its [[FastTrack]]-based peer-to-peer software and released a new client based on the free and open source gnutella client [[Gnucleus]].
+
+The word "gnutella" today refers not to any one project or piece of software, but to the open protocol used by the various clients.
+
+The name is a [[portmanteau word|portmanteau]] of ''[[GNU]]'' and ''[[Nutella]]'', the brand name of a hazelnut flavored spread: supposedly, Frankel and Pepper ate a lot of Nutella working on the original project, and intended to license their finished program under the GNU General Public License. Gnutella is not associated with the [[GNU|GNU project]]<ref>[http://www.gnu.org/philosophy/gnutella.html Regarding Gnutella (www.gnu.org)]</ref> or its own peer-to-peer network, [[GNUnet]].
+
+On October 26, 2010, popular gnutella [[servent]] [[LimeWire]] was ordered shut down by Judge [[Kimba Wood]] of the [[United States District Court for the Southern District of New York]]  when she signed a Consent Injunction which LimeWire and recording industry plaintiffs had agreed upon. <ref>http://download.limewire.com/injunction/Injunction.pdf</ref> This event may have caused a notable drop in the size of the network because, while negotiating the injunction, [[LimeWire]] had staff add remote shutdown of gnutella access and file transfers as some users installed affected versions. When the injunction came into force versions later than 5.5.10 left the network or were disabled as users started them.
+
+On November 9, 2010, LimeWire was resurrected by a secret team of developers and dubbed [[Limewire Pirate Edition]]. It was based on LimeWire 5.6 BETA. This version had its server dependencies removed and all the PRO features enabled for free.
+
+== Design ==
+To envision how gnutella originally worked, imagine a large circle of users ''(called nodes),'' each of whom have gnutella client software. On initial startup, the client software  must [[Bootstrapping (computing)|bootstrap]] and find at least one other node.  Various methods have been used for this, including a pre-existing address list of possibly working nodes shipped with the software, using updated web caches of known nodes (called [[Gnutella Web Cache]]s), UDP host caches and, rarely, even [[Internet Relay Chat|IRC]]. Once connected, the client requests a list of working addresses. The client tries to connect to the nodes it was shipped, as well as nodes it receives from other clients, until it reaches a certain quota. It connects to only that many nodes, locally caches the addresses it has not yet tried, and discards the addresses it tried that were invalid.
+
+When the user wants to do a search, the client sends the request to each actively connected node. In version 0.4 of the protocol, the number of actively connected nodes for a client was quite small (around 5), so each node then forwarded the request to all its actively connected nodes, and they in turn forwarded the request, and so on, until the packet reached a predetermined number of "hops" from the sender (maximum 7).
+
+Since version 0.6, gnutella is a composite network made of leaf nodes and ultra nodes (also called ultrapeers). The leaf nodes are connected to a small number of ultrapeers (typically 3) while each ultrapeer is connected to more than 32 other ultrapeers. With this higher [[outdegree]], the maximum number of "hops" a query can travel was lowered to 4.
+
+Leaves and ultrapeers use the Query Routing Protocol to exchange a Query Routing Table (QRT), a table of 64 [[Binary prefix#IEC standard prefixes|Ki]]-slots and up to 2 [[Binary prefix#IEC standard prefixes|Mi]]-slots consisting of hashed keywords. A leaf node sends its QRT to each of the ultrapeers it is connected to, and ultrapeers merge the QRT of all their leaves (downsized to 128 [[Binary prefix#IEC standard prefixes|Ki]]-slots) plus their own QRT (if they share files) and exchange that with their own neighbours. Query routing is then done by hashing the words of the query and seeing whether all of them match in the QRT. Ultrapeers do that check before forwarding a query to a leaf node, and also before forwarding the query to a peer ultra node provided this is the last hop the query can travel.
+
+If a search request turns up a result, the node that has the result contacts the searcher. In the classic gnutella protocol, response messages were sent back along the route the query came through, as the query itself did not contain identifying information of the node. This scheme was later revised, so that search results now are delivered over [[User Datagram Protocol]] (UDP) directly to the node that initiated the search, usually an ultrapeer of the node. Thus, in the current protocol, the queries carry the [[IP address]] and port number of either node. This lowers the amount of traffic routed through the gnutella network, making it significantly more scalable.
+
+If the user decides to download the file, they negotiate the [[file transfer]]. If the node which has the requested file is not [[Firewall (networking)|firewalled]], the querying node can connect to it directly. However, if the node is firewalled, stopping the source node from receiving incoming connections, the client wanting to download a file sends it a so called "push request" to the server for the remote client to initiate the connection instead (to "push" the file). At first, these push requests were routed along the original chain it used to send the query. This was rather unreliable because routes would often break and routed packets are always subject to flow control. Therefore so called "push proxies" were introduced. These are usually the ultrapeers of a leaf node and they are announced in search results. The client connects to one of these "push proxies" using a HTTP request and the proxy sends a "push request" to leaf on behalf of the client. Normally, it is also possible to send a push request over UDP to the push proxy which is more efficient than using TCP. Push proxies have two advantages: First, ultrapeer-leaf connections are more stable than routes which makes push requests much more reliable. Second, it reduces the amount of traffic routed through the gnutella network.
+
+Finally, when a user disconnects, the client software saves the list of nodes that it was actively connected to and those collected from pong packets for use the next time it attempts to connect so that it becomes independent from any kind of bootstrap services.
+
+In practice, this method of searching on the gnutella network was often unreliable. Each node is a regular computer user; as such, they are constantly connecting and disconnecting, so the network is never completely stable. Also, the bandwidth cost of searching on gnutella grew exponentially to the number of connected users,<ref>[http://www.darkridge.com/~jpr5/doc/gnutella.html Why Gnutella Can't Scale. No, Really.] February 2001.</ref> often saturating connections and rendering slower nodes useless. Therefore, search requests would often be dropped, and most queries reached only a very small part of the network. This observation identified the gnutella network as an [[Scalability|unscalable]] distributed system, and inspired the development of [[distributed hash table]]s, which are much more scalable but support only exact-match, rather than keyword, search.
+
+To address the problems of [[bottleneck (engineering)|bottleneck]]s, gnutella developers implemented a tiered system of '''ultrapeers''' and '''leaves'''. Instead of all nodes being considered equal, nodes entering into the network were kept at the 'edge' of the network as a leaf, not responsible for any routing, and nodes which were capable of routing messages were promoted to ultrapeers, which would accept leaf connections and route searches and network maintenance messages. This allowed searches to propagate further through the network, and allowed for numerous alterations in the topology which have improved the efficiency and scalability greatly.
+
+Additionally gnutella adopted a number of other techniques to reduce traffic overhead and make searches more efficient. Most notable are Query Routing Protocol (QRP) and Dynamic Querying (DQ). With QRP a search reaches only those clients which are likely to have the files, so rare files searches grow vastly more efficient, and with DQ the search stops as soon as the program has acquired enough search results, which vastly reduces the amount of traffic caused by popular searches. [http://gnufu.net Gnutella For Users] has a vast amount of information about these and other improvements to gnutella in user-friendly style.
+
+One of the benefits of having gnutella so decentralized is to make it very difficult to shut the network down and to make it a network in which the users are the only ones who can decide which content will be available. Unlike [[Napster]], where the entire network relied on the central server, gnutella cannot be shut down by shutting down any one node and it is impossible for any company to control the contents of the network, which is also due to the many [[free and open source software|free and open source]] gnutella clients which share the network.
+
+== Protocol features and extensions ==
+Gnutella did once operate on a purely [[query flooding]]-based protocol. The outdated gnutella version 0.4 [[network protocol]] employs five different packet types, namely
+
+* ping: discover hosts on network
+* pong: reply to ping
+* query: search for a file
+* query hit: reply to query
+* push: download request for firewalled [[servent]]s
+
+These are mainly concerned with searching the gnutella network. File transfers are handled using [[HTTP]].
+
+The development of the gnutella protocol is currently led by the Gnutella Developers Forum ("The GDF"). Many protocol extensions have been and are being developed by the software vendors and free gnutella developers of the GDF. These extensions include intelligent query routing, [[SHA-1]] checksums, query hit transmission via [[User Datagram Protocol|UDP]], querying via UDP, dynamic queries via [[Transmission Control Protocol|TCP]], file transfers via UDP, [[XML]] meta data, source exchange (also known as "the download mesh") and parallel downloading in slices (swarming).
+
+There are efforts to finalize these protocol extensions in the gnutella 0.6 specification at the gnutella protocol development website. The gnutella 0.4 standard, although still being  the latest protocol specification since all extensions only exist as proposals so far, is outdated. In fact, it is hard or impossible to connect today with the 0.4 handshake and according to developers in the GDF, version 0.6 is what new developers should pursue using the [http://gnet-specs.gnufu.net work-in-progress specifications].
+
+The gnutella protocol remains under development and in spite of attempts to make a clean break with the complexity inherited from the old gnutella 0.4 and to design a clean new message architecture, it is still one of the most successful file-sharing protocols to date.
+
+== Gnutella2 ==
+{{Main|Gnutella2}}
+The Gnutella2 protocol, often referred to as G2, is, despite its name, not a successor protocol of gnutella,<ref>[http://www.mp3newswire.net/stories/2003/gnutella2.html Gnutella vs. Gnutella2, Part 2] Thomas Mennecke for [[Slyck.com]], February 25, 2003.</ref> but rather a [[Fork (software development)|fork]]. A sore point with many gnutella developers is that the "Gnutella2" name conveys an upgrade or superiority, which led to a "Gnutella2 flame war". Other criticism included the use of the gnutella network to bootstrap G2 peers and poor documentation of the G2 protocol. Additionally, the search retries of the [[Shareaza]] client, which was one of the initial G2 clients, could unnecessarily burden the gnutella network.<ref>[http://www.slyck.com/news.php?story=100 Gnutella vs. Gnutella2, Part 1] Thomas Mennecke for [[Slyck.com]], February 25, 2003</ref>
+
+The fork took place in 2002 and both protocols have undergone significant iterations since that time.  G2 has both advantages and disadvantages compared to gnutella. An advantage often cited is Gnutella2's hybrid search is more efficient than the original gnutella [[query flooding]], which was used in 2002.<ref>[http://wortschatz.uni-leipzig.de/~fwitschel/vorlP2P/literatur/search_methods.pdf A comparison of Peer-to-Peer search methods] Dimitrios Tsoumakos, 2003</ref> An advantage for gnutella is its user population numbers in the millions,<ref name="population"/> whereas the G2 network is approximately an order of magnitude smaller.<ref>[http://crawler.trillinux.org/ G2 Network Statistics] Population ~200,000 January 2010.</ref>  It is difficult to compare the protocols in their current form; the individual client choice will probably have as much an effect to an end user on either network.
+
+== Software ==
+The following tables compare general and technical information for a number of applications supporting the gnutella network.  The tables do '''not''' attempt to give a complete [[List of Historical Gnutella Clients|list of gnutella clients]].  The tables are limited to clients that can participate in the current gnutella network.
+
+=== General specifications ===
+{| class="wikitable sortable"
+! rowspan=1 | Name
+! rowspan=1 | Platform
+! rowspan=1 | License
+! rowspan=1 | Latest Release
+! rowspan=1 | Heritage
+|-
+! {{rh}} | [[Acquisition (software)|Acquisition]]
+| [[Mac OS X]]
+| [[Proprietary software|Proprietary]]
+|{{Latest stable release/Acquisition}}
+| [[LimeWire]]
+|-
+| {{rh2}} | [[BearFlix]]
+| [[Microsoft Windows]]
+| [[Proprietary software|Proprietary]]
+| 6.2.2.521
+| [[BearShare]]
+|-
+! {{rh2}} | [[BearShare]] (Before Version 6)
+| [[Microsoft Windows]]
+| [[Proprietary software|Proprietary]]
+| 5.2.5.6
+| Original work
+|-
+| {{rh2}} | [[Cabos]]
+| [[Java platform|Java]]
+| [[GNU GPL]]
+| {{Latest stable release/Cabos}}
+| [[LimeWire]]
+|-
+| {{rh2}} | [[FilesWire]] (P2P)
+| [[Java platform|Java]]
+| [[Proprietary software|Proprietary]]
+| Beta 1.1 (2007)
+| Original Work
+|-
+! {{rh}} | [[FrostWire]]
+| [[Java platform|Java]]
+| [[GNU GPL]]
+| {{Latest stable release/FrostWire}}
+| [[LimeWire]]
+|-
+! {{rh2}} | [[giFT]] (Gnutella plug-in)
+| [[Cross-platform]]
+| [[GNU GPL]]
+| 0.0.11 (2006-08-06) <!-- {{Latest stable release/giFT}} is outdated and wrong, as this article is about Gnutella, not the protocol-independent core. -->
+| Original Work
+|-
+! {{rh2}} | [[Gnucleus]]/[[GnucDNA]]
+| [[Microsoft Windows]]
+| [[GNU GPL]], [[GNU LGPL]]
+| {{Latest stable release/Gnucleus}}
+| Original Work
+|-
+! {{rh}} | [[gtk-gnutella]]
+| [[Unix-like]], [[Mac OS X]]
+| [[GNU GPL]]
+| {{Latest stable release/gtk-gnutella}}
+| Original Work
+|-
+! {{rh2}} | [[iMesh]] (Before Version 6)
+| [[Microsoft Windows]]
+|
+| Unknown
+| [[GnucDNA]]
+|-
+| {{rh2}} | [[KCeasy]]
+| [[Microsoft Windows]]
+| [[GNU GPL]]
+| {{Latest stable release/KCeasy}}
+| [[giFT]]
+|-
+| {{rh2}} | [[GnucDNA#Kiwi Alpha|Kiwi Alpha]]
+| [[Microsoft Windows]]
+|
+| Unknown
+| [[GnucDNA]]
+|-
+! {{rh2}} | [[LimeWire]]
+| [[Java platform|Java]]
+| [[GNU GPL]]
+| {{Latest stable release/LimeWire}}
+| Original Work
+|-
+! {{rh2}} | [[Morpheus (computer program)|Morpheus]]
+| [[Microsoft Windows]]
+| [[Proprietary software|Proprietary]]
+| {{Latest stable release/Morpheus}}
+| [[GnucDNA]]
+|-
+! {{rh}} | [[Phex]]
+| [[Java platform|Java]]
+| [[GNU GPL]]
+| {{Latest stable release/Phex}}
+| Original Work
+|-
+! {{rh2}} | [[Poisoned]]
+| [[Mac OS X]]
+| [[GNU GPL]]
+| {{Latest stable release/Poisoned}}
+| [[giFT]]
+|-
+! {{rh}} | [[Shareaza]]
+| [[Microsoft Windows]]
+| [[GNU GPL]]
+| {{Latest stable release/Shareaza}}
+| Original Work
+|-
+! {{rh2}} | [[Symella]]
+| [[Symbian OS]]
+| [[GNU GPL]]
+| {{Latest stable release/Symella}}
+| Original Work
+|-
+! {{rh}} | [[Zultrax]]
+| [[Microsoft Windows]]
+| [[Proprietary software|Proprietary]]
+| 4.33 (April 2009)
+| Original Work
+|}
+
+=== Gnutella features ===
+{| style="font-size: 85%; text-align: center;" class="wikitable"
+! colspan=2 | Client
+! rowspan=1 | Hash search
+! rowspan=1 | {{cref|Chat}}
+! rowspan=1 | Buddy list
+! rowspan=1 | Handles [http://gtk-gnutella.asselman.com/gtk-gnutella/doc/public/GGEP/LF large files] (> 4 [[GiB]])
+! rowspan=1 | Unicode-compatible Query Routing
+! rowspan=1 | {{cref|UPnP port mapping}}
+! rowspan=1 | [[NAT traversal]]
+! rowspan=1 | [[NAT Port Mapping Protocol|NAT port mapping]]
+! rowspan=1 | {{cref|RUDP}}
+! rowspan=1 | TCP Push proxy
+! rowspan=1 | UDP Push proxy
+! rowspan=1 | Ultrapeer
+! rowspan=1 | {{cref|GWebCache}}
+! rowspan=1 | UDP Host Cache
+! rowspan=1 | THEX
+! rowspan=1 | [[Transport layer security|TLS]]
+! rowspan=1 | Other
+|-
+! {{rh2}} colspan=2 | [[BearShare]]
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{Yes}}
+| {{No}}
+| -
+|-
+! {{rh2}} colspan=2 | [[giFT]] (core & plug-ins)
+| {{Yes}}
+| {{n/a}}
+| {{n/a}}
+| {{No}}
+| {{No}}
+| {{?}}
+| {{?}}
+| {{?}}
+| {{No}}
+| {{Yes}} {{cref|a}}
+| {{No}}
+| {{No}} {{cref|b}}
+| {{Yes}}
+| {{No}}
+| {{No}}
+| {{No}}
+| -
+|-
+! {{rh2}} colspan=2 | [[GnucDNA]] {{cref|c}}
+| {{Yes}}
+| {{n/a}}
+| {{n/a}}
+| {{no}}
+| {{No}}
+| {{No}}
+| {{No}}
+| {{No}}
+| {{No}}
+| {{Yes}}
+| {{No}}
+| {{No}} {{cref|b}}
+| {{Yes}}
+| {{No}}
+| {{No}}
+| {{No}}
+| -
+|-
+! {{rh}} colspan=2 | [[gtk-gnutella]]
+| {{Yes}} {{cref|d}}
+| {{No}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{Yes}}
+| {{No}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{No}} (Dropped)
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| [[IPv6]], [[Distributed hash table|DHT]]
+|-
+! {{rh2}} colspan=2 | [[LimeWire]]{{cref|h}}
+| {{Yes}} {{cref|d}}
+| {{Yes}}
+| {{Yes}} (GMail or XMPP)
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}} {{cref|e}}
+| {{Yes}} {{cref|g}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| [[Distributed hash table|DHT]]
+|-
+! {{rh}} colspan=2 | [[Phex]]
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{No}}
+| {{Yes}} {{cref|socks}}
+| {{No}}
+| {{No}}
+| {{Yes}}
+| {{No}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| {{Yes}}
+| [[I2P]] for anonymity
+|-
+! {{rh}} colspan=2 | [[Shareaza]]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}{{cref|f}}
+| {{yes}}
+| {{No}}
+| supports [[Gnutella2|G2]], [[BitTorrent (protocol)|BT]], [[eDonkey network|eD2k]] and [[IRC]]
+|}
+
+==== Notes ====
+<small>
+{{Cnote|Chat|It refers to client-to-client chat.}}
+{{Cnote|UPnP port mapping|Automatically configure port forwarding (requires Router with UPnP support)}}
+{{Cnote|RUDP|Reliable UDP protocol used for NAT-to-NAT transfers; sometimes called Firewall-to-Firewall}}
+{{Cnote|GWebCache|The UDP host cache is the preferred bootstrap method.}}
+{{Cnote|a|Client only}}
+{{Cnote|b|Not high out degree, so unusable in current form.}}
+{{Cnote|c|Version 0.9.2.7}}
+{{Cnote|d|Via the [[Kademlia]] based Mojito DHT network only supported by LimeWire and gtk-gnutella (starting version r15750); completely different from [[SHA-1]] searches supported by all other gnutella clients.}}
+{{Cnote|e|Port triggering or ''firewall to firewall'' (FW2FW).}}
+{{Cnote|socks|Via [[SOCKS]] proxy which can tunnel over [[Secure Shell|SSH]].}}
+{{Cnote|f|Since version 2.2.4.0}}
+{{Cnote|g|Automatic with UPnP, or manual configuration in LimeWire firewall options}}
+{{Cnote|h|As the LimeWire client isn't officially available any more at the moment, clients like [[FrostWire]] that share most of LimeWires code base can be used as an alternative.}}
+</small>
+
+<!-- * No features have been recorded for the [[gnutella]] clients [[iMesh]], [[Symella]], [[TrustyFiles]], and [[Winmx|WinMX Music]]. -->
+* [[Morpheus (computer program)|Morpheus]] differs significantly and may have completely independent code from the GnucDNA engine.  Morpheus can function as a ''modern'' ultrapeer whereas other GnucDNA clients can not.
+* [[Gnucleus]] and [[Kiwi Alpha]] use the [[GnucDNA]] engine.
+* [[BearFlix]] should be similar to [[BearShare]].
+* [[giFTcurs]], [[Apollon (software)|Apollon]], [[FilePipe]], [[giFToxic]], [[giFTui]], [[giFTwin32]], [[KCeasy]], [[Poisoned]], and [[Xfactor]] are GUI front-ends for the [[giFT]] engine.
+* [[etomi]] uses outdated [[Shareaza]] networking code.
+* 360Share,  LemonWire, MP3Torpedo, and DexterWire are the [[LimeWire]] package.
+* [[FrostWire]] is near identical to LimeWire; [[Acquisition (software)|Acquisition]] and [[Cabos]] have custom front-ends but use [[LimeWire]] as an engine.
+
+== See also ==
+* [[Bitzi]]
+* [[Gnutella crawler]]
+
+== References ==
+{{Reflist}}
+
+== External links ==
+* [http://wiki.limewire.org/index.php?title=GDF Gnutella Protocol Development Wiki] {{dead link|date=October 2010}}
+* [http://gnufu.net GnuFU], "Gnutella For Users: A description of the inner workings of the gnutella network in User-Friendly Style"
+* [http://www.gnu.org/philosophy/gnutella.html ''Regarding Gnutella'' by GNU]
+{{Gnutella}}
+{{File sharing protocols}}
+
+[[Category:File sharing networks]]
+[[Category:Application layer protocols]]
+[[Category:Gnutella|*]]
+
+[[da:Gnutella]]
+[[de:Gnutella]]
+[[es:Gnutella]]
+[[fa:ناتلا]]
+[[fr:Gnutella]]
+[[ko:누텔라]]
+[[it:Gnutella]]
+[[he:גנוטלה]]
+[[lt:Gnutella]]
+[[hu:Gnutella]]
+[[ms:Gnutella]]
+[[nl:Gnutella]]
+[[ja:Gnutella]]
+[[no:Gnutella]]
+[[pl:Gnutella]]
+[[pt:Gnutella]]
+[[ru:Gnutella]]
+[[fi:Gnutella]]
+[[sv:Gnutella]]
+[[zh:Gnutella]]</body> </html>

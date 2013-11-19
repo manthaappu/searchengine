@@ -1,0 +1,79 @@
+<html> <head> <title>Nomad software</title></head><body>'''Nomad''' is a [[relational database]] and [[fourth-generation language]] (4GL), originally developed in the 70s by [[time-sharing]] vendor [[National CSS|National CSS, Inc.]] Its widest use was in the 70s and 80s. 
+
+Nomad provided an interactive environment for [[data management]] and application development, including commands for database definition, data manipulation, and reporting. All components were accessible by and integrated through a database-oriented programming language. Unlike many data management tools of the day, which were geared to the needs of professional programmers in MIS departments, Nomad was particularly designed for (and sold to) application end-users in large corporations.
+
+==Capabilities==
+Nomad was distinguished by four characteristics:
+*An intuitive database-oriented [[Fourth-generation programming language|4GL]] for creating databases, managing data, and writing applications
+*An interactive environment in which any [[Fourth-generation programming language|4GL]] statement could be typed and immediately processed (comparable to modern interactive tools like PHP or Perl)
+*[[Relational database]] features, supporting lookup tables and the other elements of a [[database normalization|normalized]] relational database
+*Powerful set-at-a-time operations under the control of simple imperative commands
+Nomad's language was designed to simplify the application development process, especially for reporting applications. Where possible, common requirements were addressed by intuitive nonprocedural syntax elements, to avoid traditional programming. The heart of the system was the LIST command, which created report output.
+
+<blockquote><pre>LIST BY STATE BY CUST_ID NAME PHONE ACROSS STATUS BALANCE WHERE STATE AMONG('CT','NY')
+
+State  Customer ID  Name               Phone         Active    Inactive  New
+-----  -----------  -----------------  ------------  --------  --------  ---------
+CT            1001  ABC Co.            203-555-1212      1200         0          0
+              1012  DEF Co.            203-555-1313         0        50        900
+NY            1305  GHI Co.            212-555-1414      2650         0          0
+</pre></blockquote>
+
+In this example, database fields STATE, CUST_ID, NAME, PHONE, STATUS, and BALANCE are laid out on a grid, with two sort breaks (via BY), generated columns based on data values (via ACROSS), and data selection (via WHERE). Additional keywords could control subtotals, titles, footers, table lookup, and myriad reporting details.
+
+The LIST command is somewhat analogous to the [[SQL]] SELECT statement, but incorporates formatting, totaling, and other elements helpful for tailoring output to a business requirement. The SELECT statement, in contrast, is essentially a data query tool: its results would be processed or formatted as required using other mechanisms. This distinction is highlighted by SQL's classification as a 'Data Sublanguage' (DSL): SQL is a powerful formalism for controlling ''data retrieval.'' The LIST command is a comprehensive ''report writer'' addressing broader functionality.
+
+Another example of Nomad's power is illustrated by Nicholas Rawlings in his comments for the Computer History Museum about NCSS (see citation below). He reports that [[James Martin (author)|James Martin]] asked Rawlings for a Nomad solution to a standard problem Martin called the ''Engineer's Problem'': "give 6% raises to engineers whose job ratings had an average of 7 or better." Martin provided a "dozen pages of COBOL, and then just a page or two of [[MARK-IV (Software)|Mark IV]], from [[Sterling Software|Informatics]]." Rawlings offered the following single statement, performing a set-at-a-time operation, to show how trivial this problem was with Nomad:
+
+<blockquote><pre>CHANGE ALL SALARY=SALARY*1.06 WHERE POSITION='ENG' AND AVG(INSTANCE(RATING)) GE 7</pre></blockquote>
+
+Rawlings continues: "[Martin] decided to drop the idea [of showing alternative solutions to the problem]. [The Nomad solution] was too unbelievable for him. He published his book in 1982 [''sic:'' 1981], with many fine examples of NOMAD, most of which look silly today, for they don't reflect what NOMAD was really used for in the years since: serious, mission critical applications. I used Martin's Engineer's Problem in hundreds of NOMAD classes, as I forced people to think in terms of sets of data, instead of record-at-a-time, which is how they'd been taught."
+
+==Early development==
+Nomad was developed by [[National CSS|National CSS, Inc.]], at the time in [[Stamford, Connecticut]] (later [[Wilton, Connecticut|Wilton]]), by a small team launched in 1973. It was developed to supplant [[Ramis software|RAMIS]], previously a major NCSS offering. The corporate view of Nomad's importance at the time &ndash; and of tensions with the owners of RAMIS &ndash; can be deduced from the original NOMAD acronym: ''NCSS Owned, Maintained, And Developed''. Another RAMIS successor was [[FOCUS]], which evolved in competition with Nomad. These and other 4GL platforms such as [[Oracle database|Oracle]] competed for many of the same customers, all trying to solve end-user information problems without recourse to traditional 3GL programming.
+
+Nomad was officially released in October 1975 (although customer usage began in May 1975). The Nomad customer base expanded rapidly, as new categories of users adopted time-sharing data management tools to solve problems they previously could not tackle. Nomad competed principally with Focus and Ramis for this expanding market.
+
+Nomad was claimed to be the first commercial product to incorporate relational database concepts. This seems to be borne out by the launch dates of the well-known early RDBMS vendors, which first emerged in the late 70s and early 80s &ndash; such as [[Oracle Corporation|Oracle]] (1977), [[Informix]] (1980), and [[Unify Corporation|Unify]] (1980). The seminal non-commercial research project into RDBMS concepts was IBM's [[System R]], first installed at IBM locations in 1977. System R included and tested the original [[SQL]] implementation. The early RDBMS vendors were able to learn from numerous papers describing System R in the late 70s and early 80s.
+
+Nomad was released before these industry events, and thus, like System R, Nomad drew on earlier academic work by relational database pioneers such as [[E. F. Codd]]. Early Nomad development was in particular inspired by [[Christopher J. Date|C. J. Date's]] influential ''An Introduction to Database Systems'', itself first published in 1975. This book was an important source of technical ideas about the relational database model, and included a brief mention of [[SEQUEL]] (later [[SQL]]). Later editions of the book included Nomad itself, and Date's approval of Nomad's support of the relational database model.
+
+At the time, relational database concepts were new; most database systems utilized hierarchical, network, or other data models. Adding relational features to Nomad's original hierarchical design was evidently a bold move for NCSS. Training materials, such as [[Daniel McCracken|Dan McCracken]]'s book (cited below), focused on these relational database features, and their use in rapid application development. A simple methodology letting end-users design effective, [[database normalization|normalized]] relational databases was soon added to the curriculum &ndash; and was later taught on campuses throughout the country, in the ''ACM Lectureship Series'', by NCSS emeritus Lawrence Smith. NCSS can thus be seen as an early advocate of relational methods; but this position was soon eclipsed as SQL-based vendors burst onto the scene.
+
+==Later development==
+Nomad was the flagship NCSS product during the firm's years of rapid growth, going through a series of releases and receiving a major share of this (publicly-traded) company's R&D, sales, support, and other resources. 
+
+NCSS and its [[time-sharing]] competitors primarily sold services to large corporations, at a time when most MIS departments were bogged down on huge [[COBOL]] implementation projects (see [[Frederick Brooks|Brooks]]'s famous ''[[The Mythical Man-Month]]'' for the contemporary mind-set). Because of development backlogs, outside services like NCSS became attractive. Tools like Nomad made end-users self-sufficient: If they had discretionary budgets, and could get the necessary raw data from their MIS departments, then they could solve their own information problems. Many users were content to answer seemingly simple aggregate reporting questions that baffled the MIS departments of the day &ndash; like "rank departments by profitability." Other end-users went beyond basic reporting to build large, mission-critical applications, either by learning the necessary skills, or by hiring their own technicians who didn't report through the MIS hierarchy. NCSS developed a large support infrastructure, including training, consulting, and other services, to foster end-user independence. (Dissatisfaction with traditional MIS methods and resources would later also fuel the [[personal computer]] revolution, which in turn would displace [[time-sharing]] vendors like NCSS.) ''[More citations are needed to illustrate: MIS departments of the 70s and 80s; the "Information Center" concept and end-user empowerment in the 80s; the timesharing industry and its role in enabling what became known as "Agile Companies" capable of using information as a competitive advantage. These topics were widely discussed in books and media of the day.]''
+
+In the late 70s, NCSS developed a 'mini-370' product called the NCSS 3200, primarily intended as an in-house platform for running Nomad under the NCSS operating system [[VP/CSS]] (see below). The small, low-cost system was sold as an end-user 'database machine' or 'information warehouse' for extracting and analyzing corporate datasets &ndash; analogous to the dedicated mainframes installed at some of NCSS's larger customer sites. (The [[data warehouse]]/"Information Center" concept was eventually developed more successfully by Focus and others.) Despite limited success, the company lost interest in the 3200 venture, which was scrapped along with the VP/CSS operating system. 
+
+Nomad was made available under VM in 1982 and under MVS in 1983.  Versions were released under [[PC-DOS]] and [[Microsoft Windows]] in the late 1980s.
+
+==Ownership==
+[[Dun & Bradstreet]] acquired National CSS in 1979 and rebranded it as [[D&B Computing Services]] or DBCS.  In 1986 the NOMAD related assets of DBCS were sold to [[Must Software International]] of [[Norwalk, Connecticut]] (a wholly -owned subsidiary of [[Thomson-CSF]]) which became part of [[Thomson Software Products]] in 1995 and part of [[Aonix]] in 1996. {{As of|2005}} Nomad is sold and maintained by [http://www.selectbs.com/mainframe/Nomad/nomad Select Business Solutions] in [[Trumbull, Connecticut]]. Select is now owned by the private equity firm Avantce LLC.
+
+==NCSS's VP/CSS platform==
+
+Until 1982, Nomad was available only on NCSS's proprietary time-sharing system [[VP/CSS]]. During this period, with a few exceptions, Nomad was used only by interactive [[time-sharing]] customers via pay-as-you-go dial-up access.
+
+Nomad's primary status as a [[time-sharing]] product &ndash; rather than a licensed software product &ndash; had a major impact on its design, enhancement, sales, training, support, and ultimately its fate. Nomad customers were inextricably linked to [[National CSS]]'s service offerings, and to the unique capabilities of [[VP/CSS]] and the NCSS network.
+
+==User base==
+When Nomad was released as a licensed software product it was acquired by some of the large corporations that had been using the time-sharing service. These included [[Exxon]] and [[Nytel]]. (A few large users like [[Bank of America]] and [[SOCAL]], i.e. Standard Oil of California, had previously negotiated site licenses for their own [[VP/CSS]] datacenters, most of which ran Nomad. Most [[VP/CSS]] sites eventually migrated to the VM platform.) [[Abbott Laboratories]], [[American Express]]. [[Boeing]], [[First Chicago]], and [[Motorola]] were also customers. Other later customers who were new to the product included [[Imperial Chemical Industries|ICI]] and [[Royal & SunAlliance|Royal Insurance]]. With a limited client base came an opportunity for niche suppliers to provide independent application development and support. In the UK this market was filled by [[BSL International]], RCMS, and [[Rex Software]]. RCMS became the UK vendors of Nomad while BSL operated throughout Europe and the US.
+
+==References==
+{{refbegin}}
+*[[Daniel McCracken|McCracken, Daniel]], ''A Guide to NOMAD for applications development.'' National CSS, 1980. [Published by the vendor, but by a well-known and respected author (and once a widely-distributed document).]
+
+*[[C. J. Date|Date, C. J.]], ''An introduction to database systems.'' Addison-Wesley, 1975. ISBN 0-201-14452-2. [The first edition of this well-known book only mentioned SEQUEL in a footnote. Later editions feature extensive coverage of SQL.]
+
+*Chamberlin, et al., "A history and evaluation of System R," ''CACM Vol. 24 No. 10,'' October 1981. [System R was a widely-discussed research system during the late 70s and early 80s, familiar to all computer scientists of the day working on database systems, and implementing the first version of SQL. The initial installations of System R at IBM facilities occurred in June 1977.]
+
+*Computer History Museum, Corporate Histories Collection. http://www.computerhistory.org/corphist/view.php?s=select&cid=4 [Follow links to numerous first-person recollections of life at NCSS and the history of Nomad.]
+
+*[[James Martin (author)|Martin, James]]. ''Application Development Without Programmers.'' Prentice-Hall, 1981. ISBN 0-13-038943-9. [Reported to include "many fine examples of NOMAD."]
+{{refend}}
+
+[[Category:4GL]]
+[[Category:Proprietary database management systems]]
+[[Category:History of software]]</body> </html>

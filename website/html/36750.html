@@ -1,0 +1,45 @@
+<html> <head> <title>T (programming language)</title></head><body>{{Infobox programming language
+| name = T
+| logo =
+| paradigm = [[Multi-paradigm programming language|multi-paradigm]]: [[Object-oriented programming|object-oriented]], [[Imperative programming|imperative]], [[Functional programming|functional]], [[metaprogramming|meta]]
+| year = 1980s
+| designer = Jonathan A. Rees and<br/>Norman I. Adams
+| developer = Jonathan A. Rees and<br/>Norman I. Adams
+| latest_release_version = 3.0 ({{release date|1984|8|1}})
+| latest release date = 
+| typing = [[dynamic typing|dynamic]], [[strong typing|strong]]
+| influenced_by = [[Scheme (programming language)|Scheme]]
+| influenced = [[EuLisp]] [[Joule (programming language)|Joule]]
+| operating_system = [[Cross-platform]]
+| license =
+| website =
+| file_ext =
+}}
+The '''T programming language''' is a dialect of the [[Scheme (programming language)|Scheme programming language]] developed in the early 1980s by Jonathan A. Rees, Kent M. Pitman, and Norman I. Adams of [[Yale University]] as an experiment in language design and implementation. 
+
+T's purpose is to test the thesis developed by [[Guy L. Steele, Jr.|Steele]] and [[Gerald Jay Sussman|Sussman]] in their series of papers about Scheme: that Scheme may be used as the basis for a practical programming language of exceptional expressive power, and that implementations of Scheme could perform better than other Lisp systems, and competitively with implementations of programming languages, such as [[C (programming language)|C]] and [[BLISS (programming language)|BLISS]], which are usually considered to be inherently more efficient than Lisp on conventional machine architectures.
+
+In 1987 Stephen Slade published the book "The T Programming Language: A Dialect of LISP".
+
+T contains some features that modern Scheme does not have. For example, T is [[object-oriented]], and it has first-class environments, called ''locales'', which can be modified non-locally and used as a module system. T has several extra special forms for lazy evaluation and flow control, as well as an equivalent to [[Common Lisp]]'s [[setf]]. T, like Scheme, supports [[call-with-current-continuation]], but it also has a more limited form called <code>catch</code>. From the T manual, a hypothetical implementation of <code>cons</code> could be:
+ (define-predicate pair?)
+ (define-settable-operation (car pair))
+ (define-settable-operation (cdr pair))
+ (define (cons the-car the-cdr)
+         (object nil
+                 ((pair? self) t)
+                 ((car self) the-car)
+                 ((cdr self) the-cdr)
+                 (((setter car) self new-car) (set the-car new-car))
+                 (((setter cdr) self new-cdr) (set the-cdr new-cdr))))
+Through this example, we can see that objects in T are intimately related to closures and message-passing. A primitive called <code>join</code> puts two objects together, allowing for something resembling inheritance.
+
+==External links==
+*[http://mumble.net/~jar/tproject/ The T Project]
+*[http://www.paulgraham.com/thist.html History of T], by [[Olin Shivers]]
+*[http://repository.readscheme.org/ftp/papers/t_manual.pdf T manual] (PDF) from ReadScheme
+
+[[Category:Lisp programming language family]]
+[[Category:Scheme programming language]]
+
+[[cs:T (programovací jazyk)]]</body> </html>

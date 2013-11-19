@@ -1,0 +1,101 @@
+<html> <head> <title>Mount (Unix)</title></head><body>{{lowercase}}
+The [[Unix]] command line [[Utility software|utility]] '''mount''' instructs the [[operating system]] that a [[file system]] is ready to use, and associates it with a particular point in the system's file system hierarchy (its ''mount point''). The counterpart '''umount''' instructs the operating system that the file system should be disassociated from its mount point, making it no longer accessible. The mount and umount commands require [[root user]] privilege or the corresponding fine-grained privilege, unless the file system is defined as "user mountable" in the <code>/etc/[[fstab]]</code> file (which can only be modified by the root user).
+
+== Example ==
+The second partition of a hard disk is mounted with the command:
+
+<source lang="bash">
+    $ mount /dev/hda2 /new/subdir
+</source>
+
+and unmounted with the command:
+
+<source lang="bash">
+    $ umount /dev/hda2
+</source>
+
+or
+
+<source lang="bash">
+    $ umount /new/subdir
+</source>
+
+To list all mounted file systems:
+
+<source lang="bash">
+    $ mount
+</source>
+
+To remount a partition with specific [[fstab#Options common to all filesystems|options]]:
+
+<source lang="bash">
+    $ mount -o remount,rw /dev/hda2
+</source>
+
+To mount an [[ISO 9660|ISO]] file (Linux):
+
+<source lang="bash">
+   $ mount -o loop <isofile-source> <mount-point>
+</source>
+
+To mount all filesystems listed in [[fstab]]:
+
+<source lang="bash">
+    $ mount -a
+</source>
+
+== pmount ==
+pmount is a [[wrapper]] around the standard mount program which permits normal users to mount removable devices without a matching /etc/[[fstab]] entry. This provides a robust basis for [[automounter|automounting]] frameworks like GNOME's [[Utopia (software)|Utopia]] project and confines the amount of code that runs as root to a minimum. 
+
+This package also contains a wrapper "pmount-hal" which reads information such as device labels and mount options from [[HAL (software)|HAL]] and passes them to pmount.
+
+To configure, the administrator would add a list of devices to /etc/pmount.allow that non-root users can mount: 
+
+<source lang="bash">
+echo /media/cdrom >> /etc/pmount.allow &&
+echo /media/dvd >> /etc/pmount.allow &&
+echo /media/thumbdrive >> /etc/pmount.allow
+</source>
+
+== gnome-mount  ==
+The gnome-mount package contains programs for mounting, unmounting and ejecting storage devices. The goal for gnome-mount is for GNOME software such as [[gnome-volume-manager]] and [[GNOME-VFS]] to use this instead of invoking mount/umount/eject/pmount or direct HAL invoking methods (GNOME previously used pmount). gnome-mount is not intended for direct use by users.
+
+All the gnome-mount programs utilize HAL methods and as such run unprivileged. The rationale for gnome-mount is to have a centralized place (in [[GConf]]) where settings such as mount options and mount locations are maintained. <ref>[http://www.linuxfromscratch.org/blfs/view/svn/gnome/gnome-mount.html gnome-mount-0.6<!-- Bot generated title -->]</ref>
+
+== See also ==
+* [[Mount (computing)]]
+* [[List of Unix programs]]
+
+== References ==
+
+<references/>
+
+== External links ==
+*[http://man.cat-v.org/unix-1st/1/mount mount(1) - The original Unix First Edition manual page for mount].
+*{{man|8|mount}}
+*[http://manpages.ubuntu.com/manpages/karmic/en/man8/mount.8.html mount (8)] - on a [http://manpages.ubuntu.com/ Ubuntu Manpage Repository]
+*{{man|1|pmount}}
+*[http://pmount.alioth.debian.org/ pmount].
+*{{man|1|gnome-mount}}
+*[http://www.examplenow.com/mount mount examples].
+
+{{unix commands}}
+
+[[Category:Unix file system-related software]]
+[[Category:Standard Unix programs]]
+
+{{compsci-stub}}
+
+[[ca:Mount]]
+[[cs:Mount]]
+[[de:Mounten]]
+[[es:Mount]]
+[[fa:Mount (Unix)]]
+[[it:Mount]]
+[[hu:Mount (Unix)]]
+[[nl:Mounten]]
+[[ja:Mount (UNIX)]]
+[[pl:Mount]]
+[[pt:Mount (Unix)]]
+[[ru:Mount]]
+[[uk:Mount]]</body> </html>

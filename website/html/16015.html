@@ -1,0 +1,112 @@
+<html> <head> <title>HFS Plus</title></head><body>{{Infobox filesystem
+| name = HFS+
+| full_name = Hierarchical File System Plus
+| developer = [[Apple Computer|Apple]]
+| introduction_os = [[Mac OS 8.1]]
+| introduction_date = January 19, 1998
+| partition_id = <tt>Apple_HFS</tt> ([[Apple Partition Map]])<br /><tt>0xAF</tt> ([[Master boot record|MBR]])<br /><tt>Apple_HFSX</tt> ([[Apple Partition Map]]) when HFSX <br /><tt>48465300-0000-11AA-<br />AA11-00306543ECAC</tt> ([[GUID Partition Table|GPT]])
+| directory_struct = [[B-tree]]
+| file_struct = [[Bitmap]]
+| bad_blocks_struct = [[B-tree]]
+| max_files_no = 4,294,967,295 (2<sup>32</sup>-1)
+| max_file_size = 8 [[exbibyte|EiB]]<ref name="tn1150" />
+| max_filename_size = 255 characters (255 UTF-16 encoding units, normalized to Apple-modified variant of Unicode Normalization Format D)
+| max_volume_size = 8 [[exbibyte|EiB]] <ref>{{cite web|url=http://support.apple.com/kb/HT2422 |title=Mac OS X: Mac OS Extended format (HFS Plus) volume and file limits |publisher=Support.apple.com |date=2008-07-29 |accessdate=2010-07-05}}</ref>
+| filename_character_set = [[Unicode]], any character, including [[ASCII code#ASCII control characters|NUL]]. OS APIs may limit some characters for legacy reasons
+| dates_recorded = access, attributes modified, backed up, contents modified, created
+| date_range = January 1, 1904 - February 6, 2040
+| date_resolution = 1s
+| forks_streams = Yes
+| attributes = Color (3 bits, all other flags 1 bit), locked, custom icon, bundle, invisible, alias, system, stationery, inited, no INIT resources, shared, desktop
+| file_system_permissions = Unix permissions, NFSv4 [[Access Control List|ACLs]] ([[Mac OS X v10.4]] onward)
+| compression = Yes (on OS X 10.6 and higher)
+| encryption = No, although per-[[home directory]] [[Advanced Encryption Standard|AES]] using HFS+ formatted [[.dmg]] volumes is possible using [[FileVault]] in [[Mac OS X v10.3]] onward
+| OS = [[Mac OS 8.1]], [[Mac OS 9]], [[Mac OS X]], & [[Darwin OS|Darwin]], [[Linux]], [[Microsoft Windows]] (through [[MacDrive]] or [[Bootcamp]]{{Citation needed|date=December 2010}} [[Installable File System|IFS]] drivers)}}
+
+'''HFS Plus''' or '''HFS+''' is a [[file system]] developed by [[Apple Inc.]] to replace their [[Hierarchical File System]] (HFS) as the primary file system used in [[Apple Macintosh|Macintosh]] computers (or other systems running [[Mac OS]]). It is also one of the formats used by the [[iPod]] digital music player. HFS Plus is also referred to as '''Mac OS Extended''' (or, erroneously, “HFS Extended”), where its predecessor, HFS, is also referred to as ''Mac OS Standard'' (or, erroneously, as “HFS Standard”). During development, Apple referred to this filesystem with the codename ''Sequoia''.<ref>{{cite web | url=http://developer.apple.com/adcnews/pastissues/devnews090597.html | title=New Mac OS Extended Format (HFS+) Available | date=1997 | work=Apple Developer News | accessdate=2007-03-28}}</ref>
+
+HFS Plus is an improved version of HFS, supporting much larger files (block addresses are 32-bit length instead of 16-bit) and using [[Unicode]] (instead of [[Mac OS Roman]] or any of several other character sets) for naming the items (files, folders) – names which are also character encoded in [[UTF-16]] and normalized to a form very nearly the same as [[Unicode normalization|Unicode Normalization Form D (NFD)]]<ref>{{cite web | url=http://developer.apple.com/qa/qa2001/qa1235.html | title=Technical Q&A QA1235: Converting to Precomposed Unicode | date=February 7, 2003 | work=Apple Developer Connection | accessdate=2007-03-28 }}</ref> (which means that precomposed characters like are decomposed in the HFS+ filename and therefore count as two characters<ref>there are some minor differences derived from the fact that the HFS Plus format was finalized before Unicode had standardized the NFD format (see [http://developer.apple.com/technotes/tn/tn1150.html#UnicodeSubtleties “Unicode Subtleties”] for more information)</ref> and UTF-16 implies that characters from outside the [[Basic Multilingual Plane]] — often seldom used and characters from ancient writing systems — also count as two characters in an HFS+ filename). HFS Plus permits filenames up to 255 UTF-16 characters in length, and [[n-forked files]] similar to [[NTFS]], though until recently, almost no software takes advantage of forks other than the [[data fork]] and [[resource fork]]. HFS Plus also uses a full 32-bit allocation mapping table, rather than HFS’s 16 bits. This was a serious limitation of HFS, meaning that no disk could support more than 65,536 allocation blocks under HFS. When disks were small, this was of little consequence, but as larger-capacity drives became available, it meant that the smallest amount of space that any file could occupy (a single allocation block) became excessively large, wasting significant amounts of space. For example, on a 1 GB disk, the allocation block size under HFS is 16 KB, so even a 1 byte file would take up 16 KB of disk space. Unlike most other file systems HFS Plus supports [[hard link]]s to directories.
+
+Like HFS, HFS Plus uses [[B-tree]]s to store most volume [[Metadata (computing)|metadata]].
+
+== History ==
+
+HFS+ was introduced with the January 19, 1998 release of [[Mac OS 8|Mac OS 8.1]].<ref name="tn1150">{{cite web | url=http://developer.apple.com/technotes/tn/tn1150.html | title=Technical Note TN1150: HFS Plus Volume Format | date=March 5, 2004 | work=Apple Developer Connection | accessdate=2007-03-28}}</ref> However its first appearance, as a beta filesystem, was in the never-released [[Copland (operating system)|Copland OS]] betas.
+
+With the release of the [[Mac OS X v10.2|10.2.2]] update on November 11, 2002, Apple added optional [[Journaling file system|journaling]] features to HFS Plus for improved data reliability. These features were easily accessible in [[Mac OS X]] Server, but only accessible through the command line in the standard desktop client.<ref>{{cite web | url=http://daringfireball.net/2002/11/crow | title=Crow | author=John Gruber | date=November 11, 2002 | work=DaringFireball.net | accessdate=2007-03-28}}</ref> With [[Mac OS X v10.3]], all HFS Plus volumes on all Macs are set to be journaled by default. Within the system, an HFS Plus volume with a journal is identified as '''HFSJ'''.
+
+[[Mac OS X v10.3|10.3]] also introduced another version of HFS Plus called '''HFSX'''. HFSX volumes are almost identical to HFS Plus volumes, except that they are never surrounded by the [[HFS Plus#Design|HFS Wrapper]] that is typical of HFS Plus volumes and they optionally support [[case sensitivity]] for file and folder names. HFSX volumes can be recognized by two entries in the Volume Header, a value of HX in the signature field and 5 in the version field.<ref name="tn1150" />
+
+Additionally, Mac OS X 10.3 marked Apple's adoption of Unicode 3.2 decomposition, superseding the Unicode 2.1 decomposition used previously. This change has caused problems for developers writing software for Mac OS X.<ref>{{cite web|url=http://kerneltrap.org/mailarchive/git/2008/1/23/593749/thread |title=Re: git on MacOSX and files with decomposed utf-8 file names |publisher=KernelTrap |date=2010-05-07 |accessdate=2010-07-05}}</ref>
+
+With [[Mac OS X v10.4|10.4]], Apple added support for Inline Attribute Data records, something that had been a part of the Mac OS X implementation of HFS Plus since at least [[Mac OS X v10.0|10.0]], but always marked as "reserved for future use".<ref>{{cite web | url=http://arstechnica.com/reviews/os/macosx-10.4.ars/6 | title=Mac OS X 10.4 Tiger: Metadata revisited | author=[[John Siracusa]] | date=April 28, 2005 | work=Ars Technica | accessdate=2007-03-28}}</ref> Until the release of [[Mac OS X Server|Mac OS X Server 10.4]], HFS Plus supported only the standard UNIX [[file system permissions]], however 10.4 introduced support for [[access control list]]-based file security, which provides a richer mechanism to define file permissions and is also designed to be fully compatible with the file permission models on other platforms such as [[Microsoft]] [[Windows XP]] and [[Windows Server 2003]].<ref>{{cite web | url=http://www.apple.com/br/server/macosx/windowsservices.html | title=Apple - Mac OS X Server - Windows Services | work=Apple.com | accessdate=2007-11-12 |archiveurl = http://web.archive.org/web/20071231203318/http://www.apple.com/br/server/macosx/windowsservices.html <!-- Bot retrieved archive --> |archivedate = 2007-12-31}}</ref>
+
+== Design ==
+
+HFS Plus volumes are divided into sectors (called logical blocks in HFS), that are usually 512 bytes in size. These sectors are then grouped together into allocation blocks which can contain one or more sectors; the number of allocation blocks depends on the total size of the volume. HFS Plus uses a larger value to address allocation blocks than HFS, 32 bits rather than 16 bits; this means it can access 4,294,967,296 (= 2<sup>32</sup>) allocation blocks rather than the 65,536 (= 2<sup>16</sup>) allocation blocks available to HFS.<ref name="tn1150" />
+
+Formerly, HFS Plus volumes were embedded inside an HFS standard filesystem.  This was phased out by the Tiger transition to Intel Macs, where the HFS Plus filesystem was not embedded inside a wrapper.  The wrapper was designed for two purposes; it allowed Macintosh computers without HFS Plus support in their ROM to boot HFS Plus volumes and it also was designed to help users transition to HFS Plus by including a minimal HFS volume with a read-only file called ''Where_have_all_my_files_gone?'', explaining to users with versions of Mac OS 8.0 and earlier without HFS Plus, that the volume requires a system with HFS Plus support. The original HFS volume contains a signature and an offset to the embedded HFS Plus volume within its volume header. All allocation blocks in the HFS volume which contain the embedded volume are mapped out of the HFS allocation file as ''bad blocks''.<ref name="tn1150" />
+
+There are nine structures that make up a typical HFS Plus volume:<ref name="tn1150" />
+
+# Sectors 0 and 1 of the volume are HFS '''[[Boot sector|boot blocks]]'''. These are identical to the boot blocks in an HFS volume. They are part of the HFS wrapper.
+# Sector 2 contains the '''Volume Header''' equivalent to the Master Directory Block in an HFS volume. The Volume Header stores a wide variety of data about the volume itself, for example the size of allocation blocks, a timestamp that indicates when the volume was created or the location of other volume structures such as the Catalog File or Extent Overflow File. The Volume Header is always located in the same place.
+# The '''Allocation File''' which keeps track of which allocation blocks are free and which are in use. It is similar to the Volume Bitmap in HFS, each allocation block is represented by one bit. A zero means the block is free and a one means the block is in use. The main difference with the HFS Volume Bitmap, is that the Allocation File is stored as a regular file, it does not occupy a special reserved space near the beginning of the volume. The Allocation File can also change size and does not have to be stored contiguously within a volume.
+# The '''Catalog File''' is a [[B-tree]] that contains records for all the files and directories stored in the volume. The HFS Plus Catalog File is very similar to the [[Hierarchical File System#Design|HFS Catalog File]], the main differences being records are larger to allow more fields and to allow for those fields to be larger (for example to allow the longer 255-character unicode file names in HFS Plus). A record in the HFS Catalog File is 512 bytes in size, a record in the HFS Plus Catalog File is 4KB in Mac OS and 8KB in Mac OS X. Fields in HFS are of fixed size, in HFS Plus the size can vary depending on the actual size of the data they store.
+# The '''Extents Overflow File''' is another [[B-tree]] that records the allocation blocks that are allocated to each file as extents. Each file record in the Catalog File is capable of recording eight extents for each fork of a file; once those are used extents are recorded in the Extents Overflow File. Bad blocks are also recorded as extents in the Extents Overflow File. The default size of an extent record in Mac OS is 1 KB and 4 KB in Mac OS X.
+# The '''Attributes File''' is a new [[B-tree]] in HFS Plus that does not have a corresponding structure in HFS. The Attributes File can store three different types of 4 KB records: ''Inline Data Attribute'' records, ''Fork Data Attribute'' records and ''Extension Attribute'' records. Inline Data Attribute records store small attributes that can fit within the record itself. Fork Data Attribute records contain references to a maximum of eight extents that can hold larger attributes. Extension Attributes are used to extend a Fork Data Attribute record when its eight extent records are already used.
+# The '''Startup File''' is designed for non-Mac OS systems that don't have HFS or HFS Plus support. It is similar to the Boot Blocks of an HFS volume.
+# The second to last sector contains the '''Alternate Volume Header''' equivalent to the Alternate Master Directory Block of HFS.
+# The last sector in the volume is reserved for use by Apple. It is used during the computer manufacturing process.
+
+== Other operating systems ==
+=== Linux ===
+The [[Linux kernel]] includes the hfsplus module<ref>[http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=tree;f=fs/hfsplus;hb=HEAD Git Repository Kernel.org]</ref> for mounting HFS+ filesystems. HFS+ [[fsck]] and [[mkfs]] have been ported to [[Linux]] and are part of the hfsprogs package.<ref>[http://packages.debian.org/sid/hfsprogs User-space supporting tools for HFS+ filesystems under Posix systems.]</ref>
+
+The Linux HFS+ kernel driver has support to read and write to HFS+ non-journaled drives/parititions but only has read support of journaled HFS+. Journaling ability was added to HFSplus when OSX came out and is by default on for OS X installations. Journaling is a redundant behavior of a filesystem that helps protect data loss. If planning to write to an HFS+ parition or drive journaling must be turned off in OSX.<ref>http://ubuntuforums.org/showthread.php?p=2346494</ref>
+
+=== Windows ===
+On Windows, a fairly complete filesystem driver for HFS+ exists as a commercial software package called MacDrive.<ref>{{cite web|url=http://www.mediafour.com/products/macdrive/ |title=MacDrive |publisher=Mediafour |date= |accessdate=2010-07-05}}</ref> This package allows Windows users to read and write HFS+ formatted drives, and read Mac-format optical disks.
+
+Another solution is provided by Paragon, with their HFS+ for Windows driver; this supports both read and write on HFS+ partitions.<ref>{{cite web|url=http://www.paragon-software.com/home/hfs-windows/ |title=HFS for Windows - file system driver &#124; PARAGON Software Group |publisher=Paragon-software.com |date= |accessdate=2010-07-05}}</ref>
+
+Apple has released read-only HFS+ drivers for Windows XP, Windows Vista, and Windows 7 in [[Boot Camp (software)|Boot Camp]] in [[Mac OS X 10.6]]. Microsoft has created a HFS+ driver for the XBox 360 mainly for the purpose of reading HFS+ formatted iPods.
+
+A [[free software|free]] ([[GPL]]) alternative to MacDrive is HFSExplorer written by Erik Larsson.<ref>{{cite web|url=http://catacombae.org/hfsx.html |title=Catacombae - HFSExplorer |publisher=Erik Larsson |date=2008-12-23 |accessdate=2010-12-19}}</ref> HFSExplorer is an application for viewing and extracting files from an HFS+ volume (Mac OS Extended) or an HFSX volume (Mac OS Extended, Case-sensitive) located either on a physical disk, on a .dmg disk image, or in a raw file system dump. HFSExplorer is less complete than MacDrive in the sense that it can read, but not write to HFS formatted volumes.
+
+== See also ==
+* [[Comparison of file systems]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://developer.apple.com/technotes/tn/tn1150.html Apple Technote 1150] - HFS Plus Volume Format
+* [http://developer.apple.com/technotes/tn/tn1189.html Apple Technote 1189] - The Monster Disk Driver Technote
+* [http://www.osxbook.com/software/hfsdebug/ hfsdebug] - A debugger for HFS Plus volumes by Amit Singh
+* [http://packages.debian.org/sid/hfsprogs hfsprogs] - Userspace support tools for HFS+ filesystems under Linux systems (adapted from Apple's native tools).
+* [http://apps.tempel.org/iBored/ iBored] - A disk editor and viewer supporting HFS Plus
+
+<br/><!-- Spacing for aesthetic purposes: so that bottom templates don't stick to text above it -->
+{{Mac OS X}}
+{{Mac OS}}
+{{Filesystem}}
+
+[[Category:Disk file systems]]
+[[Category:Mac OS]]
+[[Category:Mac OS X]]
+[[Category:Computer file systems]]
+
+[[ca:HFS Plus]]
+[[cs:HFS+]]
+[[de:HFS plus]]
+[[es:HFS+]]
+[[fr:HFS+]]
+[[ko:HFS 플러스]]
+[[it:HFS Plus]]
+[[ja:HFS Plus]]
+[[pt:HFS+]]
+[[ro:HFS Plus]]
+[[ru:HFS Plus]]
+[[sv:HFS Plus]]
+[[zh:HFS+]]</body> </html>

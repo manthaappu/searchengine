@@ -1,0 +1,125 @@
+<html> <head> <title>Adaptive-additive algorithm</title></head><body>In the studies of [[Fourier optics]], [[sound synthesis]], [[Stellar astronomy|stellar]] [[interferometry]], [[optical tweezers]], and diffractive optical elements (DOEs) it is often important to know the [[spatial frequency]] phase of an observed wave source. In order to reconstruct this [[phase (waves)|phase]] the '''Adaptive-Additive Algorithm''' (or '''AA algorithm'''), which derives from a group of adaptive (input-output) algorithms, can be used. The AA algorithm is an [[iterative]] [[algorithm]] that utilizes the [[Fourier Transform]] to calculate an unknown part of a propagating wave, normally the [[spatial frequency]] [[phase (waves)|phase]] (k space). This can be done when given the phase’s known counterparts, usually an observed [[amplitude]] (position space) and an assumed starting [[amplitude]] (k space). To find the correct [[phase (waves)|phase]] the [[algorithm]] uses error conversion, or the error between the desired and the theoretical [[intensity (physics)|intensities]]. The AA algorithm is currently being implemented by Dr. Wendell Hill III, Alex Robel, V. Kotlyar Soifer, and David G Grier.
+
+==The algorithm==
+===History===
+
+The adaptive-additive algorithm was originally created to reconstruct the [[spatial frequency]] [[phase (waves)|phase]] of light intensity in the study of stellar [[interferometry]]. Since then, the AA algorithm has been adapted to work in the fields of [[Fourier Optics]] by Soifer and Dr. Hill, [[soft matter]] and [[optical tweezers]] by Dr. Grier, and [[sound synthesis]] by Robel.
+
+===Pseudo-code algorithm===
+
+1. Define input amplitude and random phase
+
+2. Forward Fourier Transform
+
+3. Separate transformed amplitude and phase
+
+4. Compare transformed amplitude/intensity to desired output amplitude/intensity
+
+5. Check convergence conditions
+
+6. Mix transformed amplitude with desired output amplitude and combine with transformed phase
+
+7. Inverse Fourier Transform
+
+8. Separate new amplitude and new phase
+
+9. Combine new phase with original input amplitude
+
+10. Loop back to Forward Fourier Transform
+
+===Example===
+
+For the problem of reconstructing the [[spatial frequency]] phase (''k''-space) for a desired [[intensity (physics)|intensity]] in the image plane (''x''-space). Assume the [[amplitude]] and the starting phase of the wave in ''k''-space is a <math>A_0</math> and <math>\phi_n^{k}</math> respectively. [[Fourier transform]] the wave in ''k''-space to ''x'' space.
+
+: <math>A_0e^{i\phi_n^{k}} \xrightarrow{FFT} A_n^fe^{i\phi_n^{f}}</math>
+
+Then compare the transformed [[intensity (physics)|intensity]] <math>I_n^f</math> with the desired intensity <math>I_0^f</math>, where
+
+: <math>
+I_n^f = \left(A_n^f\right)^2,
+</math>
+
+: <math>
+\varepsilon = \sqrt{\left(I_n^f\right)^2 - \left(I_0\right)^2}.
+</math>
+
+Check <math>\varepsilon</math> against the convergence requirements. If the requirements are not met then mix the transformed [[amplitude]] <math>A_n^f</math> with desired amplitude <math>A^f</math>.
+
+: <math>\bar{A}^f_n = \left[a A^f + (1-a) A_n^f\right],</math>
+
+where ''a'' is mixing ratio and
+
+: <math>A^f = \sqrt{I_0}</math>.
+
+''Note that ''a'' is a percentage, defined on the interval 0 ≤ ''a'' ≤ 1.
+
+Combine mixed amplitude with the ''x''-space phase and [[inverse Fourier transform]].
+
+: <math>\bar{A}^{f}e^{i\phi_n^f} \xrightarrow{iFFT} \bar{A}_n^ke^{i\phi_n^k}.</math>
+
+Separate <math>\bar{A}_n^k</math> and <math>\phi^k_n</math> and combine <math>A_0</math> with <math>\phi^k_n</math>. Increase loop by one <math> n \to n + 1</math> and repeat.
+
+====Limits====
+* If <math>a = 1</math> then the AA algorithm becomes the [[Gerchberg–Saxton algorithm]].
+* If <math>a = 0</math> then <math>\bar{A}^k_n = A_0</math>.
+
+==See also==
+
+* [[Gerchberg–Saxton algorithm]]
+* [[Fourier optics]]
+* [[Holography]]
+* [[Interferometry]]
+* [[Synthesizer|Sound Synthesis]]
+
+==References==
+
+* {{citation
+| last=Dufresne
+| first=Eric
+| last2=Grier
+| first2=David G
+| last3=Spalding
+| title=Computer-Generated Holographic Optical Tweezer Arrays
+| journal=Review of Scientific Instruments
+| volume=72 | issue=3
+| month=December | year=2000}}.
+* {{citation
+| last=Grier
+| first=David G
+| title=Adaptive-Additive Algorithm
+| date=October 10, 2000
+| url=http://www.physics.nyu.edu/~dg86/cgh2b/node6.html}}.
+* {{citation
+| last=Robel
+| first=Axel
+| title=Adaptive Additive Modeling With Continuous Parameter Trajectories
+| url=http://ieeexplore.ieee.org/iel5/10376/32978/101109TSA2005858529.pdf?arnumber=101109TSA2005858529}}.
+* {{citation
+| last=Robel
+| first=Axel
+| title=Adaptive-Additive Synthesis of Sound Technical
+| place=University of Berlin Germany
+| publisher=Einsteinufer 17, 10587
+| location=Berlin, Germany.
+| url=http://i2pi.com/PAPERS/music-dsp/adaptive-additive-synthesis-of.pdf
+| format= }}{{dead link|date=April 2009}}
+* {{Citation
+| last=Soifer
+| first=V. Kotlyar
+| last2=Doskolovich,
+| first2=L.
+| title=Iterative Methods for Diffractive Optical Elements Computation
+| year=1997
+| publisher=Taylor & Francis
+| location=Bristol, PA
+| isbn=978-0-7484-0634-0}}
+
+==External links==
+* [http://staff.chess.cornell.edu/~shen/workshop2003/presentations/Talk_DiFabrizio.pdf A PDF/Power Point Presentation that describes the uses and variations of the AA algorithm] ''Berkeley, Ca''.
+* [http://physics.nyu.edu/grierlab/cgh2b/node6.html David Grier's Lab] Presentation on optical tweezers and fabrication of AA algorithm.
+* [http://www-ccrma.stanford.edu/~roebel/addsyn/index.html Adaptive Additive Synthesis for Non Stationary Sound] Dr. Axel Robel.
+* [http://hillslab.umd.edu/ Hill Labs] ''University of Maryland College Park''.
+
+{{DEFAULTSORT:Adaptive-Additive Algorithm}}
+[[Category:Digital signal processing]]
+[[Category:Physical optics]]</body> </html>

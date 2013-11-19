@@ -1,0 +1,494 @@
+<html> <head> <title>IP Pascal</title></head><body>'''IP Pascal''' is an implementation of the [[Pascal (programming language)|Pascal programming language]] using the IP portability platform, a multiple machine, operating system and language implementation system.
+
+== Overview ==
+
+IP Pascal implements the language "Pascaline" (named after Blaise Pascal's calculator), which is a highly extended superset of ISO 7185 Pascal. It adds [[module (programming)|modularity]] with [[namespace]] control, including the [[parallel tasking]] [[Monitor (synchronization)|monitor]] concept, dynamic [[array data structure|arrays]], [[Polymorphism (computer science)|overloads]] and [[overrides]], [[object (computer science)|object]]s, and a host of other minor extensions to the language. IP implements a porting platform, including a [[widget toolkit]], [[Internet protocol suite|TCP/IP]] library, [[MIDI]] and sound library and other functions, that allows both programs written under IP Pascal, and IP Pascal itself, to move to multiple operating systems and machines.
+
+IP Pascal is one of the only Pascal implementations that still exist that has passed the Pascal Validation Suite, a large suite of tests created to verify compliance with ISO 7185 Pascal.
+
+Although Pascaline extends ISO 7185 Pascal, it does not reduce the type safety of Pascal (as many other dialects of Pascal have by including so called "type escapes"). The functionality of the language is similar to that of [[C Sharp (programming language)|C#]] (which implements a C++ like language but with the type insecurities removed), and Pascaline can be used anywhere managed programs can be used (even though it is based on a language 30 years older than C#).
+
+== Open/Closed status ==
+
+The author of Pascaline the language has stated that the there is no wish to have it remain as a proprietary language. IP Pascal is sold as implementation of Pascaline, but the language itself can and should be open, and have quality implementations.
+
+To that end, the full specification for Pascaline will be published online, and the long term intention is to create a version of the open source P5 compiler/interpreter (an ISO 7185 version of Wirth's P4 compiler/interpreter) which implements Pascaline compliance. This will be known as the P6 compiler, and it will also be openly published and distributed.
+
+The value of IP Pascal as a commercial product will be based on the IDE and compiler/encoder resources of that system.
+
+== Language ==
+
+IP Pascal starts with [[International Organization for Standardization|ISO]] 7185 [[pascal programming language|Pascal]] (which standardized [[Niklaus Wirth]]'s original language), and adds:
+
+* modules, including parallel task constructs '''process''', '''monitor''' and '''share'''.
+
+ '''module''' mymod(input, output);<br/>
+ '''uses''' extlib;
+ '''const''' one = 1;<br/>
+ '''type''' string = '''packed''' '''array''' '''of''' char;<br/>
+ '''procedure''' wrtstr('''view''' s: string);<br/>
+ '''private'''<br/>
+ '''var''' s: string;<br/>
+ '''procedure''' wrtstr('''view''' s: string);<br/>
+ '''var''' i: integer;<br/>
+ '''begin'''<br/>
+    '''for''' i := 1 '''to''' max(s) '''do''' write(s[i])<br/>
+ '''end''';<br/>
+ '''begin''' { initialize monitor }<br/>
+ '''end''';<br/>
+ '''begin''' { shutdown monitor }<br/>
+ '''end'''.
+
+Modules have entry and exit sections. Declarations in modules form their own interface specifications, and it is not necessary to have both interface and implementation sections. If a separate interface declaration file is needed, it is created by stripping the code out of a module and creating a "skeleton" of the module. This is typically done only if the object for a module is to be sent out without the source.
+
+Modules must occupy a single file, and modules reference other modules via a '''uses''' or '''joins''' statement. To allow this, a module must bear the same name as its file name. The '''uses''' statement indicates that the referenced module will have its global declarations merged with the referencing module, and any name conflicts that result will cause an error. The '''joins''' statement will cause the referenced module to be accessible via the referencing module, but does not merge the name spaces of the two modules. Instead, the referencing module must use a so-called "qualified identifier":
+
+ module.identifier
+
+A '''program''' from ISO 7185 Pascal is directly analogous to a module, and is effectively a module without an exit section. Because all modules in the system are "daisy chained" such that each are executed in order, a program assumes "command" of the program simply because it does not exit its initialization until its full function is complete, unlike a module which does. In fact, it is possible to have multiple program sections, which would execute in sequence.
+
+A '''process''' module, like a '''program''' module, has only an initialization section, and runs its start, full function and completion in that section. However, it gets its own thread for execution aside from the main thread that runs '''program''' modules. As such, it can only call '''monitor''' and '''share''' modules.
+
+A '''monitor''' is a module that includes task locking on each call to an externally accessible '''procedure''' or '''function''', and implements communication between tasks by semaphores.
+
+A '''share''' module, because it has no global data at all, can be used by any other module in the system, and is used to place library code in.
+
+Because the module system directly implements multitasking/multithreading using the [[Monitor (synchronization)|Monitor]] concept, it solves the majority of multithreading access problems. Data for a module is bound to the code with [[mutex]]es or [[mutex|Mutually Exclusive Sections]]. Subtasks/subthreads are started transparently with the process module. Multiple subtasks/subthreads can access monitors or share modules. A share module is a module without data, which does not need the locking mechanisms of a monitor.
+
+* [[Dynamic array]]s. In IP Pascal, dynamics are considered "containers" for static arrays. The result is that IP Pascal is perhaps the only Pascal where dynamic arrays are fully compatible with the ISO 7185 static arrays from the original language. A static array can be passed into a dynamic array parameter to a procedure or function, or created with new.
+
+ '''program''' test(output);<br/>
+ '''type''' string = '''packed''' '''array''' '''of''' char;<br/>
+ '''var''' s: string;<br/>
+ '''procedure''' wrtstr('''view''' s: string);<br/>
+ '''var''' i: integer;<br/>
+ '''begin'''<br/>
+    '''for''' i := 1 '''to''' max(s) '''do''' write(s[i])<br/>
+ '''end''';<br/>
+ '''begin'''<br/>
+    new(s, 12);
+    s := 'Hello, world';
+    wrtstr(s^);
+    wrtstr('That's all folks')<br/>
+ '''end'''.
+
+Such "container" arrays can be any number of dimensions.
+
+* Constant expressions. A constant declaration can contain expressions of other constants.
+
+ '''const''' b = a+10;
+
+* Radix for numbers.
+
+ $ff, &76, %011000
+
+* Alphanumeric goto labels.
+
+ '''label''' exit;
+ '''goto''' exit;
+
+* '_' in all labels.
+
+ '''var''' my_number: integer;
+
+* '_' in numbers.
+
+ a := 1234_5678;
+
+The '_' (break) character can be included anywhere in a number except for the first digit. It is ignored, and serves only to separate digits in the number.
+
+* Special character sequences that can be embedded in constant strings:
+
+ '''const''' str = 'the rain in Spain\cr\lf';
+
+Using standard [[ISO 8859-1]] memnemonics.
+
+* Duplication of forwarded headers.
+
+ '''procedure''' x(i: integer); '''forward''';<br/>
+ ...<br/>
+ '''procedure''' x(i: integer);<br/>
+ '''begin'''<br/>
+    ...<br/>
+ '''end''';
+
+This makes it easier to declare a forward by cut-and-paste, and keeps the parameters of the procedure or function in the actual header where you can see them.
+
+* 'halt' procedure.
+
+ '''procedure''' error('''view''' s: string);<br/>
+ '''begin'''<br/>
+    writeln('*** Error: ', s:0);
+    halt { terminate program }<br/>
+ '''end''';
+
+* Special predefined header files.
+
+ '''program''' myprog(input, output, list);<br/>
+ '''begin'''<br/>
+    writeln(list, 'Start of listing:');
+    ...
+
+ '''program''' echo(output, command);<br/>
+ '''var''' c: char;<br/>
+ '''begin'''<br/>
+    '''while''' '''not''' eoln(command) '''do''' '''begin'''<br/>
+       read(command, c);
+       write(c)<br/>
+    '''end''';
+    writeln<br/>
+ '''end'''.
+
+ '''program''' newprog(input, output, error);<br/>
+ '''begin'''<br/>
+    ...
+    writeln(error, 'Bad parameter');
+    halt
+    ...
+
+'command' is a file that connects to the command line, so that it can be read using normal file read operations.
+
+* Automatic connection of program header files to command line names.
+
+ '''program''' copy(source, destination);<br/>
+ '''var''' source, destination: text;
+     c: char;<br/>
+ '''begin'''<br/>
+    reset(source);
+    rewrite(destination);
+    '''while''' '''not''' eof(source) '''do''' '''begin'''<br/>
+       '''while''' '''not''' eoln(source) '''do''' '''begin'''<br/>
+          read(source, c);
+          write(destination, c)<br/>
+       '''end''';
+       readln(source);
+       writeln(destination)<br/>
+    '''end'''<br/>
+ '''end'''.
+
+'source' and 'destination' files are automatically connected to the parameters on the command line for the program.
+
+* File naming and handling operations.
+
+ '''program''' extfile(output);<br/>
+ '''var''' f: file of integer;<br/>
+ '''begin'''<br/>
+    assign(f, 'myfile'); { set name of external file }
+    update(f); { keep existing file, and set to write mode }
+    position(f, length(f)); { position to end of file to append to it }
+    writeln('The end of the file is: ', location(f)); { tell user location of new element }
+    write(f, 54321); { write new last element }
+    close(f) { close the file }<br/>
+ '''end'''.
+
+* 'fixed' declarations which declare structured constant types.
+
+ '''fixed''' table: '''array''' [1..5] '''of''' '''record''' a: integer; '''packed''' '''array''' [1..10] '''of''' char '''end ='''
+                 '''array'''<br/>
+                    '''record''' 1, 'data1     ' '''end''',
+                    '''record''' 2, 'data2     ' '''end''',
+                    '''record''' 3, 'data3     ' '''end''',
+                    '''record''' 4, 'data4     ' '''end''',
+                    '''record''' 5, 'data5     ' '''end'''<br/>
+                 '''end''';
+
+* Boolean bit operators.
+
+ '''program''' test;<br/>
+ '''var''' a, b: integer;<br/>
+ '''begin'''<br/>
+    a := a '''and''' b;
+    b := b '''or''' $a5;
+    a := '''not''' b;
+    b := a '''xor''' b<br/>
+ '''end'''.
+
+* Extended range variables.
+
+ '''program''' test;<br/>
+ '''var''' a: linteger;
+     b: cardinal;
+     c: lcardinal;
+     d: 1..maxint*2;
+ ...
+
+Extended range specifications give rules for scalars that lie outside the range of -maxint..maxint. It is implementation specific as to just how large a number is possible, but Pascaline defines a series of standard types that exploit the extended ranges, including linteger for double range integers, cardinal for unsigned integers, and lcardinal for unsigned double range integers. Pascaline also defines new limits for these types, as maxlint, maxcrd, and maxlcrd.
+
+* Semaphores
+
+ '''monitor''' test;<br/>
+ '''var''' notempty, notfull: semaphore;
+ '''procedure''' enterqueue;
+ '''begin'''
+    '''while''' nodata '''do''' wait(notempty);
+    ...
+    signalone(notfull)
+ '''end''';
+ ...
+ '''begin'''
+ '''end'''.
+
+Semaphores implement task event queuing directly in the language, using the classical methods outlined by [[Per Brinch Hansen]].
+
+* Overrides
+
+ '''module''' test1;
+ '''virtual''' '''procedure''' x;
+ '''begin'''
+    ...
+ '''end''';
+
+ '''program''' test;
+ '''joins''' test1;
+ '''override''' '''procedure''' x;
+ '''begin'''
+    '''inherited''' x
+ '''end''';
+ '''begin'''
+ '''end'''.
+
+Overriding a procedure or function in another module effectively "hooks" that routine, replacing the definition for all callers of it, but makes the original definition available to the hooking module. This allows the overriding module to add new functionality to the old procedure or function. This can be implemented to any depth.
+
+* Overloads
+
+ '''procedure''' x;
+ '''begin'''
+ '''end''';
+ '''overload''' '''procedure''' x(i: integer);
+ '''begin'''
+ '''end''';
+ '''overload''' '''function''' x: integer;
+ '''begin'''
+    x := 1
+ '''end''';
+
+Overload "groups" allow a series of procedures and/or functions to be placed under the same name and accessed by their formal parameter or usage "signature". Unlike other languages that implement the concept, Pascaline will not accept overloads as belonging to the same group unless they are not ambiguous with each other. This means that there is no "priority" of overloads, nor any question as to which routine of an overload group will be executed for any given actual reference.
+
+* Objects
+
+ '''program''' test;
+ '''uses''' baseclass;
+ '''class''' alpha;
+ '''extends''' beta;
+ '''type''' alpha_ref = '''reference''' '''to''' alpha;
+ '''var''' a, b: integer;
+           next: alpha_ref;
+ '''virtual''' '''procedure''' x(d: integer);
+ '''begin'''
+    a := d;
+    self := next
+ '''end''';
+ '''private'''
+ '''var''' q: integer;
+ '''begin'''
+ '''end'''.
+ '''var''' r: alpha_ref;
+ '''begin'''
+    new(r);
+    ...
+    '''if''' r '''is''' alpha '''then''' r.a := 1;
+    r.x(5);
+    ...
+ '''end'''.
+
+In Pascaline, classes are a dynamic instance of a module (and modules are a static instance of a class). Classes are a code construct (not a type) that exists between modules and procedures and functions. Because a class is a module, it can define any code construct, such as constants, types, variables, fixed, procedures and functions (which become "methods"), and make them public to clients of the class, or hide them with the "private" keyword. Since a class is a module, it can be accessed via a qualified identifier.
+
+Classes as modules have automatic access to their namespace as found in C# and C++ in that they do not require any qualification. Outside of the class, all members of the class can be accessed either by qualified identifier or by a reference. A reference is a pointer to the object that is created according to the class. Any number of instances of a class, known as "objects" can be created with the new() statement, and removed with the dispose() statement. Class members that have instance data associated with them, such as variables (or fields) and methods must be accessed via a reference. A reference is a type, and resembles a pointer, including the ability to have the value nil, and checking for equality with other reference types. It is not required to qualify the pointer access with "^".
+
+Pascaline implements the concept of "reference grace" to allow a reference to access any part of the object regardless of whether or not it is per-instance. This characteristic allows class members to be "promoted", that is moved from constants to variables, and then to "properties" (which are class fields whose read and write access are provided by "get" and "set" methods).
+
+Both overloads and overrides are provided for and object's methods. A method that will be overridden must be indicated as virtual.
+
+Object methods can change the reference used to access them with the "self" keyword.
+
+Single inheritance only is implemented.
+
+* Structured exception handling
+
+ '''try'''
+
+    ...
+
+ '''except''' ...
+ '''else''' ...;
+
+ throw
+
+The "try" statement can guard a series of statements, and any exceptions flagged within the code are routined to the statement after "except". The try statement also features an else clause that allows a statement to be executed on normal termination of the try block.
+
+Exceptions are raised in the code via the throw() procedure. Try statements allow the program to bail out of any nested block, and serve as a better replacement for intra-procedure gotos (which are still supported under Pascaline). Since unhandled exceptions generate errors by default, the throw() procedure can serve as a general purpose error flagging system.
+
+* Asserts.
+
+ assert(expression);
+
+The system procedure assert causes the program to terminate if the value tested is false. It is typically coupled to a runtime dump or diagnostic, and can be removed by compiler option.
+
+* Unicode.
+
+IP Pascal can generate either [[ISO 8859-1]] mode programs (8 bit characters) or [[Unicode]] mode programs by a simple switch at compile time (unlike many other languages, there is no source difference between Unicode and non-Unicode programs). The ASCII upward compatible [[UTF-8]] format is used in text files, and these files are read to and from 8 or 16 bit characters internal to the program (the upper 128 characters of ISO 8859-1 are converted to and from UTF-8 format in text files even in an 8 bit character encoded program).
+
+* Constant for character high limit.
+
+Similar to maxint, Pascaline has a maxchr, which is the maximum character that exists in the character set (and may not in fact have a graphical representation). The range of the type char is then defined as 0..maxchr. This is an important addition for dealing with types like "set of char", and aids when dealing with different character set options (such as ISO 8859-1 or Unicode).
+
+== Modular structure ==
+
+IP Pascal uses a unique stacking concept for modules. Each module is stacked one atop the other in memory, and executed at the bottom. The bottom module calls the next module up, and that module calls the next module, and so on.
+
+ wrapper
+ serlib
+ program
+ cap
+
+The cap module (sometimes called a "cell" in IP Pascal terminology, after a concept in [[integrated circuit]] design) terminates the stack, and begins a return process that ripples back down until the program terminates. Each module has its startup or entry section performed on the way up the stack, and its finalization or exit section performed on the way back down.
+
+This matches the natural dependencies in a program. The most primitive modules, such as the basic I/O support in "serlib", perform their initialization first, and their finalization last,  before and after the higher level modules in the stack.
+
+== Porting platform ==
+
+IP Pascal has a series of modules (or "libraries") that form a "porting platform". These libraries present an idealized [[API]] for each function that applies, such as files and extended operating system functions, graphics, midi and sound, etc. The whole collection forms the basis for an implementation on each operating system and machine that IP Pascal appears on.
+
+The two important differences between IP Pascal and many other languages that have simply been mated with portable graphics libraries are that:
+
+1. IP Pascal uses its own porting platform for its own low level code, so that once the platform is created for a particular operating system and machine, both the IP system and the programs it compiles can run on that. This is similar to the way [[Java (programming language)|Java]] and the [[UCSD Pascal]] systems work, but with true high optimization compiled code, not interpreted code or "just in time" compiled code.
+
+2. Since modules can override lower level functions such as Pascal's "write" statement, normal, unmodified ISO 7185 Pascal programs can also use advanced aspects of the porting platform. This is unlike many or most portable graphics libraries that force the user to use a completely different I/O methodology to access a windowed graphics system, for example C, other Pascals, and [[Visual Basic]].
+
+IP modules can also be created that are system independent, and rely only on the porting platform modules. The result is that IP Pascal is very highly portable.
+
+<!--  Commented out because image was deleted: [[Image:hellogra.png|right|400px]] -->
+
+Example: The standard "hello world" program is coupled to output into a
+graphical window.
+
+ '''program''' HelloWorld(output);<br/>
+ '''begin'''<br/>
+     writeln('Hello, World!')<br/>
+ '''end'''.
+
+<!--  Commented out because image was deleted: [[Image:hellogra3.png|right|400px]] -->
+
+Example: "hello world" with graphical commands added. Note that standard Pascal
+output statements are still used.
+
+ '''program''' hello(input, output);<br/>
+ '''uses''' gralib;<br/>
+ '''var''' er: evtrec;<br/>
+ '''begin'''<br/>
+    bcolor(output, green);
+    curvis(output, false);
+    auto(output, false);
+    page(output);
+    fcolor(output, red);
+    frect(output, 50, 50, maxxg(output)-50, maxyg(output)-50);
+    fcolorg(output, maxint, maxint-(maxint div 3), maxint-maxint div 3);
+    frect(output, 50, 50, 53, maxyg(output)-50);
+    frect(output, 50, 50, maxxg(output)-50, 53);
+    fcolorg(output, maxint div 2, 0, 0);
+    frect(output, 52, maxyg(output)-53, maxxg(output)-50, maxyg(output)-50);
+    frect(output, maxxg(output)-53, 52, maxxg(output)-50, maxyg(output)-50);
+    font(output, font_sign);
+    fontsiz(output, 100);
+    binvis(output);
+    fcolor(output, cyan);
+    cursorg(output, maxxg(output) div 2-strsiz(output, 'hello, world') div 2+3,
+                    maxyg(output) div 2-100 div 2+3);
+    writeln('hello, world');
+    fcolor(output, blue);
+    cursorg(output, maxxg(output) div 2-strsiz(output, 'hello, world') div 2,
+                    maxyg(output) div 2-100 div 2);
+    writeln('hello, world');
+    '''repeat''' event(input, er) '''until''' er.etype = etterm<br/>
+  '''end'''.
+
+[[Image:breakshot.png|right|400px]]
+
+Example: Breakout game.
+
+[[Image:clockg.png|right]]
+
+Example: Graphical clock in a sizable window.
+
+Because IP Pascal modules can "override" each other, a graphical extension module (or any other type of module) can override the standard I/O calls implemented in a module below it. Thus, paslib implements standard Pascal statements such as read, write, and other support services. gralib overrides these services and redirects all standard Pascal I/O to graphical windows.
+
+The difference between this and such libraries in other implementations is that you typically have to stop using the standard I/O statements and switch to a completely different set of calls and paradigms. This means that you cannot "bring forward" programs implemented with the serial I/O paradigm to graphical systems.
+
+Another important difference with IP Pascal is that it uses procedural language methods to  access the Windowed graphics library. Most graphics toolkits force the use of [[object-oriented programming]] methods to the toolkit. One reason for this is because [[Object orientation]] is a good match for graphics, but it also occurs because common systems such as Windows force the application program to appear as a service program to the operating system, appearing as a collection of functions called by the operating system, instead of having the program control its own execution and call the operating system. This is commonly known as [[Callback (computer science)|callback]] design. Object-oriented code often works better with callbacks because it permits an object's methods to be called as callbacks, instead of a programmer having to register several pointers to functions to event handling code, each of which would be an individual callback.
+
+Object-orientation is a good programming method, but IP Pascal makes it an optional, not a required, methodology to write programs. IP Pascal's ability to use procedural methods to access all graphics functions means that there is no "[[cliff effect]]" for older programs. They don't need to be rewritten just to take advantage of modern programming environments.
+
+Another interesting feature of the IP porting platform is that it supports a character mode, even in graphical environments, by providing a "character grid" that overlays the pixel grid, and programs that use only character mode calls (that would work on any terminal or telnet connection) work under graphical environments automatically.
+
+== History ==
+=== The Z80 implementation ===
+
+The compiler started out in 1980 on [[Micropolis (company)|Micropolis]] Disk Operating System, but was moved rapidly to [[CP/M]] running on the Z80. The original system was coded in Z80 assembly language, and output direct machine code for the [[Z80]]. It was a single pass compiler without a linker, it included its system support library within the compiler, and relocated and output that into the generated code into the runnable disk file.
+
+After the compiler was operational, almost exactly at the new year of 1980, a companion assembler for the compiler was written, in Pascal, followed by a linker, in Z80 assembly language. This odd combination was due to a calculation that showed the linker tables would be a problem in the 64kb limited Z80, so the linker needed to be as small as possible. This was then used to move the compiler and linker Z80 source code off the Micropolis assembler (which was a linkerless assembler that created a single output binary) to the new assembler linker system.
+
+After this, the compiler was retooled to output to the linker format, and the support library moved into a separate file and linked in.
+
+In 1981, the compiler was extensively redone to add optimization, such as register allocation, boolean to jump, dead code, constant folding, and other optimizations. This created a Pascal implementation that benchmarked better than any existing Z80 compilers, as well as most 8086 compilers. Unfortunately, at 46kb, it also was difficult to use, being able to compile only a few pages of source code before overflowing its tables (this was a common problem with most Pascal implementations on small address processors). The system was able to be used primarily because of the decision to create a compact linker allowed for large systems to be constructed from these small object files.
+
+Despite this, the original IP Pascal implementation ran until 1987 as a general purpose compiler. In this phase, IP Pascal was C like in its modular layout. Each source file was a unit, and consisted of some combination of a 'program' module, types, constants, variables, procedures or functions. These were in "free format". Procedures, functions, types, constants and variables could be outside of any block, and in any order. Procedures, functions, and variables in other files were referenced by 'external' declarations, and procedures, functions, and variables in the current file were declared 'global'. Each file was compiled to an object file, and then linked together. There was no type checking across object files.
+
+As part of the original compiler, a device independent terminal I/O module was created to allow use of any serial terminal (similar to [[Turbo Pascal]]'s CRT unit), which remains to this day.
+
+In 1985, an effort was begun to rewrite the compiler in Pascal. The new compiler would be two pass with intermediate, which was designed to solve the memory problems associated with the first compiler. The front end of the compiler was created and tested without intermediate code generation capabilities (parse only).
+
+in 1987, the Z80 system used for IP was exchanged for an 80386 IBM-PC, and work on it stopped. From that time several other, ISO 7185 standard compilers were used, ending with the SVS Pascal compiler, a 32 bit [[DPMI]] extender based implementation.
+
+=== The 80386 implementation ===
+
+By 1993, ISO 7185 compatible compilers that delivered high quality 32 bit code were dying off. At this point, the choice was to stop using Pascal, or to revive the former IP Pascal project and modernize it as an 80386 compiler. At this point, a Pascal parser, and assembler (for Z80) were all that existed which were usable on the IBM-PC. From 1993 to 1994, the assembler was made modular to target multiple CPUs including the 80386, a linker to replace the Z80 assembly language linker was created, and a the Pascal compiler front end was finished to output to intermediate code. Finally, an intermediate code simulator was constructed, in Pascal, to prove the system out.
+
+In 1994, the simulator was used to extend the ISO 7185 IP Pascal "core" language to include features such as dynamic arrays.
+
+In 1995, a "check encoder" was created to target 80386 machine code, and a converter program created to take the output object files and create a "Portable Executable" file for Windows. The system support library was created for IP Pascal, itself in IP Pascal. This was an unusual step taken to prevent having to later recode the library from assembly or another Pascal to IP Pascal, but with the problem that both the 80386 code generator and the library would have to be debugged together.
+
+At the beginning of 1996, the original target of Windows NT was switched to Windows 95, and IP Pascal became fully operational as an 80386 compiler under Windows. The system bootstrapped itself, and the remaining Pascal code was ported from SVS Pascal to IP Pascal to complete the bootstrap. This process was aided considerably by the ability of the [[DPMI]] based SVS Pascal to run under Windows 95, which meant that the need to boot back and forth between DOS and Windows 95 was eliminated.
+
+=== The Linux implementation ===
+
+In 2000, a [[Linux]] (Red Hat) version was created for text mode only. This implementation directly uses the system calls and avoids the use of [[glibc]], and thus creates thinner binaries than if the full support system needed for C were used, at the cost of binary portability.
+
+The plan is to create a version of the text library that uses termcap info, and the graphical library under X11.
+
+=== Steps to "write once, run anywhere" ===
+
+In 1997, a version of the terminal library from the original 1980 IP Pascal was ported to windows, and a final encoder started for the 80386. However, the main reason for needing an improved encoder, execution speed, was largely made irrelevant by increases in processor speed in the IBM-PC. As a result, the new encoder wasn't finished until 2003.
+
+In 2001, a companion program to IP Pascal was created to translate C header files to Pascal header files. This was meant to replace the manual method of creating operating system interfaces for IP Pascal.
+
+In 2003, a fully graphical, operating system independent module was created for IP Pascal.
+
+In 2005, the windows management and widget kit was added.
+
+=== Lessons ===
+
+In retrospect, the biggest error in the Z80 version was its single pass structure. There was no real reason for it, the author's preceding (Basic) compiler was multiple pass with intermediate. The only argument for it was that single pass compilation was supposed to be faster. However, single pass compiling turns out to be a bad match for small machines, and isn't likely to help the advanced optimizations common in large machines.
+
+Further, the single pass aspect slowed or prevented getting the compiler bootstrapped out of Z80 assembly language and onto Pascal itself. Since the compiler was monolithic, the conversion to Pascal could not be done one section at a time, but had to proceed as a wholesale replacement. When replacement was started, the project lasted longer than the machine did. The biggest help that two pass compiling gave the I80386 implementation was the maintenance of a standard book of intermediate instructions which communicated between front and back ends of the compiler. This well understood "stage" of compilation reduced overall complexity. Intuitively, when two programs of equal size are mated intimately, the complexity is not additive, but multiplicative, because the connections between the program halves multiply out of control.
+
+Another lesson from the Z80 days, which was corrected on the 80386 compiler was to write as much of the code as possible into Pascal itself, even the support library. Having the 80386 support code all written in Pascal has made it so modular and portable that most of it was moved out of the operating system specific area and into the "common code" library section, a section reserved for code that never changes for each machine and operating system. Even the "system specific" code needs modification only slightly from implementation to implementation. The result is great amounts of implementation work saved while porting the system.
+
+Finally, it was an error to enter into a second round of optimization before bootstrapping the compiler. Although the enhancement of the output code was considerable, the resulting increase in complexity of the compiler caused problems with the limited address space. At the time, better optimized code was seen to be an enabler to bootstrapping the code in Pascal. In retrospect, the remaining assembly written sections WERE the problem, and needed to be eliminated, the sooner the better. Another way to say this is that the space problems could be transient, but having significant program sections written in assembly are a serious and lasting problem.
+
+== Further reading ==
+* Kathleen Jansen and [[Niklaus Wirth]]: ''PASCAL - User Manual and Report.'' Springer-Verlag, 1974, 1985, 1991, ISBN 0-387-97649-3, ISBN 0-387-90144-2, and ISBN 3-540-90144-2 <ref>http://www.cs.inf.ethz.ch/~wirth/books/Pascal/</ref>
+* Niklaus Wirth: ''The Programming Language Pascal.'' Acta Informatica, 1, (Jun 1971) 35-63
+* ISO/IEC 7185: ''Programming Languages - PASCAL.'' <ref>http://www.moorecad.com/standardpascal/</ref>
+
+== External links ==
+* [http://www.moorecad.com/ippas/ IP Pascal web site]
+* [http://www.standardpascal.org/ The standard, ISO 7185 Pascal web site]
+
+
+== References ==
+<references />
+{{Pascal programming language family}}
+{{Widget toolkits}}
+
+[[Category:Pascal programming language family]]
+[[Category:Pascal compilers]]</body> </html>

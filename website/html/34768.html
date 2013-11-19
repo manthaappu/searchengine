@@ -1,0 +1,135 @@
+<html> <head> <title>Snippet (programming)</title></head><body>'''Snippet''' is a programming term for a small region of re-usable [[source code]], [[machine code]] or text. Ordinarily, these are formally-defined operative units to incorporate into larger [[Module (programming)|programming module]]s. Snippets are often used to clarify the meaning of an otherwise "cluttered" function, or to minimize the use of repeated code that is common to other functions.
+
+'''Snippet management''' is a feature of some [[text editor]]s, program [[source code editor]]s, [[integrated development environment|IDE]]s, and related [[software]]. It allows the user to [[Persistence (computer science)|persist]] and use snippets in the course of routine edit operations.<ref name="gedit_feature">{{cite web
+| title       = GEdit feature example
+| url         = http://live.gnome.org/Gedit/Plugins/Snippets
+| accessdate  = 2010-01-09<!-- 04:56:40
+-->}} example of the feature in the gedit editor.</ref>
+
+==Overview==
+Snippet management is a text editor feature popular among software developers or others who routinely require content from a catalogue of repeatedly entered text (such as with [[source code]] or [[boilerplate (text)|boilerplate]]). Often this feature is justified because the content varies only slightly (or not at all) each time it is entered.
+
+===Snippets in text editors===
+Text editors that include this feature ordinarily provide a mechanism to manage the catalogue, and separate "snippets" in the same manner that the text editor and operating system allow management of separate files. These [[Create, read, update and delete|basic management abilities]] include operations such as viewing, adding, editing, deleting, sorting, filtering, grouping, renaming and storing snippets in a [[Software repository|repository]], catalogue or [[database]].
+
+===Snippets in IDEs===
+
+Some programmer's applications such as [[Eclipse (software)|Eclipse]], [[NetBeans]] and Microsoft's [[Visual Studio]] (a keyword and {{keypress|Tab}}) and other [[Integrated Development Environment|IDEs]] include built-in parts of structure for ease of coding.
+
+Other applications such as Macromedia [[Dreamweaver]] make use of these code snippets as well for [[Web development]].
+
+===Snippets in JIT compilers===
+Just-in-time ([[JIT]]) compilers can "splice together" pre-compiled sections of code as longer [[object code]]/[[machine code]] segments. This reduces interpret time significantly and simultaneously speeds execution.
+
+==Conventions==
+In addition to the basic management abilities described previously, snippet management features can be classified according to the scope of interactivity between snippets and the text editor or application that hosts them.
+
+These snippet feature groups include:
+
+* plain-text or "static" snippets
+* interactive or "dynamic" snippets
+* scriptable snippets
+
+'''Static''' snippets consist primarily of fixed text that the user can choose to insert into the current document. The user is not able to specify anything else, except perhaps the cursor position relative to the newly inserted text. Static snippets are similar to simple [[Macro (computer science)|macros]].
+
+'''Dynamic''' snippets consist of fixed text combined with dynamic elements. The user may specify both the content of the dynamic elements, as well as their position relative to the fixed text, as part of choosing what to insert into the current document. Examples of dynamic elements could be variables such as the current date or system time, or input from the user that is supplied via a GUI, or input from another application. (see also: [[Macro (computer science)#Programming macros|programmable macro]]).
+
+'''Scriptable''' snippets consist of runnable segments of code in either a macro language or a [[scripting language]]. Scriptable snippets provide the greatest degree of flexibility to the user, although that depends somewhat on the programming languages supported by the text editor, and whether or not the programming language is well-known, or particular and unique to that specific editor.
+
+The type of scripting support varies, but may include features such as running [[Unix shell|shell command]]s, providing a [[dialog box|GUI dialog]] or other methods of user interaction with the operating system; other applications; or other sub-components of the hosting application itself.
+<!-- (This probably belongs somewhere else)
+*At search engine result pages, snippet is an extract of webpage content with a user's query highlighted <b>bold</b>. It is located under the link to the site.
+### p__: 2007-11-30 12:12 ;; by dreftymac ;;
+    Yes ... this does belong somewhere else, please take a look at:
+        http://en.wikipedia.org/wiki/Search_engine_results_page
+-->
+
+== Snippet placeholders ==
+
+Placeholders are elements within a snippet that are left to be supplied by the user or other external process.  The values for placeholders are not determined until the text of the snippet is inserted during an editing session.
+
+Placeholders may have special [[Markup language|markup syntax]] that allows the editor to identify the boundaries of [[Template (software engineering)|placeholders]] relative to the other text in the current edit buffer.
+
+Other applications employ [[graphical user interface]]s and [[Modal window|modal dialog box]]es that allow the user to enter one or more values to be supplied for the placeholders.
+
+=== Placeholder identifiers ===
+Placeholders are usually indicated by some special character or sequence of characters to distinguish them from the rest of the snippet text. Some systems allow snippet placeholders to be named [[identifier]]s. The identifiers may be useful for supporting such features as placeholder duplication or placeholder transformation.
+
+The following example uses the identifiers <code>first_name</code>, <code>last_name</code>, and <code>item</code>:
+
+<pre>
+Hello {%first_name%} {%last_name%},
+
+Your shipment of {%item%} is now ready to pick up.
+
+Thanks {%first_name%}!
+</pre>
+
+=== Placeholder duplication ===
+This allows the user to indicate that the value supplied for one placeholder should be replicated in multiple places, relative to the entire text of the programmable snippet. In the previous example, the named placeholder <code>first_name</code> is an example of this usage.
+
+=== Placeholder transformation ===
+This allows the user to indicate that one or more values supplied for a placeholder should be replicated and transformed in other places within the text of the programmable snippet. For example, the user may supply a document title in one part of the snippet, and specify that the document title should be repeated in other places, with the first instance being all-uppercase and every other instance being lower-case.
+
+== Snippet programming features ==
+For applications that support '''scriptable''' snippets, the range of supported programming features varies. The following enumerates some of the features that are commonly implemented for programmable snippets.
+
+=== Plain text ===
+Although plain text is a fundamental feature included even with applications that support only non-programmable "static" snippets, programmable snippets are also used for working with plain text.
+
+One common complication, however, is that environments that support programmable snippets often have to make distinctions between what counts as "plain text" and what counts as "programming instructions". Further complicating this distinction is the fact that applications that support programmable snippets almost always include support for recognition of multiple programming languages, either through basic [[syntax highlighting]] or execution of embedded commands.
+
+For these and other reasons, emitting plain text from programmable snippets almost always entails being careful to avoid problems with [[Syntax of programming languages|syntax]] and [[Delimiter#Delimiter_collision|delimiter collisions]].
+
+=== Constants and variables ===
+Programmable snippets often include an ability to establish a binding to an existing variable scope or namespace, from which the user can select any of various constants or variables. These might include values such as the email address of the currently-logged-in user on a given machine, the current system time and date, or the output value of a function.
+
+Scriptable snippets are often associated with one or more currently-active files. Consequently, variables may also include environment variables and arguments that specify the filename, cursor position, parent directory and other stats relating to the files in a current editing session.
+
+=== Interpreted code ===
+Scriptable snippets may allow execution of code in one or more [[programming language]]s. This may include one or more standalone languages, or a language that is specific to the application in which the language is hosted.<ref name="yasnippet001">(See e.g., http://code.google.com/p/yasnippet/ YaSnippet, implemented for the Emacs text editor).</ref>
+
+<!--
+==Application support==
+The following is a summary of snippet support in some  applications such as text editors and IDEs. For more details, see also [[Comparison of text editors]].
+
+editor      ;; has_plain        ;; has_dynamic ;; has_scriptable
+[[Emacs]]   ;;     yes             ;;      yes        ;; yes
+[[EmEditor]]   ;;  yes                ;;   yes           ;; yes
+[[Textmate]]  ;;              yes      ;;     yes         ;; yes
+[[Textpad]] ;;                    yes  ;;     no         ;; no
+-->
+
+==See also==
+* [[Autocomplete]]
+* [[Codebase]]
+* [[Integrated Development Environment]]
+* [[Macro (computer science)]]
+* [[Design pattern]]
+* [[Pastebin]]
+* [[Preprocessor]]
+* [[Revision control]]
+* [[Web widget]]
+* [[JIT]]
+* [[Mail merge]]
+
+== Notes and references ==
+{{reflist}}
+
+==External links==
+* [http://www.codebarrel.com Code Barrel] Code Barrel Private Code Snippet Repository.
+* [https://sites.google.com/site/engineeringcodesnippets/ Engineering Code Snippets] [[Engineering Code Snippets Project]], a project at [[Katholieke Universiteit Leuven]]
+* [http://dobbscodetalk.com/index.php?option=com_myblog&show=The-Pastebin-Evolved.html&Itemid=29 The Pastebin, Evolved] {{Dead link|date=October 2010}}, article at [[Dr. Dobb's Journal|Dr. Dobb's]] blog about publicly sharing code snippets
+* [http://snippets.snippets.org/index.php The Snippets archive] Code snippets in [http://c.snippets.org C] and [http://cpp.snippets.org C++]
+* [http://www.refactory.org/ Code Snippets] Peer-reviewed code snippets that anyone can edit. [http://www.refactory.org/s/recent/in/php PHP], [http://www.refactory.org/s/recent/in/javascript javascript], [http://www.refactory.org/s/recent/in/python python] and more.
+* [http://www.snippetsapp.com/ Snippets.app] — code snippets library application for Mac OS X.
+
+{{DEFAULTSORT:Snippet (Programming)}}
+[[Category:Source code]]
+[[Category:Text editor features]]
+
+[[fr:Snippet]]
+[[it:Snippet]]
+[[ja:スニペット]]
+[[ru:Сниппет]]
+[[zh:片段]]</body> </html>

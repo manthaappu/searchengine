@@ -1,0 +1,36 @@
+<html> <head> <title>Dining cryptographers protocol</title></head><body>{{Mergeto|Dining cryptographers problem|date=March 2009}}
+{{Mergefrom|Dining cryptographers protocol/Rewrite|discuss=Talk:Dining cryptographers problem|date=November 2009}}
+
+The '''dining cryptographers protocol''' is a method of [[Anonymity|anonymous]] communication. It allows for any member of a group to multicast data to every other member of the group. Though the broadcast is public, the protocol guarantees that its sender remains anonymous. This protocol allows only for one member of the group to transmit data during any given round.
+
+The method is as follows: three or more [[cryptographer]]s ([[node (networking)|nodes]]) arrange themselves around a circular dinner table ([[ring network]]), with menus ([[link encryption|encrypted links]]) hiding the interaction of each pair of cryptographers. Each cryptographer secretly writes down a bit (zero or one) and shows it to every other cryptographer. Then, each cryptographer computes the [[xor]]s of their own number and each of the other cryptographers' numbers. That is, if the bit the cryptographer is shown is the same as theirs the result is 'zero', and if they are different the result is 'one'. Every cryptographer that does not want to send a message reports their result. The cryptographer that does want to send a message reports the opposite of their result. All cryptographers then add up the published numbers. If the sum is an even number, no one sent a message. If odd, a one-bit message was sent.
+
+Sender anonymity holds because no person knows what comparison value another person reported. Therefore, no one knows who reported the opposite comparison value - the sender. This does not hold in case of two cryptographers - if one person does not transmit a message but a message is being broadcast, he obviously knows who sent it.
+
+==History==
+Originally, the problem was described so that cryptographers would only compare their bit with the person to their right, and make that comparison public. However, this provides the possibility of the group colluding to find out who is sending the message. If collusion is not a problem, this method requires many fewer comparisons (<math>2n</math> vs <math>n^2</math>).
+
+== Security considerations ==
+===Advantages===
+* Anonymous sender
+* Anonymous recipient (if key used)
+:* Allows key to be sent in main channel rather than key channel
+
+===Disadvantages===
+* <math>n^2</math> bytes transfer for one bit in case of peer to peer communication where n is number of participants.  As mentioned above, this can be reduced to <math>2n</math> if there is no possibility of collusion between participants, but in many cases even this lower bound is intractable.
+* Malicious party can inject random bits to corrupt the message. Chaum present trap messages can prevent malicious data.
+
+==See also==
+* [[Cryptography]]
+* [[Dining cryptographers protocol/Rewrite|The Dining Cryptographers Protocol/Rewrite]]
+* [[Dining cryptographers problem]]
+* [[Onion routing]]
+
+==External links==
+* [http://cryptodox.com/Dining_cryptographers_protocol "Dining cryptographers protocol" at Cryptodox]
+
+[[Category:Cryptographic protocols]]
+[[Category:Anonymity networks]]
+
+
+{{crypto-stub}}</body> </html>

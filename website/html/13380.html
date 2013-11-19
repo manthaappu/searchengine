@@ -1,0 +1,108 @@
+<html> <head> <title>Feature selection</title></head><body>In [[machine learning]] and [[statistics]], '''feature selection''', also known as '''variable selection''', '''feature reduction''', '''attribute selection''' or '''variable subset selection''', is the technique of selecting a subset of relevant features for building robust learning models. When applied in [[biology]] domain, the technique is also called [[discriminative gene selection]], which detects influential [[genes]] based on [[DNA microarray]] experiments. By removing most irrelevant and redundant features from the data, feature selection helps improve the performance of learning models by:
+:* Alleviating the effect of the [[curse of dimensionality]].
+:* Enhancing generalization capability.
+:* Speeding up learning process.
+:* Improving model interpretability.
+Feature selection also helps people to acquire better understanding about their data by telling them which are the important features and how they are related with each other.
+
+==Introduction==
+Simple feature selection algorithms are ad hoc, but there are also more methodical approaches. From a theoretical perspective, it can be shown that optimal feature selection for [[supervised learning]] problems requires an exhaustive search of all possible subsets of features of the chosen cardinality. If large numbers of features are available, this is impractical. For practical supervised learning algorithms, the search is for a satisfactory set of features instead of an optimal set.
+
+Feature selection algorithms typically fall into two categories: feature ranking and subset selection.  Feature ranking ranks the features by a metric and eliminates all features that do not achieve an adequate score. Subset selection searches the set of possible features for the optimal subset.
+
+In statistics, the most popular form of feature selection is [[stepwise regression]].  It is a greedy algorithm that adds the best feature (or deletes the worst feature) at each round.  The main control issue is deciding when to stop the algorithm.  In machine learning, this is typically done by [[Cross-validation (statistics)|cross-validation]].  In statistics, some criteria are optimized.  This leads to the inherent problem of nesting. More robust methods have been explored, such as [[branch and bound]] and piecewise linear network.
+
+==Subset selection==
+Subset selection evaluates a subset of features as a group for suitability. Subset selection algorithms can be broken into Wrappers, Filters and Embedded. Wrappers use a search algorithm to search through the space of possible features and evaluate each subset by running a model on the subset. Wrappers can be computationally expensive and have a risk of over fitting to the model. Filters are similar to Wrappers in the search approach, but instead of evaluating against a model, a simpler filter is evaluated. Embedded techniques are embedded in and specific to a model.
+
+Many popular search approaches use [[greedy algorithm|greedy]] [[hill climbing]], which iteratively evaluates a candidate subset of features, then modifies the subset and evaluates if the new subset is an improvement over the old. Evaluation of the subsets requires a scoring [[Metric (mathematics)|metric]] that grades a subset of features.  Exhaustive search is generally impractical, so at some implementor (or operator) defined stopping point, the subset of features with the highest score discovered up to that point is selected as the satisfactory feature subset.  The stopping criterion varies by algorithm; possible criteria include: a subset score exceeds a threshold, a program's maximum allowed run time has been surpassed, etc.
+
+Search approaches include:
+
+* Exhaustive
+* Best first
+* [[Simulated annealing]]
+* [[Genetic algorithm]]
+* [[Greedy algorithm|Greedy]] forward selection
+* [[Greedy algorithm|Greedy]] backward elimination
+
+Two popular filter metrics for classification problems are [[correlation]] and [[mutual information]], although neither are true [[metric (mathematics)|metrics]] or 'distance measures' in the mathematical sense, since they fail to obey the [[triangle inequality]] and thus do not compute any actual 'distance' &ndash; they should rather be regarded as 'scores'.  These scores are computed between a candidate feature (or set of features) and the desired output category.
+
+Other available filter metrics include:
+
+* Class separability
+** Error probability
+** Inter-class distance
+** Probabilistic distance
+** [[Entropy (Information theory)|Entropy]]
+* Consistency-based feature selection
+* Correlation-based feature selection
+
+==Optimality criteria==
+
+There are a variety of optimality criteria that can be used for controlling feature selection.  The oldest are [[Mallows' Cp]] statistic and [[Akaike information criterion]] (AIC).  These add variables if the [[Student's t-test|''t''-statistic]] is bigger than <math>\sqrt{2}</math>. 
+
+Other criteria are [[Bayesian information criterion]] (BIC) which uses <math>\sqrt{\log{n}}</math>, [[minimum description length]] (MDL) which asymptotically uses <math>\sqrt{\log{n}}</math> but some argue this asymptote is not computed correctly{{Citation needed|date=March 2007}}, Bonnferroni / [[Risk Inflation Criterion|RIC]] which use <math>\sqrt{2\log{p}}</math>, and a variety of new criteria that are motivated by [[false discovery rate]] (FDR) which use something close to <math>\sqrt{2\log{\frac{p}{q}}}</math>.
+
+==Minimum-redundancy-maximum-relevance feature selection==
+
+Features can be selected in many different ways. One scheme is to select features that correlate strongest to the classification variable. This has been called maximum-relevance selection. Many heuristic algorithms can be used, such as the sequential forward, backward, or floating selections.
+
+On the other hand, features can be selected to be mutually far away from each other, while they still have "high" correlation to the classification variable. This scheme, termed as minimum-redundancy-maximum-relevance selection ([http://penglab.janelia.org/proj/mRMR] mRMR), has been found to be more powerful than the maximum relevance selection.
+
+As a special case, the "correlation" can be replaced by the statistical dependency between variables. Mutual information can be used to quantify the dependency. In this case, it is shown that mRMR is an approximation to maximizing the dependency between the joint distribution of the selected features and the classification variable.
+
+==Embedded methods incorporating feature selection==
+* [[Random forests]] (RF)
+* [[Random multinomial logit]] (RMNL)
+* [[Ridge regression]]
+* [[Decision tree learning|Decision tree]]
+* [[Memetic algorithm]]
+* Auto-encoding networks with a bottleneck-layer
+* Many other [[machine learning]] methods applying a [[Pruning (algorithm)|pruning]] step.
+
+==Software for feature selection==
+
+Many standard [[:Category:Data analysis software|data analysis software systems]] are often used for feature selection, such as [[MATLAB]], [[SciLab]], [[NumPy]] and [[R (programming language)|the R language]]. There are also software systems tailored specifically to the feature-selection task:
+
+* [[Weka (machine learning)|Weka]] &ndash; freely available and [[open source|open-source]] software in Java.
+* [[Feature Selection Toolbox|Feature Selection Toolbox 3]] &ndash; freely available and [[open source|open-source]] software in C++.
+* [[RapidMiner]] &ndash; freely available and [[open source|open-source]] software.
+* [[Orange (software)|Orange]] &ndash; freely available and [[open source|open-source]] software (module [http://www.ailab.si/orange/doc/modules/orngFSS.htm orngFSS]).
+* [http://sites.google.com/site/tooldiag/ TOOLDIAG Pattern recognition toolbox] &ndash; freely available C toolbox.
+* [http://penglab.janelia.org/proj/mRMR/ minimum redundancy feature selection tool] &ndash; freely available C/Matlab codes for selecting minimum redundant features.
+* [http://links.cse.msu.edu:8000/members/matt_gerber/index.php/Machine_learning_software#Feature_subset_selection A C# Implementation] of greedy forward feature subset selection for various classifiers (e.g., LibLinear, SVM-light).
+* [http://www.ipipan.eu/staff/m.draminski/files/dmLab170.zip MCFS-ID] (Monte Carlo Feature Selection and Interdependency Discovery) is a Monte Carlo method-based tool for feature selection. It also allows for the discovery of interdependencies between the relevant features. MCFS-ID is particularly suitable for the analysis of high-dimensional, ill-defined transactional and biological data.
+
+==See also==
+* [[Cluster analysis]]
+* [[Dimensionality reduction]]
+* [[Feature extraction]]
+* [[Data mining]]
+
+{{More footnotes|date=July 2010}}
+
+==References==
+* [http://featureselection.asu.edu/featureselection_techreport.pdf Tutorial Outlining Feature Selection Algorithms]
+* [http://jmlr.csail.mit.edu/papers/special/feature03.html JMLR Special Issue on Variable and Feature Selection]
+* Peng, H.C., Long, F., and Ding, C., Feature selection based on mutual information: criteria of max-dependency, max-relevance, and min-redundancy, ''IEEE Transactions on Pattern Analysis and Machine Intelligence'', Vol. 27, No. 8, pp. 1226&ndash;1238, 2005. [http://penglab.janelia.org/proj/mRMR/index.htm Program]
+* [http://www.springer.com/west/home?SGWID=4-102-22-33327495-0&changeHeader=true&referer=www.wkap.nl&SHORTCUT=www.springer.com/prod/b/0-7923-8198-X Feature Selection for Knowledge Discovery and Data Mining] (Book)
+* [http://jmlr.csail.mit.edu/papers/volume3/guyon03a/guyon03a.pdf An Introduction to Variable and Feature Selection] (Survey)
+* [http://ieeexplore.ieee.org/iel5/69/30435/01401889.pdf Toward integrating feature selection algorithms for classification and clustering] (Survey)
+* [http://library.utia.cas.cz/separaty/2010/RO/somol-efficient%20feature%20subset%20selection%20and%20subset%20size%20optimization.pdf Efficient Feature Subset Selection and Subset Size Optimization] (Survey, 2010)
+* [http://www.ijcai.org/papers07/Papers/IJCAI07-187.pdf Searching for Interacting Features]
+* [http://www.icml2006.org/icml_documents/camera-ready/107_Feature_Subset_Selec.pdf Feature Subset Selection Bias for Classification Learning]
+* M. Hall 1999, [http://www.cs.waikato.ac.nz/~mhall/thesis.pdf Correlation-based Feature Selection for Machine Learning]
+* Y. Sun, S. Todorovic, S. Goodison, Local Learning Based Feature Selection for High-dimensional Data Analysis, ''IEEE Transactions on Pattern Analysis and Machine Intelligence'', vol. 32, no. 9, pp. 1610-1626, 2010.
+
+==External links==
+* [http://www.clopinet.com/isabelle/Projects/NIPS2003/ NIPS challenge 2003] (see also [[NIPS]])
+* [http://paul.luminos.nl/documents/show_document.php?d=198 Naive Bayes implementation with feature selection in Visual Basic] (includes executable and source code)
+* [http://penglab.janelia.org/proj/mRMR/index.htm Minimum-redundancy-maximum-relevance (mRMR) feature selection program]
+
+[[Category:Machine learning]]
+[[Category:Model selection]]
+
+[[ar:اختيار المميزات]]
+[[de:Feature Subset Selection]]
+[[ja:特徴選択]]</body> </html>

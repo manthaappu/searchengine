@@ -1,0 +1,85 @@
+<html> <head> <title>Everyman kernel</title></head><body>{{Orphan|date=May 2010}}
+
+{{Advert|date=July 2009}}
+{{Infobox OS
+| name                   = The Everyman Kernel.
+| logo                   =
+| screenshot             =
+| caption                =
+| developer              = Barry Watson
+| kernel_type            = [[Microkernel]]
+| supported_platforms    =
+| ui                     =
+| family                 = [[real-time operating system]]s
+| released               =
+| latest_release_version = 1
+| latest_release_date    = June 26, 2009
+| latest_test_version    =
+| latest_test_date       =
+| marketing_target       =
+| programmed_in          =
+| prog_language          =
+| language               =
+| updatemodel            =
+| package_manager        =
+| working_state          = Current
+| license                = [[BSD License]]
+| website                = [http://barrywatson.se/?p=3 barrywatson.se]
+}}
+The '''Everyman kernel''' is a minimalistic [[Kernel (computer science)|kernel]] designed to support hard [[Real-time computing|real-time]] applications. The kernel is built from three parts: scheduling, resource access, and communication. Each part is implemented with an algorithm that does not lead to blocking. The removal of any blocking leads to predictable execution times and it is this which makes the kernel suitable for hard [[Real-time computing|real-time]] systems development.
+<ref name="buttazzo1997">{{cite book
+|     title = Hard Real-time Computing Systems
+|      year = 1997
+|    author = Giorgio C. Buttazzo
+| publisher = Kluwer
+}}</ref>
+
+Scheduling is implemented with either the [[Earliest deadline first scheduling|Earliest Deadline First]]<ref name="ll1973">{{cite journal
+|    author = C.L. Liu, J.W. Layland
+|     month = January
+|      year = 1973
+|     title = Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment
+|   journal = Journal of the Association for Computing Machinery
+|    volume = 20
+|     issue = 1
+|     pages = 46&ndash;61
+}}
+</ref> or the Deadline Monotonic algorithms.<ref name="lw1982">{{cite journal
+| author=J. Leung, J.W. Whitehead
+| title=On the Complexity of Fixed Priority Scheduling of Periodic Real-time Tasks
+| journal=Performance Evaluation 2(4)
+| month=July
+| year=1982
+}}
+</ref> Resource access, or Concurrency control, is achieved with the [[Stack Resource Policy]]<ref name="baker1990">{{cite journal
+|  author=T. P. Baker
+|  title=Stack-based scheduling of real-time processes
+|  journal=Journal of Real-Time Systems
+|  year=1991
+}}
+</ref> which eliminates any form of run-time unbounded blocking including deadlock and livelock.
+Furthermore, the use of this algorithm also means that all of the processes can share the same stack which reduces the system's memory footprint.
+Inter-process communication is implemented with Cyclical Asynchronous Buffers<ref name="clark1989">{{cite journal
+| author=D. Clark
+| title=Hic: An Operating System for Hierarchies of Servo Loops
+| journal=Proceedings of the IEEE International Conference on Robotics and Automation
+| year=1989
+}}
+</ref> - a one-to-many communications mechanism which never blocks.
+
+The kernel is designed to be simple enough that a single programmer can understand the entire system. The kernel is effectively one file containing 22 C functions. Most kernel code is written in C and is in places 32-bit specific. To port the kernel to a new platform requires the implementation of at least five functions in assembly language. The Everyman kernel can be run in Unix user space and, along with POSIX.1b real-time scheduling, the kernel can be used to implement a [[Real-time computing|real-time]] threads package.
+
+
+==Notes and references==
+{{Reflist}}
+
+==See also==
+{{Portal|Free software}}
+*[[Real-time operating system]]
+
+==External links==
+*[http://barrywatson.se/?p=3 The Everyman kernel] official announcement
+
+{{DEFAULTSORT:Everyman Kernel}}
+[[Category:Real-time operating systems]]
+[[Category:Free software operating systems]]</body> </html>

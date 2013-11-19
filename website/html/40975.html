@@ -1,0 +1,163 @@
+<html> <head> <title>ZK (framework)</title></head><body>{{Infobox software
+| name                   = ZK
+| screenshot             = [[Image:Zklogo_l.png‎]]
+| latest release version = 5.0.5
+| latest release date    = {{release date|2010|11|2}}
+| operating system       = [[Cross-platform]] ([[JVM]])
+| genre                  = [[Ajax (programming)|Ajax Web Framework]]
+| license                = [[GNU Lesser General Public License]] / [[GNU General Public License]] / Commercial
+| website                = [http://www.zkoss.org zkoss.org]
+| developer              = http://www.potix.com
+}}
+'''ZK''' is an [[Open-source software|open-source]] [[Ajax (programming)|Ajax]] [[Web application framework]], written in [[Java (programming language)|Java]],<ref name="ZK - Ajax without JavaScript">{{cite book
+ | last = Chen
+ | first = Henri
+ | title = ZK - Ajax without JavaScript
+ | publisher = Apress
+ | year = 2008
+ | isbn = 978-1590599013
+ | page = 125}}</ref><ref name="ZK Developer's Guide">{{cite book
+ | last = Staeuble
+ | first = Markus
+ | title = ZK Developer's Guide
+ | publisher = Packt Publishing
+ | year = 2008
+ | isbn = 978-1847192004
+ | page = 184}}</ref><ref name="ITWeb">{{cite web
+ | last = Van der Schyff
+ | first = Andre
+ | title = A look at MVC frameworks
+ | url = http://www.itweb.co.za/sections/industryinsight/software/vanderschyff090331.asp?S=Software&A=SFT&O=google
+ | date = 03-31-2009
+ | publisher = ITWeb
+ | quote = MVC frameworks provide limited functionality when compared to ZK, Echo and other Java Web frameworks.}}</ref> that enables creation of rich [[graphical user interface]]s for [[Web applications]] with no JavaScript and little programming knowledge.
+
+The core of ZK consists of an [[Ajax (programming)|Ajax]]-based [[event-driven]] mechanism, over 123 [[XUL]] and 83 [[XHTML]]-based components,<ref>{{cite web
+ | title = ZK Explorer
+ | url = http://www.zkoss.org/zkdemo/
+ | accessdate = 08-25-2010}}
+</ref> and a markup language for designing user interfaces. Programmers design their application pages in [[feature-rich]] [[XUL]]/[[XHTML]] components, and manipulate them upon events triggered by end user's activity. It is similar to the programming model found in desktop GUI-based applications.
+
+ZK takes the so called server-centric approach that the content synchronization of components and the event pipelining between clients and servers are automatically done by the engine and Ajax plumbing codes are completely transparent to web application developers. Therefore, the end users get the similar engaged interactivity and responsiveness as a desktop application, while programmers' development retains a similar simplicity to that of desktop applications.
+
+In addition to component-based programming in a manner similar to [[Swing (Java)|Swing]], ZK supports a markup language for rich user interface definition called ZUML.
+
+* ZUML is designed for non-programmer developers to design user interfaces intuitively.
+* ZUML allows developers to meld different markup languages, such as [[Mozilla]] XUL language and XHTML, seamlessly into the same page.
+* ZUML allows developers to embed scripts in pure Java language (interpreted by [[BeanShell]]) and use [[JavaServer Pages|EL]] expressions to manipulate the components and access data.
+
+== Features ==
+* Declarative high level specification of rich (rather than plain HTML) user interfaces. For example the XUL widget set includes support for trees, comboboxes, bandboxes and sliders [http://www.zkoss.org/zkdemo/userguide/].
+* Embedding scripting support with Java (Beanshell [http://www.beanshell.org/]). This is an important benefit as you can use a unified programming language for both user interface and backend programming. Optional support for other serverside Java scripting in other languages such as JavaScript (Rhino [http://www.mozilla.org/rhino/]), Ruby (JRuby [http://jruby.codehaus.org/]), Python (Jython [http://www.jython.org/Project/]) and Groovy [http://groovy.codehaus.org/].
+* High level Ajax support. User input passes from the browser to the serverside desktop model over Ajax.
+* Event-driven component-based model (similar to desktop programming models).
+* Support for creating user interfaces using different patterns. A MVC programming approach can be adopted with all events forwarded to a central controller class [http://www.zkoss.org/smalltalks/mvc3/]. Alternatively event handlers can be defined within the page using zscript [http://www.zkoss.org/doc/devguide/ch06s08s02.html]. The MVC page approach is analogous to Swing programming and the in-page approach is analogous to DHTML programming on the server.
+* Support for integrating with existing web frameworks via a JSP custom tag library, JSF support and a Servlet Filter. Has support for Spring and Hibernate.
+* Extensible in that programmers can create new custom UI controls. Groups of controls can be re-used as a macro component.
+* Databinding capability via in-page annotations that transparently bind screen controls to the fields of POJOs on the server.
+
+== Differences from XUL ==
+* ZK is a server side framework which emits HTML and thus does not depend on client side presence of [[Gecko (layout engine)|Gecko]] making it portable to any browser. ZK takes ZUML (xul and xhtml) serverside pages as input and outputs dhtml for the browser.
+* ZK processes user interface logic on the server in Java. This increases choice in the scripting engines and application libraries that can be used to create logic. Presentation effects can be delegated to the browser using the Client-side Actions feature to reduce server load for dhtml effects. Running the application logic on the server in a single application container reduces the amount of cross browser and browser version testing when compared to extensively programming the DOM at the browser.
+* While ZK and XUL have an overlapping subset of components, ZK has its own unique component sets. The component library can be extended with custom components. Macro components can be defined that are composites of components.
+* ZK provides serverside databinding annotations to declaratively bind UI components to serverside data.
+* [[Look and feel#In widget toolkits|Look and Feel]] differences.
+
+==System requirements==
+* [[JRE]] version 1.4 or later
+* A Web server supporting [[Servlet]] 2.3 or later
+
+==Prerequisites of programming skills==
+===Required===
+* Basic knowledge of Java or a Java scripting engine language such as [[Groovy (programming language)|Groovy]], [[Rhino (JavaScript engine)|Rhino]] (Java JavaScript), [[JRuby]] (Java Ruby) or [[Jython]] (Java Python)
+* Basic knowledge of [[HTML]] and [[XUL]]
+
+===Optional===
+* Knowledge of a scripting language to write the glue logic (running on the server):
+** [[BeanShell]] (Java interpreter), [[JavaScript]], [[Groovy (programming language)|Groovy]], [[Ruby (programming language)|Ruby]], and [[Python (programming language)|Python]] currently supported.
+* Object Oriented Programming. You can choose to do AWT/Swing style programming against the ZK API. You can choose to program one or more custom UI controller classes in Java. This is entirely optional. Alternatively you can choose to use zscript script tags for user interface logic which is similar to dhtml programming.
+* Servlet Programming. ZK is built on top of the Servlet API. You can choose to do regular Servlet programming and use ZUML as the page language.
+* Ajax. ZK is built on top of Ajax but it automatically converts user input at the browser to Java events at the server so you do not have to either program or understand browser Ajax.
+* [[JavaScript]] (on the client side). You can choose to use client side actions on your components for performing dhtml logic but most user interfaces do not require this.
+* Declarative Databindings. ZK has an optional syntax for binding user interface controls to your POJO Java Beans. ZK will automatically call your POJO setter/getter methods with zero programming in response to user input at the browser.
+* [[Expression Language]]. ZK supports JSTL style EL.
+
+==ZUML==
+'''ZUML''' (ZK User Interface Markup Language) is a markup language for rich user interfaces definition.
+* ZUML is designed for non-programmers to design user interfaces efficiently with the ZUML markup
+* ZUML allows developer to meld different markup languages, such as [[Mozilla]] XUL language and XHTML, seamlessly into the same page.
+* ZUML allows developers to embed script in pure Java language (interpreted by [[BeanShell]]) and use [[JavaServer Pages|EL]] expressions to manipulate the components and access data.
+* ZUML is supported by [[ZK Framework|ZK]].
+
+==Client-side Technologies==
+
+ZK is a server-centric framework. Technically you don't need to know about the implementation at the client side. It is how ZK Mobile running on Java Mobile VM is done.
+
+Since ZK 5.0, the so-called Server+client Fusion<ref name="Dr. Dobb's">{{cite web
+ | last = Clare
+ | first = Timothy
+ | title = Server+client Fusion: An Architectural Proposal
+ | url = http://www.drdobbs.com/java/222700556;jsessionid=441AXOKJX3ECZQE1GHPSKH4ATMY32JVN?pgno=1
+ | date = 02-09-2010
+ | publisher = Dr. Dobb's
+ | quote = A good framework architecture is flexible empowering developers and architects to implement their applications in a smart and elegant manner.}}</ref> architecture is introduced. Developers are allowed to access the client-side widgets directly if they want to. ZK Client Engine is based on [[jQuery]]<ref name="IBM developerWorks">{{cite web
+ | last = Mahajan
+ | first = Sachin
+ | title = Enhance Ajax development with a fusion of jQuery, ZK, and Java code
+ | url = http://www.ibm.com/developerworks/web/library/wa-aj-zkquery/
+ | date = 10-19-2010
+ | publisher = IBM developerWorks
+ | quote = The marriage between server-side Java code and jQuery can help you tackle the challenges in enterprise Ajax application development.}}</ref> and provides a GWT wrapper. Technically you can use jQuery-compliant libraries and widgets.
+
+==See also==
+{{Portal|Free software}}
+*Books
+**[http://www.amazon.com/dp/1590599012 ZK - Ajax without JavaScript] published by [[Apress]].
+**[http://www.amazon.com/dp/1847192009 ZK Developer's Guide] published by [[Packt]].
+**[http://www.lcm.com.br/index.php?Escolha=20&Livro=L00848 Ria com Framework ZK] (Portuguese) published by [http://www.lcm.com.br/ Editora Ciência Moderna Ltda]
+
+*Articles
+**[http://www.ibm.com/developerworks/web/library/wa-aj-open/ Rich Internet applications using ZK] at [[IBM developerWorks|IBM developerWorks]]
+**[http://www.openajax.org/whitepapers/Next-Generation%20Applications%20Using%20Ajax%20and%20OpenAjax.php Next-Generation Applications Using Ajax and OpenAjax] at [[Openajax|OpenAjax Alliance]]
+**[http://www.infoworld.com/t/application-development/zero-code-ajax-framework-sought-397 Zero-code AJAX framework sought] at [[InfoWorld]].
+**[http://www.linux.com/feature/141601 Designing rich AJAX Web interfaces with ZK] at [[Linux.com]]
+**[http://www.smashingmagazine.com/2006/11/15/ajax-dhtml-and-javascript-libraries/ AJAX, DHTML and JavaScript Libraries] at [[Smashing magazine|Smashing Magazine]]
+**[http://www.theserverside.com/tt/articles/article.tss?l=ZKandAgile ZK and Agile] at [http://www.theserverside.com/ TheServerSide]
+**[http://www.ddj.com/architect/205800349 The ZK Framework] at [http://www.ddj.com/ Dr.Dobb's Portal]
+**[http://www.ibm.com/developerworks/web/library/wa-aj-zkcdi/ Explore the CDI programming model in ZK] at [[IBM developerWorks|IBM developerWorks]]
+**[http://www.ibm.com/developerworks/blogs/page/gbowerman?entry=zk_ajax_made_easy ZK - AJAX without the JavaScript] at [[IBM developerWorks|IBM developerWorks]]
+**[http://www.developer.com/design/article.php/3610476 Ajax with the ZK Framework] at [http://www.developer.com/ developer.com]
+**[http://www.infoq.com/news/ZK-Ajax-Java-Framework ZK Ajax Java Web Framework: Ajax with no JavaScript] at [http://www.infoq.com/ infoQ.com]
+**[http://java.dzone.com/articles/using-desktop-model-view Using Desktop MVC Patterns with ZK, Spring & JPA] at JavaLobby
+**[http://groovy.dzone.com/articles/implementing-load-demand-using Implementing Load-on-Demand using ZK and Grails] at JavaLobby
+
+==References==
+{{Reflist}}
+
+==External links==
+{{Wikibooks|ZK}}
+* [http://www.zkoss.org ZK Home]
+* [http://www.zkoss.org/zkdemo/ ZK Live Demo]
+* [http://blogs.pathf.com/agileajax/2006/06/an_interview_wi.html An Interview with ZK Creator Tom Yeh]
+* [http://www2.mokabyte.it/cms/article.run?articleId=FSH-9JS-VVS-5OU_7f000001_26000063_4f8b8af8 An Interview with Tom Yeh, ZK Creator] (Un framework che guardi al futuro, Mokabyte)(Italian)
+* [http://www.theserverside.com/tt/articles/article.tss?l=ZKandAgile Tutorial: ZK Rich Client Framework and Agile Development]
+* Tutorials for Informix applications with ZK [http://www-128.ibm.com/developerworks/blogs/page/gbowerman?entry=zk_ajax_made_easy I] [http://www-03.ibm.com/developerworks/blogs/page/gbowerman?entry=simple_ajax_to_do_list II] [http://www-03.ibm.com/developerworks/blogs/page/gbowerman?entry=uploading_and_downloading_images_to III] [http://www-03.ibm.com/developerworks/blogs/page/gbowerman?entry=a_zk_image_database_application IV] [http://www-03.ibm.com/developerworks/blogs/page/gbowerman?entry=tadpole_cam&ca=drs-bl V] [http://www-03.ibm.com/developerworks/blogs/page/gbowerman?entry=improve_your_brain_age_with VI] [http://www.ibm.com/developerworks/mydeveloperworks/blogs/gbowerman/entry/zk_5_0_and_flashchart18?lang=en_us VII]
+* Tutorials from IBM developerWorks [http://www.ibm.com/developerworks/web/library/wa-aj-jpa2web/ I] [http://www.ibm.com/developerworks/web/library/wa-aj-open/ II] [http://www.ibm.com/developerworks/web/library/wa-aj-zkcdi/ III][http://www.ibm.com/developerworks/web/library/wa-aj-zkquery/ IV]
+<!-- * Dead Links : [http://dev2dev.bea.com/blog/dhrubo/archive/2007/08/a_quick_sip_of.html Tutorial from BEA dev2dev I] [http://dev2dev.bea.com.cn/techdoc/20061127901.html II] [http://dev2dev.bea.com.cn/techdoc/2007/04/java-soa-BEA-Workshop-ZK-image0470425.html III] -->
+* [http://books.zkoss.org/wiki/Small_Talks Small Talks]
+
+{{Application frameworks}}
+
+{{DEFAULTSORT:Zk (Framework)}}
+[[Category:Java libraries]]
+[[Category:User interface markup languages]]
+[[Category:Web application frameworks]]
+[[Category:Ajax (programming)]]
+[[Category:Rich Internet application frameworks]]
+
+[[es:ZK Framework]]
+[[fr:ZK (informatique)]]
+[[ja:ZK (フレームワーク)]]
+[[ro:ZK]]
+[[ru:ZK Framework]]
+[[zh:ZK]]</body> </html>

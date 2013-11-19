@@ -1,0 +1,115 @@
+<html> <head> <title>Identity transform</title></head><body>The '''identity transform''' is a [[data transformation]] that copies the source data into the destination data without change.
+
+The identity transformation is considered an essential process in creating a reusable [[transformation library]].  By creating a library of variations of the base identity transformation, a variety of [[data transformation filter]]s can be easily maintained.  These filters can be chained together in a format similar to [[UNIX]] shell pipes.
+
+== Examples ==
+=== Using XSLT ===
+The most frequently cited example of the identity transform (for XSLT version 1.0) is the "copy.xsl" transform as expressed in [[XSLT]].  This transformation uses the xsl '''copy''' command to perform the identity transformation:
+
+<source lang="xml"><xsl:stylesheet version="1.0">
+  <xsl:template match="@*|node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template>
+</xsl:stylesheet></source>
+
+This template works by matching all attributes ('''@*''') and other nodes ('''node()'''), copying each node matched, then applying the identity transformation to all attributes and child nodes of the context node. This recursively descends the element tree and outputs all structures in the same structure they were found in the original file, within the limitations of what information is considered significant in the [[XPath data model]]. Since '''node()''' matches text, processing instructions, root, and comments, as well as elements, all XML nodes are copied.
+
+A more explicit version of the identity transform is:
+
+<source lang="xml"><xsl:stylesheet version="1.0">
+  <xsl:template match="@*|*|processing-instruction()|comment()" mode="recursive-copy">
+    <xsl:copy>
+      <xsl:apply-templates select="*|@*|text()|processing-instruction()|comment()" mode="recursive-copy"/>
+    </xsl:copy>
+  </xsl:template>
+</xsl:stylesheet></source>
+
+This version is equivalent to the first, but explicitly enumerates the types of XML nodes that it will copy. Both versions copy data that is unnecessary for most XML usage (e.g., comments).
+
+Finally, note that markup details, such as the use of CDATA sections or the order of attributes, is not necessarily preserved in the output, since this information is not part of the [[XPath data model]]. To make sure CDATA markup is maintained in the output, the XSLT stylesheet that contains the identity transform template (''not'' the identity transform template itself) should make use of the '''xsl:output''' attribute called '''cdata-section-elements'''. For example:
+
+<source lang="xml"><xsl:output method="xml" encoding="utf-8" cdata-section-elements="element-name-1 element-name-2"/></source>
+
+===Using XQuery===
+[[XQuery]] can define recursive functions.  The following example function copies the input directly to the output without modification.
+
+<source lang="xml">
+declare function local:copy($element as element()) {
+  element {node-name($element)}
+    {$element/@*,
+     for $child in $element/node()
+        return if ($child instance of element())
+          then local:copy($child)
+          else $child
+    }
+};
+</source>
+=== Using XProc ===
+<source lang="xml">
+<p:pipeline name="pipeline" xmlns:p="http://www.w3.org/ns/xproc">
+  <p:identity/>
+</p:pipeline>
+</source>
+
+Here one important note about the [[XProc]] identity, is that it can take either one document like this example or a sequence of document as input.
+
+== More complex examples ==
+Generally the identity transform is used as a base on which one can make local modifications.
+
+=== Remove named element transform ===
+==== Using XSLT ====
+
+The identity transformation can be modified to copy everything from an input tree to an output tree except a given node.  For example the following will copy everything from the input to the output except the social security number:
+
+<source lang="xml">
+  <xsl:template match="@*|node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- remove all social security numbers -->
+  <xsl:template match="PersonSSNID"/>
+</source>
+
+====Using XQuery ====
+
+<source lang="xml">
+ declare function local:copy-filter-elements($element as element(), 
+   $element-name as xs:string*) as element() {
+   element {node-name($element) }
+             { $element/@*,
+               for $child in $element/node()[not(name(.)=$element-name)]
+                  return if ($child instance of element())
+                    then local:copy-filter-elements($child,$element-name)
+                    else $child
+           }
+ };
+</source>
+
+To call this one would add:
+
+<code>$filtered-output := local:copy-filter-elements($input, 'PersonSSNID')</code>
+
+==== Using XProc ====
+<source lang="xml">
+<p:pipeline name="pipeline" xmlns:p="http://www.w3.org/ns/xproc">
+  <p:identity/>
+  <p:delete match="PersonSSNID"/>
+</p:pipeline>
+</source>
+
+==See also==
+* [[data mapping]]
+* [[XML pipeline]]
+
+==References==
+* The original reference to the identity transformation in the W3C recommendation document [http://www.w3.org/TR/xslt#copying]
+* The identity step is also a required component of an XML Pipeline using the W3C [[XProc]] Recommendation [http://www.w3.org/TR/xproc/#c.identity] (accessed Nov 20, 2010)
+* Use of the identity transform is covered in the book ''XSLT Cookbook'', O'Reilly Media, Inc., December 1, 2002, by Sal Mangano, ISBN 0-596-00372-2
+* Priscilla Walmsley, ''XQuery'', O'Reilly Media, Inc., Chapter 8 Functions &ndash; Recursive Functions &ndash; page 109
+
+[[Category:Computer programming]]
+[[Category:Transforms]]</body> </html>

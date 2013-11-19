@@ -1,0 +1,190 @@
+<html> <head> <title>MyBatis</title></head><body>{{ Infobox Software
+| name                   = MyBatis 
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| developer              = The MyBatis team
+| status                 = Active
+| latest release version = 3.0.4
+| latest release date    = {{Start date and age|2010|12|31}}
+| latest preview version = 
+| latest preview date    = 
+| operating system       = [[Cross-platform]]
+| programming language   = [[Java (programming language)|Java]] and [[.NET Framework|.NET]]
+| genre                  = [[Persistence Framework]]
+| license                = [[Apache License]] 2.0
+| website                = http://www.mybatis.org
+}}
+
+'''MyBatis''' is a persistence [[Application framework|framework]] available for [[Java (programming language)|Java]] and [[.NET Framework|.NET]] that couples objects with stored procedures or [[SQL]] statements using a [[XML]] descriptor or annotations.
+
+MyBatis is [[free software]] that is distributed under the [[Apache License]] 2.0.
+
+MyBatis was formerly known as [[iBATIS]].
+
+== Feature Summary ==
+
+Unlike [[Object-relational mapping|ORM]] frameworks MyBatis does not try to map an object model to a relational [[database]], it just maps [[SQL]] statements to plain objects. This makes MyBatis an easy to use tool and also a good choice for legacy or denormalized databases or just to have full control of [[SQL]] execution. 
+
+MyBatis makes database access code much easier than for [[JDBC]]. Usually one line of code is all that is needed to execute a [[SQL]] statement. This saves time and prevents common mistakes like leaving a connection opened, coding a wrong data mapping, exceeding the limits of a result set or getting more than one result when just one was expected.
+
+The main feature of MyBatis is its simplicity because it is based on plain objects, [[XML]] and [[SQL]].
+
+MyBatis not only maps beans to database data but can also map [[SQL]] statements to interface methods (known as mappers). This, combined with a [[dependency injection]] [[framework]], allows to build business code free of dependencies and even without any call to MyBatis API. For this purpose, MyBatis integrates with [[Spring Framework]] and [[Google Guice]].
+
+MyBatis supports declarative data caching. That means that it is possible to enable caching of one or more statements adding a setting to the corresponding [[XML]] mapping file. This way MyBatis will try to get the results from a [[cache]] before hitting the database. MyBatis integrates with: [[OSCache]], [[EHcache]] and [[Hazelcast]] and supports custom integration with other [[cache]] tools.
+
+== Getting Started ==
+
+[[SQL]] statements are stored in [[XML]] files or annotations. The following sample shows the definition of a select statement that returns a "Blog" bean using [[XML]].
+
+<source lang="xml">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.example.BlogMapper">
+    <select id="selectBlog" parameterType="int" resultType="Blog">
+        select * from Blog where id = #{id}
+    </select>
+</mapper>
+</source>
+
+This sentence is executed as follows.
+
+<source lang="java">
+Blog blog = (Blog) session.selectOne("org.mybatis.example.BlogMapper.selectBlog", 101);
+</source>
+
+Mapper interfaces are a new MyBatis feature. They help to avoid the use of literal strings and enable [[Integrated development environment|IDE]] code completion. 
+
+Mappers are like [[DAO]]s (Data Access Objects) but unlike them, that consist on an interface and at least one implementation, mappers are just interfaces with one method for each statement. No implementation is needed because MyBatis will create a dynamic proxy at runtime for each mapper. 
+
+<source lang="java">
+BlogMapper mapper = session.getMapper(BlogMapper.class);
+Blog blog = mapper.selectBlog(101);
+</source>
+
+For more detail, please refer to the User Guide available at MyBatis site. See external links.
+
+== MyBatis Generator ==
+
+MyBatis provides a code generator. MyBatis Generator will introspect a database table (or many tables) and generate MyBatis artifacts needed to perform [[Create, read, update and delete|CRUD]] operations (Create, Retrieve, Update, Delete). 
+
+It will preserve any custom code in case of regeneration. 
+
+An [[Eclipse]] plugin is being developed.
+
+== Spring Integration ==
+
+MyBatis integrates with [[Spring Framework]]. This module allows MyBatis to participate in Spring transactions. It will also build MyBatis mappers and sessions and inject them into other beans.
+
+The following sample shows a basic xml configuration that sets a mapper up and injects it into a "BlogService" bean.
+
+<source lang="xml">
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+</bean>
+
+<bean id="blogMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    <property name="mapperInterface" value="org.mybatis.example.BlogMapper" />
+</bean>
+
+<bean id="blogService" class="org.mybatis.example.BlogServiceImpl">
+    <property name="blogMapper" ref="blogMapper" />
+</bean>
+</source>
+
+Calling MyBatis is now just calling a bean:
+
+<source lang="java">
+public class BlogServiceImpl implements BlogService {
+
+    private BlogMapper blogMapper;
+
+    public void setBlogMapper(BlogMapper blogMapper) {
+        this.blogMapper = blogMapper;
+    }
+
+    public void doSomethingWithABlog(int blogId) {
+        Blog blog = mapper.selectBlog(blogId);
+        ...
+    }
+} 
+</source>
+
+== Google Guice Integration ==
+
+MyBatis integrates with [[Google Guice]]. This module provides a set of Modules and Providers that will build MyBatis mappers and sessions and will inject them into other beans. It also adds transactional support based on @Transactional annotation.
+
+Building a MyBatis module.
+
+<source lang="java">
+Injector injector = Guice.createInjector(
+  new MyBatisModule.Builder()
+    .addMapperClasses(org.mybatis.example.BlogMapper.class)
+    .create();
+</source>
+
+Injecting mappers:
+
+<source lang="java">
+@Singleton
+public class BlogServiceImpl implements BlogService {
+
+    @Inject private BlogMapper blogMapper;
+
+    @Transactional
+    public void doSomethingWithABlog(int blogId) {
+        Blog blog = mapper.selectBlog(blogId);
+        ...
+    }
+} 
+</source>
+
+== MyBatis Migrations ==
+
+MyBatis Migrations is a [[Java (programming language)|Java]] command line tool that keeps track of database schema changes managing DDL files (known as migrations). 
+
+Migrations allows to query the current status of the database, apply schema changes and also undo them. It also helps to detect and solve concurrent database schema changes made by different developers.
+
+== History ==
+
+In 2001 a project called iBATIS was started by Clinton Begin. Originally the focus was on the development of cryptographic software solutions. The first product to be released by [[iBATIS]] was Secrets <ref>iBATIS Secrets [http://sourceforge.net/projects/ibatissecrets]</ref>, a personal data encryption and signing tool much like PGP. Secrets was written entirely in Java and was released under an open source license.
+
+That year [[Microsoft]] published a paper <ref>Cat Fight in a Pet Store: J2EE vs. .NET [http://onjava.com/pub/a/onjava/2001/11/28/catfight.html]</ref> to demonstrate that its recent [[.NET Framework|.NET]] 1.0 framework was more productive than [[Java (programming language)|Java]]. For that purpose Microsoft build its own version of Sun's Web "Pet Store". A Web project that Sun had used to show Java best practices ([[Java BluePrints]]). [[Microsoft]] claimed that [[.NET Framework|.NET]] was 10 times faster and 4 times more productive than [[Java (programming language)|Java]].
+
+In 2002 Clinton developed an application called JPetStore<ref>JPetStore 1.0 [http://www.google.es/url?sa=t&source=web&cd=1&ved=0CBUQFjAA&url=http%3A%2F%2Fwww.clintonbegin.com%2Fdownloads%2FJPetStore-1-2-0.pdf&ei=Bn6DTJKoAc3T4waH35mZBQ&usg=AFQjCNH4Z4ndBy2nzJCyl02u1E8aiF4oUQ&sig2=cVgovVt2fu_CLP_E8SFtyw]</ref> to demonstrate that [[Java (programming language)|Java]] could be more productive than [[.NET Framework|.NET]] and could also do so while achieving a better architecture than was used in the [[Microsoft]] implementation.
+
+JPetStore 1.0 had a big impact <ref>JPetStore 1.0 announcement on TheServerside.com [http://www.theserverside.com/news/thread.tss?thread_id=14243]</ref> and the database layer that Clinton used attracted the attention of the community. Soon, iBATIS Database Layer 1.0 project started, composed by two components: [[iBATIS]] DAO and [[iBATIS]] SQL Maps.
+
+[[iBATIS]] 2.0 was released in June 2004 <ref>iBATIS 2.0 announcement [http://www.theserverside.com/news/thread.tss?thread_id=26844]</ref>. It was a complete redesign while keeping the same features. Clinton donated the [[iBATIS]] name and code to [[Apache Software Foundation]] and the project stayed in the ASF for six years.
+
+Eventually [[iBATIS]] DAO was deprecated, considering that better dao frameworks was available like [[Spring Framework]].
+
+On May 19, 2010 [[iBATIS]] 3.0 is published and  simoultaneously the development team decided to continue the development of the framework at [[Google Code]] <ref>iBATIS Project Team Moving to Google Code [http://mail-archives.apache.org/mod_mbox/ibatis-user-java/201005.mbox/%3CAANLkTimXoLiHwI-3kbW6It7mH0771xJP4RqT609VKCXC@mail.gmail.com%3E]</ref>. Given the [[iBATIS]] name was donated to the ASF the project adquired its new name MyBatis. It was the first time a TLP (Top Level Project) moved from Apache. 
+
+MyBatis 3.0 <ref>MyBatis 3.0 announcement [http://www.mybatis.org/archive.html]</ref> is a complete redesign with some clear objectives: test driven development, code cleanliness over performance, simple design over flexible design, one JAR file, no required 3rd party dependencies and better plug-in support.
+
+==See also==
+*[[Hibernate (Java)|Hibernate]]
+*[[JDBC]]
+*[[Java Persistence API]]
+*[[EclipseLink]]
+*[[Apache Cayenne]]
+*[[pureQuery]]
+*[[NHydrate]]
+*[[OpenJPA]]
+*[[Spring Framework]]
+*[[Google Guice]]
+
+== References ==
+{{reflist}}
+
+==External links ==
+* [http://www.mybatis.org Official MyBatis site]
+
+[[Category:Object-relational mapping]]
+[[Category:Persistence frameworks]]
+
+[[es:MyBatis]]
+[[ja:MyBatis]]</body> </html>

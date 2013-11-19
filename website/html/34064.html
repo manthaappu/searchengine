@@ -1,0 +1,56 @@
+<html> <head> <title>Set packing</title></head><body>'''Set packing''' is a classical [[NP-complete]] problem in [[computational complexity theory]] and [[combinatorics]], and was one of [[Karp's 21 NP-complete problems]].
+
+Suppose we have a finite set ''S'' and a list of subsets of ''S''. Then, the set packing problem asks if some ''k'' subsets in the list are pairwise [[disjoint sets|disjoint]] (in other words, no two of them intersect). The problem is clearly in [[NP (complexity)|NP]] since, given ''k'' subsets, we can easily verify that they are pairwise disjoint.
+
+The [[optimization problem|optimization version]] of the problem, '''maximum set packing''', asks for the maximum number of pairwise disjoint sets in the list. It is a maximization problem that can be formulated naturally as an [[integer linear program]], belongs to the class of [[packing problem]]s, and its [[dual linear program]] is the [[set cover problem]].<ref>{{harvtxt|Vazirani|2001}}</ref>
+
+{{Covering-Packing Problem Pairs}}
+== Example ==
+
+As a simple example, suppose you're at a convention of foreign ambassadors, each of which speaks English and also various other languages. You want to make an announcement to a group of them, but because you don't trust them, you don't want them to be able to speak among themselves without you being able to understand them. To ensure this, you will choose a group such that no two ambassadors speak the same language, other than English. On the other hand you also want to give your announcement to as many ambassadors as possible.
+
+In this case, the elements of the set are languages other than English, and the subsets are the sets of languages spoken by a particular ambassador. If two sets are disjoint, those two ambassadors share no languages other than English. A maximum set packing will choose the largest possible number of ambassadors under the desired constraint. Although this problem is hard to solve in general, in this example a good heuristic is to choose ambassadors who only speak unusual languages first, so that not too many others are disqualified.
+
+== Heuristics and related problems ==
+
+Set packing is one among a family of problems related to covering or partitioning the elements of a set. One closely related problem is the [[set cover problem]]. Here, we are also given a set ''S'' and a list of sets, but the goal is to determine whether we can choose ''k'' sets that together contain every element of ''S''. These sets may overlap. The optimization version finds the minimum number of such sets. The maximum set packing need not cover every possible element.
+
+One advantage of the set packing problem is that even if it's hard for some ''k'', it's not hard to find a ''k'' for which it is easy on a particular input. For example, we can use a [[greedy algorithm]] where we look for the set which intersects the smallest number of other sets, add it to our solution, and remove the sets it intersects. We continually do this until no sets are left, and we have a set packing of some size, although it may not be the maximum set packing. Although no algorithm can always produce results close to the maximum (see next section), on many practical inputs these heuristics do so.
+
+The NP-complete [[exact cover]] problem, on the other hand, requires every element to be contained in exactly one of the subsets. Finding such an exact cover at all, regardless of size, is an [[NP-complete]] problem. However, if we create a [[singleton set]] for each element of ''S'' and add these to the list, the resulting problem is about as easy as set packing.
+
+Karp originally showed set packing NP-complete via a reduction from the [[clique problem]].
+
+There is a weighted version of the set cover problem in which each subset is assigned a real weight and it is this weight we wish to maximize. In our example above, we might weight the ambassadors according to the populations of their countries, so that our announcement will reach the most people possible. This seems to make the problem harder, but as we explain below, most known results for the general problem apply to the weighted problem as well.
+
+== Complexity ==
+
+The set packing problem is not only NP-complete, but its optimization version (general maximum set packing problem ) has been proven as difficult to approximate as the [[maximum clique problem]]; in particular, it cannot be approximated within any constant factor. The best known algorithm approximates it within a factor of <math>O(\sqrt{|S|})</math>. The weighted variant can also be approximated this well.
+
+However, the problem does have a variant which is more tractable: if we assume no subset exceeds ''k''≥3 elements, the answer can be approximated within a factor of ''k''/2 + ε for any ε > 0; in particular, the problem with 3-element sets can be approximated within about 50%. In another more tractable variant, if no element occurs in more than ''k'' of the subsets, the answer can be approximated within a factor of ''k''. This is also true for the weighted version.
+
+== See also ==
+* [[Matching (graph theory)|Matching]], [[3-dimensional matching]], and [[Independent set (graph theory)|independent set]] are special cases of set packing. A maximum-size matching can be found in polynomial time, but finding a largest 3-dimensional matching or a largest independent set is NP-hard.
+* [[Packing in a hypergraph]].
+
+== Notes ==
+{{reflist}}
+
+== References ==
+
+* "[http://www.nist.gov/dads/HTML/setpacking.html set packing]". ''Dictionary of Algorithms and Data Structures'', editor Paul E. Black, ''National Institute of Standards and Technology.'' Note that the definition here is somewhat different.
+* Steven S. Skiena. "[http://www2.toki.or.id/book/AlgDesignManual/BOOK/BOOK5/NODE202.HTM Set Packing]". ''The Algorithm Design Manual''. Last modified June 2, 1997.
+* Pierluigi Crescenzi, Viggo Kann, Magnús Halldórsson, [[Marek Karpinski]] and Gerhard Woeginger. "[http://www.nada.kth.se/~viggo/wwwcompendium/node144.html Maximum Set Packing]". [http://www.nada.kth.se/%7Eviggo/wwwcompendium/ ''A compendium of NP optimization problems'']. Last modified March 20, 2000.
+* {{cite book|author = [[Michael R. Garey]] and [[David S. Johnson]] | year = 1979 | title = [[Computers and Intractability: A Guide to the Theory of NP-Completeness]] | publisher = W.H. Freeman | isbn = 0-7167-1045-5}} A3.1: SP3, pg.221.
+* {{Cite book | last=Vazirani | first=Vijay V. | authorlink=Vijay Vazirani | title=Approximation Algorithms | year=2001 | publisher=Springer-Verlag | isbn=3-540-65367-8 | pages=}}
+
+== External links ==
+* [http://www.cs.sunysb.edu/~algorith/implement/syslo/implement.shtml]: A Pascal program for solving the problem. From ''Discrete Optimization Algorithms with Pascal Programs'' by MacIej M. Syslo, ISBN 0-13-215509-5.
+* [http://www.nlsde.buaa.edu.cn/~kexu/benchmarks/set-benchmarks.htm Benchmarks with Hidden Optimum Solutions for Set Covering, Set Packing and Winner Determination]
+*[http://www.phpqa.in/2010/10/solving-packaging-problem-in-php.html Solving packaging problem in PHP]
+
+[[Category:Combinatorics]]
+[[Category:NP-complete problems]]
+
+[[de:Mengenpackungsproblem]]
+[[fr:Set packing]]</body> </html>

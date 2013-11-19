@@ -1,0 +1,31 @@
+<html> <head> <title>Replay system</title></head><body>{{No footnotes|date=November 2009}}
+{{Refimprove|date=December 2008}}
+
+The '''Replay system''' is a little known subsystem within the [[Intel]] [[Pentium 4]] processor.  Its primary function is to catch operations that have been mistakenly sent for execution by the processor's [[Instruction scheduling|scheduler]].  Operations caught by the replay system are then re-executed in a loop until the conditions necessary for their proper execution have been fulfilled.
+
+==Origins==
+The replay system came about as a result of Intel's now-defunct [[megahertz myth|quest for ever increasing clock speeds]]. These higher clock speeds necessitated very lengthy [[pipeline (computing)|pipelines]] (up to 31 stages in the [[Pentium 4#Prescott|Prescott]] core). Because of this, there are 6 stages between the scheduler and the [[execution unit]]s in the Prescott core.  In an attempt to maintain acceptable performance, Intel engineers had to design the scheduler to be very optimistic.
+
+==Operation==
+The scheduler in a Pentium 4 processor is so aggressive that it will send operations for execution without a guarantee that they can be successfully executed.  (Among other things, the scheduler assumes all data is in level 1 [[cache]].)  The most common reason execution fails is that the requisite data is not available, which itself is most likely due to a cache miss.  When this happens, the replay system springs into action.  The replay system signals the scheduler to stop, and then repeatedly executes the failed string of dependent operations until they have completed successfully.
+
+==Performance considerations==
+Not surprisingly, in some cases the replay system can have a very bad impact on performance. Under normal circumstances, the execution units in the Pentium 4 are in use roughly 33% of the time. When the replay system is invoked, it will occupy execution units nearly every available cycle. This wastes power, which is an increasingly important architectural design metric, but poses no performance penalty because the execution units would be sitting idle anyway. However, if [[hyper-threading]] is in use, the replay system will prevent the other thread from utilizing the execution units. This is the true cause of any performance degradation concerning hyper-threading. In Prescott, the Pentium 4 gained a replay queue, which reduces the time the replay system will occupy the execution units.
+
+In other cases, where each thread is processing different types of operations, the replay system will not interfere, and a performance increase can appear. This explains why performance with hyper-threading is application dependent.
+
+==See also==
+{{Portal|Computer Science}}
+* [[Instruction pipeline]]
+* [[Speculative execution]]
+* [[Out-of-order execution]]
+* [[Simultaneous multithreading]]
+* [[Data dependency]]
+
+==References==
+{{Reflist}}
+*[http://www.xbitlabs.com/articles/cpu/display/replay.html ''Replay: Unknown Features of the NetBurst Core'']
+
+[[Category:X86 microprocessors]]
+
+[[ja:リプレイシステム]]</body> </html>

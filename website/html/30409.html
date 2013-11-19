@@ -1,0 +1,125 @@
+<html> <head> <title>Proxy pattern</title></head><body>[[Image:proxy_pattern_diagram.svg|thumb|400px|Proxy in [[Unified Modeling Language|UML]]]]
+
+[[Image:Proxy pattern in LePUS3.gif|thumb|400px|Proxy in [[Lepus3|LePUS3]] ([http://lepus.org.uk/ref/legend/legend.xml legend]) ]]
+
+In [[computer programming]], the '''proxy pattern''' is a [[software design pattern]].
+
+A proxy, in its most general form, is a class functioning as an interface to something else. The proxy could interface to anything: a network connection, a large object in memory, a file, or some other resource that is expensive or impossible to duplicate.
+
+A well-known example of the proxy pattern is a [[reference counting]] [[smart pointer|pointer]] object.
+
+In situations where multiple copies of a complex object must exist the proxy pattern can be adapted to incorporate the [[flyweight pattern]] in order to reduce the application's memory footprint. Typically one instance of the complex object is created, and multiple proxy objects are created, all of which contain a reference to the single original complex object. Any operations performed on the proxies are forwarded to the original object. Once all instances of the proxy are out of scope, the complex object's memory may be deallocated.
+
+==Example==
+<!-- Wikipedia is not a list of examples. Do not add examples from your favorite programming language here; this page exists to explain the design pattern, not to show how it interacts with subtleties of every language under the sun. Feel free to add examples here: http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns/Proxy -->
+
+{{wikibooks|Computer Science Design Patterns|Proxy|Proxy implementations in various languages}}
+
+The following [[Java (programming language)|Java]] example illustrates the "virtual proxy" pattern. The <code>ProxyImage</code> class is used to access a remote method.
+<source lang="java">
+interface Image 
+{
+    public abstract void displayImage();
+}
+
+//on System A 
+class RealImage implements Image 
+{
+    private String filename;
+
+    public RealImage(String filename) 
+    { 
+        this.filename = filename;
+        loadImageFromDisk();
+    }
+
+    private void loadImageFromDisk() 
+    {
+        System.out.println("Loading   " + filename);
+    }
+
+    public void displayImage() 
+    { 
+        System.out.println("Displaying " + filename); 
+    }
+
+}
+
+//on System B 
+class ProxyImage implements Image 
+{
+    private String filename;
+    private RealImage image;
+ 
+    public ProxyImage(String filename) 
+    { 
+        this.filename = filename; 
+    }
+    
+    public void displayImage() 
+    {
+        if (image == null) 
+        {
+           image = new RealImage(filename);
+        } 
+        image.displayImage();
+    }
+}
+ 
+class ProxyExample 
+{
+    public static void main(String[] args) 
+    {
+        Image image1 = new ProxyImage("HiRes_10MB_Photo1");
+        Image image2 = new ProxyImage("HiRes_10MB_Photo2");     
+        
+        image1.displayImage(); // loading necessary
+        image2.displayImage(); // loading necessary
+        image1.displayImage(); // loading unnecessary
+    }
+}
+</source>
+
+The program's output is:
+ Loading    HiRes_10MB_Photo1
+ Displaying HiRes_10MB_Photo1
+ Loading    HiRes_10MB_Photo2
+ Displaying HiRes_10MB_Photo2
+ Displaying HiRes_10MB_Photo1
+
+==See also==
+*[[Composite pattern]]
+*[[Decorator pattern]]
+*[[Lazy initialization]]
+
+==External links==
+*[http://wiki.java.net/bin/view/Javapedia/ProxyPattern Proxy pattern in Java]
+*[http://www.lepus.org.uk/ref/companion/Proxy.xml Proxy pattern in UML and in LePUS3 (a formal modelling language)]
+*[http://www.javaworld.com/javaworld/jw-02-2002/jw-0222-designpatterns.html Take control with the Proxy design pattern] by [[David Geary, JavaWorld.com]]
+*[http://perfectjpattern.sourceforge.net/dp-proxy.html PerfectJPattern Open Source Project], Provides componentized implementation of the Proxy Pattern in Java
+*[http://www.netobjectives.com/PatternRepository/index.php?title=AdapterVersusProxyVersusFacadePatternComparison Adapter vs. Proxy vs. Facade Pattern Comparison]
+*[http://sourcemaking.com/design_patterns/proxy Proxy Design Pattern]
+
+{{Design Patterns Patterns}}
+
+
+
+[[Category:Software design patterns]]
+[[Category:Articles with example Java code]]
+[[Category:Articles with example C Sharp code]]
+
+[[ar:نمط الوكيل]]
+[[bg:Пълномощно (шаблон)]]
+[[ca:Proxy (patró de disseny)]]
+[[de:Stellvertreter (Entwurfsmuster)]]
+[[es:Proxy (patrón de diseño)]]
+[[fr:Proxy (patron de conception)]]
+[[ko:프록시 패턴]]
+[[it:Proxy pattern]]
+[[lt:Proxy (objektas)]]
+[[ja:Proxy パターン]]
+[[pl:Pełnomocnik (wzorzec projektowy)]]
+[[pt:Proxy (padrões de projeto)]]
+[[ru:Proxy (шаблон проектирования)]]
+[[uk:Замісник (шаблон проектування)]]
+[[zh:代理模式]]</body> </html>

@@ -1,0 +1,71 @@
+<html> <head> <title>Prefix code</title></head><body>A '''prefix code''' is a [[code]] system, typically a [[variable-length code]], with the "prefix property": there is no valid [[code word]] in the system that is a [[prefix (computer science)|prefix]] (start) of any other valid code word in the set. A code with code words {9, 59, 55} has the prefix property; a code consisting of {9, 5, 59, 55} does not, because "5" is a prefix of both "59" and "55". With a prefix code, a receiver can identify each word without requiring a special marker between words.
+
+Prefix codes are also known as '''prefix-free codes''', '''prefix condition codes''' and '''instantaneous codes'''. Although [[Huffman coding]] is just one of many algorithms for deriving prefix codes, prefix codes are also widely referred to as "Huffman codes", even when the code was not produced by a Huffman algorithm. The term '''comma-free code''' is sometimes also applied as a synonym for prefix-free codes<ref>US [[Federal Standard 1037C]]</ref><ref>{{citation|title=ATIS Telecom Glossary 2007|url=http://www.atis.org/glossary/definition.aspx?id=6416|accessdate=December 4, 2010}}</ref> but in most mathematical books and articles (e. g. <ref>{{citation|last1=Berstel|first1=Jean|last2=Perrin|first2=Dominique|title=Theory of Codes|publisher=Academic Press|year=1985}}</ref><ref>{{citation|last1=Golomb|first1=S. W.|last2=Gordon|first2=Basil|last3=Welch|first3=L. R.|title=Comma-Free Codes|journal=Canadian Journal of Mathematics|volume=10|issue=2|pages=202–209|year=1958|url=http://books.google.com/books?id=oRgtS14oa-sC&pg=PA202}}</ref>) it is used to mean [[self-synchronizing code]]s, a subclass of prefix codes.
+
+Using prefix codes, a message can be transmitted as a sequence of concatenated code words, without any [[out-of-band]] markers to [[framing (telecommunication)|frame]] the words in the message. The recipient can decode the message unambiguously, by repeatedly finding and removing prefixes that form valid code words. This is not possible with codes that lack the prefix property, for example {0, 1, 10, 11}: a receiver reading a "1" at the start of a code word would not know whether that was the complete code word "1", or merely the prefix of the code word "10" or "11".
+
+The variable-length [[Huffman coding|Huffman codes]], [[country calling codes]], the country and publisher parts of [[ISBN]]s, and the Secondary Synchronization Codes used in the [[UMTS]] [[W-CDMA]] 3G Wireless Standard are prefix codes.
+
+Prefix codes are not [[error-correcting codes]]. In practice, a message might first be compressed with a prefix code, and then encoded again with [[channel coding]] (including error correction) before transmission.
+
+[[Kraft's inequality]] characterizes the sets of code word lengths that are possible in a prefix code.
+
+==Techniques==
+Techniques for constructing a prefix code can be simple, or quite complicated.
+
+If every word in the code has the same length, the code is called a '''fixed-length code''', or a '''block code''' (though the term [[block code]] is also used for fixed-size [[error-correcting code]]s in [[channel coding]]). For example, [[ISO 8859-15]] letters are always 8 bits long. [[UTF-32/UCS-4]] letters are always 32 bits long. [[Asynchronous Transfer Mode|ATM packets]] are always 424 bits long. A block code of fixed length ''k'' bits can encode up to <math>2^{k}</math> source symbols.
+
+Prefixes cannot exist in a fixed-length code without padding fixed codes to the shorter prefixes in order to meet the length of the longest prefixes (however such padding codes may be selected to introduce redundancy that allows autocorrection and/or synchronisation). However, fixed length encodings are inefficient in situations where some words are much more likely to be transmitted than others (in which case some or all of the redundancy may be eliminated for data compression).
+
+[[Truncated binary encoding]] is a straightforward generalization of block codes to deal with cases where the number of symbols ''n'' is not a power of two. Source symbols are assigned codewords of length ''k'' and ''k''+1. where <math>2^{k} < n < 2^{k+1}</math>.
+
+[[Huffman coding]] is a more sophisticated technique for constructing variable-length prefix codes. The Huffman coding algorithm takes as input the frequencies that the code words should have, and constructs a prefix code that minimizes the weighted average of the code word lengths. This is a form of [[lossless data compression]] based on [[entropy encoding]].
+
+Some codes mark the end of a code word with a special "comma" symbol, different from normal data.<ref>[http://www.imperial.ac.uk/research/hep/group/theses/JJones.pdf "Development of Trigger and Control Systems for CMS"] by J. A. Jones: "Synchronisation" p. 70</ref> This is somewhat analogous to the spaces between words in a sentence; they mark where one word ends and another begins. If every code word ends in a comma, and the comma does not appear elsewhere in a code word, the code is prefix-free. However, modern communication systems send everything as sequences of "1" and "0" – adding a third symbol would be expensive, and using it only at the ends of words would be inefficient. [[Morse code]] is an everyday example of a variable-length code with a comma. The long pauses between letters, and the even longer pauses between words, help people recognize where one letter (or word) ends, and the next begins. Similarly, [[Fibonacci coding]] uses a "11" to mark the end of every code word.
+
+[[Self-synchronizing code]]s are prefix codes that allow [[frame synchronization]].
+
+==Prefix codes in use today==
+Examples of prefix codes include:
+* [[country calling codes]]
+* the country and publisher parts of [[ISBN]]s
+* the Secondary Synchronization Codes used in the [[UMTS]] [[W-CDMA]] 3G Wireless Standard
+* [[VCR Plus|VCR Plus+ codes]]
+* the [[UTF-8]] system for encoding [[Unicode]] characters
+
+===Techniques===
+Commonly used techniques for constructing prefix codes include [[Huffman coding|Huffman codes]] and the earlier [[Shannon-Fano coding|Shannon-Fano codes]], and [[universal code (data compression)|universal code]]s such as:
+* [[Elias delta coding]]
+* [[Elias gamma coding]]
+* [[Elias omega coding]]
+* [[Fibonacci coding]]
+* [[Levenshtein coding]]
+* [[Unary coding]]
+* [[Golomb Rice code]]
+* [[Straddling checkerboard]] (simple cryptography technique which produces prefix codes)
+
+==Notes==
+{{Reflist}}
+
+==References==
+* P. Elias, Universal codeword sets and representations of integers, IEEE Trans. Inform. Theory 21 (2) (1975) 194–203.
+* D.A. Huffman, "A method for the construction of minimum-redundancy codes", Proceedings of the I.R.E., Sept. 1952, pp. 1098–1102 (Huffman's original article)
+* [http://www.huffmancoding.com/david/scientific.html Profile: David A. Huffman], [[Scientific American]], Sept. 1991, pp. 54–58 (Background story)
+* [[Thomas H. Cormen]], [[Charles E. Leiserson]], [[Ronald L. Rivest]], and [[Clifford Stein]]. ''[[Introduction to Algorithms]]'', Second Edition. MIT Press and McGraw-Hill, 2001. ISBN 0-262-03293-7. Section 16.3, pp.385–392.
+* {{FS1037C}}
+
+==External links==
+* [http://plus.maths.org/issue10/features/infotheory/index.html Codes, trees and the prefix property] by Kona Macphee
+
+[[Category:Coding theory]]
+[[Category:Prefixes]]
+[[Category:Data compression]]
+[[Category:Lossless compression algorithms]] <!-- do I really need both categories? -->
+
+[[cs:Prefixový kód]]
+[[de:Präfixcode]]
+[[es:Código prefijo]]
+[[fr:Code préfixe]]
+[[ja:接頭符号]]
+[[pl:Kod prefiksowy]]
+[[ru:Префиксный код]]</body> </html>

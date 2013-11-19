@@ -1,0 +1,307 @@
+<html> <head> <title>Security Assertion Markup Language</title></head><body>'''Security Assertion Markup Language''' ('''SAML''') is an [[XML]]-based [[open standard]] for exchanging [[authentication]] and [[authorization]] data between [[security domain]]s, that is, between an ''identity provider'' (a producer of assertions) and a ''service provider'' (a consumer of assertions).  SAML is a product of the [[OASIS (organization)|OASIS]] Security Services Technical Committee.
+
+The single most important problem that SAML is trying to solve is the ''Web Browser Single Sign-On'' ([[Single sign-on|SSO]]) problem, a problem also addressed by the [[OpenID]] protocol.  [[Single sign on|Single sign-on]] solutions are abundant at the [[intranet]] level (using [[HTTP cookie|cookies]], for example) but extending these solutions beyond the intranet has been problematic and has led to the proliferation of non-interoperable proprietary technologies.
+
+SAML assumes the ''principal'' (often a user) has enrolled with at least one identity provider.  This identity provider is expected to provide local authentication services to the principal.  However, SAML does not specify the implementation of these local services; indeed, SAML does not care how local authentication  services are implemented (although individual service providers most certainly will).
+
+Thus a service provider relies on the identity provider to identify the principal.  At the principal's request, the identity provider passes a SAML assertion to the service provider.  On the basis of this assertion, the service provider makes an [[access control]] decision.
+
+==History of SAML==
+The [[OASIS (organization)|OASIS]] Security Services Technical Committee (SSTC), which met for the first time in January 2001, was chartered "to define an XML framework for exchanging authentication and authorization information." [http://lists.oasis-open.org/archives/security-services/200101/msg00014.html] To this end, the following intellectual property was contributed to the SSTC during the first two months of that year:
+
+* ''Security Services Markup Language'' (S2ML) from Netegrity
+* ''AuthXML'' from Securant
+* ''XML Trust Assertion Service Specification'' (X-TASS) from VeriSign
+* ''Information Technology Markup Language'' (ITML) from Jamcracker
+
+Building on this work, in November 2002 OASIS announced the Security Assertion Markup Language (SAML) V1.0 specification as an OASIS Standard.
+
+Meanwhile, the [[Liberty Alliance]], a large consortium of companies, non-profit and government organizations, proposed an extension to the SAML standard called the Liberty Identity Federation Framework (ID-FF).  Like its SAML predecessor, Liberty ID-FF proposed a standardized, cross-domain, web-based, single sign-on framework.  In addition, Liberty described a ''circle of trust'', where each participating domain is trusted to accurately document the processes used to identify a user, the type of authentication system used, and any policies associated with the resulting authentication credentials. Other members of the circle of trust may examine these policies to determine whether to trust such information.
+
+While Liberty was developing ID-FF, the SSTC began work on a minor upgrade to the SAML standard.  The resulting SAML V1.1 specification, ratified by the SSTC in September 2003, is widely implemented and deployed today.  Then, in the same month, Liberty contributed ID-FF to OASIS, thereby sowing the seeds for the next major version of SAML.  Thus in March 2005, SAML V2.0 was announced as an OASIS Standard.  SAML V2.0 represents the convergence of Liberty ID-FF and other proprietary extensions, as well as early versions of SAML itself.  Implementations and deployments of SAML V2.0 are in progress as of this writing (March-2007).{{Update after|2010|11|13}}
+
+==Versions of SAML==
+SAML has undergone one minor and one major revision since V1.0.
+
+* SAML 1.0 was adopted as an OASIS Standard in November 2002
+* [[SAML 1.1]] was ratified as an OASIS Standard in September 2003
+* [[SAML 2.0]] became an OASIS Standard in March 2005
+
+The Liberty Alliance contributed its Identity Federation Framework (ID-FF) to the OASIS SSTC in September 2003:
+
+* ID-FF 1.1 was released in April 2003
+* ID-FF 1.2 was finalized in November 2003
+
+===Differences between V1.1 and V1.0===
+
+Versions 1.0 and 1.1 of SAML are similar.  See [[#SAMLDiff]] for specific differences between these two standards.
+
+===Differences between V2.0 and V1.1===
+
+The [https://spaces.internet2.edu/display/SHIB/SAMLDiffs differences between SAML 2.0 and SAML 1.1] are substantial.  Although the two standards address the same use case, SAML 2.0 is incompatible (on the wire) with its predecessor.
+
+===Differences between V2.0 and ID-FF 1.2===
+
+Although ID-FF 1.2 was contributed to OASIS as the basis of SAML 2.0, there are some important [https://spaces.internet2.edu/display/SHIB/SAMLLibertyDiffs differences between SAML 2.0 and ID-FF 1.2].  In particular, the two specifications, despite their common roots, are incompatible (on the wire).
+
+==SAML building blocks==
+SAML is built upon a number of existing standards:
+<!-- Don't change "Extensible" to "eXtensible"! See http://www.xml.com/axml/notes/TheCorrectTitle.html from the Annotated XML Specification.
+-->
+
+; Extensible Markup Language (XML): Most SAML exchanges are expressed in a standardized dialect of [[XML]], which is the root for the name SAML (Security Assertion Markup Language).
+; XML Schema: SAML assertions and protocols are specified (in part) using [[XML Schema (W3C)|XML Schema]].
+; XML Signature: Both [[SAML 1.1]] and [[SAML 2.0]] use digital signatures (based on the [[XML Signature]] standard) for authentication and message integrity.
+; XML Encryption: Using [[XML Encryption]], [[SAML 2.0]] provides elements for encrypted name identifiers, encrypted attributes, and encrypted assertions (SAML 1.1 does not have encryption capabilities).
+; Hypertext Transfer Protocol (HTTP): SAML relies heavily on [[HTTP]] as its communications protocol.
+; SOAP: SAML specifies the use of [[SOAP (protocol)|SOAP]], specifically [http://www.w3.org/TR/2000/NOTE-SOAP-20000508/ SOAP 1.1].
+
+==The Anatomy of SAML==
+<!-- Image with unknown copyright status removed: [[Image:Saml-anatomy.gif|thumb|SAML Anatomy]] -->
+
+SAML defines XML-based assertions and protocols, bindings, and profiles.  The term ''SAML Core'' refers to the general syntax and semantics of SAML assertions as well as the protocol used to request and transmit those assertions from one system entity to another.  ''SAML protocol'' refers to '''what''' is transmitted, not '''how''' (the latter is determined by the choice of binding).  So SAML Core defines "bare" SAML assertions along with SAML request and response elements.
+
+A SAML binding determines how SAML requests and responses map onto standard messaging or communications protocols.  An important (synchronous) binding is the SAML SOAP binding.
+
+A SAML profile is a concrete manifestation of a defined use case using a particular combination of assertions, protocols and bindings.
+
+===SAML Assertions===
+
+A SAML ''assertion'' contains a packet of security information:
+
+  <'''saml:Assertion''' ...>
+    ...
+  <'''/saml:Assertion'''>.
+
+Loosely speaking, a relying party interprets an assertion as follows:
+
+<blockquote>Assertion ''A'' was issued at time ''t'' by issuer ''R'' regarding subject ''S'' provided conditions ''C'' are valid.</blockquote>
+
+SAML assertions are usually transferred from identity providers to service providers.  Assertions contain ''statements'' that service providers use to make access control decisions.  Three types of statements are provided by SAML:
+
+# '''Authentication statements'''
+# '''Attribute statements'''
+# '''Authorization decision statements'''
+
+''Authentication statements'' assert to the service provider that the principal did indeed authenticate with the identity provider at a particular time using a particular method of authentication.  Other information about the authenticated principal (called the ''authentication context'') may be disclosed in an authentication statement.
+
+An ''attribute statement'' asserts that a subject is associated with certain attributes.  An ''attribute'' is simply a name-value pair.  Relying parties use attributes to make access control decisions.
+
+An ''authorization decision statement'' asserts that a subject is permitted to perform action ''A'' on resource ''R'' given evidence ''E''.  The expressiveness of authorization decision statements in SAML is intentionally limited.  More advanced use cases are encouraged to use [[XACML]] instead.
+
+===SAML protocols===
+
+[[Image:Saml-protocol-response.gif|right|SAML Protocol Response]]
+
+A SAML ''protocol'' describes how certain SAML elements (including assertions) are packaged within SAML request and response elements, and gives the processing rules that SAML entities must follow when producing or consuming these elements.  For the most part, a SAML protocol is a simple request-response protocol.
+
+The most important type of SAML protocol request is called a ''query''.  A service provider makes a query directly to an identity provider over a secure back channel.  Thus query messages are typically bound to SOAP.
+
+Corresponding to the three types of statements, there are three types of SAML queries:
+
+# '''Authentication query'''
+# '''Attribute query'''
+# '''Authorization decision query'''
+
+Of these, the ''attribute query'' is perhaps most important (and still the object of much research).  The result of an attribute query is a SAML response containing an assertion, which itself contains an attribute statement.  See the SAML 2.0 topic for [[SAML 2.0#SAML Attribute Query|an example of attribute query/response]].
+
+====SAML 1.1 protocols====
+Beyond queries, SAML 1.1 specifies no other protocols.
+
+====SAML 2.0 protocols====
+SAML 2.0 expands the notion of ''protocol'' considerably.  The following protocols are described in detail in SAML 2.0 Core:
+
+* Assertion Query and Request Protocol
+* Authentication Request Protocol
+* Artifact Resolution Protocol
+* Name Identifier Management Protocol
+* Single Logout Protocol
+* Name Identifier Mapping Protocol
+
+Most of these protocols are completely new in [[SAML 2.0]].
+
+===SAML bindings===
+
+[[Image:Saml-over-soap-over-http.gif|right|SAML over SOAP over HTTP]]
+
+A SAML ''binding'' is a mapping of a SAML protocol message onto standard messaging formats and/or communications protocols.  For example, the SAML SOAP binding specifies how a SAML message is encapsulated in a SOAP envelope, which itself is bound to an HTTP message.
+
+====SAML 1.1 bindings====
+SAML 1.1 specifies just one binding, the SAML SOAP Binding.  In addition to SOAP, implicit in SAML 1.1 Web Browser SSO are the precursors of the HTTP POST Binding, the HTTP Redirect Binding, and the HTTP Artifact Binding.  These are not defined explicitly, however, and are only used in conjunction with SAML 1.1 Web Browser SSO.  The notion of binding is not fully developed until SAML 2.0.
+
+====SAML 2.0 bindings====
+SAML 2.0 completely separates the binding concept from the underlying profile.  In fact, there is a brand [[SAML 2.0#SAML 2.0 Bindings|new binding specification in SAML 2.0]] that defines the following standalone bindings:
+
+* SAML SOAP Binding (based on SOAP 1.1)
+* Reverse SOAP (PAOS) Binding
+* HTTP Redirect (GET) Binding
+* HTTP POST Binding
+* HTTP Artifact Binding
+* SAML URI Binding
+
+This reorganization provides tremendous flexibility: taking just Web Browser SSO alone as an example, a service provider can choose from four bindings (HTTP Redirect, HTTP POST and two flavors of HTTP Artifact), while the identity provider has three binding options (HTTP POST plus two forms of HTTP Artifact), for a total of twelve (12) possible deployments of the SAML 2.0 Web Browser SSO Profile.
+
+===SAML profiles===
+
+A SAML ''profile'' describes in detail how SAML assertions, protocols, and bindings combine to support a defined use case.  The most important SAML profile is the Web Browser SSO Profile.
+
+====SAML 1.1 profiles====
+SAML 1.1 specifies two profiles, the Browser/Artifact Profile and the Browser/POST Profile.  The latter passes assertions ''by value'' whereas Browser/Artifact passes assertions ''by reference''.  As a consequence, Browser/Artifact requires a back-channel SAML exchange over SOAP.
+
+In SAML 1.1, all flows begin with a request at the identity provider for simplicity.  Proprietary extensions to the basic IdP-initiated flow have been proposed (by [[Shibboleth (Internet2)|Shibboleth]], e.g.).
+
+====SAML 2.0 profiles====
+The Web Browser SSO Profile has been completely refactored for SAML 2.0.  Conceptually, SAML 1.1 Browser/Artifact and Browser/POST are special cases of SAML 2.0 Web Browser SSO.  The latter is considerably more flexible than its SAML 1.1 counterpart due to the new "plug-and-play" binding design of V2.0.
+
+Unlike previous versions, SAML 2.0 browser flows begin with a request at the service provider.  This provides greater flexibility, but SP-initiated flows naturally give rise to the so-called ''Identity Provider Discovery'' problem, the focus of much research today.
+
+In addition to Web Browser SSO, SAML 2.0 introduces numerous new profiles:
+
+* SSO Profiles
+** Web Browser SSO Profile
+** Enhanced Client or Proxy (ECP) Profile
+** Identity Provider Discovery Profile
+** Single Logout Profile
+** Name Identifier Management Profile
+* Artifact Resolution Profile
+* Assertion Query/Request Profile
+* Name Identifier Mapping Profile
+* SAML Attribute Profiles
+
+A number of these profiles are discussed in more detail in the [[SAML 2.0]] topic.
+
+==The SAML Use Case==
+The primary SAML use case is called ''Web Browser Single Sign-On (SSO)''.  A user wielding a ''user agent'' (usually a web browser) requests a web resource protected by a SAML ''service provider''.  The service provider, wishing to know the identity of the requesting user, issues an authentication request to a SAML ''identity provider'' through the user agent.  The resulting protocol flow is depicted in the following diagram.
+
+[[Image:Saml-use-case.svg|frame|center|SAML Web Browser SSO]]
+
+'''1. Request the target resource at the SP''' (SAML 2.0 only)
+
+The principal (via an HTTP user agent) requests a target resource at the service provider:
+
+  <nowiki>https://sp.example.com/myresource</nowiki>
+
+The service provider performs a security check on behalf of the target resource.  If a valid security context at the service provider already exists, skip steps 2&ndash;7.
+
+'''2. Respond with an XHTML form''' (SAML 2.0 only)
+
+The service provider responds with a document containing an XHTML form:
+
+<source lang="html4strict">
+  <form method="post" action="https://idp.example.org/SAML2/SSO/POST" ...>
+    <input type="hidden" name="SAMLRequest" value="request" />
+    ...
+    <input type="submit" value="Submit" />
+  </form>
+</source>
+
+The value of the <code>SAMLRequest</code> parameter is the [[Base64]] encoding of a <code><samlp:AuthnRequest></code> element.
+
+'''3. Request the SSO Service at the IdP''' (SAML 2.0 only)
+
+The user agent issues a POST request to the SSO service at the identity provider where the value of the <code>SAMLRequest</code> parameter is taken from the XHTML form at step 2.  The SSO service processes the <code>AuthnRequest</code> and performs a security check.  If the user does not have a valid security context, the identity provider identifies the user (details omitted).
+
+'''4. Respond with an XHTML form'''
+
+The SSO service validates the request and responds with a document containing an XHTML form:
+
+<source lang="html4strict">
+  <form method="post" action="https://sp.example.com/SAML2/SSO/POST" ...>
+    <input type="hidden" name="SAMLResponse" value="response" />
+    ...
+    <input type="submit" value="Submit" />
+  </form>
+</source>
+
+The value of the <code>SAMLResponse</code> parameter is the base64 encoding of a <code><samlp:Response></code> element.
+
+'''5. Request the Assertion Consumer Service at the SP'''
+
+The user agent issues a POST request to the assertion consumer service at the service provider.  The value of the <code>SAMLResponse</code> parameter is taken from the XHTML form at step 4.
+
+'''6. Redirect to the target resource'''
+
+The assertion consumer service processes the response, creates a security context at the service provider and redirects the user agent to the target resource.
+
+'''7. Request the target resource at the SP again'''
+
+The user agent requests the target resource at the service provider (again):
+
+  <nowiki>https://sp.example.com/myresource</nowiki>
+
+'''8. Respond with requested resource'''
+
+Since a security context exists, the service provider returns the resource to the user agent.
+
+Note: In SAML 1.1, the flow begins with a request to the identity provider's inter-site transfer service at step 3.
+
+==The use of SOAP==
+In the example flow above, all depicted exchanges are ''front-channel exchanges'', that is, an HTTP user agent (browser) communicates with a SAML entity at each step.  In particular, there are no ''back-channel exchanges'' or direct communications between the service provider and the identity provider.  Front-channel exchanges lead to simple protocol flows where all messages are passed ''by value'' using a simple HTTP binding (GET or POST).  Indeed, the flow outlined in the previous section is sometimes called the ''Lightweight Web Browser SSO Profile''.
+
+Alternatively, for increased security or privacy, messages may be passed ''by reference''.  For example, an identity provider may supply a reference to a SAML assertion (called an ''artifact'') instead of transmitting the assertion directly through the user agent.  Subsequently, the service provider requests the actual assertion via a back channel.  Such a back-channel exchange is specified as a [[SOAP]] message exchange (SAML over SOAP over HTTP).  In general, any SAML exchange over a secure back channel is conducted as a SOAP message exchange.
+
+On the back channel, SAML specifies the use of SOAP 1.1.  The use of SOAP as a binding mechanism is optional, however.  Any given SAML deployment will choose whatever bindings are appropriate.
+
+==SAML security==
+The SAML specifications recommend, and in some cases mandate, a variety of security mechanisms:
+
+* SSL 3.0 or TLS 1.0 for transport-level security
+* XML Signature and XML Encryption for message-level security
+
+Requirements are often phrased in terms of (mutual) authentication, integrity, and confidentiality, leaving the choice of security mechanism to implementers and deployers.
+
+==Profiles of SAML==
+Aside from the SAML Web Browser SSO Profile, some important third-party profiles of SAML include:
+
+* [[OASIS]] [http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss Web Services Security (WSS) Technical Committee]
+** [http://www.oasis-open.org/committees/download.php/16768/wss-v1.1-spec-os-SAMLTokenProfile.pdf OASIS WS-Security SAML Token Profile]
+* [[Liberty Alliance]]
+** [http://www.projectliberty.org/resource_center/specifications/liberty_alliance_id_ff_1_2_specifications Liberty Identity Federation Framework (ID-FF)]
+** [http://www.projectliberty.org/resource_center/specifications/liberty_alliance_id_wsf_2_0_specifications Liberty Identity Web Services Framework (ID-WSF)]
+* [[OASIS]] [http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xacml eXtensible Access Control Markup Language (XACML) Technical Committee]
+** [http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xacml#XACML20 SAML 2.0 Profile of XACML v2.0]
+
+==See also==
+* [[SAML 1.1]]
+* [[SAML 2.0]]
+* [[Authentication]]
+* [[Single sign on|Single sign-on]]
+* [[Authorization]]
+* [[Federated identity]]
+* [[Shibboleth (Internet2)|Shibboleth]]
+* [[Athens access and identity management]]
+* [[OpenID]]
+* [[Information Card]]s
+* [[WS-Federation]]
+* [[OASIS (organization)|OASIS]]
+* [[Light-Weight Identity]]
+
+==References==
+* <strong id="SAMLDiff">[SAMLDiff]</strong> P. Mishra et al., ''Differences between OASIS Security Assertion Markup Language (SAML) V1.1 and V1.0.'' OASIS Draft, May 2003. Document ID sstc-saml-diff-1.1-draft-01 http://www.oasis-open.org/committees/download.php/3412/sstc-saml-diff-1.1-draft-01.pdf
+
+==External links==
+* [http://saml.xml.org/ Online Community for SAML OASIS Standard ]
+* [http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=security OASIS Security Services Technical Committee]
+* [http://xml.coverpages.org/saml.html Cover Pages: Security Assertion Markup Language (SAML)]
+* [http://www.pingidentity.com/information-library/what-is-saml.cfm Tutorial Video: Ten Things You Need To Know About SAML]
+* [http://identitymeme.org/doc/draft-hodges-learning-saml-00.html How to Study and Learn SAML]
+* [http://www.oracle.com/technetwork/articles/entarch/saml-084342.html Demystifying SAML]
+* [http://ssocircle.com First public SAML 2.0 identity provider]
+* [http://developers.sun.com/identity/reference/techart/federated.html Federated Identity: Single Sign-On Among Enterprises (SUN)]
+* [http://books.google.com/books?id=tBkEAAAAMBAJ&pg=PT42&lpg=PT42&dq=early+adopters+SAML&source=bl&ots=hcZRVwzzQr&sig=0p6hCL9Q4T7U1iKVkcq1wWkk6eo&hl=en&ei=-G5-TLLvFoyInAeSpdjvAQ&sa=X&oi=book_result&ct=result&resnum=7&ved=0CDoQ6AEwBg#v=onepage&q=early%20adopters%20SAML&f=false Federated ID gains momentum ]
+
+{{OASIS Standards}}
+
+[[Category:Computer security software]]
+[[Category:XML-based standards]]
+[[Category:Authentication methods]]
+
+[[cs:Security Assertion Markup Language]]
+[[de:Security Assertion Markup Language]]
+[[et:Security Assertion Markup Language]]
+[[fr:Security assertion markup language]]
+[[it:Security Assertion Markup Language]]
+[[ja:Security Assertion Markup Language]]
+[[pl:Security Assertion Markup Language]]
+[[ru:SAML]]
+[[fi:SAML]]</body> </html>

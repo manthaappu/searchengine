@@ -1,0 +1,106 @@
+<html> <head> <title>Cylinder-head-sector</title></head><body>{{Unreferenced|date=March 2010}}
+[[Image:Cylinder Head Sector.svg|right|Cylinder, head, and sector of a hard drive.]]
+
+'''Cylinder-head-sector''', also known as '''CHS''', was an early method for giving addresses to each physical block of data on a [[hard disk drive]]. In the case of ''floppy'' drives, for which the same exact ''diskette'' medium can be truly ''[[disk formatting|low-level formatted]]'' to different capacities, this is still true.
+
+Though CHS values no longer have a direct physical relationship to the data stored on disks, ''pseudo'' CHS values (which can be ''translated'' by disk electronics or software) are still being used by many utility programs.
+
+==Definitions==
+===Heads===
+Data is written to and read from the surface of a platter by a 
+device called a [[disk read-and-write head|head]]. Naturally, a platter has 2 sides and thus 2 surfaces on which data could be manipulated; usually there are 2 heads per platter—one on each side, but not always. (Sometimes the term ''side'' is substituted for ''head,'' since platters might be separated from their head assemblies; as is definitely the case with the removable media of a ''floppy'' drive.)
+
+===Tracks===
+The [[track (disk drive)|track]]s are the thin [[concentric]] circular strips on a floppy disk or platter surface which comprise the magnetic medium to which data is written by the drive heads. These magnetic strips form a circle and are (therefore) two-dimensional. At least one head is required to read a single track. All information stored on the hard disk is recorded in tracks.
+
+===Cylinders===
+A [[cylinder (disk drive)|cylinder]] comprises the same track number on each platter, spanning all such tracks across each platter surface that is able to store data (without regard to whether or not the track is "bad"). Thus, it is a three-dimensional structure. Any track comprising part of a specific cylinder can be written to and read from while the actuator assembly remains stationary, and one way in which hard drive manufacturers have increased drive access speed has been by increasing the number of platters which can be read at the same time.
+
+As larger hard disks have come into use, a cylinder has become also a logical, rather than a physical, disk structure: standardised at 16,065 sectors (i.e. 255 tracks multiplied by 63 sectors per track).
+
+===Sectors===
+Tracks are subdivided. Each subdivision is called a [[disk sector|sector]], which is the smallest storage unit on a hard drive. Typically, a sector will hold 512 bytes of information.<ref>Early on, leaders in the computer industry consciously chose this size, as the ANSI Accredited Standards Committee (ASC) X3 was already basing the definitions in their [http://www.t10.org/t13/project/d0791r4c-ATA-1.pdf  ATA-1 X3T10 791D] document on such ''sectors.'' Section 3.1.5 states: "LBA (Logical block address). This term defines the addressing mode of the drive as being by the linear mapping of sectors from 1 to n." And the T13 Technical Committee's [http://www.t10.org/t13/project/d1532v1r0c-ATA-ATAPI-7.pdf  ''Working Draft'' of ATA/ATAPI-7, 1410D Vol. 1, 5 November 2001], page 7, still defines a '''sector''' as: "A uniquely addressable set of 256 words (512 bytes)."</ref> Some vendors of hard drives, and some software developers, are attempting to create a new standard for the future by revising the amount of data stored in a sector to 4,096 bytes.<ref>http://www.anandtech.com/storage/showdoc.aspx?i=3691</ref>
+
+===Blocks===
+The UNIX/Linux communities employ the term ''block'' to refer to a sector or group of sectors. For example, the Linux [[fdisk]] utility normally displays partition table information using 512-byte ''blocks'', but also uses the word ''sector'' to help describe a disk's size in the phrase, ''63 sectors per track''.
+
+'''Note:''' The term ''block'' is also often used [[block (data storage)|separately from the context]] of physical disks. It is still, by convention, a power of 2 multiple of 512 bytes. In DOS and Windows communities the phrases ''allocation unit'' or ''cluster'' are used interchangeably to represent the structures defined in UNIX-based systems by the term ''block''.
+
+==CHS Addressing==
+Hence, each Sector of data can be addressed by specifying a cylinder, head, and sector. The following formulas detail the CHS geometry.
+
+The number of sectors on one side of a platter is:
+
+    Sectors Per Side = Tracks Per Side * Sectors Per track
+
+Each side of a drive "disk" or "platter" will have one head <ref>Zone Bit recording changed the way the head count is used.</ref>. So the calculation for the Total Number of Sectors is:
+
+    Total Number of Sectors = Sectors Per Side * Number of Heads
+
+Knowing that the standard size of a sector is 512 bytes. The calculation for the total size of the drive is:
+
+    Total storage capacity of a hard drive = Total Number of Sectors * 512 bytes per sector
+
+Logical blocks in modern computer systems are typically 512 [[byte]]s each, though [[ISO 9660]] CDs use 2048-byte blocks.
+
+==CHS to LBA mapping==
+{{main|Logical Block Addressing#CHS Conversion}}
+
+CHS-tuples can be mapped onto [[Logical Block Addressing|LBA]] (Logical Block Addressing) addresses using the following formula:
+
+ <math>A = ( c \cdot N_{\mathrm{heads}}  + h ) \cdot N_{\mathrm{sectors}}  + s - 1</math>
+
+Where <math>A</math> is the LBA address, <math>N_{\mathrm{heads}}</math> is the number of heads on the disk, <math>N_{\mathrm{sectors}}</math> is the number of sectors per track, and <math>(c, h, s)</math> is the CHS address.
+
+==Examples==
+A "1.44 MB"<ref>This popular ''label'' for the usual format of a 3.5-inch floppy diskette is a ''misnomer,'' since its actual capacity is 1440 [[Kibibyte|KiB]]; or: <code>1440 binaryKilo-bytes x 1024/binaryKilo = (exactly) 1,474,560 bytes</code> (which is neither 1,440,000 bytes nor 1.44 [[Mebibyte|MiB]]).</ref> [[floppy disk]] has 80 cylinders (numbered 0 to 79), 2 heads (numbered 0 to 1) and 18 sectors (numbered 1 to 18). Therefore, its capacity in sectors is computed as follows:
+
+    Total Number of Sectors = (80 * 18) * 2 = 2880  
+                                              2880*512 bytes/sector = 1474560 bytes (1.44 MB)
+
+The 16-byte entries within an [[Master boot record|MBR]] or [[Extended Boot Record|EBR]] Partition Table have CHS-''tuples'' which are limited to only (1023,254,63) for a total of 1024 cylinders, 255 heads and 63 sectors (values for cylinders and heads start at zero (0 ~ 1023 cylinders, 0 ~ 254 heads), and sector values start at one). For computers whose BIOS code was also limited to using only these CHS values, what was the largest size hard disk on which every ''sector'' could be accessed? Starting with the formula above, but also including the term, <code>512 bytes/sector</code>, the hard disk could be no larger than:
+     
+    ((1024 * 63) * 255) * 512 = 8,455,716,864 bytes (about 7.8 GiB)
+
+==History==
+Earlier hard drives used in the PC, such as [[Modified Frequency Modulation|MFM]] and [[Run Length Limited|RLL]] drives, divided each cylinder into an equal number of sectors, so the CHS values matched the physical properties of the drive. A drive with a CHS ''tuple'' of (500, 4, 32) would have 500 tracks per side on each platter, two platters (4 heads), and 32 sectors per track, with a total of 32,768,000 [[bytes]] (about 32.8 [[megabyte|MB]], or 31.25 [[mebibyte|MiB]]).
+
+[[Advanced Technology Attachment|ATA/IDE]] drives were much more efficient at storing data and have replaced the now ''archaic'' MFM and RLL drives. They use [[zone bit recording]] (ZBR), where the number of sectors dividing each track varies with the location of groups of tracks on the surface of the platter. Tracks nearer to the edge of the platter contain more blocks of data than tracks close to the spindle, because there is more physical space within a given track near the edge of the platter. Thus, the CHS addressing scheme cannot correspond directly with the physical geometry of such drives, due to the varying number of sectors per track for different regions on a platter. Because of this, many drives still have a surplus of sectors (less than 1 cylinder in size) at the end of the drive, since the total number of sectors rarely, if ever, ends on a cylinder boundary.
+
+An ATA/IDE drive can be set in the system [[BIOS]] with any configuration of cylinders, heads and sectors that do not exceed the capacity of the drive (or the BIOS), since the drive will convert any given CHS value into an actual address for its specific hardware configuration. This however can cause compatibility problems
+
+For operating systems such as [[Microsoft]] [[DOS]] or older version of [[Microsoft Windows|Windows]], each partition  must start and end at a cylinder boundary. Only some of the most modern [[operating system]]s (Windows XP included) may disregard this rule, but doing so can still cause some compatibility issues, especially if the user wants to perform [[dual boot]]ing on the same drive.  Microsoft does not follow this rule with internal disk partition tools since Windows Vista. <ref>[http://support.microsoft.com/kb/931760/en-us KB931760]</ref>
+
+==Notes==
+
+<References />
+
+==External links==
+* [http://myweb.tiscali.co.uk/bridip/recovery.htm Hard Disk backup, repair, and data recovery]
+
+==See also==
+* [[Cylinder (disk drive)]]
+* [[CD-ROM#CD-ROM format|CD-ROM format]]
+* [[Block (data storage)]]
+* [[Disk storage]]
+* [[Disk formatting]]
+* [[File Allocation Table]]
+* [[Disk partitioning]]
+* [[Logical block addressing]]
+
+{{DEFAULTSORT:Cylinder-Head-Sector}}
+[[Category:Advanced Technology Attachment]]
+[[Category:BIOS]]
+[[Category:Computer file systems]]
+[[Category:Hard disk computer storage]]
+
+[[ca:CHS]]
+[[cs:Cylindr-Hlava-Sektor]]
+[[de:Cylinder Head Sector]]
+[[es:CHS]]
+[[fr:Cylindre/Tête/Secteur]]
+[[ja:Cylinder head sector]]
+[[pl:CHS]]
+[[ru:CHS]]
+[[uk:CHS]]
+[[zh:CHS]]</body> </html>

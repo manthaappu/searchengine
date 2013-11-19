@@ -1,0 +1,101 @@
+<html> <head> <title>CGI.pm</title></head><body>{{Infobox Software
+| name = CGI.pm
+| logo = 
+| screenshot = 
+| caption = 
+| author = [[Lincoln D. Stein]]
+| developer = 
+| released = 
+| latest release version = 3.49
+| latest release date = 2010-02-05
+| latest preview version = 
+| latest preview date = 
+| operating system = 
+| platform = [[Perl]]
+| language = 
+| status = 
+| genre = [[Perl module]] for [[Common Gateway Interface|CGI]]
+| license = 
+| website = http://stein.cshl.org/WWW/software/CGI/
+}}
+'''CGI.pm''' is a large and widely used [[Perl module]] for [[Computer programming|programming]] [[Common Gateway Interface]] (CGI) [[WWW|web]] applications, providing a consistent [[Application programming interface|API]] for receiving user input and producing [[HTML]] or [[XHTML]] output.
+
+The module is written and maintained by [[Lincoln D. Stein]].
+
+== A Sample CGI Page ==
+Here is a simple CGI page, written in Perl using CGI.pm (in [[Object-oriented programming|object oriented]] style):
+
+<source lang="perl">
+#!/usr/bin/perl -w
+#
+use strict;
+use warnings;
+use CGI;
+
+my $cgi = CGI->new();
+
+print $cgi->header('text/html');
+print $cgi->start_html('A Simple CGI Page'),
+$cgi->h1('A Simple CGI Page'),
+$cgi->start_form,
+'Name: ',
+$cgi->textfield('name'), $cgi->br,
+'Age: ',
+$cgi->textfield('age'), $cgi->p,
+$cgi->submit('Submit!'),
+$cgi->end_form, $cgi->p,
+$cgi->hr;
+
+if ( $cgi->param('name') ) {
+    print 'Your name is ', $cgi->param('name'), $cgi->br;
+}
+
+if ( $cgi->param('age') ) {
+    print 'You are ', $cgi->param('age'), ' years old.';
+}
+
+print $cgi->end_html;
+</source>
+
+This would print a very simple webform, asking for your name and age, and after having been submitted, redisplaying the form with the name and age displayed below it.  This sample makes use of CGI.pm's object-oriented abilities; it can also be done by calling functions directly, without the <tt>$cgi-></tt>.
+
+Note: in many examples $q, short for query, is used to store a CGI object. As the above example illustrates, this might be very misleading.
+
+Here is another script that produces the same output using CGI.pm's [[Procedural programming|procedural]] interface:
+
+<source lang="perl">
+#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI ':standard';
+
+print header,
+    start_html('A Simple CGI Page'),
+    h1('A Simple CGI Page'),
+    start_form,
+    'Name: ',
+    textfield('name'), br,
+    'Age: ',
+    textfield('age'), p,
+    submit('Submit!'),
+    end_form, p,
+    hr;
+
+print 'Your name is ', param('name'), br if param 'name';
+print 'You are ', param('age'), ' years old.' if param 'age';
+
+print end_html;
+</source>
+
+==See also==
+*[[Mod perl|mod_perl]]
+
+==External links==
+*[http://stein.cshl.org/WWW/software/CGI/ Official homepage]
+*[http://search.cpan.org/dist/CGI.pm/ CGI.pm] &ndash; at the [[CPAN]]
+
+{{Wikibooks|Perl Programming|CGI}}
+
+{{unix-stub}}
+
+[[Category:Perl modules]]</body> </html>

@@ -1,0 +1,166 @@
+<html> <head> <title>Twisted Edwards curve</title></head><body>{{Refimprove|date=January 2010}}
+{{Technical|date=January 2010}}
+[[Image:Twisted Edwards curve.jpg|300px|right|thumb|A Twisted Edwards curve of equation <math>10x^2+y^2=1+6x^2y^2</math>]]
+
+In [[algebraic geometry]], the '''Twisted Edwards curves''' are plane models of [[elliptic curve]]s, a generalisation of [[Edwards curve]]s introduced by [[Daniel J. Bernstein|Bernstein]] et al. (2007) and named after [[Harold Edwards (mathematician)|Harold M. Edwards]].  Each [[twists of curves|twisted]] Edwards curve (as the name suggests) is a [[Twists of curves|twist]] of an [[Edwards curve]].
+A twisted Edwards curve E <sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub> over a [[field (mathematics)|field]] ''K'' which does not have 2=0 is an [[affine]] plane curve defined by the equation:
+
+:E <sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub>: <math>a x^2+y^2= 1+dx^2y^2</math>
+
+where ''a'', ''d'' are distinct non-zero elements of ''K''. An Edwards curve is a twisted Edwards curve with ''a'' = 1.
+
+Every twisted Edward curve is [[birationally equivalent]] to an elliptic curve in [[Montgomery curve|Montgomery form]] and vice versa.
+
+==Group law==
+
+As for all elliptic curves, also for the Twisted Edwards curve, it is possible to do some operations between its points, such as adding two of them or doubling (or tripling) one. The results of these operations are always points that belong to the curve itself. In the following sections some formulas are given to obtain the coordinates of a point resulted from an addition between two other points (addition), or the coordinates of point resulted from a doubling of a single point on a curve.
+
+===Addition on Twisted Edward curves===
+Let ''K'' be a field with [[characteristic (algebra)|characteristic]] different from 2.
+Let <math>(x_1,y_1)</math> and <math>(x_2,y_2)</math> be points on the Twisted Edward curve. The  equation  of Twisted Edward curve is written as;
+
+E<sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub>: <math>ax^2+y^2=1+dx^2y^2</math>.
+
+The sum of these points <math>(x_1,y_1)    ,    (x_2,y_2)</math> on  E<sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub> is:
+
+: <math>(x_1,y_1) + (x_2,y_2) = \left(\frac{x_1y_2+y_1x_2}{1+dx_1x_2y_1y_2} , \frac{y_1y_2-ax_1x_2}{1-dx_1x_2y_1y_2}\right)</math>
+
+The neutral element is (0,1) and the negative of <math>(x_1,y_1)</math> is (<math>-x_1,y_1)</math>
+
+These formulas also work for doubling. If ''a'' is a ''square'' in ''K'' and ''d'' is a ''non-square'' in ''K'', these formulas are ''complete'': this means that they can be used for all pairs of points without exceptions; so they work for doubling as well, and neutral elements and negatives are accepted as inputs.<ref>Daniel J. Bernstein and Tanja Lange, ''Faster addition and doubling on elliptic curves''</ref>
+
+'''Example of addition'''
+
+Given the following Twisted Edwards curve with a=3 and d=2:
+
+<math>3x^2 + y^2 = 1 + 2x^2y^2</math>
+
+it is possible to add the points <math>P_1=(1,\sqrt{2})</math> and <math>P_2=(1,-\sqrt{2})</math> using the formula given above. The result is a point P<sub>3</sub> that has coordinates:
+
+<math>x_3 = \frac{x_1y_2+y_1x_2}{1+dx_1x_2y_1y_2} = 0</math>
+
+<math>y_3 = \frac{y_1y_2-ax_1x_2}{1-dx_1x_2y_1y_2} = -1</math>.
+
+===Doubling on Twisted Edward curves===
+''Doubling'' can be performed with exactly the same formula as addition.
+Doubling of a point (x<sub>1</sub>,y<sub>1</sub>) on the curve E<sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub> is:
+
+[2](''x''<sub>1</sub>,''y''<sub>1</sub>) = (''x''<sub>3</sub>,''y''<sub>3</sub>)
+
+where
+
+: <math>x_3= \frac{x_1y_1+y_1x_1}{1+dx_1x_1y_1y_1}</math>
+
+<!-- spacing for legibility -->
+
+: <math>y_3= \frac{y_1y_1-ax_1x_1}{1-dx_1x_1y_1y_1}.</math>
+
+'''Example of doubling'''
+
+Considering the same twisted Edwards curve given in the previous example, with a=3 and d=2, it is possible to double the point <math>P_1=(1,\sqrt{2})</math>. The point 2P<sub>1</sub> obtained using the formula above has the following coordinates:
+
+<math>x_3 = \frac{x_1y_1+y_1x_1}{1+dx_1x_1y_1y_1} = \frac{2\sqrt{2}}{5}</math>
+
+<math>y_3 = \frac{y_1y_1-ax_1x_1}{1-dx_1x_1y_1y_1} = \frac{1}{3}.</math>
+
+It is easy to see, with some little computations, that the point <math>P_3=(\frac{2\sqrt{2}}{5},\frac{1}{3})</math> belongs to the curve <math>3x^2 + y^2 = 1 + 2x^2y^2</math>.
+
+==Extended coordinates==
+
+There is another kind of coordinate system with which a point in the Twisted Edwards curves can be represented.
+A point <math>(x,y,z) </math> on <math>ax^2+y^2= 1+dx^2y^2</math> is represented as X, Y, Z, T satisfying the following equations
+x=X/Z, y=Y/Z, xy=T/Z.
+
+The coordinates of the point (X:Y:Z:T) are called the '''extended Twisted Edward coordinates'''. The identity element is represented by (0:1:1:0). The negative of a point is (-X:Y:Z:-T).
+
+===Inverted Twisted Edwards Coordinates===
+
+The coordinates of the point <math>(X_1:Y_1:Z_1)</math>  are called the '''inverted twisted Edwards coordinates''' on the curve
+<math>(X^2+aY^2)Z^2= X^2Y^2+dZ^4</math>with <math>X_1Y_1Z_1</math>≠0; this point to the affine one<math>(Z_1/X_1,Z_1,Y_1)</math> on E<sub>E</sub><sub>,</sub><sub>a</sub><sub>,d</sub>.
+Bernstein and Lange introduced these inverted coordinates, for the case a=1 and observed that the coordinates save time in addition.
+
+===Projective twisted Edward coordinates===
+
+The equation for the Projective Twisted Edwards Curve is given as:
+<math>(aX^2+Y^2)Z^2= Z^4+dX^2Y^2</math> for Z<sub>1</sub>≠0.The point (X<sub>1</sub>:Y<sub>1</sub>:Z<sub>1</sub>) represents the [[affine space|affine point]] (x<sub>1</sub>= X<sub>1</sub>/Y<sub>1</sub>, y<sub>1</sub>= Y<sub>1</sub>/Z<sub>1</sub>) on E<sub>E</sub><sub>,</sub><sub>a</sub><sub>,</sub><sub>d</sub>.
+
+Expressing an elliptic curve in twisted Edwards form saves time in arithmetic, even when the same curve can be expressed in the Edwards form. To know more about the speeds of addition and doubling in projective coordinates on Edwards curves, standard coordinates on twisted Edward curves, inverted coordinates on Edwards curves and inverted coordinates on twisted Edwards curves refer to the table in:
+
+http://hyperelliptic.org/EFD/g1p/auto-twisted-extended-1.html
+
+==Addition in Projective Twisted curves==
+
+The addition on a projective twisted Edwards curve is given by:
+
+:(X<sub>3</sub>:Y<sub>3</sub>:Z<sub>3</sub>)= (X<sub>1</sub>:Y<sub>1</sub>:Z<sub>1</sub>)+(X<sub>2</sub>:Y<sub>2</sub>:Z<sub>2</sub>)
+
+and it costs 10'''M'''ultiplications + 1'''S'''quaring + 2'''D'''(multiplication by the curve parameter ''d'') + 7 '''a'''dditions where the '''2D''' are one multiplication by ''a'' and one by ''d.''
+
+;Algorithm
+
+:A= Z<sub>1</sub>.Z<sub>2</sub>,
+:B=A<sup>2</sup>
+:C=X<sub>1</sub>.X<sub>2</sub>
+:D=Y<sub>1</sub>.Y<sub>2</sub>
+:E=dC.D
+:F=B-E
+:G=B+E
+:X<sub>3</sub>= A.F((X<sub>1</sub>+Y<sub>1</sub>).(X<sub>2</sub>+Y<sub>2</sub>)-C-D
+:Y<sub>3</sub>=A.G.(D-aC)
+:Z<sub>3</sub>=F.G<ref name = "Twisted Edwards Curves">D.J. Bernstein, P. Birkner, M. Joye, T. Lange, C. Peters, ''Twisted Edwards Curves''</ref>
+
+===Doubling on projective twisted curves===
+
+Doubling on the projective twisted curve is given by:
+
+:(X<sub>3</sub>:Y<sub>3</sub>:Z<sub>3</sub>)= 2(X<sub>1</sub>:Y<sub>1</sub>:Z<sub>1</sub>)
+
+This costs 3'''M'''ultiplications+4'''S'''quarings+1'''D'''+7'''a'''dditions where 1'''D''' is a multiplication by '''a'''
+
+;Algorithm:
+
+:B=(X<sub>1</sub>+Y<sub>1</sub>)<sup>2</sup>
+:C= X<sub>1</sub><sup>2</sup>
+:D=Y<sub>1</sub><sup>2</sup>
+:E=aC
+:F= E+D
+:H=Z<sub>1</sub><sup>2</sup>
+:J=F-2H
+:X<sub>3</sub>=(B-C-D).J
+:Y<sub>3</sub>=F.(E-D)
+:Z<sub>3</sub>= F.J<ref name = "Twisted Edwards Curves"/>
+
+==See also==
+* For more information about the running-time required in a specific case, see [[Table of costs of operations in elliptic curves]].
+
+==Notes==
+{{Reflist}}
+
+==References==
+
+* {{Citation
+|author=Daniel J. Bernstein, Marc Joye, Tanja Lange, Peter Birkner, Christiane Peters
+|title=Twisted Edwards Curves
+|url=http://eprint.iacr.org/2008/013.pdf
+}}
+
+* {{Citation
+|author=Huseyin Hisil, Kenneth Wong, Gary Carter, Ed Dawson.
+|title=Twisted Edwards Curves revisited
+|url=http://eprint.iacr.org/2008/522
+}}
+
+* {{Citation
+|author=Daniel J. Bernstein, Tanja Lange, Peter Birkner, Christiane Peters
+|title=ECM using Edward curves
+|url=http://eprint.iacr.org/2008/016.pdf
+}}
+
+==External links==
+* http://hyperelliptic.org/EFD/g1p/index.html
+*http://hyperelliptic.org/EFD/g1p/auto-twisted.html
+
+{{DEFAULTSORT:Twisted Edwards Curve}}
+[[Category:Cryptographic attacks]]
+[[Category:Elliptic curves]]
+[[Category:Elliptic curve cryptography]]</body> </html>

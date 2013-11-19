@@ -1,0 +1,320 @@
+<html> <head> <title>Essbase</title></head><body>{{Infobox software|
+ name = Essbase |
+ original developer = [[Arbor Software Corporation]] |
+ latest_release_version = 11.1.2.0.0 |
+ latest_release_date = Aug 2009 |
+ operating_system = [[Microsoft Windows]], [[Linux]], [[AIX operating system|AIX]], [[HP-UX]], [[Solaris (operating system)|Solaris]] |
+ genre = [[Multidimensional database]] |
+ license = [[Proprietary software|Proprietary]] |
+ website = [http://www.oracle.com/bi www.oracle.com/bi] |
+}}
+
+'''Essbase''' is a multidimensional [[database management system]] (MDBMS) that provides a [[multidimensional database]] platform upon which to build analytic applications. Essbase, whose name derives from "'''E'''xtended '''S'''pread '''S'''heet data'''BASE'''", began as a product of Arbor Software, which merged with Hyperion Software in 1998. [[Oracle Corporation]] acquired [[Hyperion Solutions|Hyperion Solutions Corporation]] in 2007, {{as of | 2009 | lc = on}} it markets Essbase as "Oracle Essbase". Until late 2005 [[IBM]] also marketed the product — as '''[[IBM DB2|DB2]] OLAP Server'''.<ref>http://www-306.ibm.com/software/data/db2/db2olap/
+</ref>
+
+The database researcher [[E. F. Codd]] coined the term "on-line analytical processing" ([[OLAP]]) in a whitepaper<ref>
+{{cite journal
+| last        = Codd
+| first       = E. F.
+| authorlink  = Edgar F. Codd
+| coauthors   = S B Codd; C T Salley
+| date        = 1993-07-26
+| year        = 
+| month       = 
+| day         = 
+| title       = Providing OLAP to User-Analysts: An IT Mandate
+| journal     = [[Computerworld]]
+| volume      = 
+| issue       = 
+| series      =
+| pages       = 
+| publisher   = 
+| location    = 
+| issn        = 
+| pmid        = 
+| pmc         = 
+| doi         = 
+| bibcode     = 
+| oclc        = 
+| id          = 
+| url         = 
+| accessdate  = 
+| laysummary  = 
+| laysource   = 
+| laydate     = 
+| quote       =
+}}
+</ref>
+that set out twelve rules for analytic systems (an allusion to his earlier famous set of [[Codd's 12 rules|twelve rules]] defining the [[relational model]]).  This whitepaper, published by [[Computerworld]], was somewhat explicit in its reference to Essbase features, and when it was later discovered that Codd had been sponsored by Arbor Software, Computerworld withdrew the paper.<ref>
+http://www.regdeveloper.com/2007/01/26/olap_speed/
+</ref>
+
+In contrast to "on-line transaction processing" ([[OLTP]]), OLAP defines a database technology optimized for processing human queries rather than transactions. The results of this orientation was that [[Multidimensional database|MDBMS]] oriented their performance requirements around a different set of [[Benchmark (computing)|benchmarks]] ([[Analytic Performance Benchmark]], APB-1) than that of RDBMS ([[Transaction Processing Performance Council]] (TPC)).
+
+Hyperion renamed many of its products in 2005, giving Essbase an official name of '''Hyperion System 9 BI+ Analytic Services''', but the new name was largely ignored by practitioners.  The Essbase brand was later returned to the official product name for marketing purposes, but the server software still carried the "Analytic Services" title until it was incorporated into Oracle's [[Business Intelligence]] product suite. [http://www.oracle.com/appserver/business-intelligence/essbase.html]
+
+In August 2005, ''[[Information Age]]'' magazine named Essbase as one of the 10 most influential technology innovations of the previous 10 years,<ref>
+http://web.archive.org/web/20070927190115/http://www.hyperion.com/company/news/news_releases/press_release_2005_000512.cfm
+</ref>
+along with [[Netscape]], the [[BlackBerry]], [[Google]], [[Platform virtualization|virtualization]], Voice Over IP ([[VOIP]]), [[Linux]], [[XML]], the [[Pentium (brand)|Pentium]] processor and [[ADSL]]. Editor Kenny MacIver said: "Hyperion Essbase was the multi-dimensional database technology that put online analytical processing on the business intelligence map. It has spurred the creation of scores of rival OLAP products – and billions of OLAP cubes".
+
+==History and motivation==
+
+Although Essbase has been categorised{{By whom|date=September 2009}} as a general-purpose [[multidimensional database]], it was originally developed to address the [[scalability]] issues associated with [[spreadsheets]] such as [[Lotus 1-2-3]] and [[Microsoft Excel]].  Indeed, the patent covering Essbase uses spreadsheets as a motivating example to illustrate the need for such a system.<ref name="patent">Earle, Robert J. (1992) [http://patft.uspto.gov/netacgi/nph-Parser?u=%2Fnetahtml%2Fsrchnum.htm&Sect1=PTO1&Sect2=HITOFF&p=1&r=1&l=50&f=G&d=PALL&s1=5359724.PN.&OS=PN/5359724&RS=PN/5359724 "Method and apparatus for storing and retrieving multi-dimensional data in computer memory"].  United States Patent 5,359,724 assigned to [[Arbor Software Corporation]].</ref>
+
+In this context, "multi-dimensional" refers to the representation of financial data in spreadsheet format.  A typical spreadsheet may display time intervals along column headings, and account names on row headings.  For example:
+
+{| class="wikitable" style="text-align:center"
+! !! Jan !! Feb !! Mar !! Total
+|-
+! Quantity
+| 1000 || 2000 || 3000 || '''6000'''
+|-
+! Sales
+| $100 || $200 || $300 || '''$600'''
+|-
+! Expenses
+| $80 || $160 || $240 || '''$480'''
+|-
+! Profit
+| $20 || $40 || $60 || '''$120'''
+|}
+
+If a user wants to break down these values by region, for example, this typically involves the duplication of this table on multiple spreadsheets:
+
+{|
+|
+{| class="wikitable" style="text-align:center"
+|+North
+! !! Jan !! Feb !! Mar !! Total
+|-
+! Quantity
+| 240 || 1890 || 50 || '''2180'''
+|-
+! Sales
+| $24|| $189 || $5 || '''$218'''
+|-
+! Expenses
+| $20 || $150 || $3 || '''$173'''
+|-
+! Profit
+| $4 || $39 || $2 || '''$45'''
+|}
+|
+{| class="wikitable" style="text-align:center"
+|+South
+! !! Jan !! Feb !! Mar !! Total
+|-
+! Quantity
+| 760 || 110 || 2950 || '''3820'''
+|-
+! Sales
+| $76|| $11 || $295 || '''$382'''
+|-
+! Expenses
+| $60 || $10 || $237 || '''$307'''
+|-
+! Profit
+| $16 || $1 || $58 || '''$75'''
+|}
+|
+{| class="wikitable" style="text-align:center"
+|+'''Total Region'''
+! !! Jan !! Feb !! Mar !! Total
+|-
+! Quantity
+| 1000 || 2000 || 3000 || '''6000'''
+|-
+! Sales
+| $100 || $200 || $300 || '''$600'''
+|-
+! Expenses
+| $80 || $160 || $240 || '''$480'''
+|-
+! Profit
+| $20 || $40 || $60 || '''$120'''
+|}
+|}
+
+An alternative representation of this structure would require a three-dimensional spreadsheet grid, giving rise to the idea that "Time", "Account", and "Region" are [[dimensions]].  As further dimensions are added to the system, it becomes very difficult to maintain spreadsheets that correctly represent the multi-dimensional values.  Multidimensional databases such as Essbase provide a data store for values that exist, at least conceptually, in a multi-dimensional "[[OLAP cube|hypercube]]".
+
+===Sparsity===
+
+As the number and size of dimensions increases, developers of multidimensional databases increasingly face technical problems in the physical representation of data.  Say the above example was extended to add a "Customer" and "Product" dimension:
+
+{| class="wikitable" style="text-align:center"
+! Dimension !! Number of dimension values
+|-
+! Accounts
+| 4
+|-
+! Time
+| 4
+|-
+! Region
+| 3
+|-
+! Customer
+| 10,000
+|-
+! Product
+| 5,000
+|}
+
+If the multidimensional database reserved storage space for every possible value, it would need to store 2,400,000,000 (4 × 4 × 3 × 10,000 × 5,000) cells.  If the software maps each cell as a [[double precision|64-bit floating point]] value, this equates to a memory requirement of at least 17 [[gigabytes]] (exactly 19.2GB).  In practice, of course, the number of combinations of "Customer" and "Product" that contain meaningful values will be a tiny subset of the total space.  This property of multi-dimensional spaces is referred to as [[sparsity]].
+
+===Aggregation===
+
+[[OLAP]] systems generally provide for multiple levels of detail within each dimension by arranging the members of each dimension into one or more [[hierarchies]].  A time dimension, for example, may be represented as a hierarchy starting with "Total Time", and breaking down into multiple years, then quarters, then months.  An Accounts dimension may start with "Profit", which breaks down into "Sales" and "Expenses", and so on.
+
+In the example above, if "Product" represents individual product [[Stock Keeping Unit|SKU]]s, analysts may also want to report using aggregations such as "Product Group", "Product Family", "Product Line", etc.  Similarly, for "Customer", natural aggregations may arrange customers according to geographic location or industry.
+
+The number of aggregate values implied by a set of input data can become surprisingly large.  If the Customer and Product dimensions are each in fact six "generations" deep, then 36 (6 × 6) aggregate values are affected by a single data point.  It follows that if all these aggregate values are to be stored, the amount of space required is proportional to the [[Product (mathematics)|product]] of the depth of all aggregating dimensions.  For large databases, this can cause the effective storage requirements to be many hundred times the size of the data being aggregated.
+
+==Block storage (Essbase Analytics)==
+
+Since version 7, Essbase has supported two "storage options" which take advantage of sparsity to minimize the amount of physical memory and disk space required to represent large multidimensional spaces.  The Essbase patent<ref name="patent"/> describes the original method, which aimed to reduce the amount of physical memory required without increasing the time required to look up closely-related values.  With the introduction of alternative storage options, marketing materials called this the '''Block Storage Option''' ('''Essbase BSO'''),  later referred to as '''Essbase Analytics'''.
+
+Put briefly, Essbase requires the developer to tag dimensions as "dense" or "sparse".  The system then arranges data to represent the hypercube into "blocks", where each block comprises a multi-dimensional array made up of "dense" dimensions, and space is allocated for every potential cell in that block.  Sparsity is exploited because the system only creates blocks when required.  In the example above, say the developer has tagged "Accounts" and "Time" as "dense", and "Region", "Customer", and "Product" as "sparse".  If there are, say, 12,000 combinations of Region, Customer and Product that contain data, then only 12,000 blocks will be created, each block large enough to store every possible combination of Accounts and Time.  The number of cells stored is therefore 192000 (4 × 4 × 12000), requiring under 2 [[gigabytes]] of memory (exact 1,536MB), plus the size of the index used to look up the appropriate blocks.
+
+Because the database hides this implementation from front-end tools (i.e., a report that attempts to retrieve data from non-existent cells merely sees "null" values), the full hypercube can be navigated naturally, and it is possible to load values into any cell interactively.
+
+===Calculation engine===
+
+Users can specify calculations in Essbase BSO as:
+* the aggregation of values through dimensional hierarchies;
+* stored calculations on dimension members;
+* "dynamically calculated" dimension members; or
+* procedural "calculation scripts" that act on values stored in the database.
+
+The first method (dimension aggregation) takes place implicitly through addition, or by selectively tagging branches of the hierarchy to be subtracted, multiplied, divided or ignored.  Also, the result of this aggregation can be stored in the database, or calculated dynamically on demand—members must be tagged as "Stored" or "Dynamic Calc." to specify which method is to be used.
+
+The second method (stored calculations) uses a [[formula]] against each calculated dimension member — when Essbase calculates that member, the result is stored against that member just like a data value.
+
+The third method (dynamic calculation) is specified in exactly the same format as stored calculations, but  calculates a result when a user accesses a value addressed by that member; the system does not store such calculated values.
+
+The fourth method (calculation scripts) uses a [[procedural]] [[programming language]] specific to the Essbase calculation engine.  This type of calculation may act upon any data value in the hypercube, and can therefore   perform calculations that cannot be expressed as a simple formula.
+
+A calculation script must also be executed to trigger the calculation of aggregated values or stored calculations as described above—a built-in calculation script (called the "default calculation") can be used to execute this type of calculation.
+
+==Aggregate storage (Enterprise Analytics)==
+
+Although block storage effectively minimizes storage requirements without impacting retrieval time, it has limitations in its treatment of aggregate data in large applications, motivating the introduction of a second storage engine, named '''Aggregate Storage Option''' ('''Essbase ASO''') or more recently, '''Enterprise Analytics'''.  This storage option makes the database behave much more similarly to OLAP databases like [[SQL Server Analysis Services]].
+
+Following a data load, Essbase ASO does not store any aggregate values, but instead calculates them on demand.  For large databases, where the time required to generate these values may become inconvenient, the database can materialize one or more aggregate "views", made up  of one aggregate level from each dimension (for example, the database may calculate all combinations of the fifth generation of Product with the third generation of Customer), and these views are then used to generate other aggregate values where possible.  This process can be partially automated, where the administrator specifies the amount of disk space that may be used, and the database generates views according to actual usage.
+
+This approach has a major drawback in that the cube cannot be treated for calculation purposes as a single large hypercube, because aggregate values cannot be directly controlled, so write-back from front-end tools is limited, and complex calculations that cannot be expressed as [[Multidimensional Expressions|MDX]] expressions are not possible.
+
+===Calculation engine===
+
+Essbase ASO can specify calculations as:
+
+* the aggregation of values through dimensional hierarchies; or
+* dynamically calculated dimension members.
+
+The first method (dimension aggregation) basically duplicates the algorithm used by Essbase BSO.
+
+The second method (dynamic calculations) evaluates [[Multidimensional Expressions|MDX]] expressions against dimension members.
+
+==User interface==
+
+Many users work with Essbase data using as their [[user interface|interface]] an [[add-in]] for [[Microsoft Excel]] (previously also [[Lotus 1-2-3]]).  The add-in adds a menu to the spreadsheet application that can be used to connect to Essbase databases, retrieve data, and navigate the cube's dimensions ("Zoom in", "Pivot", etc.).<ref name="dbag">Hyperion Solutions Corporation (2006). [http://dev.hyperion.com/techdocs/essbase/essbase_712/Docs/dbag/dba_html.htm Essbase Database Administrator's Guide].</ref>
+
+With the release of System 9, Hyperion provided a new user interface add-in for Essbase called "SmartView for [[Microsoft Office]]". SmartView provides access to Essbase and other System 9 content for [[Microsoft Powerpoint]], [[Microsoft Word]], [[Microsoft Outlook]] as well as supplanting the previous add-in for [[Microsoft Excel]].
+
+In 2005, Hyperion began to offer a [[Visualization (computer graphics)|visualization]] tool called [[Tableau Software|Tableau]] under the name "[[Hyperion Visual Explorer]]".<ref name="Ref_">Tableau Software (2005).  ''[http://www.tableausoftware.com/docs/ts_pr_Hyperion.pdf Tableau Software Lands Global OEM Deal with Hyperion].  Press release.</ref>
+Tableau originated at [[Stanford University]] as a government-sponsored research project to investigate new ways for users to interact with [[relational database|relational]] and [[OLAP]] databases.
+
+Other user-facing applications with support for Essbase databases include:
+
+* [[Hyperion Analyzer]] (aka Hyperion System 9 BI+ Web Analysis)
+* [[Hyperion Reports]] (aka Hyperion System 9 BI+ Financial Reporting)
+* [[Hyperion Enterprise Reporting]]
+* [[Hyperion Intelligence]] (aka Hyperion System 9 BI+ Interactive Reporting)
+* [[Hyperion SQR]] (aka Hyperion System 9 BI+ Production Reporting)
+* [[Alphablox]]
+* [[Arcplan dynaSight]] (aka Arcplan Enterprise)
+* [[Oracle Business Intelligence Suite Enterprise Edition]] (aka OBIEE, Siebel Analytics)
+* [http://www.appliedolap.com/products/dodeca Applied OLAP Dodeca]
+* [http://www.cxo-cockpit.com/CXOCockpit/OracleHyperionEssbaseandPlanningBenefits/tabid/140/Default.aspx CXO-Cockpit Reporting Suite]
+
+The previous offerings from Hyperion acquired new names as given below:
+
+{| class="wikitable" style="text-align:center"
+! Hyperion's previous offerings !! Hyperion System 9 BI+ offerings
+|-
+! Hyperion Essbase ASO
+| Enterprise Analytics
+|-
+! Hyperion Essbase BSO
+| Essbase Analytics
+|-
+! Hyperion Analyzer
+| Web Analysis
+|-
+! Hyperion Reports
+| Financial Reporting
+|-
+! Hyperion Intelligence
+| Interactive Reporting
+|-
+! Hyperion SQR
+| Production Reporting
+|-
+! Hyperion Metrics Builder
+| Enterprise Metrics
+|}
+
+An [[API]] is available for [[C (programming language)|C]], [[Visual Basic]] and [[Java (programming language)|Java]], and embedded scripting support is available for [[Perl]].  The standardised [[XML for Analysis]] protocol can query Essbase data sources using the [[Multidimensional Expressions|MDX]] language.
+
+In 2007, Oracle Corporation began bundling Hyperion BI tools into Oracle Business Intelligence Enterprise Edition Plus..
+
+==Administrative interface==
+
+A number of standard interfaces can administer of Essbase applications:
+
+* ''ESSCMD'', the original [[command line interface]] for administration commands;
+* ''MaxL'', a "multi-dimensional database access language" which provides both a superset of ESSCMD commands, but with a syntax more akin to [[SQL]], as well as support for [[Multidimensional Expressions|MDX]] queries;
+* ''Essbase Application Manager'', the original [[Microsoft Windows]] [[GUI]] administration client, compatible with versions of Essbase before 7.0;
+* ''Essbase Administration Services'', later renamed ''Analytic Administration Services'', and then back to 'Essbase Administration Services' in v. 9.3.1, the currently-supported [[GUI]] administration client; and
+* ''Essbase Integration Server'' for maintaining the structure and content of Essbase databases based on data models derived from relational or file-based data sources.
+
+== Competitors ==
+
+There are several significant competitors among the OLAP, analytics products to that of Essbase (HOLAP/MOLAP) on the market, among them Microsoft SQL Server [[Microsoft Analysis Services]],  (MOLAP, HOLAP, ROLAP), IBM [[Cognos]] (ROLAP), IBM/Cognos/Applix [[TM1]] (MOLAP), [[Oracle OLAP]] (ROLAP/MOLAP), and [[MicroStrategy]] (ROLAP).
+
+Also note that of the above competitors, including Essbase, all use heterogenous relational ([[Microsoft SQL Server]], Oracle, IBM DB/2, TeraData, Access, etc.) or non-relational data sourcing (Excel, text Files, CSV Files, etc.) to feed the cubes (facts and dimensional data), except for Oracle OLAP which may only use Oracle relational sourcing.
+
+==Export and/or product migration of Essbase==
+
+{{As of | 2009}} two options can export Essbase cubes into other formats: 
+
+# [[CubePort]], a commercial conversion application, converts Essbase cubes to the Microsoft SQL Server Analysis Services product.  This product performs an object-to-object translation that make up an Essbase cube, including: outline, member formulas, calc scripts, data loading (load rules), report scripts to MDX queries, substitution variables, and security model.  It can extract from any platform version of Essbase, including Oracle/Hyperion Essbase on Windows, Unix, AIX, HP UX, Solaris, IBM DB/2 OLAP, or AS/400 Showcase Essbase.
+# OlapUnderground Outline Extractor performs a pure, rudimentary, export of the outline, though it does not directly create any new objects.  The output is a simple text file that can be pulled indirectly into other OLAP products, among other uses, such as synchronizing outlines.  The [http://www.appliedolap.com/free-tools/outline-extractor Outline Extractor] is now maintained, supported and distributed free of charge by Applied OLAP, Inc.
+
+== See also ==
+* [[OLAP]]
+* [[Oracle OLAP]]
+* [[Business Intelligence]]
+* [[Data Warehousing]]
+* [[Hyperion Planning]]
+* [[Comparison of OLAP Servers]]
+
+==References==
+v11.1.3 documentation: * http://download.oracle.com/docs/cd/E12825_01/nav/portal_3.htm
+
+v9.3.1 documentation: * http://download.oracle.com/docs/cd/E10530_01/doc/index.htm
+
+<references/>
+
+==External links==
+* [http://www.oracle.com/bi Oracle EPM, BI & Data Warehousing]
+* [http://www.oracle.com/technology/products/bi/essbase/index.html Oracle Essbase]
+* [http://www.oracle.com/hyperion Hyperion at Oracle]
+* [http://essbase.ru Russian Essbase Site]
+
+[[Category:Online analytical processing]]
+[[Category:Oracle software]]
+
+[[de:Essbase]]
+[[pt:Essbase]]</body> </html>

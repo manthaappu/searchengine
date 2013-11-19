@@ -1,0 +1,42 @@
+<html> <head> <title>Wolfe conditions</title></head><body>In the unconstrained [[optimization (mathematics)|minimization]] problem, the '''Wolfe conditions''' <ref>{{cite journal | last = Wolfe | first = Philip | year = 1969 | title = Convergence conditions for ascent methods | journal = SIAM Rev. | volume = 11 | issue = 2 | pages = 226–235 | doi = 10.1137/1011036}}</ref> are a set of inequalities for performing '''inexact''' [[line search]], especially in [[quasi-Newton methods]].
+
+In these methods the idea is to find
+
+<math>\min_x f(\mathbf{x})</math>
+
+for some [[smooth function|smooth]] <math>f:\mathbb R^n\to\mathbb R</math>. Each step often involves approximately solving the subproblem
+
+<math>\min_{\alpha} f(\mathbf{x}_k + \alpha \mathbf{p}_k)</math>
+
+where <math>\mathbf{x}_k</math> is the current best guess, <math>\mathbf{p}_k \in \mathbb R^n</math> is a search direction, and <math>\alpha \in \mathbb R</math> is the step length.
+
+Then inexact line searches provide an efficient way of computing an acceptable step length <math>\alpha</math> that reduces the [[objective function]] 'sufficiently', rather than minimizing the objective function over <math>\alpha\in\mathbb R^+</math> exactly. A line search algorithm can use Wolfe conditions as a requirement for any guessed <math>\alpha</math>, before finding a new search direction <math>\mathbf{p}_k</math>. 
+
+Denote a univariate function <math>\phi</math> restricted to the direction <math>\mathbf{p}_k</math> as <math>\phi(\alpha)=f(\mathbf{x}_k+\alpha\mathbf{p}_k)</math>. A step length <math>\alpha_k</math> is said to satisfy the ''Wolfe conditions'' if the following two inequalities hold:
+
+:i) <math>f(\mathbf{x}_k+\alpha_k\mathbf{p}_k)\leq f(\mathbf{x}_k)+c_1\alpha_k\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k)</math>,
+:ii) <math>\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k+\alpha_k\mathbf{p}_k)\geq c_2\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k)</math>,
+
+with <math>0<c_1<c_2<1</math>. (In examining condition (ii), recall that to ensure that <math>\mathbf{p}_k</math> is a descent direction, we have <math>\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k) < 0 </math>.)
+
+<math>c_1</math> is usually chosen to quite small while <math>c_2</math> is much larger; Nocedal gives example values of <math>c_1=10^{-4}</math> and <math>c_2=0.9</math> for Newton or quasi-Newton methods and <math>c_2=0.1</math> for the nonlinear [[conjugate gradient method]].  Inequality i) is known as the '''Armijo rule''' <ref>{{cite journal | last =  Armijo | first = Larry | year = 1966 | title = Minimization of functions having Lipschitz continuous first partial derivatives | journal = Pacific J. Math. | volume = 16 | issue = 1 | pages = 1–3 | url = http://projecteuclid.org/euclid.pjm/1102995080}}</ref> and ii) as the '''curvature condition'''; i) ensures that the step length <math>\alpha_k</math> decreases <math>f</math>  'sufficiently', and ii) ensures that the slope has been reduced sufficiently.
+
+The Wolfe conditions, however, can result in a value for the step length that is not close to a minimizer of <math>\phi</math>. If we modify the curvature condition to the following,
+
+:iia) <math>\big|\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k+\alpha_k\mathbf{p}_k)\big|\leq c_2\big|\mathbf{p}_k^{\mathrm T}\nabla f(\mathbf{x}_k)\big|</math>
+
+then i) and iia) together form the so-called '''strong Wolfe conditions''', and force <math>\alpha_k</math> to lie close to a [[critical point (mathematics)|critical point]] of <math>\phi</math>.
+
+The principal reason for imposing the Wolfe conditions in an optimization algorithm where <math> x_{k+1} = x_k + \alpha p_k </math> is to ensure convergence of the gradient to zero.  In particular, if the cosine of the angle between <math>p_k</math> and the gradient,
+
+:: <math> \cos \theta_k = \frac {\nabla f(x_k)^{\mathrm T}p_k }{\| \nabla f(x_k)\| \|p_k\| } </math> 
+
+is bounded away from zero and the i) and ii) hold, then <math> \nabla f(x_k) \rightarrow 0 </math>.
+
+An additional motivation, in the case of a [[quasi-Newton method]] is that if <math> p_k = -B_k^{-1} \nabla f(x_k) </math>, where the matrix <math> B_k </math> is updated by the [[BFGS]] or [[Davidon-Fletcher-Powell_formula|DFP]] formula, then if <math> B_k </math> is positive definite ii) implies <math> B_{k+1} </math> is also positive definite.
+
+==References==
+* J. Nocedal and S. J. Wright, Numerical optimization. Springer Verlag, New York, NY, 1999.
+<references />
+
+[[Category:Mathematical optimization]]</body> </html>

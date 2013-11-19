@@ -1,0 +1,44 @@
+<html> <head> <title>Merkle signature scheme</title></head><body>The '''Merkle signature scheme''' is a [[Digital signature|digital signature scheme]] based on [[Merkle tree|hash trees]] (also called Merkle trees) and one-time signatures such as the [[Lamport signature]] scheme. It was developed by [[Ralph Merkle]] in the late 70s and is an alternative to traditional digital signatures such as the [[Digital Signature Algorithm]] or [[RSA]]. The advantage of the Merkle Signature Scheme is, that it is believed to be resistant against [[quantum computer]] algorithms. The traditional public key algorithms, such as RSA and ELGamal would become insecure in case an effective quantum computer can be built ([[Shor's algorithm]]). The Merkle Signature Scheme however only depends on the existence of secure [[hash function]]s. This makes the Merkle Signature Scheme very adjustable and resistant against quantum computing.
+
+==Key generation==
+
+[[Image:MerkleTree1.JPG|thumb|300px|Merkle Tree with 8 leaves]]
+The Merkle Signature Scheme can only be used to sign a limited number of messages with one public key <math>pub</math>. The number of possible messages must be a power of two, so that we denote the possible number of messages as <math>N=2^n</math>.
+
+The first step of generating the public key <math>pub</math> is to generate the public keys <math>X_i</math> and private keys <math>Y_i</math> of <math>2^n</math> one-time signatures. For each private key <math>Y_i</math>, with <math>1 \leq i \leq 2^n</math>, a hash value <math>h_i=H(Y_i)</math> is computed. With these hash values <math>h_i</math> a [[hash tree]] is built. 
+
+We call a node of the tree <math>a_{i,j}</math>, where <math>i</math> denotes the level of the node. The level of a node is defined by the distance from the node to a leaf. Hence, a leaf of the tree has level <math>i=0</math> and the root has level <math>i=n</math>. We number all nodes of one level from the left to the right, so that <math>a_{i,0}</math> is the leftmost node of level <math>i</math>. 
+
+In the Merkle Tree the hash values <math>h_i</math> are the leafs of a binary tree, so that <math>h_i=a_{0,i}</math>. Each inner node of the tree is the hash value of the concatenation of its two children. So <math>a_{1,0}=H(a_{0,0}||a_{0,1})</math> and <math>a_{2,0}=H(a_{1,0}||a_{1,1})</math>. An example of a merkle tree is illustrated in figure \ref{fig:gra1}. 
+
+In this way, a tree with <math>2^n</math> leafs and <math>2^{n+1}-1</math> nodes is built. The root of the tree <math>a_{n,0}</math> is the public key <math>pub</math> of the Merkle Signature Scheme.
+
+==Signature generation==
+[[Image:MerkleTree2.jpg|thumb|300px|Merkle tree with path A and authentication path for i=2]]
+To sign a message <math>M</math> with the Merkle Signature Scheme, the message <math>M</math> is signed with a one-time signature scheme, resulting in a signature <math>sig'</math>, first. This is done, by using one of the public and private key pairs <math>(X_i, Y_i,)</math>. 
+
+The corresponding leaf of the hash tree to a one-time public key <math>X_i</math> is <math>a_{0,i}=H(Y_i)</math>. We call the path in the hash tree from <math>a_{0,i}</math> to the root <math>A</math>. The path <math>A</math> consists of <math>n+1</math> nodes, <math>A_0, ... A_n</math>, with <math>A_0=a_{0,i}</math> being the leaf and <math>A_n=a_{n,0}=pub</math> being the root of the tree. To compute this path <math>A</math>, we need every child of the nodes <math>A_{1}, ..., A_{n}</math>. We know that <math>A_i</math> is a child of <math>A_{i+1}</math>. To calculate the next node <math>A_{i+1}</math> of the path <math>A</math>, we need to know both children of <math>A_{i+1}</math>. So we need the brother node of <math>A_i</math>. We call this node <math>auth_i</math>, so that <math>A_{i+1}=H(A_i||auth_i)</math>. Hence, <math>n</math> nodes <math>auth_0,...,auth_{n-1}</math> are needed, to compute every node of the path <math>A</math>.  We now calculate and save these nodes <math>auth_{0}, ... , auth_{n-1}</math>.
+
+These nodes, plus the one-time signature <math>sig'</math> of <math>M</math> is the signature <math>sig=(sig'||auth_2||auth_3||...||auth_{n-1})</math> of the Merkle Signature Scheme. An example of an authentication path is illustrated in figure \ref{fig:gra2}.
+
+==Signature verification==
+
+The receiver knows the public key <math>pub</math>, the message <math>M</math>, and the signature <math>sig=(sig'||auth_0||auth_1||...||auth_{n-1})</math>. At first, the receiver verifies the one-time signature <math>sig'</math> of the message <math>M</math>. If <math>sig'</math> is a valid signature of <math>M</math>, the receiver computes <math>A_0=H(Y_i)</math> by hashing the public key of the one-time signature. For <math>j=1,..,n-1</math>, the nodes of <math>A_j</math> of the path <math>A</math> are computed with <math>A_j=H(a_{j-1}||b_{j-1})</math>. If <math>A_n</math> equals the public key <math>pub</math> of the merkle signature scheme, the signature is valid.
+
+== References ==
+
+{{reflist|1}}
+* G. Becker. "Merkle Signature Schemes, Merkle Trees and Their Cryptanalysis", seminar 'Post Quantum Cryptology' at the Ruhr-University Bochum, Germany.
+* E. Dahmen, M. Dring, E. Klintsevich, J. Buchmann, L.C. Coronado Garca. "CMSS - an improved merkle signature scheme". Progress in Cryptology - Indocrypt 2006, 2006.
+* E. Klintsevich, K. Okeya, C.Vuillaume, J. Buchmann, E.Dahmen. "Merkle signatures with virtually unlimited signature capacity". 5th International Conference on Applied Cryptography and Network Security - ACNS07, 2007.
+* Ralph Merkle. "Secrecy, authentication and public key systems / A certified digital signature". Ph.D. dissertation, Dept. of Electrical Engineering, Stanford University, 1979. [http://www.merkle.com/papers/Thesis1979.pdf]
+* S. Micali, M. Jakobsson, T. Leighton, M. Szydlo. "Fractal merkle tree representation and traversal". RSA-CT 03, 2003
+
+== External links ==
+* [http://www.rsasecurity.com/rsalabs/node.asp?id=2003 Efficient Use of Merkle Trees] - [[RSA Security|RSA labs]] explanation of the original purpose of Merkle trees + Lamport signatures, as an efficient one-time signature scheme.
+
+{{Crypto navbox | public-key}}
+
+[[Category:Cryptography]]
+[[Category:Asymmetric-key cryptosystems]]
+[[Category:Post-quantum cryptography]]</body> </html>

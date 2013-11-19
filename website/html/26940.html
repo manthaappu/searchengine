@@ -1,0 +1,109 @@
+<html> <head> <title>OS/8</title></head><body>{{Unreferenced|date=June 2007}}
+{{Infobox OS
+|name = OS/8
+|logo =
+|screenshot =
+|caption =
+|developer = [[Digital Equipment Corporation]]
+|source_model = [[Closed source]]
+|kernel_type = 
+|supported_platforms = [[PDP-8]]
+|ui = [[Command line interface]]
+|family = [[:Category:DEC Operating Systems|DEC OS family]]
+|latest_release_version = 
+|latest_release_date = 
+|marketing_target = 
+|prog_language = [[BASIC]], [[Fortran]], [[Text Editor and Corrector|TECO]]
+|updatemodel = 
+|package_manager = 
+|working_state = Discontinued
+|license = [[Proprietary software|Proprietary]]
+|website =
+}}
+'''OS/8''' was the primary [[operating system]] used on the [[PDP-8]] [[minicomputer]] developed by [[Digital Equipment Corporation]] of [[Maynard, Massachusetts|Maynard]], [[Massachusetts]]. OS/8 was originally called MS/8 and, for a brief time, PS/8 ("Programming System/8") before Digital settled on the name OS/8 in [[1971]].
+
+A virtually identical version of OS/8, called OS/12, was later used with Digital's [[LINC|PDP-12]] computer.
+
+==Overview==
+OS/8 provided a simple operating environment that was commensurate in complexity and scale with the PDP-8 computers on which it ran. I/O was supported via a series of supplied drivers which used polled (not interrupt-driven) techniques. The device drivers had to be cleverly written as they could only occupy one or two memory pages of 128 [[12-bit]] words, and had to be able to run in any page in field 0.  This often required considerable cleverness, such as the use of the OPR instruction (7XXX) for small negative constants.
+
+The memory-resident "footprint" of OS/8 was only 256 words; 128 words at the top of Field 0 and 128 words at the top of Field 1. The rest of the operating system (the USR, "User Service Routines") was swapped in and out of memory transparently (with regard to the user's program) as needed.
+
+==The Concise Command Language==
+Early versions of OS/8 had a very rudimentary [[command line interpreter]] with very few basic [[command (computing)|commands]]: GET, SAVE, RUN, ASSIGN, DEASSIGN, and ODT.  With version 3 they added a more sophisticated overlay called ''CCL'' (Concise Command Language) that implemented many more commands. OS/8's CCL was directly patterned after the CCL found on Digital's [[PDP-10]] systems running [[TOPS-10]]. In fact, much of the OS/8 software system was deliberately designed to mimic, as closely as possible, the TOPS-10 operating environment. (The CCL command language was later used on [[PDP-11]] computers running [[RT-11]], [[RSX-11]], and [[RSTS/E]], providing a similar user operating environment across all three architectures: PDP-8s, PDP-10s, and PDP-11s.)
+
+The basic OS and CCL implemented many rather sophisticated commands, many of which still do not exist in modern command languages, not even in [[MS-DOS]], [[Microsoft Windows|Windows]], or [[Unix-like]] operating systems.  
+
+For example, the COMPILE command would automatically find the right compiler for a given source file and start the compile/assemble/link cycle.  
+
+The ASSIGN and DEASSIGN commands allowed one to use logical device names in a program instead of physical names (as required in MS-DOS).  For example, your program could write to device FLOP:AAA.TXT, and if you first did a "ASSIGN FLOP: RXA2:" then the file would be created on physical device RXA2 (the second floppy disk drive).  [[VAX]]/[[OpenVMS|VMS]] made considerable use of this very flexible feature.  
+
+The SET command was capable of setting many system options, albeit by the crude method of patching locations in the system binary code.
+
+The BUILD command could reconfigure the OS on the fly, even adding [[device driver]]s, often without having to reboot the OS.
+
+The OS can boot from a hard disk and present the [[Command line interface#Command prompt|command prompt]] in under half a second.
+
+==The OS/8 Filesystem==
+OS/8 supported a simple, flat [[file system]] on a variety of [[mass storage]] devices including:
+* TU56 [[DECtape]]s
+* DF32 32KB [[Disk storage|fixed-head disks]]
+* RF08 256KB [[Disk storage|fixed-head disks]]
+* RK01/02/03/04/05 [[Disk storage|cartridge disk drives]]
+* RX01/02 [[floppy disk]]ette drives
+
+[[Computer file|Filenames]] on the PDP-8 took the form of FFFFFF.XX where "F" represents an [[Majuscule|uppercase]], [[alphanumeric]] character of the filename and "X" represents an upper-case, alphanumeric character of the extension (filetype). [[Assembly language]] sources used the extension ".PA"; saved core-images (executable programs) used the extension ".SV".
+
+The contents of any given file was stored contiguously in a single "extent". PIP included an option to compress ("squeeze") the filesystem so all unallocated space was moved to a single extent at the end of the disk.
+
+OS/8 volumes had a very limited maximum storage size (4096 blocks) and the RK05 (2.4MB) moving-head disk exceeded this size. Because of this, RK05 cartridges were divided into two partitions. For example the first RK05 on a system would be known as both RKA0: (SY:) and RKB0:. This division was commonly thought to mean "the upper surface" and "the lower surface" but this was incorrect; it in fact was "the outer cylinders" and "the inner cylinders".
+
+==OS/8 CUSPs (Utility Programs)==
+The CUSPs (Commonly-Used System Programs, that is utilities) supplied with OS/8 included:
+* BUILD (the program to install a configured OS/8 system onto mass storage)
+* DIR (the directory-listing program)
+* EDIT (A line-oriented editor)
+* MACREL (A relocating assembler)
+* FLAP (An absolute assembler derived from RALF)
+* FORTRAN-II
+* FOTP (File-Oriented Transfer Program, an alternative to PIP)
+* PAL (The assembler)
+* [[Peripheral Interchange Program|PIP]] (the Peripheral Interchange Program, used to copy files)
+* [[Peripheral Interchange Program|PIP10]] (a version of PIP used to copy files to from PDP-10 DECtapes)
+* RALF (Another relocating assembler for the FPP)
+* [[Text Editor and Corrector|TECO]] (Text Editor and COrrector, a much-more-sophisticated editor)
+* CCL, the [[command line interpreter]], was supplied in source form and could be extended by the user.
+
+==Programming languages==
+A single-user [[BASIC]] and several multi-user versions of BASIC were available as options. The single-user BASIC used several overlays to provide the full functionality of the language; when OS/8 was booted from a DECtape, a very noticeable delay occurred each time BASIC was required to switch overlays as they needed to be read from tape.
+
+There was also a rather complete [[Fortran|FORTRAN IV]] [[compiler]] available at extra cost.  This compiler generated code for the optional FPP-8 floating-point processor, which was essentially a separate CPU, only sharing memory with the PDP-8 CPU.  If you had the FPP-8 option installed, the FORTRAN runtime code would detect it and use the FPP-8 to run the main program code, and the PDP-8 CPU would run as an I/O processor.  If you did not have the FPP-8, the runtime code would instead call an FPP-8 interpreter running on the PDP-8 CPU, so the program would still run, but at considerably reduced speed.
+
+This FORTRAN IV compiler in version 1 had the interesting bug that DO loops counted incorrectly!  DO loops would count 1,2,3,5,6,7, …!   A quick patch was released to fix this.
+
+==OS/8 Trivia==
+{{Trivia|date=April 2010}}
+
+* OS/8 did no time-keeping, but if told the date, it would willingly store that date as part of the directory information maintained for each file in the filesystem. The OS/8 calendar originally spanned only the 8 years from 1970 through 1977, but it was later extended with a special release of the OS (version 3D) to incorporate the idea of an 8-year sliding "window". The [[Year 2000 problem|Y2K problem]] arrived '''very''' early for PDP-8 programmers.
+
+The sliding window had to be implemented in a very clever way, as there was absolutely no more room in the system data area for extra year bits.  The clever programmers at DEC realized that every copy of OS/8 had a [[HLT]] instruction at a particular address in the memory-resident code (the [[HLT]] was the last resort if the system could not read in an overlay from disk).  The [[HLT]] instruction had a particular bit in it that could be set without affecting the operation of the instruction.  So they redefined that bit to mean "use the sliding date window algorithm" for calculating dates.
+
+* The archetypical bootstrap routine for a PDP-8 with RK05 mass storage was as follows:
+::30/ 6743  (Initiate a disk read of the boot block)
+::31/ 5031  (Jump to location 31)
+::Load Address 30
+::Press CLEAR  (Cleared all disk registers)
+::Press CONTinue  (start at address 30)
+:This would read block 0000 of RKO5 disk 0 to address 0000 of field 0.  Addresses 30 and 31 of that boot block would overlay those instructions with the sequence: 30: "skip on disk done", 31:  "JMP 30", which would cause the CPU to wait for the operation to complete, then continue on in the bootstrap.
+
+* OS/8 CCL implemented the famous [[Text Editor and Corrector|TECO]] "[[Text Editor and Corrector#Trivia|.MAKE LOVE]]" joke.
+
+* '''ALL''' of OS/8 was described in a single, rather-thick "OS/8 Handbook".  There were separate guides for writing device drivers and such.
+
+* To economize on the size of the memory-resident device tables, OS/8 hashed the device names from four characters down to two, by adding the two words.  So device names were not unique — your could type "RKB0:" or the word-swapped "B0RK:" and the system did not care.  In practice this was not a noticeable problem.
+
+* OS/8 was capable of running with absolutely no changes, "virtualized" under RTS8, a real-time multi-tasking OS.  RTS8 provided interrupt-driven virtualized device handlers under OS/8.
+
+{{DEC Operating Systems}}
+
+[[Category:DEC Operating Systems]]</body> </html>

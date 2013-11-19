@@ -1,0 +1,51 @@
+<html> <head> <title>Virtual 8086 mode</title></head><body>{{Unreferenced|date=December 2009}}
+{{X86 Processor Modes}}
+
+In the [[80386]] [[microprocessor]] and later, '''virtual 8086 mode''' (also called '''virtual real mode''', '''V86-mode''' or '''VM86''') allows the execution of [[real mode]] applications that are [[protected mode#Real_mode_application_compatibility|incapable of running]] directly in [[protected mode]] while the processor is running a protected mode operating system.
+
+VM86 mode uses a [[x86 memory segmentation|segmentation]] scheme identical to that of real mode (for compatibility reasons) which creates 20-bit linear addresses in the same manner as 20-bit physical addresses are created in real mode, but are subject to protected mode's memory [[paging]] mechanism.
+
+==Usage==
+It is used to execute [[DOS]] programs in [[Windows/386]], [[Windows 3.1x|Windows 3.x]], [[Windows 9x]]/[[Windows Me|Me]], and [[OS/2]] 2.x and later through [[virtual DOS machine]]s, in [[SCO UNIX]] through [[Merge (software)|Merge]], and in [[Linux]] through [[dosemu]]. NTVDM in x86 Windows NT based operating systems also use VM86 mode<ref>{{cite web|url=http://www.microsoft.com/resources/documentation/windowsnt/4/workstation/reskit/en-us/archi.mspx?pf=true#E5PAE |title=Windows NT 4.0 Workstation Architecture}}</ref>, but with very limited direct hardware access.
+
+Protected mode DOS programs, either 16 or 32-bit, do not execute in virtual 8086 mode, but rather in user mode (as long as they are [[DPMI]] compatible), so the above emulators actually do more than just supporting the virtual 8086 mode.
+
+==Memory addressing==
+The most common problem by running 8086 code from protected mode is [[memory addressing]] which is totally different between [[protected mode]] and [[real mode]].
+As mentioned, by working under VM86 mode the [[x86 memory segmentation|segmentation]] mechanism is reconfigured to work just like under real mode, but the [[paging]] mechanism is still active, and it is transparent to the real mode code; thus, [[memory protection]] is still applicable, and so is the isolation of the address space.
+
+==Interrupts==
+When interrupts (both hardware, software and iret instruction) occur, the processor switches off the VM86 mode and returns to work in full protected mode to handle the interrupt. And before servicing the interrupt, the DS, ES, FS, and GS registers are pushed on the new stack and zeroed.
+
+==Virtual-8086 Mode Enhancements Identification==
+Support of Enhanced Virtual 8086 mode can be identified under Linux by "vme" flag in the /proc/cpuinfo file (Under "flags:" section).
+
+Identification can be generally done also using cpuid instruction, whereas result value of 2nd bit (bit no.1, 0x2 in value) in EDX register represents support of Enhanced Virtual 8086 mode.
+
+==64-bit support==
+Support for Virtual 8086 mode is not available in x86-64 [[Long mode|Long Mode]], although it is still present on 64-bit capable processors running in 32-bit protected mode. The removal of this sub-mode means that 16-bit compatibility must be rewritten or removed from 64-bit operating systems. For example, DOS and 16-bit Windows application support is not present in x64 editions of [[Microsoft Windows|Windows]], necessitating the use of 3rd party emulation software such as [[DOSBox]].
+
+==References==
+{{reflist}}
+
+==See also==
+* [[IA-32]]
+* [[x86 architecture]]
+* [[x86 assembly language]]
+
+{{DEFAULTSORT:Virtual 8086 Mode}}
+[[Category:X86 operating modes]]
+[[Category:Virtualization software]]
+[[Category:Intel products]]
+[[Category:Programming language implementation]]
+
+[[ca:Mode 8086 virtual]]
+[[de:Virtual 8086 Mode]]
+[[es:Modo 8086 virtual]]
+[[fr:Mode virtuel 8086]]
+[[ko:가상 86모드]]
+[[it:Modalità 8086 virtuale]]
+[[ja:仮想86モード]]
+[[no:Virtuell 8086 modus]]
+[[pl:Tryb wirtualny]]
+[[zh:虚拟86模式]]</body> </html>

@@ -1,0 +1,48 @@
+<html> <head> <title>Reduction of summands</title></head><body>{{Orphan|date=September 2010}}
+
+'''Reduction of summands''' is an algorithm for fast [[binary multiplication]] of non-signed binary integers.  It is performed in three steps: production of summands, reduction of summands, and summation.
+
+==Steps==
+===Production of summands===
+In binary multiplication, each row of the summands will be either zero or one of the numbers to be multiplied.  Consider the following:
+    1001
+   x1010
+   -----
+    0000
+   1001
+  0000
+ 1001
+The second and fourth row of the summands are equivalent to the first term.  Production of the summands requires a simple [[AND gate]] for each summand.  Given enough AND gates, the time to produce the summands will be one cycle of the [[arithmetic logic unit]].
+
+===Reduction of summands===
+The summands are reduced using a common 1-bit [[adder (electronics)|full adder]] that accepts two 1-bit terms and a carry-in bit.  It produces a sum and a carry-out.  The full adders are arranged such that the sum remains in the same column of summands, but the carry-out is shifted left.  In each round of reduction, three bits in a single column are used as the two terms and carry-in for the full adder, producing a single sum bit for the column.  This reduces the bits in the column by a factor of 3.  However, the column to the right will shift over carry-out bits, increasing the bits in the column by a third of the number of rows of summands.  At worst, the reduction will be 2/3 the number of rows per round of reduction.
+
+The following shows how the first round of reduction is performed.  Note that all "empty" positions of the summands are considered to be zero (a . is used here as indicator of the "assumed zero values").  In each row, the top three bits are the three inputs to the full adder (two terms and carry-in).  The sum is placed in the top bit of the column.  The carry-out is placed in the second row of the column to the left.  The bottom bit is a single feed into a adder.  The sum of this adder is placed in the third row of the column.  Carry-out is ignored as it will always be zero, but by design it would be placed in the fourth row of the column to the left.  For design, it is important to note that rows 1, 3, 5, ... (counting from the top) are filled with sums from the column itself.  Rows 2, 4, 6, ... are filled with carry-out values from the column to the right.
+    1011
+   x0110
+   -----
+ ...0000
+ ..1011.
+ .1011..
+ 0000...
+ -------
+ 0111010
+ 000100.
+ 00000..
+Reduction is performed again in exactly the same way.  This time, only the top three rows of summands are of interest because all other summands must be zero.
+ 0111010
+ 000100.
+ 00000..
+ -------
+ 0110010
+ 001000.
+When there are only two significant rows of summands, the reduction cycles end. A basic full adder normally requires three cycles of the [[arithmetic logic unit]].  Therefore, each cycle of reduction is commonly 3 cycles long.
+
+===Summation===
+When there are only two rows of summands remaining, they are added using a fast adder.  There are many designs of fast adders, any of which may be used to complete this algorithm.
+
+==Calculation time==
+The calculation time for the reduction of summands algorithm is: ''T'' = 1Δt + r3Δt + FA (where r is the number of reduction cycles and FA is the time for the fast adder at the end of the algorithm).
+
+{{DEFAULTSORT:Reduction Of Summands}}
+[[Category:Computer arithmetic]]</body> </html>

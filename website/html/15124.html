@@ -1,0 +1,33 @@
+<html> <head> <title>Geom raid5</title></head><body>{{lowercase|geom_raid5}}
+
+'''geom_raid5''' is a '''storage module''' created for the [[FreeBSD]] operating system. It facilitates [[RAID5]] functionality without the need of a hardware RAID controller.
+
+geom_raid5 allows storage of large amounts of data to be protected against disk failure, while providing good throughput performance. Like other FreeBSD storage modules, geom_raid5 utilizes the [[GEOM]] framework. It is built as a kernel loadable module (KLD) which allows it to run inside the FreeBSD kernel. The module can be compiled on FreeBSD release 5 and newer releases. geom_raid5 is also incorporated into [[FreeNAS]], an Operating System dedicated to [[NAS|Network Attached Storage]]. Its author, Arne Woerner, has released the software under the BSD license, making geom_raid5 [[Open Source Initiative|OSI]]-compliant [[open source]] software.
+
+== Comparing to other Software RAID5 solutions ==
+
+'''geom_raid5''' distinguishes itself by providing both advanced features and high performance. While the theoretical maximum write speed is ''<speed of slowest disk> · (<number of disks> - 1)'', the latest version is able to achieve about 80% of that theoretical maximum. This is in huge contrast with other software RAID5 solutions{{Fact|date=May 2008}} which sometimes achieve less than 10% of that throughput combined with significantly higher [[CPU]] utilization.
+
+The reason for this huge difference lies in geom_raid5's design. In order to write data to a RAID5 volume, data must often first be read in order to calculate the parity information that protects against data loss in case of a single disk failure. Using request combining a full stripe block can be 'collected' so a read is no longer required. This means the harddrive heads do not need to change position every time but can write data contiguously, theoretically at full speed.
+
+Of course, this only works with sequential transfers and sometimes even then the filesystem does not write contiguously. But using request combining, geom_raid5 manages to outperform any software RAID5 solution to date, capable of reaching write-speeds associated with hardware RAID5 on budget-level [[x86]] hardware.
+
+Currently the module is being finalized. When a stable version is released the author will release further information about its design and disclose benchmarks. In particular, benchmarks showing geom_raid5 performance versus [[ZFS]]'s [[RAID-Z]] are long awaited by users.
+
+==Variants==
+Various incarnations of geom raid5 exist which trade off speed for memory usage.
+* geom_raid5
+The most stable version but slower than the other variants in certain cases
+
+* geom_raid5 TNG
+Uses more memory to deliver better transfer rates
+
+* geom_raid5 PP
+Memory usage and speed is in between the TNG and PP. Uses less memory than TNG but is slower. Uses more memory than the original geom_raid5 driver and is faster. It is also claimed that PP's code best being the cleanest of the three
+
+==External links==
+* [[FreeBSD]] [[perforce]]: [http://perforce.freebsd.org/depotTreeBrowser.cgi?FSPC=//depot/user/riddick repository for '''geom_raid5''']
+* geom_raid5 sources: http://www.wgboome.de/geom_raid5.html
+
+[[Category:RAID]]
+[[Category:FreeBSD]]</body> </html>

@@ -1,0 +1,68 @@
+<html> <head> <title>Type Tunnel pattern</title></head><body>{{notability|date=March 2010}}
+{{refimprove|date=March 2010}}
+In [[computer programming]], a '''Type Tunnel  [[Design_pattern_(computer_science)|pattern]]''' is where a group of physically-unrelated types may be tunneled through an extensible adaptation layer and presented in unified form to an underlying layer for manipulation as a whole. It consists of the following:
+# a generic, extensible [[Interface (computer science)|interface]] layer, used in client code, which can interact with heterogeneous types, and
+# a tunnel mechanism, which translates between the heterogeneous types expressed in the client code into the [[Type system|type]] understood by
+# a concrete [[API]] layer, which manipulates a single concrete type.
+
+Tunnel mechanism include [[Shim (computing)|Shims]] and conversion [[Constructor (object-oriented_programming)|constructors]].
+
+==Examples==
+===C++===
+
+Example that uses Shims as tunnel mechanism.
+<source lang="cpp">
+
+// 1. Interface layer
+template <typename S> 
+void foo( S s ) 
+{    
+   bar( to_cstr_ptr( s ) ); 
+}  
+
+// 2. Tunnel mechanism: Shim
+char const * to_cstr_ptr( int ) { ... }
+char const * to_cstr_ptr( char const * ) { ... }
+char const * to_cstr_ptr( std::string ) { ... }
+
+// 3. Concrete API layer
+void bar( char const * ) { ... }
+
+// Using it
+void main()
+{
+   foo( 123 ); 
+   foo( "a C-string" ); 
+   foo( std::string( "a std::string" ) ); 
+}
+</source>
+
+==References==
+
+{{refbegin|1}}
+* <cite id=refDrDobbsWeb>{{Citation
+  | last = Wilson
+  | first = Matthew
+  | title =  Generalized String Manipulation: Access Shims and Type Tunneling
+  | url = http://www.drdobbs.com/cpp/184401689
+  | journal = C/C++ User's Journal
+  | volume = 21
+  | issue = 8
+  | date = August 2003 }}
+
+* <cite id=refMonolithWeb>{{Cite web
+  | last = Wilson
+  | first = Matthew
+  | title = Breaking Up The Monolith: Advanced C++ Design without Compromise
+  | url=http://synesis.com.au/publishing/monolith/glossary.html#type-tunnel
+  | accessdate = 11 March 2010 }}
+
+==See also==
+*[[Design pattern (computer science)|Design patterns]]
+*[[Duck typing]]
+
+[[Category:Software design patterns]]
+[[Category:Generic programming]]
+[[Category:Articles with example C++ code]]
+
+{{Software-eng-stub}}</body> </html>

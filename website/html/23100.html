@@ -1,0 +1,291 @@
+<html> <head> <title>MUSCL scheme</title></head><body>In the study of [[partial differential equation]]s, the '''MUSCL scheme''' is a [[finite volume method]] that can provide highly accurate numerical solutions for a given system, even in cases where the solutions exhibit shocks, discontinuities, or large gradients.  MUSCL stands for ''Monotone Upstream-centered Schemes for Conservation Laws'', and the term was introduced in a seminal paper by [[Bram van Leer]] (van Leer, 1979). In this paper he constructed the first ''high-order'', ''[[total variation diminishing]]'' (TVD) scheme where he obtained second order spatial accuracy.
+
+The idea is to replace the piecewise constant approximation of [[Godunov's scheme]] by reconstructed states, derived from cell-averaged states obtained from the previous time-step. For each cell, slope limited, reconstructed left and right states are obtained and used to calculate fluxes at the cell boundaries (edges). These fluxes can, in turn, be used as input to a ''[[Riemann solver]]'', following which the solutions are averaged and used to advance the solution in time. Alternatively, the fluxes can be used in ''Riemann-free-solver'' schemes, such as the ''Kurganov and Tadmor scheme'' outlined below.
+
+==Linear reconstruction==
+
+[[Image:StepFirstOrdUpwind.png|thumb|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon a first order upwind spatial discretization scheme.|200px|right|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon a first order upwind spatial discretization scheme.]]
+
+We will consider the fundamentals of the MUSCL scheme by considering the following simple first-order, scalar, 1D system, which is assumed to have a wave propagating in the positive direction,
+
+:<math>u_t + F_x\left(u \right)=0 .</math>
+
+Where <math>u \ </math> represents a state variable and <math>F \ </math> represents a [[flux]] variable.
+
+The basic scheme of Godunov uses piecewise constant approximations for each cell, and results in a first-order upwind discretisation of the above problem with cell centres indexed as <math> i </math>.  A semi-discrete scheme can be defined as follows,
+
+:<math>\frac{d u_i}{d t} + \frac{1}{\Delta x_i} \left[ 
+F \left( u_{i + 1} \right) - F \left( u_{i} \right)  \right] =0 </math>.
+
+This basic scheme is not able to handle shocks or sharp discontinuities as they tend to become smeared. An example of this effect is shown in the diagram opposite, which illustrates a 1D advective equation with a step wave propagating to the right. The simulation was carried out with a mesh of 200 cells and used a 4th order [[Runge-Kutta]] time integrator (RK4).
+
+To provide higher resolution of discontinuities, Godunov's scheme can be extended to use piecewise linear approximations of each cell, which results in a ''central difference'' scheme that is ''second-order'' accurate in space. The piecewise linear approximations are obtained from
+
+:<math> u \left( x \right) = u_{i} +
+  \frac{\left( x - x_{i} \right) }{ \left( x_{i+1} - x_{i} \right)}
+  \left( u_{i+1} - u_{i}  \right) , x \in \left[ x_{i}, x_{i+1}  \right]</math>.
+
+Thus, evaluating fluxes at the cell edges we get the following semi-discrete scheme 
+
+:<math>\frac{d u_i}{d t} + \frac{1}{\Delta x_i} \left[ 
+F \left( u_{i + \frac{1}{2}} \right) - F \left( u_{i - \frac{1}{2}} \right)  \right] =0 </math>,
+
+[[Image:stepSecOrdCentralDifference.png|thumb|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon a second order, central difference spatial discretization scheme.|200px|right|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon a second order, central difference spatial discretization scheme.]]
+
+where <math> u_{i + \frac{1}{2}} </math> and <math> u_{i - \frac{1}{2}} </math> are the piecewise approximate values of cell edge variables, i.e.
+
+:<math> u_{i + \frac{1}{2}} = 0.5 \left( u_{i} + u_{i + 1}  \right) </math>,
+:<math> u_{i - \frac{1}{2}} = 0.5 \left( u_{i-1} + u_{i}  \right) </math>.  
+
+Although the above second-order scheme provides greater accuracy for smooth solutions, it is not a [[total variation diminishing]] (TVD) scheme and introduces spurious oscillations into the solution where discontinuities or shocks are present. An example of this effect is shown in the diagram opposite, which illustrates a 1D advective equation <math>\, u_t+u_x=0 </math>, with a step wave propagating to the right. This loss of accuracy is to be expected due to [[Godunov's theorem]]. The simulation was carried out with a mesh of 200 cells and used RK4 for time integration.
+
+[[Image:LinExtrap.jpg|thumb|An example of MUSCL type left and right state linear-extrapolation.|200px|right|An example of MUSCL type left and right state linear-extrapolation.]]
+
+MUSCL based numerical schemes extend the idea of using a linear piecewise approximation to each cell by using ''slope limited'' left and right extrapolated states. This results in the following high resolution, TVD discretisation scheme,
+
+:<math>\frac{d u_i}{d t} + \frac{1}{\Delta x_i} \left[ 
+F \left( u^*_{i + \frac{1}{2}} \right) - F \left( u^*_{i - \frac{1}{2}} \right)  \right] =0 </math>.
+
+Which, alternatively, can be written in the more succinct form,
+
+:<math>\frac{d u_i}{d t} + \frac{1}{\Delta x_i} \left[ 
+F^*_{i + \frac{1}{2}}  - F^*_{i - \frac{1}{2}}  \right] =0 </math>.
+
+The numerical fluxes <math>F^*_{i \pm \frac{1}{2}} </math> correspond to a nonlinear combination of first and second-order approximations to the continuous flux function.
+
+The symbols <math> u^*_{i + \frac{1}{2}} </math> and <math> u^*_{i - \frac{1}{2}} </math> represent scheme dependent functions (of the limited extrapolated cell edge variables), i.e.
+
+:<math> u^*_{i + \frac{1}{2}} = u^*_{i + \frac{1}{2}}  \left( u^L_{i + \frac{1}{2}} , u^R_{i + \frac{1}{2}}  \right),
+
+  u^*_{i - \frac{1}{2}} = u^*_{i - \frac{1}{2}}  \left( u^L_{i - \frac{1}{2}} , u^R_{i - \frac{1}{2}}  \right) </math>,
+
+and
+:<math> u^L_{i + \frac{1}{2}} = u_{i}   + 0.5 \phi \left( r_{i} \right) \left( u_{i+1} - u_{i} \right),
+  u^R_{i + \frac{1}{2}} = u_{i+1} - 0.5 \phi \left( r_{i+1} \right)  \left( u_{i+2} - u_{i+1} \right)</math>,
+
+:<math> u^L_{i - \frac{1}{2}} = u_{i-1} + 0.5 \phi \left( r_{i-1} \right)  \left( u_{i} - u_{i-1} \right),
+  u^R_{i - \frac{1}{2}} = u_{i}   - 0.5 \phi \left( r_{i} \right)  \left( u_{i+1} - u_{i} \right)</math>,
+
+:<math> r_{i} = \frac{u_{i} - u_{i-1}}{u_{i+1} - u_{i}}</math>.
+
+The function <math> {\phi \left( r_i \right)}\ </math> is a limiter function that limits the slope of the piecewise approximations to ensure the solution is TVD, thereby avoiding the spurious oscillations that would otherwise occur around discontinuities or shocks - see [[Flux limiter]] section. The limiter is equal to zero when <math>r \le 0 \ </math> and is equal to unity when <math>r = 1 \ </math>. Thus, the accuracy of a TVD discretization degrades to first order at local extrema, but tends to second order over smooth parts of the domain.
+
+The algorithm is straight forward to implement. Once a suitable scheme for <math>F^*_{i + \frac{1}{2}} \ </math> has been chosen, such as the ''Kurganov and Tadmor scheme'' (see below), the solution can proceed using standard numerical integration techniques.
+
+==Kurganov and Tadmor central scheme==
+
+A precursor to the ''Kurganov and Tadmor'' (KT) ''central scheme'', (Kurganov and Tadmor, 2000), is the ''Nessyahu and Tadmor'' (NT) ''central scheme'', (Nessyahu and Tadmor, 1990).  It is a Riemann-solver-free, second-order, [[high-resolution scheme]] that uses MUSCL reconstruction.  It is a fully-discrete method that is straight forward to implement and can be used on [[scalar (mathematics)|scalar]] and [[vector (geometric)|vector]] problems , and can be viewed as a modification to the ''Lax-Friedrichs'' (LxF) ''scheme''.  The algorithm is based upon [[finite difference|central differences]] with comparable performance to Riemann type solvers when used to obtain solutions for PDE's describing systems that exhibit high-gradient phenomena.
+
+The KT scheme extends the NT scheme and has a smaller amount of numerical viscosity than the original NT scheme. It also has the added advantage that it can be implemented as either a ''fully-discrete'' or ''semi-discrete'' scheme. Here we consider the semi-discrete scheme.
+
+The calculation is shown below:
+: <math>F^*_{i-\frac{1}{2}} =\frac{1}{2} \left\{
+\left[ F \left(u^R_{i - \frac{1}{2}} \right) + F \left(u^L_{i - \frac{1}{2}} \right) \right]
+- a_{i - \frac{1}{2} } \left[u^R_{i - \frac{1}{2}} - u^L_{i - \frac{1}{2}} \right] \right\} </math>.
+ 
+: <math>F^*_{i+\frac{1}{2}} =\frac{1}{2} \left\{
+\left[ F \left(u^R_{i + \frac{1}{2}} \right) + F \left(u^L_{i + \frac{1}{2}} \right) \right]
+- a_{i + \frac{1}{2} } \left[u^R_{i + \frac{1}{2}} - u^L_{i + \frac{1}{2}} \right] \right\} </math>.
+
+[[Image:StepKTsuperbee.png|thumb|1D advective equation with step wave <math>u_t+u_x=0</math>, propagating to the right. Shows the analytical solution along with a simulation based upon the Kurganov and Tadmor central scheme with SuperBee limiter.|200px|right|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon the Kurganov and Tadmor central scheme with SuperBee limiter.]]
+
+Where the ''local propagation speed'', <math> a_{i \pm \frac{1}{2}} \ </math>, is the maximum absolute value of the eigenvalue of the Jacobian of <math> F \left( u \left(x, t \right) \right)</math> over cells <math>{i} , {i \pm 1}</math> given by
+
+: <math> a_{i \pm \frac{1}{2} } \left( t \right) = \max \left[ 
+\rho \left( \frac{\partial F \left( u_{i}   \left( t \right) \right)}{\partial u} \right) ,
+\rho \left( \frac{\partial F \left( u_{i \pm 1} \left( t \right) \right)}{\partial u} \right) 
+\right] </math>,
+
+where <math> \rho \ </math> represents the [[spectral radius]] of 
+<math> \frac{\partial F \left( u   \left( t \right) \right)}{ \partial u}  </math>.
+
+Beyond these [[Courant-Friedrichs-Lewy condition|CFL]] related speeds, no characteristic information is required.
+
+The above flux calculation is sometimes referred to as ''local Lax-Friedrichs flux'' or ''Rusanov flux'' (Lax, 1954; Rusanov, 1961; Toro, 1999; Kurganov and Tadmor, 2000; Leveque, 2002).
+
+An example of the effectiveness of using a high resolution scheme is shown in the diagram opposite, which illustrates the 1D advective equation <math>u_t+u_x=0 \ </math>, with a step wave propagating to the right. The simulation was carried out on a mesh of 200 cells, using the Kurganov and Tadmor central scheme with [[flux limiter|Superbee limiter]] and used RK-4 for time integration. This simulation result contrasts extremely well against the above first-order upwind and second-order central difference results shown above. This scheme also provides good results when applied to sets of equations - see results below for this scheme applied to the Euler equations. However, care has to be taken in choosing an appropriate limiter because, for example, the Superbee limiter can cause unrealistic sharpening for some smooth waves.
+
+The scheme can readily include diffusion terms, if they are present. For example, if the above 1D scalar problem is extended to include a diffusion term, we get
+
+:<math>u_t + F_x\left(u \right) = Q_x \left( u , u_x \right) </math> ,
+
+for which Kurganov and Tadmor propose the following central difference approximation,
+
+:<math>\frac{d u_i}{d t} = 
+- \frac{1}{\Delta x_i} \left[ F^*_{i + \frac{1}{2}}  - F^*_{i - \frac{1}{2}}  \right] 
++ \frac{1}{\Delta x_i} \left[ P_{i + \frac{1}{2}}  - P_{i - \frac{1}{2}}  \right] </math>.
+
+Where,
+
+:<math>P_{i + \frac{1}{2}} = \frac{1}{2} \left[ 
+Q \left( u_{i} ,   \frac{u_{i+1} - u_i}{\Delta x_i} \right) + 
+Q \left( u_{i+1} , \frac{u_{i+1} - u_i}{\Delta x_i} \right)
+   \right] </math> ,
+
+:<math>P_{i - \frac{1}{2}} = \frac{1}{2} \left[ 
+Q \left( u_{i-1} ,   \frac{u_{i} - u_{i-1}}{\Delta x_{i-1}} \right) + 
+Q \left( u_{i} , \frac{u_{i} - u_{i-1}}{\Delta x_{i-1}} \right)
+   \right] </math> .
+
+Full details of the algorithm (''full'' and ''semi-discrete'' versions) and its derivation can be found in the original paper (Kurganov and Tadmor, 2000), along with a number of 1D and 2D examples. Additional information is also available in the earlier related paper by Nessyahu and Tadmor (1990).
+
+'''Note:'''  This scheme was originally presented by Kurganov and Tadmor as a 2nd order scheme based upon ''linear extrapolation''.  A later paper (Kurganov and Levy, 2000) demonstrates that it can also form the basis of a third order scheme. A 1D advective example and an Euler equation example of their scheme, using parabolic reconstruction (3rd order), are shown in the ''parabolic reconstruction'' and ''Euler equation'' sections below.
+
+==Piecewise parabolic reconstruction==
+
+[[Image:ParabolicExtrap.jpg|thumb|An example of MUSCL type state parabolic-reconstruction.|200px|right|An example of MUSCL type state parabolic-reconstruction.]]
+
+It is possible to extend the idea of linear-extrapolation to higher order reconstruction, and an example is shown in the diagram opposite. However, for this case the left and right states are estimated by interpolation of a second-order, upwind biased, difference equation. This results in a parabolic reconstruction scheme that is third-order accurate in space.
+
+We follow the approach of Kermani (Kermani, et al., 2003), and present a third-order upwind biased scheme, where the symbols <math> u^*_{i + \frac{1}{2}} </math> and <math> u^*_{i - \frac{1}{2}} </math> again represent scheme dependent functions (of the limited reconstructed cell edge variables). But for this case they are based upon parabolically-reconstructed states, i.e.
+
+:<math> u^*_{i + \frac{1}{2}} = f \left( u^L_{i + \frac{1}{2}} , u^R_{i + \frac{1}{2}}  \right),
+
+  u^*_{i - \frac{1}{2}} = f \left( u^L_{i - \frac{1}{2}} , u^R_{i - \frac{1}{2}}  \right) </math>,
+
+and
+
+:<math> u^L_{i + \frac{1}{2}} = u_{i} + \frac{\phi \left( r_{i}    \right)}{4}  \left[  
+\left( 1 - \kappa \right)  \delta u_{i - \frac{1}{2} } + 
+\left( 1 + \kappa \right)  \delta u_{i + \frac{1}{2} } 
+\right]</math>,
+
+:<math>u^R_{i + \frac{1}{2}} = u_{i+1} - \frac{\phi \left( r_{i+1} \right)}{4}  \left[ 
+\left( 1 - \kappa  \right) \delta u_{i + \frac{3}{2} } + 
+\left( 1 + \kappa  \right) \delta u_{i + \frac{1}{2} } 
+\right] </math>,
+
+:<math> u^L_{i - \frac{1}{2}} = u_{i-1}   +  \frac{\phi \left( r_{i-1} \right)}{4} \left[  
+\left( 1 - \kappa  \right) \delta u_{i - \frac{3}{2}} + 
+\left( 1 + \kappa  \right) \delta u_{i - \frac{1}{2} } 
+\right]</math>,
+
+:<math>u^R_{i - \frac{1}{2}} = u_{i} - \frac{\phi \left( r_{i}   \right)}{4} \left[ 
+\left( 1 - \kappa  \right) \delta u_{i + \frac{1}{2} } + 
+\left( 1 + \kappa  \right) \delta u_{i - \frac{1}{2} } 
+\right]</math>.
+
+[[Image:StepParabolicKTalbada.png|thumb|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon the Kurganov and Tadmor Central Scheme with parabolic reconstruction and van Albada limiter.|200px|right|1D advective equation <math>u_t+u_x=0</math>, with step wave propagating to the right. Shows the analytical solution along with a simulation based upon the Kurganov and Tadmor Central Scheme with parabolic reconstruction and van Albada limiter.]]
+
+Where <math> \kappa \  </math> = 1/3 and,
+:<math> \delta u_{i + \frac{1}{2} } = \left( u_{i+1} - u_{i} \right) ,  
+        \delta u_{i - \frac{1}{2} } = \left( u_{i} - u_{i-1} \right)</math>,
+
+:<math> \delta u_{i + \frac{3}{2} } = \left( u_{i+2} - u_{i+1} \right) ,  
+        \delta u_{i - \frac{3}{2} } = \left( u_{i-1} - u_{i-2} \right)</math>,
+
+and the limiter function <math> \phi \left( r \right)\ </math>, is the same as above.
+
+Parabolic reconstruction is straight forward to implement and can be used with the Kurganov and Tadmor scheme in lieu of the linear extrapolation shown above. This has the effect of raising the spatial solution of the KT scheme to 3rd order. It performs well when solving the Euler equations, see below. This increase in spatial order has certain advantages over 2nd order schemes for smooth solutions, however, for shocks it is more dissipative - compare diagram opposite with above solution obtained using the KT algorithm with linear extrapolation and Superbee limiter. This simulation was carried out on a mesh of 200 cells using the same KT algorithm but with parabolic reconstruction. Time integration was by RK-4, and the alternative form of van Albada limiter, <math> \phi_{va} (r) = \frac{2 r}{1 + r^2 } \ </math>, was used to avoid spurious oscillations.
+
+==Example: 1D Euler equations==
+
+For simplicity we consider the 1D case without heat transfer and without body force. Therefore, in conservation vector form, the general [[Euler equations (fluid dynamics)|Euler equations]] reduce to
+
+:<math> 
+\frac{\partial \mathbf{U}}{\partial t}+
+\frac{\partial \mathbf{F}}{\partial x}=0
+</math>,
+
+where
+
+:<math>
+\mathbf{U}=\begin{pmatrix}\rho  \\  \rho u  \\  E\end{pmatrix}\qquad
+\mathbf{F}=\begin{pmatrix}\rho u\\p+\rho u^2\\  u(E+p)\end{pmatrix}\qquad
+</math>,
+and where '''<math> \mbox{U} </math>''' is a vector of states and '''<math> \mbox{F} </math>''' is a vector of fluxes.
+
+The equations above represent conservation of '''mass''', '''momentum''', and '''energy'''.  There are thus three equations and four unknowns, <math> \rho </math> (density) <math> u </math> (fluid velocity), <math> p </math> (pressure) and <math> E </math> (total energy). The total energy is given by,
+
+:<math>E=\rho e + \frac{1}{2} \rho u^2</math>,
+
+where <math> e\ </math> represents specific internal energy.
+
+In order to close the system an [[equation of state]] is required. One that suits our purpose is
+
+:<math>p=\rho \left(\gamma-1 \right)e</math>,
+ 
+where <math> \gamma\ </math> is equal to the ratio of specific heats <math> \left[ c_p/c_v \right] </math> for the fluid.
+
+We can now proceed, as shown above in the simple 1D example, by obtaining the left and right extrapolated states for each state variable. Thus, for density we obtain
+
+:<math> \rho^*_{i + \frac{1}{2}} = \rho^*_{i + \frac{1}{2}}  \left( \rho^L_{i + \frac{1}{2}} , \rho^R_{i + \frac{1}{2}}  \right),
+
+  \rho^*_{i - \frac{1}{2}} = \rho^*_{i - \frac{1}{2}}  \left( \rho^L_{i - \frac{1}{2}} , \rho^R_{i - \frac{1}{2}}  \right) </math>,
+
+where
+
+:<math> \rho^L_{i + \frac{1}{2}} = \rho_{i}   + 0.5 \phi \left( r_{i} \right) \left( \rho_{i+1} - \rho_{i} \right),
+  \rho^R_{i + \frac{1}{2}} = \rho_{i+1} - 0.5 \phi \left( r_{i+1} \right)  \left( \rho_{i+2} - \rho_{i+1} \right)</math>,
+
+:<math> \rho^L_{i - \frac{1}{2}} = \rho_{i-1} + 0.5 \phi \left( r_{i-1} \right)  \left( \rho_{i} - \rho_{i-1} \right),
+  \rho^R_{i - \frac{1}{2}} = \rho_{i}   - 0.5 \phi \left( r_{i} \right)  \left( \rho_{i+1} - \rho_{i} \right)</math>.
+
+Similarly, for momentum <math> \rho u </math>, and total energy <math> E </math>. Velocity <math> u </math>, is calculated from momentum, and pressure <math> p </math>, is calculated from the equation of state.
+
+Having obtained the limited extrapolated states, we then proceed to construct the edge fluxes using these values. With the edge fluxes known, we can now construct the semi-discrete scheme, i.e.
+
+:<math>\frac{d \mathbf{U}_i}{d t} = - \frac{1}{\Delta x_i} \left[ 
+\mathbf{F}^*_{i + \frac{1}{2} }  - \mathbf{F}^*_{i - \frac{1}{2}}  \right] </math>.
+
+The solution can now proceed by integration using standard numerical techniques.
+
+The above illustrates the basic idea of the MUSCL scheme. However, for a practical solution to the Euler equations, a suitable scheme (such as the above KT scheme), also has to be chosen in order to define the function <math>\mathbf{F}^*_{i \pm \frac{1}{2} } </math>. 
+
+[[Image:sodProbKTospre.png|thumb|High resolution simulation of Euler equations based on G A Sod's 'Shock Tube' problem. Shows the analytical solutions along with simulated (2nd order) solutions based upon the Kuganov and Tadmor Central Scheme with Linear Extrapolation and Ospre limiter.|200px|right|High resolution simulation of Euler equations based on G A Sod's 'Shock Tube' problem. Shows the analytical solutions along with simulated (2nd order) solutions based upon the Kuganov and Tadmor Central Scheme with Linear Extrapolation and Ospre limiter.]]
+
+The diagram opposite shows a 2nd order solution to G A Sod's [[shock tube]] problem (Sod, 1978) using the above high resolution Kurganov and Tadmor Central Scheme (KT) with Linear Extrapolation and Ospre limiter. This illustrates clearly the effectiveness of the MUSCL approach to solving the Euler equations. The simulation was carried out on a mesh of 200 cells using Matlab code (Wesseling, 2001), adapted to use the KT algorithm and [[flux limiter|Ospre limiter]]. Time integration was performed by a 4th order SHK (equivalent performance to RK-4) integrator. The following initial conditions ([[SI]] units) were used:
+
+*pressure left = 100000 [Pa];  
+*pressure right= 10000 [Pa]; 
+*density left = 1.0 [kg/m3];  
+*density right = 0.125 [kg/m3]; 
+*length = 20 [m];
+*velocity left = 0 [m/s];  
+*velocity right = 0 [m/s]; 
+*duration =0.01 [s]; 
+*lambda = 0.001069 (Δt/Δx).
+
+[[Image:SodProbParabolicKTalbada.png|thumb|High resolution simulation of Euler equations based on G A Sod's 'Shock Tube' problem - SI units. Shows the analytical solutions along with simulated (3rd order) solutions based upon the Kuganov and Tadmor Central Scheme with parabolic reconstruction and van Albada lmiter. |200px|right|High resolution simulation of Euler equations based on G A Sod's 'Shock Tube' problem - SI units. Shows the analytical solutions along with simulated (3rd order) solutions based upon the Kuganov and Tadmor Central Scheme with parabolic reconstruction and van Albada lmiter.]]
+
+The diagram opposite shows a 3rd order solution to G A Sod's [[shock tube]] problem (Sod, 1978) using the above high resolution Kurganov and Tadmor Central Scheme (KT) but with parabolic reconstruction and van Albada limiter. This again illustrates the effectiveness of the MUSCL approach to solving the Euler equations. The simulation was carried out on a mesh of 200 cells using Matlab code (Wesseling, 2001), adapted to use the KT algorithm with Parabolic Extrapolation and [[flux limiter|van Albada limiter]]. The alternative form of van Albada limiter, <math> \phi_{va} (r) = \frac{2 r}{1 + r^2 } \ </math>, was used to avoid spurious oscillations. Time integration was performed by a 4th order SHK integrator. The same initial conditions were used.
+
+Various other high resolution schemes have been developed that solve the Euler equations with good accuracy. Examples of such schemes are,
+
+*the '''Osher scheme''', and
+*the '''Liou-Steffen''' [[AUSM]] (advection upstream splitting method) scheme.
+
+More information on these and other methods can be found in the references below.
+
+==See also==
+*[[Finite volume method]]
+*[[Flux limiter]]
+*[[Godunov's theorem]]
+*[[High resolution scheme]]
+*[[Method of lines]]
+*[[Sergei K. Godunov]] 
+*[[Total variation diminishing]]
+
+==References==
+*Kermani, M. J., Gerber, A. G., and Stockie, J. M. (2003), Thermodynamically Based Moisture Prediction Using Roe’s Scheme, ''The 4th Conference of Iranian AeroSpace Society'', Amir Kabir University of Technology, Tehran, Iran, January 27–29. [http://me.aut.ac.ir/mkermani/PDF-files/Conferences/Amir_Kabir.pdf]
+*Kurganov, Alexander and Eitan Tadmor (2000), New High-Resolution Central Schemes for Nonlinear Conservation Laws and Convection-Diffusion Equations, ''J. Comp. Phys.'', ''160'', 214–282. [http://www.cscamm.umd.edu/centpack/publications/files/KT_semi-discrete.JCP00-centpack.pdf]
+*Kurganov, Alexander and Doron Levy (2000), A Third-Order Semidiscrete Central Scheme for Conservation Laws and Convection-Diffusion Equations, ''SIAM J. Sci. Comput.'', ''22'', 1461–1488. [http://www.cscamm.umd.edu/centpack/publications/files/Kur-Lev_3rd_semi_discrete.SINUM00-centpack.pdf]
+*Lax, P. D. (1954). Weak Solutions of Non-linear Hyperbolic Equations and Their Numerical Computation, ''[[Communications on Pure and Applied Mathematics|Comm. Pure Appl. Math.]]'', VII, pp159–193.
+*Leveque, R. J. (2002). ''Finite Volume Methods for Hyperbolic Problems'', Cambridge University Press.
+*van Leer, B. (1979), Towards the Ultimate Conservative Difference Scheme, V. A Second Order Sequel to Godunov's Method, ''J. Com. Phys.''., ''32'', 101–136.
+*Nessyahu, H.  and E. Tadmor (1990), Non-oscillatory central differencing for hyperbolic conservation laws, ''J. Comp. Phys.'', ''87'', 408–463. [http://www.cscamm.umd.edu/centpack/publications/files/NT2.JCP90-centpack.pdf].
+*Rusanov, V. V. (1961). Calculation of Intersection of Non-Steady Shock Waves with Obstacles, ''J. Comput. Math. Phys. USSR'', '''1''', pp267–279.
+*Sod, G. A. (1978), A Numerical Study of a Converging Cylindrical Shock. ''J. Fluid Mechanics'', ''83'', 785–794.
+*Toro, E. F. (1999), ''Riemann Solvers and Numerical Methods for Fluid Dynamics'', Springer-Verlag.
+*Wesseling, Pieter (2001), ''Principles of Computational Fluid Dynamics'', Springer-Verlag.
+
+==Further reading==
+*Hirsch, C. (1990), ''Numerical Computation of Internal and External Flows'', vol 2, Wiley.
+*Laney, Culbert B. (1998), ''Computational Gas Dynamics'', Cambridge University Press.
+*Tannehill, John C., et al. (1997), ''Computational Fluid mechanics and Heat Transfer'', 2nd Ed., Taylor and Francis.
+
+{{Numerical PDE}}
+
+[[Category:Fluid dynamics]]
+[[Category:Numerical differential equations]]
+[[Category:Computational fluid dynamics]]</body> </html>

@@ -1,0 +1,208 @@
+<html> <head> <title>Magic hypercube</title></head><body>{{Merge from|Magic tesseract|discuss=Talk:Magic hypercube#Merge from 4|date=November 2010}}
+{{Merge from|Nasik magic hypercube|discuss=Talk:Magic hypercube#Nasik|date=November 2010}}
+{{technical|date=October 2010}}
+{{Refimprove|date=October 2010}}
+In [[mathematics]], a '''magic hypercube''' is the [[dimension|''k''-dimensional]] generalization of [[magic square]]s, [[magic cube]]s and [[magic tesseract]]s; that is, a number of [[integers]] arranged in an ''n'' × ''n'' × ''n'' × ... × ''n'' pattern such that the sum of the numbers on each pillar (along any axis) as well as the main [[space diagonal]]s is equal to a single number, the so-called [[magic constant]] of the [[hypercube]], denoted ''M''<sub>''k''</sub>(''n''). It can be shown that if a magic hypercube consists of the numbers 1, 2, ..., ''n''<sup>''k''</sup>, then it has magic number
+
+:<math>M_k(n) = \frac{n(n^k+1)}{2}</math>
+
+If, in addition, the numbers on every [[cross section (geometry)|cross section]] diagonal also sum up to the hypercube's magic number, the hypercube is called a [[perfect magic hypercube]]; otherwise, it is called a [[semiperfect magic hypercube]]. The number ''n'' is called the order of the magic hypercube.
+
+Five-, six-, seven- and eight-dimensional magic hypercubes of order three have been constructed by [[J. R. Hendricks]].
+
+Marian Trenkler proved the following theorem:
+A ''p''-dimensional magic hypercube of order ''n'' exists if and only if
+''p'' > 1  and ''n'' is different from 2  or ''p'' = 1.  A construction of a magic hypercube follows from the proof.
+
+The [[R (programming language)|R programming language]] includes a module, <tt> library(magic)</tt>, that will create magic hypercubes of any dimension (with ''n'' a multiple of 4).
+
+Change to more modern conventions here-after (basically k ==> n and n ==> m)
+
+==Conventions==
+
+It is customary to denote the [[dimension]] with the letter 'n' and the [[cardinality|order]] of a hypercube with the letter 'm'.
+
+*'''(''n'') Dimension''' :  the number of directions within a hypercube.
+*'''(''m'') Order''' : the number of numbers along a direction.
+
+Further: In this article the analytical number range [0..m<sup>n</sup>-1] is being used. For the regular number range [1..m<sup>n</sup>] you can add 1 to each number. This has absolutely no effect on the properties of the hypercube.
+
+==Notations==
+
+in order to keep things in hand a special notation was developed:
+*'''[ <sub>k</sub>i; k=[0..n-1]; i=[0..m-1] ]''': positions within the hypercube
+*'''< <sub>k</sub>i; k=[0..n-1]; i=[0..m-1] >''': vector through the hypercube
+
+Note: The notation for position can also be used for the value on that position. There where it is appropriate dimension and order can be added to it thus forming: <sup>n</sup>[<sub>k</sub>i]<sub>m</sub>
+
+As is indicated 'k' runs through the dimensions, while the coordinate 'i' runs through all possible values, when values 'i' are outside the range it is simply moved back into the range by adding or subtracting appropriate multiples of m, as the magic hypercube resides in n-dimensional modular space.
+
+There can be multiple 'k' between bracket, these can't have the same value, though in undetermined order, which explains the equality of:
+ [ <sub>1</sub>i, <sub>k</sub>j ] = [ <sub>k</sub>j, <sub>1</sub>i ]
+Of course given 'k' also one value 'i' is referred to.<br />
+When a specific coordinate value is mentioned the other values can be taken as 0, which is especially the case when the amount of 'k's are limited using pe. #k=1 as in:
+ [<sub>k</sub>1 ; #k=1] = [<sub>k</sub>1 <sub>j</sub>0 ; #k=1; #j=n-1] ("axial"-neighbor of [<sub>k</sub>0])
+(#j=n-1 can be left unspecified) j now runs through all the values in [0..k-1,k+1..n-1].
+
+Further: without restrictions specified 'k' as well as 'i' run through all possible values, in combinations same letters assume same values. Thus makes it possible to specify a particular line within the hypercube (see r-agonal in pathfinder section)
+
+Note: as far as I now this notation is not in general use yet(?), Hypercubes are not generally analyzed in this particular manner.
+
+Further: "'''perm(0..n-1)'''" specifies a [[permutation]] of the n numbers 0..n-1.
+
+==Construction==
+
+Besides more specific constructions two more general construction method are noticeable:
+
+===KnightJump construction===
+This construction generalizes the movement of the chessboard horses (vectors <1,2>, <1,-2>, <-1,2>, <-1,-2>) to more general movements (vectors <<sub>k</sub>i>). The method starts at the position P<sub>0</sub> and further numbers are sequentially placed at positions V<sub>0</sub> further until (after m steps) a position is reached that is already occupied, a further vector is needed to find the next free position. Thus the method is specified by the n by n+1 matrix:
+ [P<sub>0</sub>, V<sub>0</sub> .. V<sub>n-1</sub>]
+This positions the number 'k' at position:
+ P<sub>k</sub> = P<sub>0</sub> + <sub>l=0</sub>∑<sup>n-1</sup>((k\m<sup>l</sup>)%m) V<sub>l</sub>; k = 0 .. m<sup>n</sup>-1.
+'''C. Planck''' gives in his 1905 article [http://www.magichypercubes.com/Encyclopedia/k/PathNasiks.zip "'''The theory of Path Nasiks'''"] conditions to create with this method "Path Nasik" (or modern {perfect}) hypercubes.
+
+===Latin prescription construction===
+(modular equations).
+This method is also specified by an n by n+1 matrix. However this time it multiplies the n+1 vector  [x<sub>0</sub>,..,x<sub>n-1</sub>,1], After this multiplication the result is taken modulus m to achieve the n (Latin) hypercubes:
+ LP<sub>k</sub> = ( <sub>l=0</sub>∑<sup>n-1</sup> LP<sub>k,l</sub> x<sub>l</sub> + LP<sub>k,n</sub> ) % m
+of radix m numbers (also called "'''digits'''"). On these LP<sub>k</sub>'s "'''digit changing'''" (?i.e. Basic manipulation) are generally applied before these LP<sub>k</sub>'s are combined into the hypercube:
+ <sup>n</sup>H<sub>m</sub> = <sub>k=0</sub>∑<sup>n-1</sup> LP<sub>k</sub> m<sup>k</sup>
+
+'''J.R.Hendricks''' often uses modular equation, conditions to make hypercubes of various quality can be found on [http://www.magichypercubes.com/Encyclopedia http://www.magichypercubes.com/Encyclopedia] at several places (especially p-section)
+
+Both methods fill the hypercube with numbers, the knight-jump guarantees (given appropriate vectors) that every number is present. The Latin prescription only if the components are orthogonal (no two digits occupying the same position)
+
+===Multiplication===
+Amongst the various ways of compounding, the multiplication<ref>this is a n-dimensional version of (pe.): [http://mathforum.org/alejandre/magic.square/adler/product.html Alan Adler magic square multiplication]</ref> can be considered as the most basic of these methods. The '''basic multiplication''' is given by:
+ <sup>n</sup>H<sub>m<sub>1</sub></sub> * <sup>n</sup>H<sub>m<sub>2</sub></sub> : <sup>n</sup>[<sub>k</sub>i]<sub>m<sub>1</sub>m<sub>2</sub></sub> = <sup>n</sup>[ [<nowiki>[</nowiki><sub>k</sub>i \ m<sub>2</sub>]<sub>m<sub>1</sub></sub></sub>m<sub>1</sub><sup>n</sup>]<sub>m<sub>2</sub></sub> + [<sub>k</sub>i % m<sub>2</sub>]<sub>m<sub>2</sub></sub>]<sub>m<sub>1</sub></sub><sub>m<sub>2</sub></sub>
+
+Most compounding methods can be viewed as variations of the above, As most qualfiers are invariant under multiplication one can for example place any aspectial variant of <sup>n</sup>H<sub>m<sub>2</sub></sub> in the above equation, besides that on the result one can apply a manipulation to improve quality. Thus one can specify pe the  J. R. Hendricks / M. Trenklar doubling. These things go beyond the scope of this article.
+
+==Aspects==
+A huper cube knows '''n! 2<sup>n</sup>''' Aspectial variants, which are obtained by coordinate reflection ([<sub>k</sub>i] --> [<sub>k</sub>(-i)]) and coordinate permutations ([<sub>k</sub>i] --> [<sub>perm[k]</sub>i]) effectively giving the Aspectial variant:
+ <sup>n</sup>H<sub>m</sub><sup>~R perm(0..n-1)</sup>; R = <sub>k=0</sub>∑<sup>n-1</sup> ((reflect(k)) ? 2<sup>k</sup> : 0) ; perm(0..n-1) a permutation of 0..n-1
+Where reflect(k) true iff coordinate k is being reflected, only then 2<sup>k</sup> is added to R.
+As  is easy to see only n coordinates can be reflected explaining 2<sup>n</sup>, the n! permutation of n coordinates explains the other factor to the total amount of "Aspectial variants"!
+
+Aspectial variants are generally seen as being equal. Thus any hypercube can be represented shown in '''"normal position"''' by:
+ [<sub>k</sub>0] = min([<sub>k</sub>θ ; θ ε {-1,0}]) (by reflection)
+ [<sub>k</sub>1 ; #k=1] < [<sub>k+1</sub>1 ; #k=1] ; k = 0..n-2 (by coordinate permutation)
+(explicitely stated here: [<sub>k</sub>0] the minimum of all corner points. The axial neighbour sequentially based on axial number)
+
+==Basic manipulations==
+
+Besides more specific manipulations, the following are of more general nature
+
+*'''#[perm(0..n-1)]''' : component permutation
+*'''^[perm(0..n-1)]''' : coordinate permutation (n == 2: transpose)
+*'''_2<sup>axis</sup>[perm(0..m-1)]''' : monagonal permutation (axis ε [0..n-1])
+*'''=[perm(0..m-1)]''' : digit change
+
+Note: <nowiki>'#'</nowiki>, '^', '_' and '=' are essential part of the notation and used as manipulation selectors.
+
+===Component permutation===
+Defined as the exchange of components, thus varying the factor m<sup>'''k'''</sup> in m<sup>'''perm(k)'''</sup>, because there are n component hypercubes the permutation is over these n  components
+
+===Coordinate permutation===
+The exchange of coordinate [<sub>'''k'''</sub>i] into [<sub>'''perm(k)'''</sub>i], because of n coordinates a permutation over these n directions is required.<br />
+The term '''transpose''' (usually denoted by <sup>t</sup>) is used with two dimensional matrices, in general though perhaps "coordinate permutation" might be preferable.
+
+===Monagonal permutation===
+Defined as the change of [<sub>k</sub>'''i'''] into [<sub>k</sub>'''perm(i)'''] alongside the given "axial"-direction. Equal permutation along various axes can be combined by adding the factors 2<sup>axis</sup>. Thus defining all kinds of r-agonal permutations for any r. Easy to see that all possibilities are given by the corresponding permutation of m numbers.
+
+Noted be that '''reflection''' is the special case:
+ ~R = _R[n-1,..,0]
+Further when all the axes undergo the same ;permutation (R = 2<sup>n</sup>-1) an '''n-agonal permutation''' is achieved, In this special case the 'R' is usually omitted so:
+ _[perm(0..n-1)] = _(2<sup>n</sup>-1)[perm(0..n-1)]
+
+===Digitchanging===
+Usually being applied at component level and can be seen as given by '''[<sub>k</sub>i]''' in '''perm([<sub>k</sub>i]''') since a component is filled with radix m digits, a permutation over m numbers is an appropriate manner to denote these.
+
+==Pathfinders==
+J. R. Hendricks called the directions within a hypercubes "'''pathfinders'''", these directions are simplest denoted in a ternary number system as:
+ Pf<sub>p</sub> where: p = <sub>k=0</sub>∑<sup>n-1</sup> (<sub>k</sub>i + 1) 3<sup>k</sup> <==> <<sub>k</sub>i> ; i ε {-1,0,1}
+
+This gives 3<sup>n</sup> directions. since every direction is traversed both ways one can limit to the upper half [(3<sup>n</sup>-1)/2,..,3<sup>n</sup>-1)] of the full range.
+
+With these pathfinders any line to be summed over (or r-agonal) can be specified:
+ [ <sub>j</sub>0 <sub>k</sub>p <sub>l</sub>q ; #j=1 #k=r-1 ; k > j ] < <sub>j</sub>1 <sub>k</sub>θ <sub>l</sub>0 ; θ ε {-1,1} >  ; p,q ε [0,..,m-1]
+
+which specifies all (broken) r-agonals, p and q ranges could be omitted from this description. The main (unbroken) r-agonals are thus given by the slight modification of the above:
+ [ <sub>j</sub>0 <sub>k</sub>0 <sub>l</sub>-1 <sub>s</sub>p ; #j=1 #k+#l=r-1 ; k,l > j ] < <sub>j</sub>1 <sub>k</sub>1 <sub>l</sub>-1 <sub>s</sub>0 >
+
+==Qualifications==
+
+A hypercube <sup>n</sup>H<sub>m</sub> with numbers in the analytical numberrange [0..m<sup>n</sup>-1] has the magic sum:
+ <sup>n</sup>S<sub>m</sub> = m (m<sup>n</sup> - 1) / 2.
+
+Besides more specific qualifications the following are the most important, "summing" of course stands for "summing correctly to the magic sum"
+
+*{'''r-agonal'''} : all main (unbroken) r-agonals are summing.
+*{'''pan r-agonal'''} : all (unbroken and broken) r-agonals are summing.
+*{'''magic'''} : {1-agonal n-agonal}
+*{'''perfect'''} : {pan r-agonal; r = 1..n}
+
+Note: This series doesn't start with 0 since a nill-agonal doesn't exist, the numbers correspond with the usual name-calling: 1-agonal = monagonal, 2-agonal = diagonal, 3-agonal = triagonal etc.. Aside from this the number correspond to the amount of "-1" and "1" in the corresponding pathfinder.
+
+In case the hypercube also sum when all the numbers are raised to the power p one gets p-multimagic hypercubes. The above qualifiers are simply prepended onto the p-multimagic qualifier. This defines qualifications as {r-agonal 2-magic}. Here also "2-" is usually replaced by "bi",  "3-" by "tri" etc. ("1-magic" would be "monomagic" but "mono" is usually omitted). The sum for p-Multimagic hypercubes can be found by using [[Faulhaber's formula]] and divide it by m<sup>n-1</sup>.
+
+Also "magic" (i.e. {1-agonal n-agonal}) is usually assumed, the [[perfect magic cube|Trump/Boyer {diagonal} cube]] is technically seen {1-agonal 2-agonal 3-agonal}.
+
+[[Nasik magic hypercube]] gives arguments for using {'''nasik'''} as synonymous to {'''perfect'''}. The strange generalization of square 'perfect' to using it synonymous to {diagonal} in cubes is however also resolve by putting curly brackets around qualifiers, so {'''perfect'''} means {pan r-agonal; r = 1..n} (as mentioned above).
+
+some minor qualifications are:
+*{'''<sup>n</sup>compact'''} : {all order 2 subhyper cubes sum to 2<sup>n</sup> <sup>n</sup>S<sub>m</sub> / m}
+*{'''<sup>n</sup>complete'''} : {all pairs halve an n-agonal apart sum equal (to (m<sup>n</sup> - 1)}
+
+{'''<sup>n</sup>compact'''} might be put in notation as : '''<sub>(k)</sub>∑ [<sub>j</sub>i + <sub>k</sub>1] = 2<sup>n</sup> <sup>n</sup>S<sub>m</sub> / m'''.<br />
+{'''<sup>n</sup>complete'''} can simply written as: '''[<sub>j</sup>i] + [<sub>j</sup>i + <sub>k</sub>(m/2) ; #k=n ] = m<sup>n</sup> - 1'''.<br />
+Where:<br />
+<sub>(k)</sub>∑ is symbolic for summing all possible k's, there are 2<sup>n</sup> possibilities for <sub>k</sub>1.<br />
+[<sub>j</sub>i + <sub>k</sub>1] expresses [<sub>j</sub>i] and all its r-agonal neighbors.<br />
+for {complete} the complement of [<sub>j</sup>i] is at position [<sub>j</sup>i + <sub>k</sub>(m/2) ; #k=n ].
+
+for squares: {'''<sup>2</sup>compact <sup>2</sup>complete'''} is the "modern/alternative qualification" of what Dame [[Kathleen Ollerenshaw]] called [[most-perfect magic square]], {<sup>n</sup>compact <sup>n</sup>complete} is the qualifier for the feature in more than 2 dimensions<br />
+Caution: some people seems to equate {compact} with {<sup>2</sup>compact} instead of {<sup>n</sup>compact}. Since this introductory article is not the place to discuss these kind of issues I put in the dimensional pre-superscript <sup>n</sup> to both these qualifiers (which are defined as shown) <br />
+consequences of {<sup>n</sup>compact} is that several figures also sum since they can be formed by adding/subtracting order 2 sub-hyper cubes. Issues like these go beyond this articles scope.
+
+==Special hypercubes==
+The following hypercubes serve special purposes;
+
+===The "normal hypercube"===
+ <sup>n</sup>N<sub>m</sub> : [<sub>k</sub>i] = <sub>k=0</sub>∑<sup>n-1</sup> <sub>k</sub>i m<sup>k</sup>
+This hypercube can be seen as the source of all numbers. A procedure called [http://www.magichypercubes.com/Encyclopedia/d/DynamicNumbering.html "Dynamic numbering"] makes use of the  [[isomorphism]] of every hypercube with this normal, changing the source, changes the hypercube. Usually these sources are limited to direct products of normal hypercubes or normal [[Magic hyperbeam|hyperbeams]] (defined as having possibly other orders along the various directions).
+
+===The "constant 1"===
+ <sup>n</sup>1<sub>m</sub> : [<sub>k</sub>i] = 1
+The hypercube that is usually added to change the here used "analytic" number range into the "regular" number range. Other constant hypercubes are of course multiples of this one.
+
+== See also ==
+
+*[[Magic hyperbeam]]
+*[[Nasik magic hypercube]]
+*[[Space diagonal]]
+*[[John R. Hendricks]]
+
+==File format==
+Based on [[XML]], the file format [http://www.magichypercubes.com/Encyclopedia/x/XmlHypercubes.html Xml-Hypercubes] is developed to describe various hypercubes to ensure human readability as well as programmatical usability. Besides full listings the format offers the ability to invoke mentioned constructions (amongst others)
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://www.magichypercubes.com/Encyclopedia/index.html The Magic Encyclopedia] Articles by Aale de Winkel
+* [http://members.shaw.ca/hdhcubes/ Magic Cubes - Introduction] by Harvey D. Heinz
+* [http://math.ku.sk/~trenkler/Cube-Ref.html Magic Cubes and Hypercubes - References] Collected by Marian Trenkler
+** [http://math.ku.sk/~trenkler/05-MagicCube.pdf An algorithm for making magic cubes] by Marian Trenkler
+* [http://www.multimagie.com/ multimagie.com ] Articles by Christian Boyer
+
+==Further reading==
+
+* J.R.Hendricks: Magic Squares to Tesseract by Computer, Self-published, 1998, 0-9684700-0-9
+* Planck, C., M.A.,M.R.C.S., The Theory of Paths Nasik, 1905, printed for private circulation. Introductory letter to the paper
+
+{{DEFAULTSORT:Magic Hypercube}}
+[[Category:Recreational mathematics]]
+[[Category:Magic squares|*]]
+
+[[nl:magische hyperkubus]]</body> </html>

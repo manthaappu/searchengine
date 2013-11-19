@@ -1,0 +1,62 @@
+<html> <head> <title>AS2</title></head><body>{{for|ActionScript version 2 (programming language used with [[Adobe Flash]])|ActionScript}}
+
+
+'''AS2''' (Applicability Statement 2) is a [[specification]] about how to transport data
+securely and reliably over the [[Internet]]. Security is achieved by using [[digital certificate]]s and [[encryption]].
+
+== AS2 Technical Overview ==
+
+The AS2 protocol is based on [[HTTP]] and [[S/MIME]]. It was the second AS protocol developed and uses the same signing, encryption and [[Return_receipt#Message_Disposition_Notifications|MDN]] (as defined by [http://www.ietf.org/rfc/rfc3798.txt RFC3798]) conventions used in the original [[AS1_(networking)|AS1]] protocol. In other words:
+* Files are encoded as "attachments" in a standardized [[S/MIME]] message (an AS2 message).
+* AS2 messages are always sent using the [[HTTP]] or [[HTTPS]] protocol ([[Secure Sockets Layer]] — also known as SSL — is implied by HTTPS) and usually use the "POST" method (use of "GET" is rare).
+* Messages can be signed, but do not have to be.
+* Messages can be encrypted, but do not have to be.
+* Messages may request a Message Disposition Notification [MDN] back if all went well, but do not have to request such a message.
+* If the original AS2 message requested an MDN:
+** Upon the receipt of the message and its successful decryption or signature validation (as necessary) a "success" MDN will be sent back to the original sender. This MDN is typically signed but never encrypted (unless temporarily encrypted in transit via HTTPS). 
+***Upon the receipt and successful verification of the signature on the MDN, the original sender will "know" that the recipient got their message (this provides the "Non-repudiation" element of AS2)
+** If there are any problems receiving or interpreting the original AS2 message, a "failed" MDN may be sent back. However, part of the AS2 protocol states that the client must treat a lack of an MDN as a failure as well, so some AS2 receivers will simply not return an MDN in this case. 
+
+Like any other AS file transfer, AS2 file transfers typically require both sides of the exchange to trade SSL certificates and specific "trading partner" names before any transfers can take place. AS2 trading partner names can usually be any valid phrase.
+
+=== MDN Options ===
+
+Unlike AS1 or [[AS3 (networking)|AS3]] file transfers, AS2 file transfers offer several "MDN return" options instead of the traditional options of "yes" or "no". Specifically, the choices are:
+
+====AS2 w/ "Sync" MDNs====
+''Return Synchronous MDN via HTTP(S) ("AS2 Sync")'' - This popular option allows AS2 MDNs to be returned to AS2 message sender clients over the same HTTP connection they used to send the original message. This "MDN while you wait" capability makes "AS2 Sync" transfers the fastest of any type of AS file transfer, but it also keeps this flavor of MDN request from being used with large files (which may [[time out (telecommunication)|time out]] in low-[[Bandwidth (computing)|bandwidth]] situations). 
+
+====AS2 w/ "ASync" MDNs====
+''Return Asynchronous MDN via HTTP(S) (a.k.a. "AS2 Async")'' - This popular option allows AS2 MDNs to be returned to the AS2 message sender's server later over a different HTTP connection. This flavor of MDN request is usually used if large files are involved. 
+
+====AS2 w/ "Email" MDNs====
+''Return (Asynchronous) MDN via Email'' - This rarely-used option allows AS2 MDNs to be returned to AS2 message senders via [[email]] rather than HTTP. Otherwise, it is similar to "AS2 Async (HTTP)".
+
+====AS2 w/ No MDNs====
+''Do not return MDN'' - This option works like it does in any other AS protocol: the receiver of an AS2 message with this option set simply does not try to return an MDN to the AS2 message sender.
+====AS2 FileName Preserve ====
+
+AS2 filename preservation feature will be used to communicate the filename to the trading partner. The banking industry relies on filenames being communicated between trading partners. AS2 vendors are currently certifying that implementation of filename communication conforms to the standard and is interoperable. 
+There are two profiles for filename preservation being optionally tested under AS2 testing: 
+*Filename preservation without MDN responses 
+*Filename preservation with an associated MDN response certification
+
+==External links==
+* [http://www.ietf.org/rfc/rfc4130.txt AS2 Specification, RFC 4130] AS2 specification as listed in [[request for comments|RFC]] #4130
+* [http://www.networkworld.com/news/tech/2002/1209techupdate.html AS2 secures documents using the Web]
+* [http://www.drummondgroup.com/html-v2/as2-companies.html AS2 Providers - Drummond Certified]
+* [http://sourceforge.net/search/?type_of_search=soft&type_of_search=soft&words=AS2 Opensource AS2 Providers]
+* [http://www.cleo.com/university/tech-terms/AS2_Cryptographic_Services.php Explanation of AS2 Cryptographic Services]
+* [http://code.google.com/p/babelas2/ BabelAS2, a very simple VBScript to send any message using AS2, just to demonstrate that AS2 is NOT difficult/complex ;-)]
+* [http://www.as2secure.com/ AS2Secure] Php Lib implementation - Opensource Project available under LGPL v3
+* [http://www.as2basics.co.uk AS2 Basics] Resource for learning about AS2 and how to trade electronically with your partners
+* [http://www.as2box.net/ AS2Box] Managed AS2 Service
+
+[[Category:Computer networks]]
+[[Category:Cryptographic protocols]]
+[[Category:Internet standards]]
+
+[[de:AS2]]
+[[fr:Applicability Statement 2]]
+[[nl:AS2]]
+[[pl:AS2]]</body> </html>

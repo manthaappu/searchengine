@@ -1,0 +1,556 @@
+<html> <head> <title>AutoRun</title></head><body>'''AutoRun''' and the companion feature [[AutoPlay]] are components of the [[Microsoft Windows]] [[operating system]] that dictate what actions the system takes when a drive is [[Mount (computing)|mounted]].
+
+AutoRun was introduced in [[Windows 95]] to ease application installation for non-technical users and reduce the cost of software support calls. When an appropriately configured [[CD-ROM]] is inserted into a CD-ROM drive, Windows detects the arrival and checks the contents for a special file containing a set of instructions. For a commercial application, these instructions normally initiate installation of the software from the CD-ROM. To maximise the likelihood of installation success, AutoRun also acts when the drive is accessed ("[[double-click]]ed") in [[Windows Explorer]] (or "My Computer").
+
+Until the introduction of [[Windows XP]], the terms AutoRun and AutoPlay were used interchangeably, developers often using the former term and end users the latter. This tendency is reflected in Windows Policy settings named AutoPlay that change Windows Registry entries named AutoRun, and in the [[autorun.inf]] file which causes "AutoPlay" to be added to drives’ [[context menu]]s. The terminology was of little importance until the arrival of Windows XP and its addition of a new feature to assist users in selecting appropriate actions when new media and devices were detected. This new feature was called ''AutoPlay'' and a differentiation between the two terms was created.<ref name=autoplaydiff>[http://windowshelp.microsoft.com/Windows/en-us/help/a19ac945-1007-4638-9615-e2c3bfd92b751033.mspx What's the difference between AutoPlay and AutoRun?], Microsoft, ''Windows Vista Help''</ref>
+
+== AutoRun ==
+
+AutoRun, a feature of Windows Explorer (actually of the shell32 [[Dynamic Link Library|dll]]) introduced in Windows 95, enables media and devices to launch programs by use of commands listed in a file called <tt>[[autorun.inf]]</tt>, stored in the [[root directory]] of the medium.
+
+Primarily used on installation CD-ROMs, the applications called are usually application installers. The autorun.inf file can also specify an icon which will represent the device visually in Explorer along with other advanced features.<ref name=autoplaydiff/>
+
+The terms AutoRun and AutoPlay tend to be interchangeably used when referring to the initiating action, the action that detects and starts reading from discovered [[volume (computing)|volume]]s. The [[AutoPlay#From detection to application|flowchart illustration]] in the AutoPlay article shows how AutoRun is positioned as a layer between AutoPlay and the Shell Hardware Detection service and may help in understanding the terminology. However, to avoid confusion, this article uses the term AutoRun when referring to the initiating action.
+
+== AutoPlay ==
+
+[[Image:AutoPlay.png|thumb|AutoPlay in [[Windows Vista]] ]]
+
+[[AutoPlay]] is a feature introduced in Windows XP which examines removable media and devices and, based on content such as pictures, music or video files, launches an appropriate application to play or display the content.<ref name=autoplaydiff/> If available, settings in an autorun.inf file can add to the options presented to the user.
+
+AutoPlay is based on a set of handler applications registered with the AutoPlay system. Each media type (Pictures, Music, Video) can have a set of registered handlers which can deal with playing or display that type of media.
+
+Each hardware device can have a default action occurring on discovery of a particular media type, or the AutoPlay dialog can prompt the user what action to take.
+
+== AutoRun activation ==
+
+The AutoRun sequence starts with the initial discovery of a new device or new piece of media. Following this, notification of interested parties occurs, of which the Windows Explorer shell is of primary interest. After checking certain [[Windows Registry|Registry]] settings to see if AutoRun can proceed, parsing of an optional autorun.inf may occur and any necessary actions are taken.(not working)
+
+The initial sequence is handled much the same in every version of Windows from Windows 95. However, the way the autorun.inf file is read and acted upon and the level of integration of AutoRun with AutoPlay has changed significantly from the time AutoPlay was introduced in Windows XP until the present handling in [[Windows 7]].
+
+=== Initiation and notification ===
+
+When a device with AutoRun-compatible drivers receives new media, a "Media Change Notification" event occurs. The Windows [[operating system|OS]] then notifies interested applications that a device change has occurred. The notification method used can change depending on the device type.
+
+If the device changed is a volume (like a CD) or a port (like a serial port) Windows broadcasts a <tt>WM_DEVICECHANGE</tt> notification to all top level windows.<ref>[http://support.microsoft.com/kb/q163503/ How to receive notification of CD-ROM insertion or removal], Microsoft, ''Knowledge Base''</ref><ref>[http://msdn.microsoft.com/en-us/library/aa363215(VS.85).aspx Detecting media insertion or removal], Microsoft, ''[[Microsoft Developer Network|MSDN]] Library''</ref> Windows calls this a "basic" notification. A top level window is one which is a descendant of the desktop.
+
+However, if the device changed is not one of these types an application can use the <tt>RegisterDeviceNotification</tt><ref>[http://msdn.microsoft.com/en-us/library/aa363431(VS.85).aspx RegisterDeviceNotification function], Microsoft, ''MSDN Library''</ref> function to register to receive device notifications.
+
+<blockquote>
+An article on the CodeProject website, [http://www.codeproject.com/KB/system/HwDetect.aspx "Detecting Hardware Insertion and/or Removal"], with [http://blogs.msdn.com/doronh/archive/2006/02/15/532679.aspx clarifications] from a [[Weblog|blog]] by Doran Holan is of particular technical interest here.
+</blockquote>
+
+Non-volume devices are those devices that do not appear as drive letters in "My Computer". These are not handled by any part of AutoRun - any actions taken for these devices are taken either by device specific software or by AutoPlay. See [[AutoPlay#Devices that are not drives]].
+
+When Explorer receives notification of a ''volume'' change, it performs a number of actions:<ref name=appcreate>[http://msdn.microsoft.com/en-us/library/cc144206(VS.85).aspx Creating an AutoRun-Enabled Application], Microsoft, ''MSDN Library''</ref><ref name=enadis>[http://msdn.microsoft.com/en-us/library/cc144204(VS.85).aspx Enabling and Disabling AutoRun], Microsoft, ''MSDN Library''</ref>
+
+<ol>
+<li> Checks to see if AutoRun has been disabled through the Registry. If AutoRun is disabled for that drive or drive type, Explorer does not proceed further. There have been [[#The AutoRun disable bug|bugs]] in this area. </li>
+
+<li> Checks that the root directory of the inserted media contains an autorun.inf file, which might be read. See [[#Changing behaviour|below]]. </li>
+
+<li> Sends a <tt>QueryCancelAutoPlay</tt> message to the foreground window. An application which has registered its interest in receiving this message using <tt>RegisterWindowMessage</tt> can respond to this message to halt AutoRun (and thus AutoPlay) at this point. Any application, foreground or not, can also be notified by using the <tt>IQueryCancelAutoPlay</tt> [[Component Object Model|COM]] interface<ref>[http://msdn.microsoft.com/en-us/library/bb761373(VS.85).aspx IQueryCancelAutoPlay Interface], Microsoft, ''MSDN Library''</ref> available in Windows XP and later. </li>
+
+<li> Alters [[double-click]] and contextual menu behaviours. When a user double clicks on the drive icon in Explorer or right clicks to get a context menu, what happens is fully programmable by settings in the autorun.inf file. </li>
+
+<li> Adds an autorun.inf controllable icon and descriptive text to the drive icon. </li>
+
+<li> Checks to see if the {{keypress|[[Shift key|Shift]]}} key is held down. If it is then Windows Vista (and later Windows versions) will invoke the AutoPlay dialog regardless of settings to the contrary.<ref name=vista_ap_faq>[http://windowshelp.microsoft.com/Windows/en-us/help/7e1fe788-0747-4e00-895b-c3461b1ddd971033.mspx AutoPlay: frequently asked questions], Microsoft, ''Windows Vista Help''</ref> Previous versions of Windows will not continue with the process.<ref name=enadis/> </li>
+
+<li> Finally, if this point has been reached, either:
+* takes no further action.
+* executes the "AutoRun task", the application optionally specified in the <code>open</code> or <code>shellexecute</code> keys in an autorun.inf's [[autorun.inf#%5bautorun%5d|&#91;autorun&#93;]] section.
+* invokes AutoPlay.
+Which choice is made depends on the version of Windows in use, instructions from the autorun.inf if available and the type of the media discovered. </li>
+</ol>
+
+=== Changing behaviour ===
+
+{{See also|autorun.inf#Inf handling}}
+
+==== Before AutoPlay ====
+
+On Windows versions prior to Windows XP, an autorun.inf file on any drive type will be read and its instructions followed. The AutoRun task, if specified, is executed immediately without user interaction.<ref name=inftest>[http://support.microsoft.com/kb/136214 How to Test autorun.inf Files], Microsoft, ''Knowledge Base''</ref> This includes DRIVE_REMOVABLE, DRIVE_FIXED and DRIVE_REMOTE [[#Drive types|drive types]].
+
+AutoRun will work with network drives (the DRIVE_REMOTE drive type) that are mapped to a drive letter. AutoRun will also work with floppy drives that are provided with autorun-compatible drivers.<ref name=enadis/>
+
+The default Registry settings on Windows versions prior to Windows XP (See [[#NoDriveTypeAutoRun|NoDriveTypeAutoRun]]), disable Remote and Removable drives from AutoRun initiation, leaving Fixed and CDROM drive types active by default.
+
+==== Introducing AutoPlay ====
+
+With the introduction of AutoPlay in Windows XP, the final stage action (stage 7 above) for some drive types changed from executing an application to invoking AutoPlay. From Windows Vista, the AutoPlay system is integrated into every aspect of media handling and there is no automatic execution of the AutoRun task.
+
+The default Registry settings add Removable drives to those that initiated AutoRun. In Windows XP and higher, ''except'' Windows Server 2003, only the Unknown and Remote drive types are not active for AutoRun.
+
+The handling of the autorun.inf file changes very significantly between each Windows version. The details can be found in the [[autorun.inf#Inf handling|autorun.inf]] article. The current handling in Windows 7 is that ''only'' drives of type DRIVE_CDROM may specify an AutoRun task, alter double-click behaviour or change context menus.
+
+=== The AutoPlay safety net ===
+
+It would appear that AutoPlay, by transferring control of what were previously automatic and invisible actions to AutoPlay, acts to increase user control and safety. This applies especially from Windows Vista, where all media and devices fall under AutoPlay control.
+
+However, it is important to note that:
+
+* A user can instruct AutoPlay to make automatic choices on their behalf, including the execution of any AutoRun task.
+
+* When a user double clicks on the drive icon in Explorer or right clicks to get a context menu, what happens next is fully programmable by the autorun.inf file and is essentially outside AutoPlay's purview. This is true under any Windows operating system.
+
+* Disabling AutoRun may force a user to double click the drive icon to get a contents list, thus actually increasing the chance of malware infiltration.
+
+== Registry settings ==
+
+AutoRun consults [[Windows Registry]] values to decide whether to initiate actions for any particular drive or drive type. These values can be changed using several methods, one of which is using [[Group policy|Group Policy]].
+
+The primary relevant Registry entry names are <tt>NoDriveTypeAutoRun</tt> and <tt>NoDriveAutoRun</tt>. These exist in both per-machine and per-user settings and their location and priority in the Registry are described in further detail below.
+
+=== Drive types ===
+
+The drive types are distinguished by Type Name as follows:<ref>[http://msdn.microsoft.com/en-us/library/aa364939.aspx GetDriveType Function], Microsoft, ''MSDN Library''</ref>
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+! Type name        !!   Description
+|-
+| DRIVE_UNKNOWN    ||   The drive type cannot be determined
+|-
+| DRIVE_REMOVABLE  ||   The drive has removable media (floppy drive, [[USB flash drive]])
+|-
+| DRIVE_FIXED      ||   The disk cannot be removed from the drive (hard disk)
+|-
+| DRIVE_REMOTE     ||   The drive is a remote (network) drive
+|-
+| DRIVE_CDROM      ||   The drive is a CD-ROM or DVD-ROM drive
+|-
+| DRIVE_RAMDISK    ||   The drive is a [[RAM disk]]
+|}
+
+=== Registry terminology ===
+
+<!-- I was torn over whether any of this was necessary given the existence of the Windows Registry article but I decided to do it anyway. I may make some additions to the registry article and remove this section at a later date. Carveone. -->
+
+The Windows Registry is a hierarchical [[directory (database)|database]] that stores configuration settings and options for the operating system. The terminology is somewhat misleading so it is briefly summarised here.
+
+A Registry ''key'' is similar to a folder that, in addition to values, each key can contain subkeys which in turn may contain subkeys, and so on.
+
+A Registry ''value'' consists of a name-data pair. Microsoft documentation commonly uses the term "entry" as an equivalent term. It also uses "value" for "data" when it is obvious what is meant. To avoid confusion, this article always uses the term "entry" when referring to the name-data pair.
+
+Two Registry keys that are very commonly referred to are <tt>HKEY_LOCAL_MACHINE</tt> which contains per-machine settings, and <tt>HKEY_CURRENT_USER</tt> which contains settings for the currently logged-on user. These are almost always abbreviated as <tt>HKLM</tt> and <tt>HKCU</tt> respectively. There may be many users of a machine; their settings are stored in <tt>HKEY_USERS</tt>, <tt>HKCU</tt> is actually just a link to the appropriate place in <tt>HKEY_USERS</tt>.
+
+=== Changing Registry settings ===
+
+Registry settings may be changed directly by using the GUI <tt>regedit</tt> tool or the command line <tt>reg.exe</tt> utility. Settings can also be placed in a [[#Registry files|text file]],<ref name=kb310516>[http://support.microsoft.com/kb/310516 How to use a registration entries file], Microsoft, ''Knowledge Base''</ref> named with a .reg extension type. For example, "<tt>mychanges.reg</tt>". When the file is double clicked, the settings in the file are entered into the Registry, permissions allowing.
+
+They can be changed indirectly by using Group Policy, applied locally to a single computer with <tt>GPEdit.msc</tt> or to a domain with <tt>gpmc.msc</tt>.
+
+It may be necessary to either logout or restart the computer in order for any Registry changes to take effect.
+
+=== Evaluation order ===
+
+The <tt>NoDriveAutoRun</tt> and <tt>NoDriveTypeAutoRun</tt> Registry entries can exist in two places, the per-user setting (under HKEY_CURRENT_USER) and the per-machine setting (under HKEY_LOCAL_MACHINE). If an entry appears under HKEY_LOCAL_MACHINE, then any corresponding entry under HKEY_CURRENT_USER is completely ignored. The data values are not merged in any way.
+
+When deciding whether to activate AutoRun, both <tt>NoDriveAutoRun</tt> and <tt>NoDriveTypeAutoRun</tt> Registry entries are consulted. If either value indicates a drive should be disabled then AutoRun is disabled for that drive.
+
+Thus in the following example:
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+! colspan="2" | HKEY_LOCAL_MACHINE     !! colspan="2" | HKEY_CURRENT_USER
+|-
+! NoDriveAutoRun !! NoDriveTypeAutoRun !! NoDriveAutoRun  !! NoDriveTypeAutoRun
+|-
+| <center> 0x08 </center>
+| <center> (Not Present) </center>
+| <center> 0x03FFFFFF </center>
+| <center> 0x95 </center>
+|}
+
+the data value taken for <tt>NoDriveAutoRun</tt> is 0x08, disabling drive D and the data value taken for <tt>NoDriveTypeAutoRun</tt> is 0x95, disabling removable and network drives. The per-user <tt>NoDriveAutoRun</tt> entry is never used.
+
+=== NoDriveTypeAutoRun ===
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt> <br> <tt>HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>NoDriveTypeAutoRun</tt>
+| <center> REG_DWORD </center>
+| <center> 0x00 to 0xFF  </center>
+| <center> 0x95 or 0x91 </center>
+|}
+
+This Registry entry disables or enables the AutoRun feature on all drives of the type specified.<ref name=reg_nodtar>[http://technet.microsoft.com/en-us/library/cc959381.aspx Windows 2000 Registry: NoDriveTypeAutoRun], Microsoft, ''[[Microsoft TechNet|TechNet]]''</ref> It reflects the setting of the relevant Autoplay Group Policy. Valid data ranges from 0x00 to 0xFF in [[hexadecimal]] notation. If the entry is not present, the default data value is either 0x95 or 0x91 depending on the version of Windows used. An entry present in HKLM overrides any entry present in HKCU.
+
+The entry data is a bitmapped value, where a bit set to 1 disables AutoRun on a particular type of drive. The bit settings for each type of drive are shown below:
+
+:[[Image:NoDriveTypeAutoRun bit settings.gif|none|drive type bitwise settings]]
+
+Note that bit number 1 is unused and that the "Unknown" type is represented twice. Setting all bits to 1 would give a hexadecimal value of 0xFF, decimal 255, and would disable AutoRun on all types of drives.
+
+The default setting for this entry depends on the version of Windows being used:<ref name=inftest/><ref name=kb967715>[http://support.microsoft.com/kb/967715 How to disable the Autorun functionality in Windows], Microsoft, ''Knowledge Base''</ref>
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+! Operating system      !!  Default setting
+|-
+| Windows 7             ||  <center> 0x91 </center>
+|-
+| Windows Server 2008   ||  <center> 0x91 </center>
+|-
+| Windows Vista         ||  <center> 0x91 </center>
+|-
+| Windows Server 2003   ||  <center> 0x95 </center>
+|-
+| Windows XP            ||  <center> 0x91 </center>
+|-
+| Windows 2000          ||  <center> 0x95 </center>
+|-
+| Windows 95/98         ||  <center> 0x95 </center>
+|}
+
+=== NoDriveAutoRun ===
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt> <br> <tt>HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt>
+|-
+! Entry name !! Data type !!  Range  !! Default
+|-
+| <tt>NoDriveAutoRun</tt>
+| <center> REG_DWORD </center>
+| <center> 0x0 to 0x03FFFFFF </center>
+| <center> 0x0               </center>
+|}
+
+This Registry entry disables or enables the AutoRun feature on individual drives.<ref name=reg_nodar>[http://technet.microsoft.com/en-us/library/cc959387.aspx Windows 2000 Registry: NoDriveAutoRun], Microsoft, ''TechNet''</ref> It is not associated with a Group Policy and does not exist by default. The data value is taken to be 0 if the entry is not present. An entry present in HKLM overrides any entry present in HKCU.
+
+The data is a 32 bit (DWORD) bitmapped value, of which the lower 26 bits are used to represent each of the 26 drive letters from A to Z. Thus the valid data range is from 0x0 to 0x03FFFFFF. The least significant bit (the right most bit) represents drive A, and the 26th bit from the right represents drive Z.
+
+A bit set to 1 disables AutoRun on a particular drive. For example, if the data value is set to 0x8 (1000 binary), AutoRun is disabled on drive D.
+
+== Group Policy ==
+
+[[Image:Group Policy Turn off Autoplay.gif|thumb|The Group Policy settings dialog]]
+
+The only Group Policy settings available for AutoRun affect the <tt>NoDriveTypeAutoRun</tt> Registry entries. The policy is available on either a per-machine or a per-user basis reflecting the Registry entry location in either HKLM or HKCU.<ref name=reg_nodtar/><ref name=reg_nodar/> As described [[#Evaluation order|above]], a per-machine policy setting will cause the per-user policy setting to be ignored.
+
+When a policy is ''Enabled'', Group Policy will add the <tt>NoDriveTypeAutoRun</tt> entry to the Registry. If the policy is ''Disabled'' or set to ''Not configured'', Group Policy deletes this entry from the Registry. System defaults may then take effect as described in the [[#NoDriveTypeAutoRun|NoDriveTypeAutoRun]] section.
+
+The policy names, locations and possible settings vary slightly between Windows versions. The list of settings are relatively short and are always additional to the system default setting. Therefore, on Windows 2000, enabling the "Disable Autoplay" policy and setting it to "CD-ROM drives", disables AutoRun (as distinct from AutoPlay) for CD-ROM and DVD drives, removable drives, network drives, and drives of unknown type.
+
+This setting cannot be used to enable AutoRun on drives on which it is disabled by default or disable AutoRun for drives not listed. To disable or enable any particular drives or drive types, the Registry must be edited manually.
+
+=== Windows Server 2003, Windows XP, and Windows 2000 ===
+
+The per-machine policy location is:
+: Group Policy \ Computer Configuration \ Administrative Templates \ System
+
+The per-user policy location is:
+: Group Policy \ User Configuration \ Administrative Templates \ System
+
+The relevant policy is "Turn off Autoplay". In Windows 2000 the policy is called "Disable Autoplay" instead.
+
+Once the policy is Enabled it can be set to "All drives" or "CD-ROM drives". The latter setting adds CD-ROM drives to the existing list of disabled drive types as described above.
+
+=== Windows Vista, Windows Server 2008 ===
+
+The per-machine policy location is:<ref>[http://technet.microsoft.com/en-us/library/bb629455.aspx Windows Vista Security Guide, Chapter 3], Microsoft, ''TechNet''</ref>
+: Computer Configuration \ Administrative Templates \ Windows Components \ Autoplay Policies
+
+The per-user policy location is:
+: User Configuration \ Administrative Templates \ Windows Components \ AutoPlay Policies
+
+The relevant policy is "Turn off Autoplay" and can be set for CD-ROM, DVD-ROM and removable drives or all drives.
+
+Two related policies were added in Vista and Server 2008:<ref name=vistagpo>[http://www.microsoft.com/downloads/details.aspx?familyid=18C90C80-8B0A-4906-A4F5-FF24CC2030FB&displaylang=en Group Policy Settings Reference for Windows and Windows Server], Microsoft, ''Downloads'', [[Microsoft Excel|Excel]] Spreadsheets.</ref>
+
+<dl>
+<dt>Default behavior for AutoRun</dt>
+<dd>
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt> <br> <tt>HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>NoAutoRun</tt>
+| <center> REG_DWORD </center>
+| <center></center>
+| <center></center>
+|}
+
+Sets the default behavior for AutoRun commands found in autorun.inf files.
+
+Prior to Windows Vista, when media containing an autorun.inf specifying an AutoRun task was inserted, the default action was to automatically execute the program without user intervention. From Windows Vista the default behaviour is to invoke AutoPlay and represent the AutoRun task as one of the dialog options. This is also the behaviour when this policy is Not configured or Disabled.
+
+If this policy is Enabled, the behaviour can be changed to either:
+* Completely disable autorun.inf commands ''or''
+* Automatically execute the autorun.inf command as per previous Windows versions.
+</dd>
+
+<dt>Don't set the always do this checkbox</dt>
+<dd>
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt>  <br> <tt>HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>DontSetAutoplayCheckbox</tt>
+| <center> REG_DWORD </center>
+| <center></center>
+| <center></center>
+|}
+
+If this policy is Enabled, the "Always do this..." checkbox in the AutoPlay dialog will not be set by default when the dialog is shown.
+</dd>
+</dl>
+
+=== Windows 7, Windows Server 2008 R2 ===
+
+In these versions of Windows, the ability of an autorun.inf file to set an AutoRun task, alter double-click behaviour or change context menus is restricted to drives of type DRIVE_CDROM. There are no policy settings that will override this behaviour. Policy locations and settings are as per ''Windows Vista, Windows Server 2008'' above with the addition of:<ref name=vistagpo/>
+
+<dl>
+<dt>Turn off Autoplay for non-volume devices</dt>
+<dd>
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Policies\Microsoft\Windows\Explorer</tt> <br> <tt>HKCU\Software\Policies\Microsoft\Windows\Explorer</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>NoAutoplayfornonVolume</tt>
+| <center></center>
+| <center></center>
+| <center></center>
+|}
+
+If this policy is enabled, AutoPlay will be disabled for [[AutoPlay#Devices that are not drives|non-volume]] devices.
+</dd>
+</dl>
+
+== Altering AutoRun behaviour ==
+=== Pressing the Shift key ===
+
+If the {{keypress|Shift}} key is held down at a certain point in the execution sequence Windows Vista invokes the AutoPlay dialog regardless of any AutoPlay settings to the contrary.<ref name=vista_ap_faq/> Previous versions of Windows do not execute the AutoRun task.<ref name=enadis/>
+
+Given that Shift must be held down until Windows checks for it, it may be a considerable amount of time before it becomes effective. The time taken primarily depends on the time to recognise the new hardware and the time taken for CD-ROMs to spin up. It is unsafe to rely on this method.
+
+=== Auto Insert Notification ===
+
+Certain [[#Initiation and notification|Media Change Notification]] events may be suppressed by altering certain Registry entries. "Media Change Notification" is the generic term; for CD-ROM drives, the specific term is "Auto Insert Notification".
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\SYSTEM\CurrentControlSet\Services\Cdrom</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>AutoRun</tt>
+| <center> REG_DWORD </center>
+| <center> 0 or 1 </center>
+| <center> 1 </center>
+|}
+
+For CD-ROM drives, changing the value of this Registry entry to 0, will disable Auto Insert Notification for CD-ROM drives only.<ref>[http://technet.microsoft.com/en-gb/library/cc976182.aspx Windows 2000 Registry: AutoRun], Microsoft, ''TechNet''</ref> A Windows restart will be necessary.
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+! Data value  !!  Meaning
+|-
+|  <center>0</center>  ||  Does not send an MCN message
+|-
+|  <center>1</center>  ||  Sends an MCN message
+|}
+
+Under Windows 95/98/ME, this setting can be changed under Device Manager, accessible from the System icon in Control Panel.
+
+[[Image:Win98 devmgr ain.png|thumb|Auto insert notification under Windows 98]]
+
+Although the Registry entry is named "AutoRun", it only suppresses the MCN message. The MCN message does trigger AutoRun initiation but it also instructs the Explorer shell to update its views and contents.
+
+Thus, as a side effect only, this disables AutoRun for CD-ROM drives. However, Explorer will now not update its view when a new CD is inserted; it will show the contents of the previous CD until {{keypress|F5}} is pressed or View/Refresh is selected from the Explorer menu. This could result in severe confusion for users.
+
+For this reason the Media Change Notification message should not be disabled unless there is absolutely no alternative; AutoRun can be disabled for individual drives using Group Policy or the Registry.
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="2" | <tt>HKLM\SYSTEM\CurrentControlSet\Services\Cdrom</tt>
+|-
+! Entry name !!  Data type
+|-
+| <tt>AutoRunAlwaysDisable</tt>
+| REG_MULTI_SZ 
+|}
+
+This entry is used to suppress the MCN message for specifically listed type of CD-ROM drive,<ref>[http://technet.microsoft.com/en-gb/library/cc960238.aspx Windows 2000 Registry: AutoRunAlwaysDisable], Microsoft, ''TechNet''</ref> primarily CD-ROM changers. The data is a set of device identifiers, which matches those identifiers reported to the system by the devices themselves.
+
+The default value for this entry consists of products identified by Microsoft testing as being unable to support AutoRun. This entry should not be altered from its default.
+
+=== Editing Group Policy ===
+
+AutoRun may be suppressed on particular drives and drive types by using the methods described in the [[#Group Policy|Group Policy]] section. However, the Group Policy Editor is not available on Home versions of Windows XP<ref>[http://technet.microsoft.com/en-us/library/bb457127.aspx Windows XP Pro Resource Kit, Differences with Windows XP Home Edition], Microsoft, ''TechNet''</ref> and does not provide any fine-grained drive selection facilities.
+
+However, Group Policy would be the accepted method of disabling AutoRun on an entire Windows domain.
+
+=== Registry files ===
+
+A Registry setting file can be created that, when executed, makes the desired changes in the Registry.
+
+{| style="font-size:90%; margin:1.5em 1em 1.5em 2em;"
+|-
+|
+<source lang="reg">
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\policies\Explorer]
+"NoDriveTypeAutoRun"=dword:000000ff
+
+</source>
+
+:''Note that the actual file should always end with a blank line. This is not optional.<ref name=kb310516/>''
+|}
+
+In the above example, AutoRun would be disabled for all drives and for all users. This example would need to be run as Administrator and a reboot would be needed for the setting to take complete effect.
+
+=== Initialization file mapping ===
+
+Windows Vista and later versions of Windows have a policy setting, "Default behavior for AutoRun", that can be set to disallow the reading of an autorun.inf file on any volume. This avoids certain scenarios where [[malware]] leverages autorun.inf functionality to infect a machine. Previous versions of Windows do not have this policy setting but the use of [[INI file#File mapping|initialisation file mapping]] is an effective workaround.<ref>[http://nick.brown.free.fr/blog/2007/10/memory-stick-worms.html Memory stick worms], ''Nick Brown's blog''</ref>
+
+As an autorun.inf file is a standard Windows [[INI file]], the appropriate [[API]] calls are used by Windows when fetching its settings. These API calls can be redirected using the INI file mapping method. The following [[#Registry files|Registry file]] illustrates the workaround, where all autorun.inf settings are taken solely from the <tt>HKEY_LOCAL_MACHINE\Software\DoesNotExist</tt> Registry key:
+
+{| style="font-size:90%; margin:1.5em 1em 1.5em 2em;"
+|-
+|
+<source lang="reg">
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\IniFileMapping\Autorun.inf]
+@="@SYS:DoesNotExist"
+
+</source>
+|}
+
+As this key does not exist, it is as if the autorun.inf file contains no settings information. It is important to note that this applies to any autorun.inf in any location and on any drive.
+
+Both the policy setting and this workaround have the drawback is that installation of software from an autorunning install CD or DVD is no longer automatic. It will be necessary to view the CD's autorun.inf file and then execute the appropriate install program manually.
+
+== Issues and security ==
+=== The AutoRun disable bug ===
+
+From Windows 2000 through to Windows 2008 Server, AutoRun-relevant Registry entries were not handled properly leading to a security vulnerability.<ref>[http://www.kb.cert.org/vuls/id/889747 Windows Vista fails to properly handle the NoDriveTypeAutoRun registry value], [[US-CERT]]</ref> Windows 95 and Windows 98 were not affected.
+
+When AutoRun is disabled, Windows should not proceed further through the [[#AutoRun activation|activation]] sequence than the Registry check. However, it parses any autorun.inf found and does everything except the final action to invoke AutoPlay or execute an application.
+
+This leaves the user open to attack from malware which uses the autorun.inf to alter the double-click and contextual menu behaviours. Double clicking the drive icon will infect the machine. Right Clicking and selecting the "Explore" or "Open" options from the context menu is not a workaround as these menu items can be coopted by the appropriate autorun.inf entries.
+
+This bug was fixed in a number of security updates, detailed in [[Microsoft Knowledge Base]] article <tt>967715</tt>.<ref name=kb967715/>
+
+=== Other issues ===
+
+<ul>
+<li> If you add the computer to an Active Directory domain, the <tt>NoDriveTypeAutoRun</tt> value may be reset to a default value.<ref>[http://support.microsoft.com/kb/895108 The NoDriveTypeAutoRun subkey value is reset...], Microsoft, ''Knowledge Base''</ref> This is due to Group Policy settings in the domain taking effect. This is not a bug. </li>
+
+<li> Some programs may deliberately change AutoRun Registry settings. Early versions of CD burning software like Roxio have been known to change settings in this way.<ref name=kb330135>[http://support.microsoft.com/kb/330135 The AutoRun feature or the AutoPlay feature does not work...], Microsoft, ''Knowledge Base''</ref> </li>
+
+<li> If the Group Policy "Restrict CD-ROM access to locally logged-on user only" security option under:
+
+: Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options
+
+is turned on (Enabled), then AutoRun may not function.<ref name=kb330135/>
+
+Windows Installers will also malfunction because "Local System" access to the CD-ROM will be denied.<ref>[http://support.microsoft.com/kb/230895 You receive an "Installation ended prematurely because..."], Microsoft, ''Knowledge Base''</ref>
+
+This Group Policy setting reflects the value of the Registry entry:
+
+{| class="wikitable" style="margin:1.5em 1em 1.5em 2em;"
+|-
+| colspan="4" | <tt>HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon</tt>
+|-
+! Entry name !! Data type !! Range !! Default
+|-
+| <tt>allocatecdroms</tt>
+| <center> REG_SZ </center>
+| <center> 0 or 1 </center>
+| <center> 0      </center>
+|}
+
+and should be set to 0.
+
+</li>
+
+<li> Real Player 10 interferes with AutoPlay functionality to the extent that it may look as if AutoRun or AutoPlay is not working at all.<ref>[http://gladiator-antivirus.com/forum/index.php?s=&showtopic=15090&view=findpost&p=54229 Camera and Scanner Wizard, stopped working], ''Gladiator Security chat forum''</ref><ref>[http://www.vista-xp.co.uk/forums/hardware-operating-problems/3469-autoplay-not-working-digital-camera-sorted.html#post30012 Autoplay not working with digital camera], ''vista-xp chat forum''</ref><ref>[http://www.tech-archive.net/Archive/WinXP/microsoft.public.windowsxp.photos/2005-01/0365.html How to repair your camera Autoplay download], ''tech-archive.net chat forum''</ref> </li>
+</ul>
+
+=== Attack vectors ===
+
+AutoRun functionality has been used as a malware vector for some time. Prior to Windows Vista, the default action with a CD-ROM drive type was to follow any autorun.inf file instructions without prompts or warnings. This makes rogue CD-ROMs one possible infection vector.
+
+In the same category are mixed content CD-ROMs. An audio CD, that a user would not expect to contain software at all, can contain a data section with an autorun.inf. Some companies, such as [[2005 Sony BMG CD copy protection scandal|Sony BMG]], have used this vector to install software that attempts to protect against copying of the audio tracks.
+
+[[U3]] enabled flash drives, by [[Emulator|emulating]] a CD-ROM unit, can also cause Windows to execute commands from the autorun.inf found on the emulated CD-ROM.
+
+Devices like the [[Huawei E220]] HSDPA modem, validly use this method to autoinstall drivers for the modem itself. However plugging in a flash drive from an unknown source is an unwise move. [http://wiki.hak5.org/wiki/USB_Switchblade USB Switchblade], and other similar tools, have made U3 flash drive attacks trivial. Given the ease of writing [[scripting language|script]] based attacks, [[anti-virus]] software may be ineffective in preventing data and password stealing.
+
+[[Image:Conficker worm AutoPlay Vista.png|thumb|Social Engineering: The [[Conficker]] worm [http://isc.sans.org/diary.html?storyid=5695 in action] ]]
+
+With a standard flash drive, social engineering attacks can be employed to entice a user to click on the appropriate item in the AutoPlay dialog. An alluring [[autorun.inf#%5bautorun%5d|action]] string promising free games or pornography would lure many users into the trap. At any time, double clicking on the drive icon will use the autorun.inf automatically, a trap more advanced users could fall into.
+
+Any user can configure AutoPlay to make various decisions for them; by checking the appropriate box in the AutoPlay dialog, running flash drive malware becomes silent and automatic.
+
+AutoRun malware has been extended to use hard drives,<ref>[http://www.channelregister.co.uk/2007/11/12/maxtor_infected_hdd_updated/ Chinese Trojan on Maxtor HDDs spooks Taiwan], ''[[The Register]]'', 12 November 2007</ref> picture frames and other digital devices.<ref>[http://www.theregister.co.uk/2008/01/11/malware_digital_devices/ Malware hitches a ride on digital devices], ''The Register'', 11 January 2008</ref> Care in dealing with external devices is a security priority.
+
+=== Attack mitigation ===
+
+In addition to basic security precautions, which include<ref>[http://support.microsoft.com/kb/962007 Virus alert about the Win32/Conficker worm], Microsoft, ''Knowledge Base''</ref>
+* following the [[principle of least privilege]] by not habitually running with [[Superuser|Administrator]] privileges and
+* applying all relevant security patches and updates,
+exposure to these attacks can be minimised through the appropriate use of Group Policy and Registry settings. The following security policies are a summary of those described within this article:
+
+* Disable AutoRun (but see the [[#The AutoRun disable bug|AutoRun disable bug]])
+* Use the "Default behavior for AutoRun" Group Policy under Vista (see [[#Windows Vista, Windows Server 2008|above]]) to disable autorun.inf commands
+* Use [[#Initialization file mapping|initialization file mapping]] to nullify autorun.inf sections
+* Under Windows 7, only CD and DVD drives may specify applications like the AutoRun task in the autorun.inf file. Windows XP and later can be [[Patch (computing)|patch]]ed to behave in the same way with update <tt>KB971029</tt>.<ref>[http://support.microsoft.com/kb/971029 Update to the AutoPlay functionality in Windows], Microsoft, ''Knowledge Base''</ref>
+
+In addition, the following actions have been recommended by Microsoft, primarily during the [[Conficker]] worm attacks:
+
+* Prevent autorun.inf invocation from network shares by:<ref name=kb967715/>
+*# Deleting any existing autorun.inf file from the root of a mapped network drive
+*# Denying Create rights to the root of a mapped network drive
+* Prevent the use of USB storage devices by means of:
+** USB settings within the [[BIOS|System BIOS]]
+** Appropriate Registry settings as described in Knowledge Base article <tt>823732</tt><ref>[http://support.microsoft.com/kb/823732/ How can I prevent users from connecting to a USB storage device?], Microsoft, ''Knowledge Base''</ref>
+** Setting USB devices to read only to prevent propagation of unknown worms (and theft of proprietary data)<ref>[http://support.microsoft.com/kb/555443 Removable storage devices are not recognized after installing Windows XP SP2], Microsoft, ''Knowledge Base''</ref>
+
+== See also ==
+
+* [[AutoPlay]]
+* [[autorun.inf]]
+
+== References ==
+{{Reflist|2}}
+
+== External links ==
+* [http://msdn.microsoft.com/en-us/library/cc136610(VS.85).aspx AutoRun and AutoPlay Reference], Microsoft, ''MSDN Library''
+* [http://nick.brown.free.fr/blog/2007/10/memory-stick-worms.html Memory stick worms], ''Nick Brown's blog''
+* [http://autorun.synthasite.com/ Dan McCloy's Autorun Reference Guide]
+* [http://technet.microsoft.com/en-us/magazine/cc137730.aspx Security Watch Island Hopping: The Infectious Allure of Vendor Swag], ''TechNet Magazine''
+* [http://www.microsoft.com/msj/0998/win320998.aspx Figure 4: querycancelautoplay example code], ''Microsoft Systems Journal'', September 1998
+* [http://www.microsoft.com/downloads/details.aspx?familyid=C680A7B6-E8FA-45C4-A171-1B389CFACDAD&displaylang=en AutoPlay Repair Wizard], ''Microsoft Download Center''
+* [http://blogs.computerworld.com/test_your_defenses_against_malicious_usb_flash_drives Test your defenses against malicious USB flash drives], ''Computerworld blog, January 24, 2009''
+* [http://blogs.computerworld.com/the_best_way_to_disable_autorun_to_be_protected_from_infected_usb_flash_drives The best way to disable Autorun for protection from infected USB flash drives], ''Computerworld blog, January 30, 2009''
+* [http://www.yahowto.com/How_To_Remove_Autorun_Virus How To Remove AutoRun Virus]
+* [http://www.microsoft.com/windowsxp/Downloads/powertoys/Xppowertoys.mspx Microsoft PowerToys], Microsoft, ''[[Tweak UI]]''
+* [http://www.autostart-cd-rom.com/en/ Online Information Resource] on the autorun/autostart feature of Microsoft Windows
+* [http://tabgen.com/autorunconf/autorunconf.htm AutoRunConf] simple configuration tool for Autorun settings.
+
+{{Microsoft Windows components}}
+
+{{DEFAULTSORT:Autorun}}
+[[Category:Windows components]]
+[[Category:Computer security]]
+
+[[fr:AutoRun]]
+[[he:AutoRun]]
+[[pl:Autorun.inf]]
+[[ru:Автозапуск]]</body> </html>

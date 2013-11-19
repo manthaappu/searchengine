@@ -1,0 +1,66 @@
+<html> <head> <title>VALBOND</title></head><body>In [[molecular mechanics]], '''VALBOND''' is a method for computing the angle bending energy that is based on [[valence bond theory]].<ref>Root, D. M.; Landis, C. R.; Cleveland, T. Valence Bond Concepts Applied to the Molecular Mechanics Description of Molecular Shapes. 1. Application to Nonhypervalent Molecules of the P-Block. ''J. Am. Chem. Soc.'' '''1993''', ''115'', 4201-4209.</ref> It is based on ''orbital strength functions'', which are maximized when the [[orbital hybridisation|hybrid orbitals]] on the atom are [[orthogonality#Orthogonal_functions|orthogonal]]. The hybridization of the bonding orbitals are obtained from empirical formulas based on [[Bent's rule]], which relates the preference towards p character with electronegativity.
+
+The VALBOND functions are suitable for describing the energy of bond angle distortion not only around the equilibrium angles, but also at very large distortions. This represents an advantage over the simpler [[harmonic oscillator]] approximation used by many force fields, and allows the VALBOND method to handle [[hypervalent molecule]]s<ref>Cleveland, T.; Landis, C. R. Valence Bond Concepts Applied to the Molecular Mechanics Description of Molecular Shapes. 2. Application to Hypervalent Molecules of the P-Block. ''J. Am. Chem. Soc.'' '''1996''', ''118'', 6020-6030. {{doi|10.1021/ja9506521}}</ref> and [[complex (chemistry)|transition metal complexes]].<ref>Landis, C.  R.; Cleveland, T.; Firman; T. K. Valence Bond Concepts Applied to the Molecular Mechanics Description of Molecular Shapes. 3. Application to Transition Metal Alkyls and Hydrides. ''J. Am. Chem. Soc.'' '''1998''', ''120'', 2641-2649. {{doi|10.1021/ja9734859}}</ref><ref>Firman; T. K.; Landis, C.  R. Valence Bond Concepts Applied to the Molecular Mechanics Description of Molecular Shapes. 4. Transition Metals with π-Bonds. ''J. Am. Chem. Soc.'' '''2001''', ''123'', 11728-11742. {{doi|10.1021/ja002586v}}</ref> The VALBOND energy term has been combined with [[force field (chemistry)|force fields]] such as [[CHARMM]] and UFF to provide a complete functional form that includes also bond stretching, torsions, and non-bonded interactions.
+
+==Functional form==
+
+===Non-hypervalent molecules===
+
+For an angle α between normal (non-hypervalent) bonds involving an sp<sup>m</sup>d<sup>n</sup> hybrid orbital, the energy contribution is
+
+:<math>E(\alpha ) = k(S^{max} - S(\alpha))</math>,
+
+where ''k'' is an empirical scaling factor that depends on the elements involved in the bond, ''S<sup>max</sup>'', the ''maximum strength function'', is 
+
+:<math>S^{max} = \sqrt{\frac{1}{1+m+n}} (1 + \sqrt{3m} + \sqrt{5n})</math>
+
+and ''S(α)'' is the strength function
+
+:<math>S(\alpha ) = S^{max} \sqrt{1 - \frac{1- \sqrt{1 - \Delta ^2}}{2}}</math>
+
+which depends on the ''nonorthogonality integral'' Δ:
+
+:<math>\Delta = \frac{1}{1+m+n} \left [ 1+m \cos \alpha + \frac{n}{2}(3 \cos ^2 \alpha -1) \right ]</math>
+
+The energy contribution is added twice, once per each of the bonding orbitals involved in the angle (which may have different hybridizations and different values for ''k'').
+
+For non-hypervalent p-block atoms, the hybridization value ''n'' is zero (no d-orbital contribution), and ''m'' is obtained as %p(1-%p), where %p is the p character of the orbital obtained from
+
+:<math>%p_i = \frac{n_p wt_i}{\sum_{j} wt_j}</math>
+
+where the sum over ''j'' includes all ligands, lone pairs, and radicals on the atom, ''n<sub>p</sub>'' is the "gross hybridization" (for example, for an "sp<sup>2</sup>" atom, ''n<sub>p</sub>'' = 2). The weight ''wt<sub>i</sub>'' depends on the two elements involved in the bond (or just one for lone pair or radicals), and represents the preference for p character of different elements. The values of the weights are empirical, but can be rationalized in terms of Bent's rule.
+
+===Hypervalent molecules===
+
+For hypervalent molecules, the energy is represented as a combination of VALBOND configurations, which are akin to resonance structures that place [[three-center four-electron bond]]s (3c4e) in different ways. For example, ClF<sub>3</sub> is represented as having one "normal" two-center bond and one 3c4e bond. There are three different configurations for ClF<sub>3</sub>, each one using a different Cl-F bond as the two-center bond. For more complicated systems the number of combinations increases rapidly; SF<sub>6</sub> has 45 configurations.
+
+:<math>E_{tot} = \sum_j c_j E_j</math>
+
+where the sum is over all configurations ''j'', and the coefficient ''c<sub>j</sub>'' is defined by the function
+
+:<math>c_j = \frac{\displaystyle \prod_{i=1}^{hype} \cos^2 \alpha_i}{\displaystyle \sum_{j=1}^{config} \prod_{i=1}^{hype} \cos^2 \alpha_i}</math>
+
+where "hype" refers to the 3c4e bonds. This function ensures that the configurations where the 3c4e bonds are linear are favored.
+
+The energy terms are modified by multiplying them by a bond order factor, BOF, which is the product of the formal bond orders of the two bonds involved in the angle (for 3c4e bonds, the bond order is 0.5). For 3c4e bonds, the energy is calculated as 
+
+:<math>E(\alpha) = BOF \times k_{\alpha} [1-\Delta(\alpha + \pi)^2]</math>
+
+where Δ is again the non-orthogonality function, but here the angle α is offset by 180 degrees (π radians).
+
+Finally, to ensure that the axial vs equatorial preference of different ligands in hypervalent compounds is reproduced, an "offset energy" term is subtracted. It has the form
+
+:<math>E_{offset} = \sum_{i=1}^{config} c_i \sum_{j=1}^{hype} \frac{EN_{ija} + EN_{ijb}}{2}</math>
+
+where the EN terms depend on the [[electronegativity]] difference between the ligand and the central atom as follows:
+
+:<math>EN_{ija} = 30 \times (en_{lig} - en_{c.a.}) \times ss</math>
+
+where ''ss'' is 1 if the electronegativity difference is positive and 2 if it is negative.
+
+For p-block hypervalent molecules, d orbitals are not used, so ''n'' = 0. The p contribution ''m'' is estimated from [[ab initio quantum chemistry methods]] and a natural bond orbital (NBO) analysis.
+
+==References==
+{{reflist}}
+
+[[Category:Force fields]]</body> </html>

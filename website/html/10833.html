@@ -1,0 +1,89 @@
+<html> <head> <title>Divide-and-conquer eigenvalue algorithm</title></head><body>'''Divide-and-conquer eigenvalue algorithms''' are a class of [[eigenvalue algorithm]]s for [[Hermitian matrix|Hermitian]] or [[real number|real]] [[Symmetric matrix|symmetric matrices]] that have recently (circa 1990s) become competitive in terms of [[Numerical stability|stability]] and [[Computational complexity theory|efficiency]] with more traditional algorithms such as the [[QR algorithm]].  The basic concept behind these algorithms is the [[Divide and conquer algorithm|divide-and-conquer]] approach from [[computer science]].  An [[eigenvalue]] problem is divided into two problems of roughly half the size, each of these are solved [[Recursion|recursively]], and the eigenvalues of the original problem are computed from the results of these smaller problems.
+
+Here we present the simplest version of a divide-and-conquer algorithm, similar to the one originally proposed by Cuppen in 1981.  Many details that lie outside the scope of this article will be omitted; however, without considering these details, the algorithm is not fully stable.
+
+==Background==
+As with most eigenvalue algorithms for Hermitian matrices, divide-and-conquer begins with a reduction to [[Tridiagonal matrix|tridiagonal]] form.  For an <math>m \times m</math> matrix, the standard method for this, via [[Householder reflection]]s, takes <math>\frac{4}{3}m^{3}</math> [[flops]], or <math>\frac{8}{3}m^{3}</math> if [[eigenvector]]s are needed as well.  There are other algorithms, such as the [[Arnoldi iteration]], which may do better for certain classes of matrices; we will not consider this further here.
+
+In certain cases, it is possible to ''deflate'' an eigenvalue problem into smaller problems.  Consider a [[block diagonal matrix]]
+:<math>T = \begin{bmatrix} T_{1} & 0 \\ 0 & T_{2}\end{bmatrix}.</math>
+The eigenvalues and eigenvectors of <math>T</math> are simply those of <math>T_{1}</math> and <math>T_{2}</math>, and it will almost always be faster to solve these two smaller problems than to solve the original problem all at once.  This technique can be used to improve the efficiency of many eigenvalue algorithms, but it has special significance to divide-and-conquer.
+
+For the rest of this article, we will assume the input to the divide-and-conquer algorithm is an <math>m \times m</math> real symmetric tridiagonal matrix <math>T</math>.  Although the algorithm can be modified for Hermitian matrices, we do not give the details here.
+
+==Divide==
+
+The ''divide'' part of the divide-and-conquer algorithm comes from the realization that a tridiagonal matrix is "almost" block diagonal.
+<!-- For original TeX, see image description page -->
+:[[Image:Almost block diagonal.png]]
+
+The size of submatrix <math>T_{1}</math> we will call <math>n \times n</math>, and then <math>T_{2}</math> is <math>(m - n) \times (m - n)</math>.  Note that the remark about <math>T</math> being almost block diagonal is true regardless of how <math>n</math> is chosen (i.e., there are many ways to so decompose the matrix).  However, it makes sense, from an efficiency standpoint, to choose <math>n \approx m/2</math>. 
+
+We write <math>T</math> as a block diagonal matrix, plus a [[Rank (linear algebra)|rank-1]] correction:
+<!-- For original TeX, see image description page -->
+:[[Image:Block diagonal plus correction.png]]
+
+The only difference between <math>T_{1}</math> and <math>\hat{T}_{1}</math> is that the lower right entry <math>t_{nn}</math> in <math>\hat{T}_{1}</math> has been replaced with <math>t_{nn} - \beta</math> and similarly, in <math>\hat{T}_{2}</math> the top left entry <math>t_{n+1,n+1}</math> has been replaced with <math>t_{n+1,n+1} - \beta</math>.
+
+The remainder of the divide step is to solve for the eigenvalues (and if desired the eigenvectors) of <math>\hat{T}_{1}</math> and <math>\hat{T}_{2}</math>, that is to find the [[diagonalizable matrix|diagonalization]]s <math>\hat{T}_{1} = Q_{1} D_{1} Q_{1}^{T}</math> and <math>\hat{T}_{2} = Q_{2} D_{2} Q_{2}^{T}</math>.  This can be accomplished with recursive calls to the divide-and-conquer algorithm, although practical implementations often switch to the QR algorithm for small enough submatrices.
+
+==Conquer==
+
+The ''conquer'' part of the algorithm is the unintuitive part.  Given the diagonalizations of the submatrices, calculated above, how do we find the diagonalization of the original matrix?
+
+First, define <math>z^{T} = (q_{1}^{T},q_{2}^{T})</math>, where <math>q_{1}^{T}</math> is the last row of <math>Q_{1}</math> and <math>q_{2}^{T}</math> is the first row of <math>Q_{2}</math>.  It is now elementary to show that
+:<math>T = \begin{bmatrix} Q_{1} & \\ & Q_{2} \end{bmatrix} \left( \begin{bmatrix} D_{1} & \\ & D_{2} \end{bmatrix} + \beta z z^{T} \right) \begin{bmatrix} Q_{1}^{T} & \\ & Q_{2}^{T} \end{bmatrix}</math>
+
+The remaining task has been reduced to finding the eigenvalues of a diagonal matrix plus a rank-one correction.  Before showing how to do this, let us simplify the notation.  We are looking for the eigenvalues of the matrix <math>D + w w^{T}</math>, where <math>D</math> is diagonal with distinct entries and <math>w</math> is any vector with nonzero entries.
+
+If w<sub>i</sub> is zero, (<math>e_i</math>,d<sub>i</sub>) is an eigenpair of <math>D + w w^{T}</math> since
+<math>(D + w w^{T})e_i = De_i = d_i e_i</math>.
+
+If <math>\lambda</math> is an eigenvalue, we have:
+:<math>(D + w w^{T})q = \lambda q</math>
+where <math>q</math> is the corresponding eigenvector.  Now
+:<math>(D - \lambda I)q + w(w^{T}q) = 0</math>
+:<math>q + (D - \lambda I)^{-1} w(w^{T}q) = 0</math>
+:<math>w^{T}q + w^{T}(D - \lambda I)^{-1} w(w^{T}q) = 0</math>
+Keep in mind that <math>w^{T}q</math> is a nonzero scalar. Neither <math>w</math> nor <math>q</math> are zero. If <math>w^{T}q</math> were to be zero, <math>q</math> would be an eigenvector of <math>D</math> by <math>(D + w w^{T})q = \lambda q</math>. If that were the case, <math>q</math> would contain only one nonzero position since <math>D</math> is distinct diagonal and thus the inner product <math>w^{T}q</math> can not be zero after all. Therefore, we have:
+:<math>1 + w^{T}(D - \lambda I)^{-1} w = 0</math>
+or written as a scalar equation,
+:<math>1 + \sum_{j=1}^{m} \frac{w_{j}^{2}}{d_{j} - \lambda} = 0.</math>
+This equation is known as the ''secular equation''. The problem has therefore been reduced to finding the roots of the [[rational function]] defined by the left-hand side of this equation.
+
+All general eigenvalue algorithms must be iterative, and the divide-and-conquer algorithm is no different.  Solving the [[nonlinear]] secular equation requires an iterative technique, such as the [[Newton's method|Newton–Raphson method]].  However, each root can be found in [[Big O notation|O]](1) iterations, each of which requires <math>\Theta(m)</math> flops (for an <math>m</math>-degree rational function), making the cost of the iterative part of this algorithm <math>\Theta(m^{2})</math>.
+
+==Analysis==
+
+As is common for divide and conquer algorithms, we will use the [[Master theorem]] to analyze the running time.  Remember that above we stated we choose <math>n \approx m/2</math>.  We can write the [[recurrence relation]]:
+:<math>T(m) = 2 \times T\left(\frac{m}{2}\right) + \Theta(m^{2})</math>
+In the notation of the Master theorem, <math>a = b = 2</math> and thus <math>\log_{b} a = 1</math>.  Clearly, <math>\Theta(m^{2}) = \Omega(m^{1})</math>, so we have
+:<math>T(m) = \Theta(m^{2})</math>
+
+Remember that above we pointed out that reducing a Hermitian matrix to tridiagonal form takes <math>\frac{4}{3}m^{3}</math> flops.  This dwarfs the running time of the divide-and-conquer part, and at this point it is not clear what advantage the divide-and-conquer algorithm offers over the QR algorithm (which also takes <math>\Theta(m^{2})</math> flops for tridiagonal matrices).
+
+The advantage of divide-and-conquer comes when eigenvectors are needed as well.  If this is the case, reduction to tridiagonal form takes <math>\frac{8}{3}m^{3}</math>, but the second part of the algorithm takes <math>\Theta(m^{3})</math> as well.  For the QR algorithm with a reasonable target precision, this is <math>\approx 6 m^{3}</math>, whereas for divide-and-conquer it is <math>\approx \frac{4}{3}m^{3}</math>.  The reason for this improvement is that in divide-and-conquer, the <math>\Theta(m^{3})</math> part of the algorithm (multiplying <math>Q</math> matrices) is separate from the iteration, whereas in QR, this must occur in every iterative step.  Adding the <math>\frac{8}{3}m^{3}</math> flops for the reduction, the total improvement is from <math>\approx 9 m^{3}</math> to <math>\approx 4 m^{3}</math> flops.
+
+Practical use of the divide-and-conquer algorithm has shown that in most realistic eigenvalue problems, the algorithm actually does better than this.  The reason is that very often the matrices <math>Q</math> and the vectors <math>z</math> tend to be ''numerically sparse'', meaning that they have many entries with values smaller than the [[floating point]] precision, allowing for ''numerical deflation'', i.e. breaking the problem into uncoupled subproblems.
+
+==Variants and implementation==
+
+The algorithm presented here is the simplest version.  In many practical implementations, more complicated rank-1 corrections are used to guarantee stability; some variants even use rank-2 corrections. <sup>[citation needed]</sup>
+
+There exist specialized root-finding techniques for rational functions that may do better than the Newton-Raphson method in terms of both performance and stability.  These can be used to improve the iterative part of the divide-and-conquer algorithm.
+
+The divide-and-conquer algorithm is readily [[Parallel algorithm|parallelized]], and [[linear algebra]] computing packages such as [[LAPACK]] contain high-quality parallel implementations.
+
+==References==
+* {{Citation
+ | last = Demmel
+ | first = James W.
+ | date = August 1, 1997
+ | title = Applied Numerical Linear Algebra
+ | publisher = SIAM
+ | isbn = 978-0898713893
+}}
+
+{{Numerical linear algebra}}
+
+[[Category:Numerical linear algebra]]</body> </html>

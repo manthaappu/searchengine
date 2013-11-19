@@ -1,0 +1,321 @@
+<html> <head> <title>Communicating sequential processes</title></head><body>In [[computer science]], '''Communicating Sequential Processes''' ('''CSP''') is a [[specification language|formal language]] for describing [[pattern]]s of [[interaction]] in [[concurrent systems]].<ref name="roscoe">{{cite book|first=A. W.|last=Roscoe|authorlink=Bill Roscoe|title=The Theory and Practice of Concurrency|publisher=[[Prentice Hall]]|isbn = 0-13-674409-5|year=1997}}</ref> It is a member of the family of mathematical theories of concurrency known as process algebras, or [[process calculus|process calculi]]. CSP was highly influential in the design of the [[occam (programming language)|occam]] programming language,<ref name="roscoe"/><ref>{{cite book|last=INMOS|authorlink=INMOS|url=http://www.wotug.org/occam/documentation/oc21refman.pdf|format=PDF|title=occam 2.1 Reference Manual|publisher=SGS-THOMSON Microelectronics Ltd.|date=1995-05-12}}, INMOS document 72 occ 45 03</ref> and also influenced the design of programming languages such as [[Limbo (programming language)|Limbo]]<ref>{{cite web|title=Resources about threaded programming in the Bell Labs CSP style|url=http://swtch.com/~rsc/thread/|accessdate=2010-04-15}}</ref> and [[Go (programming language)|Go]].<ref name="golang">{{cite web |title=Language Design FAQ: Why build concurrency on the ideas of CSP? |url=http://golang.org/doc/go_faq.html#csp}}</ref>
+
+CSP was first described in a 1978 paper by [[C. A. R. Hoare]],<ref name="hoare1978">{{cite journal|last=Hoare
+|first=C. A. R.
+|authorlink=C. A. R. Hoare
+|title=Communicating sequential processes
+|journal=[[Communications of the ACM]]
+|volume=21
+|issue=8
+|pages=666&ndash;677
+|year=1978
+|doi=10.1145/359576.359585}}
+</ref> but has since evolved substantially.<ref name="25years">{{cite journal|last=Abdallah
+|first=Ali E.
+|title=Communicating Sequential Processes: The First 25 Years
+|journal=[[LNCS]]
+|volume=3525
+|year=2005
+|url=http://www.springer.com/computer/theoretical+computer+science/foundations+of+computations/book/978-3-540-25813-1}}
+</ref> CSP has been practically applied in industry as a tool for [[formal specification|specifying and verifying]] the concurrent aspects of a variety of different systems, such as the T9000 [[Transputer]],<ref name="barrett">
+{{cite journal|last=Barrett
+|first=G.
+|title=Model checking in practice: The T9000 Virtual Channel Processor
+|journal=[[IEEE]] Transactions on Software Engineering
+|volume=21
+|issue=2
+|pages=69–78
+|year=1995
+|doi=10.1109/32.345823}}</ref> as well as a secure ecommerce system.<ref name="hall">{{cite journal|last = Hall
+|first=A
+|coauthors=R. Chapman
+|url=http://www.anthonyhall.org/c_by_c_secure_system.pdf
+|format=PDF|title=Correctness by construction: Developing a commercial secure system
+|journal=[[IEEE]] Software
+|volume=19
+|issue=1
+|pages=18–25
+|year=2002
+|doi=10.1109/52.976937}}
+</ref> The theory of CSP itself is also still the subject of active research, including work to increase its range of practical applicability (e.g., increasing the scale of the systems that can be tractably analyzed).<ref>
+{{cite paper|author=Creese, S.|title=Data Independent Induction: CSP Model Checking of Arbitrary Sized Networks|version=D. Phil.|publisher=[[Oxford University]]|year=2001}}
+</ref>
+
+== History ==
+The version of CSP presented in Hoare's original 1978 paper was essentially a concurrent programming language rather than a [[process calculus]]. It had a substantially different [[syntax]] than later versions of CSP, did not possess mathematically defined semantics<ref name="hoare">{{cite book|last=Hoare|first=C. A. R.|authorlink=C. A. R. Hoare|title=Communicating Sequential Processes|publisher=Prentice Hall|isbn=0-13-153289-8|year=1985}}</ref>, and was unable to represent [[unbounded nondeterminism]].<ref name="clinger1981">{{cite paper|author=William Clinger|authorlink=William Clinger (computer scientist)|title=Foundations of Actor Semantics|url=https://dspace.mit.edu/handle/1721.1/6935|publisher=MIT|version=Mathematics Doctoral Dissertation|date=June 1981}}</ref> Programs in the original CSP were written as a parallel composition of a fixed number of sequential processes communicating with each other strictly through synchronous message-passing. In contrast to later versions of CSP, each process was assigned an explicit name, and the source or destination of a message was defined by specifying the name of the intended sending or receiving process. For example the process
+
+ COPY = *[c:character; west?c → east!c]
+
+repeatedly receives a character from the process named <code>west</code>, and then sends that character to process named <code>east</code>. The parallel composition 
+
+ [west::DISASSEMBLE || X::COPY || east::ASSEMBLE]
+
+assigns the names <code>west</code> to the <code>DISASSEMBLE</code> process, <code>X</code> to the <code>COPY</code> process, and <code>east</code> to the <code>ASSEMBLE</code> process, and executes these three processes concurrently.<ref name="hoare1978"/>
+
+Following the publication of the original version of CSP, Hoare, [[Stephen Brookes]], and [[Bill Roscoe|A. W. Roscoe]] developed and refined the ''theory'' of CSP into its modern, process algebraic form. The approach taken in developing CSP into a process algebra was influenced by [[Robin Milner]]'s work on the [[Calculus of Communicating Systems]] (CCS), and vice versa. The theoretical version of CSP was initially presented in a 1984 article by Brookes, Hoare, and Roscoe<ref>{{cite journal|first=Stephen|last=Brookes|coauthors=[[C. A. R. Hoare]] and [[Bill Roscoe|A. W. Roscoe]]|title=A Theory of Communicating Sequential Processes|journal=[[Journal of the ACM]]|volume=31|issue=3|pages=560&ndash;599|year=1984|doi=10.1145/828.833}}</ref>, and later in Hoare's book ''Communicating Sequential Processes''<ref name="hoare"/>, which was published in 1985. In September 2006, that book was still the [http://citeseer.ist.psu.edu/articles.html third-most cited] [[computer science]] reference of all time according to [[Citeseer]] (albeit an unreliable source due to the nature of its sampling). The theory of CSP has undergone a few minor changes since the publication of Hoare's book. Most of these changes were motivated by the advent of automated tools for CSP process analysis and verification. Roscoe's ''The Theory and Practice of Concurrency''<ref name="roscoe"/> describes this newer version of CSP.
+
+=== Applications ===
+An early and important application of CSP was its use for specification and verification of elements of the INMOS T9000 [[Transputer]], a complex superscalar pipelined processor designed to support large-scale multiprocessing. CSP was employed in verifying the correctness of both the processor pipeline, and the Virtual Channel Processor which managed off-chip communications for the processor.<ref name="barrett"/>  
+
+Industrial application of CSP to software design has usually focused on dependable and safety-critical systems. For example, the Bremen Institute for Safe Systems and Daimler-Benz Aerospace modeled a fault management system and avionics interface (consisting of some 23,000 lines of code) intended for use on the International Space Station in CSP, and analyzed the model to confirm that their design was free of deadlock and livelock.<ref>{{cite conference|first=B. |last=Buth|coauthors=M. Kouvaras, J. Peleska, and H. Shi|title=Deadlock analysis for a fault-tolerant system|booktitle=Proceedings of the 6th International Conference on Algebraic Methodology and Software Technology (AMAST’97)| pages = 60–75|date=December 1997}}</ref><ref>{{cite conference|first=B.|last=Buth|coauthors=J. Peleska, and H. Shi|title=Combining methods for the livelock analysis of a fault-tolerant system|booktitle=Proceedings of the 7th International Conference on Algebraic Methodology and Software Technology (AMAST’98)|pages=124– 139|date=January 1999}}</ref> The modeling and analysis process was able to uncover a number of errors that would have been difficult to detect using testing alone. Similarly, [[Praxis High Integrity Systems]] applied CSP modeling and analysis during the development of software (approximately 100,000 lines of code) for a secure smart-card Certification Authority to verify that their design was secure and free of deadlock. Praxis claims that the system has a much lower defect rate than comparable systems.<ref name="hall"/> 
+
+Since CSP is well-suited to modeling and analyzing systems that incorporate complex message exchanges, it has also been applied to the verification of communications and security protocols. A prominent example of this sort of application is Lowe’s use of CSP and the FDR refinement-checker to discover a previously unknown attack on the [[Needham-Schroeder protocol|Needham-Schroeder public-key authentication protocol]], and then to develop a corrected protocol able to defeat the attack.<ref>{{cite conference|first=G. |last=Lowe|title=Breaking and fixing the Needham-Schroeder public-key protocol using FDR|booktitle=Tools and Algorithms for the Construction and Analysis of Systems (TACAS)|pages=147–166.|publisher=Springer-Verlag|year=1996|url=http://citeseer.ist.psu.edu/lowe96breaking.html}}</ref>
+
+== Informal description ==
+As its name suggests, CSP allows the description of systems in terms of component processes that operate independently, and interact with each other solely through [[message passing|message-passing]] communication. However, the ''"Sequential"'' part of the CSP name is now something of a misnomer, since modern CSP allows component processes to be defined both as sequential processes, and as the parallel composition of more primitive processes. The relationships between different processes, and the way each process communicates with its environment, are described using various [[process calculi|process algebraic]] operators. Using this algebraic approach, quite complex process descriptions can be easily constructed from a few primitive elements.
+
+=== Primitives ===
+CSP provides two classes of primitives in its process algebra:
+;Events
+:Events represent communications or interactions. They are assumed to be indivisible and instantaneous.  They may be atomic names (e.g. <math>\mathit{on}</math>, <math>\mathit{off}</math>), compound names (e.g. <math>valve.open</math>, <math>valve.close</math>), or input/output events (e.g. <math>mouse?xy</math>, <math>screen!bitmap</math>).
+;Primitive processes:
+:Primitive processes represent fundamental behaviors: examples include <math>\mathit{STOP}</math> (the process that communicates nothing, also called [[deadlock]]), and <math>\mathit{SKIP}</math> (which represents successful termination)
+
+=== Algebraic operators ===
+CSP has a wide range of algebraic operators. The principal ones are:
+
+;Prefix
+:The prefix operator combines an event and a process to produce a new process. For example,
+
+::<math>a \rightarrow P</math> 
+
+:is the process which is willing to communicate <math>\mathit{a}</math> with its environment, and, after <math>\mathit{a}</math>, behaves like the process <math>\mathit{P}</math>.
+
+;Deterministic Choice
+:The deterministic (or external) choice operator allows the future evolution of a process to be defined as a choice between two component processes, and allows the environment to resolve the choice by communicating an initial event for one of the processes. For example,
+
+::<math>\left(a \rightarrow P\right) \Box \left(b \rightarrow Q\right)</math> 
+
+:is the process which is willing to communicate the initial events <math>\mathit{a}</math> and <math>\mathit{b}</math>, and subsequently behaves as either <math>\mathit{P}</math> or <math>\mathit{Q}</math> depending on which initial event the environment chooses to communicate. If both <math>\mathit{a}</math> and <math>\mathit{b}</math> were communicated simultaneously the choice would be resolved nondeterministically.
+
+;Nondeterministic Choice
+:The nondeterministic (or internal) choice operator allows the future evolution of a process to be defined as a choice between two component processes, but does not allow the environment any control over which of the component processes will be selected. For example,
+
+::<math>\left(a \rightarrow P\right) \sqcap \left(b \rightarrow Q\right)</math> 
+
+:can behave like either <math>\left(a \rightarrow P\right)</math> or <math>\left(b \rightarrow Q\right)</math>. It can refuse to accept <math>\mathit{a}</math> or <math>\mathit{b}</math>, and is only obliged to communicate if the environment offers both <math>\mathit{a}</math> and <math>\mathit{b}</math>. Nondeterminism can be inadvertently introduced into a nominally deterministic choice if the initial events of both sides of the choice are identical. So, for example, 
+
+::<math>\left(a \rightarrow a \rightarrow STOP\right) \Box \left(a \rightarrow b \rightarrow STOP\right)</math>
+
+:is equivalent to
+
+::<math>a \rightarrow \left(\left(a \rightarrow STOP\right) \sqcap \left(b \rightarrow STOP\right)\right)</math>
+
+;Interleaving
+:The interleaving operator represents completely independent concurrent activity. The process
+
+::<math>P \;\vert\vert\vert\; Q</math>
+
+:behaves as both <math>\mathit{P}</math> and <math>\mathit{Q}</math> simultaneously. The events from both processes are arbitrarily interleaved in time.
+
+;Interface Parallel
+:The interface parallel operator represents concurrent activity that requires synchronization between the component processes &ndash; any event in the interface set can only occur when ''all'' component processes are able to engage in that event. For example, the process
+
+::<math>P \left\vert\left[ \left\{ a \right\} \right]\right\vert Q</math>
+
+:requires that <math>\mathit{P}</math> and <math>\mathit{Q}</math> must both be able to perform event <math>\mathit{a}</math> before that event can occur. So, for example, the process
+
+::<math>\left(a \rightarrow P\right) \left\vert\left[ \left\{ a \right\} \right]\right\vert \left(a \rightarrow Q\right)</math>
+
+:can engage in event <math>\mathit{a}</math>, and become the process
+
+::<math>P \left\vert\left[ \left\{ a \right\} \right]\right\vert Q</math>
+
+:while
+
+::<math>\left (a \rightarrow P\right ) \left\vert\left[ \left\{ a, b \right\} \right]\right\vert \left(b \rightarrow Q\right)</math>
+
+:will simply deadlock.
+
+;Hiding
+:The hiding operator provides a way to abstract processes, by making some events unobservable. A trivial example of hiding is
+
+::<math>\left(a \rightarrow P\right) \setminus \left\{ a \right\}</math>
+
+:which, assuming that the event <math>\mathit{a}</math> doesn't appear in <math>\mathit{P}</math>, simply reduces to
+
+::<math>\mathit{P}</math>
+
+=== Examples ===
+One of the archetypal CSP examples is an abstract representation of a chocolate vending machine, and its interactions with a person wishing to buy some chocolate. This vending machine might be able to carry out two different events, “coin” and “choc” which represent the insertion of payment and the delivery of a chocolate respectively. A machine which demands payment before offering a chocolate can be written as:
+
+:<math>\textit{VendingMachine} = \textit{coin} \rightarrow \textit{choc} \rightarrow \textit{STOP}</math>
+
+A person who might choose to use a coin or card to make payments could be modelled as:
+
+:<math>\textit{Person} = (\textit{coin} \rightarrow \textit{STOP}) \Box (\textit{card} \rightarrow \textit{STOP})</math>
+
+These two processes can be put in parallel, so that they can interact with each other. The behaviour of the composite process depends on the events that the two component processes must synchronise on. Thus,
+
+:<math>\textit{VendingMachine} \left\vert\left[\left\{ \textit{coin}, \textit{card} \right\}\right]\right\vert \textit{Person} \equiv \textit{coin} \rightarrow \textit{choc} \rightarrow \textit{STOP}</math>
+
+whereas if synchronization was only required on “coin”, we would obtain
+
+:<math>\textit{VendingMachine} \left\vert\left[\left\{ \textit{coin} \right\}\right]\right\vert \textit{Person} \equiv \left (\textit{coin} \rightarrow \textit{choc} \rightarrow \textit{STOP}\right ) \Box \left (\textit{card} \rightarrow \textit{STOP}\right )</math>
+
+If we abstract this latter composite process by hiding the “coin” and “card” events, i.e.
+
+:<math>\left (\left (\textit{coin} \rightarrow \textit{choc} \rightarrow \textit{STO}P\right ) \Box \left (\textit{card} \rightarrow \textit{STOP}\right )\right ) \setminus \left\{\textit{coin}, card\right\}</math>
+
+we get the nondeterministic process
+
+:<math>\left (\textit{choc} \rightarrow \textit{STOP}\right ) \sqcap \textit{STOP}</math>
+
+This is a process which either offers a “choc” event and then stops, or just stops. In other words, if we treat the abstraction as an external view of the system (e.g., someone who does not see the decision reached by the person), [[Nondeterministic algorithm|nondeterminism]] has been introduced.
+
+== Formal definition ==
+=== Syntax ===
+The syntax of CSP defines the “legal” ways in which processes and events may be combined. Let <math>\mathit{e}</math> be an event, and <math>\mathit{X}</math> be a set of events. Then the basic [[syntax]] of CSP can be defined as:
+
+:<math>
+\begin{matrix}
+Proc & ::= & \textit{STOP} & \; \\
+&|& \textit{SKIP} & \; \\
+&|& e \rightarrow \textit{Proc} & (\textit{prefixing})\\
+&|& \textit{Proc} \;\Box\; \textit{Proc} & (\textit{external} \; \textit{choice})\\
+&|& \textit{Proc} \;\sqcap\; \textit{Proc} & (\textit{nondeterministic} \; \textit{choice})\\
+&|& \textit{Proc} \;\vert\vert\vert\; \textit{Proc} & (\textit{interleaving}) \\
+&|& \textit{Proc} \;|[ \{ X \} ]| \;\textit{Proc} & (\textit{interface} \; \textit{parallel})\\
+&|& \textit{Proc} \setminus X & (\textit{hiding})\\
+&|& \textit{Proc} ; \textit{Proc} & (\textit{sequential} \; \textit{composition})\\
+&|& \mathrm{if} \; b \; \mathrm{then} \; \textit{Proc}\; \mathrm{else}\; Proc & (\textit{boolean} \; \textit{conditional})\\
+&|& \textit{Proc} \;\triangleright\; \textit{Proc} & (\textit{timeout})\\
+&|& \textit{Proc} \;\triangle\; \textit{Proc} & (\textit{interrupt}) 
+\end{matrix}
+</math>
+
+Note that, in the interests of brevity, the syntax presented above omits the <math>\mathbf{div}</math> process, which represents [[Divergence (computer science)|divergence]], as well as various operators such as alphabetized parallel, piping, and indexed choices.
+
+=== Formal semantics ===
+{{Expand section|date=June 2008}}
+
+CSP has been imbued with several different [[Semantics#Computer science|formal semantics]], which define the ''meaning'' of syntactically correct CSP expressions. The theory of CSP includes mutually consistent [[denotational semantics]], [[algebraic semantics]], and [[operational semantics]].
+
+==== Denotational semantics ====
+The three major denotational models of CSP are the ''traces'' model, the ''stable failures'' model, and the ''failures/divergences'' model. Semantic mappings from process expressions to each of these three models provide the denotational semantics for CSP.<ref name="roscoe"/>
+
+The ''traces model'' defines the meaning of a process expression as the set of sequences of events (traces) that the process can be observed to perform. For example, 
+
+:* <math>traces\left(STOP\right) = \left\{ \langle\rangle \right\}</math> since <math>STOP</math> performs no events
+:* <math>traces\left(a\rightarrow b \rightarrow STOP\right) = \left\{\langle\rangle ,\langle a \rangle, \langle a, b \rangle \right\}</math> since the process <math>(a\rightarrow b \rightarrow STOP)</math> can be observed to have performed no events, the event <math>a</math>, or the sequence of events <math>a</math> followed by <math>b</math>
+
+More formally, the meaning of a process <math>P</math> in the traces model is defined as <math>traces\left(P\right) \subseteq \Sigma^{\ast}</math> such that:
+# <math>\langle\rangle \in traces\left(P\right)</math> (i.e. <math>traces\left(P\right)</math> contains the empty sequence)
+# <math>s_1 \smallfrown s_2 \in traces\left(P\right) \implies s_1 \in traces\left(P\right)</math> (i.e. <math>traces\left(P\right)</math> is prefix-closed)
+where <math>\Sigma^{\ast}</math> is the set of all possible finite sequences of events.
+
+The ''stable failures model'' extends the traces model with refusal sets, which are sets of events <math>X \subseteq \Sigma</math> that a process can refuse to perform. A ''failure'' is a pair <math>\left(s,X\right)</math>, consisting of a trace <math>s</math>, and a refusal set <math>X</math> which identifies the events that a process may refuse once it has executed the trace <math>s</math>. The observed behavior of a process in the stable failures model is described by the pair <math>\left(traces\left(P\right), failures\left(P\right)\right)</math>. For example,
+
+:* <math>failures\left(\left(a \rightarrow STOP\right) \Box \left(b \rightarrow STOP\right)\right) = \left\{\left(\langle\rangle,\emptyset\right), \left(\langle a \rangle, \left\{a,b\right\}\right), \left(\langle b \rangle,\left\{a,b\right\}\right) \right\}</math>
+:* <math>failures\left(\left(a \rightarrow STOP\right) \sqcap \left(b \rightarrow STOP\right)\right) = \left\{ \left(\langle\rangle,\left\{a\right\}\right), \left(\langle\rangle,\left\{b\right\}\right),
+\left(\langle a \rangle, \left\{a,b\right\}\right), \left(\langle b \rangle,\left\{a,b\right\}\right) \right\}</math>
+
+The ''failures/divergence model'' further extends the failures model to handle [[divergence (computer science)|divergence]]. A process in the failures/divergences model is a pair <math>\left(failures_\perp\left(P\right), divergences\left(P\right)\right)</math> where <math>divergences\left(P\right)</math> is defined as the set of all traces that can lead to divergent behavior and <math>failures_\perp\left(P\right) = failures\left(P\right) \cup \left\{\left(s,X\right) \vert s \in divergences\left(P\right)\right\}</math>.
+
+== Tools ==
+
+Over the years, a number of tools for analyzing and understanding systems described using CSP have been produced. Early tool implementations used a variety of machine-readable syntaxes for CSP, making input files written for different tools incompatible. However, most CSP tools have now standardized on the machine-readable dialect of CSP devised by Bryan Scattergood, sometimes referred to as CSP<sub>''M''</sub><ref>{{cite paper|author=Scattergood, J.B.|title=The Semantics and Implementation of Machine-Readable CSP|version=D.Phil.|publisher=[[Oxford University Computing Laboratory]]|year=1998}}</ref>. The CSP<sub>''M''</sub> dialect of CSP possesses a formally defined [[operational semantics]], which includes an embedded [[functional programming language]].
+
+The most well-known CSP tool is probably ''Failures/Divergence Refinement 2'' (''[[FDR2]]''), which is a commercial product developed by Formal Systems (Europe) Ltd. FDR2 is often described as a [[model checker]], but is technically a ''refinement'' checker, in that it converts two CSP process expressions into [[Labelled transition system|Labelled Transition System]]s (LTSs), and then determines whether one of the processes is a refinement of the other within some specified semantic model (traces, failures, or failures/divergence)<ref>{{cite paper|author=[[Bill Roscoe|A.W. Roscoe]]|title=Model-checking CSP|version=In ''A Classical Mind: essays in Honour of C.A.R. Hoare''|publisher=Prentice Hall|year=1994}}</ref>. FDR2 applies various state-space compression algorithms to the process LTSs in order to reduce the size of the state-space that must be explored during a refinement check.
+
+The ''Adelaide Refinement Checker'' (''ARC'') <ref>{{cite conference |first=Atanas N. |last=  Parashkevov|coauthors=Jay Yantchev  |title=ARC - a tool for efficient refinement and equivalence checking for CSP |booktitle=IEEE Int. Conf. on Algorithms and Architectures for Parallel Processing ICA3PP '96 |pages= 68–75|year=1996 |url=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.45.3212 |accessdate=2008-11-26 }}</ref> is a CSP refinement checker developed by the Formal Modelling and Verification Group at [[The University of Adelaide]]. ARC differs from FDR2 in that it internally represents CSP processes as [[Binary decision diagram|Ordered Binary Decision Diagram]]s (OBDDs), which alleviates the state explosion problem of explicit LTS representations without requiring the use of state-space compression algorithms such as those used in FDR2.
+
+The ''ProB'' project<ref>{{cite conference| first = Michael |last=Leuschel |coauthors= Marc Fontaine| title = Probing the Depths of CSP-M: A new FDR-compliant Validation Tool| booktitle = ICFEM 2008|publisher = Springer-Verlag|year=2008|url=http://www.stups.uni-duesseldorf.de/publications/main.pdf|format=PDF|accessdate=2008-11-26}}</ref>, which is hosted by the Institut für Informatik, Heinrich-Heine-Universität Düsseldorf, was originally created to support analysis of specifications constructed in the [[B method]]. However, it also includes support for analysis of CSP processes both through refinement checking, and [[Linear Temporal Logic|LTL]] model-checking. ProB can also be used to verify properties of combined CSP and B specifications.
+
+The ''Process Analysis Toolkit'' (PAT)
+<ref>{{cite conference|last=Sun |first=Jun|coauthors= Yang Liu and Jin Song Dong|
+  title     = PAT: Towards Flexible Verification under Fairness |
+  booktitle = Proceedings of the 20th International Conference on Computer-Aided Verification (CAV 2009)|
+  publisher = Springer |
+  series = Lecture Notes in Computer Science |
+  volume    = 5643 |
+  year      = 2009 | url = http://www.comp.nus.edu.sg/~sunj/Publications/cav09.pdf | accessdate = 2009-06-16}}</ref><ref>{{cite conference|last=Sun |first=Jun|coauthors= Yang Liu and Jin Song Dong|
+  title     = Model Checking CSP Revisited: Introducing a Process Analysis Toolkit |
+  booktitle = Proceedings of the Third International Symposium on Leveraging Applications of Formal Methods, Verification and Validation (ISoLA 2008)|
+  pages     = 307–322 |
+  publisher = Springer |
+  series = Communications in Computer and Information Science |
+  volume    = 17 |
+  year      = 2008 | url = http://www.comp.nus.edu.sg/~sunj/Publications/ISoLA08.pdf | accessdate = 2009-01-15}}</ref> is a CSP analysis tool developed in the School of Computing at the [[National University of Singapore]]. PAT is able to perform refinement checking, LTL model-checking, and simulation of CSP and Timed CSP processes. The PAT process language extends CSP with support for mutable shared variables, asynchronous message passing, and a variety of fairness and quantitative time related process constructs such as <code>deadline</code> and <code>waituntil</code>. The underlying design principle of the PAT process language is to combine a high-level specification language with procedural programs (e.g. an event in PAT may be a sequential program or even an external C# library call) for greater expressiveness. Mutable shared variables and asynchronous channels provide a convenient [[syntactic sugar]] for well-known process modelling patterns used in standard CSP. The PAT syntax is similar, but not identical, to CSP<sub>''M''</sub>.<ref>{{cite conference |first=Jun |last=  Sun|coauthors=Yang Liu, Jin Song Dong and Chunqing Chen  |title=Integrating Specifications and Programs for System Specification and Verification |booktitle=IEEE Int. Conf. on Theoretical Aspects of Software Engineering TASE '09 |year=2009 |url=http://www.comp.nus.edu.sg/~sunj/Publications/tase09.pdf |accessdate=2009-04-13 }}</ref> The principal differences between the PAT syntax and standard CSP<sub>''M''</sub> are the use of semicolons to terminate process expressions, the inclusion of syntactic sugar for variables and assignments, and the use of slightly different syntax for internal choice and parallel composition.
+
+''CSPsim''<ref>{{cite conference|last=Brooke|first=Phillip|coauthors=Richard Paige|title=Lazy Exploration and Checking of CSP Models with CSPsim|booktitle=Communicating Process Architectures 2007|year=2007}}</ref> is a lazy simulator.  It does not model check CSP, but is useful for exploring very large (potentially infinite) systems.
+
+== Related formalisms ==
+Several other specification languages and formalisms have been derived from, or inspired by, the classic untimed CSP, including:
+* [http://citeseer.comp.nus.edu.sg/61363.html Timed CSP], which incorporates timing information for reasoning about real-time systems
+* [http://dx.doi.org/10.1007/BF01178564 Receptive Process Theory], a specialization of CSP that assumes an asynchronous (i.e. nonblocking) send operation
+* [http://www.wotug.org/paperdb/show_pap.php?f=1&num=394 CSPP]
+* [http://www.wotug.org/paperdb/show_pap.php?f=1&num=395 HCSP]
+* [[Wright (ADL)|Wright]], an architecture description language
+* [http://www.comp.nus.edu.sg/~dongjs/tcoz.html TCOZ], an integration of Timed CSP and [[Object Z]]
+* [http://www.cs.york.ac.uk/circus/ Circus], an integration of CSP and [[Z specification language|Z]] based on the [[Unifying Theories of Programming]]
+* [http://www.cs.swan.ac.uk/~csmarkus/Papers/cspcasl.ps CspCASL], an extension of [[Common Algebraic Specification Language|CASL]] that integrates CSP
+
+== Comparison with the Actor Model ==
+In as much as it is concerned with concurrent processes that exchange messages, the [[Actor model]] is broadly similar to CSP. However, the two models make some fundamentally different choices with regard to the primitives they provide: 
+
+* CSP processes are anonymous, while actors have identities. 
+
+* CSP message-passing fundamentally involves a rendezvous between the processes involved in sending and receiving the message, i.e. the sender cannot transmit a message until the receiver is ready to accept it. In contrast, message-passing in actor systems is fundamentally asynchronous, i.e. message transmission and reception do not have to happen at same time, and senders may transmit messages before receivers are ready to accept them. These approaches may be considered duals of each other, in the sense that rendezvous-based systems can be used to construct buffered communications that behave as asynchronous messaging systems, while asynchronous systems can be used to construct rendezvous-style communications by using a message/acknowledgement protocol to synchronize senders and receivers. 
+
+* CSP uses explicit channels for message passing, whereas actor systems transmit messages to named destination actors. These approaches may also be considered duals of each other, in the sense that processes receiving through a single channel effectively have an identity corresponding to that channel, while the name-based coupling between actors may be broken by constructing actors that behave as channels.
+
+==See also==
+* [[Occam programming language|occam]] was the first language implementing a CSP model.
+* [[Ease programming language]] - combines the process constructs of CSP with logically shared data structures.
+* [[JCSP]] is a blending of CSP & [[Occam programming language|occam]] concepts in a [[Java (programming language)|Java]] thread support API.
+* [[XC Programming Language|XC]] is a language developed by [[XMOS]] which was heavily influenced by CSP and occam
+* [[Limbo (programming language)|Limbo]] is a language that implements concurrency inside the [[Inferno (operating system)|Inferno]] operating system, in a style inspired by CSP.
+* [[Plan 9 from Bell Labs]] and [[Plan 9 from User Space]] include the libthread library which allows the use of a CSP-inspired concurrency model from [[C (programming language)|C]].
+* [[VerilogCSP]] is a set of [[Macro (computer science)|macros]] added to [[Verilog HDL]] to support Communicating Sequential Processes channel communications.
+* [[Trace monoid]] and [[history monoid]], the mathematical formalism of which CSP is an example.
+* [[Trace theory]], the general theory of traces.
+* [[Google_go|Go]] is a programming language by [[Google]] incorporating ideas from CSP.<ref name="golang"/>
+* [[Joyce (programming language)|Joyce]] is a programming language based on the principles of CSP, developed by [[Brinch Hansen]] around 1989.
+* [[SuperPascal]] is a programming language also developed by [[Brinch Hansen]], influenced by CSP and his earlier work with [[Joyce (programming language)|Joyce]].
+* [[Ada]] implements features of CSP such as the rendezvous.
+
+== Further reading ==
+* {{cite book |last=Hoare |first=C. A. R. |authorlink=C. A. R. Hoare |title=Communicating Sequential Processes |origyear=1985 |year=2004 |publisher=Prentice Hall International |format=PDF |url=http://www.usingcsp.com/}}
+** This book has been updated by Jim Davies at the [[Oxford University Computing Laboratory]] and the new edition is available for download as a PDF file at the [http://www.usingcsp.com/ Using CSP] website.
+
+* {{cite book|first=A. W.|last=Roscoe|authorlink=Bill Roscoe|title=The Theory and Practice of Concurrency|publisher=[[Prentice Hall]]|isbn = 0-13-674409-5|year=1997}}
+** Some links relating to this book are available [http://web.comlab.ox.ac.uk/oucl/publications/books/concurrency/ here]. The full text is available for download as a [http://web.comlab.ox.ac.uk/oucl/work/bill.roscoe/publications/68b.ps PS] or [http://web.comlab.ox.ac.uk/oucl/work/bill.roscoe/publications/68b.pdf PDF] file from Bill Roscoe's [http://web.comlab.ox.ac.uk/oucl/work/bill.roscoe/pubs.html list] of academic publications.
+
+==References==
+{{reflist|2}}
+
+==External links==
+===General===
+* [http://formalmethods.wikia.com/wiki/CSP The CSP Archive]
+* [http://www.wotug.org/ WoTUG], a User Group for CSP and occam style systems, contains some information about CSP and useful links.
+* [http://citeseer.org/cs?q=Communicating+and+Sequential+and+Processes CSP Citations from CiteSeer]
+
+===Analysis tools===
+* [http://www.fsel.com/ Formal Systems Europe, Ltd.] develop CSP tools, some of which are freely downloadable.
+* [http://www.cs.adelaide.edu.au/~esser/arc.html ARC], the Adelaide Refinement Checker, is a CSP verification tool.
+* [http://www.stups.uni-duesseldorf.de/ProB/overview.php ProB] is an animator and model-checker for the [[B method]], but also support refinement checking and LTL model-checking of CSP.
+*[http://www.comp.nus.edu.sg/~pat/ PAT] is a model checker, simulator and refinement checker for CSP and various extensions of CSP (e.g. shared variables, arrays, fairness).
+
+===Implementation support===
+* [http://www.ce.utwente.nl/javapp/Default.htm CTJ] is a Java implementation of CSP with network/distributed support.
+* [http://www.cppcsp.net/ C++CSP] is an implementation of CSP/occam/JCSP ideas in C++, similar in style to JCSP.
+* [http://www.axon7.com/ Jibu] (previously known as [http://www.cspdotnet.com/ CSP.NET]) is an implementation of a CSP style library for [[Microsoft .NET]].
+* [http://www.uoguelph.ca/%7Egardnerw/csp++/index.html CSP++] is a software synthesis tool for making specifications written in CSPm executable via C++.
+* [http://www.cliki.net/csp csp] is a [[Common Lisp]] library which allows use of a CSP-inspired concurrency model from [[SBCL]] and other multi-threaded [[Common Lisp]] implementations.
+* {{cite web |title=CHP: Communicating Haskell Processes. Process-Oriented Concurrency for Haskell |url=http://www.cs.kent.ac.uk/projects/ofa/chp/}} CHP is a Haskell library featuring a concurrency model inspired by CSP.
+* [http://code.google.com/p/pycsp/ PyCSP] is a Python implementation of CSP with network/distributed support.
+* [http://www.cs.kent.ac.uk/projects/ofa/jcsp/ jCSP] is a (100% pure) Java class library providing a base range of CSP primitives plus a rich set of extensions.
+
+[[Category:1978 introductions]]
+[[Category:Process calculi]]
+[[Category:Concurrent computing]]
+
+[[ca:CSP]]
+[[de:Communicating Sequential Processes]]
+[[es:Comunicación de Procesos Secuenciales]]
+[[fr:Communicating sequential processes]]
+[[ko:Communicating Sequencial Processes]]
+[[hr:Slijedni priopćajni postupci]]
+[[ja:Communicating Sequential Processes]]
+[[pt:CSP (matemática)]]</body> </html>

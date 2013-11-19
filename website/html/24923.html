@@ -1,0 +1,196 @@
+<html> <head> <title>Modular decomposition</title></head><body>In [[Graph (mathematics)|graph theory]], the '''modular decomposition''' is a decomposition of an [[undirected graph]] into subsets of vertices called '''modules.'''  A module is a generalization of a [[Connected component (graph theory)|connected component]] of a graph.  Unlike connected components, however, one module can be a proper subset of another.   Modules therefore lead to a recursive (hierarchical) decomposition of the graph, instead of just a partition.  For each undirected graph, this decomposition is unique.   
+
+This notion can be generalized to other structures (for example directed graphs) and is useful to design efficient algorithms for the recognition of some graph classes, for finding transitive orientations of [[comparability graph]]s, for [[Optimization (mathematics)|optimization problems]] on graphs, and for [[graph drawing]].  
+
+== Modules ==
+
+As the notion of modules has been rediscovered in many areas, ''modules'' have also been called ''autonomous sets'', ''homogeneous sets'', ''intervals'', and ''partitive sets''.   Perhaps the earliest reference to them, and the first description of modular quotients and the graph decomposition they give rise to appeared in ([[Tibor Gallai|Gallai]] 1967).
+
+A ''module'' of a graph is a generalization of a [[Connected component (graph theory)|connected component]].  A connected component has the property that it is a set ''X'' of vertices such that every member of ''X'' is a [[Neighbourhood (graph theory)|non-neighbor]] of every vertex not in ''X''.  (It is a union of connected components if and only if it has this property.) More generally, ''X'' is a module if, for each vertex <math>v \not\in X</math>, either every member of ''X'' is a non-neighbor of ''v'' or every member of ''X'' is a neighbor of ''v''.  
+
+Equivalently, ''X'' is a module if all members of ''X'' have the same set of neighbors among vertices not in ''X''.
+
+Contrary to the connected components, the modules of a graph are the same as the modules of its [[Complement graph|complement]], and modules can be "nested": one module can be a proper subset of another. Note that the set ''V'' of vertices of a graph, as are its one-element subsets and the empty set;  these are called the '''trivial modules'''.  A graph may or may not have other modules.  A graph is called '''prime''' if all of its modules are trivial.
+
+Despite these differences, modules preserve a desirable property of connected components, which is that many properties of the subgraph ''G[X]'' [[Glossary_of_graph_theory#Subgraphs|induced]] by a connected component are independent of the rest of the graph.   A similar phenomenon also applies to the subgraphs induced by modules.  
+
+The modules of a graph are therefore of great algorithmic interest.  A set of nested modules, of which the modular decomposition is an example,  can be used to guide the recursive solution of many combinatorial problems on graphs, such as recognizing and transitively orienting [[comparability graph]]s, recognizing and finding permutation representations of [[permutation graph]]s, recognizing whether a graph is a [[cograph]] and finding a certificate of the answer to the question, recognizing [[interval graph]]s and finding interval representations for them, defining [[distance-hereditary graph]]s (Spinrad, 2003) and for [[graph drawing]] (Papadoupoulos, 2006).  They play an important role in Lovasz's celebrated proof of the [[perfect graph theorem#Characterizations and the perfect graph theorems|perfect graph theorem]] (Golumbic, 1980).
+
+For recognizing distance-hereditary graphs and [[circle graph]]s, a further generalization of modular decomposition, called the [[split decomposition]], is especially useful (Spinrad, 2003).
+
+To avoid the possibility of ambiguity in the above definitions, we give the following formal definitions of modules. 
+<math>G = (V,E)</math>.
+<math>M \subseteq V</math> is a '''module''' of <math>G</math> if:
+* the vertices of <math>M</math> cannot be distinguished by any vertex in <math>V \backslash M</math>, i.e.
+<math>\forall u,v \in M, \forall x\in V \backslash M</math>, either <math>x</math> is adjacent to both <math>u</math> and <math>v</math> or <math>x</math> is not adjacent to both <math>u</math> and <math>v</math>.
+* the vertices of <math>M</math> have the same set of outer neighbors, i.e.
+<math>\forall u,v \in M, \{x \in V \backslash M</math> adjac
+<math>\emptyset</math>, <math>V</math> and all the [[Singleton set|singletons]] <math>\{v\}</math> for <math>v \in V</math> are modules, and are called '''trivial modules'''. A graph is '''prime''' if all its modules are trivial. [[connected component (graph theory)|Connected components]] of a graph <math>G</math>, or of its complement graph are also modules of <math>G</math>.
+
+<math>M</math> is a '''strong module''' of a graph <math>G</math> if it does not overlap any other module of <math>G</math>:
+<math>\forall M'</math> module of <math>G</math>, either <math>M \cap M' = \emptyset</math> or <math>M \subseteq M'</math> or <math>M' \subseteq M</math>.
+
+== Modular quotients and factors ==
+
+If <math>X</math> and <math>Y</math> are disjoint modules, then it is easy to see that either every member of <math>X</math> is a neighbor of every element of <math>Y</math>, or no member of <math>X</math> is adjacent to any member of <math>Y</math>.  Thus, the relationship between two disjoint modules is either ''adjacent'' or ''nonadjacent''.  No relationship intermediate between these two extremes can exit.  
+
+Because of this, '''modular partitions''' of <math>V</math> where each partition class is a module are of particular interest.  Suppose <math>P</math> is a modular partition.  Since the partition classes are disjoint, their adjacencies constitute a new graph, a '''quotient graph''' <math>G/P</math>, whose vertices are the members of <math>P</math>.  That is, each vertex of <math>G/P</math> is a module of G, and the adjacencies of these modules are the edges of <math>G/P</math>.
+
+In the figure below,   vertex 1, vertices 2 through 4, vertex 5, vertices 6 and 7, and vertices 8 through 11 are a modular partition.  In the upper right diagram, the edges between these sets depict the quotient given by this partition, while the edges internal to the sets depict the corresponding factors.
+
+The partitions ''{V}'' and  <math>\{\{x\}|x \in V\}</math> are the '''trivial modular partitions'''.  <math>G/\{V\} </math> is just the one-vertex graph, while <math>G/\{\{x\}|x \in V\}</math> = G.  Suppose <math>X</math> is a nontrivial module.  Then <math>X</math> and the one-elements subsets of <math>V \backslash X</math> are a nontrivial modular partition of <math>V</math>.  Thus, the existence of ''any'' nontrivial modules implies the existence of nontrivial modular partitions.  In general, many or all members of <math>P</math> can be nontrivial modules.  
+
+If ''P'' is a nontrivial modular partition, then ''G/P'' is a compact representation of all the edges that have endpoints in different partition classes of ''P''.  For each partition class ''X'' in ''P'', the subgraph ''G[X]'' induced by ''X'' is called a '''factor''' and gives a representation of all edges with both endpoints in ''X''.  Therefore, the edges of ''G'' can be reconstructed given only the quotient graph ''G/P'' and its factors.  The term ''prime'' graph comes from the fact that a prime graph has only trivial quotients and factors.
+
+When ''G[X]'' is a factor of a modular quotient ''G/P'', it is possible that ''G[X]'' can be recursively decomposed into factors and quotients.  Each level of the recursion gives rise to a quotient.  As a base case, the graph has only one vertex.  Collectively, ''G'' can be reconstructed inductively by reconstructing the factors from the bottom up, inverting the steps of the decomposition by combining factors with the quotient at each level.
+
+In the figure below, such a recursive decomposition is represented by a tree that  depicts one way of recursively decomposing factors of an initial modular partition into smaller modular partitions.
+
+A way to recursively decompose a graph into factors and quotients may not be unique.  (For example, all subsets of the vertices of a complete graph are modules, which means that there are many different ways of decomposing it recursively.)  Some ways may be more useful than others.
+
+== The modular decomposition ==
+
+Fortunately, there exists a such a recursive decomposition of a graph that implicitly represents all ways of decomposing it; this is the modular decomposition.  It is itself a way of decomposing a graph recursively into quotients, but it subsumes all others.  The decomposition depicted in the figure below is this special decomposition for the given graph.
+
+[[Image:ModularDecomposition.png|thumb|300px|A graph, its quotient where "bags" of vertices of the graph correspond to the children of the root of the modular decomposition tree, and its full modular decomposition tree: series nodes are labeled "s", parallel nodes "//" and prime nodes "p".]]
+
+The following is a key observation in understanding the modular decomposition:  
+
+'''If ''X'' is a module of ''G'' and ''Y'' is a subset '''of ''X'', then ''Y'' is a module of ''G'', if and only if it is a module of '''''G[X]'''.
+
+In (Gallai, 1967), Gallai defined the modular decomposition recursively on a graph with vertex set ''V'', as follows:
+
+# As a base case, if ''G'' only has one vertex, its modular decomposition is a single tree node. 
+# Gallai showed that if ''G'' is connected and so is its complement, then the maximal modules that are proper subsets of ''V'' are a partition of ''V''.  They are therefore a modular partition.  The quotient that they define is prime.  The root of the tree is labeled a ''prime'' node, and these modules are assigned as children of ''V''.  Since they are maximal, every module not represented so far is contained in a child ''X'' of ''V''.  For each child ''X'' of ''V'', replacing ''X'' with the modular decomposition tree of ''G[X]'' gives a representation of all modules of ''G'', by the key observation above.
+# If ''G'' is disconnected, its complement is connected.  Every union of connected components is a module of ''G''.  All other modules are subsets of a single connected component.  This represents all modules, except for subsets of connected components.  For each component ''X'', replacing ''X'' by the modular decomposition tree of ''G[[X]]'' gives a representation of all modules of ''G'', by the key observation above.  The root of the tree is labeled a ''parallel' node, and it is attached in place of ''X'' as a child of the root.  The quotient defined by the children is the complement of a complete graph.
+# If the complement of ''G'' is disconnected, ''G'' is connected.   The subtrees that are children of ''V'' are defined in a way that is symmetric with the case where ''G'' is disconnected, since the modules of a graph are the same as the modules of its complement.  The root of the tree is labeled a ''serial'' node, and the quotient defined by the children is a complete graph. 
+
+The final tree has one-element sets of vertices of ''G'' as its leaves, due to the base case.  A set ''Y'' of vertices of ''G'' is a module if and only if it is a node of the tree or a union of children of a series or parallel node.  This implicitly gives all modular partitions of ''V''.  It is in this sense that the modular decomposition tree "subsumes" all other ways of recursively decomposing ''G'' into quotients.
+
+== Algorithmic issues  ==
+ 
+A data structure for representing the modular decomposition tree should support the operation that inputs a node and returns the set of vertices of G that the node represents.  An obvious way to do this is to assign to each node a list of the ''k'' vertices of ''G'' that it represents.   Given a pointer to a node, this structure could return the set of vertices of ''G'' that it represents in ''O(k)'' time.  However, this data structure would require <math>\Theta(n^2)</math> space in the worst case. 
+  
+[[Image:O n ModularDecompRep.pdf|thumb|An O(n) representation of the modular decomposition]]
+
+An ''O(n)''-space alternative that matches this performance  is obtained by representing the modular decomposition tree using any standard ''O(n)'' rooted-tree data structure and labeling each leaf with the vertex of ''G'' that it represents.  The set represented by an internal node ''v'' is given by the set of labels of its leaf descendants.  It is well-known that any rooted tree with ''k'' leaves has at most ''k-1'' internal nodes, one can using a depth-first search, starting at ''v'', to report the labels of leaf descendants of ''v'', takes ''O(k)'' time.
+
+[[Image:ModDecompQuotients.pdf|thumb|The modular decomposition, augmented with a quotient on the children of each internal node, gives a complete representation of ''G''.]]
+
+Each node ''X'' is a set of vertices of ''G'' and, if ''X'' is an internal node, the set ''P'' of children of ''X'' is a partition of ''X'' where each partition class is a module.  They therefore induce the quotient ''G[X]/P'' in ''G[X]''.  The vertices of this quotient are the elements of ''P'', so ''G[X]/P'' can be represented by installing edges among the children of ''X''.  If ''Y'' and ''Z'' are two members of ''P'' and <math>u \in Y</math> and <math>v \in Z</math>, then ''u'' and ''v'' are adjacent in ''G'' if and only if ''Y'' and ''Z'' are adjacent in this quotient.  For any pair ''{u,v}'' of vertices of ''G'', this is determined by the quotient at children of the least common ancestor of ''{u}'' and ''{v}'' in the modular decomposition tree.  Therefore, the modular decomposition, labeled in this way with quotients, gives a complete representation of ''G''.
+
+Many combinatorial problems can be solved on ''G'' by solving the problem separately on each of these quotients.  For example, ''G'' is a comparability graph if and only if each of these quotients is a comparability graph (Gallai, 67; Möhring, 85).  Therefore, to find whether a graph is a comparability graph, one need only find whether each of the quotients is.   In fact, to find a [[comparability graph|transitive orientation]] of a comparability graph, it suffices to transitively orient each of these quotients of its modular decomposition (Gallai, 67; Möhring, 85).  A similar phenomenon applies for permutation graphs, (McConnell and Spinrad '94), interval graphs (Hsu and Ma '99), perfect graphs, and other graph classes.  Some important combinatorial optimization problems on graphs can be solved using a similar strategy (Möhring, 85).
+
+[[Cograph]]s are the graphs that only have parallel or series nodes in their modular decomposition tree.
+
+The first polynomial algorithm to compute the modular decomposition tree of a graph was published in 1972  (James, Stanton & Cowan 1972) and now linear algorithms are available (McConnell & Spinrad 1999, Tedder et al. 2007, Cournier & Habib 1994).
+
+==Generalizations==
+Modular decomposition of directed graphs can be done in linear time {{harv|McConnell|de Montfolfier|2005}}.
+
+== References ==
+*{{cite journal
+  | last = Gallai | first = Tibor | authorlink = Tibor Gallai
+  | title = Transitiv orientierbare Graphen
+  | journal = Acta Mathematica Academiae Scientiarum Hungaricae
+  | volume = 18
+  | year = 1967
+  | pages = 25–66
+  | id = {{MathSciNet | id = 0221974}}
+  | doi = 10.1007/BF02020961}}
+*{{cite book
+  | last1 = James | first1 = Lee O. | last2 = Stanton | first2 = Ralph G. | last3 = Cowan | first3 = Donald D.
+  | contribution = Graph decomposition for undirected graphs
+  | title = Proc. 3rd Southeastern International Conference on Combinatorics, Graph Theory, and Computing (Florida Atlantic Univ., Boca Raton, Fla., 1972)
+  | publisher = [[Florida Atlantic University]]
+  | year = 1972
+  | pages = 281–290
+  | id = {{MathSciNet | id = 0351909}}
+}}
+*{{cite book
+  | last1 = Golumbic | first1=Martin C. 
+  | publisher = Academic Press
+  | year = 1980
+  | title = Algorithmic Graph Theory and Perfect Graphs}}
+*{{cite journal
+  | doi = 10.1137/S0097539792224814
+  | last1 = Hsu | first1 = W.L. | last2 = Ma | first2 = T.
+  | title = Fast and simple algorithms for recognizing chordal comparability graphs and interval graphs
+  | journal = SIAM Journal on Computing 
+  | volume = 28
+  | year = 1999
+  | pages = 1004–1020}}
+*{{cite journal
+ | last1 = McConnell | first1 = Ross M.
+ | last2 = de Montgolfier | first2 = Fabien
+ | doi = 10.1016/j.dam.2004.02.017
+ | issue = 2
+ | journal = Discrete Applied Mathematics
+ | pages = 198–209
+ | title = Linear-time modular decomposition of directed graphs
+ | volume = 145
+ | year = 2005
+ | ref = harv}}
+*{{cite journal
+  | last1 = McConnell | first1 = Ross M. | last2 = Spinrad | first2 = Jeremy P.
+  | title = Modular decomposition and transitive orientation
+  | journal = [[Discrete Mathematics (journal)|Discrete Mathematics]]
+  | volume = 201
+  | year = 1999
+  | pages = 189–241
+  | url = http://www.cs.colostate.edu/~rmm/linto.pdf
+  | id = {{MathSciNet | id = 1687819}}
+  | doi = 10.1016/S0012-365X(98)00319-7}}
+*{{cite journal
+  | last1 = Möhring | first1 = Rolf H.
+  | title = Algorithmic aspects of comparability graphs and interval graphs
+  | journal = Graphs and Order
+  | editor = I. Rival
+  | publisher = D. Reidel
+  | year = 1985
+  | pages = 41–101}}
+*{{cite journal
+   | doi = 10.1007/BF02022041
+   | last1 = Möhring | first1 = Rolf H.
+   | title   = Algorithmic aspects of the substitution decomposition in optimization over relations, set systems and Boolean functions
+   | journal = Annals of Operations Research
+   | volume  = 4
+   | year    = 1985
+   | pages = 195–225}}
+*{{cite book
+  | last1 = Papadopoulos | first1 = Charis | last2 = Voglis | first2 = Constantinos
+  | contribution = Drawing graphs using modular decomposition
+  | title = [[International Symposium on Graph Drawing|Proc. 13th International Symposium on Graph Drawing (GD'05)]]
+  | series = Lecture Notes in Computer Science
+  | publisher = Springer-Verlag
+  | volume = 3842
+  | year = 2006
+  | pages = 343–354
+  | url = http://www.ii.uib.no/~charis/files/DrawModular.pdf
+  | id = {{MathSciNet | id = 2229205}}
+  | doi = 10.1007/11618058_31}}
+*{{cite book
+  | last1 = Spinrad | first1=Jeremy P. 
+  | series = Fields Institute Monographs
+  | publisher = American Mathematical Society
+  | year = 2003
+  | title = Efficient Graph Representations}}
+*{{cite book
+  | last1 = Tedder | first1 = Marc | last2 = Corneil | first2 = Derek
+  | last3 = Habib | first3 = Michel | last4 = Paul | first4 = Christophe
+  | contribution = Simpler Linear-Time Modular Decomposition Via Recursive Factorizing Permutations
+  | series = Lecture Notes in Computer Science
+  | publisher = Springer-Verlag
+  | volume = 5125
+  | year = 2008
+  | pages = 634–645
+  | url = http://arxiv.org/abs/0710.3901
+  | doi = 10.1007/978-3-540-70575-8_52
+  | title = [[International Colloquium on Automata, Languages and Programming|Proc. 35th International Colloquium on Automata, Languages and Programming (ICALP 2008)]]}}.
+
+== External links ==
+* [http://www.lirmm.fr/~gambette/EnsDecompositionModulaireENG.php A bibliography of modular decomposition algorithms]
+* A [[Perl]] [http://www.dns.net/dist/graph/ implementation of a modular decomposition algorithm]
+* A Java [http://code.google.com/p/bpstruct/ implementation of a modular decomposition algorithm]
+
+[[Category:Graph theory]]</body> </html>

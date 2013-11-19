@@ -1,0 +1,109 @@
+<html> <head> <title>Dominator (graph theory)</title></head><body>{{for|Dominating set problem|Dominating set}}
+
+In [[computer science]], in [[control flow graph]]s, a [[Node (computer science)|node]] '''d''' ''dominates'' a node '''n''' if every path from the ''start node'' to '''n''' must go through '''d'''. Notationally, this is written as '''d''' dom '''n''' (or sometimes '''d''' <math>\gg</math> '''n'''). By definition, every node dominates itself.
+
+There are a number of related concepts:
+
+* A node d ''strictly dominates'' a node n if d dominates n and d does not equal n.
+* The ''immediate dominator'' or '''idom''' of a node ''n'' is the unique node that strictly dominates ''n'' but does not strictly dominate any other node that strictly dominates ''n''. Not all nodes have immediate dominators (e.g. entry nodes).
+* The ''dominance frontier'' of a node n is the set of all nodes w such that n dominates an immediate predecessor of w, but n does not strictly dominate w. It is the set of nodes where n's dominance stops.
+* A ''dominator tree'' is a [[tree (graph theory)|tree]] where each node's children are those nodes it immediately dominates. Because the immediate dominator is unique, it is a tree. The start node is the top of the tree.
+
+== History ==
+Dominance was first introduced by Reese T. Prosser in a 1959 paper on analysis of flow diagrams.<ref>{{cite paper 
+|last=Prosser 
+|first=Reese T. 
+|title=Applications of Boolean matrices to the analysis of flow diagrams 
+|url=http://portal.acm.org/ft_gateway.cfm?id=1460314&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747 
+|journal=AFIPS Joint Computer Conferences: Papers presented at the December 1&ndash;3, 1959, eastern joint IRE-AIEE-ACM computer conference 
+|publisher=ACM 
+|location=Boston, MA
+|pages=133–138 
+|year=1959 }}</ref> Prosser did not present an algorithm for computing dominance, which had to wait ten years for Edward S. Lowry and C. W. Medlock.<ref>{{cite paper 
+|title=Object code optimization 
+|url=http://portal.acm.org/ft_gateway.cfm?id=362838&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747 
+|journal=Communications of the ACM 
+|volume=12 
+|issue=1 
+|month=January 
+|year=1969 
+|pages=13–22 
+|first=Edward S. 
+|last=Lowry 
+|coauthors=and Medlock, Cleburne W. }}</ref> Ron Cytron ''et al.'' rekindled interest in dominance in 1989 when they applied it to efficient computation of φ functions, which are used in [[static single assignment form]].<ref>{{cite paper 
+|first=Ron 
+|last=Cytron 
+|coauthors=Hind, Michael; and Hsieh, Wilson 
+|url=http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.50.9287&rep=rep1&type=pdf 
+|title=Automatic Generation of DAG Parallelism 
+|journal=Proceedings of the ACM SIGPLAN 89 Conference on Programming Language Design and Implementation 
+|year=1989 
+|pages=54–68 }}</ref>
+
+== Applications ==
+Dominators, and [[dominator (node)|dominance frontier]]s particularly, have applications in [[compiler]]s for computing [[static single assignment form]]. A number of compiler optimizations can also benefit from dominators. The flow graph in this case comprises [[basic block]]s.
+
+Automatic parallelization benefits from postdominance frontiers. This is an efficient method of computing control dependence, which is critical to the analysis.
+
+Memory usage analysis can benefit from the dominator tree to easily find leaks and identify high memory usage (http://www.eclipse.org/mat/).
+
+== Algorithms ==
+The dominators of a node n are given by the maximal solution to the following data-flow equations:
+
+: <math>\operatorname{Dom}(n_o) = \left \{ n_o \right \}</math>
+
+: <math>\operatorname{Dom}(n) = \left ( \bigcap_{p \in \text{preds}(n)}^{} \operatorname{Dom}(p) \right ) \bigcup^{} \left \{ n \right \} </math>
+
+where <math>n_o</math> is the start node.
+
+The dominator of the start node is the start node itself. The set of dominators for any other node n is the intersection of the set of dominators for all predecessors p of n. The node n is also in the set of dominators for n.
+
+An algorithm for direct solution is:
+
+  // dominator of the start node is the start itself
+  Dom(n<sub>0</sub>) = {n<sub>0</sub>}
+  // for all other nodes, set all nodes as the dominators
+  '''for each''' n '''in''' N - {n<sub>0</sub>}
+      Dom(n) = N;
+  // iteratively eliminate nodes that are not dominators
+  '''while''' changes in any Dom(n)
+      '''for each''' n '''in''' N - {n<sub>0</sub>}:
+          Dom(n) = {n} union with intersection over all p in pred(n) of Dom(p)
+
+Direct solution is [[quadratic growth|quadratic]] in the number of nodes, or O(n<sup>2</sup>). [[Thomas Lengauer|Lengauer]] and [[Robert Endre Tarjan|Tarjan]] developed an algorithm which is almost linear, but its implementation tends to be complex and time consuming for a graph of several hundred nodes or fewer.<ref>{{cite paper 
+|title=A fast algorithm for finding dominators in a flowgraph 
+|url=http://portal.acm.org/ft_gateway.cfm?id=357071&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747 
+|journal=ACM Transactions on Programming Languages and Systems (TOPLAS) 
+|volume=1
+|issue=1 
+|month=July 
+|year=1979 
+|pages=121–141 
+|first=Thomas 
+|last=Lengauer 
+|coauthors=and Tarjan, Robert Endre }}</ref>
+
+Keith D. Cooper, Timothy J. Harvey, and Ken Kennedy of [[Rice University]] describe an algorithm that essentially solves the above data flow equations but uses well engineered data structures to improve performance.<ref>{{cite web 
+|title=A Simple, Fast Dominance Algorithm 
+|url=http://www.hipersoft.rice.edu/grads/publications/dom14.pdf 
+|author=Cooper, Keith D.; Harvey, Timothy J; and Kennedy, Ken 
+|year=2001 }}</ref>
+
+== Postdominance ==
+Analogous to the definition of dominance above, a node ''z'' is said to '''post-dominate''' a node ''n'' if all paths to the exit node of the graph starting at ''n'' must go through ''z''. Similarly, the '''immediate post-dominator''' of a node ''n'' is the postdominator of ''n'' that doesn't strictly postdominate any other strict postdominators of ''n''.
+
+==See also==
+
+* [[Control flow graph]]
+* [[Static single assignment form]]
+
+==References==
+<references />
+
+==External links==
+*[http://www.eecs.harvard.edu/hube/software/nci/cfa.html The Machine-SUIF Control Flow Analysis Library]
+{{Graph Theory-footer}}
+
+{{DEFAULTSORT:Dominator (Graph Theory)}}
+[[Category:Graph theory]]
+[[Category:Compiler theory]]</body> </html>

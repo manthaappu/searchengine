@@ -1,0 +1,48 @@
+<html> <head> <title>Key Wrap</title></head><body>'''Key Wrap''' constructions are a class of [[symmetric encryption]] algorithms designed to [[key encapsulation|encapsulate]] (encrypt) cryptographic key material.   The Key Wrap algorithms are intended for applications such as (a) protecting keys while in untrusted storage, or (b) transmitting keys over untrusted communications networks.  The constructions are typically built from standard primitives such as [[block cipher]]s and [[cryptographic hash function]]s.  
+
+Key Wrap may be considered as a form of [[key encapsulation]] algorithm, although it should not be confused with the more commonly-known ''asymmetric'' (public-key) [[Key Encapsulation]] algorithms (e.g., [[PSEC-KEM]]).  Key Wrap algorithms can be used in a similar application: to securely transport a session key by encrypting it under a long-term encryption key.
+
+==Background==
+
+In the late 1990s, the [[National Institute of Standards and Technology]] (NIST) posed the "Key Wrap" problem: to develop secure and efficient cipher-based key encryption algorithms.  The resulting algorithms would be formally evaluated by NIST, and eventually approved for use in NIST-certified cryptographic modules.  NIST did not precisely define the security goals of the resulting algorithm, and left further refinement to the algorithm developers.  Based on the resulting algorithms, the design requirements appear to be (1) confidentiality, (2) integrity protection (authentication), (3) efficiency, (4) use of standard (approved) underlying primitives such as the [[Advanced Encryption Standard]] (AES) and the Secure Hash Algorithm ([[SHA-1]]), and (5) consideration of additional circumstances (e.g., resilience to operator error, low-quality random number generators).  Goals (3) and (5) are particularly important, given that many widely-deployed [[authenticated encryption]] algorithms (e.g., AES-CCM) are already sufficient to accomplish the remaining goals.
+
+[[Image:NIST_AES_key_wrap.png|thumb|right|NIST AES Key Wrap Specification]]
+
+Several constructions have been proposed.  These include:
+
+* ''[http://csrc.nist.gov/groups/ST/toolkit/documents/kms/key-wrap.pdf AES Key Wrap Specification]'' (November 2001)
+* [http://eprint.iacr.org/2004/340.pdf American Standards Committee ANSX9.102], which defines four algorithms:
+** AESKW (a variant of the ''AES Key Wrap Specification'')
+** TDKW (similar to AESKW, built from [[Triple DES]] rather than AES).
+** AKW1
+** AKW2
+
+Each of the proposed algorithms can be considered as a form of [[authenticated encryption]] algorithm providing confidentiality for highly-[[entropic security|entropic]] messages such as cryptographic keys.  The AES Key Wrap Specification, AESKW, TDKW, and AKW1 are intended to maintain confidentiality under [[adaptive chosen ciphertext attack]]s, while the AKW2 algorithm is designed to be secure only under known-plaintext (or weaker) attacks.  (The stated goal of AKW2 is for use in legacy systems and computationally limited devices where use of the other algorithms would be impractical.)  AESKW, TDKW and AKW2 also provide the ability to authenticate cleartext "header", an associated block of data that is not encrypted.
+
+[[Phillip Rogaway|Rogaway]] and Shrimpton evaluated the design of the ANSX9.102 algorithms with respect to the stated security goals.  Among their general findings, they noted the lack of clearly-stated design goals for the algorithms, and the absence of security proofs for all constructions.
+
+In their paper, [[Phillip Rogaway|Rogaway]] and Shrimpton proposed a provable key-wrapping algorithm (SIV--
+the Synthetic Initialization Vector mode) that authenticates and encrypts an arbitrary string and authenticates, 
+but does not encrypt, additional data which can be bound into the wrapped key. This has been standardized as a 
+new AES mode in RFC 5297.
+
+==See also==
+* [[Authenticated encryption]]
+* [[Deterministic encryption]]
+* [[Key management]]
+* [[Offline private key protocol]]
+
+==References==
+* [http://web.cecs.pdx.edu/~teshrim/keywrap.pdf P. Rogaway, T. Shrimpton.  ''A Provable-Security Treatment of the Key-Wrap Problem''.]
+* [http://csrc.nist.gov/groups/ST/toolkit/documents/kms/key-wrap.pdf NIST, ''AES Key Wrap Specification'' (November 2001)]
+* [http://eprint.iacr.org/2004/340.pdf American Standards Committee, Request for Review of Key Wrap Algorithms]
+*{{cite web
+ |     author = Dan Harkins
+ |      title = RFC 5297: Synthetic Initialization Vector (SIV) Authenticated Encryption Using the Advanced Encryption Standard (AES)
+ |      month = October
+ |       year = 2008
+ |        url = http://tools.ietf.org/html/rfc5297
+ |  publisher = IETF
+ }}
+
+[[Category:Cryptographic algorithms]]</body> </html>

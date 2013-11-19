@@ -1,0 +1,253 @@
+<html> <head> <title>Hibernate (Java)</title></head><body>{{More footnotes|date=April 2010}}
+{{Infobox software
+| logo                   = [[Image:Hibernate.png]]
+| name                   = Hibernate
+| developer              = [[Red Hat]]
+| status                 = Active
+| latest release version = 3.6.0 Final
+| latest release date    = {{release date|2010|10|13}}
+| operating system       = [[Cross-platform]] ([[JVM]])
+| platform               = [[Java Virtual Machine]]
+| programming language   = [[Java (programming language)|Java]]
+| genre                  = [[Object-relational mapping]]
+| license                = [[GNU Lesser General Public License]]
+| website                = http://www.hibernate.org
+}}
+
+'''Hibernate''' is an [[object-relational mapping]] (ORM) library for the [[Java (programming language)|Java]] language, providing a [[Software framework|framework]] for mapping an [[Object-oriented programming|object-oriented]] [[domain model]] to a traditional [[relational database]].  Hibernate solves [[object-relational impedance mismatch]] problems by replacing direct [[Persistence (computer science)|persistence]]-related database accesses with high-level object handling functions.
+
+Hibernate is [[free software]] that is distributed under the [[GNU Lesser General Public License]].
+
+Hibernate's primary feature is mapping from Java classes to database tables (and from Java data types to [[SQL]] data types). Hibernate also provides data query and retrieval facilities.  Hibernate generates the SQL calls and attempts to relieve the developer from manual result set handling and object conversion and keep the application portable to all supported SQL databases with little performance overhead.
+
+==Mapping==
+Mapping Java classes to database tables is accomplished through the configuration of an [[XML]] file or by using [[Java annotation|Java Annotations]]. When using an XML file, Hibernate can [[Program synthesis|generate]] skeletal [[source code]] for the persistence classes. This is unnecessary when annotation is used. Hibernate can use the XML file or the annotation to maintain the [[database schema]].
+
+Facilities to arrange [[one-to-many]] and [[Many-to-many (data model)|many-to-many]] relationships between classes are provided. In addition to managing association between objects, Hibernate can also manage [[Reflexive relation|reflexive]] associations where an object has a one-to-many relationship with other instances of its own [[data type|type]].
+
+Hibernate supports the mapping of custom value types. This makes the following scenarios possible:
+* Overriding the default SQL type that Hibernate chooses when mapping a column to a property.
+* Mapping Java [[Enumerated type|Enum]] to columns as if they were regular properties.
+* Mapping a single property to multiple columns.
+
+==Persistence==
+Hibernate provides transparent persistence for [[Plain Old Java Object]]s (POJOs). The only strict requirement for a persistent class is a no-argument [[Constructor (computer science)|constructor]], not necessarily ''public''. Proper behavior in some applications also requires special attention to the ''equals()'' and ''hashCode()'' methods.<ref>[http://www.hibernate.org/109.html Equals and HashCode]</ref>
+
+Collections of data objects are typically stored in Java collection objects such as Set and List. [[Generics in Java|Java generics]], introduced in Java 5, are supported. Hibernate can be configured to [[lazy load]] associated collections. Lazy loading is the default as of Hibernate 3.
+
+Related objects can be configured to ''cascade'' operations from one to the other. For example, a parent such as an Album object can be configured to cascade its save and/or delete operation to its child Track objects. This can reduce development time and ensure [[referential integrity]]. A ''dirty checking'' feature avoids unnecessary database write actions by performing SQL updates only on the modified fields of persistent objects.
+
+==Hibernate Query Language (HQL)==
+Hibernate provides an [[SQL]] inspired language called [[Hibernate Query Language]] (HQL) which allows SQL-like queries to be written against Hibernate's data objects. ''Criteria Queries'' are provided as an [[Object-oriented programming|object-oriented]] alternative to HQL.
+
+==Integration==
+Hibernate can be used both in [[Stand-alone|standalone]] [[Java (programming language)|Java]] applications and in [[Java EE]] applications using [[Java Servlet|servlets]] or [[EJB]] session beans.  It can also be included as a feature in other programming languages.  For example, [[Adobe Systems|Adobe]] integrated Hibernate into version 9 of [[ColdFusion]] (which runs on J2EE app servers) with an abstraction layer of new functions and syntax added into [[CFML]].
+
+==Entities and components==
+In Hibernate [[jargon]], an ''entity'' is a stand-alone object in Hibernate's [[Persistence (computer science)|persistent]] mechanism which can be manipulated independently of other objects. In contrast, a ''component'' is subordinate to other entities and can be manipulated only with respect to other entities. For example, an Album object may represent an entity but the Tracks object associated with the Album objects would represent a ''component'' of the Album entity if it is assumed that Tracks can only be saved or retrieved from the database through the Album object.
+
+== History ==
+
+Hibernate was started in 2001 by Gavin King as an alternative to using EJB2-style entity beans.  Its mission back then was to simply offer better persistence capabilities than offered by EJB2 by simplifying the complexities and allowing for missing features.
+
+Early in 2003, the Hibernate development team began Hibernate2 releases which offered many significant improvements over the first release and would go on to catapult Hibernate as the "de facto" standard for persistence in Java.
+
+[[JBoss (company)|JBoss, Inc.]] (now part of [[Red Hat]]) later hired the lead Hibernate developers and worked with them in supporting Hibernate.
+
+{{As of | 2010}} the current version of Hibernate is Version 3.x.  This version introduced new features like a new Interceptor/Callback architecture, user defined filters, and JDK 5.0 [[Java annotation|Annotations]] (Java's [[metadata]] feature). {{As of | 2010}} Hibernate 3 (version 3.5.0 and up) is a certified implementation of the [[Java Persistence API#JPA_2.0|Java Persistence API 2.0]] specification via a wrapper for the Core module which provides conformity with the [http://jcp.org/en/jsr/detail?id=317 JSR 317] standard.<ref>and POJO.[http://in.relation.to/Bloggers/Hibernate350FinalRelease Hibernate 3.5.0-Final release]</ref>
+
+== Application programming interface ==
+
+The Hibernate API is provided in the [[Java package]] [http://docs.jboss.org/hibernate/stable/core/api/index.html?overview-summary.html  org.hibernate].
+
+=== [http://docs.jboss.org/hibernate/stable/core/api/index.html?org/hibernate/SessionFactory.html org.hibernate.SessionFactory] interface ===
+
+References immutable and threadsafe object creating new Hibernate sessions. Hibernate-based applications are usually designed to make use only of a single instance of the class implementing this interface (often exposed using a [[singleton pattern|singleton design pattern]]).
+
+=== [http://docs.jboss.org/hibernate/stable/core/api/index.html?org/hibernate/Session.html org.hibernate.Session] interface ===
+
+Represents a Hibernate session i.e. the main point of the manipulation performed on the database entities. The latter activities include (among the other things) managing the persistence state (transient, persisted, detached) of the objects, fetching the persisted ones from the database and the management of the transaction demarcation.
+
+A session is intended to last as long as the logical transaction on the database. Due to the latter feature Session implementations are not expected to be threadsafe nor to be used by multiple clients.
+
+== See also ==
+{{Portal box|Free Software|Java}}
+* [[JBoss (disambiguation)]], other JBoss software
+* [[pureQuery]]
+* [[EJB]] 3.0
+* [[NHibernate]]
+* [[Serialization]]
+* [[MyBatis]]
+* [[iBATIS]]
+* [[Service Data Object]]
+* [[QuickDB ORM]]
+* [[List of object-relational mapping software]]
+
+==References==
+<references/>
+
+==Bibliography==
+{{Refbegin}}
+*{{citation
+| first1    = Jeff
+| last1     = Linwood
+| first2    = Dave 
+| last2     = Minter
+| date      = May 28, 2010
+| title     = Beginning Hibernate
+| edition   = Second
+| publisher = [[Apress]]
+| pages     = 400 
+| isbn      = 1430228504
+| url       = http://www.apress.com/book/view/9781430228509
+}}
+*{{citation
+| first1    = Emmanuel
+| last1     = Bernard
+| first2    = John
+| last2     = Griffin
+| date      = December 30, 2008
+| title     = Hibernate Search in Action
+| edition   = First
+| publisher = [[Manning Publications]]
+| pages     = 488
+| isbn      = 1933988649
+| url       = http://www.manning.com/bernard/
+}}
+*{{citation
+| first1    = James
+| last1     = Elliott
+| first2    = Tim
+| last2     = O'Brien
+| date      = April 22, 2008
+| title     = Harnessing Hibernate
+| edition   = First
+| publisher = [[O'Reilly Media]]
+| pages     = 380
+| isbn      = 0596517726
+| url       = http://oreilly.com/catalog/9780596517724/
+}}
+*{{citation
+| first1    = Gavin
+| last1     = King
+| first2    = Bauer
+| last2     = Christian
+| date      = November 24, 2006
+| title     = Java Persistence with Hibernate
+| edition   = Second
+| publisher = [[Manning Publications]]
+| pages     = 880
+| isbn      = 1932394885
+| url       = http://www.manning.com/bauer2/
+}}
+*{{citation
+| first1    = Jeff
+| last1     = Linwood
+| first2    = Dave
+| last2     = Minter
+| date      = August 25, 2006
+| title     = Beginning Hibernate: From Novice to Professional
+| edition   = Third
+| publisher = [[Apress]]
+| pages     = 360
+| isbn      = 1590596935
+| url       = http://www.apress.com/book/view/9781590596937
+}}
+*{{citation
+| first1    = Dave
+| last1     = Minter
+| first2    = Jeff
+| last2     = Linwood
+| date      = June 27, 2005
+| title     = Pro Hibernate 3
+| edition   = First
+| publisher = [[Apress]]
+| pages     = 242
+| isbn      = 1590595114
+| url       = http://www.apress.com/book/view/1590595114
+}}
+*{{citation
+| first     = Will
+| last      = Iverson
+| date      = December 2, 2004
+| title     = Hibernate: A J2EE Developer's Guide
+| edition   = First
+| publisher = [[Addison Wesley]]
+| pages     = 384
+| isbn      = 0321268199
+| url       = http://www.manning.com/bauer/
+}}
+*{{citation
+| first1    = Eric
+| last1     = Pugh
+| first2    = Joseph D.
+| last2     = Gradecki
+| date      = October 8, 2004
+| title     = Professional Hibernate (Programmer to Programmer)
+| edition   = First
+| publisher = [[Wrox]]
+| pages     = 456
+| isbn      = 0764576771
+| url       = http://p2p.wrox.com/book-professional-hibernate-148/
+}}
+*{{citation
+| first1    = Gavin
+| last1     = King
+| first2    = Bauer
+| last2     = Christian
+| date      = August 1, 2004
+| title     = Hibernate In Action
+| edition   = Second
+| publisher = [[Manning Publications]]
+| pages     = 400
+| isbn      = 193239415X
+| url       = http://www.manning.com/bauer/
+}}
+*{{citation
+| first     = Elliott
+| last      = James
+| date      = May 10, 2004
+| title     = Hibernate: A Developer's Notebook
+| edition   = First
+| publisher = [[O'Reilly Media]]
+| pages     = 190
+| isbn      = 0596006969
+| url       = http://oreilly.com/catalog/9780596006969/
+}}
+{{Refend}}
+
+==External links==
+* {{official|http://www.hibernate.org}}
+*[http://www.javafree.org/artigo/871462/Interview-with-Gavin-King-founder-of-Hibernate.html Interview with Gavin King, founder of Hibernate]
+*[http://www.visualbuilder.com/java/hibernate/tutorial/ Hibernate Tutorial]
+*[http://docs.jboss.org/hibernate/stable/core/reference/en/html/ Hibernate Reference Documentation]
+*[http://dev.wavemaker.com/forums/?q=node/3232 Hibernate and HQL Query Tutorial]
+*[http://community.wavemaker.com/WM5App_HQLGuru/ HQL Guru - Running Hibernate Query Examples]
+*[http://www.lalitbhatt.com/tiki-index.php?page=Hibernate Hibernate Tutorial]
+{{Java Persistence API}}
+{{Java (Sun)}}
+
+[[Category:Object-relational mapping]]
+[[Category:Java platform]]
+[[Category:Java enterprise platform]]
+[[Category:Red Hat]]
+[[Category:Cross-platform software]]
+[[Category:Persistence frameworks]]
+
+[[ca:Hibernate]]
+[[cs:Hibernate]]
+[[de:Hibernate (Framework)]]
+[[el:Hibernate Framework]]
+[[es:Hibernate]]
+[[fa:هایبرنیت]]
+[[fr:Hibernate]]
+[[it:Hibernate]]
+[[mn:Hibernate (Java)]]
+[[nl:Hibernate]]
+[[ja:Hibernate]]
+[[pl:Hibernate]]
+[[pt:Hibernate]]
+[[ru:Hibernate (библиотека)]]
+[[tr:Hibernate]]
+[[uk:Hibernate]]
+[[zh:Hibernate]]</body> </html>

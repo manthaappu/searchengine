@@ -1,0 +1,319 @@
+<html> <head> <title>Computational complexity of mathematical operations</title></head><body>The following tables list the [[Analysis of algorithms|running time]] of various [[algorithm]]s for common [[mathematical operation]]s.
+
+Here, complexity refers to the [[time complexity]] of performing computations on a [[multitape Turing machine]]<ref>A. Schönhage, A.F.W. Grotefeld, E. Vetter: ''Fast Algorithms—A Multitape Turing Machine Implementation'', BI Wissenschafts-Verlag, Mannheim, 1994</ref>. See [[big O notation]] for an explanation of the notation used.
+
+Note: Due to the variety of multiplication algorithms, ''M''(''n'') below stands in for the complexity of the chosen multiplication algorithm.
+
+
+==Arithmetic functions==
+
+{| class="wikitable"
+!Operation
+!Input
+!Output
+!Algorithm
+!Complexity
+|-
+|[[Addition]]
+|Two ''n''-digit numbers
+|One ''n''+1-digit number
+|Schoolbook addition with carry
+|Θ(''n'')
+|-
+|[[Subtraction]]
+|Two ''n''-digit numbers
+|One ''n''+1-digit number
+|Schoolbook subtraction with borrow
+|Θ(''n'')
+|-
+|rowspan=7|[[Multiplication]]
+|rowspan=7|Two ''n''-digit numbers<br/>
+|rowspan=7|One 2''n''-digit number
+|[[Multiplication algorithm#Long multiplication|Schoolbook long multiplication]]
+|O(''n''<sup>2</sup>)
+|-
+|[[Karatsuba algorithm]]
+|O(''n''<sup>1.585</sup>)
+|-
+|3-way [[Toom–Cook multiplication]]
+|O(''n''<sup>1.465</sup>)
+|-
+|''k''-way Toom–Cook multiplication
+|O(''n''<sup>log (2''k'' − 1)/log ''k''</sup>)
+|-
+|Mixed-level Toom–Cook (Knuth 4.3.3-T)<ref>D. Knuth. ''[[The Art of Computer Programming]]'', Volume 2. Third Edition, Addison-Wesley 1997.</ref>
+|O(''n'' 2<sup>√(2 log ''n'')</sup> log ''n'')
+|-
+|[[Schönhage–Strassen algorithm]]
+|O(''n'' log ''n'' log log ''n'')
+|-
+|[[Fürer's algorithm]]<ref>Martin Fürer. ''[http://www.cse.psu.edu/~furer/Papers/mult.pdf Faster Integer Multiplication]''. Proceedings of the 39th Annual [[ACM Symposium on Theory of Computing]], San Diego, California, USA, June 11-13, 2007, pp. 55–67.</ref>
+| O(''n'' log ''n'' 2<sup>[[Iterated logarithm|log*]] ''n''</sup>)
+|-
+|rowspan=2|[[Division (mathematics)|Division]]
+|rowspan=2|Two ''n''-digit numbers
+|rowspan=2|One ''n''-digit number
+|[[Long division|Schoolbook long division]]
+|O(''n''<sup>2</sup>)
+|-
+|[[Newton's method]]
+|''M''(''n'')
+|-
+|[[Square root]]
+|One ''n''-digit number
+|One ''n''-digit number
+|Newton's method
+|''M''(''n'')
+|-
+|rowspan=3|[[Modular exponentiation]]
+|rowspan=3|Two ''n''-digit numbers and a ''k''-bit exponent
+|rowspan=3|One ''n''-digit number
+|Repeated multiplication and reduction
+|''O''(2<sup>''k''</sup>''M(n)'')
+|-
+|[[Exponentiation by squaring]]
+|''O''(''k M''(n))
+|-
+|Exponentiation with [[Montgomery reduction]]
+|''O''(''k M''(n))
+|}
+Schnorr and Stumpf<ref>C. P. Schnorr and G. Stumpf. A characterization of complexity sequences. Zeitschrift fur Mathematische Logik und Grundlagen der Mathematik 21(1):47–56, 1975.</ref> conjectured that no fastest algorithm for multiplication exists.
+
+==Algebraic functions==
+
+{| class="wikitable"
+|rowspan=2|[[Polynomial]] evaluation
+|rowspan=2| One polynomial of degree ''n'' with fixed-size polynomial coefficients
+|rowspan=2| One fixed-size number
+|Direct evaluation
+|Θ(''n'')
+|-
+|[[Horner's method]]
+|Θ(''n'')
+|-
+|rowspan=2|Polynomial gcd (over ''Z[x]'' or ''F[x]'')
+|rowspan=2| Two polynomials of degree ''n'' with fixed-size polynomial coefficients
+|rowspan=2| One polynomial of degree at most ''n''
+|Euclidean algorithm
+|O(''n''<sup>2</sup>)
+|-
+|Fast Euclidean algorithm <ref>http://planetmath.org/encyclopedia/HalfGCDAlgorithm.html</ref>
+|O(''n'' (log ''n'')<sup>2</sup> log log ''n'')
+|}
+
+==Special functions==
+Many of the methods in this section are given in Borwein & Borwein.<ref>J. Borwein & P. Borwein. ''Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity''. John Wiley 1987.</ref>
+
+===Elementary functions===
+
+The [[elementary function]]s are constructed by composing arithmetic operations, the [[exponential function]] (exp), the [[natural logarithm]] (log), [[trigonometric function]]s (sin, cos), and their inverses. The complexity of an elementary function is equivalent to that of its inverse, since all elementary functions are [[analytic function|analytic]] and hence invertible by means of Newton's method. In particular, if either exp or log can be computed with some complexity, then that complexity is attainable for all other elementary functions.
+
+Below, the size ''n'' refers to the number of digits of precision at which the function is to be evaluated.
+
+{| class="wikitable"
+!Algorithm
+!Applicability
+!Complexity
+|-
+|[[Taylor series]]; repeated argument reduction (e.g. exp(2''x'') = [exp(''x'')]<sup>2</sup>) and direct summation
+|exp, log, sin, cos
+|O(''n''<sup>1/2</sup> ''M''(''n''))
+|-
+|Taylor series; [[Fast Fourier transform|FFT]]-based acceleration
+|exp, log, sin, cos
+|O(''n''<sup>1/3</sup> (log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|Taylor series; [[binary splitting]] + [[bit burst]] method<ref>David and Gregory Chudnovsky. Approximations and complex multiplication according to Ramanujan. ''Ramanujan revisited'', Academic Press, 1988, pp 375–472.</ref>
+|exp, log, sin, cos
+|O((log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|[[Arithmetic-geometric mean]] iteration
+|log
+|O(log ''n'' ''M''(''n''))
+|}
+
+It is not known whether O(log ''n'' ''M''(''n'')) is the optimal complexity for elementary functions. The best known lower bound is the trivial bound O(''M''(''n'')).
+
+===Non-elementary functions===
+
+{| class="wikitable"
+!Function
+!Input
+!Algorithm
+!Complexity
+|-
+|rowspan=3|[[Gamma function]]
+|''n''-digit number
+|Series approximation of the [[incomplete gamma function]]
+|O(''n''<sup>1/2</sup> (log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|Fixed rational number
+|Hypergeometric series
+|O((log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|''m''/24, ''m'' an integer
+|[[Arithmetic-geometric mean]] iteration
+|O(log ''n'' ''M''(''n''))
+|-
+|rowspan=2|[[Hypergeometric function]] ''<sub>p</sub>F<sub>q</sub>''
+|''n''-digit number
+|(As described in Borwein & Borwein)
+|O(''n''<sup>1/2</sup> (log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|Fixed rational number
+|Hypergeometric series
+|O((log ''n'')<sup>2</sup> ''M''(''n''))
+|}
+
+===Mathematical constants===
+This table gives the complexity of computing approximations to the given constants to ''n'' correct digits.
+{| class="wikitable"
+!Constant
+!Algorithm
+!Complexity
+|-
+|[[Golden ratio]], φ
+|[[Newton's method]]
+|O(''M''(''n''))
+|-
+|[[Square root of 2]], √2
+|Newton's method
+|O(''M''(''n''))
+|-
+|rowspan=2|[[e (mathematical constant)|Euler's number]], ''e''
+|[[Binary splitting]] of the Taylor series for the exponential function
+|O(log ''n'' ''M''(''n''))
+|-
+|Newton inversion of the natural logarithm
+|O(log ''n'' ''M''(''n''))
+|-
+|rowspan=2|[[Pi]], π
+|Binary splitting of the arctan series in [[Machin's formula]]
+|O((log ''n'')<sup>2</sup> ''M''(''n''))
+|-
+|[[Salamin–Brent algorithm]]
+|O(log ''n'' ''M''(''n''))
+|-
+|[[Euler–Mascheroni constant|Euler's constant]], γ
+|Sweeney's method (approximation in terms of the [[exponential integral]])
+|O((log ''n'')<sup>2</sup> ''M''(''n''))
+|}
+
+==Number theory==
+Algorithms for [[number theory|number theoretical]] calculations are studied in [[computational number theory]].
+
+{| class="wikitable"
+!Operation
+!Input
+!Output
+!Algorithm
+!Complexity
+|-
+|rowspan=5|[[Greatest common divisor]]
+|rowspan=5|Two ''n''-digit numbers
+|rowspan=5|One number with at most ''n'' digits
+|[[Euclidean algorithm]]
+|O(''n''<sup>2</sup>)
+|-
+|[[Binary GCD algorithm]]
+|O(''n''<sup>2</sup>)
+|-
+|Left/Right k-ary Binary GCD algorithm<ref>{{cite journal | author = J. Sorenson. | title = [http://dx.doi.org/10.1006/jagm.1994.1006 Two Fast GCD Algorithms] | journal = Journal of Algorithms | volume = 16| pages = 110–144 | year = 1994 | doi = 10.1006/jagm.1994.1006}}</ref>
+|O(''n''<sup>2</sup> / log ''n'')
+|-
+|[[Stehlé-Zimmermann algorithm]]<ref>R. Crandall & C. Pomerance. ''Prime Numbers - A Computational Perspective''. Second Edition, Springer 2005.</ref>
+|O(log ''n'' ''M''(''n''))
+|-
+|[[Schönhage controlled Euclidean descent algorithm]]<ref>{{cite journal | author = Möller N | title =  [http://www.lysator.liu.se/~nisse/archive/sgcd.pdf On Schönhage's algorithm and subquadratic integer gcd computation] | journal = Mathematics of Computation | volume = 77 | pages = 589–607 | doi = 10.1090/S0025-5718-07-02017-0 | year = 2008}}</ref>
+|O(log ''n'' ''M''(''n''))
+|-
+|rowspan=3|[[Jacobi symbol]]
+|rowspan=3|Two ''n''-digit numbers
+|rowspan=3|0, -1, or 1
+|-
+|Schönhage controlled Euclidean descent algorithm<ref>{{cite web | author = Bernstein D J | title = Faster Algorithms to Find Non-squares Modulo Worst-case Integers | url = http://cr.yp.to/papers/nonsquare.ps}}</ref>
+|O(log ''n'' ''M''(''n''))
+|-
+| Stehlé-Zimmermann algorithm<ref>{{cite|author1=Richard P. Brent|author2=Paul Zimmermann|title=An O(M(n) log n) algorithm for the Jacobi symbol|year=2010|id={{arXiv|1004.2091}}}}</ref>
+|O(log ''n'' ''M''(''n''))
+|-
+|rowspan=3|[[Factorial]]
+|rowspan=3|A fixed-size number ''m''
+|rowspan=3|One O(''m'' log ''m'')-digit number
+|Bottom-up multiplication
+|O(''m''<sup>2</sup> log ''m'')
+|-
+|Binary splitting
+|O(log ''m'' ''M''(''m'' log ''m''))
+|-
+|Exponentiation of the prime factors of ''m''
+|O(log log ''m'' ''M''(''m'' log ''m''))<ref>P. Borwein. "On the complexity of calculating factorials". ''Journal of Algorithms'' '''6''', 376-380 (1985)</ref>,<br>O(''M''(''m'' log ''m''))<ref>A. Schönhage, A.F.W. Grotefeld, E. Vetter: ''Fast Algorithms—A Multitape Turing Machine Implementation'', BI Wissenschafts-Verlag, Mannheim, 1994</ref>
+|}
+
+==Matrix algebra==
+The following complexity figures assume that arithmetic with individual elements has complexity O(1), as is the case with fixed-precision [[floating-point arithmetic]].
+
+{| class="wikitable"
+!Operation
+!Input
+!Output
+!Algorithm
+!Complexity
+|-
+|rowspan=3|[[Matrix multiplication]]
+|rowspan=3|Two ''n×n''-matrices
+|rowspan=3|One ''n×n''-matrix
+|Schoolbook matrix multiplication
+|O(''n''<sup>3</sup>)
+|-
+|[[Strassen algorithm]]
+|O(''n''<sup>2.807</sup>)
+|-
+|[[Coppersmith–Winograd algorithm]]
+|O(''n''<sup>2.376</sup>)
+|-
+|Matrix multiplication
+|One ''n×m''-matrix &
+
+One ''m×p''-matrix
+|One ''n×p''-matrix
+|Schoolbook matrix multiplication
+|O(''nmp'')
+|-
+|rowspan=3|[[Matrix inversion]]
+|rowspan=3|One ''n×n''-matrix
+|rowspan=3|One ''n×n''-matrix
+|[[Gauss–Jordan elimination]]
+|O(''n''<sup>3</sup>)
+|-
+|Strassen algorithm
+|O(''n''<sup>2.807</sup>)
+|-
+|Coppersmith–Winograd algorithm
+|O(''n''<sup>2.376</sup>)
+|-
+|rowspan=4|[[Determinant]]
+|rowspan=4|One ''n×n''-matrix
+|rowspan=4|One number with at most O(''n'' log ''n'') bits
+|[[Laplace expansion]]
+|O(''n''!)
+|-
+|[[LU decomposition]]
+|O(''n''<sup>3</sup>)
+|-
+|[[Bareiss algorithm]]
+|O(''n''<sup>3</sup>)
+|-
+|Fast matrix multiplication
+|O(''n''<sup>2.376</sup>)
+|}
+In 2005, [[Henry Cohn]], [[Robert Kleinberg]], [[Balázs Szegedy]] and [[Christopher Umans]] showed that either of two different conjectures would imply that the exponent of matrix multiplication is 2.<ref>Henry Cohn, Robert Kleinberg, Balazs Szegedy, and Chris Umans. Group-theoretic Algorithms for Matrix Multiplication. {{arXiv|archive=math.GR|id=0511460}}. ''Proceedings of the 46th Annual Symposium on Foundations of Computer Science'', 23-25 October 2005, Pittsburgh, PA, IEEE Computer Society, pp. 379–388.</ref> It has also been conjectured that no fastest algorithm for matrix multiplication exists, in light of the nearly 20 successive improvements leading to the [[Coppersmith–Winograd algorithm]].
+
+==References==
+<references/>
+
+[[Category:Arbitrary precision algorithms]]
+[[Category:Computational complexity theory]]
+[[Category:Mathematics-related lists]]
+[[Category:Number theoretic algorithms]]
+[[Category:Unsolved problems in computer science]]</body> </html>

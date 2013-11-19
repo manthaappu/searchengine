@@ -1,0 +1,67 @@
+<html> <head> <title>EKA2</title></head><body>{{Unreferenced|date=May 2007}}
+{{Infobox software
+| name                   = EKA2
+| logo                   = <!-- [[File: ]] -->
+| screenshot             = <!-- [[File: ]] -->
+| caption                =
+| collapsible            =
+| author                 =
+| developer              = [[Symbian Foundation]]
+| released               = <!-- {{start date|YYYY|MM|DD}} -->
+| discontinued           =
+| latest release version =
+| latest release date    = <!-- {{start date and age|YYYY|MM|DD}} -->
+| latest preview version =
+| latest preview date    = <!-- {{start date and age|YYYY|MM|DD}} -->
+| frequently updated     =
+| programming language   =
+| operating system       =
+| platform               =
+| size                   =
+| language               =
+| status                 =
+| genre                  = [[Kernel (computing)|Kernel]] ([[Microkernel]])
+| license                = [[Eclipse Public License]]
+| website                = http://developer.symbian.org/wiki/index.php/Category:Kernel_&_Hardware_Services
+}}
+'''EKA2''' (EPOC Kernel Architecture 2) is the second-generation [[Symbian]] platform [[kernel (computer science)|kernel]].<ref name=aboutcomnov>{{cite web|url= http://developer.symbian.org/main/documentation/reference/s%5E3/doc_source/guide/KernelandHardwareServices/kernelarch/index.html|title=Kernel Architecture (EKA2)|accessdate= 2009-11-19}} {{Dead link|date=November 2010|bot=H3llBot}}</ref>
+
+Like its predecessor, [[EKA1]], it has pre-emptive multithreading and full memory protection. The main differences are:
+
+* [[Real time operating system|Real-time]] guarantees (each API call is quick, but more importantly, time-bound)
+* Multiple threads inside the kernel as well as outside
+* Pluggable [[Memory model (computing)|memory models]], allowing better support for later generations of [[ARM architecture|ARM]] [[instruction set]].
+* A "nanokernel" which provides the most basic OS facilities upon which other "personality layers" can be built
+
+The user-side interface of EKA2 is almost completely compatible with [[EKA1]] - though EKA1 has not been used since [[Symbian OS]] v8.1 (which was superseded in 2005)
+
+The main advantage of EKA2 was its ability to run full telephone [[protocol stack|signalling stacks]]. Previously, on Symbian phones, these had to run on a separate CPU. Such signalling stacks are extremely complex and rewriting them to work natively on Symbian OS is typically not an option. EKA2 therefore allows "personality layers" to emulate the basic primitives of other operating systems, thus allowing existing signalling stacks to run largely unchanged.
+
+Real-time guarantees are a pre-requisite of signalling stacks, and also help with multimedia tasks. However, as with any real-time operating system, a full analysis of all threads is required before any real-time guarantees can be offered to anything except the highest-priority thread. (Higher priority threads may prevent lower-priority threads from running). Any multimedia task is likely to involve graphics, storage and/or networking activity, all of which are more likely to disrupt the stream than the kernel is.
+
+Inside the kernel, EKA1 only allowed a single thread (plus a 'null' [[idle thread]]). EKA2 allows many threads. This makes it much easier to write device drivers that involve complex state machines, such as those for [[memory stick]]s or [[USB]]. Interrupts are handled with an [[Interrupt Service Routine]], which may request an Immediate Deferred Function Call (called as soon as the interrupts are processed), or a Deferred Function Call, which is queued to run on a kernel thread. Either may in turn communicate with user-side threads.
+
+Power management in EKA2 was largely unchanged from EKA1. The exact scheme varies between phones, but generally the null thread puts the CPU and peripherals to sleep, after having requested a wake-up whenever the next timer is due to expire.
+
+EKA2 runs on [[ARM architecture|ARM]] CPUs and the "WINS" emulator. (Unofficial ports exist for other CPUs). On the emulator, EKA2 provides somewhat better emulation than EKA1, in particular for the <tt>RProcess</tt> APIs which Symbian OS uses to represent [[Process (computing)|processes]]. In EKA1 they didn't work at all on the emulator, which runs as a single Windows process.
+
+Much of the credit for EKA2 goes to a single Symbian kernel engineer, who began the project as an experiment many years before it became an official part of Symbian OS. {{Citation needed|date=July 2010}}
+
+==See also==
+{{Portal|Free software}}
+* [[Nanokernel]]
+
+==References==
+{{Reflist|2}}
+
+==External links==
+* http://developer.symbian.org/wiki/index.php/Category:Kernel_&_Hardware_Services
+* http://www.allaboutsymbian.com/news/item/10641_Symbian_Foundation_opensources.php
+* http://wiki.forum.nokia.com/index.php/EPOC_Kernel_Architecture_2
+* http://media.wiley.com/product_data/excerpt/47/04700252/0470025247.pdf
+
+{{DEFAULTSORT:Eka2}}
+[[Category:Operating system kernels]]
+[[Category:Nanokernels]]
+
+[[zh:EKA2]]</body> </html>

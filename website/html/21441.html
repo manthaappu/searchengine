@@ -1,0 +1,115 @@
+<html> <head> <title>Legendre wavelet</title></head><body>Compactly supported [[wavelet]]s derived from [[Legendre polynomials]] are termed spherical harmonic or Legendre wavelets.<ref>Lira et al</ref> Legendre functions have widespread applications in which [[spherical coordinate system]] are appropriate.<ref name=Gradsh>Gradshetyn and Ryzhik</ref><ref name=Colomer>Colomer and Colomer</ref><ref>Ramm and Zaslavsky</ref> As with many wavelets there is no nice analytical formula for describing these harmonic spherical wavelets. The low-pass filter associated to Legendre [[multiresolution analysis]] is a [[finite impulse response]] filter (FIR). 
+
+Wavelets associated to finite impulse response filters (FIR) are commonly preferred in most applications.<ref name=Colomer/> An extra appealing feature is that the Legendre filters are ''linear phase'' FIR (i.e. multiresolution analysis associated with [[linear phase]] filters). These wavelets have been implemented on MATLAB (wavelet toolbox). Although being compactly supported wavelet, legdN are not orthogonal (but for ''N'' = 1).<ref>Herley and Vetterli</ref>
+
+== Legendre multiresolution filters  ==
+
+Associated Legendre polynomials are the colatitudinal part of the spherical harmonics which are common to all separations of Laplace's equation in spherical polar coordinates.<ref name=Gradsh/>  The radial part of the solution varies from one potential to another, but the harmonics are always the same and are a consequence of spherical symmetry. Spherical harmonics <math>P_n(z)</math> are solutions of the Legendre <math>2^{nd}</math>-order differential equation, ''n'' integer:
+
+: <math>(1-z^2) \frac {d^2y} {dz^2} - 2z \frac {dy} {dz} + n(n+1)y=0</math>
+
+<math>P_n( \cos {\theta})</math> polynomials can be used to define the smoothing filter <math>H( \omega)</math> of a multiresolution analysis (MRA).<ref name=Mallat>Mallat</ref> Since the appropriate boundary conditions for an MRA are <math>|H(0)|=1</math> and <math>|H( \pi)|=0</math>, the smoothing filter of an MRA can be defined so that the magnitude of the low-pass <math>|H( \omega)|</math> can be associated to Legendre polynomials according to: <math>\nu = 2 n+1</math>. 
+
+: <math>|H_{\nu}(\omega)|=| \frac {P_{\nu} ( \cos { \frac {\omega} {2})}} {P_{\nu} \cos (0)}|</math>
+
+Illustrative examples of filter transfer functions for a Legendre MRA are shown in figure 1, for <math>\nu</math>=1,3 and 5. A low-pass behaviour is exhibited for the filter ''H'', as expected. The number of zeroes within <math>- \pi < \omega < \pi</math> is equal to the degree of the Legendre polynomial. Therefore, the [[roll-off]] of side-lobes with frequency is easily controlled by the parameter <math>\nu</math>.
+
+[[Image:Figura legd1.jpg|thumb|none|400px|'''Figure 1 - Magnitude of the transfer function for Legendre multiresolution smoothing filters. Filter <math>|H_{\nu} (\omega)|</math> for a few orders: <math>\nu</math>=1 (solid line), <math>\nu</math>=3 (dot line), and <math>\nu</math>=5 (dashdot line).''']] 
+
+The low-pass filter transfer function is given by
+
+: <math>H_{\nu} (\omega)=-e^{-j \nu \frac {\omega - \pi} {2}} P_{\nu}( \cos (\frac {\omega} {2}))</math>
+The transfer function of the high-pass analysing filter <math>G_{\nu} (\omega)</math> is chosen according to [[Quadrature mirror filter]] condition,<ref name=Mallat/><ref>Vetterli and Herley</ref> yielding:
+
+: <math>H_{\nu} (\omega)=-e^{-j {(\nu-2)} \frac {\omega} {2}} P_{\nu}( \sin (\frac {\omega} {2}))</math>
+
+Indeed, <math>|G_{\nu}(0)|=0</math> and <math>|G_{\nu}( \pi)|=1</math>, as expected.
+
+== Legendre multiresolution filter coefficients  ==
+
+A suitable phase assignment is done so as to properly adjust the transfer function <math>H_{\nu} (\omega)</math> to the form
+<math>H_{\nu} (\omega)= \frac {1} {\sqrt {2}} \sum_{k \in Z} h_k^{\nu} e^{-j \omega k}</math>
+<br />
+The filter coefficients <math>\{ h_k \}</math>, <math>k \in Z</math> are given by:
+<math>\frac {h_k^{\nu}} {\sqrt {2}}= - \frac {1} {2^{2 \nu}}.\binom{2k}{k}.\binom{2 \nu -2k}{\nu -k}</math>
+<br />
+It follows then the symmetry:  <math>{h_k^{\nu}}={h_{\nu -k}^{\nu}}</math>. There are just <math>\nu+1</math> non-zero filter coefficients on <math>H_n (\omega)</math>, so that the Legendre wavelets have compact support for every odd integer <math>\nu</math>.
+
+:::''Table I - Smoothing Legendre FIR filter coefficients for <math>\nu</math>=1,3,5 (''N'' is the wavelet order.)'' 
+{| border="1" cellspacing="0" cellpadding="5" align="center"
+|
+| <math>\nu=1</math> (''N''=1)
+| <math>\nu=3</math> (''N''=2)
+| <math>\nu=5</math> (''N''=3)
+|-
+| <math>h_0</math>
+| <math>- \sqrt {2} /2</math>
+| <math>- 5 \sqrt {2}/16</math>
+| <math>-63 \sqrt {2} / 256</math>
+|-
+| <math>h_1</math>
+| <math>- \sqrt {2} /2</math>
+| <math>-3 \sqrt {2} /16</math>
+| <math>- 35 \sqrt {2} /256</math>
+|-
+| <math>h_2</math>
+| 
+| <math>-3 \sqrt {2} /16</math>
+| <math>-30 \sqrt {2} /256</math>
+|-
+| <math>h_3</math>
+| 
+| <math>-5 \sqrt {2} /16</math>
+| <math>-30 \sqrt {2} /256</math>
+|-
+| <math>h_4</math>
+| 
+| 
+| <math>-35 \sqrt {2} /256</math>
+|-
+| <math>h_5</math>
+| 
+| 
+| <math>-63 \sqrt {2} /256</math>
+|-
+|}
+::: N.B. The minus signal can be suppressed.
+
+== MATLAB implementation of Legendre wavelets ==
+
+Legendre wavelets can be easily loaded into the [[MATLAB]] wavelet toolbox -- The m-files to allow the computation of Legendre wavelet transform, details and filter are (freeware) available. 
+The finite support width Legendre family is denoted by legd (short name). Wavelets: 'legdN'. The parameter ''N'' in the legdN family is found according to 2''N''=<math>\nu</math>+1 (length of the MRA filters). 
+<br />
+Legendre wavelets can be derived from the low-pass reconstruction filter by an iterative procedure (the [[cascade algorithm]]). The wavelet has compact support and finite impulse response AMR filters (FIR) are used (table 1). The first wavelet of the Legendre's family is exactly the well-known [[Haar wavelet]]. Figure 2 shows an emerging pattern that progressively looks like the wavelet's shape. 
+<br />
+ [[Image:Figura legd2.jpg|thumb|none|500px|'''Figure 2 - Shape of Legendre Wavelets of degree <math>\nu</math>=3 (legd2) derived after 4 and 8 iteration of the cascade algorithm, respectively. Shape of Legendre Wavelets of degree <math>\nu</math>=5 (legd3) derived by the cascade algorithm after 4 and 8 iterations of the cascade algorithm, respectively.''']] 
+The Legendre wavelet shape can be visualised using the wavemenu command of MATLAB. Figure 3 shows legd8 wavelet displayed using MATLAB<sup>TM</sup>. Legendre Polynomials are also associated with windows families.<ref>Jaskula</ref>
+[[Image:Figura legd3.jpg|thumb|none|300px|''' Figure 3 - legd8 wavelet display over MATLAB<sup>TM</sup> using the wavemenu command. ''']]
+
+== Legendre wavelet packets ==
+
+[[Wavelet packets]] (WP) systems derived from Legendre wavelets can also be easily accomplished. Figure 5 illustrates the WP functions derived from legd2. 
+[[Image:Figura legd5.jpg|thumb|none|350px|'''Figure 5 - Legendre (legd2) Wavelet Packets W system functions: WP from 0 to 9.''']]
+
+== References ==
+{{reflist|3}}
+
+==Bibliography==
+* M.M.S. Lira, H.M. de Oliveira, M.A. Carvalho Jr, R.M.C.Souza,  Compactly Supported Wavelets Derived from Legendre Polynomials: Spherical Harmonic Wavelets,  In: ''Computational Methods in Circuits and Systems Applications'', N.E. Mastorakis, I.A. Stahopulos, C. Manikopoulos, G.E. Antoniou, V.M. Mladenov, I.F. Gonos Eds., WSEAS press, pp.211–215, 2003.  ISBN 960-8052-88-2. Available at http://www2.ee.ufpe.br/codec/Legendre_WSEAS.PDF
+
+* I.S. Gradshteyn and I.M. Ryzhik, ''Table of Integrals, Series, and Products'', 4<sup>th</sup> Ed., New York: Academic Press, 1965.
+
+* A. A. Colomer and A. A. Colomer, Adaptive ECG Data Compression Using Discrete Legendre Transform, ''Digital Signal Processing'', 7, 1997, pp.222–228.
+
+* A.G. Ramm, A.I. Zaslavsky, X-Ray Transform, the Legendre Transform, and Envelopes, ''J. of Math. Analysis and Appl''., 183, pp.528–546, 1994.
+
+* C. Herley, M. Vetterli, Orthogonalization of Compactly Supported Wavelet Bases, ''IEEE Digital Signal Process. Workshop'', 13-16 Sep., pp.1.7.1-1.7.2, 1992.
+
+* S. Mallat, A Theory for Multiresolution Signal Decomposition: The Wavelet Representation, ''IEEE Trans. Pattern Analysis and Machine Intelligence'', 11, July pp.674–693, 1989.
+
+* M. Vetterli, C. Herly, Wavelets and Filter Banks: Theory and Design, ''IEEE Trans. on Acoustics, Speech, and Signal Processing'', 40, 9, p.2207, 1992.
+
+* M. Jaskula, New Windows Family Based on Modified Legendre Polynomials, ''IEEE Instrum. And Measurement Technol. Conf.'', Anchorage, AK, May, 2002, pp. 553–556.
+
+[[Category:Wavelets]]
+[[Category:Functional analysis]]</body> </html>

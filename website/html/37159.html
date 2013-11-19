@@ -1,0 +1,88 @@
+<html> <head> <title>Texas Instruments TMS9918</title></head><body>[[IMAGE:TMS9918A_01.jpg|thumb|VDP TMS9918A]]
+[[IMAGE:TMS9918A_02.jpg|thumb|VDP TMS9918A]]
+[[IMAGE:TMS9928A_01.jpg|thumb|VDP TMS9928A]]
+The '''TMS9918''' is a [[Video Display Controller]] (VDC) manufactured by [[Texas Instruments]].
+
+==General information==
+The TMS9918 was used in systems like [[ColecoVision]], [[Memotech MTX]], [[MSX]], [[SG-1000|Sega SG-1000]]/[[SC-3000]], [[Spectravideo]], [[Sord M5]], [[Tatung Einstein]], [[Texas Instruments TI-99/4]] and [[:pt:Tomy Tutor|Tomy Tutor/Pyuuta]]. Modified versions with additional display modes and registers were used in the [[Sega Master System]], [[Sega Game Gear]], and the [[Mega Drive]]. (Note that the Mega Drive VDP cannot access any of the TMS9918 display modes discussed below.)
+
+There are several variants called TMS9918A, TMS9928A and TMS9929A, where the 'A' indicates a second version of the chip which added new features, most prominently the addition of a [[bitmap]] mode (Graphic II). The non-A version was only used in the TI-99/4; the TI-99/4A and the other computers had the A version VDC. The TMS9918A and TMS9928A output a 60Hz video signal, while the TMS9929A outputs 50Hz. The difference between '1' and the '2' in 'TMS9918A' and 'TMS9928A' is that the '1' version outputs [[composite video|composite]] [[NTSC]] video, while the '2' versions (including the TMS9929A) outputs [[YPbPr]], more precisely the Y, R-Y and B-Y colour differences ([[luma (video)|luminance]] and colour difference signals). The need for the latter was predominant in the 50Hz world, including Europe, due to the different video signal standards [[PAL]] and [[SECAM]].  It was more cost-effective to output Y, R-Y and B-Y and encode them into PAL or SECAM in the [[RF modulator]], than to try and have a different console for every different color standard.  All of the ICs in this family are usually referred to by the TMS9918 name, sometimes with an 'A' postfix.
+
+Texas Instruments' TMS9918A was succeeded by Yamaha's [[Yamaha V9938|V9938]], which added additional bitmap modes, more colorful [[sprite (computer graphics)|sprites]], a vertical scroll register and a customizable [[palette (computing)|palette]]. The V9938 was used in a third-party upgrade to the TI-99/4A — the [[Geneve 9640]] 'computer-on-a-card'. The V9938, in turn, was succeeded by the [[Yamaha V9958|V9958]], which added some additional high-colour modes and a horizontal scroll register. These chips were used in the "TIM" upgrade card for the TI-99/4A, as well as on the MSX 2 and MSX 2+/turboR systems, although rumor has it that the V9958 was also used in a generation of the Photo Play arcades. Yamaha also produced a [[Yamaha V9990|V9990]], which is considered the follow-up of the V9958 by some, but it is not backwards compatible. A graphic chip extension utilizing the V9990 exists for the MSX in the form of the 'Graphics9000' cartridge by [http://www.msx.ch/ Sunrise].
+
+A later variant of the TMS9918 series chips, the TMS9118, TMS9128, and TMS9129, were released in the mid-late 1980s, but were never very popular. The function of one pin is changed, and a different mapping of the 16k x 8 bit block of video memory is supported. Otherwise the chips are completely identical to the TMS9918A, TMS9928A and TMS9929A respectively.
+
+==Interface==
+The TMS9918 has its own 16k x 8 bit block of video memory, outside the address space of the [[Central processing unit|CPU]]. This memory is not mapped onto the CPU memory space - the VDC's data memory bus is a private (although external) bus, separated from that of the CPU. A separate addressing space means that the CPU has to write a two-byte command word to the VDC's control port to set the address register, but it also means that the VDC doesn't slow the main processor down when it reads data out of its memory, and since the memory is not mapped onto the CPU's addressing space, there is more address space available for other memory and memory-mapped hardware.
+
+The CPU communicates with the VDC through an additional 8-bit port on the VDC, and data is transferred between the two via port writes. As a byte is written, the TMS9918 increments its internal address register - this is important, because the CPU does not have to send an address update for every byte access.  This facilitates quicker reads and writes of blocks of data. Writes to other ports can set various internal registers.
+
+==Screen modes==
+There are 4 different screen modes available in the TMS9918A (as mentioned before, the TMS9918 lacks mode Graphic II):
+
+'''Mode 0 (Text):''' 40×24 characters monochrome. As the display is 256 pixels width, the character set is only 6 pixels wide. This mode doesn't support sprites.
+
+'''Mode 1 (Graphic 1):''' 32×24 characters. Each 8 characters in the character set has a foreground and background color. The chars "0"-"7" for example all have the same color attributes.
+
+'''Mode 2 (Graphic 2):''' 32×24 characters or 256×192 bitmap, with a 2-color limitation for each 8 pixel wide line inside a character. Popular hybrids exists.
+
+'''Mode 3 (Multicolor):''' 64×48 mode, very blocky and rarely used. Each 'pixel' can have its own color defined though, hence the name. Sprites are available as in screen modes 1 and 2.
+
+The TMS9918 has a fixed 16-color palette (actually 15 colors + transparent).
+
+==Sprites==
+In modes 1, 2, and 3, the VDC can render sprites. There can be 32 monochrome sprites of either 8×8 or 16×16 pixels on screen, each sprite can have its own one color. There can be no more than 4 sprites on a single scanline; any additional sprites' horizontal pixels are dropped. Sprites with a higher priority are drawn first. The VDP reports in a status register the number of the first dropped sprite. The CPU can get around this limitation by rotating sprite priorities so that a different set of sprites is drawn on every frame. Instead of disappearing entirely, the sprites will flicker. This technique is known as sprite multiplexing.
+
+Automatic sprite movement is not handled by the VDC.  What is done, in practice, is that the CPU will pick up on the VDC's 'vertical interrupt' - a standard VDC output, which is triggered automatically once every 50th or 60th of a second (depending on chip variant), at the start of the VBI (vertical blanking interval).  The CPU then jumps to some sprite-handling routine in software, which in turn tells the VDC where to reposition the sprites.
+
+When two non-transparent pixels in any pair of sprites collide, the sprite collision flag is set. This is useful for triggering more advanced collision detection routines inside the software which can then determine the exact location and act upon it. Note that unlike the Atari 2600's [[Television Interface Adapter]] and the Commodore 64's [[MOS Technology VIC-II|VIC-II]], the VDC cannot tell the program which two sprites have collided, just that individual sprites have been involved in a collision.
+
+==Screen mode 2 detail==
+Technically, mode 2 is a character mode with a colorful character set. The screen is vertically divided into three 256×64 pixel areas, each of which gets its own character set. By sequentially printing the characters 0 through 255 in all three areas, the program can simulate a graphics mode where each pixel can be set individually. However, the resulting [[framebuffer]] is non-linear.
+
+The program can also use three identical character sets, and then deal with the screen like a text mode with a colorful character set. Background patterns and sprites then consist of colorful characters. This was commonly used in games, because to fill/scroll the entire screen, only 32×24 bytes had to be moved. Games on other home computers such as the [[Commodore 64]] also worked on a character basis. The graphics can be drawn such that the 8×8 pixel borders are not too obvious, an art where [[Konami]] was particularly well known for their excellence.
+
+This is the TMS9918 screen mode 2 challenge: every 8×1 pixel area has two colors, foreground and background. They may be freely picked out of the 16 color palette. But within each 8×1 pixel area, only two different colors can exist. When manipulating the screen in BASIC with the LINE command, one easily could exceed the limit of max 2 colors per 8×1 area and end up with "[[Attribute clash|color spill]]".
+
+In comparison, the [[MOS Technology VIC-II]] used in the [[Commodore 64]] limited programmers to 4 colors per 4×8 fat-pixel area. This meant there was less local color pressure, but more global color pressure: while three of the 4 colors could be freely picked out of palette of 16, the remaining fourth was a universal background color. 
+
+The TMS9918 does not have any scroll registers. Scrolling must be done in software.
+
+==Tradeoffs used in games==
+Some games tried to get around the 8 pixel scroll limitation, by scrolling the character set itself. [[Parsec_(video_game)|Parsec]] (TI-99/4A) does this.
+
+[[Circus Charlie]] (MSX) scrolled horizontally, and hence bumped into the maximum of 2 colors per 8×1 area limit. The graphics were "monochrome-ish" and there were some glitches halfheartedly covered by sprites.
+
+[[Pippols]] (MSX) scrolled vertically. Because this isn't affected by the 8×1 area limit, the player character could walk along smoothly scrolling colorful flowers and other such graphical fourishes. However there aren't many distinct objects onscreen, because the character set is cut down by factor 8. Pippols seems to be even below that limit by some factor.
+
+When moving at full speed in [[Road Fighter]] (MSX, vertically scrolling racing game), the screen moves 8 pixels each frame. This results in a smooth scroller in spite of the 8 pixel jumps. For many games this scrolling speed is not feasible, though.
+
+In [[Knightmare (1986 video game)|Knightmare]] (MSX), the scene scrolls vertically so slowly that the 8 pixel jump doesn't disturb much. Zanac scrolls vertically fairly fast, but due to the soft backgrounds which you never collide with it is a minor issue. It is most problematic in [[Gradius|Nemesis]] ("[[R-Type]] style" horizontal space shooter). On the other hand, the Nemesis 2 backgrounds are really of "16 bit" beauty.
+
+==Specifications==
+* Video RAM: 16 KB
+* Text modes: 40 × 24 and 32 × 24
+* Resolution: 256 × 192 (15 colours + transparent)
+* Sprites: 32, 1 colour, max 4 per horizontal line
+
+==Amateur's Tool==
+TMS9918 still has plenty of fans who nowadays create lots of PC tools for character design, sprite design and for converting true color images to screen 2. With respect to this latter application, it is worth to underline the use of dithering algorithms (e.g. [[Floyd-Steinberg]]) in order to overcome the color clash problem and the limitations of the fixed palette. 
+
+For tools implementing dithering in screen 2 conversion look at: 
+[http://msx.jannone.org/conv/ Online screen 2 converter] and to [http://www.msx.org/modules.php?op=modload&name=Downloads&file=index&req=visit&lid=859 Offline screen 2 converter + C sources]
+
+==See also==
+* [[List of home computers by video hardware]]
+
+==External links==
+*[http://emu-docs.org/VDP%20TMS9918/Datasheets/TMS9918.pdf Online datasheet]
+
+[[Category:Graphics chips]]
+[[Category:TI-99/4A]]
+[[Category:MSX]]
+
+[[it:Texas Instruments TMS9918]]
+[[nl:Texas Instruments TMS9918]]
+[[ja:TMS9918]]
+[[ru:Texas Instruments TMS9918]]
+[[sv:Texas Instruments TMS9918]]</body> </html>

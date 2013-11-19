@@ -1,0 +1,253 @@
+<html> <head> <title>F Sharp (programming language)</title></head><body>{{Correct title|title=F#|reason=hash}}
+{{Infobox programming language
+| name                   = F#
+| logo                   = 
+| caption                = 
+| file ext               = 
+| paradigm               = [[multi-paradigm programming language|multi-paradigm]]: [[functional programming|functional]], [[imperative programming|imperative]], [[object-oriented programming|object-oriented]]
+| released               = {{Start date|2002}}
+| designer               = [[Microsoft Research]]
+| developer              = [[Microsoft Developer Division]]
+| latest release version = 2.0
+| latest release date    = {{start date|2010|04|12}}
+| latest preview version = 
+| latest preview date    = 
+| typing                 = [[static typing|static]], [[strong typing|strong]], [[type inference|inferred]]
+| implementations        = 
+| dialects               = 
+| influenced by          = [[Objective Caml]], [[C Sharp (programming language)|C#]], [[Haskell (programming language)|Haskell]]<ref>{{harvcoltxt|Syme|Granicz|Cisternino|2007|p=2}} "F# also draws from Haskell particularly with regard to two advanced language features called ''sequence expressions'' and ''workflows''."</ref>
+| influenced             = 
+| programming language   = 
+| operating system       = [[Cross-platform]] ([[.NET Framework]], [[Mono (software)|Mono]])
+| license                = [[Apache license]]
+| website                = [http://fsharp.net Microsoft F# Developer Center]
+| wikibooks              = F Sharp Programming
+}}
+
+'''F#''' (pronounced '''F Sharp''') is a [[multi-paradigm programming language]], targeting the [[.NET Framework]], that encompasses [[functional programming]] as well as [[imperative programming|imperative]] and [[object-oriented programming]] disciplines. It is a variant of [[ML (programming language)|ML]] and is largely compatible with the [[OCaml]] implementation. F# was initially developed by [[Don Syme]] at [[Microsoft Research]] but is now being developed at [[Microsoft]] Developer Division and is being distributed as a fully supported language in the [[.NET Framework]] and [[Microsoft Visual Studio|Visual Studio]] as part of [[Visual Studio 2010]].<ref>{{cite web | url = http://blogs.msdn.com/somasegar/archive/2007/10/17/f-a-functional-programming-language.aspx | title = F# - A functional Programming Language | author = [[S. Somasegar]] | accessdate = 2007-10-18}}</ref>
+
+==Overview==
+F# is a [[strongly typed programming language|strongly typed]] language that uses [[type inference]]. As a result, data types need not be explicitly declared by the programmer; they will be deduced by the compiler during compilation. However, F# also allows explicit data type declaration. Being a [[List of CLI languages|CLI compliant language]], F# supports all CLI types and objects but it extends the type system and categorizes types as [[immutable object|immutable type]]s or mutable types. CLI objects classify as mutable types (which can be edited in-place), and are used to provide an [[object-oriented programming]] model. Immutable types (editing such a type creates a new instance without overwriting the older one) are primarily used for [[functional programming]].
+
+Like [[ML (programming language)|ML]], F# includes a functional programming component supporting [[eager evaluation]]. For functional programming, it provides several constructs and a set of immutable types: ''tuples'', ''records'', ''discriminated unions'' and ''lists''.<ref name="overview"/> 
+
+An ''[[n-tuple]]'' represents a collection of ''n'' values, where ''n'' ≥ 0. The value ''n'' is called the [[arity]] of the tuple. The type <code>[[unit type|unit]]</code> corresponds to the 0-tuple and it has one value only: <code>()</code>, which conveys no information. The type <code>unit</code> is used to implement functions that need no input and/or return no value. A 3-tuple would be represented as <code>(A, B, C)</code>, where A, B and C are values of possibly different types. A tuple can be used only to store values when the number of values is known at design-time and stays constant throughout execution.
+
+A ''record'' is a specialization of tuple where the data members are named, as in <code>{ Name:string; Age:int }</code>. Records can be created as <code>{ Name="AB"; Age=42 }</code>. The <code>with</code> keyword is used to create a copy of a record, as in <code>{ r with Name="CD" }</code>, which creates a new record by copying <code>r</code> and changing the value of the <code>Name</code> field (assuming the record created in the last example was named <code>r</code>). 
+
+The ''list'' type is a regular [[linked list]] represented either using a <code>head::tail</code> notation (<code>::</code> is the [[cons]] operator) or a shorthand as <code>[item1; item2; item3]</code>. An empty list is written <code>[]</code>.
+
+The other sort of [[algebraic data type]] mentioned, "[[tagged union|discriminated unions]]" ([[type-safe]] versions of [[union (computer science)|C unions]]), can be defined to hold a value of any of a pre-defined type. For example, 
+<source lang="ocaml">
+ type A = 
+    | ConstructorX of string
+    | ConstructorY of int
+</source>
+can hold values as instantiated by either constructor. The type of the values the constructors will act on can be defined as well.
+
+Constructors are used to create a view of the data type different from the actual implementation, as required for supporting the [[Active Patterns]] concept.<ref name="overview"/> Data types are created with the <code>type</code> keyword. F# uses the <code>let</code> keyword for binding type values to a name (variable).<ref name="overview">{{cite web | url = http://tomasp.net/articles/fsharp-i-introduction/article.pdf | title = F# Language Overview | accessdate = 2007-12-14}}</ref>
+
+F# uses [[pattern matching]] to resolve names into values. It is also used when accessing discriminated unions. Functions using a discriminated union provide different expressions to be invoked, associated with the data type in the union. The union is matched against these data types, and the expression associated with the match is invoked. F# also supports the ''Active Patterns'' pattern. It is used, for example, when a type needs to provide multiple views. For example, an exponential number will provide both the final value, as well as the base and exponents.<ref name="overview"/>
+
+All functions in F# are instances of the <code>function</code> type, and are immutable as well.<ref name="overview"/> Functions can either be [[curry function|curried]] or in uncurried form. Being an instance of a type, functions can be passed as arguments to other functions, resulting in [[higher order function]]s. F# supports [[lambda calculus|lambda functions]] and [[closure (computing)|closure]]s as well.<ref name="overview"/> Like other functional programming languages, F# allows [[function composition]] using the <code>>></code> operator. Every statement in F#, including <code>if</code> statements and loops, is a composable expression with a definite return type as well.<ref name="overview"/> Functions and expressions that do not return any value have a return type of <code>unit</code>.
+
+The F# extended type system is implemented as [[generic programming|generic]] .NET types. The ''Record'' type creates a .NET class with the field names as properties. ''Tuples'' are generic classes of type <code>Tuple<_,_></code>. The number of type parameters define the number and types of the elements in the tuple. Discriminated unions are implemented as [[tagged union]]s. Functions are of type <code>FastFunc<_,_></code> with type parameters specifying the parameter and return types.<ref>{{cite web | url = http://research.microsoft.com/fsharp/manual/export-interop.aspx | title = F# from C# and other .NET Languages | accessdate = 2007-12-14}}</ref>
+
+F#, like other .NET languages, can use .NET types and objects, using an imperative object-oriented style of programming. For imperative programming, F# supports <code>for</code> and <code>while</code> [[Control flow#Loops|loops]], [[array data structure|arrays]] (created with the <code>[| ... |]</code> syntax, and number sequences written in shorthand as in <code>1 .. 25</code>) and support for creating <code>Object types</code> (equivalent to .NET classes).<ref name="overview"/> F# also allows [[metaprogramming|extending the syntax]] to support embedding custom [[domain-specific language]]s within the F# language itself.<ref name="overview"/>
+
+F# provides ''sequence expressions''<ref name="seq"/> that allows for a defining a sequence block (<code>seq { ... }</code> or <code>[ ... ]</code> or <code>[| ... |]</code>) encapsulating constructs (either functions, conditional expressions or loops) that act on a collection such that the results and another function (or lambda), such that the function is invoked on the results yielded from the collection collection-processing expressions. For example, <code>seq { for b in 0 .. 25 do if b < 15 then yield b*b }</code> is a sequence expression that forms a sequence of squares of numbers from 0 to 14 by filtering out numbers from the range of numbers from 0 to 25. The sequence is [[lazy evaluation|lazily evaluated]], i. e., the collection is processed and results yielded on-demand. It can be used for filtering and is the basis of support for [[LINQ]] queries. Sequence expressions are generalized as ''Computation Expressions'' which are equivalent to [[monad (functional programming)|monad]]s.<ref name="seq">{{cite web | url = http://blogs.msdn.com/dsyme/archive/2007/09/22/some-details-on-f-computation-expressions-aka-monadic-or-workflow-syntax.aspx | title = Some Details on F# Computation Expressions | accessdate = 2007-12-14}}</ref>
+
+Sequence expressions and computation expressions are also used for creating ''asynchronous workflows''.<ref name="aw"/> An asynchronous workflow is defined as a sequence of commands inside a <code>async{ ... }</code>, as in
+<source lang="ocaml">
+ let asynctask = async
+ {
+     let req = WebRequest.Create(url)
+     let! response = req.GetResponseAsync()
+     use stream = response.GetResponseStream()
+     use streamreader = new System.IO.StreamReader(stream)
+     return streamreader.ReadToEnd()
+ }
+</source>
+The <code>let!</code> allows the rest of the async block to be defined as the delegate and passed as the [[callback (computer science)|callback function]] of an asynchronous operation. This helps deal with [[inversion of control]] issues.<ref name="aw"/> The async block is invoked using the <code>Async.Run</code> function. Multiple async blocks are executed in parallel using the <code>Async.Parallel</code> function that takes a list of <code>async</code> objects (in the example, <code>asynctask</code> is an async object) and creates another async object to run the tasks in the lists in parallel. The resultant object is invoked using <code>Async.Run</code>.<ref name="aw">{{cite web | url = http://blogs.msdn.com/dsyme/archive/2007/10/11/introducing-f-asynchronous-workflows.aspx | title = Introducing F# Asynchronous Workflows | accessdate = 2007-12-14}}</ref>
+
+F# comes with a [[Microsoft Visual Studio]] language service that integrates it with the IDE. With the language service installed, Visual Studio can be used to create F# projects and the Visual Studio debugger used to debug F# code. In addition, it comes with a Visual Studio-hosted interactive console that executes F# code as it is being written.
+
+== Examples ==
+
+A few small samples follow:
+<source lang="ocaml">
+(* This is commented *)
+(* Sample hello world program *)
+printfn "Hello World!"
+</source>
+
+A simple example that is often used to demonstrate the syntax of functional languages is the factorial function for non-negative 32-bit integers, here shown in F#:
+<source lang="ocaml">
+let rec factorial n =
+    match n with
+    | 0 -> 1
+    | _ -> n * factorial (n - 1)
+</source>
+
+Recursive function examples:
+<source lang="ocaml">
+(* print a list of numbers recursively *)
+let rec printList lst =
+    match lst with 
+    | [] -> ()
+    | h :: t -> 
+        printf "%d\n" h
+        printList t
+
+(* Same thing, using matching against list elements *)
+let rec printList2 l =
+    match l with
+    | []     -> ()
+    | h :: t -> printfn "%A" h
+                printList2 t
+
+(* Using shorthand for match *)
+let rec printList3 = function
+    | []     -> ()
+    | h :: t -> printfn "%A" h
+                printList3 t
+
+(* Or, using a higher-order function *)
+let printlist4 lst = List.iter (printfn "%A") lst
+</source>
+
+<source lang="ocaml">
+(* Fibonacci Number formula *)
+let rec fib n =
+    match n with
+    | 0 | 1 -> n
+    | _ -> fib (n - 1) + fib (n - 2)
+
+(* An alternative approach - a lazy recursive sequence of Fibonacci numbers *)
+let rec fibs = Seq.cache <| seq { yield! [1; 1]                                  
+                                  for x, y in Seq.zip fibs <| Seq.skip 1 fibs -> x + y }
+
+(* Another approach - a lazy infinite sequence of Fibonacci numbers *)
+let fibSeq = Seq.unfold (fun (a,b) -> Some(a+b, (b, a+b))) (1,1)
+
+(* Print even fibs *)
+[1 .. 10]
+|> List.map     fib
+|> List.filter  (fun n -> (n % 2) = 0)
+|> printlist
+
+(* Same thing, using sequence expressions *)
+[ for i in 1..10 do
+    let r = fib i
+    if r % 2 = 0 then yield r ]
+|> printlist
+</source>
+
+<source lang="ocaml">
+(* Sample Windows Forms Program *)
+
+(* We need to open the System library for the STAThreadAttribute class *)
+open System
+
+(* We need to open the Windows Forms library *)
+open System.Windows.Forms
+
+(* Create a window and set a few properties *)
+let form = new Form(Visible=true, TopMost=true, Text="Welcome to F#")
+
+(* Create a label to show some text in the form *)
+let label =
+    let temp = new Label()
+    let x = 3 + (4 * 5)
+    (* Set the value of the Text*)
+    temp.Text <- sprintf "x = %d" x
+    (* Remember to return a value! *)
+    temp
+
+(* Add the label to the form *)
+form.Controls.Add(label)
+
+(* Finally, run the form  *)
+[<STAThread>]
+Application.Run(form)
+</source>
+
+<source lang="ocaml">
+(* Async workflows sample (parallel CPU and I/O tasks) *)
+
+(* A very naive prime number detector *)
+let isPrime (n:int) =
+   let bound = int (System.Math.Sqrt(float n))
+   seq {2 .. bound} |> Seq.exists (fun x -> n % x = 0) |> not
+
+(* We are using async workflows *)
+let primeAsync n =
+    async { return (n, isPrime n) }
+
+(* Return primes between m and n using multiple threads *)  
+let primes m n =
+    seq {m .. n}
+        |> Seq.map primeAsync
+        |> Async.Parallel
+        |> Async.RunSynchronously
+        |> Array.filter snd
+        |> Array.map fst
+
+(* Run a test *)
+primes 1000000 1002000
+    |> Array.iter (printfn "%d")
+</source>
+
+==See also==
+* [[OCaml]]
+* [[C Sharp (programming language)|C#]]
+* [[Haskell (programming language)|Haskell]]
+* [[ML (programming language)|ML]]
+* [[Scala (programming language)|Scala]]
+* [[Nemerle]]
+
+==Notes==
+{{reflist}}
+
+==References==
+* {{Cite document| first1=Don |last1=Syme |author1-link=Don Syme |first2=Adam |last2=Granicz |first3=Antonio |last3=Cisternino |title=Expert F# |year=2007 |publisher=[[Apress]]| ref=harv| postscript=<!--None-->}}
+* {{Cite document| first1=Jon |last1=Harrop |title=Visual F# 2010 for Technical Computing |year=2010 |publisher=Flying Frog Consultancy| ref=harv| postscript=<!--None-->}}
+* {{Cite document| first1=Robert |last1=Pickering |title=Foundations of F# |year=2007 |publisher=[[Apress]]| ref=harv| postscript=<!--None-->}}
+* {{Cite document|first=Chris |last=Smith |title=Programming F# |year=2009 |publisher=[[O'Reilly]]|ref=harv|postscript=<!--None-->}}
+* {{Cite document |first=Tomas |last=Petricek |title=Real World Functional Programming With Examples in F# and C# |year=2009 |publisher=Manning Publications |ref=harv |postscript=<!--None-->}}
+
+==External links==
+{{Wikibooks|F Sharp Programming}}
+* [http://research.microsoft.com/en-us/um/cambridge/projects/fsharp/ Microsoft Research's website for F#]
+* [http://msdn.microsoft.com/en-us/fsharp/default.aspx Microsoft F# Developer Center]
+* [http://blogs.msdn.com/dsyme Don Syme's web log, a key source of information on F#]
+* [http://feedproxy.google.com/planet_fsharp Planet F#]
+* [http://www.ctocorner.com/fsharp/book The F# Survival Guide, Dec 2009 (Web-based book)]
+
+{{DotNET}}
+
+[[Category:Functional languages]]
+[[Category:ML programming language family]]
+[[Category:.NET programming languages]]
+[[Category:Microsoft Research]]
+[[Category:Free cross-platform software]]
+[[Category:Programming languages created in the 2000s]]
+
+[[ar:إف شارب (لغة برمجة)]]
+[[cs:F Sharp]]
+[[da:F Sharp]]
+[[de:F-Sharp]]
+[[es:F Sharp]]
+[[fr:F Sharp]]
+[[ko:F 샤프]]
+[[it:F Sharp]]
+[[ka:F Sharp]]
+[[ms:F Sharp]]
+[[nl:F♯]]
+[[ja:F Sharp]]
+[[pl:F Sharp]]
+[[pt:F Sharp]]
+[[ru:F Sharp]]
+[[sv:F Sharp]]
+[[th:ภาษาเอฟชาร์ป]]
+[[zh:F♯]]</body> </html>

@@ -1,0 +1,87 @@
+<html> <head> <title>JFFS2</title></head><body>{{Infobox filesystem|
+| name = JFFS2
+| developer = David Woodhouse
+| full_name = Journalling Flash File System version 2
+| introduction_date = 
+| introduction_os = [[Linux kernel|Linux]] 2.4.10
+| partition_id = 
+| directory_struct = 
+| file_struct = 
+| bad_blocks_struct = 
+| max_file_size = 
+| max_files_no = 
+| max_filename_size = 
+| max_volume_size = 
+| dates_recorded = 
+| date_range = 
+| date_resolution =
+| forks_streams = 
+| attributes = 
+| file_system_permissions = 
+| compression = [[zlib]], rubin and rtime
+| encryption = 
+| OS = [[Linux]]
+}}
+'''Journalling Flash File System version 2''' or '''JFFS2''' is a [[log-structured file system]] for use in [[flash memory]] devices.<ref>[http://www.linux-mtd.infradead.org/faq/jffs2.html#L_hdd_jffs2 JFFS2, mainly designed for raw flash, not for block devices like hard drives, USB sticks, CF cards etc. (block2mtd)]</ref> It is the successor to [[JFFS]].  JFFS2 has been included in the [[Linux kernel]] since the 2.4.10 release. JFFS2 is also available for [[Open Firmware]], the [[eCos]] RTOS and the [[RedBoot]] bootloader.
+
+The new [[LogFS]] filesystem is aimed to replace JFFS2 for most uses, but focuses more on large devices (> 64 MB - 512 MB), see also [[UBIFS]] and [[YAFFS]].
+
+== Features ==
+
+JFFS2 introduced:
+* Support for [[NAND flash#NAND flash|NAND flash]] devices. This involved a considerable amount of work as NAND devices have a sequential I/O interface and cannot be memory-mapped for reading.
+* Hard links. This was not possible in JFFS because of limitations in the on-disk format.
+* Compression. Three algorithms are available: [[zlib]], rubin and rtime.
+* Better performance.  JFFS treated the disk as a purely circular log.  This generated a great deal of unnecessary I/O.  The [[garbage collection (computer science)|garbage collection]] [[algorithm]] in JFFS2 makes this mostly unnecessary.
+
+== Design ==
+
+As with JFFS, changes to files and directories are "logged" to flash in ''nodes'', of which there are two types:
+* ''[[inode]]s'': a header with file metadata, followed by a payload of file data (if any). Compressed payloads are limited to one page. 
+* ''dirent'' nodes: directory entries each holding a name and an inode number. Hard links are represented as different names with the same inode number. The special inode number 0 represents an unlink.
+As with JFFS, nodes start out as ''valid'' when they are created, and become ''obsolete'' when a newer version has been created elsewhere.
+
+Unlike JFFS, however, there is no circular log.  Instead, JFFS2 deals in ''blocks'', a unit the same size as the erase segment of the flash medium. Blocks are filled, one at a time, with nodes from bottom up.  A ''clean'' block is one that contains only ''valid'' nodes.  A ''dirty'' block contains at least one ''obsolete'' node. A ''free'' block contains no nodes.
+
+The [[garbage collection (computer science)|garbage collector]] runs in the background, turning ''dirty'' blocks into ''free'' blocks.  It does this by copying ''valid'' nodes to a new block and skipping ''obsolete'' ones.  That done, it erases the ''dirty'' block and tags it with a special marker designating it as a ''free'' block (to prevent confusion if power is lost during an erase operation).
+
+To make [[wear levelling|wear-levelling]] more even and prevent erasures from being too concentrated on mostly-static file systems, the garbage collector will occasionally also consume ''clean'' blocks.
+
+== Disadvantages ==
+
+* All nodes must still be scanned at [[Mount (computing)|mount]] time.  This is slow and is becoming an increasingly serious problem as flash devices scale upward into the [[Gigabyte]] range.
+* Writing many small blocks of data can even lead to negative compression rates, so it is essential for applications to use large write buffers.
+* There is no practical way to tell how much usable free space is left on a device since this depends both on how well additional data can be compressed, and the writing sequence.
+
+== See also ==
+* [[List of file systems]]
+* [[YAFFS]]
+* [[UBIFS]]
+* [[LogFS]]
+* [[ZFS]]
+* [[Btrfs]]
+* [[NILFS]]
+
+== External links ==
+*[http://sources.redhat.com/jffs2/ Red Hat JFFS2 site]
+*[http://sources.redhat.com/jffs2/jffs2-html JFFS: The Journalling Flash File System] by David Woodhouse ([http://sources.redhat.com/jffs2/jffs2.pdf PDF])
+*[http://lists.infradead.org/pipermail/linux-mtd/ JFFS2 official mailing list]
+
+== References ==
+<references />
+{{Filesystem}}
+
+[[Category:Disk file systems]]
+[[Category:Flash file systems]]
+[[Category:Embedded Linux]]
+[[Category:Linux file systems]]
+[[Category:Compression file systems]]
+[[Category:Free special purpose file systems]]
+
+[[es:JFFS2]]
+[[fr:JFFS2]]
+[[ko:JFFS2]]
+[[it:JFFS2]]
+[[ja:JFFS2]]
+[[pl:JFFS2]]
+[[zh:JFFS2]]</body> </html>

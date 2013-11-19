@@ -1,0 +1,31 @@
+<html> <head> <title>Clausal normal form</title></head><body>The '''clausal normal form''' (or '''clause normal form''', '''conjunctive normal form''', '''CNF''') of  a logical formula is used in [[logic programming]] and many [[automated theorem proving|theorem proving]] systems. A formula in clause normal form is a set of clauses, interpreted as a conjunction. A [[Clause (logic)|clause]] is an implicitly universally quantified set of literals, interpreted as a disjunction.<ref>{{cite book|last=Loveland|first=Donald W.|title=Automated Theorem Proving: A Logical Basis|publisher=North Holland|date=1978}}</ref>
+
+==Conversion to clausal normal form==
+
+The procedure to convert a formula into clausal form can destroy the structure of the formula, and naive translations often causes [[exponential growth|exponential blowup]] in the size of the resulting formula.
+
+The procedure begins with any formula of classical [[First-order predicate calculus|first-order logic]]:
+
+# Put the formula into [[negation normal form]].
+# Standardize variables
+#* <math>(\forall x\, P(x)) \vee (\exists x\, P(x))</math> becomes <math>(\forall x\, P(x)) \vee (\exists c\, P(c))</math>, where <math>c</math> is new
+# [[Skolem normal form|Skolemize]] -- replace [[Existential quantification|existential]] variables with Skolem constants or Skolem functions of [[Universal quantification|universal]] variables, from the outside inward. Make the following replacements:
+#* <math>\forall x \exists y \, P(y)</math> becomes <math>, \forall x \, P(f_c(x))</math>, where <math>f_c</math> is new
+# Discard the [[universal quantifier]]s (which are implicit in CNF).
+# Put the formula into [[conjunctive normal form]].
+# Replace <math>C1 \wedge \cdots \wedge Cn</math> with <math>\{ C1 , \dots , Cn \}</math>. Each conjunct is of the form <math>\neg A1 \vee \cdots \vee \neg Am \vee B1 \vee \cdots \vee Bn</math>, which is equivalent to <math>( A1 \wedge \cdots \wedge Am ) \to ( B1 \vee \cdots \vee Bn )</math>.
+# Finally, replace each conjunct <math>( A1 \wedge \cdots \wedge Am ) \to ( B1 \vee \cdots \vee Bn )</math> with <math>\{ A1 \wedge \cdots \wedge Am \to B1 , A1 \wedge \cdots \wedge Am \to B2 , \cdots , A1 \wedge \cdots \wedge Am \to Bn \}</math>.
+When ''n'' ≤ 1 for all clauses, the logic is called [[Horn clause]] logic and is equivalent in computational power to a [[universal Turing machine]]. Horn logic is the basis of [[Prolog]], the most widely used [[logic programming]] language. 
+
+Often it is sufficient to generate an equisatisfiable (not an equivalent) CNF for a formula. In this case, the worst-case exponential blow-up can be avoided by introducing ''definitions'' and using them to ''rename'' parts of the formula.
+<ref>{{cite book|last=Nonnengart|first=Andreas|coauthors=Christoph Weidenbach|title=Handbook of Automated Reasoning|editor=A. Robinson and A. Voronkov|publisher=Elsevier Science and MIT Press|date=2001|volume=I|pages=335–367|chapter=Computing Small Clause Normal Forms|url=http://www.mpi-inf.mpg.de/~weidenb/publications/handbook99small.ps.gz|accessdate=2009-07-05}}</ref>
+
+== References ==
+
+<references/>
+
+[[Category:Logic programming]]
+[[Category:Normal forms (logic)]]
+
+[[ja:節標準形]]
+[[pt:Forma normal clausal]]</body> </html>

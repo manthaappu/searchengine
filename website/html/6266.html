@@ -1,0 +1,39 @@
+<html> <head> <title>Cipher suite</title></head><body>A '''cipher suite''' is a named combination of [[authentication]], [[encryption]], and [[message authentication code]] (MAC) [[algorithm]]s used to negotiate the security settings for a network connection using the [[Transport Layer Security]] (TLS) or [[Secure Sockets Layer]] (SSL) [[network protocol]].  
+
+The structure and use of the cipher suite concept is defined in the documents that define the protocol (RFC 5246 standard for TLS version 1.2).  A reference for named cipher suites is provided in RFC 2434, the TLS Cipher Suite Registry.
+
+==Use==
+When a TLS connection is established, a [[handshaking]], known as the TLS Handshake Protocol, occurs.  Within this handshake, a ''client hello'' (ClientHello) and a ''server hello'' (ServerHello) message is passed. (RFC 5246, p. 37)  First, the client sends a cipher suite list, a list of the cipher suites that it supports, in order of preference.  Then the server replies with the cipher suite that it has selected from the client cipher suite list. (RFC 5246, p. 40)
+In order to test which TLS ciphers that a server supports an SSL/TLS Scanner may be used.
+
+==Detailed description==
+Each named cipher suite defines a [[key exchange algorithm]], a bulk [[encryption algorithm]], a [[message authentication code]] (MAC) algorithm, and a [[pseudorandom function]] (PRF). (RFC 5246, p. 40)
+
+* The '''key exchange algorithm''' is used to determine if and how the client and server will authenticate during the handshake. (RFC 5246, p. 47). 
+* The '''bulk encryption algorithm''' is used to encrypt the message stream. It also includes the key size and the lengths of explicit and implicit [[initialization vector]]s ([[cryptographic nonce]]s). (RFC 5246, p. 17)
+* The '''message authentication code''' (MAC) algorithm is used to create the [[message digest]], a [[cryptographic hash]] of each [[Block (telecommunications)|block]] of the message stream. (RFC 5246, p. 17)
+* The '''pseudorandom function''' (PRF) is used to create the '''master secret''', a 48-byte secret shared between the two peers in the connection. The master secret is used as a source of entropy when creating session keys, such as the one used to create the MAC. (RFC 5246, p. 16-17, 26)
+<ref>
+{{cite web |url=http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy10700_.htm |title=CipherSuites and CipherSpecs |publisher=IBM |accessdate=20 November 2009}}</ref><ref>
+{{cite web |url=http://msdn.microsoft.com/en-us/library/aa374757(VS.85).aspx |title=Cipher Suites in Schannel |publisher=Microsoft MSDN |accessdate=20 November 2009}}</ref>
+
+===Examples of algorithms used===
+;key exchange: [[RSA]], [[Diffie-Hellman]], [[Elliptic Curve Diffie-Hellman|ECDH]], [[Secure remote password protocol|SRP]], [[Pre-shared key|PSK]]
+;authentication: [[RSA]], [[Digital Signature Algorithm|DSA]], [[Elliptic Curve DSA|ECDSA]]
+;bulk ciphers: [[RC4 (cipher)|RC4]], [[Triple DES]], [[Advanced Encryption Standard|AES]], [[International Data Encryption Algorithm|IDEA]], [[Data Encryption Standard|DES]], or [[Camellia (cipher)|Camellia]]. In older versions of SSL, [[RC2]] was also used. 
+;message authentication: for TLS, a [[HMAC|Hash-based Message Authentication Code]] using [[MD5]] or one of the [[SHA hash functions]] is used.  For SSL, [[SHA]], [[MD5]], [[MD4]], and [[MD2 (cryptography)|MD2]] are used.
+
+==Programming references==
+Programatically, a cipher suite is referred to as:
+;CipherSuite cipher_suites: a list of the cryptographic options supported by the client (RFC 5246, p. 41) 
+;CipherSuite cipher_suite: the cipher suite selected by the server and revealed in the ServerHello message (RFC 5246, p. 42-43, 64)
+
+==References==
+{{Reflist}}
+:RFC 5246 standard for TLS version 1.2
+:[http://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-3 TLS Cipher Suite Registry] at [http://www.iana.org IANA]
+
+[[Category:Application layer protocols]]
+[[Category:Cryptographic protocols]]
+[[Category:Internet protocols]]
+[[Category:Secure communication]]</body> </html>

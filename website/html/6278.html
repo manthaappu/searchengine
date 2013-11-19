@@ -1,0 +1,63 @@
+<html> <head> <title>Circuit breaker design pattern</title></head><body>'''Circuit breaker''' is a [[Design pattern (computer science)|design pattern]] in modern [[software development]].
+
+Circuit breaker is used to detect failures and encapsulates logic of preventing a failure to reoccur constantly (during maintenance, temporary external system failure or unexpected system difficulties).
+
+==Common Uses==
+
+Your application connects to a [[database]] 100 times per second and the database fails. You do not want to have the same error reoccur constantly. You also want to handle the error quickly and gracefully without waiting for [[TCP connection]] timeout.
+
+Generally Circuit Breaker can be used to check the availability of an external service. An external can be a database server or a web service used by the application.
+
+[[Circuit breaker]] detects failures and prevents the application from trying to perform the action that is doomed to fail (until its safe to retry).
+
+==Implementation==
+
+The Circuit Breaker Design Pattern should be implemented asynchronously. The reason is to offload the logic to detect failures from the actual request.
+
+This requires Circuit Breaker to use a persistent storage layer, e.g. a network cache such as [[Memcached]] or [[Redis (data store)|Redis]], or local cache (disk or memory based) to record the availability of a, to the application, external service.
+
+Circuit Breaker records the state of the external service on a given interval.
+
+Before the external service is used from the application, the storage layer is queried to retrieve the current state.
+
+==Performance Implication==
+
+While it's save to say that the benefits outweigh the consequences, implementing Circuit Breaker will of course affect the performance.
+
+By how much depends on the storage layer used and generally available resources. The largest factors in this regard are the type of cache, for example, disk-based vs. memory-based and local vs. network.
+
+==Example Implementation==
+===PHP===
+
+The following is a [[Proof of concept|POC]] example implementation in PHP. The POC stores the status of a MySQL server into a shared memory cache ([[Alternative PHP Cache|APC]]).
+
+==== Check ====
+
+The following script could be run on a set interval through [[crontab]].
+
+<source lang="php">
+$db = mysql_connect('localhost','root','pass');
+if ($db === false) {
+    apc_store('dbUp', 'up');
+} else {
+    apc_store('dbUp', 'down');
+    @mysql_close($db);
+}
+</source>
+
+====Usage in an application====
+
+<source lang="php">
+if (apc_fetch('dbUp') === 'down') {
+    echo "The database server is currently not available. Please try again in a minute.";
+    exit;
+}
+$db  = mysql_connect('localhost', 'root', 'pass');
+$res = mysql_db_query('database', 'SELECT * FROM table');
+</source>
+
+==External links==
+*[http://artur.ejsmont.org/blog/PHP-Circuit-Breaker-initial-Zend-Framework-proposal Example of PHP implementation with diagrams]
+
+[[Category:Software design patterns]]
+[[Category:Articles with example PHP code]]</body> </html>

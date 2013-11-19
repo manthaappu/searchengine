@@ -1,0 +1,39 @@
+<html> <head> <title>Simple rational approximation</title></head><body>'''Simple rational approximation (SRA)''' is a subset of interpolating methods using rational functions. Especially, SRA interpolates a given function with a specific [[rational function]] whose [[poles]] and [[root of a function|zeros]] are [[simple]], which means that there is no multiplicity in poles and zeros. Sometimes, it only implies simple poles.
+
+The main application of SRA lies in finding the [[root of a function|zeros]] of [[secular function]]s. A divide-and-conquer  algorithm to find the [[eigenvalues]] and [[eigenvectors]] for various kinds of [[Matrix (mathematics)|matrices]] is well-known in [[numerical analysis]]. In a strict sense, SRA implies a specific [[interpolation]] using simple rational functions as a part of the divide-and-conquer algorithm. Since such secular functions consist of a series of rational functions with simple poles, SRA is the best candidate to interpolate the zeros of the secular function. Moreover, based on previous researches, a simple zero that lies between two adjacent poles can be considerably well interpolated by using a two-dominant-pole rational function as an approximating function.
+
+== One-point third-order iterative method: Halley's formula ==
+The origin of the interpolation with rational functions can be found in the previous work done by [[Edmond Halley]]. Halley's formula is known as one-point third-order iterative method to solve <math>\,f(x)=0</math> by means of approximating a rational function defined by
+:<math>h(z)=\frac{a}{z+b}+c.</math>
+We can determine a, b, and c so that 
+:<math>h^{(i)}(x)=f^{(i)}(x), \qquad i=0,1,2.</math>
+Then solving <math>\,h(z)=0</math> yields the iteration
+:<math>x_{n+1}=x_{n}-\frac{f(x_n)}{f'(x_n)} \left({\frac{1}{1-\frac{f(x_n)f''(x_n)}{2(f'(x_n))^2}}}\right).</math>
+This is referred to as Halley's formula.
+This ''geometrical interpretation'' <math>h(z)</math> was derived by Gander(1978), where the equivalent iteration also was derived by applying Newton's method to
+:<math>g(x)=\frac{f(x)}{\sqrt{f'(x)}}=0.</math>
+We call this ''algebraic interpretation'' <math>g(x)</math> of Halley's formula.
+
+There are no known explanation for how one is supposed to calculate a, b or c out of these equations.
+
+==One-point second-order iterative method: Simple rational approximation==
+Similarly, we can derive a variation of Halley's formula based on a one-point ''second-order'' iterative method to solve <math>\,f(x)=\alpha(\neq 0)</math> using simple rational approximation by
+:<math>h(z)=\frac{a}{z+b}.</math>
+Then we need to evaluate
+:<math>h^{(i)}(x)=f^{(i)}(x), \qquad i=0,1.</math>
+Thus we have
+:<math>x_{n+1}=x_{n}-\frac{f(x_n)-\alpha}{f'(x_n)} \left(\frac{f(x_n)}{\alpha}\right).</math>
+The algebraic interpretation of this iteration is obtained by solving 
+:<math>g(x)=1-\frac{\alpha}{{f(x)}}=0.</math>
+This one-point second-order method is known to show a locally quadratic convergence if the root of equation is simple.
+SRA strictly implies this one-point second-order interpolation by a simple rational function.
+
+We can notice that even third order method is a variation of Newton's method. We see the Newton's steps are multiplied by some factors. These factors are called the ''convergence factors'' of the variations, which are useful for analyzing the rate of convergence. See Gander(1978).
+
+== References ==
+* James W. Demmel, ''Applied numerical linear algebra,'' Society for Industrial and Applied Mathematics, 1997. ISBN 0-89871-389-7
+* S. Elhay, G. H. Golub and Y.M. Ram, "The spectrum of a modified linear pencil", ''Computers and Mathematics with Applications'', vol. 46, pp. 1413-1426, 2003.
+* M. Gu and S. Eisenstat, "A Divide-and-Conquer Algorithm for the Symmetric Tridiagonal Eigenproblem," ''SIMAX'', vol. 16, no. 1, pp. 172-191, 1995.
+* Walter Gander, ''On the linear least squares problem with a quadratic constraint,'' [[Stanford University]], School of Humanities and Sciences, Computer Science Dept., 1978.
+
+[[Category:interpolation]]</body> </html>

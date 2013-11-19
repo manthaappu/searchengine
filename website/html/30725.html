@@ -1,0 +1,92 @@
+<html> <head> <title>Quadruple precision floating-point format</title></head><body>In [[computing]], '''quadruple precision''' (also commonly shortened to '''quad precision''') is a binary [[floating-point]] [[computer numbering format]] that occupies 16 bytes (128 bits in modern computers) in computer memory.
+
+In [[IEEE 754-2008]] the 128-bit base 2 format is officially referred to as '''binary128'''.
+
+{{Floating-point}}
+
+== IEEE 754 quadruple precision binary floating-point format: binary128 ==
+
+The IEEE 754 standard specifies a '''binary128''' as having:
+* [[Sign bit]]: 1
+* [[Exponent]] width: 15  
+* [[Significand]] [[precision (arithmetic)|precision]]: 113 (112 explicitly stored)   
+<!-- "significand", with a d at the end, is a technical term, please do not confuse with "significant" -->
+
+The format is written with an implicit lead bit with value 1 unless the  exponent is stored with all zeros. Thus only 112 bits of the [[significand]] appear in the memory format, but the total precision is 113 bits (approximately 34 decimal digits, <math>\log_{10}(2^{113}) \approx 34.016</math>). The bits are laid out as follows:
+
+[[Image:IEEE_754_Quadruple_Floating_Point_Format.svg]]
+
+=== Exponent encoding ===
+
+The quadruple precision binary floating-point exponent is encoded using an [[offset binary]] representation, with the zero offset being 16383; also known as exponent bias in the IEEE 754 standard.
+
+* E<sub>min</sub> = 0x0001−0x3fff = −16382
+* E<sub>max</sub> = 0x7ffe−0x3fff = 16383
+* [[Exponent bias]] = 0x3fff = 16383
+
+Thus, as defined by the offset binary representation, in order to get the true exponent the offset of 16383 has to be subtracted from the stored exponent.
+
+The stored exponents 0x0000 and 0x7fff are interpreted specially.
+
+{|class="wikitable" style="text-align:center"
+! Exponent !! Significand zero !! Significand non-zero !! Equation
+|-
+| 0x0000 || [[0 (number)|0]], [[−0]] || [[subnormal numbers]] || <math>(-1)^{\text{signbit}} \times 2^{-16382} \times 0.\text{significandbits}_2</math>
+|-
+| 0x0001, ..., 0x7ffe ||colspan=2| normalized value || <math>(-1)^{\text{signbit}} \times 2^{{\text{exponentbits}_2} - 16383} \times 1.\text{significandbits}_2</math>
+|-
+| 0x7fff || ±[[infinity]] || [[NaN]] (quiet, signalling)
+|}
+
+<!-- TO DO: FILL IN proper values:
+The minimum strictly positive (subnormal) value is 2<sup>−16382−p</sup> ≈ ... × 10<sup>−...</sup>.
+The minimum positive normal value is 2<sup>−16382</sup> ≈ ... × 10<sup>−...</sup>.
+-->
+The maximum representable value is ≈ 1.1897 × 10<sup>4932</sup>.
+
+=== Implementations ===
+
+Quadruple precision is currently implemented in [[C (programming language)|C]]/[[C++]] and [[Fortran]] as [[long double]] and REAL*16<ref>{{cite web|title=Single, Double, and Long Double Precision |url=http://docs.sun.com/app/docs/doc/801-7639/6i1ucu1ul?a=view|work=|publisher=Sun Microsystems|date=|accessdate=2010-01-23}}</ref> respectively. Not all compilers support the quad-precision type. Microsoft [[Visual C++]], for example, makes the [[long double]] type synonymous with the double-precison type<ref>MSDN homepage, about Visual C++ compiler [http://msdn.microsoft.com/en-us/library/9cx8xs15.aspx]</ref>. The [[GNU]] Fortran compiler also lacks support for the quad-precison, but proprietary compilers such as the [[Intel Fortran Compiler]] do support quad-precison<ref>{{cite web|title= Intel Fortran Compiler Product Brief |url=http://h21007.www2.hp.com/portal/download/files/unprot/intel/product_brief_Fortran_Linux.pdf|work=|publisher=Su|date=|accessdate=2010-01-23}}</ref>. The fourth-generation programming language, [[MATLAB]], supports varying degrees of precision including quadruple precision with use of the "Variable Precision Arithmetic function".<ref>{{cite web|title= Technical Solutions |url=http://www.mathworks.com/support/solutions/en/data/1-1AGHW/index.html?product=SM&solution=1-1AGHW|work=|publisher=MathWorks|date=|accessdate=2010-01-23}}</ref>
+
+The [[GNU C Compiler]] provides a quadruple-precision type called <code>__float128</code> for [[x86]], [[x86-64]] and [[Itanium]] CPUs,<ref>[http://gcc.gnu.org/onlinedocs/gcc/Floating-Types.html Section 6.10 : Additional Floating Types] ''gcc.gnu.org''</ref> using a software emulation from [[libc6]].
+
+=== Quadruple precision examples ===
+
+These examples are given in bit ''representation'', in [[hexadecimal]],
+of the floating point value. This includes the sign, (biased) exponent, and significand.
+
+ 3fff 0000 0000 0000 0000 0000 0000 0000   = 1
+ c000 0000 0000 0000 0000 0000 0000 0000   = -2
+ 
+ 7ffe ffff ffff ffff ffff ffff ffff ffff   ≈  1.189731495357231765085759326628007 × 10<sup>4932</sup> (max quadruple precision)
+ 
+ 0000 0000 0000 0000 0000 0000 0000 0000   = 0
+ 8000 0000 0000 0000 0000 0000 0000 0000   = -0
+ 
+ 7fff 0000 0000 0000 0000 0000 0000 0000   = infinity
+ ffff 0000 0000 0000 0000 0000 0000 0000   = -infinity
+ 				
+ 3ffd 5555 5555 5555 5555 5555 5555 5555   ≈  1/3
+
+By default, 1/3 rounds down like [[double precision]], because of the odd number of bits in the significand.
+So the bits beyond the rounding point are <code>0101...</code> which is less than 1/2 of a [[unit in the last place]]. 
+
+== See also ==
+* [[IEEE 754-2008|IEEE Standard for Floating-Point Arithmetic (IEEE 754)]]
+* [[Extended precision]] (80-bit)
+* [[ISO/IEC 10967]], Language Independent Arithmetic
+* [[Primitive data type]]
+* [[long double]]
+
+== References ==
+{{reflist|colwidth=30em}}
+
+== External links ==
+* [http://crd.lbl.gov/~dhbailey/mpdist/ High-Precision Software Directory]
+* [http://www.nongnu.org/hpalib/ HPAlib] - a [[free software]] ([[LGPL]]) software library for quad-precision arithmetic
+
+[[Category:Computer arithmetic]]
+[[Category:Data types]]
+
+[[de:Vierfache Genauigkeit]]
+[[ru:Число четверной точности]]</body> </html>

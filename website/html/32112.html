@@ -1,0 +1,46 @@
+<html> <head> <title>Rinda (Ruby programming language)</title></head><body>'''Rinda''' is a [[Ruby (programming language)|Ruby]] implementation of [[Linda_(coordination_language)|Linda]] [[distributed computing]] paradigm. Linda defines a set of atomic operations on shared, virtual, (global) associative memory, called a tuplespace. In essence, it is like a distributed blackboard system for decoupled processes. Processes may add tuples to the blackboard or read/remove from the blackboard tuples that match a certain
+pattern. 
+
+Rinda builds on Linda/tuplespaces paradigm by offering some interesting additions. In particular, the Rinda implementation uses the case comparison (===) operator to match tuples. This means that tuples may be matched using regular expressions, the classes of their elements, and the element values.
+
+DRb server that offers a shared tuplespace:
+<source lang="ruby">
+require 'rinda/tuplespace'
+
+URI = "druby://localhost:67671"
+DRb.start_service(URI, Rinda::TupleSpace.new)
+DRb.thread.join
+</source>
+
+Computational agent that accepts messages containing an arithmetic operator and two numbers, computes the result and stores it in tuplespace:
+<source lang="ruby">
+require 'rinda/rinda'
+
+URI = "druby://localhost:67671"
+DRb.start_service
+ts = Rinda::TupleSpaceProxy.new(DRbObject.new(nil, URI))
+loop do
+  ops, a, b = ts.take([ %r{^[-+/*]$}, Numeric, Numeric])
+  ts.write(["result", a.send(ops, b)])
+end
+</source>
+
+The client submits tuples to the tuplespace and consumes the result when it is ready:
+<source lang="ruby">
+require 'rinda/rinda'
+
+URI = "druby://localhost:67671"
+DRb.start_service
+ts = Rinda::TupleSpaceProxy.new(DRbObject.new(nil, URI))
+tuples = [[ "*", 2, 2 ], [ "+", 2, 5 ], [ "-", 9, 3 ]]
+tuples.each do |t|
+  ts.write(t)
+  res = ts.take(["result", nil])
+  puts "#{res[1]} = #{t[1]} #{t[0]} #{t[2]}"
+end
+</source>
+
+==External links==
+*[http://ruby-doc.org/stdlib/libdoc/rinda/rdoc/index.html Rinda library reference]
+
+[[Category:Tree programming languages]]</body> </html>

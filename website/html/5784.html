@@ -1,0 +1,87 @@
+<html> <head> <title>Certificate Management Protocol</title></head><body>{| class="wikitable float-right" align=right
+|-----
+! bgcolor="#C0C0FF" colspan="2" font="size:larger"  | CMP (Certificate Management Protocol)
+|-----
+| align="left" | '''family:'''
+| align="left" | unknown
+|-----
+| align="left" | '''field of application :'''
+| align="left" | certificate management
+|-----
+| align="left" | '''newest version:'''
+| align="left" | cmp2000(2)
+|-----
+| align="left" | '''[[Object identifier|OID]] of the newest version:'''
+| align="left" | 1.3.6.1.5.5.7.0.16
+|-----
+| align="left" | '''TCP/UDP port:'''
+| align="left" | 829 (pkix-3-ca-ra)
+|-----
+| align="center" colspan="2" |
+{| border="0" cellspacing="3" {{{2|style="float:right;padding-left:10px"}}}
+|+ CMP in the TCP/IP model:
+|-----
+| rowspan="2" align="center" bgcolor="#FFCC99" | '''application'''
+| rowspan="2" colspan="1" align="center" bgcolor="#9999FF" | '''CMP'''
+| colspan="4" align="center" bgcolor="#9999FF" | '''CMP'''
+|-----
+| colspan="1" align="center" bgcolor="#EEEEFF" | '''[[HTTP]]'''
+| colspan="1" align="center" bgcolor="#EEEEFF" | '''[[HTTPS]]'''
+| colspan="1" align="center" bgcolor="#EEEEFF" | '''[[SMTP]]'''
+| colspan="1" align="center" bgcolor="#EEEEFF" | '''...'''
+|-----
+| align="center" bgcolor="#FFEEBB" | ''transport''
+| colspan="5" align="center" bgcolor="#EEEEFF" | [[Transmission Control Protocol|TCP]]
+|-----
+| align="center" bgcolor="#FFEEBB" | ''Internet''
+| colspan="5" align="center" bgcolor="#EEEEFF" | IP ([[IPv4]], [[IPv6]])
+|-----
+| rowspan="2" align="center" bgcolor="#FFEEBB" | ''link''
+| rowspan="2" align="center" bgcolor="#EEEEEE" | [[Ethernet]]
+| rowspan="2" align="center" bgcolor="#EEEEEE" | [[Token Bus|Token<br>Bus]]
+| rowspan="2" align="center" bgcolor="#EEEEEE" | [[Token Ring|Token<br>Ring]]
+| rowspan="2" align="center" bgcolor="#EEEEEE" | [[Fiber Distributed Data Interface|FDDI]]
+| rowspan="2" align="center" bgcolor="#EEEEEE" | ...
+|}
+|-----
+| align="left" | '''proposed standard:'''
+| align="left" |
+RFC 4210 (CMP, 2005)<br />
+|-----
+| align="left" | '''obsolete standard:'''
+| align="left" |
+RFC 2510 (CMP, 1999)<br />
+|}
+
+The '''Certificate Management Protocol''' (CMP) is an Internet protocol used for obtaining X.509 digital certificates in a [[public key infrastructure]] (PKI). It is described in RFC 4210 and is one of two protocols so far to use the [[Certificate Request Message Format]] (CRMF), described in RFC 4211, with the other protocol being [[Certificate Management over CMS]] (CMC), described in RFC 5273.  An obsolete version of CMP is described in RFC 2510, the respective CRMF version in RFC 2511.
+
+CMP messages are encoded in [[ASN.1]], using the [[Distinguished Encoding Rules|DER]] method and usually encapsulated in HTTP.
+
+==PKI Entities==
+A [[certificate authority]] (CA), issuing the certificates, acts as the server in a PKI using CMP. One of the clients, obtaining their digital certificates by means of this protocol is called '''end entity''' (EE). None or any number of [[registration authority|registration authorities]] (RA), can be used to mediate between the EEs and the CA.
+
+==Features==
+An EE can utilize CMP to obtain certificates from the CA. This can be done through an "initial registration/certification", a "key pair update"  or a "certificate update"  message sequence. By means of a revocation request it can also get one of its own certificates revoked. Using a "cross-certification request" a CA can get a certificate signed by another CA. In case an EE has lost its private key and it is stored by the CA, it might be recovered by requesting a "key pair recovery".
+
+==Transport==
+Several means of transportation are foreseen for conveying CMP messages:<ref>[http://tools.ietf.org/html/draft-ietf-pkix-cmp-transport-protocols draft-ietf-pkix-cmp-transport-protocols - Internet X.509 Public Key Infrastructure - Transport Protocols for CMP (latest version)]</ref>
+* Encapsulated in a [[Hypertext Transfer Protocol|HTTP]] message.
+* [[Transmission Control Protocol|TCP]] or any other reliable, connection-oriented transport protocol.
+* As a file, e.g. over [[File Transfer Protocol|FTP]] or [[Secure Copy|SCP]].
+* By [[E-Mail]], using the [[Multipurpose Internet Mail Extensions|MIME]] encoding standard.
+
+The [[Content-Type]] used is ''application/pkixcmp''; older versions of the draft used ''application/pkixcmp-poll'', ''application/x-pkixcmp'' or ''application/x-pkixcmp-poll''.
+
+==Implementations==
+* The library [[cryptlib]] provides CMP support.
+* [[EJBCA]], a [[certificate authority|CA]], implements a subset<ref>[http://ejbca.sourceforge.net/features.html EJBCA - The J2EE Certificate Authority]</ref> of the CMP functions.
+* [[OpenSSL]] is capable of producing and parsing CMP messages, using an additional patch.<ref>[https://sourceforge.net/projects/cmpforopenssl/ CMP for OpenSSL, Sourceforge Project page]</ref>
+
+==References==
+<references/>
+
+[[Category:Cryptographic protocols]]
+[[Category:Internet standards]]
+[[Category:Internet protocols]]
+
+[[de:Certificate Management Protocol]]</body> </html>

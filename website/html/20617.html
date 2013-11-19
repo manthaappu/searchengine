@@ -1,0 +1,75 @@
+<html> <head> <title>Key strengthening</title></head><body>In [[cryptography]], '''key strengthening''' or '''key stretching''' refer to techniques used to make a possibly weak [[Key (cryptography)|key]], typically a [[password]] or [[passphrase]], more secure against a [[brute force attack]] by increasing the time it takes to test each possible key. Passwords or passphrases created by humans are often short or predictable enough to allow [[password cracking]]. Key strengthening makes such attacks more difficult.
+
+Key strengthening techniques generally work as follows. The initial key is fed into an algorithm that, running on a given speed of processor, takes a known constant time to apply. The algorithm is constructed so that the delay introduced is acceptable to most users, say one second on a typical personal computer. The output is the '''enhanced key'''. The enhanced key should be of sufficient size to make it unfeasible to break by brute force (e.g. at least 128 bits). The overall algorithm used should be secure in the sense that there should be no known way of taking a shortcut that would make it possible to calculate the enhanced key in less time (less processor work) than by using the key strengthening algorithm itself.
+
+The key strengthening process leaves the attacker with two options: either try every possible combination of the enhanced key (infeasible if the enhanced key is long enough), or else try likely combinations of the initial key. In the latter approach, if the initial key is a password or a passphrase, then the attacker would first try every word in a dictionary or common password list and then try all character combinations for longer passwords. Key strengthening does not prevent this approach, but the attacker has to spend much more time on each attempt. 
+
+If the attacker uses the same class of hardware as the user, each guess will take the same amount of time to process as it took the user (for example, one second). Even if the attacker has much greater computing resources than the user, the key strengthening will still slow the attacker down, since the user's computer only has to compute the strengthening function once upon the user entering his/her password, whereas the attacker must compute it for every guess in the attack.
+
+There are several ways to perform key strengthening. A [[cryptographic hash function]] or a [[block cipher]] may be repeatedly applied in a loop (see pseudo code below). In applications where the key is used for a [[Encryption|cipher]], the [[key schedule]] (key set-up) in the cipher may be modifid so that it takes one second to perform.
+
+A related technique, [[salt (cryptography)|salting]], protects against [[time-memory tradeoff]] attacks and is often used in conjunction with key strengthening.
+
+== Hash based key strengthening ==
+
+Simple key strengthening method:
+
+ key = hash(password )
+ '''for''' 1 '''to''' 65000 '''do'''
+   key = hash(key )
+
+Even better method with a [[Salt (cryptography)|salt]]. ("+" denotes the operation of [[concatenation]]):
+
+ key = hash(password + salt)
+ '''for''' 1 '''to''' 65000 '''do'''
+   key = hash(key )
+
+Or even:
+
+ key = hash(password + salt)
+ '''for''' 1 '''to''' 65000 '''do'''
+   key = hash(key + salt)
+
+== Strength and time ==
+
+For these examples assume that the slowest [[personal computer]]s in use today ({{CURRENTYEAR}}) can do about 65000 [[SHA-1]] hashes in one second using [[Compiler|compiled]] code. Thus a program that uses key strengthening can use 65000 rounds of hashes and delay the user for at most one second.
+
+Testing a trial password or passphrase typically requires one hash operation. But if key strengthening was used, the attacker must compute a strengthened key for each key they test, meaning there are 65000 hashes to compute per test. This increases the attacker's workload by a factor of 65000, approximately 2<sup>16</sup> operations, which means the enhanced key is "worth" about an additional 16 bits in key strength.
+
+The commonly accepted [[Moore's law]] states that computer speed doubles about every 1.5 years. Under this assumption, every 1.5 years one more bit of key strength is plausibly brute-forcible. This implies that 16 extra bits of strength is worth about 16×1.5 = 24 years later cracking, but it also means that the number of key strengthening rounds a system uses should be doubled about every 1.5 years to maintain the same level of security. (Since most keys are more secure than necessary, systems that require consistent deterministic key generation will likely not update the number of iterations used in key strengthening. In such a case, the designer should take into consideration how long they wish for the key derivation system to go unaltered and should choose an appropriate number of hashes for the lifespan of the system.)
+
+An important consideration to be made is that CPU-bound hash functions are still vulnerable to [[Custom_hardware_attack|hardware implementations]]. For example, the literature provides efficient hardware implementations of SHA1 in as low as 5000 gates, and able to produce a result in less than 400 clock cycles<ref>http://events.iaik.tugraz.at/RFIDSec08/Papers/Publication/04%20-%20ONeill%20-%20Low%20Cost%20SHA-1%20-%20Slides.pdf</ref>. Since multi-million gate FPGAs can be purchased at less than 100$ price points<ref>http://www.xilinx.com/prs_rls/silicon_spart/0333spartan3.htm</ref>, it follows that an attacker can build a fully [[Loop_unwinding|unrolled]] hardware cracker for about 5000$. Such a design, if clocked at 100MHz can try about 300.000 keys/second for the algorithm proposed above. The attacker is free to choose a good price/speed compromise, for example a 150.000 keys/second design for 2500$. It's worth noting that the key strengthening still slows down the attacker in such a situation, i.e. a 5000$ design attacking a straight SHA1 hash would be able to try 300.000*2^16 = 20 billion keys/second.
+
+To alleviate this problem, the use of [[Memory_bound_function|memory bound]] cryptographic functions has been proposed. These functions access large amounts of memory in an unpredictable fashion such that [[Cache|caches]] are ineffective. Since large amounts of low latency memory are very expensive, or downright impossible with current technology, the would be attacker is significantly deterred.
+
+== History ==
+
+The first deliberately-slow password-based key derivation function was called [[Crypt (Unix)#Library Function|"CRYPT"]] and was invented by [[Robert Morris (cryptographer)|Robert Morris]] during the 1980s for encrypting [[Unix]] passwords. It used an iteration count of 25, a 12-bit salt and a variant of [[Data Encryption Standard|DES]] as the sub-function. (DES proper was avoided in an attempt to frustrate attacks using standard DES hardware.) It also limited passwords to a maximum of eight [[ASCII]] characters. While it seemed a great advance at the time, CRYPT(3) is now considered inadequate. The iteration count, designed for the [[PDP-11]] era, is too low, 12 bits of salt is an inconvenience but does not stop precomputed dictionary attacks, and the 8 character limit prevents the use of stronger [[passphrase]]s.
+
+Modern password-based key derivation functions, such as [[PBKDF2]] (specified in RFC 2898), use a cryptographic hash, such as [[MD5]] or [[SHA1]], more salt (e.g. 64 bits) and a high iteration count (often 1000 or more). There have been proposals [http://www.tarsnap.com/scrypt/scrypt.pdf] to use algorithms that require large amounts of computer memory and other computing resources to make [[custom hardware attack]]s more difficult to mount.
+
+== Some systems that use key strengthening ==
+
+*[[Pretty Good Privacy|PGP]], [[GNU Privacy Guard|GPG]] encryption software.
+*[[Wi-Fi Protected Access]] (WPA and WPA2) wireless encryption protocol in personal mode.
+*Some but not all [[disk encryption software]]: (See [[comparison of disk encryption software]])
+*[[KeePass]], an [[open source]] [[Password manager]] utility.
+
+== See also ==
+* [[PBKDF2]] - a widely used key strengthening algorithm
+* [[Key derivation function]] - Often uses key strengthening.
+* [[Hashcash]] - A somewhat related method.
+
+== References ==
+{{reflist}}
+* [http://www.schneier.com/paper-low-entropy.html Secure Applications of Low-Entropy Keys] by [[John Kelsey (cryptanalyst)|J. Kelsey]], [[Bruce Schneier|B. Schneier]], C. Hall, and [[David A. Wagner|D. Wagner]] (1997)
+* [http://www2007.org/poster855.php A Password Stretching Method with User Specific Salts] by ChangHee Lee and Heejo Lee (2007)
+* RFC 2898
+
+==External links==
+* [http://www.php-einfach.de/improved_hash_algorithm_en.php PHP implementation to get a strong hash from a weak password]
+
+{{Crypto navbox}}
+
+[[Category:Key management]]
+[[Category:Articles with example pseudocode]]</body> </html>

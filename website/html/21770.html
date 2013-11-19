@@ -1,0 +1,201 @@
+<html> <head> <title>Linearizability</title></head><body>{{no footnotes|date=December 2010}}
+{{Other uses|Atomicity (disambiguation)}}
+
+In [[concurrent programming]], an operation (or set of operations) is '''atomic''', '''linearizable''', '''indivisible''' or '''uninterruptible''' if it appears to the rest of the system to occur instantaneously. Atomicity is a guarantee of [[Isolation (computer science)|isolation]] from [[Concurrency (computer science)|concurrent processes]]. Additionally, atomic operations commonly have a [[Atomicity (database systems)|succeed-or-fail]] definition — they either successfully change the state of the system, or have no visible effect.
+
+Atomicity is commonly enforced by [[mutual exclusion]], whether at the hardware level building on a [[cache coherency]] protocol, or the software level using [[semaphore (programming)|semaphores]] or [[lock (computer science)|locks]]. Thus, an atomic operation does not ''actually'' occur instantaneously. The benefit comes from the ''appearance'': the system behaves ''as if'' each operation occurred instantly, separated by pauses. Because of this, implementation details may be ignored by the user, except insofar as they affect performance. If an operation is not atomic, the user will also need to understand and cope with sporadic extraneous behaviour caused by interactions between concurrent operations, which by its nature is likely to be hard to reproduce and [[debugging|debug]].
+
+==Primitive atomic instructions==
+
+Most modern processors have [[Instruction (computer science)|instructions]] which can be used to implement [[lock (computer science)|locking]] and [[lock-free and wait-free algorithms]]. The ability to temporarily turn off [[interrupt]]s, ensuring that the currently running [[process (computing)|process]] cannot be [[context switch]]ed, also suffices on a [[uniprocessor]]. These instructions are used directly by compiler and operating system writers but are also abstracted and exposed as bytecodes and library functions in higher-level languages.
+
+*Atomic read and write
+*[[Atomic swap]] as used in some [[Burroughs large systems#Multiple processors|Burroughs mainframes]], also called [[XOR_swap_algorithm#The_XCHG_instruction|XCHG]].
+*[[Test-and-set]]
+*[[Fetch-and-add]]
+*[[Compare-and-swap]]
+*[[Load-Link/Store-Conditional]]
+
+Many of these primitives can be implemented in terms of each other.
+
+Many [[central processing unit|processors]], especially [[32-bit]] ones with [[64-bit]] [[floating point]] support, also provide some read and write operations that are not atomic: one [[thread (computer science)|thread]] reading a 64-bit register while another thread is writing to it may see a combination of both "before" and "after" values, a combination that may never actually have been written to the register. Further, only single operations are guaranteed to be atomic; threads arbitrarily performing groups of reads and writes will also observe a mixture of "before" and "after" values.
+
+==High-level atomic operations==
+
+The easiest way to achieve linearizability is running groups of primitive operations in a [[critical section]]. Strictly independent operations can then be carefully permitted to overlap their critical sections, provided this does not violate linearizability. Such an approach must balance the cost of large numbers of [[lock (computer science)|locks]] against the benefits of increased parallelism.
+
+Another approach, favoured by researchers (but not yet widely used in the software industry), is to design a linearizable object using the native atomic primitives provided by the hardware. This has the potential to maximise available parallelism and minimise synchronisation costs, but requires mathematical proofs which show that the objects behave correctly.
+
+A promising hybrid of these two is to provide a [[transactional memory]] abstraction. As with critical sections, the user marks sequential code that must be run in isolation from other threads. The implementation then ensures the code executes atomically. This style of abstraction is common when interacting with databases; for instance, when using the [[Spring Framework]], annotating a method with @Transactional will ensure all enclosed database interactions occur in a single [[database transaction]]. Transactional memory goes a step further, ensuring that all memory interactions occur atomically. As with database transactions, issues arise regarding composition of transactions, especially database and in-memory transactions.
+
+A common theme when designing linearizable objects is to provide an all-or-nothing interface: either an operation succeeds completely, or it fails and does nothing. ([[ACID]] databases refer to this principle as [[Atomicity_(database_systems)|atomicity]].) If the operation fails (usually due to concurrent operations), the user must retry, usually performing a different operation. For example:
+
+* [[Compare-and-swap]] writes a new value into a location only if it matches a supplied old value. This is commonly used in a read-modify-CAS sequence: the user reads the location, computes a new value to write, and writes it with a CAS; if the value changes concurrently, the CAS will fail and the user tries again.
+* [[Load-Link/Store-Conditional]] encodes this pattern more directly: the user reads the location with load-link, computes a new value to write, and writes it with store-conditional; if the value has changed concurrently, the SC will fail and the user tries again.
+* In a [[database transaction]], if the transaction cannot be completed due to a concurrent operation (e.g. in a [[deadlock]]), the transaction will be aborted and the user must try again.
+
+==Example atomic operation==
+
+Consider a simple counter which different processes can increment.
+
+===Non-atomic===
+
+The naive, non-atomic implementation:
+# reads the value in the memory location;
+# adds one to the value;
+# writes the new value back into the memory location.
+
+Now, imagine two processes are running incrementing a single, shared memory location:
+# the first process reads the value in memory location;
+# the first process adds one to the value;
+but before it can write the new value back to the memory location it is suspended, and the second process is allowed to run:
+# the second process reads the value in memory location, the ''same'' value that the first process read;
+# the second process adds one to the value;
+# the second process writes the new value into the memory location.
+The second process is suspended and the first process allowed to run again:
+# the first process writes a now-wrong value into the memory location, unaware that the other process has already updated the value in the memory location.
+
+This is a trivial example. In a real system, the operations can be more complex and the errors introduced extremely subtle. For example, reading a [[64-bit]] value from memory may actually be implemented as two [[sequence|sequential]] reads of two [[32-bit]] memory locations. If a process has only read the first 32 bits, and before it reads the second 32 bits the value in memory gets changed, it will have neither the original value nor the new value but a mixed-up [[garbage (computer science)|garbage]] value.
+
+Furthermore, the specific order in which the processes run can change the results, making such an error difficult to detect, reproduce and [[debug]].
+
+===Compare-and-swap===
+
+Most systems provide an atomic [[compare-and-swap]] instruction that reads from a memory location, compares the value with an "expected" one provided by the user, and writes out a "new" value if the two match, returning whether the update succeeded. We can use this to fix the non-atomic counter algorithm as follows:
+
+:# read the value in the memory location;
+:# add one to the value
+:# use compare-and-swap to write the incremented value back
+:# retry if the value read in by the compare-and-swap did not match the value we originally read
+
+Since the compare-and-swap occurs (or appears to occur) instantaneously, if another process updates the location while we are in-progress, the compare-and-swap is guaranteed to fail.
+
+===Locking===
+{{main|Lock (computer science)}}
+
+Another approach is to turn the naive algorithm into a [[critical section]], preventing other threads from disrupting it, using a [[lock (computer science)|lock]]. Once again fixing the non-atomic counter algorithm:
+
+:# take a lock, excluding other threads from running the critical section (steps 2-4) at the same time
+:# read the value in the memory location
+:# add one to the value
+:# write the incremented value back to the memory location
+:# release the lock
+
+This strategy works with any problem; compared with direct use of atomic operations, it is relatively easy to get right, but it requires great care to not suffer significant overhead. To improve program performance, it may therefore be a good idea to replace simple critical sections with atomic operations for [[non-blocking synchronization]] (as we have just done for the counter with compare-and-swap), instead of the other way around, but unfortunately a significant improvement is not guaranteed and lock-free algorithms can easily become too complicated to be worth the effort.
+
+==History of linearizability==
+
+Linearizability was first introduced as a [[consistency model]] by Herlihy and Wing in 1987. It encompassed more restrictive definitions of atomic, such as "an atomic operation is one which cannot be (or is not) interrupted by concurrent operations", which are usually vague about when an operation is considered to begin and end.
+
+An atomic object can be understood immediately and completely from its sequential definition, as a set of operations run in parallel will always appear to occur one after the other; no inconsistencies may emerge. Specifically, linearizability guarantees that the [[Invariant (computer science)|invariants]] of a system are ''observed'' and ''preserved'' by all operations: if all operations individually preserve an invariant, the system as a whole will.
+
+==Definition of linearizability==
+
+A ''history'' is a sequence of ''invocations'' and ''responses'' made of an object by a set of [[Thread (computer science)|threads]]. Each invocation of a function will have a subsequent response. This can be used to model any use of an object. Suppose, for example, that two threads, A and B, both attempt to grab a lock, backing off if it's already taken. This would be modeled as both threads invoking the lock operation, then both threads receiving a response, one successful, one not.
+
+{| border="1" cellspacing="0"
+ | A invokes ''lock''
+ | B invokes ''lock''
+ | A gets "failed" response
+ | B gets "successful" response
+|}
+
+A ''sequential'' history is one in which all invocations have immediate responses. A sequential history should be trivial to reason about, as it has no real concurrency; the previous example was not sequential, and thus is hard to reason about. This is where linearizability comes in.
+
+A history is ''linearizable'' if:
+* its invocations and responses can be reordered to yield a sequential history
+* that sequential history is correct according to the sequential definition of the object
+* if a response preceded an invocation in the original history, it must still precede it in the sequential reordering
+
+(Note that the first two bullet points here match [[serializability]]: the operations appear to happen in some order. It is the last point which is unique to linearizability, and is thus the major contribution of Herlihy and Wing.)
+
+Let us look at two ways of reordering the locking example above.
+
+{| border="1" cellspacing="0"
+ | A invokes ''lock''
+ | A gets "failed" response
+ | B invokes ''lock''
+ | B gets "successful" response
+|}
+
+Reordering B's invocation below A's response yields a sequential history. This is easy to reason about, as all operations now happen in an obvious order. Unfortunately, it doesn't match the sequential definition of the object: A should have successfully obtained the lock, and B should have subsequently aborted.
+
+{| border="1" cellspacing="0"
+ | B invokes ''lock''
+ | B gets "successful" response
+ | A invokes ''lock''
+ | A gets "failed" response
+|}
+
+This is another correct sequential history. It is also a linearization! Note that the definition of linearizability only precludes responses that precede invocations from being reordered; since the original history had no responses before invocations, we can reorder it as we wish. Hence the original history is indeed linearizable.
+
+An object (as opposed to a history) is linearizable if all valid histories of its use can be linearized. Note that this is a much harder assertion to prove.
+
+===Linearizability versus serializability===
+
+Consider the following history, again of two objects interacting with a lock:
+
+{| border="1" cellspacing="0"
+ | A invokes lock
+ | A successfully locks
+ | B invokes unlock
+ | B successfully unlocks
+ | A invokes unlock
+ | A successfully unlocks
+ |}
+
+This history is visibly not linearizable, as it cannot be reordered to another sequential history without violating the ordering rule. However, under serializability, we may reorder B's unlock operation to ''before'' A's original lock, which is a valid history assuming the object begins the history in a locked state:
+
+{| border="1" cellspacing="0"
+ | B invokes unlock
+ | B successfully unlocks
+ | A invokes lock
+ | A successfully locks
+ | A invokes unlock
+ | A successfully unlocks
+ |}
+
+While weird, this reordering is sensible provided there is no alternative means of communicating between A and B. Linearizability is better when considering individual objects separately, as the reordering restrictions ensure that multiple linearizable objects are, considered as a whole, still linearizable.
+
+===Linearization points===
+
+This definition of linearizability is equivalent to the following:
+
+* All function calls have a ''linearization point'' at some instant between their invocation and their response
+* All functions appear to occur instantly at their linearization point, behaving as specified by the sequential definition
+
+This alternative is usually much easier to prove. It is also much easier to reason about as a user, largely due to its intuitiveness. This property of occurring instantaneously, or indivisibly, leads to the use of the term ''atomic'' as an alternative to the longer "linearizable".
+
+In the examples above, the linearization point of the counter built on CAS is the linearization point of the first (and only) successful CAS update. The counter built using locking can be considered to linearize at any moment while the locks are held, since any potentially conflicting operations are excluded from running during that period.
+
+==Strict consistency==
+
+'''Strict consistency''' in [[computer science]] is the most stringent [[consistency model]]. It says that a [[read operation]] has to return the result of the latest [[write operation]] which occurred on that [[data item]].
+
+== See also ==
+*[[Atomicity (database_systems)|Atomic transaction]]
+*[[Consistency model]]
+*[[ACID]]
+
+== References ==
+* M. Herlihy and J. Wing, "Axioms for Concurrent Objects", Proceedings of the 14th ACM SIGACT-SIGPLAN symposium on Principles of programming languages  (January 1987), pp. 13-26 [http://portal.acm.org/citation.cfm?id=41627].
+* M. Herlihy, "A methodology for implementing highly concurrent data structures", ACM SIGPLAN symposium on Principles & practice of parallel programming, 1990, pp. 197-206 [http://portal.acm.org/citation.cfm?id=99185].
+* M. Herlihy and J.Wing  "Linearizability: a correctness condition for concurrent objects", ACM Transactions on Programming Languages and Systems, 1990, pp. 463-492 [http://portal.acm.org/citation.cfm?doid=78969.78972].
+
+
+[[Category:Consistency models]]
+[[Category:Transaction processing]]
+[[Category:Concurrency control]]
+
+[[cs:Atomicita]]
+[[de:Atomare Operation]]
+[[es:Instrucción atómica]]
+[[fr:Atomicité (informatique)]]
+[[ko:원자성]]
+[[he:פעולה אטומית]]
+[[lt:Nedaloma operacija]]
+[[ja:不可分操作]]
+[[pl:Operacja atomowa]]
+[[pt:Transação atômica]]
+[[ru:Атомарные операции]]
+[[uk:Атомарна операція]]</body> </html>

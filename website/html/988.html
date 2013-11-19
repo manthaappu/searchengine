@@ -1,0 +1,105 @@
+<html> <head> <title>Adaptive sort</title></head><body>A [[sorting algorithm]] falls into the '''adaptive sort''' family if it takes advantage of existing order in its input.  It benefits from the presortedness in the input sequence – or a limited amount of [[randomness|disorder]] for various definitions of measures of disorder – and sorts faster.  Adaptive sorting is usually performed by modifying existing sorting algorithms.
+
+== Motivation ==
+[[Comparison sort|Comparison-based sorting algorithms]] have traditionally dealt with achieving an optimal bound of [[Big O notation|O]](n logn) when dealing with [[time complexity]].  Adaptive sort takes advantage of the existing order of the input to try to achieve better times, so that the time taken by the algorithm to sort is a smoothly growing function of the size of the sequence ''and'' the disorder in the sequence.  In other words, the more presorted the input is, the faster it should be sorted.
+
+This is an attractive algorithm because nearly sorted sequences are common in practice.  Thus, the performance of existing sort algorithms can be improved by taking into account the existing order in the input.  
+
+Note that the most worst-case sorting algorithms that do optimally well in the worst-case, notably [[heap sort]] and [[merge sort]], do not take existing order within their input into account, although this deficiency is easily rectified in the case of [[merge sort]] by checking if left.last_item ≤ right.first_item, in which case a merge operation may be replaced by simple concatenation – a modification that is well within the scope of making an algorithm adaptive.
+
+== Examples ==
+A classic example of an adaptive sorting algorithm is ''Straight Insertion Sort''.  In this sorting algorithm, we scan the input from left to right, repeatedly finding the position of the current item, and insert it into an array of previously sorted items.
+
+In [[pseudo-code]] form, the ''Straight Insertion Sort'' algorithm could look something like this:
+
+  '''procedure''' ''Straight Insertion Sort (X, n)'':
+  ''X[0]'' := − ∞;
+  '''for''' j := 2 '''to''' n '''do'''
+  '''begin''' i := j − 1;
+        t := ''X[j]'';
+        '''while''' t < ''X[i]'' '''do'''
+        '''begin''' ''X[i + 1]'' := ''X[i]'';
+              i := i - 1
+        '''end''';
+        ''X[i + 1]'' := t;
+  '''end;'''
+
+The performance of this algorithm can be described in terms of the number of [[Inversion (discrete mathematics)|inversions]] in the input, and then T(n) will be roughly equal to I(A) + (n - 1), where I(A) is the number of Inversions.  Using this measure of presortedness – being relative to the number of inversions – ''Straight Insertion Sort'' takes less time to sort the closer it is to being sorted.
+
+Other examples of adaptive sorting algorithms are [[Adaptive heap sort|Adaptive Heap-Sort]] and [[Adaptive Merge-Sort]].  Dijkstra’s [[Smoothsort]] algorithm is a variation on heap-sort that is also considered an adaptive sorting algorithm.
+
+[[Timsort]], used as the generic sorting algorithm for several programming languages including Python, is adaptive.<ref>{{Cite web
+|last=Peters
+|first=Tim
+|authorlink=Tim Peters (programmer)
+|title=listsort.txt
+|url=http://svn.python.org/projects/python/trunk/Objects/listsort.txt
+|accessdate=2009-03-31
+}}</ref>
+
+== See also ==
+* [[Sorting algorithms]]
+* [[Smoothsort]]
+
+== References ==
+* {{cite book
+  | last = Hagerup
+  | first = Torben
+  | coauthors = Jyrki Katjainen
+  | title = Algorithm Theory – SWAT 2004
+  | publisher = Springer-Verlag
+  | year = 2004
+  | location = Berlin Heidelberg
+  | pages = 221–222
+  | url = http://books.google.com/?id=2E-KNhKl3gEC&pg=PA221&lpg=PA221&dq=adaptive+sort
+  | isbn = 3-540-22339-8}}
+* {{cite book
+  | last = Mehta
+  | first = Dinesh P.
+  | coauthors = Sartaj Sahni
+  | title = Data Structures and Applications
+  | publisher = Chapman & Hall/CRC
+  | year = 2005
+  | location = USA
+  | pages = 11‑8–11‑9
+  | url = http://books.google.com/?id=fQVZy1zcpJkC&pg=PT230&lpg=PT230&dq=adaptive+sort
+  | isbn = 1-58488-435-5}}
+* {{cite journal
+  | doi = 10.1145/146370.146381
+  | last = Estivill-Castro
+  | first = Vladmir
+  | coauthors = Derick Wood
+  | title = A survey of adaptive sorting algorithms
+  | journal = ACM
+  | volume = 24
+  | issue = 4
+  | pages = 441–476
+  | publisher = ACM
+  | location = New York, NY, USA
+  | date = December 1992
+  | url = http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=D302DA5A589E5D23ED76279C88DCCCEB?doi=10.1.1.45.8017&rep=rep1&type=pdf
+  | issn = 0360-0300
+  | accessdate = February 22, 2009}}
+* {{cite journal
+  | last = Petersson
+  | first = Ola
+  | coauthors = Alistair Moffat
+  | title = A framework for adaptive sorting
+  | journal = Lecture Notes in Computer Science
+  | volume = 621
+  | pages = 422–433
+  | publisher = Springer Berlin / Heidelberg
+  | location = Berlin
+  | year = 1992
+  | url = http://www.springerlink.com/content/yv85w0u75777j021/
+  | issn = 1611-3349
+  | doi = 10.1007/3-540-55706-7_38
+  | accessdate = February 23, 2009}}
+<references />
+
+{{sorting}}
+
+[[Category:Sorting algorithms]]
+
+[[it:Algoritmi di ordinamento adattivi]]
+[[pt:Ordenação adaptativa]]</body> </html>

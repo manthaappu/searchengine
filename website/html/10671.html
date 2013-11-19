@@ -1,0 +1,203 @@
+<html> <head> <title>Discrete wavelet transform</title></head><body>[[Image:Jpeg2000 2-level wavelet transform-lichtenstein.png|thumb|300px|An example of the 2D discrete wavelet transform that is used in [[JPEG2000]]. The original image is high-pass filtered, yielding the three large images, each describing local changes in brightness (details) in the original image. It is then low-pass filtered and downscaled, yielding an approximation image; this image is high-pass filtered to produce the three smaller detail images, and low-pass filtered to produce the final approximation image in the upper-left.]]
+In [[numerical analysis]] and [[functional analysis]], a '''discrete wavelet transform''' (DWT) is any [[wavelet transform]] for which the [[wavelet]]s are discretely sampled. As with other wavelet transforms, a key advantage it has over [[Fourier transform]]s is temporal resolution: it captures both frequency ''and'' location information (location in time).
+
+== Examples ==
+=== Haar wavelets ===
+{{main|Haar wavelet}}
+The first DWT was invented by the Hungarian mathematician [[Alfréd Haar]]. For an input represented by a list of <math>2^n</math> numbers, the [[Haar wavelet]] transform may be considered to simply pair up input values, storing the difference and passing the sum. This process is repeated recursively, pairing up the sums to provide the next scale: finally resulting in <math>2^n-1</math> differences and one final sum.
+
+=== Daubechies wavelets ===
+{{main|Daubechies wavelet}}
+The most commonly used set of discrete wavelet transforms was formulated by the Belgian mathematician [[Ingrid Daubechies]] in 1988. This formulation is based on the use of [[recurrence relation]]s to generate progressively finer discrete samplings of an implicit mother wavelet function; each resolution is twice that of the previous scale. In her seminal paper, Daubechies derives a family of [[Daubechies wavelet|wavelets]], the first of which is the Haar wavelet. Interest in this field has exploded since then, and many variations of Daubechies' original wavelets were developed.
+
+=== Others ===
+Other forms of discrete wavelet transform include the [[Stationary wavelet transform|non- or undecimated wavelet transform]] (where downsampling is omitted), the [[Newland transform]] (where an [[orthonormal]] basis of wavelets is formed from appropriately constructed [[top-hat filter]]s in [[frequency space]]). [[Wavelet packet decomposition|Wavelet packet transform]]s are also related to the discrete wavelet transform.  [[Complex wavelet transform]] is another form.
+
+== Properties ==
+The Haar DWT illustrates the desirable properties of wavelets in general. First, it can be performed in <math>O(n)</math> operations; second, it captures not only a notion of the frequency content of the input, by examining it at different scales, but also temporal content, i.e. the times at which these frequencies occur. Combined, these two properties make the [[Fast wavelet transform]] (FWT) an alternative to the conventional [[Fast Fourier Transform]] (FFT).
+
+== Applications ==
+The discrete wavelet transform has a huge number of applications in science, engineering, mathematics and computer science. Most notably, it is used for [[signal coding]], to represent a discrete signal in a more redundant form, often as a preconditioning for [[data compression]].
+
+== Comparison with Fourier transform ==
+{{see also|Discrete Fourier transform}}
+
+To illustrate the differences and similarities between the discrete wavelet transform with the [[discrete Fourier transform]], consider the DWT and DFT of the following sequence: (1,0,0,0), a [[unit impulse]].
+
+The DFT has orthogonal basis ([[DFT matrix]]):
+<pre>
+ 1  1  1  1
+ 1  0 –1  0
+ 0  1  0 –1
+ 1 –1  1 –1
+</pre>
+while the DWT with Haar wavelets for length 4 data has orthogonal basis in the rows of:
+<pre>
+ 1  1  1  1
+ 1  1 -1 -1
+ 1 –1  0  0
+ 0  0  1 –1
+</pre>
+
+(To simplify notation, whole numbers are used, so the bases are [[orthogonal]] but not [[orthonormal]].)
+
+Preliminary observations include:
+* Wavelets have ''location'' – the (1,1,–1,–1) wavelet corresponds to “left side” versus “right side”, while the last two wavelets have support on the left side or the right side, and one is a translation of the other.
+* Sinusoidal waves do not have location – they spread across the whole space – but do have ''phase'' – the second and third waves are translations of each other, corresponding to being 90° out of phase, like cosine and sine, of which these are discrete versions.
+
+Decomposing the sequence with respect to these bases yields:
+:<math>\begin{align}
+(1,0,0,0) &= \frac{1}{4}(1,1,1,1)+\frac{1}{4}(1,1,-1,-1)
++ \frac{1}{2}(1,-1,0,0)
+\qquad\text{Haar DWT}\\
+(1,0,0,0) &= \frac{1}{4}(1,1,1,1)
++ \frac{1}{2}(1,0,-1,0) + \frac{1}{4}(1,-1,1,-1)
+\qquad\text{DFT}
+\end{align}</math>
+The DWT demonstrates the localization: the (1,1,1,1) term gives the average signal value, the (1,1,–1,–1) places the signal in the left side of the domain, and the 
+(1,–1,0,0) places it at the left side of the left side, and truncating at any stage yields a downsampled version of the signal:
+:<math>\begin{align}
+&\left(\frac{1}{4},\frac{1}{4},\frac{1}{4},\frac{1}{4}\right)\\
+&\left(\frac{1}{2},\frac{1}{2},0,0\right)\qquad\text{2-term truncation}\\
+&\left(1,0,0,0\right)
+\end{align}</math>
+[[File:Sinc function (normalized).svg|thumb|The [[sinc function]], showing the time domain artifacts ([[undershoot (signal)|undershoot]] and [[ringing (signal)|ringing]]) of truncating a Fourier series.]]
+The DFT, by contrast, expresses the sequence by the interference of waves of various frequencies – thus truncating the series yields a [[low-pass filter]]ed version of the series:
+:<math>\begin{align}
+&\left(\frac{1}{4},\frac{1}{4},\frac{1}{4},\frac{1}{4}\right)\\
+&\left(\frac{3}{4},\frac{1}{4},-\frac{1}{4},\frac{1}{4}\right)\qquad\text{2-term truncation}\\
+&\left(1,0,0,0\right)
+\end{align}</math>
+Notably, the middle approximation (2-term) differs. From the frequency domain perspective, this is a better approximation, but from the time domain perspective it has drawbacks – it exhibits [[undershoot (signal)|undershoot]] – one of the values is negative, though the original series is non-negative everywhere – and [[ringing (signal)|ringing]], where the right side is non-zero, unlike in the wavelet transform. On the other hand, the Fourier approximation correctly shows a peak, and all points are within <math>1/4</math> of their correct value, though all points have error. The wavelet approximation, by contrast, places a peak on the left half, but has no peak at the first point, and while it is exactly correct for half the values (reflecting location), it has an error of <math>1/2</math> for the other values.
+
+This illustrates the kinds of trade-offs between these transforms, and how in some respects the DWT provides preferable behavior, particularly for the modeling of transients, which is of interest in applications.
+
+== Definition ==
+=== One level of the transform ===
+
+The DWT of a signal <math>x</math> is calculated by passing it through a series of filters.  First the samples are passed through a [[low pass filter]] with [[impulse response]] <math>g</math>  resulting in a [[convolution]] of the two:
+
+:<math>y[n] = (x * g)[n] = \sum\limits_{k =  - \infty }^\infty  {x[k] g[n - k]}. </math>
+
+The signal is also decomposed simultaneously using a [[high-pass filter]] <math>h</math>.  The outputs giving the detail coefficients (from the high-pass filter) and approximation coefficients (from the low-pass).  It is important that the two filters are related to each other and they are known as a [[quadrature mirror filter]].
+
+However, since half the frequencies of the signal have now been removed, half the samples can be discarded according to Nyquist’s rule.  The filter outputs are then [[subsampling|subsampled]] by 2 (Mallat's and the common notation is the opposite, g- high pass and h- low pass):
+
+:<math>y_{\mathrm{low}} [n] = \sum\limits_{k =  - \infty }^\infty  {x[k] g[2 n - k]} </math>
+:<math>y_{\mathrm{high}} [n] = \sum\limits_{k =  - \infty }^\infty  {x[k] h[2 n - k]} </math>
+
+This decomposition has halved the time resolution since only half of each filter output characterises the signal.  However, each output has half the frequency band of the input so the frequency resolution has been doubled.
+
+[[Image:Wavelets - DWT.png|frame|none|Block diagram of filter analysis]]
+
+With the [[subsampling]] operator <math>\downarrow</math>
+
+:<math>(y \downarrow k)[n] = y[k n] </math>
+
+the above summation can be written more concisely.
+
+:<math>y_{\mathrm{low}} = (x*g)\downarrow 2 </math>
+:<math>y_{\mathrm{high}} = (x*h)\downarrow 2 </math>
+
+However computing a complete convolution <math>x*g</math> with subsequent downsampling would waste computation time.
+
+The [[Lifting scheme]] is an optimization where these two computations are interleaved.
+
+=== Cascading and Filter banks ===
+
+This decomposition is repeated to further increase the frequency resolution and the approximation coefficients decomposed with high and low pass filters and then down-sampled.  This is represented as a binary tree with nodes representing a sub-space with a different time-frequency localisation.  The tree is known as a [[filter bank]].
+
+[[Image:Wavelets - Filter Bank.png|frame|none|A 3 level filter bank]] 
+
+At each level in the above diagram the signal is decomposed into low and high frequencies.  Due to the decomposition process the input signal must be a multiple of <math>2^n</math> where <math>n</math> is the number of levels.
+
+For example a signal with 32 samples, frequency range 0 to <math>f_n</math> and 3 levels of decomposition, 4 output scales are produced:
+
+{| class="wikitable"
+! Level
+! Frequencies
+! Samples
+|-
+| rowspan="2" | 3
+| <math>0</math> to <math>{{f_n}}/8</math>
+| 4
+|-
+| <math>{{f_n}}/8</math> to <math>{{f_n}}/4</math>
+| 4
+|-
+| 2
+| <math>{{f_n}}/4</math> to <math>{{f_n}}/2</math>
+| 8
+|-
+| 1
+| <math>{{f_n}}/2</math> to <math>f_n</math>
+| 16
+|}
+
+[[Image:Wavelets - DWT Freq.png|frame|none|Frequency domain representation of the DWT]]
+
+== Other transforms ==
+{{see also|Adam7 algorithm}}
+The [[Adam7 algorithm]], used for [[Interlacing (bitmaps)|interlacing]] in the [[Portable Network Graphics]] (PNG) format, is a multiscale model of the data
+which is similar to a DWT with [[Haar wavelet]]s.
+
+Unlike the DWT, it has a specific scale – it starts from an 8×8 block, and it [[downsample]]s the image, rather than [[decimation (signal processing)|decimating]] ([[low-pass filter]]ing, then downsampling). It thus offers worse frequency behavior, showing artifacts ([[pixelation]]) at the early stages, in return for simpler implementation.
+
+== Code examples ==
+
+In its simplest form, the DWT is remarkably easy to compute.
+
+The [[Haar wavelet]] in [[Java (programming language)|Java]]:
+<source lang=java>
+public static int[] invoke(int[] input)
+{
+    
+    //This function assumes input.length=2^n, n>1
+    int[] output = new int[input.length];
+
+    for (int length = input.length >> 1; ; length >>= 1) {
+        //length=input.length/2^n, WITH n INCREASING to log(input.length)/log(2)
+        for (int i = 0; i < length; i++) {
+            int sum = input[i*2]+input[i*2+1];
+            int difference = input[i*2]-input[i*2+1];
+            output[i] = sum;
+            output[length+i] = difference;
+        }
+        if (length == 1) 
+            return output;
+
+        //Swap arrays to do next iteration
+        System.arraycopy(output, 0, input, 0, length<<1);
+    }
+}
+</source>
+A complete Java code for a 1-D and 2-D DWT using [[Haar wavelet|Haar]], [[Daubechies wavelet|Daubechies]], [[Coiflet]], and [[Legendre wavelet|Legendre]] wavelets is available from the open source project: [http://code.google.com/p/jwave/ JWave].
+Furthermore, a fast lifting implementation of the discrete biorthogonal [[Cohen-Daubechies-Feauveau wavelet|CDF]] 9/7 wavelet transform in [[C (programming language)|C]], used in the [[JPEG 2000]] image compression standard can be found [http://www.embl.de/~gpau/misc/dwt97.c here].
+
+==See also==
+* [[Wavelet series]]
+* [[Wavelet compression]]
+* [[List of wavelet-related transforms]]
+
+==Notes==
+{{reflist|group=note}}
+
+==References==
+*Stéphane Mallat, [http://books.google.com/books?vid=ISBN012466606X&id=yW2kut44AsMC&dq=Wavelet+tour+of+signal+processing  A Wavelet Tour of Signal Processing]
+
+{{DEFAULTSORT:Discrete Wavelet Transform}}
+[[Category:Numerical analysis]]
+[[Category:Signal processing]]
+[[Category:Wavelets]]
+[[Category:Articles with example Java code]]
+[[Category:Transforms]]
+
+[[ca:Transformada discreta d'ondeta]]
+[[cs:Diskrétní vlnková transformace]]
+[[de:Wavelet-Transformation#Diskrete Wavelet-Transformation]]
+[[fa:تبدیل موجک گسسته]]
+[[fr:Transformée en ondelettes discrète]]
+[[ja:離散ウェーブレット変換]]
+[[pt:Transformada discreta de wavelet]]
+[[ru:Дискретное вейвлет-преобразование]]
+[[zh:離散小波變換]]</body> </html>

@@ -1,0 +1,105 @@
+<html> <head> <title>Thin plate spline</title></head><body>{{Confusing|date=December 2006}}
+
+This is a brief derivation for the closed form solutions for ''smoothing Thin Plate Spline''. Details about these splines can be found in (Wahba, 1990).
+
+'''Thin plate splines (TPS)''' were introduced to [[geometric design]] by Duchon (Duchon, 1976). The name ''thin plate spline'' refers to a physical analogy involving the bending of a thin sheet of metal. In the physical setting, the deflection is in the <math>z</math> direction, orthogonal to the plane. In order to apply this idea to the problem of coordinate transformation, one interprets the lifting of the plate as a displacement of the <math>x</math> or <math>y</math> coordinates within the plane. In 2D cases, given a set of <math>K</math> corresponding points, the TPS warp is described by <math>2(K+3)</math> parameters which include 6 global affine motion parameters and <math>2K</math> coefficients for correspondences of the control points. These parameters are computed by solving a linear system, in other words, TPS has closed-form solution.
+
+''Smoothing TPS'' is a regularized TPS. The model has a parameter <math>\lambda</math> to control how non-rigid is allowed for the deformation. When <math>\lambda \rightarrow \infty</math>, TPS is equal to an affine transformation, as the roughest model for non-rigid deformation.
+
+==Radial basis function==
+{{Main|Radial basis function}}
+
+Given a set of control points <math>\{w_{i}, i = 1,2, \ldots,K\}</math>, a radial basis function basically defines a spatial mapping which maps any location <math>x</math> in space to a new location <math>f(x)</math>, represented by,
+:<math>
+	f(x) = \sum_{i = 1}^K c_{i}\varphi(\left\| x - w_{i}\right\|)
+</math>
+where <math>\left\|\cdot\right\|</math> denotes the usual [[Norm (mathematics)|Euclidean norm]] and <math>\{c_{i}\}</math> is a set of mapping coefficients. 
+One possible choice for the kernel function <math>\phi</math> is the thin plate spline <math>\varphi(r) = r^2 \log r</math>. It has a more global nature than the Gaussian kernel <math>\varphi(r) = \exp(-r^2/\sigma^2)</math>, which is another common function -- a small perturbation of one of the control points always affects the coefficients corresponding to all the other points as well.
+
+==Thin plate spline==
+===Smoothness measure===
+One of the simplest smoothness measures is the space integral of the square of the second order derivatives of the mapping function. This leads us to the thin plate spline (TPS). The TPS fits a mapping function <math>f(x)</math> between corresponding point-sets <math>\{y_i\}</math> and <math>\{x_i\}</math> by minimizing the following energy function: 
+:<math>
+	E = \iint\left[\left(\frac{\partial^2 f}{\partial x^2}\right)^2 + 2\left(\frac{\partial^2 f}{\partial xy}\right)^2 + \left(\frac{\partial^2 f}{\partial y^2}\right)^2 \right] \textrm{d} x \, \textrm{d}y
+</math>
+And for a smoothing TPS, it is
+:<math>
+	E_{tps} = \sum_{i=1}^K \|y_i - f(x_i) \|^2 + \lambda \iint\left[\left(\frac{\partial^2 f}{\partial x^2}\right)^2 + 2\left(\frac{\partial^2 f}{\partial x \partial y}\right)^2 + \left(\frac{\partial^2 f}{\partial y^2}\right)^2 \right] \textrm{d} x \, \textrm{d}y
+</math>
+Then smoothing TPS is defined as
+:<math>
+	f_{tps} = \arg\min_f E_{tps}
+</math>
+For this variational problem, it can be shown that there exists a unique minimizer <math>f</math> (Wahba,1990) <!--(''can someone explain this in detail? Thanks!'')--> with a fixed weight parameter <math>\lambda</math> which is presented in next section.
+
+===Spline===
+Suppose the points are in 2D (D = 2). We use ''homogeneous coordinates'' for the point-set where a point <math>y_{i}</math> represented as a vector <math>(1, y_{ix}, y_{iy})</math>. The unique minimizer <math>f</math> is parameterized by <math>\alpha</math> which comprises two matrices <math>d</math> and <math>c</math> (<math>\alpha = \{d,c\}</math>).
+:<math>
+	f_{tps}(z, \alpha) = f_{tps}(z, d, c) = z\cdot d + \sum_{i = 1}^K \phi(\| z - x_i\|)\cdot c_i	
+</math>
+where d is a <math>(D+1)\times(D+1)</math> matrix representing the affine transformation and c is a <math>K\times(D+1)</math> warping coefficient matrix representing the non-affine deformation. The kernel function <math>\phi(z)</math> is a <math>1\times K</math> vector for each point <math>z</math>, where each entry <math>\phi_i(z) = \|z - x_i\|^2 \log \|z - x_i\|</math> for 2 dimensions.  For the 3 dimension case, <math>\phi_i(z) = \|z - x_i\|^3 </math>. Note that for TPS, the control points <math>\{w_i\}</math> are chosen to be the same as the set of points to be warped <math>\{x_i\}</math>, so we already use <math>\{x_i\}</math> in the place of the control points. 
+
+If we substitute the solution for <math>f</math>, <math>E_{tps}</math> becomes:
+:<math>
+	E_{tps}(d,c) = \|Y - Xd - \Phi c\|^2 + \lambda \textrm{trace}(c^T\Phi c)
+</math>
+where <math>Y</math> and <math>X</math> are just concatenated versions of the point coordinates <math>y_i</math> and <math>x_i</math>, and <math>\Phi</math> is a <math>(K\times K)</math> matrix formed from the <math>\phi (\|x_i - x_j\|)</math>. Each row of each newly formed matrix comes from one of the original vectors. The matrix <math>\Phi</math> represents the TPS kernel. Loosely speaking, the TPS kernel contains the information about the point-set's internal structural relationships. When it is combined with the warping coefficients <math>c</math>, a non-rigid warping is generated.
+
+A nice property of the TPS is that it can always be decomposed into a global affine and a local non-affine component. Consequently, the TPS smoothness term is solely dependent on the non-affine components. This is a desirable property, especially when compared to other splines, since the global pose parameters included in the affine transformation are not penalized.
+
+===Solution===
+The separation of the affine and non-affine warping space is done through a [[QR decomposition]] (Wahba,1990). 
+:<math>
+	X = [Q_1 | Q_2] \left( 
+	\begin{array}{cc}
+	R \\
+	0
+	\end{array}	
+	\right)
+</math>
+where Q1 and Q2 are <math>K \times (D+1)</math> and <math>K \times (K-D-1)</math> orthonormal matrices, respectively. The matrix <math>R</math> is upper triangular.
+With the QR decomposition in place, we have 
+:<math>
+	E_{tps}(\gamma,d) = \|Q_2^T Y - Q_2^T\Phi Q_2 \gamma\|^2 + \|Q_1^T Y -Rd - Q_1^T\Phi Q_2 \gamma\|^2 + \lambda \textrm{trace}( \gamma^T Q_2^T \Phi Q_2 \gamma)
+</math>
+where <math>\gamma </math> is a <math>(K-D-1)\times (D+1)</math> matrix. Setting <math>c=Q_2\gamma</math> (which in turn implies that <math>X^T c = 0</math>) enables us to cleanly separate the first term in last third equation into a non-affine term and an affine term (first and second terms last equation respectively).  
+
+The least-squares energy function in the last equation can be first minimized w.r.t <math>\gamma</math> and then w.r.t. <math>d</math>. By applying [[Tikhonov regularization]] we have
+:<math>
+	\hat{c} = Q_2(Q_2^T\Phi Q_2 + \lambda I_{(k-D-1)})^{-1}Q_2^T Y 
+</math>
+:<math>
+	\hat{d} = R^{-1}Q_1^T (Y - \Phi \hat{c})
+</math>
+The minimum value of the TPS energy function obtained at the optimum <math>(\hat{c},\hat{d})</math> is
+:<math>
+	E_{bending} = \lambda\,\textrm{trace}[Q_2(Q_2^T\Phi Q_2 + \lambda I_{(k-D-1)})^{-1}Q_2^T Y Y^T]
+</math>
+
+==Application==
+TPS has been widely used as the non-rigid transformation model in image
+alignment and shape matching. 
+
+The popularity of TPS comes from a number of advantages: (1) the interpolation is smooth with derivatives of any order; (2) the model has no free parameters that need manual tuning; (3) it has closed-form solutions for both warping and parameter estimation; and (4) there is a physical explanation for its energy function.
+
+==References==
+*Haili Chui: Non-Rigid Point Matching: Algorithms, Extensions and Applications. PhD Thesis, Yale University, May 2001. 
+*G. Wahba, 1990,Spline models for observational data. Philadelphia: Society for Industrial and Applied Mathematics.
+*J. Duchon, 1976, Splines minimizing rotation invariant seminorms in sobolev spaces, constructive theory of functions of several variables. vol 1, pp 85-100
+
+==See also==
+*[[Inverse distance weighting]]
+*[[Radial basis function]]
+*[[Subdivision surface]] (emerging alternative to spline-based surfaces)
+*[[Spline (mathematics)|Spline]] 
+*[[Polyharmonic spline]] (the thin-plate-spline is a special case of a polyharmonic spline)
+
+==External links==
+*[http://www-cse.ucsd.edu/classes/fa01/cse291/hhyu-presentation.pdf Explanation for a simplified variation problem]
+*[http://mathworld.wolfram.com/ThinPlateSpline.html TPS at MathWorld]
+*[http://elonen.iki.fi/code/tpsdemo/index.html TPS in C++]
+*[http://launchpad.net/templatedtps TPS in templated C++]
+*[http://ricanet.com/new/data/hw/vision/tps1.ppt TPS Powerpoint]
+
+[[Category:Splines]]
+[[Category:Multivariate interpolation]]</body> </html>

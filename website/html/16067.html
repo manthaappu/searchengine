@@ -1,0 +1,70 @@
+<html> <head> <title>HP BASIC for OpenVMS</title></head><body>{{About|1=the BASIC dialect created at [[Digital Equipment Corporation|DEC]], but now transferred to [[HP]]|2=the dialect created at [[HP]] but now transferred to [[Agilent]]|3=Rocky Mountain BASIC}}
+
+'''HP BASIC for OpenVMS''' is the latest name for a dialect of the [[BASIC programming language|BASIC]] [[programming language]] created by [[Digital Equipment Corporation]] and now owned by [[Hewlett-Packard]].  Although it was developed before [[OpenVMS|VMS]] on the [[PDP-11]] platform, it was later ported to [[OpenVMS|VMS]] on [[VAX]] then [[OpenVMS]] on [[DEC Alpha|Alpha]]. It has recently been ported to [[OpenVMS]] on [[List of Hewlett-Packard products|Integrity]] (HP's name for servers based upon [[Itanium]] processors from [[Intel]]).
+
+==Notable features==
+
+HP BASIC has many [[FORTRAN]]-like extensions, as well as supporting the original [[Dartmouth BASIC]] [[Array data structure|matrix]] [[operator (programming)|operators]]. 
+
+[[line number]]s are optional, unless the "ERL" function is present.  It allows you to write "WHEN ERROR" [[exception handling|error handlers]] around protected [[statement (programming)|statements]].  The more traditional but less elegant "ON ERROR" statement lacks such context or scope.
+
+One of HP BASIC's more innovative features is built-in support for [[OpenVMS]]'s powerful [[Record Management Services]] (RMS).  Before VAX BASIC (as it was then called), you would only get native RMS support in DEC's [[COBOL]] compiler.
+
+==History==
+
+HP BASIC for OpenVMS has gone through many name changes.  It began at [[Digital Equipment Corporation|DEC]], which was bought by [[Compaq]], who then merged with [[HP]].  Since the company name is embedded in the product name, each new owner changed the product name.  It has also been [[porting|ported]] to a succession of new [[platform (computing)|platforms]] as they were developed by DEC/Compaq/HP, over a period of more than 30 years.
+
+===BASIC-PLUS===
+
+{{Main|BASIC-PLUS}}
+
+HP BASIC began as '''BASIC-PLUS''', created by DEC for their [[RSTS-11]] [[operating system]] and [[PDP-11]] [[minicomputer]].  Programming language statements could either be typed into the [[command interpreter]] directly, or entered into a [[text editor]], saved to a file, and then loaded into the command interpreter from the file.   Errors in source code were reported to the user immediately after the line was entered.
+
+Programs were stored as a .BAS [[source code|source]] file, using the "SAVE" command.  It could be "compiled" into a non-editable binary .BAC file, using the "COMPILE" command.  This command did not produce true [[machine language]] programs, but rather a [[byte code]] called "tokens".  The tokens were interpreted upon execution, in a manner similar to the more modern [[Java (programming language)|Java]].
+
+Programs were entered into the command interpreter starting with [[line number]]s, integers from 1 to 32767.  Lines could be continued onto multiple lines by using a [[line feed]] character.  For ease of external editing of the source file, later versions of BASIC-PLUS also allowed the & character as a line-continuation character.  Multiple statements could be placed on a single line using \ as the statement separator.
+
+For PDP-11 systems with virtual memory ([[RSTS/E]]), address space was limited to about 64 [[kilobytes|KB]].  With BASIC-PLUS, about half of this was used by the combined command interpreter and run-time library.  This limited user programs to about 32 KB of memory.  Older [[RSTS-11]] systems lacked virtual memory, so the user program had to fit into whatever was left of physical memory after RSTS and BASIC-PLUS took up their share.  For example, on a PDP-11/35 with 32K of physical memory, running RSTS-11 V04B-17, user programs were limited to 7 KB.  Large programs could be broken up into various pieces by use of the "CHAIN" instruction.  Programs could [[chain loading|chain]] to specific line numbers in a secondary program.  The use of a shared memory section called [[Core common area|core common]] also allowed programs to pass data among each other as needed; [[Hard disk|disk]] files could also be used but were slower.
+
+The interpreter included a garbage collecting memory manager, used for both string data and byte-code.  A running program could be interrupted, have variables examined and modified, and then be resumed.  Many of the control structures used in other high-level languages existed in BASIC-PLUS, including WHILE and UNTIL.  The language also supported the use of conditional modifiers on a single line.  For example, the line "PRINT I UNLESS I < 10" would print the value of "I" unless I was less than 10.
+
+===BASIC Plus 2===
+
+'''Basic Plus 2''' ('''BP2''' or '''BASIC-Plus-2''') was later developed by DEC to add additional features and increase performance.  It used true compilation into [[threaded code]], and wrote its output to [[machine language]] [[object files]].  These were compatible with other object files on the system, and could be assembled into libraries.  A linker (the TKB taskbuilder) then created [[executable file]]s from them.  TKB also supported overlays; this allowed individual routines to be swapped into the main memory space as needed.
+
+BP2 programs ran under [[RSX-11]] or RSTS/E's RSX Run Time System.  This RTS only occupied 8KB (later, 2KB) of the user's address space, leaving 56KB for the user's program.  These two factors allowed individual BP2 programs to be much larger than BASIC-PLUS programs, often eliminating the need for CHAINing.  Unlike BASIC-PLUS (which was only available on RSTS-11), BP2 allowed use on the RSX-11 operating system as well..
+
+===VAX BASIC and DEC BASIC===
+With the creation of the [[VAX]] [[minicomputer]], DEC ported BASIC-PLUS-2 to the new [[OpenVMS|VMS]] operating system, and called it '''VAX BASIC'''.  VAX BASIC used the standard VMS calling standards, so object code produced by VAX BASIC could be linked with object code produced by any of the other VMS languages.  Source code for BASIC Plus 2 would usually run without major changes on VAX BASIC.
+
+When DEC created their [[DEC Alpha|Alpha]] [[microprocessor]], VMS was ported to it and renamed [[OpenVMS]].  VAX BASIC was likewise ported to Alpha and renamed '''DEC BASIC'''.  The BASIC [[interpreter (computing)|interpreter]] was permanently dropped at this point, which meant that DEC BASIC programs could only be run as OpenVMS [[executable]]s, produced by a [[compiler|compile]] followed by a [[Linker (computing)|link]].
+
+===Compaq and HP===
+When DEC was purchased by [[Compaq]] in 1997/98, the products were renamed '''Compaq BASIC for OpenVMS VAX''' and '''Compaq BASIC for OpenVMS Alpha'''.
+
+Likewise, when [[Compaq]] merged with [[HP]] in 2001/02, the products were renamed '''HP BASIC for OpenVMS on VAX''' and '''HP BASIC for OpenVMS on AlphaServer'''. HP has since built new [[Server (computing)|server]] platforms based upon [[Intel]]'s [[Itanium]] chip, and there is now a '''HP BASIC for OpenVMS on Integrity''' as well.
+
+==Sample code==
+===Hello, world===
+<source lang="QBasic">
+ 10 PRINT "Hello, world!"
+ 20 END
+</source>
+
+==Celsius to Fahrenheit conversion==
+<source lang="QBasic">
+ 10 PRINT "Enter a temperature in "
+ 20 INPUT C
+ 30 PRINT "Temperature in degrees Fahrenheit is "; (C * 1.8) + 32
+ 40 END
+</source>
+
+==External links==
+* [http://h71000.www7.hp.com/doc/basic.html Official BASIC documentation at HP]
+* [http://www3.sympatico.ca/n.rieck/links/openvms_demos.html Some excellent HP BASIC demos for OpenVMS]
+
+{{BASIC}}
+
+[[Category:Articles with example BASIC code]]
+[[Category:OpenVMS software]]
+[[Category:BASIC compilers]]</body> </html>

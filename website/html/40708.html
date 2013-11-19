@@ -1,0 +1,115 @@
+<html> <head> <title>XML pipeline</title></head><body>In [[software]], an '''XML Pipeline''' is formed when [[XML]] (Extensible Markup Language) processes, especially [[XML transformation language|XML transformations]] and [[XML validation]]s, are connected together.
+
+For instance, given two transformations T<sub>1</sub> and T<sub>2</sub>, the two can be connected together so that an input XML document is transformed by T<sub>1</sub> and then the output of T<sub>1</sub> is fed as input document to T<sub>2</sub>. Simple pipelines like the one described above are called ''linear''; a single input document always goes through the same sequence of transformations to produce a single output document.  
+
+== Linear Operations ==
+Linear operations can be divided in at least two parts 
+=== Micro-operations ===
+They operate at the inner document level 
+* '''Rename''' - renames elements or attributes without modifying the content
+* '''Replace''' - replaces elements or attributes
+* '''Insert''' - adds a new data element to the output stream at a specified point
+* '''Delete''' - removes an element or attribute (also known as pruning the input tree)
+* '''Wrap''' - wraps elements with additional elements
+* '''Reorder''' - changes the order of elements
+=== Document operations ===
+They take the input document as a whole
+* '''[[Identity transform]]''' - makes a verbatim copy of its input to the output
+* '''Compare''' - it takes two documents and compare them
+* '''Transform''' - execute a transform on the input file using a specified [[XSLT]] file.  Version 1.0 or 2.0 should be specified.
+* '''Split''' - take a single XML document and split it into distinct documents
+=== Sequence operations ===
+They are mainly introduced in [[XProc]] and help to handle the sequence of document as a whole
+* '''Count''' - it takes a sequence of documents and counts them
+* '''[[Identity transform]]''' - makes a verbatim copy of its input sequence of documents to the output
+* '''split-sequence''' - takes a sequence of documents as input and routes them to different outputs depending on matching rules
+* '''wrap-sequence''' - takes a sequence of documents as input and wraps them into one or more documents
+
+==Non-linear==
+
+Non-linear operations on pipelines may include:
+
+* '''Conditionals''' &mdash; where a given transformation is executed if a condition is met while another transformation is executed otherwise
+* '''Loops''' &mdash; where a transformation is executed on each node of a node set selected from a document or a transformation is executed until a condition evaluates to false
+* '''Tees''' &mdash; where a document is fed to multiple transformations potentially happening in parallel
+* '''Aggregations''' &mdash; where multiple documents are aggregated into a single document 
+* '''Exception Handling''' &mdash; where failures in processing can result an alternate pipeline being processed
+
+Some standards also categorize transformation as macro (changes impacting an entire file) or micro (impacting only an element or attribute)
+
+== XML Pipeline languages ==
+
+XML pipeline languages are used to define pipelines. A program written with an XML pipeline language is implemented by software known as an XML pipeline engine, which creates processes, connects them together and finally executes the pipeline. Existing XML pipeline languages include:
+=== Standards ===
+* '''[[XProc|XProc: An XML Pipeline Language]]''' is a W3C Recommendation [http://www.w3.org/TR/xproc] for defining linear and non-linear XML pipelines.
+=== Product-specific ===
+* '''W3C XML Pipeline Definition Language''' is specified in a W3C Note and Sun provides an implementation.{{Fact|date=October 2007}}
+* '''W3C XML Pipeline Language (XPL) Version 1.0 (Draft) [http://www.w3.org/Submission/xpl/] [http://www.w3.org/TR/xml-pipeline/]''' is specified in a W3C Submission and a component of Orbeon Presentation Server OPS (now called Orbeon Forms).  This specification provides an implementation of an earlier version of the language.  XPL allows the declaration of complex pipelines with conditionals, loops, tees, aggregations, and sub-pipelines.
+* '''[[Apache Cocoon|Cocoon]] sitemaps''' allow, among other functionality, the declaration of XML pipelines. Cocoon sitemaps are one of the earliest implementations of the concept of XML pipeline.
+* '''smallx XML Pipelines''' are used by the smallx project.
+* '''ServingXML''' defines a vocabulary for expressing flat-XML, XML-flat, flat-flat, and XML-XML transformations in pipelines.
+* '''[http://www.polarlake.com/reference-data-distribution/xml-data-pipelining-platform PolarLake Circuit Markup Language]''' used by PolarLake's runtime to define [http://www.polarlake.com/reference-data-distribution/xml-data-pipelining-platform XML pipelines]. Circuits are collections of paths through which fragments of XML stream (usually as SAX or DOM events). Components are placed on paths to interact with the stream (and/or the outside world) in a low latency process.
+* '''xmlsh''' is a scripting language based on the unix shells which natively supports xml and text pipelines [http://www.xmlsh.org]
+
+== Pipe Granularity ==
+Different XML Pipeline implementations support different granularity of flow. 
+
+* Document: Whole documents flow through the pipe as atomic units. A document can only be in one place at a time. Though usually multiple documents may be in the pipe at once.
+* Event: Element/Text nodes events may flow through different paths. A document may be concurrently flowing through many components at the same time.
+
+== Standardization ==
+
+Until may 2010, there was no widely used standard for XML pipeline languages.  However, with the introduction of the [[W3C]] XProc standard as a [[W3C recommendation#Recommendation (REC)|W3C Recommendation]] as of May 2010 [http://www.w3.org/TR/xproc/], widespread adoption can be expected.
+
+==XML Pipeline History==
+
+* 1972 [[Douglas McIlroy]] of [[Bell Laboratories]] adds the pipe operator to the [[UNIX]] command shell.  This allows the output from one shell program to go directly into input of another shell program without going to disk.  This allowed programs such as the UNIX [[awk]] and [[sed]] to be specialized yet work together [http://www.cs.dartmouth.edu/~doug/] [http://cm.bell-labs.com/cm/cs/who/dmr/hist.html].  For more details see [[Pipeline (Unix)]].
+* 1993 [http://seanmcgrath.blogspot.com Sean McGrath] developed a C++ toolkit for [[SGML]] processing [http://xpipe.sourceforge.net/Articles/Miscellaneous/fog0000000020.html].
+* 1998 [[Stefano Mazzocchi]] releases the first version of [[Apache Cocoon]], one of the first software programs to use XML pipelines.
+* 1998 [http://www.polarlake.com/ PolarLake] build [http://www.polarlake.com/reference-data-distribution/xml-data-pipelining-platform XML Operating System], which includes [http://www.polarlake.com/reference-data-distribution/xml-data-pipelining-platform XML Pipelining].
+* 2002 Notes submitted by Norman Walsh and [[Eve Maler]] from [[Sun Microsystems]], as well as a W3C Submission submitted in 2005 by [[Erik Bruchez]] and [[Alessandro Vernet]] from [[Orbeon]], were important steps toward spawning an actual standardization effort. While neither submission directly became a W3C recommendation, they were considered key sources of inspiration for the W3C XML Processing [[Working group|Working Group]].
+* September 2005 W3C XML Processing [[Working group|Working Group]] started. The task of this working group was to create a specification for an XML pipelining language.
+* August 2008, [http://www.xmlsh.org xmlsh], an XML pipeline language was announced at [http://www.balisage.net/Proceedings/vol1/html/Lee01/BalisageVol1-Lee01.html Balisage 2008]
+
+== See also ==
+* [[Apache Cocoon]]
+* [[Identity transform]]
+* [[NetKernel]]
+* [[Pipeline (Unix)]]
+* [[W3C recommendation]]
+* [[XSLT]]
+* [[SYSQ]]
+* [[kyachahiye]]
+
+== External links ==
+=== Standards ===
+==== Recommandations ====
+* [http://www.w3.org/TR/xproc/ XProc: An XML Pipeline Language], W3C Recommendation 11 May 2010
+==== Working drafts ====
+* [http://www.w3.org/XML/Processing/ W3C XML Processing Model Working Group]
+* [http://www.w3.org/TR/xml-pipeline/ W3C XML Pipeline Definition Language Note]
+* [http://www.w3.org/Submission/xpl/ W3C XML Pipeline Language (XPL) Version 1.0 (Draft) Submission]
+=== Product specific ===
+* [http://www.oracle.com/technology/tech/xml/xdkhome.html Oracle's XML Pipeline Definition Language Controller Implementation] ''Part of XML Developer's kit, no individual download''
+* [http://cocoon.apache.org/2.1/userdocs/concepts/sitemap.html Cocoon sitemap]
+* [http://www.1060research-server-1.co.uk/docs/3.2.0/book/tutorial/doc_guide_xml_pipelines_main.html NetKernel XML Pipelines]
+* [http://idealliance.org/proceedings/xtech05/papers/04-03-01/ Managing Complex Document Generation through Pipelining]
+* [http://www.orbeon.com/ois/doc/reference-xpl-pipelines XML Pipeline Language (XPL) Documentation]
+* [http://norman.walsh.name/2004/06/20/sxpipe SXPipe]
+* [http://www.polarlake.com/ PolarLake Reference data management] PolarLake XML circuits and reference data management
+* [https://smallx.dev.java.net/ smallx]
+* [http://servingxml.sourceforge.net/ ServingXML]
+* [http://www.stylusstudio.com/xml/pipeline.html XML Pipeline Implementation from Stylus Studio] - This program allows XML transforms to be chained together along with other operations on XML files such as validation and HTML tidy.
+* [http://xproc.org/ Norman Walsh's XProc web site] - Norman Walsh is the chair of the W3C XProc standards committee.
+* [http://yax.sourceforge.net/ yax - an XProc Implementation] currently with commandline and Apache ant interface
+* [http://pipes.yahoo.com/ Yahoo! Pipes] let's users create multi-source data mashups in a web-based visual environment
+* [http://www.xmlsh.org xmlsh] A shell for manipulating xml based on the unix shells. Supports in-process multithreaded xml and text processing pipelines.
+* [http://www.gerixsoft.com/blog/xslt/xml-pipeline-xslt] How to implement XML Pipeline in XSLT
+* [http://xmlcalabash.com/ Calabash is an implementation of XProc]
+* [https://community.emc.com/community/edn/xmltech/ Calumet] is an XProc implementation from EMC
+[[Category:XML-based standards]]
+[[Category:Inter-process communication]]
+
+[[de:XML Pipeline]]
+[[fr:Pipeline XML]]
+[[uk:XML pipeline]]</body> </html>

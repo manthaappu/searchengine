@@ -1,0 +1,107 @@
+<html> <head> <title>Core dump</title></head><body>[[Image:Magnetic core.jpg|right|thumb|250|A core dump gets its name from an old memory technology using tiny magnetic cores, shown here at 50x magnification.]]
+
+In [[computing]], a '''core dump''', more properly a memory dump or storage dump, consists of the recorded state of the working [[Computer storage|memory]] of a [[computer program]] at a specific time, generally when the program has terminated abnormally ([[crash (computing)|crash]]ed).<ref>{{man|4|core|Solaris|Process core file}}</ref>  The name comes from the days when [[magnetic core memory]] was used, before the introduction of [[semiconductor memory]]; the name has remained established in systems inspired by [[UNIX]] long after the technolgy had faded from use.  In practice, other key pieces of [[Context switch|program state]] are usually dumped at the same time, including the [[processor register]]s, which may include the program counter and stack pointer, memory management information, and other processor and operating system flags and information. Core dumps are often used to assist in diagnosing and [[debugging]] errors in computer programs.
+
+On many operating systems, a [[fatal error]] in a program automatically triggers a core dump; by extension the phrase "to dump core" has come to mean, in many cases, any fatal error, regardless of whether a record of the program memory results.
+
+The term "core dump", "memory dump", or just "dump". has become jargon to indicate any storing of a large amount of raw data for further examination.
+
+== Background==
+Before the advent of [[disk operating system]]s and the ability to record large [[data file]]s, core dumps were paper printouts of the contents of memory, typically arranged in columns of [[octal]] or [[hexadecimal]] numbers (a "[[hex dump]]"), sometimes accompanied by their interpretations as machine language instructions, text strings, or decimal or floating-point numbers (''cf.'' [[disassembler]]).  In more recent operating systems, a "core dump" is a [[file (computing)|file]] containing the memory image of a particular [[process (computing)|process]], or the memory images of parts of the [[address space]] of that process, along with other information such as the values of [[processor register]]s. These files can be printed or viewed as text, or analysed with specialised tools such as [[objdump]].
+
+== Uses of core dumps==
+Core dumps can serve as useful debugging aids in several situations.  On early standalone or [[batch processing|batch-processing]] systems, core dumps allowed a user to debug a program without monopolizing the (very expensive) computing facility for debugging; a printout could also be more convenient than debugging using switches and lights.  On shared computers, whether time-sharing, batch processing, or server systems, core dumps allow off-line debugging of the [[operating system]], so that the system can go back into operation immediately.  Core dumps allow a user to save a crash for later or off-site analysis, or comparison with other crashes.  For [[embedded system|embedded computers]], it may be impractical to support debugging on the computer itself, so analysis of a dump may take place on a different computer.  Some operating systems such as early versions of [[Unix]] did not support attaching [[debugger]]s to running processes, so core dumps were necessary to run a debugger on a process's memory contents.  Core dumps can be used to capture data freed during [[dynamic memory allocation]] and may thus be used to retrieve information from a program that is no longer running. In the absence of an interactive debugger, the core dump may be used by an assiduous programmer to determine the error from direct examination.
+
+A core dump represents the complete contents of the dumped regions of the address space of the dumped process.  Depending on the operating system, the dump may contain few or no data structures to aid interpretation of the memory regions.  In these systems, successful interpretation requires that the program or user trying to interpret the dump understands the structure of the program's memory use.
+
+A debugger can use a [[symbol table]], if one exists, to help the programmer interpret dumps, identifying variables symbolically and displaying source code; if the symbol table is not available, less interpretation of the dump is possible, but there might still be enough possible to determine the cause of the problem.  There are also special-purpose tools called [[dump analyzer]]s to analyze dumps. One popular tool, available on many operating systems, is the GNU binutils' [[objdump]].
+
+On modern [[Unix-like]] operating systems, administrators and programmers can read core dump files using the GNU Binutils [[Binary File Descriptor library]] (BFD), and the [[GNU Debugger]] (gdb) and objdump that use this library.  This library will supply the raw data for a given address in a memory region from a core dump; it does not know anything about variables or data structures in that memory region, so the application using the library to read the core dump will have to determine the addresses of variables and determine the layout of data structures itself, for example by using the symbol table for the program undergoing debugging.
+
+Analysts of crash dumps from [[Linux]] systems can use <code>kdump</code> or the Linux Kernel Crash Dump (LKCD).<ref>
+{{cite book
+|last= Venkateswaran
+|first= Sreekrishnan
+|title= Essential Linux device drivers
+|url= http://books.google.com/books?id=Boo57V0IOq0C
+|accessdate= 2010-07-15
+|series= Prentice Hall open source software development series
+|year= 2008
+|publisher= Prentice Hall
+|isbn= 9780132396554
+|page= 623
+|pages= 714
+|quote= Until the advent of kdump, ''Linux Kernel Crash Dump'' (LKCD) was the popular mechanism to obtain and analyze dumps.
+}}
+</ref>
+
+Core dumps can save the context (state) of a process at a given state for returning to it later. Systems can be made highly available by transferring core between processors, sometimes via coredump files themselves.
+
+Core can also be dumped onto a remote host over a network.<ref>
+{{cite book
+|author= Fedora Documentation Project
+|title= Fedora 13 Security Guide
+|url= http://books.google.com/books?id=bh6LSvafC28C
+|accessdate= 2010-09-29
+|year= 2010
+|publisher= Fultus Corporation
+|isbn= 9781596822146
+|page= 63
+|pages= 212
+|quote= Remote memory dump services, like <code>netdump</code>, transmit the contents of meomory over the network unencrypted.
+}}
+</ref>
+
+== Core dump files ==
+=== Format ===
+
+In older and simpler operating systems, each process had a contiguous address-space, so a core dump file was simply a binary file with the sequence of bytes or words.  In modern operating systems, a process address space may have gaps, and share pages with other processes or files, so more elaborate representations are used; they may also include other information about the state of the program at the time of the dump.
+
+In [[Unix-like]] systems, core dumps generally use the standard [[executable]] image-[[file format|format]]:
+* [[a.out (file format)|a.out]] in older versions of [[Unix]],
+* [[Executable and Linkable Format|ELF]] in modern [[Linux]], [[UNIX System V|System V]], [[Solaris Operating System|Solaris]], and [[BSD]] systems,
+* [[Mach-O]] in [[Mac OS X]], ''etc.''
+
+=== Naming ===
+
+*Dumps of user-processes traditionally get created as "<code>core</code>".
+
+*System-wide dumps on modern Unix-like systems often appear as "<code>vmcore</code>" or as "<code>vmcore.incomplete</code>".
+
+*Systems such as [[Microsoft Windows]] which use [[filename extension]]s may use the extension  "<code>.dmp</code>", e.g., "<code>memory.dmp</code>" or "<code>\Minidump\Mini051509-01.dmp</code>".
+
+==Notes==
+{{Reflist|group=NB}}
+
+==References ==
+<references/>
+
+== See also==
+* [[Savestate]]
+* [[Brain dump]]
+* [[Magnetic core memory]]
+
+==External links ==
+
+Descriptions for the file format:
+* {{man|5|core|Linux}}
+* {{man|4|core|Solaris}}
+* {{man|4|core|HP-UX}}
+* {{man|5|core|FreeBSD}}
+* {{man|5|core|OpenBSD}}
+* {{man|5|core|NetBSD}}
+* {{man|5|core|Darwin}}
+* [http://msdn2.microsoft.com/en-us/library/ms680378(VS.85).aspx Minidump Files]
+* [http://www.rt-embedded.com/blog/archives/enabling-core-dumps-in-embedded-systems/ Enabling core dumps in embedded systems] - An article from the Real-Time embedded blog.
+
+[[Category:Debugging]]
+[[Category:Computer errors]]
+
+[[ca:Abocament de memòria]]
+[[cs:Core dump]]
+[[es:Volcado de memoria]]
+[[id:Core dump]]
+[[ja:コアダンプ]]
+[[pt:Core dump]]
+[[ru:Дамп памяти]]
+[[zh:核心文件]]</body> </html>

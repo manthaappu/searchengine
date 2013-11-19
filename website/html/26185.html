@@ -1,0 +1,100 @@
+<html> <head> <title>Network coding</title></head><body>'''Network coding''' is a technique where, instead of simply relaying the [[Packet (information technology)|packets]] of information they receive, the [[Node (networking)|nodes]] of a network will take ''several'' packets and combine them together for transmission. This can be used to attain the maximum possible [[information]] [[flow network|flow]] in a [[Network theory|network]]. Network coding is a field of [[information theory]] and [[coding theory]].
+
+== A brief history ==
+A network is represented by a [[directed graph]] <math>\mathcal{G}=(V, E, C)</math>. <math>V</math> is the set of nodes or vertices, <math>E</math> is the set of directed links (or edges), and <math>C</math> gives the capacity of each link of <math>E</math>. Let <math>t(s, t)</math> be the maximum possible throughput from node <math>s</math> to node <math>t</math>. It has long been known that <math>t(s, t)</math> is upper bounded by the minimum capacity of all cuts, which is the sum of the capacities of the edges on a cut, between these two nodes.
+
+[[Karl Menger]] proved that there is always a set of edge-disjoint paths achieving the upper bound in a [[unicast]] scenario, known as the [[max-flow min-cut theorem]]. Later, the [[Ford-Fulkerson algorithm]] was proposed to find such paths in a polynomial time. Then, Edmonds proved in the paper "Edge-Disjoint Branchings" the upper bound in the broadcast scenario is also achievable, and proposed a polynomial time algorithm.
+
+However, the situation in the [[multicast]] scenario is more complicated, and in fact, such an upper bound can't be reached using traditional [[routing]] ideas. Ahlswede, et al. proved that it can be achieved if additional computing tasks (incoming packets are combined into one or several outgoing packets) can be done in the intermediate nodes.<ref name="Ahlswede 2000">{{cite journal| first=Rudolf| last= [[Rudolf Ahlswede|Ahlswede]]| coauthors= N. Cai, Shuo-Yen Robert Li, and Raymond Wai-Ho Yeung| title=Network Information Flow| journal=IEEE Transactions on Information Theory, IT-46| pages= 1204–1216| year= 2000| doi=10.1109/18.850663| volume=46}}</ref>
+
+In 2003, Li, et al. proved that [[linear coding]] is enough to achieve the upper bound in multicast problems <ref>S. Li, R. Yeung, and N. Cai, “Linear Network Coding”([http://pdos.lcs.mit.edu/decouto/papers/li03.pdf PDF]), in IEEE Transactions on Information Theory, Vol 49, No. 2, pp. 371-381, 2003.</ref> In 2005, [[Randall Dougherty]], [[Chris Freiling]], and Ken Zeger showed that the linear coding is not sufficient in general (multisource, multisink with arbitrary demands), even for more general versions of linearity such as [[convolutional coding]], [[filter-bank coding]], etc.<ref>Dougherty, Freiling, and Zeger. Insufficiency of Linear Coding in Network Information Flow.[http://code.ucsd.edu/~zeger/publications/journals/DoFrZe05-IT-Insufficiency/DoFrZe05-IT-Insufficiency.pdf] and [http://code.ucsd.edu/~zeger/publications/journals/DoFrZe05-IT-Insufficiency/DoFrZe05-IT-Insufficiency-erratum.pdf]</ref>
+
+== Linear network coding ==
+
+In a Linear Network coding problem a group of nodes <math>P</math> are involved in moving the data from <math>S</math> source nodes to <math>K</math> sink nodes. Each node generates a new packet, which is a linear combination of the earlier received packets on the link, by coefficients in the [[galois field|finite field]].
+
+A message generated so <math>X_k</math> is related to the received messages <math>M_i</math> by the relation:
+:<math>X_k = \sum_{i=1}^{S}g_k^i\cdot M_i</math>
+
+Each node forwards the computed value <math>X_k</math> along with all the coefficients used in the <math>k^{th}</math> level, <math>g_k^i</math>.
+
+The values <math>g_k^i</math> are the coefficients from the Galois field <math>GF(2^s)</math>.
+Since the operations are computed in the finite field, the result of the operation is also of the same length, as the size of each vector <math>M</math>.
+
+Each node produces a similar output, as computed above. This yields a linear problem of the type 
+<math>X = G M</math>, where with the knowledge of the <math>X , G</math> we need to compute <math>M</math>. Each of the receivers in <math>K</math>, try to solve this linear equation, and for which at least <math>N \ge S</math> packets must be received. The received packets are continually used in the [[Gaussian elimination]] method to reduce <math>G</math> matrix into the row-echelon form. Finally the resulting values of <math>X = G_{echelon}M </math> are solved to obtain <math>M</math>.
+
+==Example ==
+[[Image:Butterfly network.svg|thumb|Butterfly Network.]]
+In the butterfly network, there are two sources (at the top of the picture), each having knowledge of some value A and B. There are two destination nodes (at the bottom), which each want to know both A and B. Each edge can carry only a single value (we can think of an edge transmitting a bit in each time slot). 
+
+If we only used [[routing]], then the central line would be able to carry A or B, but not both. Suppose we send A through the center; then the left destination would receive A twice and not know B at all. Sending B poses a similar problem for the right destination. We say that routing is insufficient because no routing scheme can transmit both A and B simultaneously to both destinations.
+
+Using a simple code, as shown, we do get both A and B to both destinations simultaneously by sending the sum of the symbols through the center (in other words, we encode A and B using the formula "A+B"). The left destination receives A and A+B, and can find B by subtracting the two values. This is a [[linear code]] because the encoding and decoding schemes are linear operations.
+
+===Throughput===
+At the middle of the butterfly network, 3 messages are being transmitted (A, A+B, B).  
+However 4 messages are being received at the endpoints at the bottom 
+(receive 4 messages for the cost of 3 messages, 
+Note that a message storage in the middle center router could store messages A and B and still provide all 4 messages to the endpoints 
+(receive 4 messages for the cost of 2 messages, a 100% improvement).
+
+A better example is Figure 2 of http://algo.epfl.ch/~christin/primer.ps 
+which looks like 2 squares showing a shared network path on one side.
+This shared path carries message A+B.
+The network gets both messages to endpoints in 1 time slot rather than 2.
+
+==Random network coding ==
+
+Random Network Coding relies on using [[random coding|random code]]s at nodes for multicast or in cast networks. It was originally proposed in - T. Ho, R. Koetter, M. Medard, D. R. Karger and M. Effros, "The Benefits of Coding over Routing in a Randomized Setting" 2003 IEEE International Symposium on Information Theory. In random network coding, interior network nodes independently choose random linear mappings from inputs to outputs. The effect of the network is that of a transfer matrix from sources to receivers. To recover symbols at the receivers, we require sufficient degrees of freedom – an invertible matrix in the coefficients of all nodes. Receiver nodes can decode if they receive as many independent linear combinations as the number of source processes.
+
+==Coding-aware routing ==
+
+The example of coding-aware routing was first proposed in [[ROCX]].<ref>http://arena.cse.sc.edu/papers/rocx.secon06.pdf</ref> Consider the scenario in Fig. 2 with three flows f1 : 2→1, f2 : 1→3, f3 : 3→2. If all the links are perfect with no loss, the corresponding shortest paths are 2→5→7→4→1, 1→4→7→6→3, and 3→9→8→2 respectively. Without coding, the total number of transmissions needed to deliver one packet of each flow is 11. Under COPE, since nodes 4, 5 and 6 can not overhear each other, there is only one coding opportunity at node 4 as node 1 and node 7 exchange packets through node 4, reducing the total from 11 to 10. On the other hand, if the route of f3 is changed to 3→6→7→5→2, we need no more than 9 transmissions. Though this path has one more hop (one more transmission) than the shortest path, it creates coding opportunities at nodes 5 and 6. This leads us to investigate the extent of gain possible when routing is performed with the awareness of coding opportunities. 
+
+== Applications ==
+Network coding is seen to be useful in the following areas:
+* Alternative to [[forward error correction]] and [[ARQ]] in traditional and wireless networks. eg: [[Multi-user ARQ]]<ref>http://www.ericsson.com/technology/research_papers/wireless_access/doc/Multi-User%20ARQ.pdf</ref>
+* Robust and resilient to network attacks like snooping, eavesdropping or replay attacks<ref>http://home.eng.iastate.edu/~yuzhen/publications/ZhenYu_INFOCOM_2008.pdf</ref>.
+* Digital file distribution and P2P file sharing. eg: [[Avalanche filesystem|Avalanche]] from Microsoft
+* Throughput increase in wireless mesh networks. eg : [[COPE]],<ref>[http://www.sigcomm.org/sigcomm2006/discussion/showpaper.php?paper_id=24 Sigcomm 2006 Form >> XORs in The Air: Practical Wireless Network Coding<!-- Bot generated title -->]</ref> [[Coding-aware routing]]<ref>http://www.cs.wisc.edu/~shravan/infocom-07-2.pdf</ref>
+* Bidirectional low energy transmission in wireless sensor networks.
+* Many-to-many broadcast network capacity augmentations.
+* Buffer and Delay reduction in spatial sensor networks: [[Spatial buffer multiplexing]] <ref>[http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4146919 Welcome to IEEE Xplore 2.0: Looking at Large Networks: Coding vs. Queueing<!-- Bot generated title -->]</ref>
+
+==Network coding and Peer-to-Peer Networks==
+
+Network coding may be used in a [[peer-to-peer]] network to reduce the amount of routing information required by peers to achieve near optimal throughput {{Citation needed|date=July 2010}}. In large networks this can be a significant advantage, since otherwise the amount of routing [[overhead information|overhead]] would scale with the size of the network. Unlike scenarios such as the butterfly network example above, network coding does not increase the maximum achievable throughput of a peer-to-peer network <ref name=autogenerated1>http://personal.ie.cuhk.edu.hk/~dmchiu/p2pnetcoding.pdf</ref>.
+
+However there are several difficulties when utilising network coding in peer-to-peer networks.
+* A peer may need to spend a large amount of time and resources decoding received data.
+* It can be difficult to ensure the uniqueness of the coefficients when there are many pieces in the transferred data.
+* The topology of a peer-to-peer network is constantly changing through the addition and removal of peers.
+
+== See also ==
+* [[Secret sharing protocol]]
+
+==References==
+{{Reflist}}
+
+== External links ==
+* [http://www.ifp.uiuc.edu/~koetter/NWC/index.html Network Coding Homepage]
+* [https://wiki.lnt.ei.tum.de/doku.php?id=network_coding:bibliography_for_network_coding A network coding bibliography]
+* Raymond W. Yeung, Information Theory and Network Coding, Springer 2008, http://iest2.ie.cuhk.edu.hk/~whyeung/book2/
+* Raymond W. Yeung et al., Network Coding Theory, now Publishers, 2005, http://iest2.ie.cuhk.edu.hk/~whyeung/netcode/monograph.html
+* Christina Fragouli et al., Network Coding: An Instant Primer, ACM SIGCOMM 2006, http://infoscience.epfl.ch/getfile.py?mode=best&recid=58339.
+* Avalanche Filesystem, http://research.microsoft.com/en-us/projects/avalanche/default.aspx
+* Random Network Coding, http://www.mit.edu/~medard/coding1.htm
+* Digital Fountain Codes, http://www.icsi.berkeley.edu/~luby/
+* Coding-Aware Routing, http://arena.cse.sc.edu/papers/rocx.secon06.pdf
+* MIT offers a course: [http://web.mit.edu/professional/short-programs/courses/network_coding.html Introduction to Network Coding]
+* [http://www.networkworld.com/news/2007/121007-network-coding.html Network coding: Networking's next revolution?]
+
+[[Category:Finite fields]]
+[[Category:Network performance]]
+[[Category:Coding theory]]
+[[Category:Information theory]]
+[[Category:Wireless sensor network]]
+
+[[ca:Network Coding]]
+[[ru:Сетевое кодирование]]</body> </html>

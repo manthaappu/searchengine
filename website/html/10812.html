@@ -1,0 +1,28 @@
+<html> <head> <title>Distributed transaction</title></head><body>A '''distributed transaction''' is an [[operations bundle]], in which two or more network hosts are involved. Usually, hosts provide '''transactional resources''', while the '''transaction manager''' is responsible for creating and managing a global transaction that encompasses all operations against such resources. Distributed transactions, as any other [[Database transaction|transactions]], must have all four [[ACID]] properties, where atomicity guarantees all-or-nothing outcomes for the unit of work (operations bundle).
+
+Open Group, a vendor consortium, proposed the [[X/Open XA|X/Open Distributed Transaction Processing (DTP) Model]] (X/Open XA), which became a de-facto standard for behavior of transaction model components.
+
+Databases are common transactional resources and, often, transactions span a couple of such databases. In this case, a distributed transaction can be seen as a [[database transaction]] that must be [[synchronized]] (or provide [[ACID]] properties) among multiple participating [[database]]s which are [[distributed computing|distributed]] among different physical locations. The [[isolation (computer science)|isolation]] property (the I of ACID) poses a special challenge for multi database transactions, since the (global) [[serializability]] property could be violated, even if each database provides it (see also [[global serializability]]). In practice most commercial database systems use [[Two phase locking|strong strict two phase locking (SS2PL)]] for [[concurrency control]], which ensures global serializability, if all the participating databases employ it. (see also [[commitment ordering]] for multidatabases.)
+
+A common [[algorithm]] for ensuring [[correctness|correct]] completion of a distributed transaction is the [[two-phase commit]] (2PC). This algorithm is usually applied for updates able to [[commit (data management)|commit]] in a short period of time, ranging from couple of milliseconds to couple of minutes.
+
+There are also long-lived distributed transactions, for example a transaction to book a trip, which consists of booking a flight, a rental car and a hotel. Since booking the flight might take up to a day to get a confirmation, two-phase commit is not applicable here, it will lock the resources for this long. In this case more sophisticated techniques that involve multiple undo levels are used. The way you can undo the hotel booking by calling a desk and cancelling the reservation, a system can be designed to undo certain operations (unless they are irreversibly finished).
+
+In practice, long-lived distributed transactions are implemented in systems based on [[Web Services]]. Usually these transactions utilize principles of [[Compensating transaction]]s, Optimism and Isolation Without Locking. X/Open standard does not cover long-lived DTP.
+
+Several modern technologies, including [[Enterprise Java Beans]] (EJBs) and [[Microsoft Transaction Server]] (MTS) fully support distributed transaction standards.
+
+==References==
+* {{cite web | title=Web-Services Transactions | work=Web-Services Transactions | url=http://xml.sys-con.com/read/43755.htm | accessdate=May 2, 2005 }}
+* {{cite web | title=Nuts And Bolts Of Transaction Processing | work=Article about Transaction Management | url=http://www.subbu.org/articles/transactions/NutsAndBoltsOfTP.html
+| accessdate=May 3, 2005 }}
+
+==Further reading==
+* Gerhard Weikum, Gottfried Vossen, ''Transactional information systems: theory, algorithms, and the practice of concurrency control and recovery'', Morgan Kaufmann, 2002, ISBN 1558605088
+
+{{DEFAULTSORT:Distributed Transaction}}
+[[Category:Data management]]
+[[Category:Transaction processing]]
+
+[[ko:분산 트랜잭션]]
+[[ja:分散トランザクション]]</body> </html>

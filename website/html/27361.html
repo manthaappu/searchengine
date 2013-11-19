@@ -1,0 +1,72 @@
+<html> <head> <title>OpenEXR</title></head><body>{{Cleanup|date=July 2008}}
+'''OpenEXR''' is a [[high dynamic range imaging]] [[image file format]], released as an [[open standard]] along with a set of software tools created by [[Industrial Light and Magic]] (ILM), released under a [[free software license]] similar to the [[BSD license]].
+
+It is notable for supporting 16-bits-per-channel [[floating point]] values ([[half precision]]), with a sign bit, five bits of exponent, and a ten-bit [[Significand|mantissa]]. This allows a dynamic range of over thirty [[f-stop|stop]]s of exposure.
+
+Both [[Lossless data compression|lossless]] and [[Lossy data compression|lossy compression]] of high dynamic range data is also supported.<ref name="technical_introduction">[http://www.openexr.com/TechnicalIntroduction.pdf Technical introduction: Data Compression]</ref>
+
+== OpenEXR Overview ==
+For a full technical introduction of OpenEXR, see the Technical Introduction available on the OpenEXR.org website.<ref name="technical_introduction"/>
+
+OpenEXR, or simply EXR for short, is a deep raster format developed by ILM and very broadly used in the computer-graphics industry, both visual effects and animation.
+
+OpenEXR's multi-resolution and arbitrary channel format makes it appealing for compositing. OpenEXR alleviates several painful elements of the compositing process. Since it can store arbitrary channels, specular, diffuse, alpha, RGB, normals, and various other types of channels in one file, it takes away the need to store this information in separate files. The multi-channel concept also reduces the necessity to "bake" in the before mentioned data to the final image. If a compositer is not happy with the current level of [[specularity]], he or she can adjust that specific channel.
+
+OpenEXR's API makes tools development a relative ease for developers. Since there are almost never two production pipelines that are the same, custom tools always need to be developed to address problems in the production process, e. g. to address image manipulation issue. OpenEXR's library  allows quick and easy access to the image's attributes such as tiles and channels.
+
+=== History ===
+OpenEXR was created by ILM in 1999 and released to the public in 2003.
+
+OpenEXR is directly supported by [[3Delight]], [[HDR PhotoStudio]], Artizen HDR, [[Combustion (software)|Combustion]], [[Cerebro (software)|Cerebro]], Flame 2008, Smoke 2008, [[Blender (software)|Blender]], [[3dsmax]], [http://www.digitalvision.tv/products/nucoda.aspx Digital Vision/Nucoda grading and mastering solutions], [[LuxRender]], [[YafaRay]], [[Indigo Renderer|Indigo]], [[CinePaint]], [[Cinelerra]], [[Houdini (software)|Houdini]], [[Lightwave]], [[Modo (software)|modo]], [[Adobe After Effects|After Effects]] 7 Professional, [[V-Ray]],  [[Mental Ray]], [[PRMan]], [[Holomatix Rendition|Rendition]], [[Digital Fusion (software)|Digital Fusion]], [[Nuke (software)|Nuke]], [[IRIDAS FrameCycler]], [[IRIDAS SpeedGrade]], [[Toxik (Software)|Toxik]], [[Shake (software)|Shake]], [[Pixie (renderer)|Pixie]], [[Photoshop]] CS2, [[CINEMA 4D]], [[Animation:Master]], [[Pixel Image Editor]], [[Tweak RV]], [[SquidNet Render Manager]], [[Bryce (software)|Bryce]] and [[Synfig]]. Others, like [[SView5]] do support it by means of external tools like exrtoppm. It is also supported by the [[Cg programming language]] and [[Mac OS X]] since version 10.4.
+
+=== Compression methods ===
+
+There are 3 general types of lossless compression built into OpenEXR, with two different methods of Zip compressing.  For most images without a lot of grain, the two Zip compression methods seem to work best, while the PIZ compression algorithm is better suited to grainy images.  The following options are available:
+
+; None: Disables all compression.
+; [[Run-length encoding|Run Length Encoding (RLE)]]: This is a basic form of compression that is comparable to that used by standard [[Truevision TGA|Targa]] files.
+; [[ZIP file format|Zip]] (per scanline): Zip style compression applied to individual [[scanline]]s.
+; [[ZIP file format|Zip]] (16 scanline blocks): Zip style compression applied to blocks of 16 scanlines at time.  This tends to be the most effective style of compression to use with rendered images that do not have film grain applied.
+; PIZ ([[wavelet]] compression): This uses a new combined wavelet / [[Huffman coding|Huffman]] compression.  This form of compression is quite effective when dealing with grainy images, and will often surpass any of the other options under grainy conditions.
+; PXR24 (24 bit data conversion then zipped compression): This form of compression from [[Pixar]] converts data to 24 bit then uses Zip compression. It is lossless for half and 32bit integer data and slightly lossy for 32bit float data.
+; B44: This form of compression is lossy for half data and stores 32bit data uncompressed.
+; B44A: An extension to B44 where areas of flat color are further compressed. Regular B44 compresses uniformly regardless of image content.
+
+=== Credits ===
+From OpenEXR.org's Technical Introduction:
+
+<blockquote>''The ILM OpenEXR file format was designed and implemented by Florian Kainz, Wojciech Jarosz, and Rod Bogart. The PIZ compression scheme is based on an algorithm by Christian Rouet. Josh Pines helped extend the PIZ algorithm for 16-bit and found optimizations for the float-to-half conversions. Drew Hess packaged and adapted ILM's internal source code for public release and maintains the OpenEXR software distribution. The PXR24 compression method is based on an algorithm written by Loren Carpenter at Pixar Animation Studios.''</blockquote>
+
+== Developing with OpenEXR ==
+The OpenEXR library is developed in C++ and is available in source format as well as compiled format for Windows, Mac OS X and Linux. Careful attention was taken to ensure that OpenEXR easily compiles on almost any platform that supports C++.  Python bindings for the library are also available.
+
+As of version 1.3.0, released on June 8, 2006, support for multithreaded reading and writing was added to OpenEXR. Multithreaded reading and writing offers a higher performance gain for systems that have multiple cores or CPUs. OpenEXR handles reading and writing by a means of a [[thread pool]].
+
+==References==
+<references />
+
+==External links==
+* [http://www.openexr.com/ OpenEXR.com]
+* [http://www.openexr.com/documentation.html OpenEXR Documentation]
+* [http://www.openexr.com/samples.html OpenEXR Samples]
+* [http://www.excamera.com/sphinx/articles-openexr.html OpenEXR in Python]
+* [http://scanline.ca/exrtools/ exrtools incl. exrtoppm exe]
+* [http://www.openexr.com/TechnicalIntroduction.pdf (PDF) Technical Introduction to OpenEXR]
+* [http://www.openexr.com/ReadingAndWritingImageFiles.pdf (PDF) Reading and Writing Image Files]
+* [http://cybertiggyr.com/gene/exrtoppm/ exrtoppm exe/src for Windows]
+{{Graphics file formats}}
+{{DEFAULTSORT:Openexr}}
+[[Category:High dynamic range file formats]]
+[[Category:Graphics file formats]]
+[[Category:Free graphics software]]
+[[Category:Open formats]]
+
+[[da:OpenEXR]]
+[[de:OpenEXR]]
+[[es:OpenEXR]]
+[[fr:OpenEXR]]
+[[it:OpenEXR]]
+[[ko:OpenEXR]]
+[[ja:OpenEXR]]
+[[pl:OpenEXR]]
+[[yo:OpenEXR]]</body> </html>

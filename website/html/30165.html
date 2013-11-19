@@ -1,0 +1,38 @@
+<html> <head> <title>Professional File System</title></head><body>The '''Professional File System''' is a [[filesystem]] originally developed commercially for the [[Amiga]]. It tends to perform very well, due to the simplicity of design.
+
+The device is split into two main areas. At the beginning of the device is the metadata section, which consists of a root block, and a generic array of blocks that can be allocated to store metadata. The rest of the device is another contiguous generic array of blocks that can be allocated to store data. The metadata section usually uses a few percent of the device, depending on the size of the device.
+
+The metadata is stored as a tree of single blocks in the metadata section. The entire directory structure is recorded in the metadata, so the data section purely contains data from files. The metadata describes the location of data in files with extents of blocks, which makes the metadata quite compact.
+
+When a metadata update occurs, the system looks at the block containing the metadata to be changed, and copies it to a newly-allocated block from the metadata section, with the change made, then it recursively changes the metadata in the block that points to that block in the same way. This way, eventually the root block needs to be changed, which causes the atomic metadata update.
+
+The filesystem is reasonably good at keeping files unfragmented, although there is a defragmentation tool available which will work on an online filesystem.
+
+It was the first filesystem to introduce the concept of the [[Recycle bin (computing)|Recycle Bin]] natively at filesystem-level to the Amiga, holding the last few deleted files in a hidden directory on the disk root.
+
+As is common (and generally required) with Amiga filesystems, the filesystem does not need to be unmounted in order to be "cleanly" mounted afterwards.
+
+PFS was developed in C by Michiel Pelt.
+
+==See also==
+*[[Amiga Old File System]]
+*[[Amiga Fast File System]]
+*[[Smart File System]]
+*[http://lclevy.club.fr/adflib/index.html The ADFlib Page] and precisely [http://lclevy.club.fr/adflib/adf_info.html ADF File specs]
+
+The ADFLib specs are also available into Aminet Archive.
+
+*[ftp://it.aminet.net/pub/aminet/disk/misc/ADFlib.lha Link to ADFlib.lha in Aminet repository]
+*[[File system]]
+*[[List of file systems]]
+
+==External links==
+*[http://www.keithhalstead.name/pfsdefrag Freeware PFS Defragmentation tool]
+
+{{AmigaOS}}
+{{MorphOS}}
+
+[[Category:Disk file systems]]
+[[Category:Amiga software]]
+[[Category:AmigaOS]]
+[[Category:MorphOS software]]</body> </html>

@@ -1,0 +1,102 @@
+<html> <head> <title>NetWeaver Developer</title></head><body>NetWeaver Developer is a [[knowledgebase]] development system. This article 
+# gives a brief history of the system,
+# summarizes key features of the software, 
+# is a bit of a primer, describing basic attributes of a NetWeaver knowledgebase, and
+# provides secondary references that independently document some of the NetWeaver applications developed since the late 1980s (see the [[#References]] section in this article, as well as applications documented for the [[EMDS]] system).
+
+First, though, a word about knowledgebases. While there are various ways of describing a [[knowledgebase]], perhaps one of the more central concepts is that a knowledgebase provides a formal specification for interpreting information.<ref>Walters, J.R., and N.R. Nielsen.  1988. Crafting Knowledge-based Systems. New York: John Wiley and Sons. 342 p.</ref> Formal in this context means that the specification is [[Ontology (information science)|ontologically committed]] <ref> Gruber, T.R. 1995. Toward principles for the design of ontologies used for knowledge sharing. International Journal of Human-Computer Studies 43:907-928.</ref> to the semantics and syntax prescribed by a knowledgebase processor (aka, an engine).
+
+== A brief history == 
+NetWeaver was created in late 1991 as a response to ease knowledge engineering tasks by giving a graphical user interface to the ICKEE (IConic Knowledge Engineering Environment) inference engine developed at Penn State University by Bruce J. Miller and Michael C. Saunders.  The first iterations were simply a visual representation of dependency networks stored in a LISP-like syntax.  NetWeaver quickly evolved into an interactive interface where the visual environment was also capable of editing the dependency networks and saving them in the ICKEE file format.  Eventually NetWeaver became "live" in the sense that it could evaluate the dependency networks in real time.
+
+== NetWeaver basics ==
+A NetWeaver [[knowledgebase]] graphically represents a problem to be evaluated as networks of topics, each of which evaluates a proposition. The formal specification of each topic is graphically constructed, and composed of other topics (e.g., premises) related by logic operators such as and, or, not, etc. NetWeaver topics and operators return a continuous-valued ‘‘[[truth value]]’’,<ref> Miller, B.J., and M.C. Saunders. 2002. The NetWeaver Reference Manual. University Park, PA: Pennsylvania State University.  61 p.</ref> that expresses the strength of evidence that the operator and its arguments provide to a topic or to another logic operator. The specification of an individual NetWeaver topic supports 
+potentially complex reasoning because both topics and logic operators may be specified as arguments to an operator. Considered in its entirety, the complete knowledgebase specification for a problem can be thought of a mental map of the logical dependencies among propositions. In other words, the knowledgebase amounts to a formal logical argument in the classical sense.<ref> Halpern, D.F. 1989. Thought and Knowledge, An Introduction to Critical Thinking. Hillsdale, NJ: Lawrence Erlbaum Associates. 517 p.</ref> 
+
+== When logic meets graphics ==
+[[Cognitive theory]] suggests that human beings have two fundamental modes of reasoning: logical (albeit however informally some folks may do that when left to their own devices) and spatial.<ref> Stillings, N.A., M.H. Feinstein, J.L. Garfield, [et al.]. 1991. Cognitive Science: An Introduction. Cambridge, MA: MIT Press. 533 p.</ref> Interesting things happen when logic is implemented graphically. 
+
+First, the knowledge of individual subject-matter experts engaged in [[knowledge 
+engineering]] often is not fully integrated when dealing with complex problems, at least initially. Rather, this knowledge may exist in a somewhat more loosely organized state, a sort of knowledge soup with chunks of knowledge floating about in it. A common observation of knowledge engineers experienced in graphically designing [[knowledgebase]]s is that the process of constructing a graphic representation of problem-solving knowledge in a formal logical framework seems to be synergistic, with new insights into the expert’s knowledge emerging as the process unfolds. (At the moment, this assertion is largely anecdotal. Contributors to this article need to find a suitable way to document this point, because it is actually a rather important finding not simply limited to NetWeaver, but knowledge engineering more broadly).
+
+Second, synergies similar to those observed in organizing the reasoning of individual subject-matter experts also can occur in [[knowledge engineering]] projects that require the interaction of multiple disciplines. For example, many different kinds of specialists may be involved in evaluating the overall health of a watershed. Use of a formal logic system, with well defined syntax and semantics, allows specialists’ representation of their problem solving approach to be expressed in a common language, which in turn facilitates understanding of how all the various perspectives of the different specialists fit together. 
+
+== About NetWeaver knowledgebases ==
+A NetWeaver knowledgebase has been defined by the developers as a network of networks (Miller and Saunders 2002). Each network corresponds to a topic of interest in the problem being evaluated by the knowledgebase. 
+
+NetWeaver knowledgebases are object-based. There are two basic types of objects: 
+networks, and data links, each of which is represented in the logic structure by a programming object which has both state and behavior.  
+
+The NetWeaver engine is a Windows dynamic link library (DLL) developed by Rules of Thumb, Inc. (North East, PA).  NetWeaver Developer is an interface to the engine that is used for designing knowledgebases.
+  
+=== Logic networks ===
+A knowledgebase represents knowledge about how to solve a problem in terms of the topics of interest in the problem domain, and relations among these topics.  Each logic network in a NetWeaver knowledge base represents a proposition about the condition of some ecosystem state or process.
+
+* State - The key state variable of a logic network is its truth value which expresses the degree to which evidence from antecedent networks and data links support or refute the proposition.  Logically, network A is said to be antecedent to network B if B depends upon A because network A must be evaluated before network B can be evaluated.  
+* Behavior - The basic function of a network is to evaluate the truth of its proposition. NetWeaver networks have three basic behaviors related to this function: 
+** They query their antecedants to determine the latters' state. 
+** They evaluate their own state, given the state of their antecedants. 
+** They inform higher level networks that depend on them about their state. 
+
+=== Data links ===
+A data link is an elementary dependency network with slightly modified behavior. 
+ 
+* State - Like a network, a data link may evaluate to a truth value, given a data input. A data link may also hold a data value that is subsequently transformed by mathematical operations defined for a calculated data link. 
+* Behavior: 
+** In NetWeaver Developer, data links prompt the user for data input.   
+** On receipt of data, data links evaluate their state, given the data input (simple data links), or pass the data value to a special data link that performs some transformation of input data (calculated data link). 
+** They inform higher level networks that depend on them about their state.  
+
+=== Truth values ===
+The truth value is the basic state variable of networks and data links.  It expresses an observation's degree of membership in a set. Evaluations of degree of set membership are quantified in the semantics of [[fuzzy logic]].<ref>Zadeh, L.A. 1965. Fuzzy sets. Information and Control 8:338-353.</ref><ref>Zadeh, L. A. 1968. Probability measures of fuzzy events. J. Math. Anal. and Appl. 23:421-427.</ref><ref>Zadeh, L.A. 1975. The concept of a linguistic variable and its application to approximate reasoning, part I. Information Science 8, 199-249.</ref><ref>Zadeh, L. A. 1975b. The concept of a linguistic variable and its application to approximate reasoning. Part II. Information Science 8:301-357. </ref><ref>Zadeh, L.A. 1976. The concept of a linguistic variable and its application to approximate reasoning. Part III. Information Science 9: 43-80.</ref> Equivalently, think of the truth value metric as expressing the degree to which evidence supports the proposition of the network or data link; in EMDS, the symbology for maps displaying network truth values is based on the concept of strength of evidence.  For additional discussion on this topic, see Interpretation of Truth Values. 
+
+Data links are frequently used to read a datum and evaluate its degree of membership in a concept that is quantified in a fuzzy argument (an argument that quantifies fuzzy set membership).  Thus, in a data link the argument is a mathematical statement of a proposition.  Some simple examples include:  
+
+* If the datum fully satisfies the argument, then the truth value of the data link is 1 (full support). 
+* If the datum is fully contrary to the argument, then the truth value of the data link is -1 (no support). 
+* If the datum partially satisfies the argument, then the truth value of the data link is in the open interval (-1, 1).  Note in particular that negative truth values greater than -1 do not connote negative truth.  Rather, such values connote low membership, or low support. 
+* If the data is not known, then the truth value of the data link is 0 (undetermined). 
+
+Interpretation of truth values within networks must be treated more generally, because the truth value of a network may depend on several to many logic operators.  Simple examples related to the two key logic operators, AND and OR, are:  
+
+* If ‘’’all’’’ logical antecedents to an AND operator fully support the AND relation, then the truth value of the operator is 1 (full support). 
+* If ‘’’any’’’ logical antecedent to an AND operator is fully contrary to the AND 
+relation, then the truth value of the operator is -1 (no support). 
+* If ‘’’any’’’ logical antecedent to an OR operator fully supports the OR relation, then the truth value is 1 (full support). 
+* If there is no evidence for or against an AND or OR relation, then the truth value of either operator is 0 (undetermined). 
+
+As with data links, networks may also evaluate to partially true.  Two conditions give rise to this condition in NetWeaver: 
+ 
+* One or more data items are missing and cannot be supplied, and therefore contribute a value of 0 to an AND. 
+* One or more data items that influence the truth value of a dependency network have been evaluated against a fuzzy argument and found not to have full membership in the fuzzy set defined by the fuzzy argument (the data provides only partial support for the proposition).
+
+== Notes ==
+{{Reflist}}
+
+== References ==
+Barr, N.B., R.S. Copeland, M. De Meyer, D. Masiga, H.G. Kibogo, M.K. Billah, E. Osir, R.A. Wharton, and B.A. McPheron. 2006. Molecular diagnostics of economically important Ceratitis fruit fly species (Diptera: Tephritidae) in Africa using PCR and RFLP analyses. Bulletin of Entomological Research, 96: 505-521. [http://journals.cambridge.org/action/displayAbstract?aid=936280 online]
+
+Dai, J.J., S. Lorenzato and D. M. Rocke. 2004. A knowledge-based model of watershed assessment for sediment.  Environmental Modelling & Software Volume 19: 423-433. [http://dx.doi.org/10.1016/S1364-8152(03)00158-0 online]
+
+Galbraith, John M., Ray B. Bryant, Robert J. Ahrens. 1998. An Expert System for Soil Taxonomy. Soil Science Volume 163: 748-758. [http://journals.lww.com/soilsci/pages/articleviewer.aspx?year=1998&issue=09000&article=00008&type=abstract online]
+
+Heaton, Jill S., Kenneth E. Nussear, Todd C. Esque, Richard D. Inman, Frank M. Davenport, Thomas E. Leuteritz, Philip A. Medica, Nathan W. Strout, Paul A. Burgess, and Lisa Benvenuti. 2008. Spatially explicit decision support for selecting translocation areas for Mojave desert tortoises. Biodiversity and Conservation 17:575–590. [http://dx.doi.org/10.1007/s10531-007-9282-3 online]
+
+Hu, Z.B., X.Y. He, Y.H. Li, J.J. Zhu, Y. Mu, and Z.X. Guan. 2007. Ying yong sheng tai xue bao (The journal of applied ecology) 18:2841-5. [http://www.ncbi.nlm.nih.gov/sites/entrez online]
+
+Janssen, R., H. Goosen, M.L. Verhoeven, J.T.A. Verhoeven, A.Q.A. Omtzigt, and E. Maltby. 2005. Decision support for integrated wetland management, Environmental Modelling & Software Volume 20: 215-229. [http://dx.doi.org/10.1016/j.envsoft.2003.12.020 online]
+
+Mendoza, G.A., and Ravi Prabhu. 2004. Fuzzy methods for assessing criteria and indicators of sustainable forest management. Ecological Indicators 3: 227-236. 
+[http://dx.doi.org/10.1016/j.ecolind.2003.08.001 online]
+
+Paterson, Barbara, Greg Stuart-Hill, Les G. Underhill, Tim T. Dunne, Britta Schinzel, Chris Brown, Ben Beytell, Fanuel Demas, Pauline Lindeque, Jo Tagg, and Chris Weaver. 2008. A fuzzy decision support tool for wildlife translocations into communal conservancies in Namibia, Environmental Modelling & Software Volume 23: 521-534. [http://dx.doi.org/10.1016/j.envsoft.2007.07.005 online]
+
+Porter, Andrea, Adel Sadek, and Nancy Hayden. 2006. Fuzzy Geographic Information Systems for Phytoremediation Plant Selection. J. Envir. Engrg. 132: 120. [http://dx.doi.org/10.1061/(ASCE)0733-9372(2006)132:1(120) online]
+
+Saunders, M.C., T.J. Sullivan, B.L. Nash, K.A. Tonnessen, B.J. Miller. 2005. A knowledge-based approach for classifying lake water chemistry. Knowledge-Based Systems Volume 18: 47-54. [http://dx.doi.org/10.1016/j.knosys.2004.04.006 online]
+
+== External links ==
+* [http://www.institute.redlands.edu/emds/ Ecosystem Management Decision Support (EMDS) System]
+* [http://rules-of-thumb.com/ Rules of Thumb, Inc.]
+
+[[Category:Knowledge engineering]]</body> </html>

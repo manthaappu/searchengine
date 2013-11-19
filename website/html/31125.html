@@ -1,0 +1,123 @@
+<html> <head> <title>Radiative transfer equation and diffusion theory for photon transport in biological tissue</title></head><body>{{mergeto|radiative transfer|discuss=Talk:radiative transfer#Merger proposal|date=December 2009}}
+
+Photon transport in biological tissue can be equivalently modeled numerically with [[Photon transport monte carlo|Monte Carlo simulations]] or analytically by the [[radiative transfer]] equation (RTE). However, the RTE is difficult to solve without introducing approximations. A common approximation summarized here is the diffusion approximation. Overall, solutions to the [[diffusion equation]] for photon transport are more computationally efficient, but less accurate than Monte Carlo simulations<ref name = Wang_BioMedBooK>{{cite book |author=LV Wang and HI Wu |title=Biomedical Optics|publisher=Wiley |year=2007|isbn=9780471743040}}</ref>.
+
+==Definitions==
+[[Image:Energyflow.png|thumb|125px|right|Figure 1: Schematic of energy flow through a differential area element <math>dA</math> at position <math>\vec{r}</math> within a differential solid angle element <math>d\Omega</math>.]]
+The RTE can mathematically model the transfer of energy as photons move inside a tissue. The flow of radiation energy through a small area element in the radiation field can be characterized by [[radiance]] <math>L(\vec{r},\hat{s},t) (\frac{W}{m^2 sr})</math>. Radiance is defined as energy flow per unit normal area per unit [[solid angle]] per unit time. Here, <math>\vec{r}</math> denotes position, <math>\hat{s}</math> denotes unit direction vector and <math>t</math> denotes time (Figure 1). 
+<br />Several other important physical quantities are based on the definition of radiance<ref name = Wang_BioMedBooK>{{cite book |author=L.H. Wang and H.I. Wu |title=Biomedical Optics|publisher=Wiley |year=2007|isbn=9780471743040}}</ref>:
+*Fluence rate or [[intensity]]{{dn}} <math>\Phi(\vec{r},t)=\int_{4\pi}L(\vec{r},\hat{s},t)d\Omega (\frac{W}{m^2})</math>
+*[[Fluence]] <math>F(\vec{r})=\int_{-\infty}^{+\infty}\Phi(\vec{r},t)dt (\frac{J}{m^2})</math>
+*[[Current density]] (energy [[flux]]) <math>\vec{J}(\vec{r},t)=\int_{4\pi}\hat{s}L(\vec{r},\hat{s},t)d\Omega (\frac{W}{m^2})</math>. This is the vector counterpart of fluence rate pointing in the prevalent direction of energy flow.
+
+==Radiative transfer equation==
+The RTE is a differential equation describing radiance <math>L(\vec{r},\hat{s},t)</math>. It can be derived via [[conservation of energy]]. Briefly, the RTE states that a beam of light loses energy through divergence and [[refractive index#Dispersion and absorption|extinction]] (including both [[Absorption (electromagnetic radiation)|absorption]] and [[scattering]] away from the beam) and gains energy from light sources in the medium and scattering directed towards the beam. [[Coherence (physics)|Coherence]], [[Polarization (waves)|polarization]] and non-linearity are neglected. Optical properties such as [[refractive index]] <math>n</math>, [[absorption coefficient]] μ<sub>a</sub>, scattering coefficient μ<sub>s</sub>, and scattering anisotropy <math>g</math> are taken as time-invariant but may vary spatially. Scattering is assumed to be elastic.
+The RTE ([[Boltzmann equation]]) is thus written as<ref name="Wang_BioMedBooK"/>:
+:<math>\frac{\partial L(\vec{r},\hat{s},t)/c}{\partial t} = -\hat{s}\cdot \nabla L(\vec{r},\hat{s},t)-\mu_tL(\vec{r},\hat{s},t)+\mu_s\int_{4\pi}L(\vec{r},\hat{s},t)P(\hat{s}'\cdot\hat{s})d\Omega' + S(\vec{r},\hat{s},t)</math>
+where<br />
+*<math>c</math> is the speed of light in the tissue, as determined by the relative refractive index
+*μ<sub>t</sub><math>=</math>μ<sub>a</sub>+μ<sub>s</sub> is the extinction coefficient
+*<math>P(\hat{s}',\hat{s})</math> is the phase function, representing the probability of light with propagation direction <math>\hat{s}'</math> being scattered into solid angle <math>d\Omega</math> around <math>\hat{s}</math>. In most cases, the phase function depends only on the angle between the scattered <math>\hat{s}'</math> and incident <math>\hat{s}</math> directions, i.e. <math>P(\hat{s}',\hat{s})=P(\hat{s}'\cdot\hat{s})</math>. The scattering anisotropy can be expressed as <math>g=\int_{4\pi}(\hat{s}'\cdot\hat{s})P(\hat{s}'\cdot\hat{s})d\Omega</math>
+*<math>S(\vec{r},\hat{s},t)</math> describes the light source.
+
+==Diffusion theory==
+===Assumptions===
+In the RTE, six different independent variables define the radiance at any spatial and temporal point (<math>x</math>, <math>y</math>, and <math>z</math> from <math>\vec{r}</math>, [[polar angle]] <math>\theta</math> and azimuthal angle <math>\phi</math> from <math>\hat{s}</math>, and <math>t</math>). By making appropriate assumptions about the behavior of photons in a scattering medium, the number of independent variables can be reduced. These assumptions lead to the [[Photon diffusion|diffusion theory]] (and diffusion equation) for photon transport. 
+Two assumptions permit the application of diffusion theory to the RTE:
+*Relative to scattering events, there are very few absorption events. Likewise, after numerous scattering events, few absorption events will occur and the radiance will become nearly isotropic. This assumption is sometimes called directional broadening.
+*In a primarily scattering medium, the time for substantial current density change is much longer than the time to traverse one transport mean free path. Thus, over one transport mean free path, the fractional change in current density is much less than unity. This property is sometimes called temporal broadening.
+
+It should be noted that both of these assumptions require a high-[[albedo]] (predominantly scattering) medium<ref name="Wang_BioMedBooK"/>.
+
+===The RTE in the diffusion approximation===
+Radiance can be expanded on a basis set of [[spherical harmonics]] <math>Y</math><sub>n, m</sub>. In diffusion theory, radiance is taken to be largely isotropic, so only the isotropic and first-order anisotropic terms are used:
+<math>L(\vec{r},\hat{s},t) \approx\ \sum_{n=0}^{1} \sum_{m=-n}^{n}L_{n,m}(\vec{r},t)Y_{n,m}(\hat{s})</math>
+where <math>L</math><sub>n, m</sub> are the expansion coefficients. Radiance is expressed with 4 terms; one for n = 0 (the isotropic term) and 3 terms for n = 1 (the anisotropic terms). Using properties of spherical harmonics and the definitions of fluence rate <math>\Phi(\vec{r},t)</math> and current density <math>\vec{J}(\vec{r},t)</math>, the isotropic and anisotropic terms can respectively be expressed as follows:
+*<math>L_{0,0}(\vec{r},t)Y_{0,0}(\hat{s})=\frac{\Phi(\vec{r},t)}{4\pi}</math>
+*<math>\sum_{m=-1}^{1}L_{1,m}(\vec{r},t)Y_{1,m}(\hat{s})=\frac{3}{4\pi}\vec{J}(\vec{r},t)\cdot \hat{s}</math>
+Hence we can approximate radiance as<ref name = Wang_BioMedBooK>{{cite book |author= L.H. Wang and H.I. Wu |title=Biomedical Optics|publisher=Wiley |year=2007|isbn=9780471743040}}</ref>
+:<math>L(\vec{r},\hat{s},t)=\frac{1}{4\pi}\Phi(\vec{r},t)+\frac{3}{4\pi}\vec{J}(\vec{r},t)\cdot \hat{s}</math>
+Substituting the above expression for radiance, the RTE can be respectively rewritten in scalar and vector forms as follows (The scattering term of the RTE is integrated over the complete <math>4\pi</math> solid angle. For the vector form, the RTE is multiplied by direction <math>\hat{s}</math> before evaluation.)<ref name="Wang_BioMedBooK"/>:
+:<math> \frac{\partial \Phi(\vec{r},t)}{c\partial t} + \mu_a\Phi(\vec{r},t) + \nabla \cdot \vec{J}(\vec{r},t) = S(\vec{r},t)</math>
+:<br /><math> \frac{\partial \vec{J}(\vec{r},t)}{c\partial t} + (\mu_a+\mu_s')\vec{J}(\vec{r},t) + \frac{1}{3}\nabla \Phi(\vec{r},t) = 0</math>
+
+The diffusion approximation is limited to systems where reduced scattering coefficients are much larger than their absorption coefficients and having a minimum layer thickness of the order of a few transport [[mean free path]].
+
+===The diffusion equation===
+Using the second assumption of diffusion theory, we note that the fractional change in current density <math>\vec{J}(\vec{r},t)</math> over one transport [[mean free path]] is negligible. The vector representation of the diffusion theory RTE reduces to [[Fick's law]] <math>\vec{J}(\vec{r},t)=\frac{-\nabla \Phi(\vec{r},t)}{3(\mu_a+\mu_s')}</math>, which defines current density in terms of the gradient of fluence rate. Substituting Fick's law into the scalar representation of the RTE gives the diffusion equation<ref name="Wang_BioMedBooK"/>:
+:<math> \frac{\partial \Phi(\vec{r},t)}{c\partial t} + \mu_a\Phi(\vec{r},t) - \nabla \cdot [D\nabla\Phi(\vec{r},t)] = S(\vec{r},t)</math>
+<math>D=\frac{1}{3(\mu_a+\mu_s')}</math> is the [[diffusion coefficient]] and μ'<sub>s</sub><math>=(1-g)</math>μ<sub>s</sub> is the reduced scattering coefficient.
+<br />Notably, there is no explicit dependence on the scattering coefficient in the diffusion equation. Instead, only the reduced scattering coefficient appears in the expression for <math>D</math>. This leads to an important relationship; diffusion is unaffected if the anisotropy of the scattering medium is changed while the reduced scattering coefficient stays constant<ref name="Wang_BioMedBooK"/>.
+
+==Solutions to the diffusion equation==
+For various configurations of boundaries (e.g. layers of tissue) and light sources, the diffusion equation may be solved by applying appropriate [[boundary conditions]] and defining the source term <math>S(\vec{r},t)</math> as the situation demands. 
+===Point sources in infinite homogeneous media===
+A solution to the diffusion equation for the simple case of a short-pulsed point source in an infinite homogeneous medium is presented in this section. The source term in the diffusion equation becomes <math>S(\vec{r},t, \vec{r'},t')=\delta(\vec{r}-\vec{r'})\delta(t-t')</math>, where <math>\vec{r}</math> is the position at which fluence rate is measured and <math>\vec{r'}</math> is the position of the source. The pulse peaks at time <math>t'</math>. The diffusion equation is solved for fluence rate to yield
+:<math>\Phi(\vec{r},t;\vec{r'},t)=\frac{c}{[4\pi Dc(t-t')^{3/2}]}\exp\left[-\frac{\mid \vec{r}-\vec{r'} \mid ^2}{rDc(t-t')}\right]\exp[-\mu_ac(t-t')]</math>
+The term <math>\exp\left[-\mu_ac(t-t')\right]</math> represents the exponential decay in fluence rate due to absorption in accordance with [[Beer's law]]. The other terms represent broadening due to scattering. Given the above solution, an arbitrary source can be characterized as a superposition of short-pulsed point sources.
+Taking time variation out of the diffusion equation gives the following for a time-independent point source <math>S(\vec{r})=\delta(\vec{r})</math>:
+:<math>\Phi(\vec{r})=\frac{1}{4\pi Dr}\exp(-\mu_{eff}r)</math>
+<math>\mu_{\mathrm{eff}}=\sqrt{\frac{\mu_a}{D}}</math> is the effective [[attenuation coefficient]] and indicates the rate of spatial decay in fluence<ref name="Wang_BioMedBooK"/>.
+
+===Boundary conditions===
+====Fluence rate at a boundary====
+Consideration of boundary conditions permits use of the diffusion equation to characterize light propagation in media of limited size (where interfaces between the medium and the ambient environment must be considered). To begin to address a boundary, one can consider what happens when photons in the medium reach a boundary (i.e. a surface). The direction-integrated radiance at the boundary and directed into the medium is equal to the direction-integrated radiance at the boundary and directed out of the medium multiplied by [[Fresnel equations|reflectance]] <math>R_F</math>: 
+:<math>\int_{\hat{s}\cdot \hat{n}<0}L(\vec{r},\hat{s},t)\hat{s}\cdot \hat{n}  d\Omega=\int_{\hat{s}\cdot \hat{n}>0}R_F(\hat{s}\cdot \hat{n})L(\vec{r},\hat{s},t)\hat{s}\cdot \hat{n}d\Omega</math>
+where <math>\hat{n}</math> is normal to and pointing away from the boundary. The diffusion approximation gives an expression for radiance <math>L</math> in terms of fluence rate <math>\Phi</math> and current density <math>\vec{J}</math>. Evaluating the above integrals after substitution gives<ref name=Haskell_1994>{{cite journal |author=RC Haskell et al. |title=Boundary conditions for the diffusion equation in radiative transfer|journal=[[Journal of the Optical Society of America A]]|volume=11|pages=2727–2741|year=1994 |doi=10.1364/JOSAA.11.002727}}</ref>:
+[[Image:Pencil Beam.png|thumb|right|Figure 2: The steps in representing a pencil beam incident on a semi-infinite anisotropically scattering medium as two isotropic point sources in an infinite medium.]]
+:<math>\frac{\Phi(\vec{r},t)}{4}+\vec{J}(\vec{r},t)\cdot \frac{\hat{n}}{2}=R_{\Phi}\frac{\Phi(\vec{r},t)}{4}-R_{J}\vec{J}(\vec{r},t)\cdot \frac{\hat{n}}{2}</math>
+*<math>R_{\Phi}=\int_{0}^{\pi/2}2\sin \theta \cos \theta R_F(\cos \theta)d\theta</math>
+*<math>R_{J}=\int_{0}^{\pi/2}3\sin \theta (\cos \theta)^2 R_F(\cos \theta)d\theta</math>
+Substituting Fick's law (<math>\vec{J}(\vec{r},t)=-D\nabla \Phi(\vec{r},t)</math>) gives, at a distance from the boundary z=0<ref name=Haskell_1994>{{cite journal |author=RC Haskell et al. |title=Boundary conditions for the diffusion equation in radiative transfer.|journal=Journal of the Optical Society of America A |volume=11|pages=2727–2741|year=1994 |doi=10.1364/JOSAA.11.002727}}</ref>,
+:<math>\Phi(\vec{r},t)=A_z\frac{\partial \Phi(\vec{r},t)}{\partial z}</math>
+*<math>A_z=2D\frac{1+R_{eff}}{1-R_{eff}}</math>
+*<math>R_{\mathrm{eff}}=\frac{R_{\Phi}+R_{J}}{2-R_{\Phi}+R_J}</math>
+
+====The extrapolated boundary====
+It is desirable to identify a zero-fluence boundary. However, the fluence rate <math>\Phi(z=0, t)</math> at a physical boundary is, in general, not zero. An extrapolated boundary, at <math>z</math><sub>b</sub> for which fluence rate is zero, can be determined to establish image sources. Using a first order [[Taylor series]] approximation,
+:<math>\left.\Phi(z=-A_z,t)\approx \Phi(z=0,t)-A_z\frac{\partial \Phi(\vec{r},t)}{\partial z}\right|_{z=0}</math>
+which evaluates to zero since <math>\Phi(\vec{r},t)=A_z\frac{\partial \Phi(\vec{r},t)}{\partial z}</math>. Thus, by definition, <math>z</math><sub>b</sub> must be <math>-A</math><sub>z</sub> as defined above. Notably, when the index of refraction is the same on both sides of the boundary, <math>R</math><sub>F</sub> is zero and the extrapolated boundary is at <math>z</math><sub>b</sub><math>=-2D</math>.<ref name="Haskell_1994"/>
+
+===Pencil beam normally incident on a semi-infinite medium===
+Using boundary conditions, one may approximately characterize diffuse reflectance for a [[pencil beam]] normally incident on a semi-infinite medium. The beam will be represented as two point sources in an infinite medium as follows (Figure 2)<ref name="Wang_BioMedBooK"/><ref name=Wang_2000>{{cite journal |author=LV Wang and SL Jacques |title=Sources of error in calculation of optical diffuse reflectance from turbid media using diffusion theory|journal=Computer Methods and Programs in Biomedicine |volume=61|pages=163–170|year=2000 |doi=10.1016/S0169-2607(99)00041-3 |pmid=10710179 |issue=3}}</ref>:
+#Set scattering anisotropy <math>g</math><sub>2</sub><math>=0</math> for the scattering medium and set the new scattering coefficient μ<sub>s2</sub> to the original μ<sub>s1</sub> multiplied by <math>(1-g</math><sub>1</sub><math>)</math>, where <math>g</math><sub>1</sub> is the original scattering anisotropy. 
+#Convert the pencil beam into an isotropic point source at depth of one transport mean free path <math>l</math>' below the surface and power = <math>a</math>'.
+#Implement the extrapolated boundary condition by adding an image source of opposite sign above the surface at <math>l</math>'<math>+2z</math><sub>b</sub>.
+The two point sources can be characterized as point sources in an infinite medium via 
+:<math>\Phi_{\infty}(r,\theta,z; r',\theta',z')=\frac{1}{4\pi D\rho}\exp(-\mu_{\mathrm{eff}}\rho)</math>
+<math>\rho</math> is the distance from observation point <math>(r,\theta,z)</math> to source location <math>(r ',\theta ',z')</math> in cylindrical coordinates. The linear combination of the fluence rate contributions from the two image sources is
+:<math>\Phi(r,\theta,z; r',\theta',z')=a'\Phi_{\infty}(r,\theta,z; r',\theta',z')-a'\Phi_{\infty}(r,\theta,z; r',\theta',-z'-2z_b)</math>
+This can be used to get diffuse reflectance <math>R</math><sub>d</sub><math>(r)</math> via Fick's law:
+:<br /><math>\left.R_d(r)=D\frac{\partial \Phi}{\partial z}\right|_{z=0}= \frac{a 'z '(1+\mu_{\mathrm{eff}}\rho_1)\exp(-\mu_{eff}\rho_1)}{4\pi D\rho_1^3} + \frac{a '(z '+4D)(1+\mu_{\mathrm{eff}}\rho_2)\exp(-\mu_{\mathrm{eff}}\rho_2)}{4\pi D\rho_2^3}</math>
+<br /><math>\rho_1</math> is the distance from the observation point <math>(r,0,0)</math> to the source at <math>(0,0,z ')</math> and <math>\rho_2</math> is the distance from the observation point to the image source at <math>(0,0,-z '-2z</math><sub>b</sub><math>)</math><ref name="Wang_BioMedBooK"/><ref name="Wang_2000"/>.
+
+==Diffusion theory solutions vs. Monte Carlo simulations ==
+Monte Carlo simulations of photon transport, though time consuming, will accurately predict photon behavior in a scattering medium. The assumptions involved in characterizing photon behavior with the diffusion equation generate inaccuracies. Generally, the diffusion approximation is less accurate as the absorption coefficient μ<sub>a</sub> increases and the scattering coefficient μ<sub>s</sub> decreases <ref name=Yoo1990_PhysRevLett> K. Yoo, F. Liu & R. Alfano, '' When does the diffusion-approximation fail to describe photon transport in random-media'', Phys. Rev. Lett. '''64''', 2647-2650 (1990). 
+[http://link.aps.org/doi/10.1103/PhysRevLett.64.2647] </ref> <ref name=Alerstam2008_JBO > E. Alerstam, S. Andersson-Engels & T. Svensson, ''White Monte Carlo for time-resolved photon migration'', J. Biomed. Opt. '''13''', 041304 (2008).  [http://link.aip.org/link/?JBOPFO/13/41304/1] </ref>
+. For a photon beam incident on a medium of limited depth, error due to the diffusion approximation is most prominent within one transport mean free path of the location of photon incidence (where radiance is not yet isotropic) (Figure 3). 
+<br />Among the steps in describing a pencil beam incident on a semi-infinite medium with the diffusion equation, converting the medium from anisotropic to isotropic (step 1) (Figure 4) and converting the beam to a source (step 2) (Figure 5) generate more error than converting from a single source to a pair of image sources (step 3) (Figure 6). Step 2 generates the most significant error.<ref name="Wang_BioMedBooK"/><ref name="Wang_2000"/>
+<gallery widths="235px" heights="235px" perrow="2">
+Image:Monte_Carlo_vs_Diffusion_Theory.png|Figure 3: Diffuse reflectance vs. radius from an incident pencil beam as determined by a Monte Carlo simulation (red) and diffuse reflectance vs. radius from two isotropic point sources as determined by the diffusion theory solution to the RTE (blue). The transport mean free path is 0.1 cm.
+Image:MC_vs_DT_step1.png|Figure 4: Diffuse reflectance vs. radius from incident pencil beam for an anisotropic (blue) and isotropic (red) medium.
+Image:MC_vs_DT_step2.png|Figure 5: Diffuse reflectance vs. radius from photon source for a pencil beam (blue) and an isotropic point source (red).
+Image:MC_vs_DT_step3.png|Figure 6: Diffuse reflectance vs. radius from the photon source for an isotropic point source as characterized by the solution to the RTE (blue) and a Monte Carlo simulation (red).
+</gallery>
+
+==See also==
+* [[Monte Carlo method for photon transport]]
+* [[Radiative transfer]]
+
+==Further reading==
+* {{cite book
+ | author=LV Wang and HI Wu
+ | title=Biomedical Optics
+ | publisher=Wiley
+ | year=2007
+ | isbn =9780471743940}}
+
+==References==
+{{reflist}}
+
+[[Category:Electromagnetic radiation]]
+[[Category:Optics]]
+[[Category:Light]]</body> </html>

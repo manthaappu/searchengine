@@ -1,0 +1,52 @@
+<html> <head> <title>Pruning (decision trees)</title></head><body>{{Cleanup|date=May 2008}}
+{{expert-subject-multiple|Mathematics|Computer science|date=August 2009}}
+
+'''Pruning''' is a technique in [[machine learning]] that reduces the size of [[Decision_tree_learning|decision tree]]s by removing sections of the tree that provide little power to classify instances.  The dual goal of pruning is reduced complexity of the final classifier as well as better predictive accuracy by the reduction of [[overfitting]] and removal of sections of a classifier that may be based on [[Errors and residuals in statistics | noisy or erroneous]] data.  
+
+==Introduction==
+One of the questions that arises in a decision tree algorithm is the optimal size of the final tree.  A tree that is too large risks [[overfitting]] the training data and poorly generalizing to new samples.  A small tree might not capture important structural information about the sample space.  However, it is hard to tell when a tree algorithm should stop because it is impossible to tell if the addition of a single extra node will dramatically decrease error.  This problem is known as the [[horizon effect]].  A common strategy is to grow the tree until each node contains a small number of instances then use pruning to remove nodes that do not provide additional information<ref name="tib">Tevor Hastie, Robert Tibshirani, and Jerome Friedman.  The Elements of Statistical Learning.  Springer: 2001, pp. 269-272</ref>.
+
+Pruning should reduce the size of a learning tree without reducing predictive accuracy as measured by a test set or using [[cross-validation_(statistics)|cross-validation]].  There are many techniques for tree pruning that differ in the measurement that is used to optimize performance.
+
+==Techniques==
+Pruning can occur in a top down or bottom up fashion.  A top down pruning will traverse nodes and trim subtrees starting at the root, while a bottom up pruning will start at the leaf nodes.  Below are several popular pruning algorithms.
+
+===Reduced error pruning===
+One of the simplest forms of pruning is reduced error pruning.  Starting at the leaves, each node is replaced with its most popular class.  If the prediction accuracy is not affected then the change is kept.  While somewhat naive, reduced error pruning has the advantage of simplicity and speed.
+
+===Cost complexity pruning===
+Cost complexity pruning generates a series of trees <math>T_0 \dots T_m</math> where <math>T_0</math> is the initial tree and <math>T_m</math> is the root alone.  At step <math>i</math> the tree is created by removing a subtree from tree <math>i-1</math> and replacing it with a leaf node with value chosen as in the tree building algorithm.  The subtree that is removed is chosen as follows.  Define the error rate of tree <math>T</math> over data set <math>S</math> as <math>err(T,S)</math>.  The subtree that minimizes 
+<math>\frac{err(prune(T,t),S)-\epsilon(T,S)}{|leaves(T)|-|leaves(prune(T,t)|}</math>
+is chosen for removal.  The function <math>prune(T,t)</math> defines the tree gotten by pruning the subtrees <math>t</math> from the tree <math>T</math>.  Once the series of trees has been created, the best tree is chosen by generalized accuracy as measured by a training set or cross-validation.  
+
+==See also==
+* [[Alpha-beta pruning]]
+* [[Decision_tree_learning|Decision tree]]
+* [[Artificial neural network]]
+* [[Null-move heuristic]]
+
+==References==
+* Pessimistic Decision tree pruning based on Tree size<ref name=Mansour1997>{{citation
+ | last = Mansour | first =  Y.
+ | year = 1997
+ | title = Pessimistic decision tree pruning based on tree size
+ | journal = Proc. 14th International Conference on Machine Learning
+ | pages = 195–201
+ | url = http://citeseer.ist.psu.edu/76752.html
+}}</ref>
+{{reflist}}
+
+==Further reading==
+* MDL based decision tree pruning
+* Decision tree pruning using backpropagation
+* Neural networks
+
+==External links==
+* [http://www.cis.upenn.edu/~mkearns/papers/pruning.pdf Fast, Bottom-Up Decision Tree Pruning Algorithm]
+* [http://www.math.tau.ac.il/~mansour/ml-course/scribe11.ps Introduction to Decision tree pruning]
+
+[[Category:Decision trees]]
+
+[[de:Pruning]]
+[[pt:Poda (computação)]]
+[[ru:Вербализация нейронных сетей]]</body> </html>

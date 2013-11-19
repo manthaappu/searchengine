@@ -1,0 +1,65 @@
+<html> <head> <title>SL (complexity)</title></head><body>In [[computational complexity theory]], '''SL''' ('''Symmetric Logspace''' or '''Sym-L''') is the [[complexity class]] of problems [[log-space reducible]] to '''USTCON''' (''undirected s-t connectivity''), which is the problem of determining whether there exists a path between two vertices in an [[undirected graph]], otherwise described as the problem of determining whether two vertices are in the same [[Connected component (graph theory)|connected component]]. This problem is also called the '''undirected reachability problem'''. It does not matter whether [[many-one reduction|many-one reducibility]] or [[Turing reduction|Turing reducibility]] is used. Although originally described in terms of [[symmetric Turing machine]]s, that equivalent formulation is very complex, and the reducibility definition is what is used in practice.
+
+USTCON is a special case of [[STCON]] (''directed reachability''), the problem of determining whether a directed path between two vertices in a [[directed graph]] exists, which is complete for [[NL (complexity)|NL]]. Because USTCON is '''SL'''-complete, most advances that impact USTCON have also impacted '''SL'''. Thus we will discuss them together. 
+
+In October 2004 [[Omer Reingold]] showed that '''SL''' = '''[[L (complexity)|L]]'''.
+
+== Origin ==
+
+SL was first defined in 1982 by Lewis and Papadimitriou<ref>[[Harry R. Lewis|Lewis, H. R.]] and [[Christos H. Papadimitriou|Papadimitriou, C. H.]] 1980. [http://www.springerlink.com/content/f50061vx3k145jk0/ Symmetric Space-Bounded Computation (Extended Abstract)]. In Proceedings of the 7th Colloquium on Automata, Languages and Programming (July 14 - 18, 1980). J. W. Bakker and J. v. Leeuwen, Eds. Lecture Notes In Computer Science, vol. 85. Springer-Verlag, London, 374-384. </ref>, who were looking for a class in which to place USTCON, which until this time could, at best, be placed only in [[NL (complexity)|NL]], despite seeming not to require nondeterminism. They defined the [[symmetric Turing machine]], used it to define SL, showed that USTCON was complete for SL, and proved that
+: <math>\mathrm{L} \subseteq \mathrm{SL} \subseteq \mathrm{NL}</math>
+where [[L (complexity)|L]] is the more well-known class of problems solvable by an ordinary [[deterministic Turing machine]] in logarithmic space, and [[NL (complexity)|NL]] is the class of problems solvable by [[nondeterministic Turing machines]] in logarithmic space. The result of Reingold, discussed later, shows that in fact, when limited to log space, the symmetric Turing machine is equivalent in power to the deterministic Turing machine.
+
+== Complete problems ==
+
+Using our definition, USTCON is trivially complete for SL (all problems in SL reduce to it, including itself). Many more interesting complete problems were found, most by reducing directly or indirectly from USTCON, and a compendium of them was made by Àlvarez and Greenlaw.<ref>Àlvarez, C. and Greenlaw, R. 2000. [http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.22.2351 A compendium of problems complete for symmetric logarithmic space]. Comput. Complex. 9, 2 (Apr. 2000), 123-145.</ref> Many of the problems are [[graph theory]] problems. Some of the simplest and most important SL-complete problems they describe include:
+* USTCON
+* Simulation of symmetric Turing machines: does an STM accept a given input in a certain space, given in unary?
+* Vertex-disjoint paths: are there ''k'' paths between two vertices, sharing vertices only at the endpoints? (a generalization of USTCON, equivalent to asking whether a graph is ''k''-edge-connected)
+* Is a given graph a [[bipartite graph]], or equivalently, does it have a [[graph coloring]] using 2 colors?
+* Do two undirected graphs have the same number of [[Connected component (graph theory)|connected components]]?
+* Does a graph have an even number of connected components?
+* Given a graph, is there a cycle containing a given edge?
+* Do the [[spanning forest]]s of two graphs have the same number of edges?
+* Given a graph where all its edges have distinct weights, is a given edge in the [[minimum weight spanning forest]]?
+* [[Exclusive or]] 2-[[Boolean satisfiability problem|satisfiability]]: given a formula requiring that ''x''<sub>''i''</sub> xor ''x''<sub>''j''</sub> hold for a number of pairs of variables (''x''<sub>''i''</sub>,''x''<sub>''j''</sub>), is there an assignment to the variables that makes it true?
+
+The [[complement (complexity)|complement]]s of all these problems are in SL as well, since, as we will see, SL is closed under complement.
+
+Now that we know '''L''' = '''SL''', we know of a great deal more SL-complete problems with respect to log-space reductions: every problem in '''L''' or in '''SL''' is '''SL'''-complete; moreover, even if the reductions are in some smaller class than '''L''', '''L'''-completeness is equivalent to '''SL'''-completeness. In this sense this class has become somewhat trivial.
+
+== Important results ==
+
+There are well-known classical algorithms such as [[depth-first search]] and [[breadth-first search]] which solve USTCON in linear time and space. Their existence, shown long before '''SL''' was defined, proves that '''SL''' is contained in '''P'''. It's also not difficult to show that USTCON, and so '''SL''', is in '''NL''', since we can just nondeterministically guess at each vertex which vertex to visit next in order to discover a path if one exists. 
+
+The first nontrivial result for '''SL''', however, was [[Savitch's theorem]], proved in 1970, which provided an algorithm that solves USTCON in log<sup>2</sup> ''n'' space. Unlike depth-first search, however, this algorithm is impractical for most applications because of its potentially superpolynomial running time. One consequence of this is that USTCON, and so '''SL''', is in DSPACE(log<sup>2</sup>''n'').<ref>W.J.Savitch, "Relationship between nondeterministic and deterministic tape classes", J.CSS, 4, pp 177-192, 1970</ref> (Actually, Savitch's theorem gives the stronger result that '''NL''' is in DSPACE(log<sup>2</sup>''n'').)
+
+Although there were no ''deterministic'' space improvements on Savitch's algorithm for 22 years, a highly practical probabilistic log-space algorithm was found in 1979 by Aleliunas et al.: simply start at one vertex and perform a random walk until you find the other one (then accept) or until ''|V|''<sup>3</sup> time has passed (then reject).<ref>Aleliunas, R., Karp, R. M., Lipton, R. J., Lovasz, L., and Rackoff, C. 1979. [http://portal.acm.org/citation.cfm?id=1382621 Random walks, universal traversal sequences, and the complexity of maze problems]. In Proceedings of the 20th Annual Symposium on Foundations of Computer Science (October 29 - 31, 1979). SFCS. IEEE Computer Society, Washington, DC, 218-223.</ref> False rejections are made with a small bounded probability that shrinks exponentially the longer the random walk is continued. This also showed that '''SL''' is contained in [[RL_(complexity)|RLP]], the class of problems solvable in polynomial time and logarithmic space with probabilistic machines that reject incorrectly less than 1/3 of the time. 
+
+In 1989, Borodin et al. strengthened this result by showing that the [[complement (complexity)|complement]] of USTCON, determining whether two vertices are in different connected components, is also in '''RLP'''.<ref>Borodin, A., Cook, S. A., Dymond, P. W., Ruzzo, W. L., and Tompa, M. 1989. [http://portal.acm.org/citation.cfm?id=68485# Two applications of inductive counting for complementation problems]. SIAM J. Comput. 18, 3 (Jun. 1989), 559-578. </ref> This placed USTCON, and '''SL''', in co-'''RLP''' and in the intersection of '''RLP''' and co-'''RLP''', which is [[ZPLP]], the class of problems which have log-space, expected polynomial-time, no-error randomized algorithms.
+
+In 1992, Nisan, Szemerédi, and Wigderson finally found a new deterministic algorithm to solve USTCON using only log<sup>1.5</sup> ''n'' space.<ref>Noam Nisan, Endre Szemerédi, Avi Wigderson. Undirected connectivity in O(log1.5 n) space. In Proc. 33rd IEEE Symposium on Foundations of Computer Science, 1992, pp.24-29.</ref> This was improved slightly, but there would be no more significant gains until Reingold.
+
+In 1995, Nisan and Ta-Shma showed the surprising result that '''SL''' is closed under complement, which at the time was believed by many to be false; that is, '''SL''' = co-'''SL'''.<ref>Nisan, N. and Ta-Shma, A. 1995. [http://portal.acm.org/citation.cfm?id=225101# Symmetric logspace is closed under complement]. In Proceedings of the Twenty-Seventh Annual ACM Symposium on theory of Computing (Las Vegas, Nevada, United States, May 29 - June 01, 1995). STOC '95. ACM, New York, NY, 140-146.</ref> Equivalently, if a problem can be solved by reducing it to a graph and asking if two vertices are in the ''same'' component, it can also be solved by reducing it to another graph and asking if two vertices are in ''different'' components. However, Reingold's paper would later make this result redundant.
+
+One of the most important corollaries of '''SL''' = co-'''SL''' is that '''L'''<sup>'''SL'''</sup> = '''SL'''; that is, a deterministic, log-space machine with an [[oracle machine|oracle]] for '''SL''' can solve problems in '''SL''' (trivially) but cannot solve any other problems. This means it does not matter whether we use Turing reducibility or many-one reducibility to show a problem is in '''SL'''; they are equivalent.
+
+A breakthrough October 2004 paper by [[Omer Reingold]] showed that USTCON is in fact in [[L (complexity)|L]].<ref>Reingold, O. 2008. [http://portal.acm.org/citation.cfm?id=1391291# Undirected connectivity in log-space]. J. ACM 55, 4 (Sep. 2008), 1-24.</ref> Since USTCON is '''SL'''-complete, this implies that '''SL''' = '''L''', essentially eliminating the usefulness of consideration of '''SL''' as a separate class. A few weeks later, graduate student Vladimir Trifonov showed that USTCON could be solved deterministically using O(log ''n'' log log ''n'') space—a weaker result—using different techniques.<ref>Trifonov, V. 2005. [http://portal.acm.org/citation.cfm?id=1060684# An O(log n log log n) space algorithm for undirected st-connectivity]. In Proceedings of the Thirty-Seventh Annual ACM Symposium on theory of Computing (Baltimore, MD, USA, May 22 - 24, 2005). STOC '05. ACM, New York, NY, 626-633.</ref>
+
+==Consequences of L = SL ==
+
+The collapse of '''L''' and '''SL''' has a number of significant consequences. Most obviously, all '''SL'''-complete problems are now in '''L''', and can be gainfully employed in the design of deterministic log-space and polylogarithmic-space algorithms. In particular, we have a new set of tools to use in [[log-space reduction]]s. It is also now known that a problem is in '''L''' if and only if it is log-space reducible to USTCON.
+
+==Footnotes==
+<references/>
+
+==References==
+*<div id="Papadimitriou">[[Christos H. Papadimitriou|C. Papadimitriou]]. ''Computational Complexity''. Addison-Wesley, 1994. ISBN 0-201-53082-1.</div>
+*<div id="Sipser">[[Michael Sipser]]. ''Introduction to the Theory of Computation''. PWS Publishing Co., Boston 1997 ISBN 0-534-94728-X.</div>
+
+{{ComplexityClasses}}
+
+[[Category:Complexity classes]]
+
+[[es:SL (clase de complejidad)]]
+[[ja:SL (計算複雑性理論)]]</body> </html>

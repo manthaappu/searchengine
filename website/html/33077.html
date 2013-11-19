@@ -1,0 +1,50 @@
+<html> <head> <title>SYN flood</title></head><body>[[Image:Tcp normal.png|thumb|right|A normal connection between a user ([[Alice and Bob|Alice]]) and a server. The three-way handshake is correctly performed.]]
+[[Image:Tcp synflood.png|thumb|right|SYN Flood. The attacker ([[Alice and Bob|Mallory]]) sends several packets but does not send the "ACK" back to the server. The connections are hence half-opened and consuming server resources. Alice, a legitimate user, tries to connect but the server refuses to open a connection resulting in a denial of service.]]
+A '''SYN flood''' is a form of [[denial-of-service attack]] in which an attacker sends a succession of <code>[[SYN (TCP)|SYN]]</code> requests to a target's system.  Some systems can misdetect a SYN Flood when being scanned for open proxies, as commonly done by IRC servers and services. These are '''not''' SYN Floods, merely an automated system designed to check the connecting IP.<ref>RFC 4987 TCP SYN Flooding Attacks and Common Mitigations</ref>
+
+When a client attempts to start a [[Transmission Control Protocol|TCP]] connection to a server, the [[client (computing)|client]] and [[Server (computing)|server]] exchange a series of messages which normally runs like this:
+
+#The client requests a connection by sending a <code>SYN</code> (''synchronize'') message to the server.
+#The server ''acknowledges'' this request by sending <code>SYN-ACK</code> back to the client.
+#The client responds with an <code>ACK</code>, and the connection is established.
+
+This is called the [[Transmission Control Protocol#Connection establishment|TCP three-way handshake]], and is the foundation for every connection established using the TCP protocol.
+
+The SYN flood is a well known type of attack and is generally not effective against modern networks{{Citation needed|date=October 2010}}.  It works if a server allocates resources after receiving a <code>SYN</code>, but before it has received the <code>ACK</code>.
+
+There are two methods, but both involve the server not receiving the <code>ACK</code>. A malicious client can skip sending this last <code>ACK</code> message. Or by [[IP address spoofing|spoofing]] the source [[IP address]] in the <code>SYN</code>, it makes the server send the <code>SYN-ACK</code> to the falsified IP address, and thus never receive the <code>ACK</code>. In both cases the server will wait for the acknowledgement for some time, as simple network congestion could also be the cause of the missing <code>ACK</code>.
+
+If these ''[[half-open connection]]s'' bind resources on the server, it may be possible to take up all these resources by flooding the server with <code>SYN</code> messages. Once all resources set aside for half-open connections are reserved, no new connections (legitimate or not) can be made, resulting in denial of service. Some systems may malfunction badly or even crash if other operating system functions are starved of resources this way.
+
+The [http://www.cert.org/advisories/CA-1996-21.html technology often used in 1996 for allocating resources for half open TCP connections] involved a queue which was often very short (e.g., [http://www.sean.de/Solaris/soltune.html 8 entries long]) with each entry of the queue being removed upon a completed connection, or upon expiry (e.g., after 3 minutes<ref>[http://tools.ietf.org/html/rfc1122#section-4.2.3.5]</ref>).  When the queue was full, further connections failed.  With the examples above, all further connections would be prevented for 3 minutes by sending a total of 8 packets.  A well-timed 8 packets every 3 minutes would prevent all further TCP connections from completing.  This allowed for a Denial of Service attack with very minimal traffic.
+
+[[SYN cookies]] provide protection against the SYN flood by eliminating the resources allocated on the target host.
+
+Limiting new connections per source per timeframe is not a general solution since the attacker can spoof the packets to have multiple sources.
+
+[[Reflector router]]s can also be used as attackers, instead of client machines.
+
+== References ==
+<references/>
+
+== External links ==
+*[http://www.cert.org/advisories/CA-1996-21.html Official CERT advisory on SYN Attacks]
+
+{{DEFAULTSORT:Syn Flood}}
+[[Category:Articles with Alice and Bob explanations]]
+[[Category:Denial-of-service attacks]]
+
+[[cs:SYN flood]]
+[[de:SYN-Flood]]
+[[el:SYN flood]]
+[[fr:SYN flood]]
+[[id:SYN flooding attack]]
+[[it:SYN flood]]
+[[he:הצפת SYN]]
+[[hu:SYN flood]]
+[[nl:SYN flood]]
+[[ja:SYN flood]]
+[[pl:SYN flood]]
+[[pt:SYN Flood]]
+[[ru:SYN-флуд]]
+[[zh:Syn flood]]</body> </html>

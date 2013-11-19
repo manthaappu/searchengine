@@ -1,0 +1,82 @@
+<html> <head> <title>Revocation list</title></head><body>In the operation of some [[cryptosystem]]s, usually [[public key infrastructure]]s (PKIs), a '''certificate revocation list (CRL)''' is a list of [[identity certificate|certificates]] (or more specifically, a list of serial numbers for certificates) that have been revoked, and therefore should not be relied upon.
+
+==Revocation States==
+
+There are two different states of revocation defined in RFC 3280:
+* Revoked: A certificate is irreversibly revoked if, for example, it is discovered that the [[certificate authority]] (CA) had improperly issued a certificate, or if a private-key is thought to have been compromised. Certificates may also be revoked for failure of the identified entity to adhere to policy requirements such as publication of false documents, mis-representation of software behavior, or violation of any other policy specified by the CA operator or its customer. The most common reason for revocation is the user no longer being in sole possession of the private key (''e.g.'', the token containing the private key has been lost or stolen).
+* Hold: This reversible status can be used to note the temporary invalidity of the certificate (''e.g.'', if the user is unsure if the private key has been lost). If, in this example, the private key was found and nobody had access to it, the status could be reinstated, and the certificate is valid again, thus removing the certificate from future CRLs.
+
+==Reasons for Revocation==
+
+Reasons to revoke a certificate according to RFC 5280 p69 are:
+
+* unspecified (0)
+* keyCompromise (1)
+* cACompromise (2)
+* affiliationChanged (3)
+* superseded (4)
+* cessationOfOperation (5)
+* certificateHold (6)
+* (value 7 is not used)
+* removeFromCRL (8)
+* privilegeWithdrawn (9)
+* aACompromise (10)
+
+==Publishing Revocation Lists==
+
+A CRL is generated and published periodically, often at a defined interval. A CRL can also be published immediately after a certificate has been revoked. The CRL is always issued by the CA which issues the corresponding certificates. All CRLs have a lifetime during which they are valid; this timeframe is often 24 hours or less. During a CRL's validity period, it may be consulted by a PKI-enabled application to verify a certificate prior to use.
+
+To prevent [[spoofing attack|spoofing]] or [[denial-of-service attack]]s, CRLs usually carry a digital signature associated with the CA by which they are published. To validate a specific CRL prior to relying on it, the certificate of its corresponding CA is needed, which can usually be found in a public [[directory service|directory]].
+
+The certificates for which a CRL should be maintained are often [[X.509]]/[[public key]] [[public key certificate|certificate]]s, as this format is commonly used by PKI schemes.
+
+==Revocation vs. Expiration==
+
+Certificate expiration dates are not a substitute for a CRL. While all expired certificates are considered invalid, not all unexpired certificates are necessarily valid. CRLs or other certificate validation techniques are a necessary part of any properly operated PKI, as mistakes in certificate vetting and key management are expected to occur in real world operations.
+
+In a noteworthy example, a certificate for [[Microsoft]] was mistakenly issued to an unknown individual, who had successfully posed as Microsoft to the CA contracted to maintain the [[ActiveX]] 'publisher certificate' system ([[VeriSign]])<ref>http://news.cnet.com/2100-1001-254586.html</ref>. Microsoft saw the need to patch their cryptography subsystem so it would check the status of certificates before trusting them. As a short-term fix, a patch was issued for the relevant Microsoft software (most importantly Windows) specifically listing the two certificates in question as "revoked".<ref>http://www.microsoft.com/technet/security/bulletin/MS01-017.mspx</ref>
+
+==Problems with CRLs==
+Best practices require that wherever and however certificate status is maintained, it must be checked whenever one wants to rely on a certificate. Failing this, a revoked certificate may be incorrectly accepted as valid. This means that to  use a PKI effectively, one must have access to current CRLs. This requirement of on-line validation negates one of the original major advantages of PKI over [[symmetric key algorithm|symmetric cryptography]] protocols, namely that the certificate is "self-authenticating". Symmetric systems such as [[Kerberos (protocol)|Kerberos]] also depend on the existence of on-line services (a [[key distribution center]] in the case of Kerberos).
+
+The existence of a CRL implies the need for someone (or some organization) to enforce policy and revoke certificates deemed counter to operational policy. If a certificate is mistakenly revoked, significant problems can arise. As the certificate authority is tasked with enforcing the operational policy for issuing certificates, they typically are responsible for determining if and when revocation is appropriate by interpreting the operational policy.
+
+The necessity of consulting a CRL (or other certificate status service) prior to accepting a certificate raises a potential [[denial-of-service attack]] against the PKI. If acceptance of a certificate fails in the absence of an available valid CRL, then no operations depending upon certificate acceptance can take place. This issue exists for Kerberos systems as well, where failure to retrieve a current authentication token will prevent system access. No comprehensive solutions to these problems are known, though there are multiple [[workaround]]s for various aspects, some of which have proven acceptable in practice{{Citation needed|date=September 2010}}.
+
+An alternative to using CRLs is the certificate validation protocol known as [[Online Certificate Status Protocol]] (OCSP). OCSP has the primary benefit of requiring less network bandwidth, enabling real-time and near real-time status checks for high volume or high value operations.
+
+== Authority revocation lists ==
+{{anchor|Authority_revocation_list}} <!-- [[Authority revocation list]] redirects here -->
+{{unreferenced|section|date=March 2007}}
+
+An ''authority revocation list'' (ARL) is a form of CRL containing certificates issued to [[certificate authority|certificate authorities]], contrary to CRLs which contain revoked end-entity certificates.
+
+==See also==
+
+* [[Trusted third party]]
+* [[Web of trust]]
+* [[Certificate server]]
+
+== References ==
+{{Reflist|2}}
+
+==External links==
+* RFC 3280
+* RFC 5280
+*[http://www.hbarel.com/blog/index.php?itemid=36 The Inevitable Collapse of the Certificate Model] An essay on pragmatic reliability issues in current deployments of the certificate model.
+
+
+{{DEFAULTSORT:Revocation List}}
+[[Category:Public-key cryptography]]
+[[Category:Key management]]
+
+[[ar:قائمة نقض الشهادات]]
+[[cs:Revokační seznam]]
+[[de:Zertifikatsperrliste]]
+[[es:Certificate Revocation List]]
+[[fr:Liste de révocation de certificats]]
+[[ko:인증서 폐기 목록]]
+[[it:Certificate revocation list]]
+[[nl:Certificate revocation list]]
+[[ja:証明書失効リスト]]
+[[pl:Lista unieważnionych certyfikatów]]</body> </html>

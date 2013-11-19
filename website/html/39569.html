@@ -1,0 +1,133 @@
+<html> <head> <title>Visual IRC</title></head><body>{{Infobox software
+| name                      = Visual IRC
+| logo                      =
+| screenshot                = [[Image:Virc.png|250px]] Visual IRC 2
+| caption                   =
+| developer                 = Adrian Cable and Jesse McGrew
+| frequently_updated        = yes<!-- Release version update? Don't edit this page, just click on the version number! -->
+| latest_prerelease_version =
+| latest_prerelease_date    =
+| operating_system          = [[Microsoft Windows|Windows]]
+| genre                     =
+| license                   = [[GNU General Public License|GPL]]
+| website                   = http://www.visualirc.net/
+}}'''Visual IRC''' ('''ViRC''') is an [[open source]] [[Internet Relay Chat]] client for the [[Microsoft Windows|Windows]] operating system. Unlike many other [[List of IRC clients|IRC client]]s, nearly all of the functionality in ViRC is driven by the included [[IRC script|script]], with the result that the program's behavior can be extended or changed without altering the [[source code]].
+
+==History==
+*Visual IRC (16-bit) - Released in [[1995]] for Windows 3.x, written by MeGALiTH. This [[computer program|program]] had many built-in features, but it was also scriptable with VPL ([[ViRC Programming Language]]), the predecessor to [[ViRCScript]] and [[Versus programming language|Versus]].
+
+*Visual IRC '96 (and later Visual IRC '97, Visual IRC '98) - Released in [[1996]], written by MeGALiTH. This was the first 32-bit version of ViRC, written for Windows 9x/NT. Many of the features that were built into 16-bit ViRC were handled by the default script in ViRC '96. ViRC '98 contained some code contributed by [[Jesse McGrew]] AKA "Mr2001", particularly enhancements to the ViRCScript engine. The [[scripting programming language|scripting language]] was incompatible with the earlier version. In later versions, voice chat and video conferencing features were added.
+
+:Development of the second incarnation slowed down, and by 2000, Visual IRC appeared to be dead. The original author MeGALiTH (Adrian Cable) passed the source code to a user, Mr2001 (Jesse McGrew), who had previously contributed some code, and who had secretly been developing a [[clone (computer science)|clone]] called [[Bisual IRC]] (BIRC). Rather than restarting development of the ViRC '98 code base, he merged some of ViRC '98's features into BIRC and released it as Visual IRC 2.
+
+*Visual IRC 2 - First released by Mr2001, coincidentally in [[2001]], this version's [[Versus programming language|Versus]] scripting language is based on ViRCScript, but internally it has been almost totally rewritten. In fact, ViRC 2 only shares a few hundred lines of code with ViRC '98. The voice and video conferencing features were removed in this version because the [[library (computer science)|libraries]] used to implement them were no longer supported.
+
+Much of the source code to BIRC, ViRC 2, and the related utilities has been released under the [[GNU General Public License|GPL]] through the project's web site and [[SourceForge]].
+
+==Versus==
+'''Versus''' is a [[scripting language]] originally developed for the [[IRC]] [[IRC client|client]] [[Bisual IRC]], and currently used with Visual IRC. It is similar in many ways to the scripting languages used by [[ircII]] and [[mIRC]], as well as [[Tcl]] and [[C (programming language)|C]].
+
+The name "Versus" was chosen because it could be shortened to "VS", which was a common abbreviation for [[ViRCScript]], the language used by Visual IRC '96 through '98. Versus remained mostly [[backward compatibility|backward compatible]] with ViRCScript, so existing documentation and commentary that mentioned "VS" remained mostly accurate when applied to Versus. The name also alluded to BIRC's origins as a replacement for ViRC.
+
+'''Object Versus''', or OVS, refers to the [[object-oriented programming|object-oriented]] features of Versus. Scripts can define [[class (computer science)|classes]] and work with objects and methods instead of textual data and [[IRC script|aliases]]; however, in practice, OVS is mostly used to manipulate the [[Visual Component Library|VCL]] objects that make up ViRC's interface.
+
+===Script storage===
+
+Scripts are stored in files, usually with a .vsc [[file extension]], though the .lib extension is sometimes used. A Versus script file simply contains [[statement (programming)|statement]]s to be interpreted when the script is loaded; any blocks defined in a script (see below) will replace blocks defined with the same name by previous scripts.
+
+===Blocks that can be defined in a script===
+
+*'''Aliases''' are [[subroutine]]s. They can be called from the command entry line of any window, or from other parts of the script. Aliases that return a value are called functions; an alias can determine whether it's expected to return a value, and then act as a function or a command appropriately.
+*'''Classes''' are used in object-oriented scripting (OVS). Each class may contain [[property (computer science)|properties]], [[method (computer science)|method]]s, a [[constructor (computer science)|constructor]], and a [[destructor (computer science)|destructor]].
+*'''Events''' are used to [[event handler|handle]] messages from the IRC [[Server (computing)|server]], as well as certain system- or client-level occurrences, such as completing a [[Direct Client-to-Client|file transfer]] or opening a new window.
+**Server events use [[regular expression]]s or Versus's own [[wildcard character]]s to match messages from the server. If multiple server events match a particular message, only the one with the highest priority (calculated from the length of the pattern and the relative "value" of the wildcards therein) will be executed.
+**Client events are identified by name: for example, <OnCreateWindow_foo> and <OnCreateWindow_bar> will both run when a new window is opened. They can also include patterns, which limit the particular occurrences that can trigger that event (for example, to only run when a new ''channel'' window is created).
+*'''Menu trees''' and '''menu items''' define the [[context menu]]s that can appear for various elements of the client's interface, as well as the main menu which is always visible. Menu tree blocks define the menu's layout and set captions for each item; menu item blocks define the script code to be executed when an item is clicked.
+*'''Toolbars''' and '''toolbar items''' are similar to menu tree and menu item blocks, but they define the [[toolbar]]s associated with each window. New toolbars can be added to the interface simply by choosing a unique name.
+
+Aliases, methods (including constructors and destructors), events, menu items, and toolbar items are referred to as '''routines''' or code blocks.
+
+=== Data storage ===
+====Files====
+*Scripts can access files with the functions $RandomRead() and $ReadLine(), and the commands CreateFile and AppendText.
+*Scripts can also use the TStringList [[Visual Component Library|VCL]] class to read an entire text file into memory, manipulate it, and save it.
+
+====Variables====
+*All variables may contain up to 4 [[gibibyte|GiB]] of data.
+*Variable names begin with a dollar sign ($) and an uppercase letter, lowercase letter, or underscore.
+*Variables may contain any characters, although they are usually used for printable text.
+*'''Local variables''' are set with the <code>@L</code> command and only exist in the context of the routine that created them. They are deleted when the routine ends. Some local variables are predefined, such as $C for the current channel's name.
+*'''Global variables''' are set with the <code>@</code> command and can be accessed from any routine. They are deleted when the client exits. Aliases may return a value by setting the global variable $fresult.
+*'''Stored variables''' are set with the <code>@S</code> command and, like global variables, can be accessed anywhere. Their values are saved to persistent storage immediately, and restored the next time the client starts.
+
+====Associative arrays====
+*[[Associative array]]s map keys to values.
+*Keys and values can contain up to 4 GiB of data with no limits on the allowed characters.
+*Local, global, and stored array values can be set using the <code>@L</code>, <code>@</code>, and <code>@S</code> commands, and they behave just like the corresponding variables. When a stored array value is set, the entire array is saved.
+*The syntax <code>$arrayname[key]</code> is used to set or retrieve the value for a particular key.
+*The syntax <code>$arrayname</code> alone treats an array as a list of key-value pairs, allowing a script to set the entire contents of an array at once, or iterate through the keys that are already present.
+
+====Pseudovariables====
+*Pseudovariables (or pvars) are similar in syntax to variables, but their values cannot be changed.
+*The pvars $0 through $9 contain the parameters that were passed to the current routine, in order. $0 contains the routine's name, $1 contains the first word of the parameter string, and so on.
+*The pvars $0- through $9- contain the parameters that were passed to the current routine, plus all following parameters. $0- contains the routine's name and the entire parameter string, $1- contains all parameters, $2- contains all parameters after the first, and so on.
+*The special sequence <code>$?="PROMPT STRING"</code> causes a dialog box to appear, prompting the user to enter a value.
+
+=== Code examples ===
+
+Here is the [[Hello World]] code example:
+
+<pre>Alias HELLO
+  TextOut > $C clBlack Hello, world!
+EndAlias</pre>
+
+Here is an example to count to ten:
+
+<pre>Alias TEN
+  for (@l $i = 1; $i <= 10; $i++)
+    TextOut > $C clBlack $i
+  endfor
+EndAlias</pre>
+
+Here is an example to make everyone in the current channel an [[IRC channel operator|operator]]:
+
+<pre>Alias MASSOP
+  foreach ($a,$b,$c,$d; $nicklist($C))
+    Mode $C +oooo $a $b $c $d
+  endforeach
+EndAlias</pre>
+
+==References==
+{{Ref begin}}
+* {{cite book
+| last        = Charalabidis
+| first       = Alex
+| title       = The Book of IRC: The Ultimate Guide to Internet Relay Chat
+| year        = 1999
+| publisher   = [[No Starch Press]]
+| isbn        = 1-886411-29-8
+| pages       = 37&ndash;38
+| chapter     = Windows IRC Clients: Visual IRC
+}}
+* Forrest Stroud (8 April 2004) [http://www.winplanet.com/article/2101-.htm Visual IRC], [[internet.com|WinPlanet]] Software Reviews
+{{Ref end}}
+
+==External links==
+{{Portal|Free software}}
+*[http://www.visualirc.net/ Visual IRC homepage]
+*[http://www.visualirc.net/features.php List of features and screenshots]
+*[http://sourceforge.net/projects/visualirc/ SourceForge project page]
+*[http://www.visualscripts.com/ Collection of ViRC scripts]
+*[http://www.visualirc.net/hx/ ViRC DocCenter (Versus language reference)]
+
+{{IRC clients}}
+
+{{IRC-stub}}
+{{DEFAULTSORT:Visual Irc}}
+[[Category:Free Internet Relay Chat clients]]
+[[Category:Internet Relay Chat client scripts]]
+[[Category:Internet Relay Chat clients]]
+[[Category:Scripting languages]]
+[[Category:Windows Internet Relay Chat clients]]
+
+[[pl:Visual IRC]]</body> </html>

@@ -1,0 +1,132 @@
+<html> <head> <title>Behavior of DEVS</title></head><body>Behaviors of a given [[DEVS]] model is a set of sequences of timed events including null events, called [[Event Segment|event segments]] which make the model move one state to another within a set of legal states. To define this way, the concept of a set of illegal state as well a set of legal states are needed to be introduced. 
+
+In addition, since the behaviors of a given DEVS model needs to define how the state transition change both when time is passed by and when an event occurs, it has been described by a much general formalism, called General System [[Behavior_of_DEVS#References|[ZPK00]]]. In this article, we use a sub-class of General System formalism, called [[Timed Event System]] instead. 
+
+Depending on how to define the total state and its external state transition function of [[DEVS]], two ways to define the behavior of a [[DEVS]] model using [[Timed Event System]]. 
+Since [[Behavior of Coupled DEVS|behavior of a Coupled DEVS]] model is defined as an [[DEVS#Atomic_DEVS|Atomic DEVS]] model, behavior of Coupled DEVS class is defined by [[Timed Event System]].
+
+== View 1: Total States = States * Elapsed Times ==
+Suppose that a [[DEVS]] model,
+<math>\mathcal{M}=<X,Y,S,s_0,ta,\delta_{ext},\delta_{int},\lambda></math> has
+
+# the total state set <math>Q=\{(s,t_e)| s \in S, t_e \in (\mathbb{T} \cap [0, ta(s)])\}</math> where <math> t_e </math> denotes elapsed time since last event and <math> \mathbb{T}=[0,\infty)</math> denotes the set of non-negative real numbers, and 
+# the external state transition <math> \delta_{ext}:Q \times X \rightarrow S</math>.
+
+Then the [[DEVS]] model,
+<math>\mathcal{M} </math> is a [[Timed Event System]] <math>\mathcal{G}=<Z,Q,q_0,Q_A,\Delta> </math> where 
+<blockquote>
+*The event set <math>Z=X \cup Y^\phi</math>. 
+*The state set <math>Q=\mathcal{M}.Q \cup \{(illegal,t_e)| illegal \not \in S, t_e \in \mathbb{T} \}</math>.
+*The initial state <math> \,q_0 = (s_0,0)</math>.
+*The set of acceptance states <math> Q_A = \mathcal{M}.Q.</math>
+*The state trajectory function <math> \Delta: Q \times \Omega_{Z,[t_l,t_u]}
+\rightarrow Q</math> is defined for an total state <math> q=(s,t_e) \in Q</math> at time <math> t \in \mathbb{T} </math> and an [[event segment]] <math> \omega \in \Omega_{Z,[t_l,t_u]}</math> as follows.
+
+If [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is  the [[Event Segment#Null Event Segment|null event segment]], i.e.  <math> \omega=\epsilon_{[t, t+dt]}</math>  
+<center> <math>\, \Delta(q, \omega)=(s, t_e+dt).\,</math> </center>
+
+If [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is a [[Event Segment#Timed Event|timed event]] <math> \omega=(x, t)</math> where the event is an input event <math> x \in X</math>, 
+<center> <math> 
+\Delta(q, \omega)= 
+\begin{cases}
+(\delta_{ext}(s,t_e,x), 0)& \textrm{if } ~s \in S\\
+(illegal, t_e)& \textrm{otherwise}.
+\end{cases}
+</math> </center>
+
+If  [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is a [[Event Segment#Timed Event|timed event]]  <math> \omega=(y, t)</math> where the event is an output event or the unobservable event <math> y \in Y^\phi</math>, 
+<center> <math> 
+\Delta(q, \omega)= 
+\begin{cases}
+(\delta_{int}(s), 0)& \textrm{if } ~s \in S, t_e = ta(s), y = \lambda(s)\\
+(illegal, t_e)& \textrm{otherwise}.
+\end{cases}
+</math> </center>
+
+</blockquote>
+
+Computer algorithms to simulate this view of behavior are available at [[Simulation Algorithms for Atomic DEVS]].
+
+== View 2: Total States = States * Lifespans * Elapsed Times  ==
+Suppose that a [[DEVS]] model,
+<math>\mathcal{M}=<X,Y,S,s_0,ta,\delta_{ext},\delta_{int},\lambda></math> has
+
+# the total state set <math>Q=\{(s,t_s, t_e)| s \in S, t_s\in \mathbb{T}^\infty, t_e \in (\mathbb{T} \cap [0, t_s])\}</math> where  <math> t_s </math> denotes lifespan of state <math> s </math>, <math> t_e </math> denotes elapsed time since last <math>t_s </math>update, and <math> \mathbb{T}^\infty=[0,\infty) \cup \{ \infty \}</math> denotes the set of non-negative real numbers plus infinity, 
+# the external state transition is <math> \delta_{ext}:Q \times X \rightarrow S \times \{0,1\} </math>. 
+
+Then the [[DEVS]] <math>Q=\mathcal{D}</math> is a [[Timed Event System]] <math>\mathcal{G}=<Z,Q,q_0,Q_A,\Delta> </math> where 
+<blockquote>
+*The event set <math>Z=X \cup Y^\phi</math>. 
+*The state set <math>Q=\mathcal{M}.Q \cup
+\{(illegal,\infty, t_e)| illegal \not \in S, t_e \in \mathbb{T} \}</math>. 
+*The initial state <math> \,q_0 = (s_0,ta(s_0),0)</math>.
+*The set of acceptance states <math> Q_A = \mathcal{M}.Q</math>.
+*The state trajectory function <math> \Delta: Q \times \Omega_{Z,[t_l,t_u]}
+\rightarrow Q</math> is defined for a total state <math> q=(s,t_s, t_e) \in Q</math> at time <math> t \in \mathbb{T} </math> and an [[event segment]] <math> \omega \in \Omega_{Z,[t_l,t_u]}</math> as follows.
+
+If [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is  the [[Event Segment#Null Event Segment|null event segment]], i.e.  <math> \omega=\epsilon_{[t, t+dt]}</math>   
+<center> <math> \,\Delta(q, \omega)=(s, t_s, t_e+dt).\,</math> </center>
+
+If [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is a [[Event Segment#Timed Event|timed event]] <math> \omega=(x, t)</math> where the event is an input event <math> x \in X</math>, 
+<center> <math> 
+\Delta(q, \omega)= 
+\begin{cases}
+(s', ta(s'), 0)& \textrm{if } ~s \in S, \delta_{ext}(s,t_s,t_e,x)=(s',1)\\
+(s', t_s, t_e)& \textrm{if } ~s \in S, \delta_{ext}(s,t_s,t_e,x)=(s',0)\\
+(s, t_s, t_e)& \textrm{otherwise}.
+\end{cases}
+</math> </center>
+
+If  [[Event Segment#Unit Event Segment|unit event segment]] <math> \omega</math> is a [[Event Segment#Timed Event|timed event]]  <math> \omega=(y, t)</math> where the event is an output event or the unobservable event <math> y \in Y^\phi</math>, 
+<center> <math> 
+\Delta(q, \omega)= 
+\begin{cases}
+(s', ta(s'),0)& \textrm{if } ~s \in S, t_e = t_s, y = \lambda(s), \delta_{int}(s)=s'\\
+(illegal, \infty, t_e)& \textrm{otherwise}.
+\end{cases}
+</math> </center>
+
+</blockquote>
+Computer algorithms to simulate this view of behavior are available at [[Simulation Algorithms for Atomic DEVS]].
+
+== Comparison of View1 and View2 ==
+=== Features of View1 ===
+View1 has been introduced by Zeigler [[Behavior_of_DEVS#References|[Zeigler84]]] in which given a total state <math> q=(s,t_e) \in Q </math> and <center><math>\, ta(s)=\sigma </math> </center> 
+where <math> \sigma </math> is the remaining time [[Behavior_of_DEVS#References|[Zeigler84]]] [[Behavior_of_DEVS#References|[ZPK00]]]. In other words, the set of partial states is indeed <math>S=\{(d,\sigma)| d \in S', \sigma \in \mathbb{T}^\infty \} </math> where <math> S'</math> is a state set.
+
+When a DEVS model receives an input event <math> x \in X</math>, View1 resets the elapsed time <math> t_e </math> by zero, if the DEVS model needs to ignore <math> x </math> in terms of the lifepan control, modellers have to update the remaining time 
+<center> <math>\, \sigma = \sigma - t_e</math> </center> 
+in the external state transition function <math> \delta_{ext} </math> that is the responsibility of the modellers. 
+
+Since the number of possible values of <math> \sigma </math> is the same as the number of possible input events coming to the DEVS model, that is unlimited. As a result, the number of states <math> s=(d, \sigma) \in S </math> is also unlimited that is the reason why View2 has been proposed.
+
+If we don't care the finite-vertex reachability graph of a DEVS model, View1 has an advantage of simplicity for treating the elapsed time <math> t_e=0</math> every time any input event arrives into the DEVS model. But disadvantage might be modelers of DEVS should know how to manage <math>\sigma</math> as above, which is not explicitly explained in <math>\delta_{ext} </math> itself but in <math>\Delta</math>.
+
+=== Features of View2 ===
+View2 has been introduced by Hwang and Zeigler[[Behavior_of_DEVS#References|[HZ06]]][[Behavior_of_DEVS#References|[HZ07]]] in which given a total state <math> q=(s, t_s, t_e) \in Q </math>, the remaining time, <math> \sigma</math> is computed as
+
+<center> <math>\, \sigma = t_s - t_e. 
+</math> </center>
+
+When a DEVS model receives an input event <math> x \in X</math>, View2 resets the elapsed time <math> t_e </math> by zero only if <math> \delta_{ext}(q,x)=(s',1)</math>. If the DEVS model needs to ignore <math> x </math> in terms of the lifepan control, modellers can use <math> \delta_{ext}(q,x)=(s',0) </math>.
+  
+Unlike View1, since the remaining time <math> \sigma </math> is not component of <math> S </math> in nature, if the number of states, i.e. <math> |S| </math> is finite, we can draw a finite-vertex (as well as edge) state-transition diagram [[Behavior_of_DEVS#References|[HZ06]]][[Behavior_of_DEVS#References|[HZ07]]]. As a result, we can abstract behavior of such a DEVS-class network, for example [[SP-DEVS]] and [[FD-DEVS]], as a finite-vertex graph, called reachability graph [[Behavior_of_DEVS#References|[HZ06]]][[Behavior_of_DEVS#References|[HZ07]]].
+
+==See also==
+*[[DEVS]]
+
+*[[Behavior of Coupled DEVS]]
+
+*[[Simulation Algorithms for Atomic DEVS]]
+
+*[[Simulation Algorithms for Coupled DEVS]]
+
+== References ==
+* [Zeigler76] {{cite book|author = Bernard Zeigler | year = 1976| title = Theory of Modeling and Simulation| publisher = Wiley Interscience, New York  | id = |edition=first}}
+* [Zeigler84] {{cite book|author = Bernard Zeigler | year = 1984| title = Multifacetted Modeling and Discrete Event Simulation | publisher = Academic Press, London; Orlando | id = ISBN 978-0127784502  }}
+* [ZKP00] {{cite book|author = Bernard Zeigler, Tag Gon Kim, Herbert Praehofer| year = 2000| title = Theory of Modeling and Simulation| publisher = Academic Press, New York  | id= ISBN 978-0127784557 |edition=second}}
+* [HZ06] M. H. Hwang and B. P. Zeigler, ``A Reachable Graph  of Finite and Deterministic  DEVS Networks``, ''Proceedings of 2006 DEVS Symposium'', pp48-56, Huntsville, Alabama, USA, (Available at http://www.acims.arizona.edu and http://moonho.hwang.googlepages.com/publications)
+* [HZ07] M.H. Hwang and B.P. Zeigler, ``Reachability Graph of Finite & Deterministic DEVS``, IEEE Transactions on Automation Science and Engineering, Volume 6, Issue 3, 2009, pp.454-467, http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?isnumber=5153598&arnumber=5071137&count=19&index=7
+
+[[Category:Automata theory]]
+[[Category:Formal specification languages]]</body> </html>

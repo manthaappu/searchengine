@@ -1,0 +1,182 @@
+<html> <head> <title>ReDoS</title></head><body>{{Orphan|date=April 2010}}
+{{Cleanup|date=May 2010}}
+
+The '''regular expression denial of service (ReDoS)'''
+<ref name="ReDoS in OWASP">
+{{
+cite web
+|author=[[OWASP]]
+|date=2010-02-10
+|url=http://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS
+|title=Regex Denial of Service
+|accessdate=2010-04-16
+}}
+</ref>
+<ref name="Checkmarx">
+{{
+cite web
+|author=[http://www.checkmarx.com Checkmarx]
+|date=2009-09-13
+|url=http://www.checkmarx.com/NewsDetails.aspx?id=23&cat=3
+|title=Regular expression Denial of Service Revisited
+|accessdate=2010-03-19
+}}
+</ref>
+is a [[denial-of-service attack]], that exploits the fact that most [[regular expression]] implementations may reach extreme situations that cause them to work very slowly (exponentially related to input size). An attacker can then cause a program using a regular expression to enter these extreme situations and then hang for a very long time.
+<ref name="RiverStar">
+{{
+cite web
+|author=[[RiverStar Software]]
+|date=2010-01-18
+|url=https://www.riverstarsoftware.com/kb/article/security-bulletin-caution-using-regular-expressions-17.html
+|title=Security Bulletin: Caution Using Regular Expressions
+|accessdate=2010-04-16
+}}
+</ref>
+<ref name="ModSecurity">
+{{
+cite book
+| last = Ristic
+| first = Ivan
+| authorlink = http://blog.ivanristic.com/
+| title = ModSecurity Handbook
+| publisher = [https://www.feistyduck.com/ Feisty Duck Ltd]
+| date = 2010-03-15
+| location = London, UK
+| page = 173
+| url = https://www.feistyduck.com/books/modsecurity-handbook/index.html
+| isbn = 978-1-907117-02-2
+}}</ref>
+
+==Description==
+===The problematic Regex naïve algorithm===
+The regular expression naïve algorithm builds a [[nondeterministic finite-state machine]], which is a finite state machine where for each pair of state and input symbol there may be several possible next states. Then the engine starts to make transition until the end of the input. Since there may be several possible next states, a deterministic algorithms is used. This algorithm tries one by one all the possible paths (if needed) until a match is found (or all the paths are tried and fail).<ref name="Crossby&Wallach">
+{{
+cite web
+|author=Crosby&Wallach, Usenix Security
+|year=2003
+|url=http://www.cs.rice.edu/~scrosby/hash/slides/USENIX-RegexpWIP.2.ppt
+|title=Regular Expression Denial Of Service
+|accessdate=2010-01-13
+}}
+</ref>
+<ref name="Sullivan">
+{{
+cite web
+|author=[http://msdn.microsoft.com/en-us/magazine/ee532098.aspx?sdmr=BryanSullivan&sdmi=authors Bryan Sullivan], [[MSDN Magazine]]
+|date=2010-05-03
+|url=http://msdn.microsoft.com/en-au/magazine/ff646973.aspx
+|title=Regular Expression Denial of Service Attacks and Defenses
+|accessdate=2010-05-06
+}}
+</ref>
+
+For example, the Regex '''''^(a+)+$''''' is represented by the following NFA - [http://www.owasp.org/images/0/0c/NFA.png Regex NFA]
+
+For the input '''''aaaaX''''' there are 16 possible paths in the above graph. But for '''''aaaaaaaaaaaaaaaaX''''' there are 65536 possible paths, and the number is double for each additional '''''a'''''. This is an extreme case where the naïve algorithm is problematic, because it must pass on many paths, and then fail.<ref name="VAC">
+{{
+cite web
+|author=[http://www.owasp.org/index.php/Netherlands OWASP NL]
+|date=2009-12-10
+|url=http://www.owasp.org/images/3/38/20091210_VAC-REGEX_DOS-Adar_Weidman.pdf
+|title=VAC Presentation - ReDoS, OWASP-NL Chapter meeting, Dec. 2009
+|accessdate=2010-03-22
+}}
+</ref>
+
+Notice, that not all algorithms are naïve, and actually Regex algorithms can be written in an efficient way. Unfortunately, most Regex engines today try to solve not only "pure" Regexes, but also "expanded" Regexes with "special additions", such as back-references that cannot be always be solved efficiently (see '''Patterns for non-regular languages''' in regular expression for some more details). So even if the Regex is not "expanded", a naïve algorithm is used.
+
+===Evil Regexes===
+A Regex is called "evil" if it can get stuck on crafted input.<ref name="Podcast">
+{{
+cite web
+|author=Jim Manico&Adar Weidman
+|date=2009-12-07
+|url=http://www.owasp.org/index.php/Podcast_56
+|title=OWASP Podcast 56 (ReDoS)
+|accessdate=2010-04-02
+}}
+</ref>
+
+'''Evil Regex pattern contains''':
+* Grouping with repetition
+* Inside the repeated group:
+** Repetition
+** Alternation with overlapping
+
+'''Examples of Evil Patterns''':
+* (a+)+
+* ([a-zA-Z]+)*
+* (a|aa)+
+* (a|a?)+
+* (.*a){x} | for x > 10
+
+All the above are susceptible to the input '''''aaaaaaaaaaaaaaaaaaaaaaaa!''''' (The minimum input length might change slightly, when using faster or slower machines).
+
+==="Weak" ReDoS===
+Although the main problem with ReDoS seems to be '''Evil Regex'''s, that cause the computer to hang for very short inputs, there is another type of ReDoS, which can be called "Weak" ReDoS. This ReDoS contains patterns that do not cause an exponential behavior, but for long enough inputs (a few hundreds of characters, usually) they make the Regex engine hang for a long time.
+
+An example for such a pattern is
+ a*b?a*x
+Using aaaaaa... (1000 characters) will hang most Regex engines. And this input is certainly a legitimate input length, especially when using files as an input.
+
+This type of pattern might be more common, since at first sight it seems like there is no problem with the expression.
+
+===Attacks===
+The attacker might use the above knowledge to look for applications that use regular expressions, containing an '''Evil Regex''', and send a well-crafted input, that will hang the system. Alternatively, if a Regex itself is affected by a user input, the attacker can inject an '''Evil Regex''', and make the system vulnerable.
+
+==Risk factors==
+The Web is Regex-based. In every layer of the Web there are regular expressions, that might contain an '''Evil Regex'''. An attacker can hang a Web-browser (on a computer or potentially also on a mobile device), hang a Web Application Firewall (WAF), attack a database, and even stack a vulnerable Web server.
+
+For example, if a programmer uses a Regex to validate the client side of a system, and the Regex contains an '''Evil Regex''', the attacker can assume the same vulnerable Regex is used in the server side, and send a well-crafted input, that stacks the Web server.
+
+==Examples==
+===Vulnerable regexes in online repositories===
+1. [http://regexlib.com/REDetails.aspx?regexp_id=1757 ReGexLib,id=1757 (email validation)] - see bold part, which is an '''Evil Regex'''
+ ^([a-zA-Z0-9])'''(([\-.]|[_]+)?([a-zA-Z0-9]+))*'''(@){1}[a-z0-9]+[.]{1}(([a-z]{2,3})|([a-z]{2,3}[.]{1}[a-z]{2,3}))$
+
+Input:
+ aaaaaaaaaaaaaaaaaaaaaaaa!
+
+2. [http://www.owasp.org/index.php/OWASP_Validation_Regex_Repository OWASP Validation Regex Repository], Java Classname - see bold part, which is an '''Evil Regex'''
+ ^'''(([a-z])+.)+'''[A-Z]([a-z])+$
+
+Input:
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+===Web application attack===
+* Open a JavaScript
+* Find '''Evil Regex'''
+* Craft a malicious input for the found Regex
+* Change the request to contain a malicious input
+* You are done!
+
+===ReDoS via regex injection===
+The following example checks if the username is part of the password entered by the user.
+ String userName = textBox1.Text;
+ String password = textBox2.Text;
+ Regex testPassword = new Regex(userName);
+ Match match = testPassword.Match(password);
+ if (match.Success)
+ {
+     MessageBox.Show("Do not include name in password.");
+ }
+ else
+ {
+     MessageBox.Show("Good password.");
+ }
+If an attacker enters ''^(([a-z])+.)+[A-Z]([a-z])+$'' as a username and ''aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!'' as a password, the program will hang.
+
+==References==
+<references/>
+
+==External links==
+* Examples of ReDoS in open source applications:
+** [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2009-3277 ReDoS in DataVault]
+** [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2009-3275 ReDoS in EntLib]
+** [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2009-3276 ReDoS in NASD CORE.NET Terelik]
+* Some benchmarks for ReDoS
+** Achim Hoffman (2010). [http://github.com/EnDe/ReDoS/ "ReDoS - benchmark for regular expression DoS in JavaScript"]. Retrieved 2010-04-19.
+** Richard M. Smith (2010). [http://www.computerbytesman.com/redos "Regular expression denial of service (ReDoS) attack test results"]. Retrieved 2010-04-19.
+
+[[Category:Denial-of-service attacks]]</body> </html>

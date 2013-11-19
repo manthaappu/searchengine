@@ -1,0 +1,36 @@
+<html> <head> <title>Line search</title></head><body>In [[optimization (mathematics)|optimization]], the '''line search''' strategy is one of two basic [[iteration|iterative]] approaches to finding a [[maxima and minima|local minimum]] <math>\mathbf{x}^*</math> of an [[objective function]] <math>f:\mathbb R^n\to\mathbb R</math>. The other approach is [[trust region]]. 
+
+The line search approach first finds a descent direction along which the objective function <math>f</math> will be reduced and then computes a step size that decides how far <math>\mathbf{x}</math> should move along that direction. The descent direction can be computed by various methods, such as [[gradient descent]], [[newton's method]] and [[Quasi-Newton method]]. The step size can be determined either exactly or inexactly.
+
+==Example use ==
+
+Here is an example gradient method that uses a line search in step 4.
+
+# Set iteration counter <math>\displaystyle k=0</math>, and make an initial guess, <math>\mathbf{x}_0</math> for the minimum
+# Repeat:
+#     Compute a [[descent direction]] <math>\mathbf{p}_k</math>
+#     Choose <math>\displaystyle \alpha_k</math> to 'loosely' minimize <math>h(\alpha)=f(\mathbf{x}_k+\alpha\mathbf{p}_k)</math> over <math>\alpha\in\mathbb R_+</math>
+#     Update <math>\mathbf{x}_{k+1}=\mathbf{x}_k+\alpha_k\mathbf{p}_k</math>, and <math>\displaystyle k=k+1</math>
+# Until <math>\|\nabla f(\mathbf{x}_k)\|</math> < tolerance
+
+At the line search step (4) the algorithm might either ''exactly'' minimize ''h'', by solving <math>h'(\alpha_k)=0</math>, or ''loosely'', by asking for a sufficient decrease in ''h''. One example of the former is [[conjugate gradient method]]. The latter may be performed in a number of ways, perhaps by doing a [[backtracking line search]] or using the [[Wolfe conditions]].
+
+Like other optimization methods, line search may be combined with [[simulated annealing]] to allow it to jump over some [[local minimum|local minima]].
+
+==Algorithms==
+=== Direct search methods ===
+In this method, the minimum must first be bracketed, so the algorithm must identify points x<sub>1</sub> and x<sub>2</sub> that are above the minimum. The interval is then divided by computing f(x) at two internal points, x<sub>3</sub> and x<sub>4</sub>, and rejecting whichever of the two outer points has the highest function value. Subsequently only one extra internal point needs to be calculated. Of the various methods of dividing the interval<ref>M.J. Box, D. Davies and W.H. Swann, Non-Linear optimisation Techniques, Oliver & Boyd, 1969</ref>, those that use the [[golden section search|golden ratio]] are particularly simple and effective . 
+:<math>x_4-x_1=x_2-x_3=\frac{1}{\tau}(x_2-x_1), \tau=\frac{1}{2}(1+\sqrt 5)</math>
+
+==See also==
+* [[Secant method]]
+* [[Newton–Raphson method]]
+* [[Pattern search (optimization)]]
+
+==References==
+<references />
+
+[[Category:Mathematical optimization]]
+
+[[fr:Recherche linéaire]]
+[[sl:Minimizacija v dani smeri]]</body> </html>

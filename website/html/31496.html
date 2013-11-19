@@ -1,0 +1,227 @@
+<html> <head> <title>Reconfigurable computing</title></head><body>{{COI|date=April 2009}}
+{{Cleanup-jargon|date=May 2009}}
+'''Reconfigurable computing''' is a [[computer architecture]] combining some of the flexibility of software with the high performance of hardware by processing with very flexible high speed computing fabrics like [[FPGA|field-programmable gate array]]s (FPGAs). The principal difference when compared to using ordinary [[microprocessor]]s is the ability to make substantial changes to the [[datapath]] itself in addition to the control flow. On the other hand, the main difference with custom hardware, i.e. [[application-specific integrated circuit]]s (ASICs) is the possibility to adapt the hardware during runtime by "loading" a new circuit on the reconfigurable fabric.
+
+==History and properties==
+
+The concept of reconfigurable computing has existed since the 1960s, when [[Gerald Estrin]]'s landmark paper proposed the concept of a computer made of a standard processor and an array of "reconfigurable"
+hardware.<ref name="Estrin2002">
+Estrin, G. 2002.
+Reconfigurable computer origins: the UCLA fixed-plus-variable (F+V) structure computer.
+''IEEE Ann. Hist. Comput.''
+ 24, 4 (Oct. 2002), 3–9. DOI=http://dx.doi.org/10.1109/MAHC.2002.1114865
+</ref><ref>
+Estrin, G.,
+"Organization of Computer Systems—The Fixed Plus Variable Structure Computer,"
+''Proc. Western Joint Computer Conf.'',
+Western Joint Computer Conference, New York, 1960, pp. 33–40.
+</ref> The main processor would control the behavior of the reconfigurable hardware. The latter would then be tailored to perform a specific task, such as image processing or pattern matching, as quickly as a dedicated piece of hardware. Once the task was done, the hardware could be adjusted to do some other task. This resulted in a hybrid computer structure combining the flexibility of software with the speed of hardware; unfortunately this idea was far ahead of its time in needed electronic technology.
+
+In the 1980s and 1990s there was a renaissance in this area of research with many proposed reconfigurable architectures developed in industry and academia,<ref name="Bobda2007">C. Bobda: Introduction to Reconfigurable Computing: Architectures; Springer, 2007</ref> such as: [http://www.sciengines.com/copacobana/ COPACOBANA], Matrix, [http://brass.cs.berkeley.edu/garp.html Garp],<ref>Hauser, John R. and Wawrzynek, John,
+"Garp: A MIPS Processor with a Reconfigurable Coprocessor,"
+''Proceedings of the IEEE Symposium on Field-Programmable Custom Computing Machines''
+(FCCM '97, April 16–18, 1997), pp. 24–33.
+</ref> Elixent, PACT XPP, Silicon Hive, Montium, Pleiades, Morphosys, PiCoGA.<ref>Campi, F.; Toma, M.; Lodi, A.; Cappelli, A.; Canegallo, R.; Guerrieri,
+R., "A VLIW processor with reconfigurable instruction set for embedded
+applications," Solid-State Circuits Conference, 2003. Digest of
+Technical Papers. ISSCC. 2003 IEEE International , vol., no., pp.
+250-491 vol.1, 2003</ref> Such designs were feasible due to the constant progress of silicon technology that let complex designs be implemented on one chip. The world's first commercial reconfigurable computer, the Algotronix CHS2X4, was completed in 1991. It was not a commercial success, but was promising enough that [[Xilinx]] (the inventor of the [[FPGA|Field-Programmable Gate Array]], FPGA) bought the technology and hired the Algotronix staff.<ref>[http://www.algotronix.com/people/tom/album.html Algotronix History]</ref>
+
+== Current systems ==
+
+The reconfigurable computers can be categorized in two classes of architectures: hybrid computer and fully [[FPGA]] based computers. Both architectures are designed to transport the benefits of reconfigurable logic to large scale computing. They can be used in traditional CPU cluster computers and network infra structures.
+
+The hybrid computer combine a single or a couple of reconfigurable logic chip, FPGAs, with a standard microprocessor [[CPU]] by exchanging e.g. one CPU of a multi CPU board with a FPGA, also known as [[hybrid-core computing]], or adding a [[Conventional PCI|PCI]] or [[PCI Express]] based FPGA expansion card to the computer. Simplified, they are [[Von Neumann architecture|Von-Neumann]] based architectures with an integrated FPGA accelerator. This architectural compromise results in an reduced scalability of hybrid computers and raises their power consumption. They have the same bottlenecks as all von Neumann based architectures have nevertheless it enables users to get an acceleration of their algorithm without losing their standard CPU based environment.
+
+A relatively new class are the fully FPGA based computers. This class usually contains no CPUs or uses the CPUs only as interface to the network environment. Their benefit is to transport the energy efficiency and scalability of FPGAs fully without compromise to their users. Depending on the Architecture of the interconnection between the FPGAs these machines are fully scalable even across single machine borders. Their bus system and overall architecture eliminate the bottlenecks of the von Neumann architecture.
+
+;Examples for hybrid computers
+
+Known examples for hybrid computers are the [[Cray XD1|XD1]]. A machine designed by OctigaBay. Cray supercomputer company (not affiliated with SRC Computers) acquired OctigaBay and its reconfigurable computing platform, which Cray marketed as the [[Cray XD1|XD1]] until recently. [[Silicon Graphics|SGI]] sells the [[Reconfigurable Application-Specific Computing|RASC]] platform with their [[Altix]] series of supercomputers.<ref>[http://www.sgi.com/products/rasc/ RASC]</ref> [[SRC Computers, Inc.]] has developed a family of reconfigurable computers based on their IMPLICIT+EXPLICIT architecture and MAP processor.  A current example of hybrid-core computers is [[Convey Computer]] Corporation's HC-1, which has both an Intel x86 processor and a Xilinx FPGA coprocessor. Another example is [[CompactRIO]] from [[National Instruments]].
+
+;Examples for fully FPGA based computers
+
+There are a several academic projects who tried to create fully FPGA based computers for several markets. One is the [http://www.sciengines.com/copacobana/ COPACOBANA] the Cost Optimized Codebreaker and Analyzer. A spin-off company [http://www.sciengines.com SciEngines] of the COPACOBANA-Project of the Universities of Bochum and Kiel in Germany currently sells the fourth generation of fully FPGA based computers, COPACOBANA RIVYERA (Reconfigure Versatally your raw architecture).
+
+===Programming of reconfigurable computers===
+
+The FPGA reconfiguration can be accomplished either via the traditional [[hardware description language]]s (HDLs), which can be generated directly or by using electronic design automation ("EDA") or electronic system level ("ESL") tools, employing high level languages like the graphical tool [[Starbridge Viva]] or [[C (programming language)|C]]-based languages like for example [[Impulse C]] from [[Impulse Accelerated Technologies]], [[SystemC]], [[Language for Instruction Set Architecture|LISA]], [[Handel-C]] from [[Celoxica]], [[DIME-C]] from [[Nallatech]], [http://www.c-to-verilog.com C-to-Verilog.com] or Mitrion-C from [[Mitrionics]], or graphical programming languages like [[LabVIEW]].
+
+=== Mitrionics ===
+
+[[Mitrionics]] has developed a SDK that enables software written using a single assignment language to be compiled and executed on FPGA-based computers. The Mitrion-C software language and Mitrion processor enable software developers to write and execute applications on FPGA-based computers in the same manner as with other computing technologies, such as graphical processing units (“GPUs”), cell-based processors, parallel processing units (“PPUs”), multi-core CPUs, and traditional single-core CPU clusters.
+
+=== SRC ===
+
+SRC has developed a ''"Carte"'' compiler that takes an existing high-level languages like [[C (programming language)|C]] or [[Fortran]], and with a few modifications, compiles them for execution on both the FPGA and microprocessor. According to SRC literature{{Citation needed|date=April 2010}}, "...application algorithms are written in a high-level language such as C or Fortran. Carte extracts the maximum parallelism from the code and generates pipelined hardware logic that is instantiated in the MAP. It also generates all the required interface code to manage the movement of data to and from the MAP and to coordinate the microprocessor with the logic running in the MAP." (note that SRC also allows a traditional HDL flow to be used). The SRC systems communicate via the SNAP memory interface, and/or the (optional) Hi-Bar switch.
+
+=== National Instruments ===
+
+[[National Instruments]] have developed a hybrid embedded computing system called [[CompactRIO]]. CompactRIO systems consist of reconfigurable chassis housing the user-programmable FPGA, hot swappable I/O modules, real-time controller for deterministic communication and processing, and graphical LabVIEW software for rapid RT and FPGA programming.
+
+=== Research projects ===
+
+The research community is also acting on the subject with projects like MORPHEUS <ref>[http://www.morpheus-ist.org/ MORPHEUS project home page<!-- Bot generated title -->]</ref> in Europe which implements on a single 100 mm² 90 nm chip an ARM9 processor, an eFPGA from Abound Logic (formerly M2000), a DREAM PiCoGA and a PACT XPP matrix.
+
+Abound Logic <ref>[http://www.aboundlogic.com/ www.aboundlogic.com]</ref> contributes to the MORPHEUS project with an embedded FPGA, and uses the same architecture to make its very large standard FPGAs.
+
+The [[University of Florida]] also has its own version of a reconfigurable computer called Novo-G <ref>[http://www.zeenews.com/news549926.html World's most fastest computer becomes operational]</ref> that is currently the world's fastest and most powerful.
+
+'''Morphing Machines (India)'''
+
+Morphing Machines created the world's most powerful reconfigurable computing platform - ''REDEFINE''.
+
+REDEFINE technology enables a variety of compute-intensive applications in real-time and embedded systems and devices to achieve close to hardware performance at a fraction of the cost of designing and developing ASICs for the same applications. REDEFINE technology is making waves in several domains of applications including cryptography, video processing and transcoding, software defined radio, avionics and automotive, and bespoke other application domains.
+
+== Comparison of systems ==
+
+As an emerging field, classifications of reconfigurable architectures are still being developed and refined as new architectures are developed; no unifying taxonomy has been suggested to date. However, several recurring parameters can be used to classify these systems.
+
+===Granularity===
+
+The granularity of the reconfigurable logic is defined as the size of the smallest functional unit (configurable logic block, CLB) that is addressed by the mapping tools. High granularity, which can also be known as fine-grained, often implies a greater flexibility when implementing algorithms into the hardware. However, there is a penalty associated with this in terms of increased power, area and delay due to greater quantity of routing required per computation. Fine-grained architectures work at the bit-level manipulation level; whilst coarse grained processing elements (reconfigurable datapath unit, rDPU) are better optimised for standard data path applications. One of the drawbacks of coarse grained architectures are that they tend to lose some of their utilisation and performance if they need to perform smaller computations than their granularity provides, for example for a one bit add on a four bit wide functional unit would waste three bits. This problem can be solved by having a coarse grain array ([[reconfigurable datapath array]], rDPA) and a [[FPGA]] on the same chip.
+
+Coarse-grained architectures ([[rDPA]]) are intended for the implementation for algorithms needing word-width data paths (rDPU). As their functional blocks are optimized for large computations and typically comprise word wide [[arithmetic logic unit]]s (ALU), they will perform these computations more quickly and with more power efficiency than a set of interconnected smaller functional units; this is due to the connecting wires being shorter, resulting in less wire capacitance and hence faster and lower power designs. A potential undesirable consequence of having larger computational blocks is that when the size of operands may not match the algorithm an inefficient utilisation of resources can result. Often the type of applications to be run are known in advance allowing the logic, memory and routing resources to be tailored (for instance, see [[KressArray Xplorer]]) to enhance the performance of the device whilst still providing a certain level of flexibility for future adaptation. Examples of this are domain specific arrays aimed at gaining better performance in terms of power, area, throughput than their more generic finer grained [[FPGA]] cousins by reducing their flexibility.
+
+===Rate of reconfiguration===
+
+Configuration of these reconfigurable systems can happen at deployment time, between execution phases or during execution. In a typical reconfigurable system, a bit stream is used to program the device at deployment time. Fine grained systems by their own nature require greater configuration time than more coarse-grained architectures due to more elements needing to be addressed and programmed. Therefore more coarse-grained architectures gain from potential lower energy requirements, as less information is transferred and utilised. Intuitively, the slower the rate of reconfiguration the smaller the energy consumption as the associated energy cost of reconfiguration are amortised over a longer period of time. [[Partial re-configuration]] aims to allow part of the device to be reprogrammed while another part is still performing active computation. [[Partial re-configuration]] allows smaller reconfigurable bit streams thus not wasting energy on transmitting redundant information in the bit stream. Compression of the bit stream is possible but careful analysis is to be carried out to ensure that the energy saved by using smaller bit streams is not outweighed by the computation needed to decompress the data.
+
+===Host coupling===
+
+Often the reconfigurable array is used as a processing accelerator attached to a host processor. The level of coupling determines the type of data transfers, latency, power, throughput and overheads involved when utilising the reconfigurable logic. Some of the most intuitive designs use a peripheral bus to provide a coprocessor like arrangement for the reconfigurable array. However, there have also been implementations where the reconfigurable fabric is much closer to the processor, some are even implemented into the data path, utilising the processor registers. The job of the host processor is to perform the control functions, configure the logic, schedule data and to provide external interfacing.
+
+===Routing/interconnects===
+
+The flexibility in reconfigurable devices mainly comes from their routing interconnect. One style of interconnect made popular by [[FPGA]]s vendors, Xilinx and Altera are the island style layout, where blocks are arranged in an array with vertical and horizontal routing. A layout with inadequate routing may suffer from poor flexibility and resource utilisation, therefore providing limited performance. If too much interconnect is provided this requires more transistors than necessary and thus more silicon area, longer wires and more power consumption.
+
+===Tool flow===
+
+Generally, tools for configurable computing systems can be split up in two parts, [[CAD]] tools for reconfigurable array and compilation tools for CPU. The front-end compiler is an integrated tool, and will generate a structural hardware representation that is input of hardware design flow. Hardware design flow for reconfigurable architecture can be classified by the approach adopted by three main stages of design process: technology mapping, placement algorithm and routing algorithm. The software frameworks differ in the level of the programming language.
+
+Some types of reconfigurable computers are microcoded processors where the [[microcode]] is stored in [[random-access memory|RAM]] or [[EEPROM]], and changeable on [[hard reboot|reboot]] or on the fly. This could be done with the [[Advanced Micro Devices|AMD]] 2900 series [[bit slicing|bit slice processor]]s (on reboot) and later with [[Field-programmable gate array|FPGA]]s (on the fly).
+
+Some{{Which?|date=April 2010}} [[dataflow]] processors are implemented using reconfigurable computing.
+
+A new method of application development for reconfigurable computing is being developed by MNB Technologies, Inc,[http://www.mnbtech.com] under contract to the United States Air Force Office of Scientific Research (AFOSR).  This approach uses a national repository of generic algorithms, similar to the [[BLAS]] and [[LAPACK]] libraries found at netlib.org.  In addition to the repository, the project is developing a tightly integrated suite of expert system based tools that largely eliminate the need for an application developer to have any in-depth knowledge of the underlying hardware or how to use the specialized Verilog and VHDL hardware description languages.  The results of this research will be available without charge to individuals and organizations based in the United States.
+
+To compare the effect of various ways to implement an algorithm on the runtime and energy used, some tools allow compiling the same piece of C code for a fixed CPU, a [[soft processor]], or compiling directly to FPGA [http://www.fpgajournal.com/articles/impulseC.htm].
+
+==Reconfigurable computing as a paradigm shift: using the Anti Machine ==
+
+{|class="wikitable" | align="right"
+|+ ''Table 1: Nick Tredennick’s Paradigm Classification Scheme''
+|-
+|{{highlight1}} colspan="2" | '''Early Historic Computers:'''
+|-
+|{{highlight1}} |  
+! Programming Source
+|-
+| Resources fixed
+| none
+|-
+| Algorithms fixed
+| none
+|-
+|{{highlight2}} colspan=2 | '''von Neumann Computer:'''
+|-
+|{{highlight2}} |  
+! Programming Source
+|-
+| Resources fixed
+| none
+|-
+| Algorithms variable
+| Software (instruction streams)
+|-
+|{{highlight3}} colspan="2"| '''Reconfigurable Computing Systems:'''
+|-
+|{{highlight3}}|  
+! Programming Source
+|-
+| Resources variable
+| [[Configware]] (configuration)
+|-
+| Algorithms variable
+| [[Flowware]] (data streams)
+|}
+
+Computer scientist [[Reiner Hartenstein]] describes reconfigurable computing in terms of an ''[[anti machine]]'' that, according to him, represents a fundamental paradigm shift away from the more conventional [[von Neumann machine]].
+<ref>
+Hartenstein, R. 2001.
+A decade of reconfigurable computing: a visionary retrospective.
+In ''Proceedings of the Conference on Design, Automation and Test in Europe (DATE 2001)'' (Munich, Germany).
+W. Nebel and A. Jerraya, Eds. Design, Automation, and Test in Europe.
+IEEE Press, Piscataway, NJ, 642–649.
+</ref>  Hartenstein calls it '''Reconfigurable Computing Paradox,''' that software-to-[[configware]] migration (software-to-[[FPGA]] migration) results in reported speed-up factors of up to more than four orders of magnitude, as well as a reduction in electricity consumption by up to almost foure orders of magnitude—although the technological parameters of FPGAs are behind the Gordon Moore curve by about four orders of magnitude, and the clock frequency is substantially lower than that of microprocessors. This paradox is due to a paradigm shift, and is also partly explained by the [[Von Neumann syndrome]].
+
+The fundamental model of the reconfigurable computing machine paradigm, the data-stream-based anti machine is well illustrated by the differences to other machine paradigms that were introduced earlier, as shown by [[Nick Tredennick]]'s following classification scheme of computing paradigms (see "Table 1: Nick Tredennick’s Paradigm Classification Scheme").
+<ref>
+N. Tredennick: The Case for Reconfigurable Computing; Microprocessor Report, Vol. 10 No. 10, 5 August 1996, pp 25–27.</ref>
+
+The fundamental model of a [[Anti machine|Reconfigurable Computing Machine]], the data-stream-based  anti machine (also called Xputer), is the counterpart of the instruction-stream-based von Neumann machine paradigm. This is illustrated by a simple reconfigurable system (not [[dynamically reconfigurable|''dynamically'' reconfigurable]]), which has no instruction fetch at run time. The reconfiguration (before run time) can be considered as a kind of ''super instruction fetch''. An anti machine does not have a program counter. The anti machine has data counters instead, since it is data-stream-driven. Here the definition of the term ''data streams'' is adopted from the [[systolic array]] scene, which defines, at which time which data item has to enter or leave which port, here of the reconfigurable system, which may be fine-grained (e. g. using FPGAs) or coarse-grained, or a mixture of both.
+
+The systolic array scene, originally (early 1980s) mainly mathematicians, only defined one half of the anti machine: the data path: the systolic array (also see [[Super systolic array]]). But they did not define nor model the data sequencer methodology, considering that this is not their job to take care where the data streams come from or end up. The data sequencing part of the anti machine is modeled as distributed memory, preferably on chip, which consists of [[auto-sequencing memory]] (ASM) blocks. Each ASM block has a sequencer including a data counter. An example is the [[Generic Address Generator]] (GAG), which is a generalization of the [[Direct memory access|DMA]].
+
+==See also==
+* [[Reconfigurable computing terminology]]
+* [[Partial re-configuration]]
+* [[Sprinter (computer)|Sprinter]]
+* [[1chipMSX]]
+* [[PSoC]]
+* [[PipeRench]]
+* [[Computing with Memory]]
+* [[High-Performance Reconfigurable Computing]]
+
+== References ==
+{{Reflist|2}}
+
+== Further reading ==
+* S. Hauck and A. DeHon, ''Reconfigurable Computing: The Theory and Practice of FPGA-Based Computing'', [[Morgan Kaufmann]], 2008.
+* J. Henkel, S. Parameswaran (editors): Designing Embedded Processors. A Low Power Perspective; Springer Verlag, March 2007
+* J. Teich (editor) et al.: Reconfigurable Computing Systems. Special Topic Issue of Journal ''it — Information Technology'', Oldenbourg Verlag, Munich. [http://www.atypon-link.com/OLD/toc/itit/49/3 Vol. 49(2007) Issue 3]
+* T.J. Todman, G.A. Constantinides, S.J.E. Wilton, O. Mencer, W. Luk and P.Y.K. Cheung, "Reconfigurable Computing: Architectures and Design Methods", IEE Proceedings: Computer & Digital Techniques, Vol. 152, No. 2, March 2005, pp. 193–208.
+* A. Zomaya (editor): Handbook of Nature-Inspired and Innovative Computing: Integrating Classical Models with Emerging Technologies; Springer Verlag, 2006
+* J. M. Arnold and D. A. Buell, "VHDL programming on Splash 2," in More FPGAs, Will Moore and Wayne Luk, editors, Abingdon EE & CS Books, Oxford, England, 1994, pp. 182–191. (Proceedings,International Workshop on Field-Programmable Logic, Oxford, 1993.)
+* J. M. Arnold, D. A. Buell, D. Hoang, D. V. Pryor, N. Shirazi, M. R. Thistle, "Splash 2 and its applications, "Proceedings, International Conference on Computer Design, Cambridge, 1993, pp. 482–486.
+* D. A. Buell and Kenneth L. Pocek, "Custom computing machines: An introduction," [[The Journal of Supercomputing]], v. 9, 1995, pp. 219–230.
+
+==External links==
+*[http://www3.isi.edu/research/research-divisions/div10-home/div10-research_overview/div10-research_fine_grain_computing.htm The Fine-grained Computing Group at Information Sciences Institute]
+* [http://scale.engin.brown.edu/classes/EN2911XF07/ Reconfigurable computing lectures and tutorials at Brown University]
+* [http://www.ics.uci.edu/~dutt/ics212-wq05/hartenstein-recongtut-date01.pdf A Decade of Reconfigurable Computing: a Visionary Retrospective]
+* [http://pw1.netcom.com/~optmagic/reconfigure/fawcett.html Reconfigurable Computing: Coming of Age]
+* [http://www.cse.sc.edu/~buell/Public_Data/reconlab.html The University of South Carolina Reconfigurable Computing Laboratory]
+* [http://www.ccm.ece.vt.edu/ The Virginia Tech Configurable Computing Laboratory]
+* [http://rssi.ncsa.uiuc.edu/ Reconfigurable Systems Summer Institute (RSSI)]
+* [http://www.fccm.org/ IEEE Symposium on Field-Programmable Custom Computing Machines (FCCM)]
+* [http://fpl.org/ International Conference on Field-Programmable Logic and Applications (FPL)]
+* [http://www.jhdl.org/ BYU Configurable Computing Laboratory's FPGA CAD tool set]
+* [http://morphware.net/ The Morphware Forum]
+* [http://www.chrec.org/ NSF Center for High-Performance Reconfigurable Computing (CHREC)]
+* [http://www.openfpga.org/ The OpenFPGA effort]
+* [http://helios.informatik.uni-kl.de/RCeducation/ RC Education Workshop]
+* [http://xputers.informatik.uni-kl.de/raw/index_raw.html#raw_06 Reconfigurable Architectures Workshop]
+* [http://hpcl.seas.gwu.edu/ The George Washington University High Performance Computing Laboratory]
+* [http://www.hcs.ufl.edu/ The University of Florida High-Performance Computing & Simulation Research Laboratory]
+* [http://www.ittc.ku.edu/hybridthreads The University of Kansas Hybridthreads Project - OS for Hybrid CPU/FPGA chips]
+* [http://www.ece.wisc.edu/~kati/research.html Reconfigurable computing tools and O/S Support from the University of Wisconsin]
+* [http://cas.ee.ic.ac.uk Circuits and Systems Group, Imperial College London]
+* [http://isvlsi06.itiv.uni-karlsruhe.de/RCe-i1.pdf Why we need reconfigurable computing education]
+* [http://proteas.ee.duth.gr The on-line version of the MEANDER FPGA design framework]
+* [http://www.fhpca.org/ FHPCA: FPGA High Performance Computing Alliance]
+* [http://www.dresd.org/ Website of the DRESD (Dynamic Reconfigurability in Embedded System Design) research project]
+* [http://www.stanford.edu/class/ee392c/ Advanced topics in computer architecture: chip multiprocessors and polymorphic processors (2003)]
+* [http://www.cs.utexas.edu/users/cart/trips/ UT Austin TRIPS multiprocessor]
+* [http://rcs.uncc.edu/wiki/index.php/Main_Page UNC Charlotte reconfigurable computing cluster]
+* [http://www.arces.unibo.it/content/view/31/243 XiRisc/PiCoGA project at University of Bologna, Italy]
+* [http://www.sciengines.com/copacobana/ COPACOBANA Project, Germany]
+
+{{DEFAULTSORT:Reconfigurable Computing}}
+[[Category:Digital electronics]]
+[[Category:Reconfigurable computing| ]]
+
+[[de:Reconfigurable Computing]]
+[[hu:Újrakonfigurálható számítás]]
+[[ja:Reconfigurable computing]]
+[[zh:可重組計算]]</body> </html>

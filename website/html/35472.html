@@ -1,0 +1,88 @@
+<html> <head> <title>Ssh-keygen</title></head><body>{{DISPLAYTITLE:ssh-keygen}}
+{{Howto|date=January 2010}}
+
+'''SSH-Keygen''' is a Linux/Unix utility that is used to generate, manage, and convert authentication keys for ssh authentication. With the help of the SSH-Keygen tool, a user can create [[passphrase]] keys for both [[Secure Shell|SSH]] protocol version 1 and version 2. SSH-keygen tool creates [[RSA]] keys for SSH protocol version 1 and RSA or [[Digital_Signature_Algorithm|DSA]] keys for use by SSH protocol version 2. 
+
+==Working==
+
+The SSH-keygen tool stores the private key in $HOME/.ssh/id_rsa and the public key in $HOME/.ssh/id_rsa.pub in the user’s home directory. The user should then copy the id_rsa.pub to $HOME/.ssh/authorized_keys in his home directory on the remote machine. It also asks for a passphrase. The passphrase may be empty to indicate no passphrase (host keys must have an empty passphrase), or it may be a string of the arbitrary length. Instead of RSA, DSA can also be used. The steps to create authorization keys by using the SSH-keygen tool are as follows:
+
+*'''Start the SSH-keygen tool by using the following command to generate an RSA authentication key:'''
+
+ [axl@asterisk1 axl]$ ssh-keygen -t rsa
+ Generating public/private rsa key pair.
+ ...
+
+*'''Enter the path to the file that will hold the key:''' By default, the file name $HOME/.ssh/id_rsa, which represents an RSA v2 key, appears in parentheses.  
+ 
+ Enter file in which to save the key (/home/axl/.ssh/id_rsa): <return>
+
+*'''Enter a passphrase for using your key:''' The passphrase you will enter will be used for encrypting your private key. A good passphrase should be alphanumeric having 10-30 character length. You can also use the null passphrase however it can be a loophole for the security.
+
+ Enter passphrase (empty for no passphrase): <Type the passphrase>
+ 
+*'''Re-enter the passphrase to confirm it:''' Type your passphrase once again to confirm it.
+ 
+ Enter same passphrase again: <Type the passphrase>
+ Your identification has been saved in /home/axl/.ssh/id_rsa.
+ Your public key has been saved in /home/axl/.ssh/id_rsa.pub.
+ The key fingerprint is:
+ 0b:fa:3c:b8:73:71:bf:58:57:eb:2a:2b:8c:2f:4e:37 axl@myLocalHost
+ 
+* '''Check the Passphrase Key:''' The private key was saved in .ssh/id_rsa file which is the read-only file. No one else must see the content of that file, as it is used to decrypt all correspondence encrypted with the public key. The public key is save in .ssh/id_rsa.pub file.
+ 
+* '''Copy the Public Key onto remote systems' .ssh/authorized_keys file:''' Now, you have to copy the public key onto a remote systems' .ssh/authorized_keys file. And you can now SSH to the remote systems's account without using a password.
+
+==ssh-keygen command syntax==
+
+The syntax of the ssh-keygen file is as follows:
+
+ ssh-keygen [options]
+
+Some of the important options of ssh-keygen command are as follows:
+
+{| class="wikitable"
+|-
+! ssh-keygen command options 
+! description
+|-
+| -b bits
+| Specifies the number of bits in the key to create. The minimum bit length is 512 bits and the default length is 2048 bits.
+|-
+| -p 
+| Requests changing the passphrase of a private key file instead of creating a new private key. 
+|-
+| -t
+| Specifies the type of key to create.
+|-
+| -q
+| quiets ssh-keygen. It is used by the /etc/rc file while creating a new key.
+|-
+| -N 
+| Provides a new Passphrase.
+|}
+
+==Files Used by SSH-Keygen utility==
+
+The SSH-Keygen utility uses various files for storing public and private keys. The files used by SSH-Keygen utility are as follows:
+
+*'''$HOME/.ssh/identity:''' The $HOME/.ssh/identity file contains the RSA private key when using the SSH protocol version 1. 
+
+*'''$HOME/.ssh/identity.pub:''' The $HOME/.ssh/identity.pub file contains the RSA public key for authentication when you are using the SSH protocol version 1. A user should copy its contents in the $HOME/.ssh/authorized_keys file of the remote system where a user wants to log in using RSA authentication.
+
+*'''$HOME/.ssh/id_dsa:''' The $HOME/.ssh/id_dsa file contains the protocol version 2 DSA authentication identity of the user. 
+
+*'''$HOME/.ssh/id_dsa.pub:''' The $HOME/.ssh/id_dsa.pub file contains the DSA public key for authentication when you are using the SSH protocol version 2. A user should copy its contents in the $HOME/.ssh/authorized_keys file of the remote system where a user wants to log in using DSA authentication.
+
+*'''$HOME/.ssh/id_rsa:''' The $HOME/.ssh/id_rsa file contains the protocol version 2 RSA authentication identity of the user. This file should not be readable by anyone but the user.
+
+*'''$HOME/.ssh/id_rsa.pub:''' The $HOME/.ssh/id_rsa.pub file contains the protocol version 2 RSA public key for authentication. The contents of this file should be added to $HOME/.ssh/authorized_keys on all computers where a user wishes to log in using public key authentication.
+
+==External links==
+* [http://linux.die.net/man/1/ssh-keygen ssh-keygen manual page]
+
+{{unix commands}}
+
+[[Category:Operating system security]]
+[[Category:Standard Unix programs]]
+[[Category:Unix network-related software]]</body> </html>

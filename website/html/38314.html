@@ -1,0 +1,103 @@
+<html> <head> <title>Truncated binary encoding</title></head><body>{{Unreferenced|date=December 2009}}
+
+'''Truncated binary encoding''' is an [[entropy encoding]] typically used for uniform [[probability distribution]]s with a finite alphabet. It is parameterized by an alphabet with total size of number ''n''. It is a slightly more general form of [[Binary numeral system|binary encoding]] when ''n'' is not a [[power of two]].
+
+Let ''n'' = 2<sup>''k''</sup>+''b'', for 0 ≤ ''b'' ≤ 2<sup>''k''</sup>.  If ''n'' is a power of 2, you may choose two possible values of ''k''; both produce the same coded values, which are identical to a simple binary code.
+
+Truncated binary encoding assigns the first 2<sup>''k''</sup>−''b'' symbols codewords of length ''k'' and then assigns the remaining 2''b'' symbols the '''last''' 2''b'' codewords of length ''k''+1.  Because all the codewords of length ''k''+1 consist of an unassigned codeword of length ''k'' with a "0" or "1" appended, the resulting code is a [[prefix code]].
+
+==Example with ''n'' = 5==
+For example, for the alphabet {0, 1, 2, 3, 4}, ''n'' = 5 = 2²+1.  Truncated binary encoding assigns the first three symbols (2²−1) the codewords 00, 01, and 10, all of length 2, then assigns the last two symbols the codewords 110 and 111, the last two codewords of length 3, each of which is the unused two-bit codeword 11 with an extra digit appended. 
+
+For example, if ''n'' is 5, plain binary encoding and truncated binary encoding allocates the following [[codewords]].  Digits shown <del>struck</del> are not transmitted in truncated binary.
+<!-- &#8199; is Unicode "figure space", a blank space the same width as a digit. -->
+{|border="1" class="wikitable" style="text-align:center"
+|-
+! Truncated<br/>binary !!colspan=3| Encoding !! Standard<br/>binary
+|-
+|align=right| 0 ||bgcolor=silver| <del>0</del> || 0 || 0 ||align=left| 0
+|-
+|align=right| 1 ||bgcolor=silver| <del>0</del> || 0 || 1 ||align=left| 1
+|-
+|align=right| 2 ||bgcolor=silver| <del>0</del> || 1 || 0 ||align=left| 2
+|-
+|align=right| UNUSED ||bgcolor=silver| <del>0</del> ||bgcolor=silver| <del>1</del> ||bgcolor=silver| <del>1</del> ||align=left| 3
+|-
+|align=right| UNUSED ||bgcolor=silver| <del>1</del> ||bgcolor=silver| <del>0</del> ||bgcolor=silver| <del>0</del> ||align=left| 4
+|-
+|align=right| UNUSED ||bgcolor=silver| <del>1</del> ||bgcolor=silver| <del>0</del> ||bgcolor=silver| <del>1</del> ||align=left| 5/UNUSED
+|-
+|align=right| 3 || 1 || 1 || 0 ||align=left| 6/UNUSED
+|-
+|align=right| 4 || 1 || 1 || 1 ||align=left| 7/UNUSED
+|}
+The nearest power of 2 after ''n'' = 5 is 2³ = 8, so there are ''u'' = 8−5 = 3 unused codes in the straightforward 3-bit binary encoding.
+
+In numerical terms, to send a value 0 ≤ ''x'' < ''n'', which is one of 2<sup>''k''</sup> ≤ ''n'' ≤ 2<sup>''k''+1</sup> symbols, there are ''u'' = 2<sup>''k''+1</sup>−''n'' unused entries when the alphabet size is rounded up to the nearest power of two.  The process to encode the number ''x'' in truncated binary is: If ''x'' is less than ''u'', encode it in ''k'' binary bits.  If ''x'' is greater than or equal to ''u'', encode the value ''x''+''u'' in ''k''+1 binary bits.
+
+==Example with ''n'' = 10==
+Another example, encoding an alphabet of size 10 (between 0 and 9) requires ''k''=4 bits, but there are 2<sup>4</sup>−10 = 6 unused codes, so input values less than 6 have the first bit discarded, while input values greater than or equal to 6 are offset by 6 to the end of the binary space.  (Unused patterns are not shown in this table.)
+
+{|border="1" class="wikitable" style="text-align:center"
+|-
+!Input<br/>value!!Offset!!Offset<br/>value!!Standard<br/>Binary||Truncated<br />Binary
+|-
+| 0 || 0 ||  0 || <del>0</del>000 || 000 
+|-
+| 1 || 0 ||  1 || <del>0</del>001 || 001 
+|-
+| 2 || 0 ||  2 || <del>0</del>010 || 010 
+|-
+| 3 || 0 ||  3 || <del>0</del>011 || 011 
+|-
+| 4 || 0 ||  4 || <del>0</del>100 || 100 
+|-
+| 5 || 0 ||  5 || <del>0</del>101 || 101 
+|-
+|colspan=4|
+|-
+| 6 || 6 || 12 || 1100 || 1100
+|-
+| 7 || 6 || 13 || 1101 || 1101
+|-
+| 8 || 6 || 14 || 1110 || 1110
+|-
+| 9 || 6 || 15 || 1111 || 1111
+|}
+
+To decode, read the first ''k'' bits.  If they encode a value less than ''u'', decoding is complete.  Otherwise, add an additional bit and subtract ''u'' from the result.
+
+==Example with ''n'' = 7==
+Here is a more extreme case: with ''n'' = 7 the next power of 2 is 8 (we will then use 3 bits or 2 bits if the high bit is discarded) and ''u'' = 1:
+{|border="1" class="wikitable" style="text-align:center"
+|-
+!Input<br/>value!!Offset!!Offset<br />value!!Standard<br/>Binary||Truncated<br />Binary
+|-
+| 0 || 0 || 0 || <del>0</del>00 || 00 
+|-
+|colspan=4|
+|-
+| 1 || 1 || 2 || 010 || 010
+|-
+| 2 || 1 || 3 || 011 || 011
+|-
+| 3 || 1 || 4 || 100 || 100
+|-
+| 4 || 1 || 5 || 101 || 101
+|-
+| 5 || 1 || 6 || 110 || 110
+|-
+| 6 || 1 || 7 || 111 || 111
+|}
+
+This last example demonstrates that a leading zero bit does not always indicate a short code; if ''u'' < 2<sup>''k''−1</sup>, some long codes will begin with a zero bit.
+
+If ''n'' is a power of two, then the encoding may be done with either of two different values of ''k''.  Both produce equivalent outputs; one just has ''u'' = 2<sup>''k''</sup> and encodes all values as "short" ''k''-bit codes, while the other has ''u'' = 0 and encodes everything with "long" ''k''+1-bit codes.
+
+==See also==
+* [[Benford's law]]
+
+{{DEFAULTSORT:Truncated Binary Encoding}}
+[[Category:Lossless compression algorithms]]
+
+[[fr:Codage binaire tronqué]]</body> </html>

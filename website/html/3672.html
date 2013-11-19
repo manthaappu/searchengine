@@ -1,0 +1,51 @@
+<html> <head> <title>Beta normal form</title></head><body>{{Unreferenced|date=December 2009}}
+In the [[lambda calculus]], a term is in '''beta normal form''' if no ''[[lambda calculus#β-reduction|beta reduction]]'' is possible. A term is in '''beta-eta normal form''' if neither a beta reduction nor an ''[[lambda calculus#η-conversion|eta reduction]]'' is possible. A term is in '''head normal form''' if there is no ''beta-redex in head position''.
+
+==Beta reduction==
+In the lambda calculus, a '''beta redex''' is a term of the form
+
+:<math> ((\mathbf{\lambda} x . A(x)) t) </math>
+
+where <math>A(x)</math> is a term (possibly) involving variable <math>x</math>.
+
+A ''beta reduction'' is an application of the following rewrite rule to a beta redex
+
+:<math> ((\mathbf{\lambda} x . A(x)) t) \rightarrow A(t)</math>
+
+where <math>A(t)</math> is the result of substituting the term <math>t</math> for the variable <math>x</math> in the term <math>A(x)</math>.
+
+A beta reduction is in head position if it is of the following form:
+
+* <math> \lambda x_0 \ldots \lambda x_{i-1} . (\lambda x_i . A(x_i)) M_1 M_2 \ldots M_n \rightarrow
+         \lambda x_0 \ldots \lambda x_{i-1} . A(M_1) M_2 \ldots M_n </math>, where <math> i \geq 0, n \geq 1 </math>.
+
+Any reduction not in this form is an internal beta reduction.
+
+===Reduction strategies===
+In general, there can be several different beta reductions possible for a given term. '''Normal-order reduction''' is the [[evaluation strategy]] in which one continually applies the rule for ''beta reduction in head position'' until no more such reductions are possible. At that point, the resulting term is in ''head normal form''.
+
+In contrast, in '''applicative order reduction''', one applies the internal reductions first, and then only applies the head reduction when no more internal reductions are possible.
+
+Normal-order reduction is complete, in the sense that if a term has a head normal form, then normal order reduction will eventually reach it. In contrast, applicative order reduction may not terminate, even when the term has a normal form. For example, using applicative order reduction, the following sequence of reductions is possible:
+
+:<math> (\mathbf{\lambda} x . z) ((\lambda w. w w w) (\lambda w. w w w)) </math>
+:<math> \rightarrow (\lambda x . z) ((\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w))</math>
+:<math> \rightarrow (\lambda x . z) ((\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w))</math>
+:<math> \rightarrow (\lambda x . z) ((\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w) (\lambda w. w w w))</math>
+:<math>\ldots</math>
+
+But using normal-order reduction, the same starting point reduces quickly to normal form:
+
+:<math> (\mathbf{\lambda} x . z) ((\lambda w. w w w) (\lambda w. w w w)) </math>
+:<math> \rightarrow z </math>
+
+Sinot's [[director string]]s is one method by which the computational complexity of beta reduction can be optimized.
+
+==See also==
+* [[Lambda calculus]]
+* [[Normal form]]
+
+{{DEFAULTSORT:Beta Normal Form}}
+[[Category:Lambda calculus]]
+
+[[zh:Beta范式]]</body> </html>

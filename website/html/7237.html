@@ -1,0 +1,87 @@
+<html> <head> <title>Comparison sort</title></head><body>[[Image:Balance à tabac 1850.JPG|thumb|right|300px|Sorting a set of unlabelled weights by weight using only a balance scale requires a comparison sort algorithm]]
+A '''comparison sort''' is a type of [[sorting algorithm]] that only reads the list elements through a single abstract comparison operation (often a "less than or equal to" operator) that determines which of two elements should occur first in the final sorted list. The only requirement is that the operator obey two of the properties of a [[total order]]:
+# if ''a'' ≤ ''b'' and ''b'' ≤ ''c'' then ''a'' ≤ ''c'' (transitivity)
+# for all ''a'' and ''b'', either ''a'' ≤ ''b'' or ''b'' ≤ ''a'' (totalness or [[trichotomy (mathematics)|trichotomy]]).
+
+It is possible that both ''a'' ≤ ''b'' and ''b'' ≤ ''a''; in this case either may come first in the sorted list. In a [[Sorting_algorithm#Stability|stable sort]], the input order determines the sorted order in this case.
+
+A metaphor for thinking about comparison sorts is that someone has a set of unlabelled weights and a [[balance scale]]. Their goal is to line up the weights in order by their weight without any information except that obtained by placing two weights on the scale and seeing which one is heavier (or if they weigh the same).
+
+==Examples==
+[[File:Bubble sort animation.gif|thumb|right|250px|A bubble sort, a sorting algorithm that continuously steps through a list, [[Swap (computer science)|swapping]] items until they appear in the correct order.]]
+Some of the most well-known comparison sorts include:
+*[[Quick sort]]
+*[[Heap sort]]
+*[[Merge sort]]
+*[[Intro sort]]
+*[[Insertion sort]]
+*[[Selection sort]]
+*[[Bubble sort]]
+*[[Cocktail sort]]
+*[[Cycle sort]]
+
+Some examples of sorts which are not comparison sorts include:
+* [[Radix sort]] (examines individual bits of keys)
+* [[Counting sort]] (indexes using key values)
+* [[Bucket sort]] (examines bits of keys)
+
+==Performance limits and advantages of different sorting techniques==
+
+There are fundamental limits on the performance of comparison sorts. A comparison sort must have a lower bound of [[big-O notation|Ω]](''n'' log ''n'') comparison operations<ref>http://planetmath.org/encyclopedia/LowerBoundForSorting.html</ref>. This is a consequence of the limited information available through comparisons alone &mdash; or, to put it differently, of the vague algebraic structure of totally ordered sets. In this sense, mergesort, heapsort, and introsort are [[asymptotically optimal]] in terms of the number of comparisons they must perform, although this metric neglects other operations. The three non-comparison sorts above achieve [[big-O notation|O]](''n'') performance by using operations other than comparisons, allowing them to sidestep this lower bound (assuming elements are constant-sized).
+
+Nevertheless, comparison sorts offer the notable advantage that control over the comparison function allows sorting of many different datatypes and fine control over how the list is sorted. For example, reversing the result of the comparison function allows the list to be sorted in reverse; for instance, one can sort a list of [[tuple]]s in [[lexicographic order]] by just creating a comparison function that compares each part in sequence:
+ '''function''' tupleCompare((lefta, leftb, leftc), (righta, rightb, rightc))
+     '''if''' lefta ≠ righta
+         '''return''' compare(lefta, righta)
+     '''else if''' leftb ≠ rightb
+         '''return''' compare(leftb, rightb)
+     '''else'''
+         '''return''' compare(leftc, rightc)
+
+[[Balanced ternary]] notation allows comparisons to be made in one step, whose result will be one of "less than", "greater than" or "equal to".
+
+Comparison sorts generally adapt more easily to complex orders such as the order of floating-point numbers. Additionally, once a comparison function is written, any comparison sort can be used without modification; non-comparison sorts typically require specialized versions for each datatype.
+
+This flexibility, together with the efficiency of the above comparison sorting algorithms on modern computers, has led to widespread preference for comparison sorts in most practical work.
+
+== Number of comparisons required to sort a list ==
+The number of comparisons that a comparison sort algorithm requires increases in proportion to <math>n\log(n)</math>, where <math>n</math> is the number of elements to sort. This bound is [[asymptotic complexity|asymptotically tight]]:
+
+Given a list of distinct numbers (we can assume this because this is a worst-case analysis), there are ''n'' [[factorial]] permutations exactly one of which is the list in sorted order. The sort algorithm must gain enough information from the comparisons to identify the correct permutation. If the algorithm always completes after at most ''f''(''n'') steps, it cannot distinguish more than 2<sup>''f''(''n'')</sup> cases because the keys are distinct and each comparison has only two possible outcomes. Therefore,
+:<math>2^{f(n)}\geq n!</math>, or equivalently <math>f(n)\geq\log_2(n!).</math>
+From [[Stirling's approximation]] we know that <math>\log_2(n!)</math> is <math>\Omega(n \log_2 n)</math>. This provides the lower-bound part of the claim.
+
+An identical upper bound follows from the existence of the algorithms that attain this bound in the worst case.
+
+The above argument provides an ''absolute'', rather than only asymptotic lower bound on the number of comparisons, namely <math>\lceil\log_2(n!)\rceil</math> comparisons. This lower bound is fairly good (it can be approached within a linear tolerance by a simple merge sort), but it is known to be inexact. For example, <math>\lceil\log_2(13!)\rceil=33</math>, but the minimal number of comparisons to sort 13 elements has been proved to be 34
+<ref>Marcin Peczarski: The Ford-Johnson algorithm is still unbeaten for less than 47 elements. Inf. Process. Lett. 101(3): 126-128 (2007)
+[http://dx.doi.org/10.1016/j.ipl.2006.09.001 doi:10.1016/j.ipl.2006.09.001]</ref>.
+
+Determining the ''exact'' number of comparisons needed to sort a given number of entries is a computationally hard problem even for small ''n'', and no simple formula for the solution is known. For some of the few concrete values that have been computed, see {{OEIS2C|id=A036604}}.
+
+=== Lower bound for the average number of comparisons ===
+A similar bound applies to the average number of comparisons. Assuming that
+* all keys are distinct, i.e. every comparison will give either ''a>b'' or ''a<b'', and
+* the input is a random permutation, chosen uniformly from the set of all possible permutations of ''n'' elements,
+it is impossible to determine which order the input is in with fewer than ''log<sub>2</sub>(n!)'' comparisons on average.
+
+This can be most easily seen using concepts from [[information theory]]. The [[Shannon entropy]] of such a random permutation is ''log<sub>2</sub>(n!)'' bits. Since a comparison can give only two results, the maximum amount of information it provides is 1 bit. Therefore after ''k'' comparisons the remaining entropy of the permutation, given the results of those comparisons, is at least ''log<sub>2</sub>(n!) - k'' bits on average. To perform the sort, complete information is needed, so the remaining entropy must be 0. It follows that ''k'' must be at least ''log<sub>2</sub>(n!)''.
+
+Note that this differs from the worst case argument given above, in that it does not allow rounding up to the nearest integer. For example, for ''n = 3'', the lower bound for the worst case is 3, the lower bound for the average case as shown above is approximately 2.58, while the highest lower bound for the average case is 8/3, approximately 2.67.
+
+In the case that multiple items may have the same key, there is no obvious statistical interpretation for the term "average case", so an argument like the above cannot be applied without making specific assumptions about the distribution of keys.
+
+==Notes ==
+<references/>
+
+==References==
+
+* [[Donald Knuth]]. ''The Art of Computer Programming'', Volume 3: ''Sorting and Searching'', Second Edition. Addison-Wesley, 1997. ISBN 0-201-89685-0. Section 5.3.1: Minimum-Comparison Sorting, pp. 180&ndash;197.
+* [[Thomas H. Cormen]], [[Charles E. Leiserson]], [[Ronald L. Rivest]], and [[Clifford Stein]]. ''[[Introduction to Algorithms]]'', Second Edition. MIT Press and McGraw-Hill, 2001. ISBN 0-262-03293-7. Section 8.1: Lower bounds for sorting, pp. 165&ndash;168.
+
+{{DEFAULTSORT:Comparison Sort}}
+[[Category:Sorting algorithms]]
+
+[[it:Algoritmi di ordinamento comparativi]]
+[[ml:താരതമ്യ സോർട്ട്]]
+[[pt:Ordenação por comparação]]</body> </html>

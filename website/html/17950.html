@@ -1,0 +1,67 @@
+<html> <head> <title>Image registration</title></head><body>[[Image:Registrator Demo2.png|thumb|right|Registering and summing multiple exposures of the same scene improves signal to noise ratio, allowing to see things previously impossible to see.]]
+{{Refimprove|date=August 2008}}
+
+'''Image registration''' is the process of transforming different sets of data into one coordinate system. Data may be multiple photographs, data from different sensors, from different times, or from different viewpoints.<ref>[http://portal.acm.org/citation.cfm?id=146374 Lisa Gottesfeld Brown, A survey of image registration techniques (''abstract''), ACM Computing Surveys (CSUR)  archive, Volume 24 ,  Issue 4, December 1992), Pages: 325 - 376]</ref> It is used in [[computer vision]], [[medical imaging]], military [[automatic target recognition]], and compiling and analyzing images and data from satellites. Registration is necessary in order to be able to compare or integrate the data obtained from these different measurements.
+
+== Algorithm classification ==
+=== Intensity-based vs feature-based ===
+Image registration or image alignment algorithms can be classified into intensity-based and feature-based.<ref name="AG">A. Ardeshir Goshtasby: [http://www.wiley.com/WileyCDA/WileyTitle/productCd-0471649546.html 2-D and 3-D Image Registration for Medical, Remote Sensing, and Industrial Applications], Wiley Press, 2005.</ref> One of the images is referred to as the ''reference'' or ''source'' and the second image is referred to as the ''target'' or ''sensed.'' Image registration involves spatially transforming the target image to align with the reference image.<ref name="AG"/> Intensity-based methods compare intensity patterns in images via correlation metrics, while feature-based methods find correspondence between image features such as points, lines, and contours.<ref name="AG"/> Intensity-based methods register entire images or subimages. If subimages are registered, centers of corresponding subimages are treated as corresponding feature points. Feature-based method established correspondence between a number of points in images. Knowing the correspondence between a number of points in images, a transformation is then determined to map the target image to the reference images, thereby  establishing point-by-point correspondence between the reference and target images.<ref name="AG"/>
+
+=== Transformation models ===
+Image registration algorithms can also be classified according to the transformation models they use to relate the target image space to the reference image space. The first broad category of transformation models includes [[linear transformation]]s, which include translation, rotation, scaling, and other affine transforms. [[Linear transformation]]s are global in nature, thus, they cannot model local geometric differences between images.<ref name="AG"/>
+
+The second category of transformations allow 'elastic' or 'nonrigid' transformations. These transformations are capable of locally warping the target image to align with the reference image.  Nonrigid transformations include radial basis functions (thin-plate or surface splines, multiquadrics, and compactly-supported transformations<ref name="AG"/>), physical continuum models (viscous fluids), and large deformation models ([[diffeomorphism]]s).
+
+=== Spatial vs. frequency domain methods ===
+Spatial methods operate in the image domain, matching intensity patterns or features in images. Some of the feature matching algorithms are outgrowths of traditional techniques for performing manual image registration, in which an operator chooses corresponding [[Feature (computer vision)|control points]] (CPs) in images. When the number of control points exceeds the minimum required to define the appropriate transformation model, iterative algorithms like [[RANSAC]] can be used to robustly estimate the parameters of a particular transformation type (e.g. affine) for registration of the images.
+
+Frequency-domain methods find the transformation parameters for registration of the images while working in the transform domain. Such methods work for simple transformations, such as translation, rotation, and scaling. Applying the [[Phase correlation]] method to a pair of images produces a third image which contains a single peak. The location of this peak corresponds to the relative translation between the images. Unlike many spatial-domain algorithms, the phase correlation method is resilient to noise, occlusions, and other defects typical of medical or satellite images. Additionally, the phase correlation uses the [[fast Fourier transform]] to compute the cross-correlation between the two images, generally resulting in large performance gains. The method can be extended to determine rotation and scaling differences between two images by first converting the images to [[Log-polar coordinates|log-polar]] coordinates. Due to properties of the [[Fourier transform]], the rotation and scaling parameters can be determined in a manner invariant to translation.
+
+=== Single- vs. multi-modality methods ===
+Another classification can be made between single-modality and multi-modality methods. Single-modality methods tend to register images in the same modality acquired by the same scanner/sensor type, while multi-modality registration methods tended to register images acquired by different scanner/sensor types.
+
+Multi-modality registration methods are often used in [[medical imaging]] as images of a subject are frequently obtained from different scanners. Examples include registration of brain [[Computed tomography|CT]]/[[MRI]] images or whole body [[Positron emission tomography|PET]]/[[Computed tomography|CT]] images for tumor localization, registration of contrast-enhanced [[Computed tomography|CT]] images against non-contrast-enhanced [[Computed tomography|CT]] images for segmentation of specific parts of the anatomy, and registration of [[ultrasound]] and [[Computed tomography|CT]] images for [[prostate]] localization in [[radiotherapy]].
+
+=== Automatic vs. interactive methods ===
+Registration methods may be classified based on the level of automation they provide. Manual, interactive, semi-automatic, and automatic methods have been developed. Manual methods provide tools to align the images manually. Interactive methods reduce user bias by performing certain key operations automatically while still relying on the user to guide the registration. Semi-automatic methods perform more of the registration steps automatically but depend on the user to verify the correctness of a registration. Automatic methods do not allow any user interaction and perform all registration steps automatically.
+
+=== Similarity measures for image registration ===
+Image similarities are broadly used in [[medical imaging]]. An image similarity measure quantifies the degree of similarity between intensity patterns in two images.<ref name="AG"/> The choice of an image similarity measure depends on the modality of the images to be registered. Common examples of image similarity measures include [[cross-correlation]], [[mutual information]], sum of squared intensity differences, and ratio image uniformity. Mutual information and normalized mutual information are the most popular image similarity measures for registration of multimodality images. Cross-correlation, sum of squared intensity differences and ratio image uniformity are commonly used for registration of images in the same modality.
+
+== Uncertainty ==
+There is a level of [[uncertainty]] associated with registering images that have any spatio-temporal differences.  A confident registration with a measure of uncertainty is critical for many [[change detection]] applications such as medical diagnostics.
+
+In remote sensing applications where a digital image pixel may represent several kilometers of spatial distance (such as NASA's [[LANDSAT]] imagery), an uncertain image registration can mean that a solution could be several kilometers from ground truth.  Several notable papers have attempted to quantify uncertainty in image registration in order to compare results.<ref name="simonson">Simonson, K., Drescher, S., Tanner, F., A Statistics Based Approach to Binary Image Registration with Uncertainty Analysis.  IEEE Pattern Analysis and Machine Intelligence, Vol. 29, No. 1, January 2007</ref><ref name="Domokos">Domokos, C., Kato, Z., Francos, J., Parametric estimation of affine deformations of binary images. Proceedings of IEEE [[International Conference on Acoustics, Speech, and Signal Processing]], 2008</ref> However, many approaches to quantifying uncertainty or estimating deformations are computationally intensive or are only applicable to limited sets of spatial transformations.
+
+== Applications ==
+Image registration has applications in remote sensing (cartography updating), and computer vision.  Due to the vast applications to which image registration can be applied, it is impossible to develop a general method that is optimized for all uses.
+
+[[Medical imaging|Medical image]] registration (for data of the same patient taken at different points in time such as change detection or tumor monitoring)) often additionally involves ''elastic'' (also known as ''nonrigid'') registration to cope with deformation of the subject (due to breathing, anatomical changes, and so forth). Nonrigid registration of medical images can also be used to register a patient's data to an anatomical atlas, such as the [[Jean Talairach|Talairach]] atlas for neuroimaging.
+
+It is also used in [[astrophotography]] to align images taken of space.  Using control points (automatically or manually entered), the computer performs transformations on one image to make major features align with a second image.
+
+Image registration is essential part of Panoramic image creation. There are many different techniques that can be implemented in real time and run on embedded devices like cameras and camera-phones.
+
+== See also ==
+{{Portal|Free software}}
+* [[Spatial normalization]]
+
+==References==
+
+<references/>
+
+==External links==
+*Richard Szeliski, [http://research.microsoft.com/apps/pubs/default.aspx?id=75695 Image Alignment and Stitching: A Tutorial]. Foundations and Trends in Computer Graphics and Computer Vision, 2:1-104, 2006.
+* B. Fischer, J. Modersitzki: [http://www.iop.org/EJ/article/0266-5611/24/3/034008/ip8_3_034008.pdf Ill-posed medicine – an introduction to image registration]. Inverse Problems, 24:1–19, 2008
+* Barbara Zitová, Jan Flusser: [http://library.utia.cas.cz/prace/20030125.pdf Image registration methods: a survey]. Image Vision Comput. 21(11): 977-1000 (2003).
+* ''Mathematica''  [http://reference.wolfram.com/mathematica/ref/ImageAlign.html ImageAlign] function
+
+{{DEFAULTSORT:Image Registration}}
+[[Category:Computer vision]]
+
+[[ar:مطابقة الصور]]
+[[de:Bildregistrierung]]
+[[fa:ثبت تصویر]]
+[[fr:Recalage d'images]]
+[[ko:영상 정합]]
+[[it:Registratura d'immagini]]</body> </html>

@@ -1,0 +1,220 @@
+<html> <head> <title>TCP/IP model</title></head><body>{{Merge|Internet Protocol Suite|discuss=Talk:TCP/IP_model#Proposed_merge|date=December 2009}}
+
+The '''TCP/IP model''' is a description framework for [[Protocol (computing)|computer network protocols]] created in the 1970s by [[DARPA]], an agency of the [[United States Department of Defense]]. It evolved from [[ARPANET]], which was the world's first [[wide area network]] and a predecessor of the [[Internet]]. The [[TCP/IP]] Model is sometimes called the ''Internet Model'' or the ''[[United States Department of Defense|DoD]] Model. 
+
+The TCP/IP model, or [[Internet Protocol Suite]], describes a set of general design guidelines and implementations of specific networking protocols to enable computers to communicate over a [[Computer network|network]].  TCP/IP provides end-to-end connectivity specifying how data should be formatted, addressed, transmitted, [[routing|routed]] and received at the destination.  Protocols exist for a variety of different types of communication services between computers.
+
+TCP/IP, sometimes referred to as the ''Internet model'', has four [[abstraction layer]]s as defined in RFC 1122. This layer architecture is often compared with the seven-layer [[OSI Reference Model]]; using terms such as ''Internet reference model'', incorrectly, however, because it is descriptive while the OSI Reference Model was intended to be prescriptive, hence being a reference model.
+
+The TCP/IP model and related protocols are maintained by the [[Internet Engineering Task Force]] (IETF).
+
+{{IPstack}}
+
+==Key architectural principles==
+An early architectural document, RFC 1122, emphasizes architectural principles over layering.<ref>[ftp://ftp.rfc-editor.org/in-notes/rfc1958.txt Architectural Principles of the Internet], RFC 1958, B. Carpenter, June 1996</ref>
+
+* [[End-to-end principle|End-to-End Principle]]: This principle has evolved over time. Its original expression put the maintenance of state and overall intelligence at the edges, and assumed the Internet that connected the edges retained no state and concentrated on speed and simplicity.  Real-world needs for firewalls, network address translators, web content caches and the like have forced changes in this principle.<ref>[http://www.csd.uoc.gr/~hy558/papers/Rethinking_2001.pdf Rethinking the design of the Internet: The end to end arguments vs. the brave new world], Marjory S. Blumenthal, David D. Clark, August 2001</ref>
+* [[Robustness Principle]]: "In general, an implementation must be conservative in its sending behavior, and liberal in its receiving behavior.  That is, it must be careful to send well-formed datagrams, but must accept any datagram that it can interpret (e.g., not object to technical errors where the meaning is still clear)." <ref>[http://www.ietf.org/rfc/rfc0791.txt?number=791 p.23 INTERNET PROTOCOL DARPA INTERNET PROGRAM PROTOCOL SPECIFICATION September 1981 Jon Postel Editor]</ref> "The second part of the principle is almost as important: software on other hosts may contain deficiencies that make it unwise to exploit legal but obscure protocol features." <ref>[http://tools.ietf.org/html/rfc1122#page-12 Requirements for Internet Hosts -- Communication Layers p.13 October 1989 R. Braden, Editor]</ref>
+
+Even when the layers are examined, the assorted architectural documents—there is no single architectural model such as ISO 7498, the OSI reference model—have fewer and less rigidly-defined layers than the OSI model, and thus provide an easier fit for real-world protocols. In point of fact, one frequently referenced document, RFC 1958, does not contain a stack of layers. The lack of emphasis on layering is a strong difference between the IETF and OSI approaches. It only refers to the existence of the "internetworking layer" and generally to "upper layers"; this document was intended as a 1996 "snapshot" of the architecture: "The Internet and its architecture have grown in evolutionary fashion  from modest beginnings, rather than from a Grand Plan. While this process of evolution is one of the main reasons for the technology's success, it nevertheless seems useful to record a snapshot of the current principles of the Internet architecture." 
+
+RFC 1122, entitled ''Host Requirements'', is structured in paragraphs referring to layers, but the document refers to many other architectural principles not emphasizing layering. It loosely defines a four-layer model, with the layers having names, not numbers, as follows:
+
+*Application Layer (process-to-process): This is the scope within which applications create user data and communicate this data to other processes or applications on another or the same host. The communications partners are often called ''peers''.  This is where the "higher level" protocols such as [[SMTP]], [[File Transfer Protocol|FTP]], [[Secure Shell|SSH]], [[HTTP]], etc. operate.
+*Transport Layer (host-to-host): The Transport Layer constitutes the networking regime between two network hosts, either on the local network or on remote networks separated by routers. The Transport Layer provides a uniform networking interface that hides the actual topology (layout) of the underlying network connections. This is where flow-control, error-correction, and connection protocols exist, such as [[Transmission Control Protocol|TCP]]. This layer deals with opening and maintaining connections between Internet hosts.
+*Internet Layer (internetworking): The Internet Layer has the task of exchanging datagrams across network boundaries. It is therefore also referred to as the layer that establishes internetworking, indeed, it defines and establishes the [[Internet]]. This layer defines the addressing and routing structures used for the TCP/IP protocol suite. The primary protocol in this scope is the [[Internet Protocol]], which defines [[IP address]]es. Its function in routing is to transport datagrams to the next IP router that has the connectivity to a network closer to the final data destination.
+*Link Layer: This layer defines the networking methods within the scope of the local network link on which hosts communicate without intervening routers. This layer describes the protocols used to describe the local network topology and the interfaces needed to affect transmission of Internet Layer datagrams to next-neighbor hosts. (cf. the OSI Data Link Layer).
+
+The [[Internet Protocol Suite]] and the layered [[protocol stack]] design were in use before the [[OSI model]] was established. Since then, the TCP/IP model has been compared with the OSI model in books and classrooms, which often results in confusion because the two models use different assumptions, including about the relative importance of strict layering.
+
+==Layers in the TCP/IP model==
+{| align="right"
+|-
+| [[Image:IP stack connections.svg|thumb|350px|Two Internet hosts connected via two routers and the corresponding layers used at each hop.]]
+|-
+| [[Image:UDP encapsulation.svg|thumb|350px|Encapsulation of application data descending through the TCP/IP layers]]
+|}
+
+The layers near the top are logically  closer to the user application, while those near the bottom are logically closer to the physical transmission of the data. Viewing layers as providing or consuming a service is a method of [[abstraction (computer science)|abstraction]] to isolate upper layer protocols from the nitty-gritty detail of transmitting bits over, for example, [[Ethernet]] and [[Carrier sense multiple access with collision detection|collision detection]], while the lower layers avoid having to know the details of each and every application and its protocol.
+
+This abstraction also allows upper layers to provide services that the lower layers cannot, or choose not to, provide. Again, the original [[OSI Reference Model]] was extended to include connectionless services (OSIRM CL).<ref>[ OSI: Reference Model Addendum 1: Connectionless-mode Transmission,ISO7498/AD1],ISO7498/AD1, May 1986</ref> For example, IP is not designed to  be reliable and is a [[best effort delivery]] protocol. This means that all transport layer implementations must choose whether or not to provide reliability and to what degree.  UDP provides data integrity (via a [[checksum]]) but does not guarantee delivery; TCP provides both data integrity and delivery guarantee (by retransmitting until the receiver acknowledges the reception of the packet).
+
+This model lacks the formalism of the OSI reference model and associated documents, but the IETF does not use a formal model and does not consider this a limitation, as in the comment by [[David D. Clark]], "We reject: kings, presidents and voting. We believe in: rough consensus and running code." Criticisms of this model, which have been made with respect to the OSI Reference Model, often do not consider ISO's later extensions to that model. 
+# For multiaccess links with their own addressing systems (e.g. Ethernet) an address mapping protocol is needed. Such protocols can be considered to be below IP but above the existing link system. While the IETF does not use the terminology, this is a subnetwork dependent convergence facility according to an extension to the OSI model, the Internal Organization of the Network Layer (IONL).<ref>[http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=16011 Internal Organization of the Network Layer], ISO 8648</ref>
+# ICMP & IGMP operate on top of IP but do not transport data like UDP or TCP. Again, this functionality exists as layer management extensions to the OSI model, in its ''Management Framework'' (OSIRM MF) <ref>[http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=14258&ICS1=35&ICS2=100&ICS3=70 Open Systems Interconnection -- Basic Reference Model -- Part 4: Management framework], ISO 7498/4</ref>
+# The SSL/TLS library operates above the transport layer (uses TCP) but below application protocols. Again, there was no intention, on the part of the designers of these protocols, to comply with OSI architecture.
+# The link is treated like a black box here. This is fine for discussing IP (since the whole point of IP is it will run over virtually anything). The IETF explicitly does not intend to discuss transmission systems, which is a less academic but practical alternative to the OSI Reference Model.
+
+The following is a description of each layer in the TCP/IP networking model starting from the lowest level.
+
+===Link Layer===
+The Link Layer is the networking scope of the local network connection to which a host is attached. This regime is called the ''link'' in Internet literature. This is the lowest component layer of the Internet protocols, as TCP/IP is designed to be hardware independent. As a result TCP/IP has been implemented on top of virtually any hardware networking technology in existence.
+
+The Link Layer is used to move packets between the Internet Layer interfaces of two different hosts on the same link.  The processes of transmitting and receiving packets on a given link can be controlled both in the [[software]] [[device driver]] for the [[network card]], as well as on [[firmware]] or specialized [[chipsets]]. These will perform [[Data Link Layer|data link]] functions such as adding a [[packet header]] to prepare it for transmission, then actually transmit the frame over a [[Physical Layer|physical]] [[transmission medium|medium]]. The TCP/IP model includes specifications of translating the network addressing methods used in the Internet Protocol to data link addressing, such as [[Media Access Control]] (MAC), however all other aspects below that level are implicitly assumed to exist in the Link Layer, but are not explicitly defined.
+
+The Link Layer is also the layer where packets may be selected to be sent over a [[virtual private network]] or other [[tunneling protocol|networking tunnel]]. In this scenario, the Link Layer data may be considered application data which traverses another instantiation of the IP stack for transmission or reception over another IP connection. Such a connection, or virtual link, may be established with a transport protocol or even an application scope protocol that serves as a [[tunneling protocol|tunnel]] in the Link Layer of the protocol stack. Thus, the TCP/IP model does not dictate a strict hierarchical encapsulation sequence.
+
+===Internet Layer===
+The [[Internet Layer]] solves the problem of sending packets across one or more networks. [[Internetworking]] requires sending data from the source [[computer network|network]] to the destination network. This process is called [[routing]].<ref>[http://www.comsci.us/datacom/ippacket.html IP Packet Structure]</ref>
+
+In the Internet Protocol Suite, the Internet Protocol performs two basic functions:
+* ''Host addressing and identification'': This is accomplished with a hierarchical addressing system (see [[IP address]]).
+* ''Packet routing'': This is the basic task of getting packets of data (datagrams) from source to destination by sending them to the next network node (router) closer to the final destination.
+
+IP can carry data for a number of different [[upper layer protocol]]s. These protocols are each identified by a unique [[List of IP protocol numbers|protocol number]]: for example, [[Internet Control Message Protocol]] (ICMP) and [[Internet Group Management Protocol]] (IGMP) are protocols 1 and 2, respectively.
+
+Some of the protocols carried by IP, such as ICMP (used to transmit diagnostic information about IP transmission) and IGMP (used to manage [[IP Multicast]] data) are layered on top of IP but perform internetworking functions. This illustrates the differences in the architecture of the TCP/IP stack of the Internet and the OSI model.
+
+===Transport Layer===
+The [[Transport Layer]]'s responsibilities include end-to-end message transfer capabilities independent of the underlying network, along with error control, segmentation, flow control, congestion control, and application addressing (port numbers). End to end message transmission or connecting applications at the transport layer can be categorized as either [[connection-oriented]], implemented in [[Transmission Control Protocol]] (TCP),
+or [[connectionless]], implemented in [[User Datagram Protocol]] (UDP).
+
+The Transport Layer can be thought of as a transport mechanism, e.g., a vehicle with the responsibility to make sure that its contents (passengers/goods) reach their destination safely and soundly, unless another protocol layer is responsible for safe delivery.
+
+The Transport Layer provides this service of connecting applications through the use of [[TCP and UDP port|service ports]]. Since IP provides only a [[best effort delivery]], the Transport Layer is the first layer of the TCP/IP stack to offer reliability. IP can run over a reliable data link protocol such as the [[High-Level Data Link Control]] (HDLC). Protocols above transport, such as RPC, also can provide reliability.
+
+For example, the Transmission Control Protocol (TCP) is a connection-oriented protocol that addresses numerous reliability issues to provide a [[reliable byte stream]]:
+* data arrives in-order
+* data has minimal error (i.e. correctness)
+* duplicate data is discarded
+* lost/discarded packets are resent
+* includes traffic congestion control
+
+The newer [[Stream Control Transmission Protocol]] (SCTP) is also a reliable, connection-oriented transport mechanism. It is [[Message-stream-oriented]] — not [[byte-stream-oriented]] like TCP — and provides multiple streams multiplexed over a single connection. It also provides [[multi-homed|multi-homing]] support, in which a connection end can be represented by multiple [[IP address]]es (representing multiple physical interfaces), such that if one fails, the connection is not interrupted. It was developed initially for telephony applications (to transport [[Signaling System 7|SS7]] over [[Internet Protocol|IP]]), but can also be used for other applications.
+
+User Datagram Protocol is a connectionless [[datagram]] protocol. Like IP, it is a best effort, "unreliable" protocol.  Reliability is addressed through [[error detection]] using a weak [[checksum]] algorithm. UDP is typically used for applications such as streaming media (audio, video, [[Voice over IP]] etc) where on-time arrival is more important than reliability, or for simple query/response applications like [[Domain Name System|DNS]] lookups, where the overhead of setting up a reliable connection is disproportionately large.  [[Real-time Transport Protocol]] (RTP) is a datagram protocol that is designed for real-time data such as [[streaming media|streaming audio and video]].
+
+TCP and UDP are used to carry an assortment of higher-level applications. The appropriate transport protocol is chosen based on the higher-layer protocol application. For example, the [[File Transfer Protocol]] expects a reliable connection, but the [[Network File System (protocol)|Network File System]] (NFS) assumes that the subordinate [[Remote Procedure Call]] protocol, not transport, will guarantee reliable transfer. Other applications, such as VoIP, can tolerate some loss of packets, but not the reordering or delay that could be caused by retransmission.
+
+The applications at any given network address are distinguished by their TCP or UDP [[TCP and UDP port|port]]. By convention certain ''well known ports'' are associated with specific applications.  (''See [[List of TCP and UDP port numbers]].'')
+
+===Application Layer===
+The [[Application Layer]] refers to the higher-level protocols used by most applications for network communication. Examples of application layer protocols include the [[File Transfer Protocol]] (FTP) and the [[Simple Mail Transfer Protocol]] (SMTP).<ref>[http://www.kohala.com/start/tcpipiv1.html ''TCP/IP Illustrated: the protocols''], ISBN 0-201-63346-9, W. Richard Stevens, February 1994</ref> Data coded according to application layer protocols are then [[encapsulation (networking)|encapsulated]] into one or (occasionally) more transport layer protocols (such as the [[Transmission Control Protocol]] (TCP) or [[User Datagram Protocol]] (UDP)), which in turn use [[lower layer protocol]]s to effect actual data transfer.
+
+Since the IP stack defines no layers between the application and transport layers, the application layer must include any protocols that act like the OSI's presentation and session layer protocols. This is usually done through [[Library (computer science)|libraries]].
+
+Application Layer protocols generally treat the transport layer (and lower) protocols as "[[Black Box|black boxes]]" which provide a stable network connection across which to communicate, although the applications are usually aware of key qualities of the transport layer connection such as the [[Transport Layer|end point]] [[IP Address|IP addresses]] and [[port number]]s. As noted above, layers are not necessarily clearly defined in the Internet protocol suite. Application layer protocols are most often associated with [[client–server]] applications, and the commoner [[server (computing)|servers]] have specific [[TCP and UDP port|ports]] assigned to them by the [[Internet Assigned Numbers Authority|IANA]]: [[HyperText Transfer Protocol|HTTP]] has port 80; [[Telnet]] has port 23; etc. [[client (computing)|Clients]], on the other hand, tend to use [[ephemeral port]]s, i.e. port numbers assigned at random from a range set aside for the purpose.
+
+Transport and lower level layers are largely unconcerned with the specifics of application layer protocols. [[Router]]s and [[network switch|switches]] do not typically "look inside" the encapsulated traffic to see what kind of application protocol it represents, rather they just provide a conduit for it. However, some [[Firewall (computing)|firewall]] and [[bandwidth throttling]] applications do try to determine what's inside, as with the [[Resource Reservation Protocol]] (RSVP). It's also sometimes necessary for [[Network Address Translation]] (NAT) facilities to take account of the needs of particular application layer protocols. (NAT allows hosts on private networks to communicate with the outside world via a single visible IP address using [[port forwarding]], and is an almost ubiquitous feature of modern domestic [[broadband router]]s).
+
+==Hardware and software implementation==
+Normally, application programmers are concerned only with interfaces in the Application Layer and often also in the Transport Layer, while the layers below are services provided by the TCP/IP stack in the operating system. Microcontroller firmware in the network adapter typically handles link issues, supported by driver software in the operational system. Non-programmable analog and digital electronics are normally in charge of the physical components in the Link Layer, typically using an [[application-specific integrated circuit]] (ASIC) chipset for each network interface or other physical standard. 
+
+However, hardware or software implementation is not stated in the protocols or the layered reference model. High-performance routers are to a large extent based on fast non-programmable digital electronics, carrying out link level switching.
+
+==OSI and TCP/IP layering differences==
+The three top layers in the OSI model—the [[Application Layer]], the [[Presentation Layer]] and the [[Session Layer]]—are not distinguished separately in the TCP/IP model where it is just the Application Layer. While some pure OSI protocol applications, such as [[X.400]], also combined them, there is no ''requirement'' that a TCP/IP protocol stack needs to impose monolithic architecture above the Transport Layer. For example, the [[Network File System]] (NFS) application protocol runs over the [[External Data Representation|eXternal Data Representation]] (XDR) presentation protocol, which, in turn, runs over a protocol with Session Layer functionality, [[Remote Procedure Call]] (RPC). RPC provides reliable record transmission, so it can run safely over the best-effort [[User Datagram Protocol]] (UDP) transport.
+
+The Session Layer roughly corresponds to the Telnet [[virtual terminal]] functionality{{Citation needed|date=June 2009}}, which is part of text based protocols such as the [[HTTP]] and [[SMTP]] TCP/IP model Application Layer protocols. It also corresponds to TCP and UDP port numbering, which is considered as part of the transport layer in the TCP/IP model. Some functions that would have been performed by an OSI presentation layer are realized at the Internet application layer using the [[MIME]] standard, which is used in application layer protocols such as [[HTTP]] and [[SMTP]]. 
+
+Since the IETF protocol development effort is not concerned with strict layering, some of its protocols may not appear to fit cleanly into the OSI model. These conflicts, however, are more frequent when one only looks at the original OSI model, ISO 7498, without looking at the annexes to this model (e.g., ISO 7498/4 Management Framework), or the ISO 8648 Internal Organization of the Network Layer (IONL).  When the IONL and Management Framework documents are considered, the  [[Internet Control Message Protocol|ICMP]] and [[Internet Group Management Protocol|IGMP]] are neatly defined as layer management protocols for the network layer. In like manner, the IONL provides a structure for "subnetwork dependent convergence facilities" such as  [[Address Resolution Protocol|ARP]] and [[Reverse Address Resolution Protocol|RARP]]. 
+
+IETF protocols can be encapsulated recursively, as demonstrated by tunneling protocols such as [[Generic Routing Encapsulation]] (GRE).  While basic OSI documents do not consider tunneling, there is some concept of tunneling in yet another extension to the OSI architecture, specifically the transport layer gateways within the International Standardized Profile framework.<ref>[http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=30726 Framework and taxonomy of International Standardized Profiles], ISO 10000, October 1998</ref> The associated OSI development effort, however, has been abandoned given the overwhelming adoption of TCP/IP protocols.
+
+==Layer names and number of layers in the literature==
+The following table shows the layer names and the number of layers of networking models presented in [[request for comments|RFCs]] and textbooks in widespread use in today's university computer networking courses. 
+{| class="wikitable"
+|-
+! style="background:#adb" | Kurose,<ref>[http://www.pearsonhighered.com/educator/academic/product/0,,0321497708,00%2ben-USS_01DBC.html James F. Kurose, Keith W. Ross, Computer Networking: A Top-Down Approach, 2008, ISBN 0-321-49770-8]</ref>  Forouzan <ref name=Forouzan>[http://books.google.com/books?id=U3Gcf65Pu9IC&printsec=frontcover&dq=forouzan+%22computer+networks%22&ei=RPZ9SOCvMofctAO02di0AQ&hl=en&sig=ACfU3U2Hh_n83pPtf5uCreCih0HnWvNcxg#PPA29,M1 Behrouz A. Forouzan, Data Communications and Networking]</ref>
+! style="background:#adb" | Comer,<ref name=Comer>[http://books.google.com/books?id=jonyuTASbWAC&pg=PA155&hl=sv&source=gbs_toc_r&cad=0_0&sig=ACfU3U18gHAia1pU_Pxn-rhkCnH1v70M6Q#PPA161,M1 Douglas E. Comer, Internetworking with TCP/IP: Principles, Protocols and Architecture, Pearson Prentice Hall 2005, ISBN 0-13-187671-6]</ref> Kozierok<ref>[http://books.google.com/books?id=Pm4RgYV2w4YC&pg=PA131&dq=%22TCP/IP+model+layers%22&lr=&hl=sv&sig=ACfU3U3ofMwYAbZfGz1BmAXc2oNNFC2b8A#PPA129,M1 Charles M. Kozierok, "The TCP/IP Guide", No Starch Press 2005]</ref> 
+! style="background:#adb" | Stallings<ref name=Stallings>[http://books.google.com/books?id=c_AWmhkovR0C&pg=PA35&dq=%22internet+layer%22+%22network+access+layer%22&ei=-O99SI3EJo32sgOQpPThDw&hl=en&sig=ACfU3U38aXznzeAnQdbLcPFXfCgxAd4lFg William Stallings, Data and Computer Communications, Prentice Hall 2006, ISBN 0-13-243310-9]</ref> 
+! style="background:#adb" | Tanenbaum<ref>[http://books.google.com/books?id=Pd-z64SJRBAC&pg=PA42&vq=internet+layer&dq=networks&hl=sv&source=gbs_search_s&sig=ACfU3U3DHANeIz0sOsd5NK4VXSrgNFYVAw#PPA42,M1 Andrew S. Tanenbaum, Computer Networks, Prentice Hall 2002, ISBN 0-13-066102-3]</ref>
+! style="background:#adb" | RFC 1122, Internet STD 3 (1989) 
+! style="background:#adb" | Cisco Academy<ref>Mark Dye, Mark A. Dye, Wendell, Network Fundamentals: CCNA Exploration Companion Guide, 2007, ISBN 1-58713-208-7</ref>
+! style="background:#adb" | Mike Padlipsky's 1982 "Arpanet Reference Model" (RFC 871)
+|-
+| style="background:#cfc" | ''Five layers'' 
+| style="background:#cfc" | ''Four+one layers'' 
+| style="background:#cfc" | ''Five layers''
+| style="background:#cfc" | ''Four layers''
+| style="background:#cfc" | ''Four layers''
+| style="background:#cfc" | ''Four layers''
+| style="background:#cfc" | ''Three layers''
+|-
+| style="background:#cfc" | "Five-layer Internet model" or "TCP/IP protocol suite"
+| style="background:#cfc" | "TCP/IP 5-layer reference model"
+| style="background:#cfc" | "TCP/IP model"
+| style="background:#cfc" | "TCP/IP reference model"
+| style="background:#cfc" | "Internet model"
+| style="background:#cfc" | "Internet model"
+| style="background:#cfc" | "Arpanet reference model"
+|-
+| Application 
+| Application
+| Application
+| Application
+| Application
+| Application
+| Application/Process 
+|-
+| Transport
+| Transport
+| Host-to-host or transport
+| Transport
+| Transport
+| Transport
+| rowspan="2"| Host-to-host
+|-
+| Network
+| Internet
+| Internet
+| Internet
+| Internet
+| Internetwork
+|-
+| Data link
+| Data link (Network interface)
+| Network access
+| rowspan="1"| Host-to-network
+| rowspan="1"| Link
+| rowspan="1"| Network interface
+| rowspan="1"| Network interface
+|-
+| Physical
+| (Hardware)
+| Physical
+|}
+
+These textbooks are secondary sources that may contravene the intent of RFC 1122 and other IETF primary sources such as RFC 3439.<ref name=R3439 />
+
+Different authors have interpreted the RFCs differently regarding the question whether the Link Layer (and the TCP/IP model) covers [[Physical Layer]] issues, or if a hardware layer is assumed below the Link Layer. Some authors have tried to use other names for the Link Layer, such as ''network interface layer'', in view to avoid confusion with the [[Data Link Layer]] of the seven layer [[OSI model]]. Others have attempted to map the Internet Protocol model onto the OSI Model. The mapping often results in a model with five layers where the Link Layer is split into a Data Link Layer on top of a Physical Layer. In literature with a bottom-up approach to Internet communication,<ref name=Forouzan/><ref name=Comer/><ref name=Stallings/> in which hardware issues are emphasized, those are often discussed in terms of physical layer and data link layer.
+
+The Internet Layer is usually directly mapped into the OSI Model's [[Network Layer]], a more general concept of network functionality. The Transport Layer of the TCP/IP model, sometimes also described as the host-to-host layer, is mapped to OSI Layer 4 (Transport Layer), sometimes also including aspects of OSI Layer 5 ([[Session Layer]]) functionality. OSI's [[Application Layer]], [[Presentation Layer]], and the remaining functionality of the Session Layer are collapsed into TCP/IP's Application Layer. The argument is that these OSI layers do usually not exist as separate processes and protocols in Internet applications.{{Citation needed|date=April 2009}} 
+
+However, the Internet protocol stack has never been altered by the Internet Engineering Task Force from the four layers defined in RFC 1122.  The IETF makes no effort to follow the OSI model although RFCs sometimes refer to it and often use the old OSI layer numbers. The IETF has repeatedly stated{{Citation needed|date=April 2009}} that Internet protocol and architecture development is not intended to be OSI-compliant. RFC 3439, addressing Internet architecture, contains a section entitled: "Layering Considered Harmful".<ref name=R3439>{{citation
+ | url = http://www.isi.edu/in-notes/rfc3439.txt  
+ | title = Some Internet Architectural Guidelines and Philosophy
+ | author = R. Bush
+ | coauthors = D. Meyer
+ | publisher = Internet Engineering Task Force
+ | accessdate = 2007-11-20
+ |date=December 2002}}</ref>
+
+==See also==
+*[[BBN Report 1822]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://www.cisco.com/univercd/cc/td/doc/product/iaabu/centri4/user/scf4ap1.htm Understanding Cisco TCP/IP]
+
+{{DEFAULTSORT:Tcp/Ip Model}}
+[[Category:Network architecture]]
+[[Category:Internet protocols]]
+[[Category:Reference models]]
+
+[[de:DoD-Schichtenmodell]]
+[[es:Capas o niveles del TCP/IP]]
+[[fa:مدل تی‌سی‌پی/آی‌پی]]
+[[id:Model DARPA]]
+[[he:TCP/IP#מודל ה-TCP/IP]]
+[[lv:TCP/IP modelis]]
+[[mk:TCP/IP model]]
+[[ml:ടി.സി.പി./ഐ.പി. മാതൃക]]
+[[ja:DARPAモデル]]
+[[pl:Model DoD]]
+[[ro:TCP/IP]]
+[[ru:Модель DOD]]
+[[sl:TCP/IP]]
+[[fi:TCP/IP-viitemalli]]</body> </html>

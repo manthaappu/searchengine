@@ -1,0 +1,81 @@
+<html> <head> <title>Isolation lemma</title></head><body>The '''isolation lemma''', also sometimes known as the '''isolating lemma''', is a [[Lemma (mathematics)|lemma]] in [[probability theory]] with several applications in [[computer science]]. It was introduced in a paper by [[Ketan Mulmuley|Mulmuley]], [[Umesh Vazirani|Vazirani]] and [[Vijay Vazirani|Vazirani]], who used it to give a randomized parallel algorithm for the [[maximum matching]] problem.<ref>{{Cite journal
+| volume = 7
+| issue = 1
+| pages = 105–113
+| last = Mulmuley
+| first = K.
+| coauthors = U. V Vazirani, V. V Vazirani
+| title = Matching is as easy as matrix inversion
+| journal = Combinatorica
+| year = 1987
+| url=http://www.springerlink.com/content/r4rw2x4l46476708/ | doi = 10.1007/BF02579206}}
+[[STOC]] 1987 version: {{doi|10.1145/28395.383347}}</ref>
+
+==Statement==
+Let <math>\mathcal F</math> be any family of subsets of a set with ''n'' elements. Suppose each element ''x'' of the set is independently assigned a weight ''w''(''x'') uniformly from {1, …, ''N''}, and the weight of a set ''S'' in <math>\mathcal F</math> is defined as
+
+:<math>w(S) = \sum_{x \in S} w(x).</math>
+
+Then, the probability that there is a ''unique'' set in <math>\mathcal F</math> of minimum weight is at least 1&minus;''n/N''.
+
+The remarkable thing about the lemma is that it assumes nothing about the nature of the family <math>\mathcal F</math>; for instance <math>\mathcal F</math> may include ''all'' 2<sup>''n''</sup> subsets, and (as the weight of each set in <math>\mathcal F</math> is in {1, …, ''nN''}), there would be an average of 2<sup>''n''</sup>/(''nN'') sets with the same weight. Still, with high probability, there is a unique set of minimum weight.
+
+==Proof==
+===Proof 1===
+(The original proof from the paper.) Suppose we have fixed the weights of all elements except an element ''x''. Then ''x'' has a ''threshold'' weight ''α'', such that if the weight ''w''(''x'') of ''x'' is greater than ''α'', then it is not contained in any minimum-weight subset, and if <math>w(x) \le \alpha</math>, then it is contained in some set of minimum weight. Further, observe that if <math>w(x) < \alpha</math>, then ''every'' minimum-weight subset must contain ''x'' (since, when we decrease ''w(x)'' from ''α'', sets that do not contain ''x'' do not decrease in weight, while those that contain ''x'' do). Thus, ambiguity about whether a minimum-weight subset contains ''x'' or not can happen only when its weight is exactly equal to its threshold; in this case we will call ''x'' "singular". Now, as the threshold of ''x'' was defined only in terms of the weights of the ''other'' elements, it is independent of ''w(x)'', and therefore, as ''w''(''x'') is chosen uniformly from {1, …, ''N''},
+
+:<math>\Pr[x\text{ is singular}] = \Pr[w(x) = \alpha] \le 1/N</math>
+
+and the probability that ''some'' ''x'' is singular is at most ''n/N''. As there is a unique minimum-weight subset [[iff]] no element is singular, the lemma follows.
+
+===Proof 2===
+This is a restatement version of the above proof, due to [[Joel Spencer]] (1995).<ref>
+{{citation | last=Jukna | first=Stasys | year=2001 | title=Extremal combinatorics: with applications in computer science | publisher=Springer | isbn=9783540663133 | url=http://lovelace.thi.informatik.uni-frankfurt.de/~jukna/EC_Book/index.html | pages=147–150}} [http://lovelace.thi.informatik.uni-frankfurt.de/~jukna/EC_Book/sample/147-150.pdf]
+</ref>
+
+For any element ''x'' in the set, define
+
+:<math>\alpha(x) = \min_{S \in \mathcal F, x \not\in S}w(S) - \min_{S\in\mathcal F, x\in S}w(S\setminus\{x\}). \, </math>
+
+Observe that <math>\alpha(x)</math> depends only on the weights of elements other than ''x'', and not on ''w''(''x'') itself. So whatever the value of <math>\alpha(x)</math>, as ''w''(''x'') is chosen uniformly from {1, …, ''N''}, the probability that it is equal to <math>\alpha(x)</math> is at most 1/''N''. Thus the probability that <math>w(x) = \alpha(x)</math> for ''some'' ''x'' is at most ''n/N''.
+
+Now if there are two sets ''A'' and ''B'' in <math>\mathcal F</math> with minimum weight, then, taking any ''x'' in ''A\B'', we have
+
+:<math>\begin{align}
+\alpha(x) &= \min_{S \in \mathcal F, x \not\in S}w(S) - \min_{S\in\mathcal F, x\in S}w(S\setminus\{x\})  \\
+          &= w(B) - (w(A)-w(x)) \\
+          &= w(x),
+\end{align}</math>
+
+and as we have seen, this event happens with probability at most ''n/N''.
+
+==Examples/applications==
+{{Expand section|date=May 2010}}
+* The original application was to minimum-weight (or maximum-weight) perfect matchings in a graph. Each edge is assigned a random weight in {1, …, 2''m''}, and <math>\mathcal F</math> is the set of perfect matchings, so that with probability at least 1/2, there exists a unique perfect matching. When each indeterminate <math>x_{ij}</math> in the [[Tutte matrix]] of the graph is replaced with <math>2^{w_{ij}}</math> where <math>w_{ij}</math> is the random weight of the edge, we can show that the determinant of the matrix is nonzero, and further use this to find the matching.
+
+* More generally, the paper also observed that any search problem of the form "Given a set system <math>(S,\mathcal F)</math>, find a set in <math>\mathcal F</math>" could be reduced to a decision problem of the form "Is there a set in <math>\mathcal  F</math> with total weight at most ''k''?". For instance, it showed how to solve the following problem posed by Papadimitriou and Yannakakis,  for which (as of the time the paper was written) no deterministic polynomial-time algorithm is known: given a graph and a subset of the edges marked as "red", find a perfect matching with exactly ''k'' red edges.
+
+* The [[Valiant–Vazirani theorem]], concerning unique solutions to NP-complete problems, has a simpler proof using the isolation lemma. This is proved by giving a randomized reduction from [[Clique problem|CLIQUE]] to UNIQUE-CLIQUE.
+
+* [[Avi Wigderson]] used the isolation lemma in 1994 to give a randomized reduction from [[NL (complexity)|NL]] to UL, and thereby prove that NL/poly ⊆ ⊕L/poly.<ref>{{Cite conference| last = Wigderson| first = Avi | title = NL/poly ⊆ ⊕L/poly | url = http://www.math.ias.edu/~avi/PUBLICATIONS/MYPAPERS/W94/proc.pdf | date = July 1994 | conference = Proceedings of the 9th Structures in Complexity Conference | pages = 59–62}}</ref> Reinhardt and Allender later used the isolation lemma again to prove that NL/poly = UL/poly.<ref>{{Cite journal | volume = 29 | pages = 1118 | last = Reinhardt | first = K. | coauthors = E. Allender | title = Making Nondeterminism Unambiguous | journal = SIAM Journal on Computing | date = 2000| url=http://chosei.informatik.uni-tuebingen.de/~reinhard/nlul.pdf}}</ref>
+
+* The book by Hemaspaandra and Ogihara has a chapter on the isolation technique, including generalizations.<ref>{{citation | year=2002 | chapter= Chapter 4. The Isolation Technique | url=http://www.cs.rochester.edu/~lane/=companion/isolation.pdf | title=The complexity theory companion | last1=Hemaspaandra | first1=Lane A. | last2=Ogihara | first2=Mitsunori | publisher=Springer | isbn=9783540674191}} [http://www.cs.rochester.edu/~lane/=companion/]</ref>
+
+* The isolation lemma has been proposed as the basis of a scheme for [[digital watermarking]].<ref>{{Cite conference | publisher = ACM | doi = 10.1145/378239.378566 | isbn = 1-58113-297-2 | pages = 480–485 | last = Majumdar | first = Rupak | coauthors = Jennifer L. Wong | title = Watermarking of SAT using combinatorial isolation lemmas | booktitle = Proceedings of the 38th annual Design Automation Conference | location = Las Vegas, Nevada, United States | accessdate = 2010-05-10 | date = 2001 | url = http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.9300}}</ref>
+
+* There is ongoing work on derandomizing the isolation lemma in specific cases<ref>
+{{Cite conference | publisher = Springer-Verlag | isbn = 978-3-540-85362-6 | pages = 276–289 | last = Arvind | first = V. | coauthors = Partha Mukhopadhyay | title = Derandomizing the Isolation Lemma and Lower Bounds for Circuit Size | booktitle = Proceedings of the 11th international workshop, APPROX 2008, and 12th international workshop, RANDOM 2008 on Approximation, Randomization and Combinatorial Optimization: Algorithms and Techniques | location = Boston, MA, USA | accessdate = 2010-05-10 | date = 2008 | url = http://portal.acm.org/citation.cfm?id=1429791.1429816}} {{arxiv|0804.0957}}
+</ref> and on using it for identity testing.<ref>
+{{Cite conference | publisher = IEEE Computer Society | isbn = 978-0-7695-3169-4 | pages = 268–279 | last = Arvind | first = V. | coauthors = Partha Mukhopadhyay, Srikanth Srinivasan | title = New Results on Noncommutative and Commutative Polynomial Identity Testing | booktitle = Proceedings of the 2008 IEEE 23rd Annual Conference on Computational Complexity | accessdate = 2010-05-10 | date = 2008 | url = http://portal.acm.org/citation.cfm?id=1380843.1380966}} {{arxiv|0801.0514}}</ref>
+
+==References==
+<references/>
+
+==External links==
+* [http://blog.computationalcomplexity.org/2006/09/favorite-theorems-unique-witnesses.html Favorite Theorems: Unique Witnesses] by [[Lance Fortnow]]
+* [http://rjlipton.wordpress.com/2009/07/01/the-isolation-lemma-and-beyond/ The Isolation Lemma and Beyond] by [[Richard J. Lipton]]
+
+{{DEFAULTSORT:Isolation Lemma}}
+[[Category:Probability theorems]]
+[[Category:Combinatorics]]
+[[Category:Lemmas]]</body> </html>

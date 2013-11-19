@@ -1,0 +1,54 @@
+<html> <head> <title>ANSI/ISO C Specification Language</title></head><body>{{Infobox programming language
+| name                   = ANSI/ISO C Specification Language
+| paradigm               = [[declarative programming|declarative]] with few [[imperative programming|imperative]] features.
+| year                   = 2008
+| designer               = [[Commissariat à l'Énergie Atomique]] and [[INRIA]]
+| developer              = [[Commissariat à l'Énergie Atomique]] and [[INRIA]]
+| latest release version = [[2008]]
+| latest release date    = December 2008
+| typing                 = [[Type system|static]]
+| implementations        = an implementation is in the [[Frama-C]] platform.
+| influenced_by          = [[Java Modeling Language|JML]]
+}}
+
+The '''ANSI/ISO C Specification Language '''('''ACSL''') is a specification language for [[C program]]s, using Hoare style pre- and postconditions and invariants, that follows the design by contract paradigm. Specifications are written as C annotation comments to the C program, which hence can be compiled with any C compiler.
+
+The current verification tool for ACSL is [[Frama-C]].
+
+== Overview ==
+
+ACSL is a Behavioral Interface Specification Language (BISL). It aims at specifying behavioral properties of C source code. The main inspiration for this language comes from the specification language of the Caduceus tool for deductive verification of behavioral properties of [[C program]]s. The specification language of Caduceus is itself inspired from [[JML]] which aims at similar goals for Java source code.
+
+One difference with [[JML]], is that ACSL aims at static verification and deductive verification whereas [[JML]] aims both at runtime assertion checking and static verification using for instance the [[ESC/Java]] tool.
+
+== Syntax ==
+
+Let us consider the following example for the prototype of a function named <code>incrstar</code>:
+
+ /*@ requires \valid(p);
+   @ assigns *p;
+   @ ensures *p == \old(*p) + 1;
+   @*/
+ void incrstar (int *p);
+
+The contract is given by the comment which starts with <code>/*@</code>. Its meaning is as follows:
+* the first line is a precondition: it states that function <code>incrstar</code> must be called with a pointer <code>p</code> that points to a safely allocated memory location.
+* Second line is a frame clause, stating that function <code>incrstar</code> does not modify any memory location but the one pointed to by <code>p</code>.
+* Finally, the <code>ensures</code> clause is a postcondition, which specifies that the value <code>*p</code> is incremented by one.
+
+== Tool support ==
+
+Most of the features of ACSL are supported by [[Frama-C]].
+
+== References ==
+
+* [http://www.springerlink.com/content/r4480863w8726723/ Example of ACSL usage] Sufficient Preconditions for Modular Assertion Checking in VMCAI 2008 pages 188-202.
+* A tutorial [http://www.first.fraunhofer.de/uploads/tx_wfproject/acsl-by-example-5_1_0_05.pdf ACSL By Example] was written as part of the [http://www.first.fraunhofer.de/en/projects/devicesoft_deduktive_verifikation_fuer_sicherheitskritische_software_eingebetteter_systeme DEVICE-SOFT] project at  [http://www.first.fraunhofer.de/en/home Fraunhofer FIRST]
+* Report mentioning the use of ACSL in teaching [http://www.it-education.ru/2009/reports/Petrenko_Khoroshilov.htm], Петренко Ольга Леонидовна and Хорошилов Алексей Владимирович.
+
+== External links ==
+
+Complete ACSL specification is available from http://frama-c.cea.fr/download.html
+
+[[Category:Specification languages]]
+[[Category:C programming language]]</body> </html>

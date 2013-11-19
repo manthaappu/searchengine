@@ -1,0 +1,233 @@
+<html> <head> <title>Bipartite dimension</title></head><body>In the mathematical field of [[graph theory]], the '''bipartite dimension''' of a [[graph (mathematics)|graph]] ''G'' = (''V'', ''E'') is the minimum number of [[biclique]]s, that is, complete bipartite subgraphs, needed to [[covering (graph theory)|cover]] all edges in ''E''. A collection of bicliques covering all edges in ''G'' is called a '''biclique edge cover''', or sometimes '''biclique cover'''. The bipartite dimension of ''G'' is often denoted by the symbol ''d''(''G'').
+
+==Example==
+An example for a biclique edge cover is given in the following diagrams:
+
+<gallery Caption="Example for biclique edge cover">
+Image:Bipartite-dimension-bipartite-graph.svg|A bipartite graph...
+Image:Bipartite-dimension-biclique-cover.svg|...and a covering with four bicliques
+Image:Bipartite-dimension-red-biclique.svg|the red biclique from the cover
+Image:Bipartite-dimension-blue-biclique.svg|the blue biclique from the cover
+Image:Bipartite-dimension-green-biclique.svg|the green biclique from the cover
+Image:Bipartite-dimension-black-biclique.svg|the black biclique from the cover
+</gallery>
+
+==Bipartite dimension formulas for some graphs==
+The bipartite dimension of a ''2n''-vertex
+[[crown graph]] equals <math>\sigma(n)</math>, where
+:<math>\sigma(n)=\min \left\{\,k \mid n \le \binom{k}{\lfloor k/2 \rfloor} \,\right\}</math>
+is the inverse function of the [[central binomial coefficient]] {{harv|de Caen|Gregory|Pullman|1981}}.
+{{harvtxt|Fishburn|Hammer|1996}} determine the bipartite dimension for some special graphs. For example, the path <math>P_n</math>
+has <math>d(P_n) = \lfloor n/2 \rfloor</math>, the cycle <math>C_n</math> has <math>d(C_n)=\lceil n/2\rceil</math>,
+and the complete graph <math>K_n</math> has <math>d(K_n) = \lceil\log n \rceil</math>.
+
+==Computing the bipartite dimension==
+The computational task of determining the bipartite dimension for a given graph ''G'' is an [[optimization problem]]. The [[decision problem]] for bipartite dimension can be phrased as:
+
+:INSTANCE: A graph <math>G=(V,E)</math> and a positive integer <math>k</math>.
+:QUESTION: Does G admit a biclique edge cover containing at most <math>k</math> bicliques?
+
+This problem appears as problem '''GT18''' in Garey and Johnson's classical book on [[NP-completeness|'''NP'''-completeness]], and is a rather straightforward reformulation of
+another decision problem on families of finite sets.
+
+The '''set basis problem''' appears as problem '''SP7''' in Garey and Johnson's book.
+Here, for a family <math>\mathcal{S}=\{S_1,\ldots,S_n\}</math> of subsets of a finite set <math>\mathcal{U}</math>,
+a '''set basis''' for <math>\mathcal{S}</math> is another family of subsets <math>\mathcal{B} = \{B_1,\ldots,B_\ell\}</math> of <math>\mathcal{U}</math>, such that every set <math>S_i</math> can be described as the union of some basis elements from <math>\mathcal{B}</math>. The set basis problem is now given as follows:
+
+:INSTANCE: A finite set <math>\mathcal{U}</math>, a family <math>\mathcal{S}=\{S_1,\ldots,S_n\}</math> of subsets of <math>\mathcal{U}</math>, and a positive integer ''k''.
+:QUESTION: Does there exist a set basis of size at most <math>k</math> for <math>\mathcal{S}</math>?
+
+In its former formulation, the problem was proved to be [[NP-complete|'''NP'''-complete]] by {{harvtxt|Orlin|1977}}, even for [[bipartite graph]]s. The formulation as a set basis problem was proved to be '''NP'''-complete earlier by {{harvtxt|Stockmeyer|1975}}. The problem remains '''NP'''-hard even if we restrict our attention to bipartite graphs whose bipartite dimension is guaranteed to be at most <math>O(\log\,\!n)</math>, with ''n'' denoting the size of the given problem instance {{harv|Gottlieb|Savage|Yerukhimovich|2005}}. On the positive side, the problem is solvable in polynomial time on bipartite [[domino-free graph]]s {{harv|Amilhastre|Janssen|Vilarem|1997}}.
+
+Regarding the existence of [[approximation algorithm]]s, {{harvtxt|Simon|1990}} proved that the problem cannot be approximated well (assuming [[P versus NP problem|'''P''' ≠ '''NP''']]). Indeed, the bipartite dimension is [[Hardness of approximation|'''NP'''-hard to approximate]] within <math>|V|^{1/3-\epsilon}</math> for every fixed <math>\epsilon>0</math>, already for bipartite graphs {{harv|Gruber|Holzer|2007}}.
+
+In contrast, proving that the problem is [[fixed-parameter tractable]] is an exercise in designing [[kernelization|kernelization algorithms]], which appears as such in the textbook by {{harvtxt|Downey|Fellows|1999}}. {{harvtxt|Fleischner|Mujuni|Szeider|2009}} also provide a concrete bound on the size of the resulting kernel, which has meanwhile been improved by {{harvtxt|Nor|Hermelin|Charlat|Engelstadter|2010}}.
+In fact, for a given bipartite graph on ''n'' vertices, it can be decided in time <math>O(f(k))+n^3</math> with <math>f(k) = 2^{k2^{k-1}+3k}</math> whether its bipartite dimension is at most ''k'' {{harv|Nor|Hermelin|Charlat|Engelstadter|2010}}
+
+==Bounds==
+Although determining the bipartite dimension is computationally hard, quite a few estimates are available. For instance, {{harvtxt|Jukna|Kulikov|2009}}
+established a relation between the size of a [[maximum matching]] and the bipartite dimension. More precisely, they showed that for a graph ''G'' with ''m'' edges that admits a matching of size <math>\scriptstyle \nu </math> the following holds:
+:<math>d(G)\ge \frac{\nu^2}{m}.</math>
+
+==Applications==
+The problem of determining the bipartite dimension of a graph appears in various contexts of computing. For instance, in computer systems, different users of a system can be allowed or disallowed accessing various resources. In a [[role-based access control]] system, a role provides access rights to a set of resources. A user can own multiple roles, and he has permission to access all resources granted by some of his roles. Also, a role can be owned by multiple users. The ''role mining problem'' is to find a minimum set of roles, such that for each user, his roles taken together grant access to all specified resources. The set of users together with the set of resources in the system naturally induces a bipartite graph, whose edges are permissions. Each biclique in this graph is a potential role, and the optimum solutions to the role mining problem are precisely the minimum biclique edge covers {{harv|Ene|Horne|Milosavljevic|Rao|2008}}.
+
+A similar scenario is known in [[computer security]], more specifically in secure [[broadcast]]ing. In that setup, several messages need to be sent each to a set of receivers, over an insecure channel. Each message has to be encrypted using some cryptographic key that is known only to the intended receivers. Each receiver may possess multiple encryption keys, and each key will be distributed to multiple receivers. The ''optimum key generation problem'' is to find a minimum set of encryption keys for ensuring secure transmission. As above, the problem can be modeled using a bipartite graph whose minimum biclique edge covers coincide with the solutions to the optimum key generation problem {{harv|Shu|Lee|Yannakakis|2006}}.
+
+==See also==
+[[List of NP-complete problems]]
+
+==References==
+*{{Citation
+ | first1 = Jérôme |last1 = Amilhastre
+ | first2 = Philippe | last2 = Janssen
+ | first3 = Marie-Catherine
+ | last3 = Vilarem
+ | year = 1997
+ | contribution = Computing a minimum biclique cover is polynomial for bipartite domino-free graphs
+ | title = Proceedings of the Eighth Annual ACM-SIAM Symposium on Discrete Algorithms, 5–7 January 1997, New Orleans, Louisiana.
+ | pages = 36–42
+ | publisher = ACM/SIAM
+ | url=http://portal.acm.org/citation.cfm?id=314175}}
+*{{Citation
+ | last1 = de Caen | first1 = Dominique
+ | last2 = Gregory | first2 = David A.
+ | last3 = Pullman | first3 = Norman J.
+ | contribution = The Boolean rank of zero-one matrices
+ | editor-last = Cadogan | editor-first = Charles C.
+ | pages = 169–173
+ | publisher = Department of Mathematics, University of the West Indies
+ | title = 3rd Caribbean Conference on Combinatorics and Computing
+ | id = {{MR|0657202}}
+ | year = 1981}}.
+*{{Citation
+ | last1 = Downey | first1 = Rod
+ | last2 = Fellows | first2 = Michael R. | author2-link = Michael Fellows
+ | isbn = 0-387-94883-X
+ | publisher = Springer
+ | title = Parameterized complexity
+ | year = 1999}}.
+*{{Citation
+ | last1 = Ene | first1 = Alina
+ | last2 = Horne | first2 = William G.
+ | last3 = Milosavljevic | first3 = Nikola
+ | last4 = Rao | first4 = Prasad
+ | last5 = Schreiber | first5 = Robert
+ | last6 = Tarjan | first6 = Robert Endre
+ | author6-link = Robert Tarjan
+ | contribution = Fast exact and heuristic methods for role minimization problems
+ | editor1-last = Ray | editor1-first = Indrakshi
+ | editor2-last = Li | editor2-first = Ninghui
+ | pages = 1–10
+ | publisher = ACM
+ | title = 13th ACM Symposium on Access Control Models and Technologies (SACMAT 2008)
+ | year = 2008}}.
+*{{Citation
+ | last1 = Fishburn | first1 = Peter C. | author1-link = Peter C. Fishburn
+ | last2 = Hammer | first2 = Peter L. | author2-link = Peter Hammer
+ | doi = 10.1016/0012-365X(95)00154-O
+ | issue = 1–3
+ | journal = [[Discrete Mathematics (journal)|Discrete Mathematics]]
+ | pages = 127–148
+ | title = Bipartite dimensions and bipartite degrees of graphs
+ | volume = 160
+ | year = 1996}}.
+*{{Citation
+ | last1 = Fleischner | first1 = Herbert
+ | last2 = Mujuni | first2 = Egbert
+ | last3 = Paulusma | first3 = Daniël
+ | last4 = Szeider | first4 = Stefan
+ | doi = 10.1016/j.tcs.2008.12.059
+ | issue = 21-23
+ | journal = [[Theoretical Computer Science (journal)|Theoretical Computer Science]]
+ | pages = 2045–2053
+ | title = Covering graphs with few complete bipartite subgraphs
+ | volume = 410
+ | year = 2009}}.
+*{{Citation
+ | last1 = Garey | first1 = Michael R. | author1-link = Michael Garey
+ | last2 = Johnson | first2 = David S. | author2-link = David S. Johnson
+ | publisher = W.H. Freeman
+ | title = [[Computers and Intractability: A Guide to the Theory of NP-Completeness]]
+ | year = 1979
+ | isbn = 0716710455}}.
+*{{Citation
+ | last1 = Gottlieb | first1 = Lee-Ad J.
+ | last2 = Savage | first2 = John E.
+ | last3 = Yerukhimovich | first3 = Arkady
+ | year = 2005
+ | title = Efficient data storage in large nanoarrays
+ | journal = Theory of Computing Systems
+ | volume = 38
+ | issue = 4
+ | pages = 503–536
+ | doi = 10.1007/s00224-004-1196-9}}.
+*{{Citation
+ | last1 = Gruber | first1 = Hermann
+ | last2 = Holzer | first2 = Markus
+ | doi = 10.1007/978-3-540-73208-2_21
+ | editor1-last = Harju | editor1-first = Terjo
+ | editor2-last = Karhumäki | editor2-first = Juhani
+ | editor3-last = Lepistö | editor3-first = Arto
+ | contribution = Inapproximability of Nondeterministic State and Transition Complexity Assuming P <> NP.
+ | title = 11th [[International Conference on Developments in Language Theory]] (DLT 2007)
+ | place = Turku, Finland
+ | volume = 4588
+ | series = LNCS
+ | pages = 205–216
+ | year = 2007
+ | publisher = Springer
+}}.
+*{{Citation
+ | last1 = Jukna | first1 = Stasys
+ | last2 = Kulikov | first2 = A. S.
+ | doi =
+ 10.1016/j.disc.2008.09.036| issue =
+ | journal = [[Discrete Mathematics (journal)|Discrete Mathematics]]
+ | pages = 3399–3403
+ | title = On covering graphs with complete bipartite subgraphs
+ | volume = 309
+ | year = 2009}}.
+*{{Citation
+ | last1 = Monson | first1 = Sylvia D.
+ | last2 = Pullman | first2 = Norman J.
+ | last3 = Rees | first3 = Rolf
+ | journal = Bulletin of the ICA
+ | pages = 17–86
+ | title = A survey of clique and biclique coverings and factorizations of (0,1)-matrices
+ | volume = 14
+ | id = {{MR|1330781}}
+ | year = 1995}}.
+*{{Citation
+ | last1 = Nor | first1 = Igor
+ | last2 = Hermelin | first2 = Danny
+ | last3 = Charlat | first3 = Sylvain
+ | last4 = Engelstadter | first4 = Jan
+ | last5 = Reuter | first5 = Max
+ | last6 = Duron | first6 = Olivier
+ | last7 = Sagot | first7 = Marie-France
+ | id = {{arxiv|cs.DS|1002.1292}}
+ | title = Mod/Resc Parsimony Inference
+ | year = 2010}}.
+*{{Citation
+ | last = Orlin | first = James
+ | doi = 10.1016/1385-7258(77)90055-5
+ | issue = 5
+ | journal = [[Indagationes Mathematicae]]
+ | pages = 406–424
+ | title = Contentment in graph theory: covering graphs with cliques
+ | volume = 80
+ | year = 1977}}.
+*{{Citation
+| last1 = Shu | first1 = Guoqiang
+| last2 = Lee | first2 = David
+| last3 = Yannakakis |first3 = Mihalis
+| contribution = A note on broadcast encryption key management with applications to large scale emergency alert systems.
+| publisher = IEEE
+| title = 20th International Parallel and Distributed Processing Symposium (IPDPS 2006)
+| year = 2006
+}}.
+*{{Citation
+ | last = Simon | first = Hans-Ulrich
+ | doi = 10.1137/0403025
+ | issue = 2
+ | journal = SIAM Journal on Discrete Mathematics
+ | pages = 294–310
+ | title = On Approximate Solutions for Combinatorial Optimization Problems
+ | volume = 3
+ | year = 1990}}.
+*{{Citation
+ | last = Stockmeyer | first = Larry J. | author-link = Larry J. Stockmeyer
+ | publisher = IBM
+ | series = Technical Report RC-5431
+ | title = The set basis problem is NP-complete
+ | year = 1975}}.
+
+==External links==
+*[http://11011110.livejournal.com/134829.html blog entry about bipartite dimension] by [[David Eppstein]]
+
+{{Use dmy dates|date=September 2010}}
+
+{{DEFAULTSORT:Bipartite Dimension}}
+[[Category:NP-complete problems]]
+[[Category:Graph invariants]]</body> </html>

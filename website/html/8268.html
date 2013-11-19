@@ -1,0 +1,18 @@
+<html> <head> <title>Count Key Data</title></head><body>'''Count Key Data''' (CKD) is a disk data architecture.  Each physical disk record consists of a count field, an optional key field, and a ("user") data field with error correction/detection information appended to each field and gaps separating each field <ref>Systems Reference Library, IBM System/360 Component Description, circa 1966, Track Format, p.3-7 [http://www.textfiles.com/bitsavers/pdf/ibm/360/A26-5988-2_storageComp.pdf],<br/>IBM 3390 Direct Access Storage Introduction, GC26-4573-03, May 1993, Chapter 2, Count-Key-Data Record Format</ref>. Because of the gaps and other information the recorded space is larger than that required for just the count data, key data, or user data.
+
+The principle behind the architecture is that since data record lengths can vary, they all have an associated count field which indicates the size of the key if used and the size of the data.<ref name="ibm">[http://publib.boulder.ibm.com/infocenter/dsichelp/ds8000ic/index.jsp?topic=/com.ibm.storage.ssic.help.doc/f2c_count_key_data_32odui.html Count key data], IBM infocenter</ref>.  The count field has the identification of the physical location in cylinder-head-record format, the length of the key, and the length of the data. The key may be omitted or consist of a string of characters.  Most often the key is omitted, the record located sequentially or by direct cylinder-head-record addressing.  If it is present, the key is typically a copy of the first n bytes of the data record but can be any data which will be used to find the record.  The key (and hence the record) is locatable via hardware commands.<ref>Houtekamer, Gilbert E. and Artis, H. Pat, MVS I/O Subsystems, McGraw-Hill 1991, ISBN 0-07-002553-3</ref> Since the introduction of [[IBM System/360|IBM's System/360]] in 1964 nearly all [[IBM]] large and intermediate system [[Direct Access Storage Device|DASD]]s have used the Count Key Data Architecture<ref name="Sync">Introduction to Nonsynchronous Direct Access Storage Subsystems, IBM GC46-4519-0, January 1990, Chapter 2, Synchronous DASD Operations</ref>. Compare to [[Fixed Block Architecture]] (FBA).
+
+The advantages of Count Key Data architecture are:
+*The record size can be exactly matched to the application block size
+*CPU and memory requirements can be reduced by exploiting search-key commands.
+*IBM CKD devices operate synchronously with the system channel and can process information in the gaps between the various fields, thereby achieving higher performance by avoiding the redundant transfer of information to the host<ref name="Sync" />.
+
+Reduced CPU and memory prices and higher device and interface speeds have somewhat nullified the advantages of CKD, and it is retained only because IBM's flagship operating system [[z/OS]] does not support sector-oriented interfaces.
+
+{{anchor|ECKD}}
+'''Extended Count Key Data''' (ECKD) refers to the CCW commands used with cached controllers for IBM [[Direct access storage device|DASD]]. The new commands were introduced on the cached versions of the [[IBM 3880]] and were extended on the [[IBM 3990]]. The ECKD channel commands provide improved performance for the obsolete Bus & Tag interface, [[ESCON]] (or Enterprise Systems Connection) interface or the newer [[FICON]] (Fiber Connectivity) protocol.  ECKD allows the programmer to provide the control unit with information on intent and to perform operations in a single [[Channel_I/O#Channel_Program|channel program]] that would require multiple channel programms with CKD.
+
+==References==
+{{Reflist}}
+
+[[Category:Computer memory]]</body> </html>

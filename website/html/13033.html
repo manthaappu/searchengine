@@ -1,0 +1,65 @@
+<html> <head> <title>FCMOV</title></head><body>'''FCMOV''' is a '''f'''loating point '''c'''onditional '''mov'''e [[opcode]] of the [[Intel]] [[x86]] architecture, first introduced in [[Pentium Pro]] processors. It copies the contents of one of the floating point stack register, depending on the contents of [[FLAGS register (computing)|EFLAGS]] integer flag register, to the ST(0) (top of stack) register. There are 8 variants of the instruction selected by the condition codes that need be set for the instruction to perform the move.
+
+Similar to the [[CMOV]] instruction, FCMOV allows to perform some conditional operations without the usual [[Branch (computer science)|branching]] overhead.<ref name="x86ref">''Intel Architecture Software Developer Manual, Volume 2: Instruction Set Reference.'' Available for download at [http://www.intel.com/design/intarch/manuals/243191.htm]</ref> However, it has a higher [[Latency (engineering)|latency]] than conditional branch instructions.<ref name="assembly">Fog, A: ''Optimizing subroutines in assembly language. An optimization guide for x86 platforms.'' Available for download at [http://www.agner.org/optimize/]</ref> Therefore, it is most useful for simple yet unpredictable comparison or conditional operations, where it can provide substantial performance gains.
+
+The instruction is usually used with the [[FCOMI]] instruction or the [[FCOM]]-[[FSTSW]]-[[SAHF]] idiom to set the relevant condition codes based on the result of a floating point comparison.
+
+==Variants==
+This table shows the variants of the FCMOV instructions.<ref name="x86ref"/> In the Opcode column, i denotes the number of the floating point stack register used as the second operand (the first is always the ST(o) register - the top of the stack). Add it to the given number to obtain the corresponding opcode.
+{| class="wikitable"
+!Opcode
+!Mnemonic
+!Meaning
+!Condition
+|---
+|DA C0+i
+|FCMOVB
+|Move if below
+|[[Carry flag]] set
+|---
+|DA C8+i
+|FCMOVE
+|Move if equal
+|Zero flag set
+|---
+|DA D0+i
+|FCMOVBE
+|Move if below or equal
+|Carry flag or Zero flag set
+|---
+|DA D8+i
+|FCMOVU
+|Move if unordered
+|[[Parity flag]] set
+|---
+|DB C0+i
+|FCMOVNB
+|Move if not below
+|Carry flag cleared
+|---
+|DB C8+i
+|FCMOVNE
+|Move if not equal
+|Zero flag cleared
+|---
+|DB D0+i
+|FCMOVNBE
+|Move if not below or equal
+|Carry flag and Zero flag cleared
+|---
+|DB D8+i
+|FCMOVNU
+|Move if not unordered
+|Parity flag cleared
+|---
+|}
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://www.x86.org/secrets/opcodes/fcmov.htm Free Dr. Dobb's Microprocessor Resources]
+* [http://www.agner.org/optimize/ Software Optimization Resources]
+* [http://www.intel.com/design/intarch/manuals/243191.htm Intel's official instruction set reference download page]
+
+[[Category:X86 instructions]]</body> </html>

@@ -1,0 +1,78 @@
+<html> <head> <title>Multivariate interpolation</title></head><body>In [[numerical analysis]], '''multivariate interpolation''' or '''spatial interpolation''' is [[interpolation]] on functions of more than one variable.
+
+The function to be interpolated is known at given points <math>(x_i, y_i, z_i, \dots)</math> and the interpolation problem consist of yielding values at arbitrary points <math>(x,y,z,\dots)</math>.
+
+==Regular grid==
+For function values known on a [[regular grid]] (having predetermined, not necessarily uniform, spacing), the following methods are available.
+
+===Any dimension===
+* [[Nearest-neighbor interpolation]]
+
+===2 dimensions===
+* [[Bilinear interpolation]]
+* [[Bicubic interpolation]] 
+* [[Bézier surface]]
+* [[Lanczos resampling]] 
+* [[Delaunay triangulation]] 
+* [[Spline interpolation]]
+* [[Natural neighbor]]
+* [[Kriging]]
+* [[Inverse distance weighting]]
+
+[[Resampling#Bitmap|Bitmap resampling]] is the application of 2D multivariate interpolation in [[image processing]].
+
+Three of the methods applied on the same dataset, from 16 values located at the black dots. The colours represent the interpolated values.
+<gallery>
+Image:Nearest2DInterpolExample.png|Nearest neighbor
+Image:BilinearInterpolExample.png|Bilinear
+Image:BicubicInterpolationExample.png|Bicubic
+</gallery>
+
+See also [[Padua points]], for [[polynomial interpolation]] in two variables.
+
+===3 dimensions===
+* [[Trilinear interpolation]]
+* [[Tricubic interpolation]]
+
+See also [[Resampling (bitmap)|bitmap resampling]].
+
+===Tensor product splines for ''N'' dimensions===
+
+Catmull-Rom splines can be easily generalized to any number of dimensions.
+The [[cubic Hermite spline]] article will remind you that <math>\mathrm{CINT}_x(f_{-1}, f_0, f_1, f_2) = \mathbf{b}(x) \cdot \left( f_{-1} f_0 f_1 f_2 \right)</math> for some 4-vector <math>\mathbf{b}(x)</math> which is a function of ''x'' alone, where <math>f_j</math> is the value at <math>j</math> of the function to be interpolated.
+Rewrite this approximation as
+:<math>
+\mathrm{CR}(x) = \sum_{i=-1}^2 f_i b_i(x)
+</math>
+This formula can be directly generalized to N dimensions <ref>[http://arxiv.org/abs/0905.3564 Two hierarchies of spline interpolations. Practical algorithms for multivariate higher order splines]</ref>:
+:<math>
+\mathrm{CR}(x_1,\dots,x_N) = \sum_{i_1,\dots,i_N=-1}^2 f_{i_1\dots i_N} \prod_{j=1}^N b_{i_j}(x_j)
+</math>
+Note that similar generalizations can be made for other types of spline interpolations, including Hermite splines.
+In regards to efficiency, the general formula can in fact be computed as a composition of successive <math>\mathrm{CINT}</math>-type operations for any type of tensor product splines, as explained in the [[tricubic interpolation]] article.
+However, the fact remains that if there are <math>n</math> terms in the 1-dimensional <math>\mathrm{CR}</math>-like summation, then there will be <math>n^N</math> terms in the <math>N</math>-dimensional summation.
+
+== Irregular grid (scattered data) ==
+Schemes defined for scattered data on a [[irregular grid]] should all work on a regular grid, typically reducing to another known method.
+* [[Nearest-neighbor interpolation]]
+* [[Triangulated irregular network]]-based [[natural neighbor]]
+* [[Triangulated irregular network]]-based [[linear interpolation]] (a type of [[piecewise linear function]])
+* [[Inverse distance weighting]]
+* [[Kriging]]
+* [[Radial basis function]]
+* [[Thin plate spline]]
+* [[Polyharmonic spline]] (the thin-plate-spline is a special case of a polyharmonic spline)
+* Least-squares [[spline (mathematics)|spline]]
+
+==Notes==
+<references />
+
+==External links==
+* [http://chichi.lalescu.ro/splines.html Example C++ code for several 1D, 2D and 3D spline interpolations (including Catmull-Rom splines).]
+* [http://web.archive.org/web/20060915111500/http://www.ices.utexas.edu/CVC/papers/multidim.pdf Multi-dimensional Hermite Interpolation and Approximation], Prof. Chandrajit Bajaja, [[Purdue University]]
+
+[[Category:Interpolation]]
+[[Category:Multivariate interpolation]]
+
+
+{{Mathapplied-stub}}</body> </html>

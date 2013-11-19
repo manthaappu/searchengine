@@ -1,0 +1,35 @@
+<html> <head> <title>Dynamization</title></head><body>In [[computer science]], '''Dynamization''' is the process of transforming a [[static data structure]] into a [[dynamic data structure|dynamic]] one. Although static data structures may provide very good functionality and fast queries, their utility is limited because of their inability to grow/shrink fast, thus making them inapplicable for the solution of [[dynamic problem (algorithms)|dynamic problem]]s, where the amount of the input data changes. Dynamization techniques provide uniform ways of creating dynamic data structures.
+
+==Decomposable search problems==
+We define problem P of searching for the predicate M match in the set S as <math>P(M,S)</math>. Problem P is decomposable if the set S can be decomposed into subsets <math>S_i</math> and there exist an operation <math>+</math> of result unification such that <math>P(M,S) = P(M,S_0) + P(M,S_1) + \dots + P(M,S_n)</math>.
+
+==Decomposition==
+
+Decomposition is a term used in computer science to break static data structures into smaller units of unequal size. The basic principle is the idea that any decimal number can be translated into a representation in any other base. For more details about the topic see [[Decomposition (computer science)]]. For simplicity, binary system will be used in this article but any other base (as well as other possibilities such as [[Fibonacci number]]s) can also be utilized.
+
+If using the binary system, a set of <math>n</math> elements is broken down into subsets of sizes with 
+
+:<math>2^{i}*n_{i}</math>    
+
+elements where <math>n_{i}</math> is the  <math>i</math>-th bit of <math>n</math> in binary. This means that if <math>n</math> has <math>i</math>-th bit equal to 0, the corresponding set does not contain any elements. Each of the subset has the same property as the original static data structure. Operations performed on the new dynamic data structure may involve traversing <math>\log_{2}\left(n\right)</math> sets formed by decomposition. As a result, this will add <math>O(\log\left(n\right))</math>  factor as opposed to the static data structure operations but will allow Insert/Delete operation to be added. 
+
+[[Kurt Mehlhorn]] proved several equations for time complexity of operations on data structures dynamized according to this idea. Some of these equalities are listed. 
+
+If 
+
+ <math>P_S\left(n\right)\,\!</math> = time to build the static data structure
+ <math>Q_S\left(n\right)\,\!</math> = time to query the static data structure
+ <math>Q_D\left(n\right)\,\!</math> = time to query the dynamic data structure formed by decomposition
+ <math>\overline{I}</math> = amortized insertion time
+
+Then
+
+  <math>Q_D\left(n\right) = O(Q_S\left(n\right)\log\left(n\right))\,\!</math>
+  <math>\overline{I}=O(\left(P_S\left(n\right)/n\right)\log\left(n\right))</math>
+
+If <math>Q_S\left(n\right)</math> is [[at least polynomial]], then <math>Q_D\left(n\right)=O\left(Q_S\left(n\right)\right)</math>.
+
+==Further reading==
+Kurt Mehlhorn, [http://www.mpi-sb.mpg.de/~mehlhorn/DatAlgbooks.html Data structures and algorithms] 3, . An EATCS Series, vol. 3, Springer, 1984.
+
+[[Category:Data structures]]</body> </html>

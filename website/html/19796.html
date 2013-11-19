@@ -1,0 +1,107 @@
+<html> <head> <title>Java package</title></head><body>A '''Java package''' is a mechanism for organizing [[Java (programming language)|Java]] [[class (computer science)|classes]] into [[namespace (computer science)|namespaces]] similar to the modules of [[Modula]].  Java packages can be stored in compressed files called [[JAR file]]s, allowing classes to download faster as a group rather than one at a time. Programmers also typically use packages to organize classes belonging to the same category or providing similar functionality. 
+
+* A package provides a unique namespace for the types it contains.
+* Classes in the same package can access each other's package-access members.
+
+== Overview ==
+
+In general, a package can contain the following kinds of [[Datatypes|types]].
+* [[Class (computer science)|Classes]]
+* [[Interface (Java)|Interfaces]]
+* [[Enumerated type]]s
+
+== Using packages ==
+
+In a Java source file, the package that this file's class or classes belong to is specified with the <code>package</code> [[keyword (computer programming)|keyword]]. This keyword is usually the first keyword in source file.<ref>http://java.sun.com/docs/books/tutorial/java/package/managingfiles.html</ref> 
+
+<source lang="java">
+package java.awt.event;
+</source>
+To use a package's classes inside a Java source file, it is convenient to import the classes from the package  with an <code>import</code> declaration.  The following declaration
+<source lang="java">
+import java.awt.event.*;
+</source>
+imports all classes from the <code>java.awt.event</code> package, while the next declaration
+<source lang="java">
+import java.awt.event.ActionEvent;
+</source>
+imports only the <code>ActionEvent</code> class from the package. After either of these import declarations, the <code>ActionEvent</code> class can be referenced using its simple class name:
+<source lang="java">
+ActionEvent myEvent = new ActionEvent();
+</source>
+Classes can also be used directly without an import declaration by using the fully qualified name of the class.  For example,
+<source lang="java">
+java.awt.event.ActionEvent myEvent = new java.awt.event.ActionEvent();
+</source>
+does not require a preceding import declaration.
+
+Note that if you do not use a package declaration, your class ends up in an unnamed package.<ref>http://java.sun.com/docs/books/tutorial/java/package/createpkgs.html</ref><ref>http://java.sun.com/docs/books/jls/second_edition/html/packages.doc.html#26639</ref>
+
+== Package access protection ==
+
+Classes within a package can access classes and members declared with ''default access'' and class members declared with the ''<code>protected</code>'' access modifier.  Default access is enforced when neither the <code>public</code>, <code>protected</code> nor <code>private</code> access modifier is specified in the declaration.  By contrast, classes in other packages cannot access classes and members declared with default access.  Class members declared as <code>protected</code> can be accessed from the classes in the same package as well as classes in other packages that are subclasses of the declaring class.
+
+== Creation of JAR files ==
+
+JAR Files are created with the jar command-line utility. The command
+
+ jar cf myPackage.jar *.class
+
+compresses all .class files into the JAR file ''myPackage.jar''.  The ' c ' option on the command line tells the jar command to "create new archive."  The ' f ' option tells it to create a file. The file's name comes next before the contents of the JAR file.
+
+== Package naming conventions ==
+
+Packages are usually defined using a [[hierarchical]] naming [[pattern]], with levels in the hierarchy separated by periods (<code>.</code>) (pronounced "dot").  Although packages lower in the naming hierarchy are often referred to as "subpackages" of the corresponding packages higher in the hierarchy, there is no semantic relationship between packages.  The Java Language Specification establishes package naming conventions to avoid the possibility of two published packages having the same name.  The naming conventions describe how to create unique package names, so that packages that are widely distributed will have unique namespaces.  This allows packages to be separately, easily and automatically installed and catalogued.
+
+In general, a package name begins with the [[top level domain]] name of the organization and then the organization's domain and then any subdomains listed in reverse order. The organization can then choose a specific name for their package. Package names should be all lowercase characters whenever possible.
+
+For example, if an organization in Canada called MySoft creates a package to deal with fractions, naming the package <tt>ca.mysoft.fractions</tt> distinguishes the fractions package from another similar package created by another company.  If a US company named MySoft also creates a fractions package, but names it <tt>us.mysoft.fractions</tt>, then the classes in these two packages are defined in a unique and separate namespace.
+
+Complete conventions for disambiguating package names and rules for naming packages when the Internet domain name cannot be directly used as a package name are described in section 7.7 of the Java Language Specification.
+
+== Core packages in Java SE 6 ==
+{{main|Java Platform, Standard Edition}}
+
+{|
+| {{Javadoc:SE|package=java.lang|java/lang}}          || — basic language functionality and fundamental types
+|-
+| {{Javadoc:SE|package=java.util|java/util}}          || — collection [[data structure]] classes
+|-
+| {{Javadoc:SE|package=java.io|java/io}}              || — file operations
+|-
+| {{Javadoc:SE|package=java.math|/java/math}}         || — multiprecision arithmetics 
+|-
+| {{Javadoc:SE|package=java.nio|java/nio}}            || — the [[New I/O]] framework for Java
+|-
+| {{Javadoc:SE|package=java.net|java/net}}            || — networking operations, sockets, [[DNS lookup]]s, ...
+|-
+| {{Javadoc:SE|package=java.security|java/security}}  || — key generation, encryption and decryption
+|-
+| {{Javadoc:SE|package=java.sql|java/sql}}            || — [[Java Database Connectivity]] (JDBC) to access databases
+|-
+| {{Javadoc:SE|package=java.awt|java/awt}}            || — basic hierarchy of packages for native GUI components
+|-
+| {{Javadoc:SE|package=javax.swing|javax/swing}}      || — hierarchy of packages for platform-independent rich [[GUI]] components
+|-
+| {{Javadoc:SE|package=java.applet|java/applet}}      || — classes for creating an applet
+|}
+
+The {{Javadoc:SE|package=java.lang|java/lang}} package is available without the use of an import statement.
+
+== External links ==
+
+* {{Javadoc:SE}}
+* Java Language Specification, 3rd Edition, Chapter 7: [http://java.sun.com/docs/books/jls/third_edition/html/packages.html Packages]
+* Code Conventions for the Java Programming Language, Chapter 9: [http://java.sun.com/docs/codeconv/html/CodeConventions.doc8.html Naming conventions] (mentions packages)
+* Sun's "Java Tutorials" [http://java.sun.com/docs/books/tutorial/java/package/index.html Lesson: Packages]
+
+==References==
+{{reflist|1}}
+
+[[Category:Java programming language|Package]]
+
+[[es:Paquete Java]]
+[[it:Package (Java)]]
+[[nl:Java package]]
+[[ja:パッケージ (Java)]]
+[[ru:Package (Java)]]</body> </html>

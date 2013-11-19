@@ -1,0 +1,533 @@
+<html> <head> <title>MOS Technology 8568</title></head><body>[[Image:SpeedScript 128 in action.png|thumb|right|320px|The VDC was designed with [[office suite]] applications in mind. Shown here is ''[[SpeedScript|SpeedScript 128]]'', a [[word processor]].]]
+[[Image:Ultra Hi-Res Cube Demo.gif|thumb|right|320px|This ''Ultra Hi-Res'' [[demo (computer programming)|demo]] showcases the VDC's [[blitter]] capabilities with a simple [[3D animation]] of a [[wire frame model]] of a [[cube]].]]
+The '''8568 Video Display Controller (VDC)''' was [[MOS Technology]]'s [[graphics processor]] responsible for the 80 column{{ref|80-column}} or [[RGB]]I display on [[Commodore 128#128D; RGB graphics|D[CR]]] models of the [[Commodore 128]] [[personal computer]].  In the Commodore 128 service manual, this part was referred to as the "80 column [[cathode ray tube|CRT]] controller."  The 8568 embodied many of the features of the older [[MOS Technology 6545|6545E]] [[monochrome]] CRT controller plus RGBI color.{{ref|128-manual}}
+
+The original ("flat") C128 used the [[MOS Technology 8563|8563]] video controller to generate the 80 column display.  The 8568 was essentially an updated version of the 8563, combining the latter's functionality with [[glue logic]] that previously was implemented by discrete components in physical proximity to the 8563.  Unlike the 8563, the 8568 included an unused [[Logic level|active low]] [[interrupt request]] line (<tt>/INTR</tt>), which was asserted when the "ready" bit in the 8568's status register changed from 0 to 1.  Reading the control register would automatically deassert <tt>/INTR</tt>.  Owing to differences in pin assignments and circuit interfacing, the 8563 and 8568 are not electrically interchangeable.{{ref|128-manual}}
+
+The Commodore 128 had two video display modes, which were usually used singularly, but could be used simultaneously if the computer was connected to two compatible video monitors. The [[MOS Technology VIC-II|VIC-II]] chip, also found in the [[Commodore 64]], was mapped directly into main memory&mdash;the video memory and CPUs (the 8502 and Z80A processors) shared a common 128 [[kilobyte|KB]] [[random access memory|RAM]], and the VIC-II [[hardware register|control register]]s were accessed as memory locations (that is, they were [[memory mapped I/O|memory mapped]]).
+
+Unlike the VIC-II, the 8568 had its own local video RAM, 64K in the C-128DCR model (sold in North America) and, depending on the date of manufacture of the particular machine, either 16 or 64K in the C-128D model (marketed in Europe).  Addressing the VDC's internal registers and dedicated video memory must be accomplished by indirect means.  First the program must tell the VDC which of its 37 internal registers is to be accessed.  Next the program must wait until the VDC is ready for the access, after which a read or write on the selected internal register may be performed.  The following code is typical of a register read:
+<code>
+         ldx #regnum       ;VDC register to access
+         stx $d600         ;write to control register
+ loop    bit $d600         ;check bit 7 of status register
+         bpl loop          ;VDC not ready
+         lda $d601         ;read from VDC register
+         ...
+</code>
+
+The following code is typical of a register write operation:
+
+<code>
+         ldx #regnum       ;VDC register to write to
+         stx $d600         ;write to control register
+ loop    bit $d600         ;check bit 7 of status register
+         bpl loop          ;VDC not ready
+         sta $d601         ;write to VDC register
+         ...
+</code>
+
+Owing to this somewhat cumbersome method of controlling the 8568, the maximum possible [[frame rate]] in [[bit-map]]ped mode is generally too slow for arcade-style action video games, in which bit-intensive manipulation of the display is required.
+
+The final versions of the 8568 had the revision codes R9a or R9b appended to the part number, apparently indicating undocumented improvements.
+
+== Features == 
+* 80 × 25 characters text resolution
+* 640 x 400 pixels maximum video resolution
+* Interlaced up to 80 x 50 text, 640H x 480V bitmap
+* 3 character modes: standard, semigraphic and graphic, double width & HiRes bitmap.
+* Output: digital [[RGBI interface|RGBI]] with 16 colors or 16 gray shades, plus limited monochrome composite.
+* Features: Interlace mode, horizontal & vertical [[scrolling]], [[Light pen]] input, hardware cursor, underline, blink, reverse video, 2 character sets of 256 each, update ready interrupt
+* Can access 64 KByte of memory, programmable to interface either 4164/4464 or 4416 [[Dynamic random access memory|DRAM]]
+* 48 pins, +5 [[Volt]] [[Direct current|DC]] supply.<ref name="geocities_com-csg">{{cite web|title=empty|url=http://www.geocities.com/rmelick/csg.txt|archiveurl=http://web.archive.org/web/20091028092612/http://www.geocities.com/rmelick/csg.txt|archivedate=2009-10-28}} 090425 geocities.com</ref>
+
+== Register Listing ==
+This information was adapted from the [http://www.devili.iki.fi/library/publication/351.en.html ''Commodore 128 Programmer's Reference Guide'']<ref name=CBM>Commodore Capital, Inc., (1986). ''Commodore 128 programmer's reference guide.'' p.294, New York, NY: Bantam Books, Inc.</ref>
+{| class="wikitable" border="1"
+|-
+! Register
+! Hexadecimal
+! Bit 7
+! Bit 6
+! Bit 5
+! Bit 4
+! Bit 3
+! Bit 2
+! Bit 1
+! Bit 0
+! Description
+|-
+| <center>0</center>
+| <center>$00</center>
+| <center>HT7</center>
+| <center>HT6</center>
+| <center>HT5</center>
+| <center>HT4</center>
+| <center>HT3</center>
+| <center>HT2</center>
+| <center>HT1</center>
+| <center>HT0</center>
+| Horizontal Total
+|-
+| <center>1</center>
+| <center>$01</center>
+| <center>HD7</center>
+| <center>HD6</center>
+| <center>HD5</center>
+| <center>HD4</center>
+| <center>HD3</center>
+| <center>HD2</center>
+| <center>HD1</center>
+| <center>HD0</center>
+| Horizontal Displayed
+|-
+| <center>2</center>
+| <center>$02</center>
+| <center>HP7</center>
+| <center>HP6</center>
+| <center>HP5</center>
+| <center>HP4</center>
+| <center>HP3</center>
+| <center>HP2</center>
+| <center>HP1</center>
+| <center>HP0</center>
+| Horizontal Sync Position
+|-
+| <center>3</center>
+| <center>$03</center>
+| <center>VW3</center>
+| <center>VW2</center>
+| <center>VW1</center>
+| <center>VW0</center>
+| <center>HW3</center>
+| <center>HW2</center>
+| <center>HW1</center>
+| <center>HW0</center>
+| Vertical/Horizontal Sync Width
+|-
+| <center>4</center>
+| <center>$04</center>
+| <center>VT7</center>
+| <center>VT6</center>
+| <center>VT5</center>
+| <center>VT4</center>
+| <center>VT3</center>
+| <center>VT2</center>
+| <center>VT1</center>
+| <center>VT0</center>
+| Vertical Total
+|-
+| <center>5</center>
+| <center>$05</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>VA4</center>
+| <center>VA3</center>
+| <center>VA2</center>
+| <center>VA1</center>
+| <center>VA0</center>
+| Vertical Adjust
+|-
+| <center>6</center>
+| <center>$06</center>
+| <center>VD7</center>
+| <center>VD6</center>
+| <center>VD5</center>
+| <center>VD4</center>
+| <center>VD3</center>
+| <center>VD2</center>
+| <center>VD1</center>
+| <center>VD0</center>
+| Vertical Displayed
+|-
+| <center>7</center>
+| <center>$07</center>
+| <center>VP7</center>
+| <center>VP6</center>
+| <center>VP5</center>
+| <center>VP4</center>
+| <center>VP3</center>
+| <center>VP2</center>
+| <center>VP1</center>
+| <center>VP0</center>
+| Vertical Sync Position
+|-
+| <center>8</center>
+| <center>$08</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>IM1</center>
+| <center>IM0</center>
+| Interlace Mode
+|-
+| <center>9</center>
+| <center>$09</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>CTV4</center>
+| <center>CTV3</center>
+| <center>CTV2</center>
+| <center>CTV1</center>
+| Character Total Vertical
+|-
+| <center>10</center>
+| <center>$0A</center>
+| <center>--</center>
+| <center>CM1</center>
+| <center>CM0</center>
+| <center>CS4</center>
+| <center>CS3</center>
+| <center>CS2</center>
+| <center>CS1</center>
+| <center>CS0</center>
+| Cursor Mode, Start Scan
+|-
+| <center>11</center>
+| <center>$0B</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>CE4</center>
+| <center>CE3</center>
+| <center>CE2</center>
+| <center>CE1</center>
+| <center>CE0</center>
+| Cursor End Scan Line
+|-
+| <center>12</center>
+| <center>$0C</center>
+| <center>DS15</center>
+| <center>DS14</center>
+| <center>DS13</center>
+| <center>DS12</center>
+| <center>DS11</center>
+| <center>DS10</center>
+| <center>DS9</center>
+| <center>DS8</center>
+| Display Start Address High Byte
+|-
+| <center>13</center>
+| <center>$0D</center>
+| <center>DS7</center>
+| <center>DS6</center>
+| <center>DS5</center>
+| <center>DS4</center>
+| <center>DS3</center>
+| <center>DS2</center>
+| <center>DS1</center>
+| <center>DS0</center>
+| Display Start Address Low Byte
+|-
+| <center>14</center>
+| <center>$0E</center>
+| <center>CP15</center>
+| <center>CP14</center>
+| <center>CP13</center>
+| <center>CP12</center>
+| <center>CP11</center>
+| <center>CP10</center>
+| <center>CP9</center>
+| <center>CP8</center>
+| Cursor Position High Byte
+|-
+| <center>15</center>
+| <center>$0F</center>
+| <center>CP7</center>
+| <center>CP6</center>
+| <center>CP5</center>
+| <center>CP4</center>
+| <center>CP3</center>
+| <center>CP2</center>
+| <center>CP1</center>
+| <center>CP0</center>
+| Cursor Position Low Byte
+|-
+| <center>16</center>
+| <center>$10</center>
+| <center>LPV7</center>
+| <center>LPV6</center>
+| <center>LPV5</center>
+| <center>LPV4</center>
+| <center>LPV3</center>
+| <center>LPV2</center>
+| <center>LPV1</center>
+| <center>LPV0</center>
+| Light Pen Vertical Position
+|-
+| <center>17</center>
+| <center>$11</center>
+| <center>LPH7</center>
+| <center>LPH6</center>
+| <center>LPH5</center>
+| <center>LPH4</center>
+| <center>LPH3</center>
+| <center>LPH2</center>
+| <center>LPH1</center>
+| <center>LPH0</center>
+| Light Pen Horizontal Position
+|-
+| <center>18</center>
+| <center>$12</center>
+| <center>UA15</center>
+| <center>UA14</center>
+| <center>UA13</center>
+| <center>UA12</center>
+| <center>UA11</center>
+| <center>UA10</center>
+| <center>UA9</center>
+| <center>UA8</center>
+| Update Address High Byte
+|-
+| <center>19</center>
+| <center>$13</center>
+| <center>UA7</center>
+| <center>UA6</center>
+| <center>UA5</center>
+| <center>UA4</center>
+| <center>UA3</center>
+| <center>UA2</center>
+| <center>UA1</center>
+| <center>UA0</center>
+| Update Address Low Byte
+|-
+| <center>20</center>
+| <center>$14</center>
+| <center>AA15</center>
+| <center>AA14</center>
+| <center>AA13</center>
+| <center>AA12</center>
+| <center>AA11</center>
+| <center>AA10</center>
+| <center>AA9</center>
+| <center>AA8</center>
+| Attribute Start Address High Byte
+|-
+| <center>21</center>
+| <center>$15</center>
+| <center>AA7</center>
+| <center>AA6</center>
+| <center>AA5</center>
+| <center>AA4</center>
+| <center>AA3</center>
+| <center>AA2</center>
+| <center>AA1</center>
+| <center>AA0</center>
+| Attribute Start Address Low Byte
+|-
+| <center>22</center>
+| <center>$16</center>
+| <center>CTH3</center>
+| <center>CTH2</center>
+| <center>CTH1</center>
+| <center>CTH0</center>
+| <center>CDH3</center>
+| <center>CDH2</center>
+| <center>CDH1</center>
+| <center>CDH0</center>
+| Character Total Horizontal, Character Display Horizontal
+|-
+| <center>23</center>
+| <center>$17</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>CDV4</center>
+| <center>CDV3</center>
+| <center>CDV2</center>
+| <center>CDV1</center>
+| <center>CDV0</center>
+| Character Display Vertical
+|-
+| <center>24</center>
+| <center>$18</center>
+| <center>COPY</center>
+| <center>RVS</center>
+| <center>CBRATE</center>
+| <center>VSS4</center>
+| <center>VSS3</center>
+| <center>VSS2</center>
+| <center>VSS1</center>
+| <center>VSS0</center>
+| Vertical Smooth Scrolling
+|-
+| <center>25</center>
+| <center>$19</center>
+| <center>TEXT</center>
+| <center>ATR</center>
+| <center>SEMI</center>
+| <center>DBL</center>
+| <center>HSS3</center>
+| <center>HSS2</center>
+| <center>HSS1</center>
+| <center>HSS0</center>
+| Horizontal Smooth Scrolling
+|-
+| <center>26</center>
+| <center>$1A</center>
+| <center>FG3</center>
+| <center>FG2</center>
+| <center>FG1</center>
+| <center>FG0</center>
+| <center>BG3</center>
+| <center>BG2</center>
+| <center>BG1</center>
+| <center>BG0</center>
+| Foreground/Background color
+|-
+| <center>27</center>
+| <center>$1B</center>
+| <center>AI7</center>
+| <center>AI6</center>
+| <center>AI5</center>
+| <center>AI4</center>
+| <center>AI3</center>
+| <center>AI2</center>
+| <center>AI1</center>
+| <center>AI0</center>
+| Address Increment per Row
+|-
+| <center>28</center>
+| <center>$1C</center>
+| <center>CB15</center>
+| <center>CB14</center>
+| <center>CB13</center>
+| <center>RAM</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| Character Base Address
+|-
+| <center>29</center>
+| <center>$1D</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>UL4</center>
+| <center>UL3</center>
+| <center>UL2</center>
+| <center>UL1</center>
+| <center>UL0</center>
+| Underline Scan Line
+|-
+| <center>30</center>
+| <center>$1E</center>
+| <center>WC7</center>
+| <center>WC6</center>
+| <center>WC5</center>
+| <center>WC4</center>
+| <center>WC3</center>
+| <center>WC2</center>
+| <center>WC1</center>
+| <center>WC0</center>
+| Word Count
+|-
+| <center>31</center>
+| <center>$1F</center>
+| <center>DA7</center>
+| <center>DA6</center>
+| <center>DA5</center>
+| <center>DA4</center>
+| <center>DA3</center>
+| <center>DA2</center>
+| <center>DA1</center>
+| <center>DA0</center>
+| Data Register
+|-
+| <center>32</center>
+| <center>$20</center>
+| <center>BA15</center>
+| <center>BA14</center>
+| <center>BA13</center>
+| <center>BA12</center>
+| <center>BA11</center>
+| <center>BA10</center>
+| <center>BA9</center>
+| <center>BA8</center>
+| Block Start Address High Byte
+|-
+| <center>33</center>
+| <center>$21</center>
+| <center>BA7</center>
+| <center>BA6</center>
+| <center>BA5</center>
+| <center>BA4</center>
+| <center>BA3</center>
+| <center>BA2</center>
+| <center>BA1</center>
+| <center>BA0</center>
+| Block Start Address Low Byte
+|-
+| <center>34</center>
+| <center>$22</center>
+| <center>DEB7</center>
+| <center>DEB6</center>
+| <center>DEB5</center>
+| <center>DEB4</center>
+| <center>DEB3</center>
+| <center>DEB2</center>
+| <center>DEB1</center>
+| <center>DEB0</center>
+| Display Enable Begin
+|-
+| <center>35</center>
+| <center>$23</center>
+| <center>DEE7</center>
+| <center>DEE6</center>
+| <center>DEE5</center>
+| <center>DEE4</center>
+| <center>DEE3</center>
+| <center>DEE2</center>
+| <center>DEE1</center>
+| <center>DEE0</center>
+| Display Enable End
+|-
+| <center>36</center>
+| <center>$24</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>DRR3</center>
+| <center>DRR2</center>
+| <center>DRR1</center>
+| <center>DRR0</center>
+| DRAM Refresh Rate
+|-
+| <center>37<ref name=welte>{{cite web
+| url         = http://www.go64.de/english/online_e/06_00_2e.htm
+| title       = Uncovered: The VDC 8568's 38th register
+| accessdate  = 2008-12-30
+}}</ref></center>
+| <center>$25</center>
+| <center>HSYNC</center>
+| <center>VSYNC</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| <center>--</center>
+| SYNC Polarity (undocumented)
+|}
+
+==Notes==
+# {{note|80-column}} In Commodore 128 terminology, the VIC-II display was called the 40 column display, and the VDC, 80 column, due to the number of columns of fixed-pitch text that could be natively displayed.
+# {{note|128-manual}}Commodore service manual 314001-08 (1987).
+# {{note|C-64}} The 8563/8568 hardware is always visible on the address and data buses regardless of which mode in which the C-128 is operating.  Hence it is possible to generate an 80 column display while running in [[Commodore 64|C-64]] compatibility mode.  There is, of course, no C-64 operating system support.
+
+==References==
+{{reflist}}
+
+{{MOS Video/Sound}}
+[[Category:Graphics chips]]
+[[Category:Commodore 64]]
+
+[[it:MOS DVDC]]</body> </html>

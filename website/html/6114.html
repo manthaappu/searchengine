@@ -1,0 +1,72 @@
+<html> <head> <title>Chinese speech synthesis</title></head><body>{{Review|date=June 2010}}
+
+'''Chinese speech synthesis''' is the application of [[speech synthesis]] to the Chinese language (usually [[Standard Chinese]]).  It poses additional difficulties due to the Chinese characters (which frequently have different pronunciations in different contexts), the complex [[Prosody (linguistics)|prosody]] which is essential to convey the meaning of words, and sometimes the difficulty in obtaining agreement among native speakers concerning what is the correct pronunciation of certain phonemes.
+
+==Approaches taken==
+===Corpus-based (iFlyTek and SinoSonic)===
+
+Anhui USTC iFlyTek Co., Ltd (iFlyTek) published a [[W3C]] paper in which they adapted [[Speech Synthesis Markup Language]] to produce a mark-up language called Chinese Speech Synthesis Markup Language (CSSML) which can include additional markup to clarify the pronunciation of characters and to add some prosody information.<ref>http://www.w3.org/2005/08/SSML/Papers/iFLYTech.pdf</ref>  Their synthesiser takes a "corpus-based" approach, which means it can sound very natural in most cases but can err in dealing with unusual phrases if they can't be matched with the corpus.  The amount of data involved is not disclosed by iFlyTek but can be seen from the commercial products that iFlyTek have licensed their technology to; for example, [http://www.biderworld.com/speechplus.asp Bider's SpeechPlus] is a 1.3 Gigabyte download, 1.2 Gigabytes of which is used for the highly-compressed data for a single Chinese voice.  iFlyTek's synthesiser can also synthesise mixed Chinese and English text with the same voice (e.g. Chinese sentences containing some English words); they claim their English synthesis to be "average".
+
+The iFlyTek corpus appears to be heavily dependent on [[Chinese character]]s, and it is not possible to synthesize from [[pinyin]] alone. It is sometimes possible by means of CSSML to add pinyin to the characters to disambiguate between multiple possible pronunciations, but this does not always work. The [[spaced-interval repetition]] language-practice program [http://people.pwf.cam.ac.uk/ssb22/gradint/ Gradint] includes a utility that attempts to turn arbitrary pinyin into CSSML that will be spoken correctly in SpeechPlus, by choosing Chinese characters that are most likely to be given the required pronunciation by SpeechPlus (taking its quirks into account), but this utility recommends that every phrase synthesized be systematically tested and a backup synthesizer be used for phrases that are not spoken correctly, since it is possible for the resulting sound to contain syllables that are totally different from the pinyin input. Gradint now recommends the use of Lily (see below) instead of SpeechPlus.
+
+A corpus-based approach is also taken by [[Tsinghua University]]'s [http://hcsi.cs.tsinghua.edu.cn/chinese/tts1.htm SinoSonic], with the Harbin voice data taking 800 Megabytes. As of 2007, the download link for SinoSonic has not yet been activated.
+
+===Concatenation (KeyTip)===
+
+A less complex approach is taken by cjkware.com's [http://www.cjkware.com KeyTip Putonghua Reader], which contains 120 Megabytes of sound recordings (GSM-compressed to 40 Megabytes in the evaluation version), comprising 10,000 multi-syllable dictionary words plus single-syllable recordings in 6 different prosodies (4 tones, neutral tone, and an extra third-tone recording for use at the end of a phrase). These recordings can be concatenated in any desired combination, but the joins sound forced (as is usual for simple concatenation-based [[speech synthesis]]) and this can severely affect prosody; the synthesizer is also inflexible in terms of speed and expression. However, because this synthesizer does not rely on a corpus, there is no noticeable degradation in performance when it is given more unusual or awkward phrases.
+
+===NeoSpeech and Nuance voices===
+
+Concatenation with a larger amount of recorded data (about 500 Megabytes), along with other undisclosed methods, is apparently used by [[NeoSpeech]]'s [[SAPI 5]] voices "Lily" and "Wang",<ref>[http://www.nextup.com/neospeech.html NeoSpeech SAPI5 TTS Voices for TextAloud, Kurzweil K3000, Jaws and Other Voice Programs<!-- Bot generated title -->]</ref> which can, in most cases, reliably synthesize awkward phrases provided they are added to the dictionary properly<ref>[http://www.nextup.com/phpBB2/viewtopic.php?p=8252#8252 NextUp.com :Text To Speech Software Forums: View topic - Cannot make Neospeech Lily read pinyin (phonetic text)<!-- Bot generated title -->]</ref> and does not suffer from the severe inflexibility and forced joins of simpler concatenation-based synthesis.
+
+The Nuance (formerly ScanSoft) RealSpeak MeiLing voice (available from [http://www.nextup.com/TextAloud/SpeechEngine/voices.html#Nuance NextUp] but note that it won't install without a purchased version of [http://www.nextup.com/ScanInstall.html TextAloud]) has similar properties but the download size is much smaller (42.7 MB).  Due to bugs in the program, it is very difficult to get MeiLing to speak reliably from pinyin or [[zhuyin]] input.<ref>[http://www.nextup.com/phpBB2/viewtopic.php?p=9636#9636 NextUp.com :Text To Speech Software Forums: View topic - How to customize pronunciation in ScanSoft MeiLing?<!-- Bot generated title -->]</ref>
+
+Of these programs, the most reliable for synthesizing awkward or unusual phrases from pronunciation input appears to be Lily. However, even Lily is not perfect. A few phrases are synthesized incorrectly when entered as pinyin but correctly when entered as Chinese characters, for example "yong4chu5lai5" (incorrectly read as the more common "yong4chu1lai5", but characters 用出来 are read correctly), and "zhuan3lai2zhuan3qu4" (the first "zhuan" is incorrectly read as "zhuai", but the characters 转来转去 are read correctly). This is reminiscent of some commercial English speech synthesizers which yield lower quality speech when fed pronunciation data than when fed original text, suggesting that the pronunciation data they accept are not the internal format they use.<ref>[http://people.pwf.cam.ac.uk/ssb22/gradint/lexconvert.html lexconvert: a converter between the lexicon formats of different speech synthesizers<!-- Bot generated title -->]</ref>  Nevertheless it is not always desirable to enter characters only, because often it is necessary to specify a different pronunciation.
+
+These programs can also err in ways that are not explainable by the input format. For example, Neospeech Lily and Nuance MeiLing '''both''' make the following mistakes (which could indicate a sharing of the unpublished techniques they use, despite the significant difference in data size): 首都 (shou3du1) the "du1" is too low in pitch; 邮编 (you2bian1) the "bian1" is too low in pitch; 天真 (tian1zhen1) the two syllables are said with a drop of a musical third, like a doorbell, whereas they should be at the same pitch; 糖尿病 (tang2 niao4 bing4) the N is very unclear. This is true whether the input is characters or (in Lily's case) pinyin.  The first three of these mistakes do not occur when the word is part of a longer phrase, but do occur when it is in isolation, which is often the case in a language-learning scenario.<ref>http://people.pwf.cam.ac.uk/ssb22/gradint/vocab.txt</ref>
+
+Sometimes, pinyin phrases that are synthesized incorrectly by Lily can be corrected by breaking long words into separate words, but not in the above examples.
+
+There does not appear to be any method of sending feedback to the developers about these bugs.
+
+===eSpeak===
+The lightweight open-source speech project [[eSpeak]], which has its own approach to synthesis, has started experimenting with Chinese synthesis.
+
+===Ekho===
+[http://e-guidedog.sourceforge.net/ekho.php Ekho] is another open source TTS, which simply concatenates sampled syllables. It currently supports Cantonese, Mandarin, and Korean.  Some of the Mandarin syllables have been pitched-normalised in [[Praat]].  A modified version of these is used in [http://people.pwf.cam.ac.uk/~ssb22/gradint Gradint]'s "synthesis from partials".
+
+==Online Demos and Bell Labs==
+
+There is an online interactive demonstration for NeoSpeech speech synthesis,<ref>http://www.neospeech.com/demo/demo_text.php</ref> but it is not possible to customize the Chinese pronunciation by entering [[pinyin]]. iFlyTek has two demos available online.<ref>[http://www.iflytek.com/english/Demo.asp Anhui USTC iFlyTek Co., Ltd Demo]</ref><ref>[http://ecl.iflytek.com Anhui USTC iFlyTek Co., Ltd Beta 1.0]</ref>
+
+[[Bell Labs]] have an online Mandarin text-to-speech demo<ref>[http://www.bell-labs.com/project/tts/mandarin.html Mandarin TTS<!-- Bot generated title -->]</ref> dated 1997, but it is now non-functional (the server that the query is to be submitted to does not exist in the [[Domain name system|DNS]]) and the contact email is no longer valid. However, their approach was described in a monograph "Multilingual Text-to-Speech Synthesis: The Bell Labs Approach" (Springer, October 31, 1997, ISBN 978-0792380276), and the former employee who was responsible for the project, Chilin Shih (who now works at the University of Illinois), has some notes about her methods on her website.<ref>[https://netfiles.uiuc.edu/cls/www/ Home Page: Chilin Shih<!-- Bot generated title -->]</ref>
+
+==Non-Windows systems==
+
+The above-mentioned Chinese speech synthesis systems (apart from the online demos) are available only for Windows.  However, the [[spaced-interval repetition]] language-practice program Gradint includes code and instructions for using KeyTIP and SpeechPlus data on other operating systems, by reading the data directly or using the [[Wine (software)|WINE]] emulator.
+
+There are some reports<ref>[http://www.texttospeechblog.com/2007_02_01_archive.html Text To Speech Blog (www.TextToSpeechBlog.com): February 2007<!-- Bot generated title -->]</ref> that [[SAPI 5]]-based speech synthesizers can be run on recent versions of the [[Wine (software)|WINE]] emulator.
+
+Mac OS had Chinese speech synthesizers available up to version 9. This was removed in Mac OS X. From the release 10.5 (Leopard), the built-in VoiceOver application claims to support third-party Chinese voices,<ref>[http://www.apple.com/accessibility/voiceover/ Apple's VoiceOver page]</ref> but no Chinese voice is built in to the operating system and Apple does not provide any links to actual Mac OS X Chinese voice products.
+
+==Notable approaches not yet taken==
+
+As of 2007, it appears that there have been no projects to synthesize Chinese by simulating the human vocal tract, as [[GNU Speech]] is doing for English.<ref>[http://www.gnu.org/software/gnuspeech/]</ref>  Chinese is also not one of the languages being synthesized in the multilingual [[MBROLA]] project.
+
+==See also==
+*[[Speech synthesis]]
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://www.iflytek.com/english/index.htm Anhui USTC iFlyTek Co., Ltd] homepage
+
+{{DEFAULTSORT:Chinese Speech Synthesis}}
+[[Category:Standard Chinese]]
+[[Category:Chinese language]]
+[[Category:Computational linguistics]]
+[[Category:Artificial intelligence applications]]
+[[Category:Speech synthesis]]
+
+[[it:Sintesi vocale cinese]]</body> </html>

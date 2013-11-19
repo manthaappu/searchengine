@@ -1,0 +1,65 @@
+<html> <head> <title>PRONOM technical registry</title></head><body>'''PRONOM''' is a [[world wide web|web]]-based technical registry to support [[digital preservation]] services, developed by [[The National Archives (UK)|The National Archives of the United Kingdom]]. PRONOM was the first and remains, to date, the only operational public [[file format]] registry in the world,<ref>[http://www.ariadne.ac.uk/issue46/rusbridge/ Rusbridge, C. (2006) "Excuse me...some digital preservation fallacies?", ''Ariadne'', '''46'''
+]</ref><ref>[http://www.iwi-iuk.org/cashmere/htdocs/html/workshop/presentations/van_wijngaarden_format_registries.pdf Van Wijngaarden, H. (2005) Format Registries, ''CASHMERE-int Workshop on Preservation and DC-tools: Standards and standardization activities, Goettingen'': 6]</ref>, although the "Magic File" repository of the [[File (command)|File Command]] has served this role in a less formal capacity for two decades. Other projects to develop technical registries, including the UK [[Digital Curation Centre]]'s Representation Information Registry, and the [[Global Digital Format Registry]] project at [[Harvard University]], are now in progress.
+
+PRONOM's origins lie in a requirement to have access to reliable technical information about the electronic records held by The National Archives. By definition, electronic records are not inherently human-readable - file formats encode information into a form which can only be processed and rendered comprehensible by very specific technological environments. The accessibility of that information is therefore highly vulnerable to [[digital obsolescence|technological obsolescence]]. Technical information about the structure of those file formats, and the [[software]] and [[computer hardware|hardware]] environments required to support them, is therefore a prerequisite for any digital preservation regime.<ref>[http://www.clir.org/pubs/reports/pub93/contents.html Lawrence, G. W., Kehoe, W. R., Rieger, O. Y., Walters, W. H., and Kenney, A. R. (2000) Risk Management of Digital Information: a File Format Investigation, Washington DC: Council on Library and Information Resources: 21]</ref> PRONOM was developed to provide this function, initially as an internal resource for National Archives staff, and subsequently as public, web-based resource.
+
+__TOC__
+
+== Development ==
+The first version of PRONOM was developed by The National Archives digital preservation department in March 2002. PRONOM 2 was released in December 2002, and provided support for the development of multi-lingual versions of the registry. The web-enabling of PRONOM (PRONOM 3) in February 2004 represented the starting point for the development of PRONOM as a major online resource for the international digital preservation community. <ref>[http://www.rlg.org/preserv/diginews/diginews7-5.html#feature2 Darlington, J. (2003) PRONOM: A practical online compendium of file formats, ''RLG DigiNews'' '''7(5)''']</ref>
+
+PRONOM 4, released in October 2005, includes a significant reworking of the underlying data model to allow the capture of detailed technical information on file formats and support future interoperability with other planned registry systems, and the release of the DROID software for automatic file format identification.
+
+The latest version PRONOM 5 was a relatively minor update to support improvements to DROID and was released in 2006. A much more substantial update is planned for 2007, which will include the exposure of core PRONOM functions through [[web service]]s [[interface (computer science)|interfaces]].  This work forms part of the Seamless Flow programme to position The National Archives to receive and manage future government records in electronic formats.
+
+In future, PRONOM may participate as a node in the planned [[Global Digital Format Registry]] project.
+
+The National Archives won the 2007 [[Digital Preservation Award]] sponsored by the [[Digital Preservation Coalition]], for its work on PRONOM and DROID.<ref>[http://www.dpconline.org/graphics/advocacy/press/award2007.html]</ref>
+
+== Services ==
+
+The core technical registry supports a number of specific services:
+
+
+
+The PRONOM registry provides a searchable web database of technical information about file formats, the software tools required to access them, and the technical environments required to access them. Users can search for formats and software using a variety of criteria, such as format or software name and [[file extension]]. PRONOM also holds information about support periods for software products, and can also be queried on this basis. In addition to on-screen viewing, registry information can be exported in [[XML]], [[comma-separated values|CSV]] and printer-friendly formats. The PRONOM website allows users to submit new information for inclusion in PRONOM.
+
+=== The PRONOM Persistent Unique Identifier (PUID) scheme ===<!-- This section is linked from [[File format]] -->
+
+The PRONOM Persistent Unique Identifier (PUID) is an extensible scheme of persistent, unique and unambiguous [[identifier]]s for records in the PRONOM registry. Such identifiers are fundamental to the exchange and management of digital objects, by allowing human or automated user agents to unambiguously identify, and share that identification of, the representation information required to support access to an object. This is a virtue both of the inherent uniqueness of the identifier, and of its binding to a definitive description of the representation information in a registry such as PRONOM.
+
+At present, the PUID scheme is limited to one particular class of representation information: the [[file format|format]] in which a digital object is encoded. Formats were considered a particular priority for such a scheme, as no existing, universally applicable system provides for this. [[Unix]] [[magic number (programming)|magic numbers]] and [[Apple Macintosh|Macintosh]] [[resource fork|data forks]] do provide some of this functionality, but the same is not true within [[DOS]] or [[Microsoft Windows]] environments. The three-character [[file extension]] is neither standardised nor unique, and is interpreted differently by different environments. Equally, the [[Internet_Assigned_Numbers_Authority|IANA]] [[MIME]]-type scheme does not provide sufficient granularity or coverage to satisfy the requirements for unique identifiers. The PUID scheme has been developed for the single purpose of providing such identifiers.
+
+The scheme has been adopted as the recommended encoding scheme for describing file formats in the latest version of the ''UK e-Government Metadata Standard''<ref>[http://www.govtalk.gov.uk/documents/eGovMetadataStandard%2020040429.pdf UK e-Government Metadata Standard]</ref>. The scheme is designed to be extensible, and may be expanded in future to include other classes of representation information in PRONOM, such as [[data compression|compression methods]], [[character encoding|character encoding schemes]], and [[operating system]]s.
+
+PUIDs can be expressed as [[Uniform Resource Identifier]]s using the <tt>info:pronom/</tt> namespace, details of which are available from the [[info URI]] registry. Neither the PUID scheme, nor its expression as an info URI, supports any inherent dereferencing mechanism, i.e. a PUID does not resolve to a [[Uniform Resource Locator]]. However, The National Archives is planning to develop a range of services to expose PRONOM registry content, including a resolution service for PUIDs.
+
+=== DROID ===
+
+DROID (Digital Record Object Identification) is a software tool developed by The National Archives to perform automated batch identification of file formats. It is one of a planned series of tools utilising PRONOM to provide specific digital preservation services. DROID uses internal (byte sequence) and external (file extension) signatures to identify and report the specific file format versions of digital files. These signatures are stored in an XML signature file, generated from information recorded in the PRONOM technical registry. New and updated signatures are regularly added to PRONOM, and DROID can be configured to automatically download updated signature files from the PRONOM website via [[web service]]s.
+
+DROID allows files and folders to be selected from a file system for identification. After the identification process had been run, the results can be output in [[XML]], [[comma-separated values|CSV]] or printer-friendly formats.
+
+DROID is a platform-independent [[Java (Sun)|Java]] tool. It includes a documented, public [[API]], and can be invoked from both [[GUI]] and [[command line]] interfaces.
+
+=== Future services ===
+Proposed future services include format risk assessments and preservation planning, and the automated generation of migration pathways for converting between formats. <ref>[http://www.rlg.org/en/page.php?Page_ID=20571#article1 Brown, A. (2005) "Automating preservation: New developments in the PRONOM service", ''RLG DigiNews'' '''9(2)''']</ref>
+
+== See also ==
+* [[Digital curation]]
+* [[Digital preservation]]
+* [[File format]]
+
+== References ==
+{{Reflist}}
+
+== External links ==
+* [http://www.nationalarchives.gov.uk/pronom/ PRONOM technical registry]
+* [http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:pronom/ info:pronom/ namespace registration]
+* [http://droid.sourceforge.net/ DROID website]
+* [http://hul.harvard.edu/gdfr/ Global Digital Format Registry project]
+
+[[Category:Digital libraries]]
+[[Category:Preservation (library and archival science)]]
+[[Category:Web applications]]
+[[Category:Computer archives]]</body> </html>

@@ -1,0 +1,81 @@
+<html> <head> <title>DBMail IMAP and POP3 server</title></head><body>{{Primarysources|date=December 2008}}
+
+{{Infobox Software | name = DBMail IMAP and POP3 server
+| logo = 
+| screenshot = 
+| caption = 
+| developer = [http://www.nfg.nl NFG Net Facilities Group] and others
+| latest_release_version = 2.2.17
+| latest_release_date = 2010-09-01
+| latest_preview_version = 2.3.6
+| latest_preview_date =  2009-06-28
+| frequently updated = yes
+| operating_system = [[Cross-platform]]
+| genre = [[Mail Delivery Agent]]
+| license = [[GNU General Public License]]
+| website = http://www.dbmail.org/
+}}
+
+The '''DBMail IMAP and POP3''' is a fast, scalable IMAP4 and POP3 server that stores all email and users in a [[Postgresql]], [[MySQL]] or [[SQLite]] database. 
+
+== How does it work? ==
+
+DBMail is made up of several components. A normal MTA ([[Postfix (software)|Postfix]], [[Sendmail]], [[Qmail]], [[Exim]]) is used for accepting messages. The MTA hands the messages over DBMail for message delivery using either a pipe interface, or [[LMTP]] (Local Mail Transport Protocol). DBMail then takes care of delivering the message into the database. Messages can be retrieved from the database by any common [[Mail User Agent]] using the [[POP3]] protocol or [[IMAP4]] protocol. 
+
+== Features ==
+=== Database driven ===
+The whole email is stored in the database, including attachments. The DBMail programs do not have to touch the filesystem to retrieve or insert emails. User information is also stored in the database (or in [[Lightweight Directory Access Protocol|LDAP]]), so users do not need an account on the machines DBMail is running on. 
+
+DBMail currently supports:
+* [[MySQL]]
+* [[Postgresql]]
+* [[SQLite]]
+
+=== LDAP integration ===
+DBMail features full LDAP integration for both user authentication (login/password validation) and for user configuration (mail addresses and mail forwarding). [[Active Directory]] is supported.
+
+LDAP is the industry standard for unified user management and authentication, spanning multiple application domains across multiple sites. By integrating DBmail with LDAP, email user and alias management can be performed easily and transparently from within the chosen LDAP user management environment.
+
+=== Sieve filtering ===
+The DBMail server supports server-side mail filtering through the implementation of a mail filtering language called [[Sieve (mail filtering language)|Sieve]], derived from the [[Cyrus IMAP]] implementation. Users can set up and manage complex filtering rules to sort email into folders.
+
+== Advantages ==
+
+The database driven design gives the server large advantages in scalability, manageability, speed, security and flexibility.
+
+; Scalability
+:  DBMail is as scalable as the database system that is used for the mail storage. In theory millions of accounts can be managed using dbmail. One could, for example, run 4 different servers with the pop3 daemon each connecting to the same database (cluster) server.
+
+; Manageability
+: DBMail Administrator (DBMA) - the independently developed Graphic User Interface [GUI] for DBMail, accesses the database (RDBMS) on either a PostgreSQL or MySQL system and provides a scalable, menu-driven interface for administering e-mail; user accounts; global configurations; sending & fetching email and more. Written in PERL, DBMA can be used with [[Apache HTTP Server]], [[Internet Information Services]] or any other [[Httpd|HTTP Daemon]].  <ref>[http://www.dbma.ca DBMailAdministrator (DBMA) provides a complete LAN or WAN interface for all DBMail versions while reporting on your e-mail system's health.]</ref>
+
+; Speed
+: DBMail uses very efficient, database specific queries for retrieving mail information. This is much faster than parsing a filesystem.  On [[PostgreSQL]], there should be a further benefit where message bodies are transparently compressed and stored in a side table, with various performance improvements, via the TOAST feature.
+
+; Security
+: DBMail has got nothing to do with the filesystem or interaction with other programs in the Unix environment which need special permissions. DBMail is as secure as the database it's based upon.
+
+; Flexibility.
+: Changes on a DBMail system (adding of users, changing passwords etc.) are effective immediately.
+
+== Disadvantages ==
+; Performance
+: Even though one can run very fast queries with PostgreSQL or MySQL, that only helps after the mail is already stored in the database. It is widely reported that a DBMail system is much slower in accepting the incoming mails than systems based on Maildir. And while it might be easily scalable, it can lead to serious performance issues when the server has to accept many incoming mails ([http://www.dovecot.org/list/dovecot/2007-May/022599.html See this benchmarking for reference]).
+
+== History ==
+
+DBMail was originally developed by IC&S. Early 2005,  NFG took over the project.
+
+==References==
+<references/>
+
+==External links==
+* [http://www.dbmail.org/ Home page]
+* [http://www.ic-s.nl/ IC&S Internet & Open Source]
+* [http://DBMA.ca/ DBMail Administrator]
+
+[[Category:Groupware]]
+[[Category:Message transfer agents]]
+[[Category:Databases]]
+
+[[ru:DBMail]]</body> </html>

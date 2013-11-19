@@ -1,0 +1,29 @@
+<html> <head> <title>MESIF protocol</title></head><body>The '''MESIF protocol''' is a [[cache coherency]] and [[memory coherence]] protocol developed by [[Intel]] for [[Non-Uniform_Memory_Access#Cache_coherent_NUMA_.28ccNUMA.29|cache coherent non-uniform memory architectures]]<ref>http://www.realworldtech.com/page.cfm?ArticleID=RWT082807020032&p=5</ref>. The protocol consists of five states, Modified (M), Exclusive (E), Shared (S), Invalid (I) and Forward (F). The M, E, S and I states are the same as in the [[MESI protocol]]. The F state indicates that a cache should act as a designated responder for any requests for the given line. In a system of caches employing the MESI protocol, a cache line request that is received by multiple caches holding a line in the S state will receive multiple responses. In a system of caches employing the MESIF protocol, a cache line request will be responded to only by the cache holding the line in the F state<ref>US Patent 6922756, http://www.google.com/patents/about?id=MzYVAAAAEBAJ&dq=6922756</ref>.
+
+For any given pair of caches, the permitted states of a given cache line are as follows:
+{|class=wikitable style=text-align:center
+!   !!  M  !!  E  !!  S  !!  I  !!  F 
+|-
+!  M 
+|      {{N}} || {{N}} || {{N}} || {{Y}} || {{N}}
+|-
+!  E 
+|      {{N}} || {{N}} || {{N}} || {{Y}} || {{N}}
+|-
+!  S 
+|      {{N}} || {{N}} || {{Y}} || {{Y}} || {{Y}}
+|-
+!  I 
+|      {{Y}} || {{Y}} || {{Y}} || {{Y}} || {{Y}}
+|-
+!  F 
+|      {{N}} || {{N}} || {{Y}} || {{Y}} || {{N}}
+|}
+
+== References ==
+{{Reflist}}
+
+<!--- Categories --->
+[[Category:Cache coherency]]
+
+[[ru:MESIF]]</body> </html>

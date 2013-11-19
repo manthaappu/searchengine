@@ -1,0 +1,110 @@
+<html> <head> <title>Operational semantics</title></head><body>In [[computer science]], '''operational semantics''' is a way to give meaning to [[computer program]]s in a mathematically rigorous way. Other approaches to providing a [[formal semantics of programming languages]] include [[axiomatic semantics]] and [[denotational semantics]].
+
+The operational semantics for a programming language describes how a valid program is interpreted as sequences of computational steps.
+These sequences then ''are'' the meaning of the program.
+In the context of [[functional program]]s, the final step in a terminating
+sequence returns the value of the program.  (In general there can be many return values for a single program,
+because the program could be [[Nondeterministic algorithm|nondeterministic]], and even for a deterministic program there can be many computation sequences since the semantics may not specify exactly what sequence of operations arrives at that value.)
+
+For the first time, the concept of operational semantics was used in defining the semantics of Algol 68. 
+The following statement is a quote from the revised ALGOL 68 report: 
+
+<blockquote>
+The meaning of a program in the strict language is explained in terms of a hypothetical computer 
+which performs the set of actions which constitute the elaboration of that program. ([[#algol68|Algol68]], Section 2)
+</blockquote> 
+
+The first use of the term "operational semantics" in its present meaning is attributed to
+Dana Scott ([[#plotkin04|Plotkin04]]). 
+What follows is a quote from Scott's seminal paper on formal semantics, 
+in which he mentions the "operational" aspects of semantics.
+
+<blockquote>
+It is all very well to aim for a more ‘abstract’ and a ‘cleaner’ approach to
+semantics, but if the plan is to be any good, the operational aspects cannot
+be completely ignored. ([[#scott70|Scott70]])
+</blockquote>
+
+Perhaps the first formal incarnation of operational semantics was the use of the [[lambda calculus]] to define the semantics of [[LISP]] by [{{Cite web| title=Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I| author=John McCarthy | url=http://www-formal.stanford.edu/jmc/recursive.html | accessdate=2006-10-13}}]. 
+Abstract machines in the tradition of the [[SECD machine]] are also closely related.
+
+== Structural Operational Semantics (SOS) ==
+
+Structural Operational Semantics (SOS), sometimes also called structured operational semantics, was introduced by [[Gordon Plotkin]] in ([[#plotkin81|Plotkin81]])  as a logical means to defining operational semantics. The basic idea behind SOS is to define the behavior of a program in terms of the behavior of its parts, thus providing a structural, i.e., syntax oriented and [[inductive definition|inductive]], view on operational semantics.  An SOS specification defines the behavior of a program in terms of a (set of) [[State transition system|transition relation]](s). SOS specifications take the form of a set of [[inference rule]]s which define the  valid transitions of a composite piece of syntax in terms of the transitions of its components.
+
+For a simple example, we consider part of the semantics of a simple programming language; proper illustrations are given in [[#plotkin81|Plotkin81]] and [[#hennessybook|Hennessy90]], and other textbooks. Let <math>C_1, C_2</math> range over programs of the language, and let <math>s</math> range over states (e.g. functions from memory locations to values). If we have expressions (ranged over by <math>E</math>), values (<math>V</math>) and locations (<math>L</math>), then a memory update command would have semantics:
+
+<math>
+\frac{\langle E,s\rangle \Rightarrow V}{\langle L:=E\,,\,s\rangle\longrightarrow (s\uplus (L\mapsto V))}
+</math>
+<!-- NOTE: This is only a fragment of a full semantics. I've tried to include enough to illustrate the points but not so much that it takes a disproportionate amount of space.  -->
+
+Informally, the rule says that "'''if''' the expression <math>E</math> in state <math>s</math> reduces to value <math>V</math>, '''then''' the program <math>L:=E</math> will update the state <math>s</math> with the assignment <math>L=V</math>".
+
+The semantics of sequencing can be given by the following three rules:
+
+<math>
+\frac{\langle C_1,s\rangle \longrightarrow s'}
+{\langle C_1;C_2 \,,s\rangle\longrightarrow \langle C_2, s'\rangle}
+\quad\quad
+\frac{\langle C_1,s\rangle \longrightarrow \langle C_1',s'\rangle}
+{\langle C_1;C_2 \,,s\rangle\longrightarrow \langle C_1';C_2\,, s'\rangle}
+\quad\quad
+\frac{}
+{\langle \mathbf{skip} ,s\rangle\longrightarrow s}
+</math>
+
+Informally, the first rule says that,
+if program <math>C_1</math> in state <math>s</math> finishes in state <math>s'</math>, then the program <math>C_1;C_2</math> in state <math>s</math> will reduce to the program <math>C_2</math> in state <math>s'</math>.
+(You can think of this as formalizing "You  can run <math>C_1</math>, and then run <math>C_2</math>
+using the resulting memory store.)
+The second rule says that
+if the program <math>C_1</math> in state <math>s</math> can reduce to the program <math>C_1'</math>  with state <math>s'</math>, then the program <math>C_1;C_2</math> in state <math>s</math> will reduce to the program <math>C_1';C_2</math> in state <math>s'</math>.
+(You can think of this as formalizing the principle for an optimizing compiler:
+"You are allowed to transform <math>C_1</math> as if it were stand-alone, even if it is just the
+first part of a program.") 
+The semantics is structural, because the meaning of the sequential program <math>C_1;C_2</math>, is defined by the meaning of <math>C_1</math> and the meaning of <math>C_2</math>.
+
+If we also have Boolean expressions over the state, ranged over by <math>B</math>, then we can define the semantics of the '''while''' command: 
+<math>
+\frac{\langle B,s\rangle \Rightarrow \mathbf{true}}{\langle\mathbf{while}\ B\ \mathbf{ do }\ C,s\rangle\longrightarrow \langle C;\mathbf{while}\ B\ \mathbf{do}\ C,s\rangle}
+\quad
+\frac{\langle B,s\rangle \Rightarrow \mathbf{false}}{\langle\mathbf{while}\ B\ \mathbf{ do }\ C,s\rangle\longrightarrow s}
+</math>
+
+Such a definition allows formal analysis of the behavior of programs, permitting the study of [[Relation (mathematics)|relations]] between programs. Important relations include [[simulation preorder]]s and [[bisimulation]]. 
+These are especially useful in the context of [[Concurrency (computer science)|concurrency theory]]. 
+
+Thanks to its intuitive look and easy to follow structure,
+SOS has gained great popularity and has become a de facto standard in defining
+operational semantics. As a sign of success, the original report (so-called Aarhus
+report) on SOS ([[#plotkin81|Plotkin81]]) has attracted more than 1000 citations according to the CiteSeer [http://citeseer.ist.psu.edu/673965.html], 
+making it one of the most cited technical reports in [[Computer Science]].
+
+== See also ==
+
+* [[Algebraic semantics]]
+* [[Axiomatic semantics]]
+* [[Denotational semantics]]
+* [[Interpreter semantics]]
+* [[Formal semantics of programming languages]]
+
+== References ==
+
+* <cite id=plotkin81> [[Gordon Plotkin|Gordon D. Plotkin.]] [http://citeseer.ist.psu.edu/673965.html A Structural Approach to Operational Semantics]. (1981) Tech. Rep. DAIMI FN-19, Computer Science Department, Aarhus University, Aarhus, Denmark. (Reprinted with corrections in J. Log. Algebr. Program. 60-61: 17-139 (2004), [http://homepages.inf.ed.ac.uk/gdp/publications/sos_jlap.pdf preprint]). </cite>
+* <cite id=plotkin04> [[Gordon Plotkin|Gordon D. Plotkin.]] The Origins of Structural Operational Semantics.  J. Log. Algebr. Program. 60-61:3-15, 2004.  ([http://homepages.inf.ed.ac.uk/gdp/publications/Origins_SOS.pdf preprint]). </cite>
+* <cite id=scott70>  [[Dana Scott|Dana S. Scott.]] Outline of a Mathematical Theory of Computation, Programming Research Group, Technical Monograph PRG–2, Oxford University, 1970.</cite>
+* <cite id=algol68> [[Adriaan van Wijngaarden]]  et al. [[ALGOL 68|Revised Report on the Algorithmic Language ALGOL 68. IFIP. 1968.]] ([http://vestein.arb-phys.uni-dortmund.de/~wb/RR/rr.pdf])</cite>
+* <cite id=hennessybook>[[Matthew Hennessy]]. Semantics of Programming Languages. Wiley, 1990. [http://www.cogs.susx.ac.uk/users/matthewh/semnotes.ps.gz available online].</cite>
+
+[[Category:Formal specification languages]]
+[[Category:Logic in computer science]]
+[[Category:Programming language semantics]]
+
+[[de:Operationelle Semantik]]
+[[fr:Sémantique opérationnelle]]
+[[hr:Operacijska semantika]]
+[[ja:操作的意味論]]
+[[pt:Semântica operacional]]
+[[uk:Операційна семантика]]
+[[zh:操作语义学]]</body> </html>

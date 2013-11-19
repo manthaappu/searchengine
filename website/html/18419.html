@@ -1,0 +1,45 @@
+<html> <head> <title>Initialization on demand holder idiom</title></head><body>In [[software engineering]], the '''Initialization on Demand Holder''' idiom ([[design pattern (computer science)|design pattern]]) is a [[lazy initialization|lazy-loaded]] [[Singleton pattern|singleton]]. The idiom can be implemented in both single-threaded/serial and concurrent environments, but care must be taken to correctly implement the idiom under concurrent conditions.
+
+== Example Java Implementation ==
+This implementation is a well-performing and concurrent implementation valid in all versions of Java. The original implementation from Bill Pugh (see links below), based on the earlier work of Steve Quirk, has been modified to reduce the scope of <tt>LazyHolder.INSTANCE</tt> to private and to make the field final.
+
+<source lang="java">
+public class Something {
+	private Something() {
+	}
+
+	private static class LazyHolder {
+		private static final Something INSTANCE = new Something();
+	}
+
+	public static final Something getInstance() {
+		return LazyHolder.INSTANCE;
+	}
+}
+</source>
+
+=== How it works ===
+The implementation relies on the well-specified initialization phase of execution within the Java Virtual Machine (JVM); see section [http://java.sun.com/docs/books/jls/third_edition/html/execution.html#44557 12.4 of Java Language Specification] (JLS) for details.
+
+When the class <tt>Something</tt> is loaded by the JVM, the class goes through initialization. Since the class does not have any static variables to initialize, the initialization completes trivially. The static class definition <tt>LazyHolder</tt> within it is ''not'' initialized until the JVM determines that <tt>LazyHolder</tt> must be executed. The static class <tt>LazyHolder</tt> is only executed when the static method <tt>getInstance</tt> is invoked on the class <tt>Something</tt>, and the first time this happens the JVM will load and initialize the <tt>LazyHolder</tt> class. The initialization of the <tt>LazyHolder</tt> class results in static variable <tt>INSTANCE</tt> being initialized by executing the (private) constructor for the outer class <tt>Something</tt>. Since the class initialization phase is guaranteed by the JLS to be serial, i.e., non-concurrent, no further synchronization is required in the static <tt>getInstance</tt> method during loading and initialization. And since the initialization phase writes the static variable <tt>INSTANCE</tt> in a serial operation, all subsequent concurrent invocations of the <tt>getInstance</tt> will return the same correctly initialized <tt>INSTANCE</tt> without incurring any additional synchronization overhead.
+
+=== When to use it ===
+Use this pattern if the initialization of the class is ''expensive'' and it cannot be done safely at ''class-loading'' time and the initialization is highly concurrent. The crux of the pattern is the safe removal of the synchronization overhead associated with accessing a singleton instance.
+
+=== When not to use it ===
+Avoid this idiom if the construction of <tt>INSTANCE</tt> can fail. If construction of <tt>INSTANCE</tt> fails, an invocation of <tt>Something.getInstance()</tt> will result in a <tt>java.lang.NoClassDefFoundError</tt> error. Handling, or mishandling, of these types of construction initialization failures is a common criticism of this idiom and the singleton pattern in general.
+
+== See also ==
+* [[Singleton pattern|Singleton Pattern]]
+* [[Double-checked locking|Double Checked Locking Idiom]]
+* [[Multiton pattern|Multiton Pattern]]
+
+== External links ==
+* http://www.cs.umd.edu/~pugh/java/memoryModel/
+* http://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html
+* http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+
+[[Category:Software design patterns]]
+[[Category:Articles with example Java code]]
+
+[[fr:Support d'initialisation à la demande]]</body> </html>

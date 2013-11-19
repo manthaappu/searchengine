@@ -1,0 +1,48 @@
+<html> <head> <title>Postcondition</title></head><body>In [[computer programming]], a '''postcondition''' is a condition or [[Predicate (mathematics)|predicate]] that must always be true just after the execution of some section of code or after an operation in a [[formal specification]]. Postconditions are sometimes tested using [[assertion (computing)|assertions]] within the code itself. Often, postconditions are simply included in the documentation of the affected section of code.
+
+For example: The result of a [[factorial]] is always an integer and greater than or equal to 1. So a program that calculates the factorial of an input number would have postconditions that the result after the calculation be an integer and that it be greater than or equal to 1.
+
+==Postconditions in object-oriented programming==
+In object-oriented programming, postconditions, along with [[Precondition|preconditions]] and class [[Invariant (computer science)|invariants]] are components of the software construction method [[design by contract]]. 
+
+The postcondition for any routine is a declaration of the properties which are guaranteed upon completion of the routine's execution.<ref>[[Bertrand Meyer|Meyer, Bertrand]], ''[[Object-Oriented Software Construction]], second edition,'' Prentice Hall, 1997, p. 342.</ref> As it relates to the routine's contract, the postcondition offers assurance to potential callers that in cases in which the routine is called in a state in which its [[precondition]] holds, the properties declared by the postcondition are assured. 
+
+===[[Eiffel (programming language)|Eiffel]] example===
+
+The following example written in Eiffel sets the value of a class attribute <code>hour</code> based on a caller-provided argument <code>a_hour<code>. The postcondition follows the keyword <code>ensure</code>. In this example the postcondition guarantees, in cases in which the precondition holds (i.e., when <code>a_hour</code> represents a valid hour of the day), that after the execution of <code>set_hour</code>, the class attribute <code>hour</code> will have the same value as <code>a_hour</code>.  The tag "<code>hour_set:</code>" describes this postcondition clause and serves to identify it in case of a runtime postcondition violation.
+
+<source lang="eiffel">
+    set_hour (a_hour: INTEGER)
+            -- Set `hour' to `a_hour'
+        require
+            valid_argument: 0 <= a_hour and a_hour <= 23
+        do
+            hour := a_hour
+        ensure
+            hour_set: hour = a_hour
+        end
+</source>
+
+===Postconditions and inheritance===
+In the presence of inheritance, the routines inherited by descendant classes (subclasses) do so with their contracts, that is their preconditions and postconditions, in force. This means that any implementations or redefinitions of inherited routines also have to be written to comply with their inherited contract. Postconditions can be modified in redefined routines, but they may only be strengthened.<ref>Meyer, 1997, pp. 570–573.</ref> That is, the redefined routine may increase the benefits it provides to the client, but may not decrease those benefits.
+
+==See also==
+*[[Precondition]]
+*[[Design by contract]]
+*[[Hoare logic]]
+*[[Invariant (computer science)|Invariant]]s maintained by conditions
+*[[Database trigger]]
+
+==References==
+{{reflist}}
+
+{{Formalmethods-stub}}
+
+[[Category:Programming constructs]]
+[[Category:Formal methods terminology]]
+[[Category:Logic in computer science]]
+[[Category:Mathematics of computing]]
+
+[[de:Nachbedingung (Informatik)]]
+[[es:Postcondición]]
+[[uk:Післяумова (формальні методи)]]</body> </html>

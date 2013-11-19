@@ -1,0 +1,210 @@
+<html> <head> <title>Crowds</title></head><body>{{Otheruses|Crowd}}
+{{Cleanup|date=February 2007}}
+'''Crowds''' is a proposed anonymity network that gives probable innocence in the face of a large number of attackers.  Crowds was designed by [[Michael_Reiter|Michael K. Reiter]] and [[Avi_Rubin|Aviel D. Rubin]] and defends against internal attackers and a corrupt receiver, but provides no anonymity against a global attacker or a local eavesdropper (see "Crowds: Anonymity For Web Transactions").  Crowds is vulnerable to the [[predecessor attack]]; this was discussed in Reiter and Rubin's paper and further expanded in "The Predecessor Attack: An Analysis of a Threat to Anonymous Communications Systems" by Matthew K. Wright, Micah Adler, And Brian Neil Levine.  Crowds is important as it introduced the concept of users blending into a crowd of computers, and many of the concepts used in newer systems (e.g. [[Tarzan (anonymity network)|Tarzan]]).
+Provide users with a mechanism for anonymous Web browsing. The main idea behind Crowds anonymity protocol is to hide each user's communications by routing them randomly within a group of similar users. By Crowds protocol a corrupt group member or local eavesdropper that observes a message being sent by a particular user can never be sure whether the user is the actual sender, or is simply routing another user's message.
+
+==How crowds works==
+# Each user joins a crowd of other users by registering himself at the blender which is a single server responsible for membership management. When a user registers, all the other members in the crowd are notified. The blender is also responsible for key distribution, as it distributes symmetric keys to individual pairs of jondos, used for encryption and decryption, respectively of packets routed along the virtual paths.
+# Each user is represented by a jondo on her machine which is an application that runs on a user’s computer.
+# Each jondo either submit request to end server or forwards it to a randomly chosen jondo (possibly itself). Other jondo tasks are to strip out any personal information such as cookies, identifying header fields.
+# A jondo cannot tell if a request is initiated by the previous jondo or one before it.
+# Request and reply follow the same virtual paths which are constructed using an algorithm involving probabilities.The virtual paths are torn down and reconstructed on a regular basis to allow anonymity for newly added members.
+
+==Definitions==
+Crowds uses and defines the following terms:
+; Sender : The initiator of a message
+; Receiver : The final recipient of a message
+; Probable Innocence : The attacker is unable to have greater than 50% confidence that any node initiated the message (a node appears equally like to have initiated the message as to not have - each user is more likely innocent than not.)
+; Local Eavesdropper : An attacker that can observe all incoming and outgoing messages for any propersubset of the nodes
+; Corrupt Node : A node is corrupt if it uses information obtained from forwarding the message to determine the sender
+; <math>C</math> : The number of corrupt nodes
+; <math>N</math> : The number of nodes (<math>N - C</math> is the number of good nodes)
+; <math>p_f</math> : The probability of forwarding
+
+==Basic Design==
+Crowds works by making each node seem equally likely to be the initiator of the message. As we said each node joins the network by starting a ''jondo'' (from "John Doe"), which is a small process that will forward and receive requests from other users.  When the jondo is started all nodes in the network are informed of the new node's entrance, and will begin to select him as a forwarder.  To actually send a message a node chooses randomly (with uniform probability) from all nodes in the network and forwards the message to them.  Upon receiving the message the node flips a biased coin (with probability <math>p_f > \frac{1}{2}</math>) and if it lands heads forwards it to another random node, otherwise it forwards it to the final destination.  Each node when forwarding to another node records the predecessor and in this way a tunnel is built, this is used for the communication between the sender and the receiver.
+
+===The algorithm on each machine===
+<code>
+OnReceive(Node P, Message M)
+# Flip biased coin (<math>\Pr(Heads) = p_f</math>)
+## ''If'' Heads ''Then'' Select a uniformly random node and forward to them
+## ''Else'' Forward to destination
+# Record P so that a tunnel can be built
+</code>
+
+==Security analysis==
+We consider the question of what information an attacker can learn about the senders and receivers of web transactions, given the mechanisms of Crowds we described.
+
+=== Local eavesdropper ===
+Recall that every message forwarded on a path, except for the final request to the end server, is encrypted. Thus, while the eavesdropper is able to view any message emanating from the user's computer, it only views a message submitted to the end server 
+if the user's jondo ultimately submits the user's request itself.
+Since the probability that the user's jondo ultimately submits the request is 1/n where n is the size of the crowd when the path was created.Thus We learn that the probability that the eavesdropper learns the identity of the receiver  decreases as a function of crowd size. Moreover, when the user's jondo does not ultimately submit the request, the local eavesdropper sees only the encrypted address of the end server, which we suggest yields receiver anonymity that is (informally) beyond suspicion.
+(beyond suspicion - no user is more  suspicious than other).
+
+=== Collaborating jondos ===
+Consider a set of collaborating corrupted jondos in the crowd.Because each jondo can observe plaintext traffic on a path routed through it,any such traffic, including the address of the end server is exposed to this attacker.
+The question we consider here is if the attacker can determine who initiated the path. The goal of the collaborators is to determine the member that initiated the path.
+We now analyze how confident the collaborators can be that their immediate predecessor is in fact the path initiator:
+
+#Let '''H<sub>k</sub>''', k >= 1, denote the event that the first collaborator on the path occupies the kth position on the path, where the initiator itself occupies the 0th position (and possibly others).
+#Let define '''H<sub>k+</sub>'''   =   '''H<sub>k</sub>'''  or  '''H<sub>k+1</sub>'''  or  '''H<sub>k+2</sub>'''  or  . . . .
+#Let  '''I'''  denote the event that the first collaborator on the path is immediately preceded on the path by the path initiator.
+
+Note that  '''H<sub>1</sub> => I''' , but the converse  '''I => H<sub>1</sub>''' is not true, because the 
+initiating jondo might appear on the path multiple times.There can be a case where path is composed as follow:
+:initiator jondo(0 - position) ---->  jondo(1 - position)  ----> 
+:initiator jondo(2 - position) ---->  Collaborating jondo(3 - position)
+
+Note that the first collaborator on the path is in the third position.
+
+:4.Given this notation, the collaborators now hope to determine:
+'''P(I|H<sub>1+</sub>)''' - given that a collaborator is on the path, what is the probability that the path initiator is the first collaborator's immediate predecessor?
+
+'''Definition:''' <br />
+'''''The path initiator has probable innocence if P(I|H<sub>1+</sub>)<=1\2.'''''
+
+In order to yield probable innocence for the path initiator, certain 
+conditions must be met in our system.
+In particular,let
+'''pf  > 1/2''' (the probability of forwarding in the system.)
+
+('''c''' - number of collaborators in the crowd)
+
+('''n''' - total number of crowd members when the path is formed)
+
+The theorem below gives a sufficient condition on pf , c, and n to ensure
+probable innocence for the path initiator.
+
+'''Theorem:'''
+'''''The path initiator has probable innocence against c collaborators in case'''''
+
+<math>n \geq \frac{p_f}{p_f - \frac{1}{2}}\left( c + 1\right)</math>
+
+'''Proof:'''
+we want to show that '''pf  > 1/2   if   <math>n \geq \frac{p_f}{p_f - \frac{1}{2}}\left( c + 1\right)</math>'''
+
+note that:
+
+P(H<sub>i</sub>) = <math>(p_f\frac{n-c}{n})^{i-1} (\frac{c}{n})</math>
+
+in order for the first collaborator to be in the '''ith''' position on the path, the path must first wander to '''i-1''' noncollaborators each time with probability of 
+<math>\frac{n-c}{n}</math>,each of which chooses to forward the path with probability '''pf''' , and then to a collaborator with probability <math>\frac{c}{n}</math>.
+
+The next two facts follow immediately from this
+
+P(H<sub>1+</sub>) = <math>\frac{c}{n}\sum_{k=0}(p_f\frac{n-c}{n})^{k} = 
+(\frac{c}{n})(\frac{1}{1-\frac{p_f(n-c)}{n}})</math>
+
+P(H<sub>2+</sub>) = <math>\frac{c}{n}\sum_{k=1}(p_f\frac{n-c}{n})^{k} = 
+(\frac{c}{n})(\frac{\frac{p_f(n-c)}{n}}{1-\frac{p_f(n-c)}{n}})</math>
+
+P(H<sub>1</sub>) = <math>\frac{c}{n}</math>
+
+P(I|H<sub>1</sub>) = <math>1</math>
+
+P(I|H<sub>2</sub>) = <math>\frac{1}{n-c}</math>
+
+Now, P(I) can be captured as
+
+P(I) = P(H<sub>1</sub>)P(I|H<sub>1</sub>) + P(H<sub>2+</sub>)P(IH<sub>2+</sub>) = <math>\frac{c(n-np_fn+cp_f+pf)}{n^2-pfn(n-c)}</math>
+
+since I=>H<sub>1+</sub>
+
+P(I|H<sub>1+</sub>)= <math>\frac{P(I \and H1+)}{P(H1+)}</math> = <math>\frac{P(I)}{P(H1+)}</math> = <math>\frac{n-p_f(n-c-1)}{n}</math>
+
+so,if <math>n \geq \frac{p_f}{p_f - \frac{1}{2}}\left( c + 1\right)</math>
+
+then  P(I|H<sub>1+</sub>)<=1\2
+
+E.g. if  '''pf=3\4''' , then probable innocence is guaranteed as long as n >= 3(c + 1).
+
+=== Static paths ===
+Dynamic paths tends to decrease the anonymity properties provided by the system against collaborating jondos. The reason is that the probable innocence vanishes if the collaborators are able to link many distinct paths as being initiated by the same jondo. Collaborating jondos might be able to link paths initiated by the same unknown jondo based on related path content or timing of
+communication on paths. To prevent this, we made paths static, so the attacker simply does not have multiple paths to link to the same jondo.
+
+=== Embedded images and timing attacks ===
+An HTML page can include a URL (e.g., the address of an image) that, when the page is retrieved, causes the user's browser to automatically issue another request. It is the immediate nature of these requests that poses the greatest opportunity for timing attacks by collaborating jondos.
+The first collaborating jondo on a path, upon returning a web page on that path containing a URL that will be automatically retrieved, can time the duration until it receives the request for that URL. If the duration is sufficiently short, then this could reveal that the collaborator's immediate predecessor is the initiator of the request.
+
+How to prevent?
+
+When a jondo receives an HTML reply to a request that it either received directly from a user's browser or submitted directly to an end server,it parses the HTML page to identify all URLs that the user's browser will automatically request as a result of receiving this reply. The last jondo on the path requests these URLs and sends them back along the same path on which the original request was received.
+The user's jondo, upon receiving requests for these URLs from the user's browser, does not forward these requests on the path, but rather simply waits for the URLs contents to arrive on the path and then feeds them to the browser. In this way, other jondos on the path never see the requests that are generated by the browser, and thus cannot glean timing information from them.
+
+==Scale==
+The measure of scale that we evaluate is the expected total number of appearances that each jondo makes on all paths at any point in time. For example, if a jondo occupies two positions on one path and one position on another, then it makes a total of three appearances on these paths.
+
+'''Theorem : In a crowd of size n, the expected total number of appearances that any jondo makes on all paths is'''
+<math>O(\frac{1}{(1-p_f)^2}(1+\frac{1}{n}))</math>
+
+Each jondo's expected number of appearances on paths is virtually constant as a function of the size of the crowd. This suggests that crowds should be able to grow quite large.
+
+==Attacks==
+Crowds provides perfect anonymity against a corrupt receiver (i.e. <math>d \gets 1</math> see [[Degree of anonymity]]) as all members appear equally likely to have been the initiator.  As we showed against collaborating corrupt nodes Crowds provides probable innocence as long as <math>N \geq \frac{p_f}{p_f - \frac{1}{2}}\left( C + 1\right)</math> (see the paper for the derivation of this), and provides a [[degree of anonymity]] <math>d \gets \frac{\frac{N - p_f \cdot (N - C - 1)}{N} \cdot \lg\left[\frac{N}{N - p_f \cdot (N - C - 1)}\right] + p_f \cdot \frac{N - C - 1}{N} \cdot \lg\left[N/p_f\right]}{\lg (N - C)}</math>.  Against the [[predecessor attack]] Crowds succumbs in <math>O\left(\frac{N}{C} \lg(N)\right)</math>; this attack works by a corrupt node retaining the previous hop in the path, as this will be the sender more than any other node over the rounds of rebuilding the network it will become apparent who the initiator is.  Reiter and Rubin mention this and recommend ''long'' (and if possible infinite) time between path reformations (caused when a node in the path leaves the network).  Crowds is unable to protect against a global eavesdropper as it cannot use encryption on the links, this is because each node in Crowds is able to communicate with every other node (a fully connected graph), because of this setting up symmetric keys requires <math>O(N^2)</math> pairwise keys; this is too large of a number to be feasible.  Against a local eavesdropper again Crowds provides no protection as the eavesdropper will see a message coming out of a node that did not enter, and this positively identifies the node as the sender.
+
+==See also==
+* [[Onion routing]]
+* [[Tor (anonymity network)]]
+* [[Degree of anonymity]]
+
+==References==
+# {{note|TMA}} {{cite journal |
+  title = Towards measuring anonymity |
+  author = Claudia Diaz and Stefaan Seys and Joris Claessens and Bart Preneel |
+  journal = Proceedings of Privacy Enhancing Technologies Workshop (PET 2002) |
+  year = 2002 |
+  month = April | 
+  editor = Roger Dingledine and Paul Syverson |
+  publisher = Springer-Verlag, LNCS 2482 |
+  url = http://www.esat.kuleuven.ac.be/~cdiaz/papers/tmAnon.ps.gz |
+  volume = |
+  issue = |
+  pages = |
+  accessdate = 2005-11-10 |
+  format = {{Dead link|date=May 2008}}
+}}
+# {{note|CROWDS}} {{cite journal |
+  title = Crowds: Anonymity for Web Transactions |
+  author = Michael Reiter and Aviel Rubin |
+  journal = ACM Transactions on Information and System Security |
+  year = 1998 |
+  month = June | 
+  url = http://avirubin.com/crowds.pdf |format=PDF|
+  volume = 1 |
+  issue = 1 |
+  pages = |
+  accessdate = 2005-11-23 }}
+# {{note|PRED}} {{cite journal |
+  title = The predecessor attack: An analysis of a threat to anonymous communications systems |
+  author = Matthew K. Wright and Micah Adler and Brian Neil Levine and Clay Shields |
+  journal = ACM Transactions on Information Systems Security |
+  year = 2004 |
+  month = | 
+  editor = |
+  publisher = ACM Press |
+  url = http://www.cs.georgetown.edu/~clay/research/pubs/wright.tissec.pdf |format=PDF|
+  volume = 7 |
+  issue = 4 |
+  pages = 489–522 |
+  accessdate = 2005-11-23}}
+# {{note|DEG}} {{cite journal |
+  title = An Analysis of the Degradation of Anonymous Protocols |
+  author = Matthew Wright and Micah Adler and Brian Neil Levine and Clay Shields |
+  journal = Proceedings of the Network and Distributed Security Symposium - NDSS '02 |
+  year = 2002 |
+  month = February | 
+  editor = |
+  publisher = IEEE |
+  url = http://www.cs.umass.edu/~mwright/papers/wright-degrade.pdf |format=PDF|
+  volume = |
+  issue = |
+  pages = |
+  accessdate = 2005-11-23 }}
+
+==External links==
+* [http://www.freehaven.net/anonbib/ Anonymity Bibliography]
+* [http://eprint.iacr.org/ Cryptology ePrint Archive]
+
+[[Category:Routing software]]
+[[Category:Anonymity networks]]</body> </html>

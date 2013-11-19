@@ -1,0 +1,216 @@
+<html> <head> <title>Integral transform</title></head><body>In [[mathematics]], an '''integral transform''' is any [[list of transforms|transform]] ''T'' of the following form:
+
+:<math> Tf(u) = \int_{t_1}^{t_2} K(t, u)\, f(t)\, dt</math>
+
+The input of this transform is a [[function (mathematics)|function]] ''f'', and the output is another function ''Tf''. An integral transform is a particular kind of mathematical [[Operator (mathematics)|operator]]. 
+
+There are numerous useful integral transforms. Each is specified by a choice of the function ''K'' of two [[Variable (mathematics)|variables]], the '''kernel function''' or '''nucleus''' of the transform.
+
+Some kernels have an associated ''inverse kernel'' <math>K^{-1}( u,t )</math> which (roughly speaking) yields an inverse transform:
+
+:<math> f(t) = \int_{u_1}^{u_2} K^{-1}( u,t )\, (Tf(u))\, du</math>
+
+A ''symmetric kernel'' is one that is unchanged when the two variables are [[Permutation|permuted]]<!--Correct link?-->.
+
+== Motivation ==
+
+Mathematical notation aside, the motivation behind integral transforms is easy to understand. There are many classes of problems that are difficult to solve—or at least quite unwieldy algebraically—in their original representations. An integral transform "maps" an equation from its original "domain" into another domain. Manipulating and solving the equation in the target domain can be much easier than manipulation and solution in the original domain. The solution is then mapped back to the original domain with the inverse of the integral transform.
+
+== History ==
+The precursor of the transforms were the [[Fourier series]] to express functions in finite intervals. Later the [[Fourier transform]] was developed to remove the requirement of finite intervals. 
+
+Using the Fourier series, just about any practical function of time (the [[voltage]] across the terminals of an [[electronic device]] for example) can be represented as a sum of [[sine]]s and [[cosine]]s, each suitably scaled (multiplied by a constant factor), shifted (advanced or retarded in time) and "squeezed" or "stretched" (increasing or decreasing the frequency). The sines and cosines in the Fourier series are an example of an orthonormal basis.
+
+==Importance of orthogonality==
+
+The individual basis functions have to be [[orthogonal]]. That is, the product of two dissimilar basis functions—integrated over their domain—must be zero. An integral transform, in actuality, just changes the representation of a function from one orthogonal basis to another. Each point in the representation of the transformed function in the target domain corresponds to the contribution of a given orthogonal basis function to the expansion. The process of expanding a function from its "standard" representation to a sum of a number of orthonormal basis functions, suitably scaled and shifted, is termed "[[spectral factorization]]." This is similar in concept to the description of a point in space in terms of three discrete components, namely, its ''x'', ''y'', and ''z'' coordinates. Each axis correlates only to itself and nothing to the other orthogonal axes. Note the terminological consistency: the determination of the amount by which an individual orthonormal basis function must be scaled in the spectral factorization of a function, ''F'', is termed the "projection" of ''F'' onto that basis function.
+
+The normal Cartesian graph ''per se'' of a function can be thought of as an orthonormal expansion. Indeed, each point just reflects the contribution of a given orthonormal basis function to the sum. Intuitively, the point (3,5) on the graph means that the orthonormal basis function δ(x-3), where "δ" is the [[Dirac delta function]], is scaled up by a factor of five to contribute to the sum in this form. In this way, the graph of a continuous [[real number|real]]-valued function in the plane corresponds to an ''infinite'' set of basis functions; if the number of basis functions were finite, the curve would consist of a discrete set of points rather than a continuous contour.
+
+==Usage example==
+
+As an example of an application of integral transforms, consider the [[Laplace transform]]. This is a technique that maps [[Differential equation|differential]] or [[integro-differential equation]]s in the [[time domain|"time" domain]] into polynomial equations in what is termed the [[frequency domain|"complex frequency" domain]]. (Complex frequency is similar to actual, physical frequency but rather more general. Specifically, the imaginary component ''ω'' of the complex frequency ''s = -σ + iω'' corresponds to the usual concept of frequency, ''viz.'', the speed at which a sinusoid cycles, whereas the real component ''σ'' of the complex frequency corresponds to the degree of "damping". ) The equation cast in terms of complex frequency is readily solved in the complex frequency domain (roots of the polynomial equations in the complex frequency domain correspond to [[eigenvalues]] in the time domain), leading to a "solution" formulated in the frequency domain. Employing the [[inverse transform]], ''i.e.'', the inverse procedure of the original Laplace transform, one obtains a time-domain solution. In this example, polynomials in the complex frequency domain (typically occurring in the denominator) correspond to power series in the time domain, while axial shifts in the complex frequency domain correspond to damping by decaying exponentials in the time domain. 
+
+The Laplace transform finds wide application in physics and particularly in electrical engineering, where the [[characteristic equation]]s that describe the behavior of an electric circuit in the complex frequency domain correspond to linear combinations of exponentially damped, scaled, and time-shifted sinusoids in the time domain. Other integral transforms find special applicability within other scientific and mathematical disciplines.
+
+==Table of transforms==
+{| class="wikitable"
+|+ Table of integral transforms
+|-
+! scope="col" | Transform
+! scope="col" | Symbol
+! scope="col" | <math>K</math>
+! scope="col" | t<sub>1</sub>
+! scope="col" | t<sub>2</sub>
+! scope="col" | <math>K^{-1}</math>
+! scope="col" | u<sub>1</sub>
+! scope="col" | u<sub>2</sub>
+|-
+| [[Fourier transform]]
+| <math>\mathcal{F}</math>
+| <math>\frac{e^{-iut}}{\sqrt{2 \pi}}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+| <math>\frac{e^{+iut}}{\sqrt{2 \pi}}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+|-
+| [[Fourier sine transform]]
+| <math>\mathcal{F}_s</math>
+| <math>\frac{\sqrt{2}\sin{(ut)}}{\sqrt{\pi}}</math>
+| <math>0\,</math>
+| <math>\infty</math>
+| <math>\frac{\sqrt{2}\sin{(ut)}}{\sqrt{\pi}}</math>
+| <math>0\,</math>
+| <math>\infty</math>
+|-
+| [[Fourier cosine transform]]
+| <math>\mathcal{F}_c</math>
+| <math>\frac{\sqrt{2}\cos{(ut)}}{\sqrt{\pi}}</math>
+| <math>0\,</math>
+| <math>\infty</math>
+| <math>\frac{\sqrt{2}\cos{(ut)}}{\sqrt{\pi}}</math>
+| <math>0\,</math>
+| <math>\infty</math>
+|-
+| [[Hartley transform]]
+| <math>\mathcal{H}</math>
+| <math>\frac{\cos(ut)+\sin(ut)}{\sqrt{2 \pi}}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+| <math>\frac{\cos(ut)+\sin(ut)}{\sqrt{2 \pi}}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+|-
+| [[Mellin transform]]
+| <math>\mathcal{M}</math>
+| <math>t^{u-1}\,</math>
+| <math>0\,</math>
+| <math>\infty\,</math>
+| <math>\frac{t^{-u}}{2\pi i}\,</math>
+| <math>c\!-\!i\infty</math>
+| <math>c\!+\!i\infty</math>
+|-
+| [[Two-sided Laplace transform|Two-sided Laplace<br>transform]]
+| <math>\mathcal{B}</math>
+| <math>e^{-ut}\,</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+| <math>\frac{e^{+ut}}{2\pi i}</math>
+| <math>c\!-\!i\infty</math>
+| <math>c\!+\!i\infty</math>
+|-
+| [[Laplace transform]]
+| <math>\mathcal{L}</math>
+| <math>e^{-ut}\,</math>
+| <math>0\,</math>
+| <math>\infty\,</math>
+| <math>\frac{e^{+ut}}{2\pi i}</math>
+| <math>c\!-\!i\infty</math>
+| <math>c\!+\!i\infty</math>
+|-
+| [[Weierstrass transform]]
+| <math>\mathcal{W}</math>
+| <math>\frac{e^{-(u-t)^2/4}}{\sqrt{4\pi}}\,</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+| <math>\frac{e^{+(u-t)^2/4}}{i\sqrt{4\pi}}</math>
+| <math>c\!-\!i\infty</math>
+| <math>c\!+\!i\infty</math>
+|-
+| [[Hankel transform]]
+| 
+| <math>t\,J_\nu(ut)</math>
+| <math>0\,</math>
+| <math>\infty\,</math>
+| <math>u\,J_\nu(ut)</math>
+| <math>0\,</math>
+| <math>\infty\,</math>
+|-
+| [[Abel transform]]
+| 
+| <math>\frac{2t}{\sqrt{t^2-u^2}}</math>
+| <math>u\,</math>
+| <math>\infty\,</math>
+| <math>\frac{-1}{\pi\sqrt{u^2\!-\!t^2}}\frac{d}{du}</math>
+| <math>t\,</math>
+| <math>\infty\,</math>
+|-
+| [[Hilbert transform]]
+| <math>\mathcal{H}il</math>
+| <math>\frac{1}{\pi}\frac{1}{u-t}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+| <math>\frac{1}{\pi}\frac{1}{u-t}</math>
+| <math>-\infty\,</math>
+| <math>\infty\,</math>
+|-
+| [[Poisson kernel]]
+|
+| <math>\frac{1-r^2}{1-2r\cos\theta +r^2}</math>
+| <math>0\,</math>
+| <math>2\pi\,</math>
+| 
+| 
+| 
+|-
+| [[Dirac delta function|Identity transform]]
+| 
+| <math>\delta (u-t)\,</math>
+| <math>t_1<u\,</math>
+| <math>t_2>u\,</math>
+| <math>\delta (t-u)\,</math>
+| <math>u_1\!<\!t</math>
+| <math>u_2\!>\!t</math>
+|}
+In the limits of integration for the inverse transform, ''c'' is a constant which depends on the nature of the transform function. For example, for the one and two-sided Laplace transform, ''c'' must be greater than the largest real part of the zeroes of the transform function.
+
+==Different domains==
+Here integral transforms are defined for functions on the real numbers, but they can be defined more generally for functions on a group.
+* If instead one uses functions on the circle (periodic functions), integration kernels are then biperiodic functions; convolution by functions on the circle yields [[circular convolution]].
+* If one uses functions on the [[cyclic group]] of order ''n'' (<math>C_n</math> or <math>\mathbf{Z}/n\mathbf{Z}</math>), one obtains ''n'' × ''n'' matrices as integration kernels; convolution corresponds to [[circulant matrices]].
+
+==General theory==
+Although the properties of integral transforms vary widely, they have some properties in common. For example, every integral transform is a [[linear operator]], since the integral is a linear operator, and in fact if the kernel is allowed to be a [[generalized function]] then all linear  operators are integral transforms (a properly formulated version of this statement is the [[Schwartz kernel theorem]]).
+
+The general theory of such [[integral equation]]s is known as [[Fredholm theory]].  In this theory, the kernel is understood to be a [[compact operator]] acting on a [[Banach space]] of functions. Depending on the situation, the kernel is then variously referred to as the [[Fredholm operator]], the [[nuclear operator]] or the [[Fredholm kernel]].
+
+== See also ==
+{{colbegin}}
+* [[Reproducing kernel]]
+* [[Convolution kernel]]
+* [[Circular convolution]]
+* [[Circulant matrix]]
+* [[List of transforms]]
+* [[List of operators]]
+* [[List of Fourier-related transforms]]
+* [[Kernel trick]]
+* [[Kernel methods]]
+* [[Nachbin's theorem]]
+* [[Bateman transform]]
+* [[Symbolic integration]]
+{{colend}}
+
+== References ==
+* A. D. Polyanin and A. V. Manzhirov, ''Handbook of Integral Equations'', CRC Press, Boca Raton, 1998. ISBN 0-8493-2876-4
+* [http://eqworld.ipmnet.ru/en/auxiliary/aux-inttrans.htm Tables of Integral Transforms] at EqWorld: The World of Mathematical Equations.
+
+[[Category:Integral transforms|*]]
+[[Category:Mathematical analysis]]
+
+[[cs:Integrální transformace]]
+[[de:Integraloperator]]
+[[es:Transformada integral]]
+[[eu:Transformatu integral]]
+[[fa:تبدیل انتگرالی]]
+[[fr:Opérateur intégral]]
+[[gl:Transformada integral]]
+[[ko:적분 변환]]
+[[it:Trasformata integrale]]
+[[nl:Integraaltransformatie]]
+[[pt:Transformada integral]]
+[[ru:Интегральные преобразования]]
+[[th:การแปลงเชิงปริพันธ์]]
+[[uk:Інтегральне перетворення]]
+[[vi:Biến đổi tích phân]]
+[[zh:积分变换]]</body> </html>

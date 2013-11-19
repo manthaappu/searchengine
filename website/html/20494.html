@@ -1,0 +1,116 @@
+<html> <head> <title>Kelly criterion</title></head><body>In [[probability theory]], the '''Kelly criterion''', or '''Kelly strategy''' or '''Kelly formula''', or '''Kelly bet''', is a [[formula]] used to determine the optimal size of a series of bets. In most gambling scenarios, and some investing scenarios under some simplifying assumptions, the Kelly strategy will do better than any essentially different strategy in the long run. It was described by [[John Larry Kelly, Jr|J. L. Kelly, Jr]], in a 1956 issue of the ''[[Bell System Technical Journal]]''.<ref name="original Kelly article">{{Citation |last=Kelly |first=J. L., Jr. |year=1956 |title=A New Interpretation of Information Rate |journal=Bell System Technical Journal |volume=35 |issue= |pages=917–926 |url= |issn= }}</ref> [[Edward O. Thorp]] demonstrated the practical use of the formula in a 1961 address to the ''[[American Mathematical Society]]''<ref name="Thorp talk">{{Citation |last=Thorp |first=E. O. |month=January |year=1961 |title=Fortune's Formula: The Game of Blackjack |work=American Mathematical Society }}</ref> and later in his books ''Beat the Dealer''<ref name="Beat the Dealer">{{Citation |last=Thorp |first=E. O. |year=1962 |title=Beat the dealer: a winning strategy for the game of twenty-one. A scientific analysis of the world-wide game known variously as blackjack, twenty-one, vingt-et-un, pontoon or Van John |publisher=Blaisdell Pub. Co }}</ref> (for gambling) and ''Beat the Market''<ref name="Beat the Market">{{Citation |last=Thorp |first=Edward O. |last2=Kassouf |first2=Sheen T. |year=1967 |title=Beat the Market: A Scientific Stock Market System |publisher=Random House |isbn=0394424395 }}</ref> (with Sheen Kassouf, for investing).
+
+Although the Kelly strategy's promise of doing better than any other strategy seems compelling, some economists have argued strenuously against it, mainly because an individual's specific investing constraints override the desire for optimal growth rate.<ref name="Poundstone book article">{{citation |last=Poundstone |first=William|title=Fortune's Formula: The Untold Story of the Scientific Betting System That Beat the Casinos and Wall Street |year=2005 |publisher=Hill and Wang |location=New York |isbn=0809046377 }}</ref> The conventional alternative is [[utility]] theory which says bets should be sized to [[Optimization (mathematics)|maximize]] the [[expectation|expected]] utility of the outcome (to an individual with [[logarithm]]ic utility, the Kelly bet maximizes utility, so there is no conflict). Even Kelly supporters usually argue for fractional Kelly (betting a fixed fraction of the amount recommended by Kelly) for a variety of practical reasons, such as wishing to reduce volatility, or protecting against non-deterministic errors in their advantage (edge) calculations.<ref name="Wilmott I">{{citation |last=Thorp |first=E. O. |title=The Kelly Criterion: Part I |month=May |year=2008 |journal=Wilmott Magazine }}</ref>
+
+In recent years, Kelly has become a part of mainstream investment theory<ref name="Handbook of Asset and Liability Management">{{citation |last=Zenios |first=S. A. |last2=Ziemba |first2=W. T. |title=Handbook of Asset and Liability Management |year=2006 |publisher=North Holland |location= |isbn=978-0444508751 }}</ref> and the claim has been made that well-known successful investors including [[Warren Buffett]]<ref name="The Dhandho Investor">{{citation |last=Pabrai |first=Mohnish |title=The Dhandho Investor: The Low-Risk Value Method to High Returns |year=2007 |publisher=Wiley |location= |isbn=978-0470043899}}</ref> and [[William H. Gross|Bill Gross]]<ref name="Wilmott II">{{citation |last=Thorp |first=E. O. |title=The Kelly Criterion: Part II |month=September |year=2008 |journal=Wilmott Magazine }}</ref> use Kelly methods. [[William Poundstone]] wrote an extensive popular account of the history of Kelly betting in ''Fortune's Formula''.<ref name="Poundstone book article" /> But as Kelly's original paper demonstrates, the criterion is only valid when the investment or "game" is played many times over, with the same probability of winning or losing each time, and the same payout ratio.<ref name="original Kelly article">J. L. Kelly, Jr, <cite>A New Interpretation of Information Rate</cite>, Bell System Technical Journal, 35, (1956), 917–926</ref>
+
+== Statement ==
+
+For simple bets with two outcomes, one involving losing the entire amount bet, and the other involving winning the bet amount multiplied by the payoff [[odds]], the Kelly bet is:
+
+: <math> f^{*} = \frac{bp - q}{b} , \! </math>
+
+where:
+
+* ''f''* is the fraction of the current bankroll to wager;
+* ''b'' is the net odds received on the wager (that is, odds are usually quoted as "''b'' to 1")
+* ''p'' is the probability of winning;
+* ''q'' is the probability of losing, which is 1 − ''p''.
+
+As an example, if a gamble has a 60% chance of winning (''p'' = 0.60, ''q'' = 0.40), but the gambler receives 1-to-1 odds on a winning bet (''b'' = 1), then the gambler should bet 20% of the bankroll at each opportunity (''f''* = 0.20), in order to maximize the long-run growth rate of the bankroll.
+
+If the gambler has zero edge, i.e. if ''b'' = ''q''/''p'', then the criterion will usually recommend the gambler bets nothing (although in more complex scenarios such a bet may help ensure the best compounding rate of return: for instance a short-priced favourite in a horse race may be worth covering to provide downside protection even though the only advantageous bet is on another outsider). If the edge is negative (''b'' < ''q''/''p'') the formula gives a negative result, indicating that the gambler should take the other side of the bet. For example, in standard American roulette, the bettor is offered an even money payoff (b = 1) on red, when there are 18 red numbers and 20 non-red numbers on the wheel (p = 18/38). The Kelly bet is -1/19, meaning the gambler should bet one-nineteenth of the bankroll that red will not come up. Unfortunately, the casino doesn't allow betting ''against'' red, so a Kelly gambler could not bet.
+
+For even-money bets (i.e. when ''b'' = 1), the formula can be simplified to:
+: <math> f^{*} = p - q . \! </math>
+Since q = 1-p, this simplifies further to
+: <math> f^{*} = 2p - 1 . \! </math>
+
+== Proof ==
+
+To quickly verify the Kelly criterion with [[Python_(programming_language)|Python]] and [[Sympy]] one would set the derivative y'(x) of the expected value of the logarithmic bankroll y(x) to 0 and solve x:
+
+<source lang="python">
+>>> from sympy import *
+>>> x,b,p = symbols('xbp')
+>>> y = p*log(1+b*x) + (1-p)*log(1-x)
+>>> solve(diff(y,x), x)
+[-(1 - p - b*p)/b]
+</source>
+
+For a rigorous and general proof, see [[John Larry Kelly, Jr|Kelly's]] original paper<ref name="original Kelly article">J. L. Kelly, Jr, <cite>A New Interpretation of Information Rate</cite>, Bell System Technical Journal, 35, (1956), 917–926</ref> or some of the other references listed below. Some corrections can be found in: Optimal Gambling Systems For Favourable Games:- L. Breiman, University of California, Los Angeles.
+
+We give the following non-rigorous argument for the case b = 1 (a 50:50 "even money" bet) to show the general idea and provide some insights.
+
+When b = 1, the Kelly bettor bets 2p - 1 times initial wealth, W, as shown above. If he wins, he has 2pW. If he loses, he has 2(1 - p)W. Suppose he makes N bets like this, and wins K of them. The order of the wins and losses doesn't matter, he will have:
+
+: <math> 2^Np^K(1-p)^{N-K}W \! </math>
+
+Suppose another bettor bets a different amount, (2p - 1 + <math>\Delta</math>)W for some positive or negative <math>\Delta</math>. He will have (2p + <math>\Delta</math>)W after a win and [2(1 - p)- <math>\Delta</math>]W after a loss. After the same wins and losses as the Kelly bettor, he will have:
+
+: <math> (2p+\Delta)^K[2(1-p)-\Delta]^{N-K}W \! </math>
+
+Take the derivative of this with respect to <math>\Delta</math> and get:
+
+: <math> K(2p+\Delta)^{K-1}[2(1-p)-\Delta]^{N-K}W-(N-K)(2p+\Delta)^K[2(1-p)-\Delta]^{N-K-1}W\! </math>
+
+The turning point of the original function occurs when this derivative equals zero, which occurs at:
+
+: <math> K[2(1-p)-\Delta]=(N-K)(2p+\Delta) \! </math>
+
+which implies:
+
+: <math> \Delta=2(\frac{K}{N}-p) \! </math>
+
+but:
+
+: <math> \lim_{N \to +\infty}\frac{K}{N}=p \! </math>
+
+so in the long run, final wealth is maximized by setting <math>\Delta</math> to zero, which means following Kelly strategy.
+
+This illustrates that Kelly has both a deterministic and a stochastic component. If one knows K and N and wishes to pick a constant fraction of wealth to bet each time (otherwise one could cheat and, for example, bet zero after the K<sup>th</sup> win knowing that the rest of the bets will lose), one will end up with the most money if one bets:
+
+: <math> \left(2\frac{K}{N}-1\right)W \! </math>
+
+each time. This is true whether N is small or large. The "long run" part of Kelly is necessary because K is not known in advance, just that as N gets large, K will approach pN. Someone who bets more than Kelly can do better if K > pN for a stretch; someone who bets less than Kelly can do better if K < pN for a stretch, but in the long run, Kelly always wins.
+
+== Reasons to bet less than Kelly ==
+
+A natural assumption is that taking more risk increases the probability of both very good and very bad outcomes. One of the most important ideas in Kelly is that betting more than the Kelly amount ''decreases'' the probability of very good results, while still increasing the probability of very bad results. Since in reality we seldom know the precise probabilities and payoffs, and since overbetting is worse than underbetting, it makes sense to err on the side of caution and bet less than the Kelly amount.
+
+Kelly assumes sequential bets that are [[statistical independence|independent]] (later work generalizes to bets that have sufficient independence). That may be a good model for some gambling games, but generally does not apply in investing and other forms of risk-taking.
+
+The Kelly property appears "in the long run" (that is, it is an [[asymptotic analysis|asymptotic]] property). To a person, it matters whether the property emerges over a small number or a large number of bets. It makes sense to consider not just the long run, but where losing a bet might leave one in the short and medium term as well. A related point is that Kelly assumes the only important thing is long-term wealth. Most people also care about the path to get there. Kelly betting leads to highly volatile short-term outcomes which many people find unpleasant, even if they believe they will do well in the end.
+
+== Bernoulli ==
+
+In a 1738 article, [[Daniel Bernoulli]] suggested that when one has a choice of bets or investments that one should choose that with the highest [[geometric mean]] of outcomes. This is mathematically equivalent to the Kelly criterion, although the motivation is entirely different (Bernoulli wanted to resolve the [[St. Petersburg paradox]]). The Bernoulli article was not translated into [[English (language)|English]] until 1956,<ref name="Bernoulli translation">{{Citation |last=Bernoulli |first=Daniel |lastauthoramp= |year=1956 |origyear=1738 |title=Exposition of a New Theory on the Measurement of Risk |journal=Econometrica |volume=22 |issue=1 |pages=22–36 |url=http://www.jstor.org/stable/1909829 |issn= |publisher=The Econometric Society }}</ref> but the work was well-known among mathematicians and economists.
+
+== See also ==
+
+* [[Gambling and information theory]]
+
+== References ==
+
+{{Reflist}}
+
+== External links ==
+* [http://www.racing.saratoga.ny.us/kelly.pdf Original Kelly paper]
+* [http://www.sbrforum.com/Betting+Tools/Kelly+Calculator.aspx Multi-variable Kelly Calculator for Sports Bettors]
+* [http://groups.google.com/group/rec.gambling.poker/msg/7bb09884cfac7678 Kelly Criterion by Tom Weideman]
+* [http://www.cisiova.com/betsizing.asp Generalized Kelly Criterion For Multiple Outcomes and Financial Investors]
+* [http://www.goldengem.co.uk/portfolio.html portfolio analyzer which maximizes expected log return (Kelly criterion) for one risk free bond and a group of risky alpha Levy stable assets]
+* [http://www.thestakingmachine.com/kelly.php Kelly staking plan calculator]
+* [http://links.jstor.org/sici?sici=0012-9682%28195401%2922%3A1%3C23%3AEOANTO%3E2.0.CO%3B2-X Daniel Bernoulli - Exposition of a New Theory on the Measurement of Risk, translated to  english]
+* [http://www.fortunesformula.com  Edward O. Thorp & Fortune's Formula]
+
+[[Category:Blackjack]]
+[[Category:Games (probability)]]
+[[Category:Information theory]]
+[[Category:Wagering]]
+[[Category:Articles containing proofs]]
+
+[[fr:Formule de Kelly]]
+[[lt:Keli formulė]]
+[[ru:Критерий Келли]]
+[[zh:凱利公式]]</body> </html>

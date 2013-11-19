@@ -1,0 +1,74 @@
+<html> <head> <title>Constant interface</title></head><body>In the [[Java programming language]], the constant interface [[Design pattern (computer science)|pattern]] describes the use of an [[interface (Java)|interface]] solely to define constants, and having [[Class (computer science)|classes]] implement that interface in order to achieve convenient syntactic access to those constants.
+However, since the usage of constants is an implementation detail, it is considered inappropriate to define an interface for this purpose.<ref>Bloch, Joshua, Effective Java, 2nd Edition, p. 98</ref><ref name="Sun">Sun Microsystems, Inc. (2004). [http://java.sun.com/j2se/1.5.0/docs/guide/language/static-import.html "Static Import"].</ref>  In general, collecting system constants into classes independent of behaviour, might create a poor [[object-oriented]] design, because it is often a sign of low [[Cohesion (computer science)|cohesion]].  It is for these reasons that implementing constants interfaces is considered to be an [[anti-pattern]].
+
+Use of this anti-pattern has a few other downsides:
+# It pollutes the class [[Namespace (computer science)|namespace]] with read-only variables that may not be of use.
+# Contrary to the [[compile-time]] tactical utility of implementing a constants interface, the incidental [[run-time]] artifacts have little practical purpose (cf. [[Marker interface pattern|marker interfaces]] which also have no methods but '''are''' useful at run-time).
+# If [[binary code compatibility]] is required in future releases, the constants interface must remain forever an interface (it cannot be converted into a class), even though it has not been used as an interface in the conventional sense.
+# Without an IDE that resolves where the constant are coming from, tracking it back to its containing class or interface can be time consuming.
+# A variable (representing an instance) of the interface is syntactically no more useful than the interface name itself (since it has no methods).
+
+
+
+==Example==
+
+<source lang="java">
+public interface Constants {
+
+	public static final double PI = 3.14159;
+	public static final double PLANCK_CONSTANT = 6.62606896e-34;
+}
+
+
+public class Calculations implements Constants {
+
+	public double getReducedPlanckConstant() {
+		return PLANCK_CONSTANT / (2 * PI);
+	}
+}
+</source>
+
+
+==Alternatives==
+Many of the pitfalls of the anti-pattern can be avoided by converting the constants interface to a proper class with no instances:
+<source lang="java">
+public final class Constants {
+
+	private Constants() {
+		// restrict instantiation
+	}
+
+	public static final double PI = 3.14159;
+	public static final double PLANCK_CONSTANT = 6.62606896e-34;
+}
+</source>
+
+This still leaves the original intent of the pattern mostly un-addressed (i.e. there is no syntax for accessing the constants unqualified).  However, since [[Java 5]], consider using ''[[static import]]''<ref name="Sun"/> to achieve the same goal:
+<source lang="java">
+import static Constants.PLANCK_CONSTANT;
+import static Constants.PI;
+
+public class Calculations {
+
+	public double getReducedPlanckConstant() {
+		return PLANCK_CONSTANT / (2 * PI);
+	}
+}
+</source>
+
+
+To varying degrees, the issues listed above have now been addressed:
+# Because static members can be imported specifically, the class namespace need not be polluted with all members of the constants interface.
+# Run-time and compile-time semantics are more closely aligned when using static imports instead of constants interfaces.
+# The compiled code has one less binary compatibility constraint (that "class Calculations implements Constants").
+# Because static imports apply only to the current file (and not the whole class hierarchy) it is easier to discover where each static member is declared.
+# There is less need to declare variables of the constants interface type, and it is potentially clearer that no concrete instances actually exist.
+
+Note however, the changes do nothing to improve the [[Cohesion (computer science)|cohesion]] of the Constants class, so static imports should not be considered to be a panacea.
+
+==References==
+
+{{Reflist}}
+
+[[Category:Java programming language]]
+[[Category:Anti-patterns]]</body> </html>

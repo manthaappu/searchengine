@@ -1,0 +1,45 @@
+<html> <head> <title>Rejection sampling</title></head><body>In [[mathematics]], '''rejection sampling''' is a technique used to generate observations from a [[probability distribution|distribution]]. It is also commonly called the '''acceptance-rejection method''' or "accept-reject algorithm".
+
+It generates sampling values from an arbitrary [[probability distribution]] function <math>f(x)</math> by using an instrumental distribution <math>g(x)</math>, under the only restriction that <math>f(x)< M g(x)</math> where <math>M>1</math> is an appropriate bound on <math>f(x)/g(x)</math>.
+
+Rejection sampling is usually used in cases where the form of <math>f(x)</math> makes sampling difficult. Instead of sampling directly from the distribution <math>f(x)</math>, we use an envelope distribution <math>Mg(x)</math> where sampling is easier. These samples from <math>Mg(x)</math> are probabilistically accepted or rejected.
+
+This method relates to the general field of [[Monte Carlo method|Monte Carlo]] techniques, including [[Markov chain Monte Carlo]] algorithms that also use a proxy distribution to achieve simulation from the target distribution <math>f(x)</math>. It forms the basis for algorithms such as the [[Metropolis algorithm]].
+
+The '''unconditional acceptance probability''' is the proportion of proposed samples which are accepted, which is <math>Pr(u<f(x)/Mg(x))</math> <math>= E[f(x)/Mg(x)] = </math>&int;<math>(f(x)/Mg(x))g(x)dx = (1/M)</math>&int;<math>f(x)dx = 1/M</math>. If <math>M</math> is low, fewer samples are rejected, and the required number of samples for the target distribution is obtained more quickly. Because <math>M</math> must be no less than the maximum of <math>f(x)/g(x)</math>, the unconditional acceptance probability is higher the less that ratio varies, however to obtain acceptance probability 1, <math>f(x)=g(x)</math>, which defeats the purpose of sampling.
+
+==Algorithm==
+The algorithm (used by [[John von Neumann]] and dating back to Buffon and [[Buffon's needle|his needle]]) is as follows:
+* Sample <math>x</math> from <math>g(x)</math> and <math>u</math> from <math>U(0,1)</math> (the uniform distribution over the unit interval)
+* Check whether or not <math>u<f(x)/Mg(x)</math>.
+** If this holds, accept <math>x</math> as a realization of <math>f(x)</math>;
+** if not, reject the value of <math>x</math> and repeat the sampling step.
+
+The validation of this method is the '''envelope principle''': when simulating the pair <math>(x,v=u*Mg(x))</math>, one produces a uniform simulation over the subgraph of <math>Mg(x)</math>. Accepting only pairs such that <math>u<f(x)/Mg(x)</math> then produces pairs <math>(x,v)</math> uniformly distributed over the subgraph of <math>f(x)</math> and thus, marginally, a simulation from <math>f(x)</math>.
+
+This means that, with enough replicates, the algorithm generates a sample from the desired distribution <math>f(x)</math>. There are a number of extensions to this algorithm, such as the [[Metropolis algorithm]].
+
+==Examples==
+[[Image:Circle sampling.png|right|140px]]
+As a simple geometric example, suppose it is desired to generate a random point within the unit circle. Generate a candidate point <math>(x,y)</math> where <math>x</math> and <math>y</math> are independent uniformly distributed between &minus;1 and 1. If it so happens that <math>x^2+y^2 \leq 1</math> then the point is within the unit circle and should be accepted. If not then this point should be rejected and another candidate should be generated.
+
+The [[ziggurat algorithm]], a more advanced example, is used to efficiently generate [[Normal distribution|normally-distributed]] [[pseudorandom number]]s.
+
+==Drawbacks==
+
+Rejection sampling can lead to a lot of unwanted samples being taken if the function being sampled is highly concentrated in a certain region, for example a function that has a spike at some location. Also, as the dimensions of the problem get larger, the ratio of the embedded volume to the "corners" of the embedding volume tends towards zero, thus a lot of rejections can take place before a useful sample is generated, thus making the algorithm inefficient and impractical. See [[curse of dimensionality]].
+
+==See also==
+*[[Inverse transform sampling]]
+*[[Sampling techniques]]
+
+==References==
+*Robert, C.P. and Casella, G. "Monte Carlo Statistical Methods" (second edition). New York: Springer-Verlag, 2004.
+*J. von Neumann, "Various techniques used in connection with random digits. Monte Carlo methods", Nat. Bureau Standards, 12 (1951), pp. 36–38.
+
+[[Category:Monte Carlo methods]]
+[[Category:Non-uniform random numbers]]
+
+[[de:Verwerfungsmethode]]
+[[fr:Méthode de rejet]]
+[[ru:Выборка с отклонением]]</body> </html>

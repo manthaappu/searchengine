@@ -1,0 +1,62 @@
+<html> <head> <title>NeoDatis ODB</title></head><body>{{ infobox Software
+| name                   = NeoDatis ODB
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| developer              = NeoDatis Team
+| latest_release_version = 1.9
+| latest_release_date    = {{release date and age|2009|05|14}}
+| released               = 
+| frequently updated     = 
+| programming_language   = [[Java (programming language)|Java]]
+| operating system       = [[Cross-platform]]
+| platform               = [[Java (software platform)|Java]]
+| language               = English
+| status                 = Under development
+| genre                  = [[Object database]]
+| license                = [[GNU Lesser General Public License|LGPL]]
+| website                = [http://www.neodatis.org neodatis.org]
+}}
+
+'''NeoDatis ODB'''  is an [[object database]] available the [[GNU Lesser General Public License]], hence usable in [[free (software)|free]] or [[Commerce|commercial]] applications. NeoDatis ODB is available both for [[Java (programming language)|Java]] and [[.NET Framework|.NET]], the latter being still under development.
+
+==Features==
+* Support for [[Native Queries]] (see [[#NativeQuery|below]]).
+* NeoDatis is simple and intuitive. Objects can be easily be added to a database, requiring no boilerplate, nor modification to already existing classes.
+* ODB Explorer: a graphical tool to browse, query, create, update, and delete object, as well as import/export the database from and to XML files.
+
+==Types of Queries==
+===NativeQuery===
+To perform a native query, an object implementing a method named <code>match</code> is sent to the database. Such method receives each [[object (programming)|object]] of a determined class from the database, and returns a boolean value determining whether each one should be returned as part of the query result or not.
+Usage of such queries would be for example<ref>http://www.neodatis.org/5m-tutorial#toc7</ref>:
+<source lang="java">
+IQuery query = new SimpleNativeQuery() {
+    public boolean match(Player player) {
+        return player.getFavoriteSport().getName().toLowerCase().startsWith("volley");
+    }
+};
+
+Objects<Player> players = odb.getObjects(query);
+</source>
+Native queries have a reduced performance compared to other types of queries, since every object of a certain class in the database must be instantiated, along with its members, however, they maintain some principles of [[object-oriented programming]] (encapsulation and data abstraction), which other types of queries do not.
+
+===CriteriaQuery===
+A CriteriaQuery allow retrieval of objects by queries which compare object attributes. It's syntaxis is somewhat SQL-like. A simple example is:
+<source lang="java">
+IQuery query = new CriteriaQuery(Player.class, Where.equal("name", "olivier"));
+    Objects<Player> players = odb.getObjects(query);
+</source>
+
+==References==
+<references />
+
+== External links ==
+* [http://www.neodatis.org neodatis.org]
+
+== Similar databases ==
+* [[db4o]]
+
+[[Category:Open source database management systems]]
+[[Category:Object-oriented database management systems]]
+[[Category:Cross-platform software]]
+{{database-software-stub}}</body> </html>

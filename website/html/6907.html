@@ -1,0 +1,142 @@
+<html> <head> <title>Colour look-up table</title></head><body>{{Unreferenced|date=February 2008}}
+A '''colour look-up table''' (CLUT) is a mechanism used to transform a range of input colours into another range of colours. It can be a hardware device built into an imaging system or a software function built into an [[Image_Processing|image processing]] application.  The hardware colour look-up table will convert the logical colour (pseudo-colour) numbers stored in each [[pixel]] of [[video memory]] into physical colours, normally represented as [[RGB color model|RGB]] triplets, that can be displayed on a computer monitor. The palette is simply a block of fast [[Random access memory|RAM]] which is addressed by the logical colour and whose output is split into the red, green, and blue levels which drive the actual display (e.g., a [[Cathode ray tube|CRT]] or ''cathode ray tube'').
+
+A CLUT is characterized by:
+* The ''number of entries'' in the palette: determines the maximum number of colours which can appear on screen simultaneously (a subset of the wider ''full palette'', which is to be understood as the total number of colours that a given system is able to generate or manage, e.g. ''the full RGB colour palette'').
+
+* The ''width of each entry'' in the palette: determines the number of colours which the wider ''full palette'' can represent.
+
+A common example would be a palette of 256 colours; that is, the number of entries is 256, and thus each entry is addressed by an [[8-bit]] pixel value. The 8 bits is known as ''[[color depth|colour depth]]'', ''bit depth'' or ''bits per pixel'' (''bpp'').  Each colour can be chosen from a ''full palette'', typically with a total of 16.7 million colours; that is, the width of each entry is 24 bits, 8 bits per channel, which means combinations of 256 levels for each of the red, green, and blue components: 256 × 256 × 256 = 16,777,216 colours.
+
+An abstract, graphic example would be:
+
+{| class="wikitable"
+!  
+! colspan="2" | Image 
+! colspan="2" | Image Palette <BR>(CLUT) 
+!Full <BR>RGB Palette
+|-
+! rowspan="2" |Properties
+! Dimensions
+! Colour <BR>depth
+! Number <BR>of entries <BR>(logical <BR>colours)
+! Entry 
+width
+! Number <BR>of entries <BR>(physical <BR>colours)
+|- align="center"
+|8 &times; 6 pixels
+|2 bits per pixel &rarr;
+|(&rarr; 2 bits) 4
+| 3 bits &rarr;
+|(&rarr; 3-bit RGB) 8
+|- align="center"
+! Size in
+memory 
+| colspan="2" |8 &times; 6 &times; 2 = 96 bits 
+| colspan="2" | 4 &times; 3 = 12 bits 
+| N/A
+|- align="center"
+! Numeric <BR>entries
+| colspan="2" | 
+{| class="wikitable"
+|-
+| 00 || 00 || 00 || 00 || 00 || 00 || 00 || 00
+|-
+| 00 || 00 || 00 || 00 || 01 || 01 || 00 || 00
+|-
+| 00 || 00 || 00 || 01 || 01 || 01 || 01 || 00
+|-
+| 10 || 10 || 10 || 10 || 10 || 10 || 10 || 10
+|-
+| 11 || 11 || 11 || 11 || 11 || 11 || 11 || 11
+|-
+| 11 || 11 || 11 || 11 || 11 || 11 || 11 || 11
+|}
+| colspan="2" |
+{| class="wikitable" 
+! 00 
+| 011
+|-
+! 01 
+| 110
+|-
+! 10 
+| 001
+|-
+! 11 
+| 010
+|}
+| rowspan=2|
+{| class="wikitable" 
+! 000 
+| style="background:#000000;color:#000000" |000 
+|-
+! 001 
+| style="background:#0000FF" |  
+|-
+! 010 
+| style="background:#00FF00" | 
+|-
+! 011 
+| style="background:#00FFFF" | 
+|-
+! 100 
+| style="background:#FF0000" | 
+|-
+! 101 
+| style="background:#FF00FF" | 
+|-
+! 110 
+| style="background:#FFFF00" | 
+|-
+! 111 
+| style="background:#FFFFFF" | 
+|}
+|- align="center"
+! Coloured <BR>entries
+| colspan="2" |
+{| class="wikitable" 
+|-
+| style="background:#00FFFF;color:#00FFFF"| 00 || style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00|| style="background:#00FFFF;color:#00FFFF"| 00
+|-
+| style="background:#00FFFF"|   || style="background:#00FFFF"|   || style="background:#00FFFF"|   || style="background:#00FFFF"|   || style="background:#FFFF00"|   || style="background:#FFFF00"|   || style="background:#00FFFF"|   || style="background:#00FFFF"|  
+|-
+| style="background:#00FFFF"|   || style="background:#00FFFF"|   || style="background:#00FFFF"|   || style="background:#FFFF00"|   || style="background:#FFFF00"|   || style="background:#FFFF00"|   || style="background:#FFFF00"|   || style="background:#00FFFF"|  
+|-
+| style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|   || style="background:#0000FF"|  
+|-
+| style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|  
+|-
+| style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|   || style="background:#00FF00"|  
+|}
+| colspan="2" |
+{| class="wikitable"
+|-
+! 00 
+| style="background:#00FFFF;color:#00FFFF"| 011 
+|-
+! 01 
+| style="background:#FFFF00"|   
+|-
+! 10 
+| style="background:#0000FF"|  
+|-
+! 11 
+| style="background:#00FF00"|  
+|}
+|}
+
+Changes to the palette affect the whole screen at once and can be used to produce special effects which would be much slower to produce by updating pixels.
+
+==See also==
+* [[Palette (computing)]]
+* [[Lookup table]]
+* [[Truecolor]]
+* [[Indexed_color#Colors_and_palettes|Indexed color (Colors and palettes)]]
+* [[Color_depth#Indexed_color|Color depth (Indexed color)]]
+
+{{FOLDOC}}
+
+[[Category:Computer graphics]]
+
+[[de:Indizierte Farben]]</body> </html>

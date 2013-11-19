@@ -1,0 +1,31 @@
+<html> <head> <title>Lyapunov vector</title></head><body>In applied mathematics, '''Lyapunov vectors''', named after [[Aleksandr Lyapunov]], are easily computable approximations of the [[Singular value decomposition|singular vectors]] of the linear evolution operator of a [[dynamical system]]. They describe the dominant instabilities of a dynamical system, i.e. the errors that are most likely to grow. They have been used in predictability analysis and as initial perturbations for [[ensemble forecasting]] in [[numerical weather prediction]]. In modern practice they are often replaced by [[bred vector]]s for this purpose. 
+
+==Mathematical description==
+[[Image:LyapunovDiagram.svg|thumb|LyapunovDiagram|333px|right|Depiction of the asymmetric growth of perturbations along an evolved trajectory.]]
+
+Given a model ''M'' that evolves states <math>x</math> through time define a linear operator, <math>L</math>, valid at time <math>t</math>, which evolves states to a nearby <math>t+1</math>. Because this operator is linear we can easily consider the growth of nearby perturbations of the state <math>x</math>, <math>x+\delta x</math> and how they evolve to time <math>t+1</math> relative to the original state. 
+
+: <math>
+\begin{align}
+& {} \quad M_{t\rightarrow t+1}(x+\delta x) - M_{t\rightarrow t+1}(x) \\
+& \approx L(x+\delta x) - Lx  \\
+& = Lx + L\delta x - Lx = L \, \delta x
+\end{align}
+</math>
+
+And so we see that perturbations (errors) of the initial conditions evolve approximately with L. Often we are interested in how these perturbations <math> \delta x </math> grow. In chaotic systems a small subspace of the space of perturbations will grow very quickly relative to the rest (see figure). These directions are the Lyapunov vectors and they describe the fastest growing errors that can occur in our system. 
+
+These vectors often lie within the [[attractor]] of the [[dynamical system]]. As a result they are often used to generate other perturbations that lie within the attractor for initial conditions of [[ensemble forecasting]].
+
+==Method==
+To compute the Leading Lyapunov Vectors (LLVs) we apply a sequence of linear operators <math>L_{x_i}</math> to a random seed of uniform perturbations <math> \{v_j\}</math> along a trajectory <math> \{x_1, x_2, x_3, \dots, x_n\}</math> of states evolved through time. As we replace <math> v_j := L_{x_i}v_j </math> the dominant Lyapunov Vectors grow more strongly in each of the <math> v_j </math> and they will eventually all converge on the single Leading Lyapunov Vector. To obtain several vectors rather than this one and to avoid computational blowup we can orthonormalize the set <math>\{v_j\}</math> at each step. This process is very similar to [[Krylov_subspace_methods|Krylov subspace methods]].
+
+==References==
+*Kalnay, E. (2007), "Atmospheric Modeling, Data Assimilation and Predictability", Cambridge:  Cambridge University Press
+*Kalnay E, Corazza M, Cai M. Are Bred Vectors the same as Lyapunov Vectors? EGS XXVII General Assembly,. 2002. Available at: http://www.atmos.umd.edu/~ekalnay/lyapbredamsfinal.htm
+
+[[Category:Functional analysis]]
+[[Category:Mathematical physics]]
+[[Category:Dynamical systems]]
+
+{{mathanalysis-stub}}</body> </html>

@@ -1,0 +1,70 @@
+<html> <head> <title>ANOVA-simultaneous component analysis</title></head><body>{{multiple issues|context=November 2010|wikify=November 2010|onesource=November 2010}}
+
+'''ASCA''', '''ANOVA-SCA''', or '''analysis of variance – simultaneous component analysis''' is a method that partitions variation and enables interpretation of these partitions by SCA, a method that is similar to [[Principal components analysis|PCA]]. This method is a multi or even megavariate extension of [[ANOVA]]. The variation partitioning is similar to Analysis of variance (ANOVA). Each partition matches all variation induced by an effect or factor, usually a treatment regime or experimental condition. The calculated effect partitions are called effect estimates. Because even the effect estimates are multivariate, interpretation of these effects estimates is not intuitive. By applying SCA on the effect estimates one gets a simple interpretable result. In case of more than one effect this method estimates the effects in such a way that the different effects are not correlated. See also references ([http://dx.doi.org/10.1093/bioinformatics/bti476], [http://dx.doi.org/10.1002/cem.952] and [http://dx.doi.org/10.1186/1471-2105-8-322]).
+
+== Details ==
+
+Many research areas see increasingly large numbers of variables in only few samples. The low sample to variable ratio creates problems known as [[multicollinearity]] and singularity. Because of this, most traditional multivariate statistical methods cannot be applied.
+
+== ASCA algorithm ==
+
+This section details how to calculate the ASCA model on a case of two main effects with one interaction effect. It is easy to extend the declared rationale to more main effects and more interaction effects. If the first effect is time and the second effect is dosage, only the interaction between time and dosage exist. 
+We assume there are four time points and three dosage levels. 
+
+Let X be a matrix that holds the data. X is mean centered, thus having zero mean columns. A1, A2, A3 and A4, as B1, B2 and B3 indicate the levels in time and dosage. A and B are required to be balanced if the effect estimates need to be orthogonal and the partitioning unique. Matrix E holds the information that is not assigned to any effect. The partitioning gives the following notation:
+
+: <math>X = A+B+AB+E \,</math>
+
+== Calculating main effect estimate A (or B) ==
+
+Find all rows that correspond to effect A level 1 and averages these rows. The result is a vector. Repeat this for the other effect levels. Make a new matrix of the same size of X and place the calculated averages in the matching rows. That is, give all rows that match effect (i.e.) A level 1 the average of effect A level 1. 
+After completing the level estimates for the effect, perform an SCA. The scores of this SCA are the sample deviations for the effect, the important variables of this effect are in the weights of the SCA loading vector.
+
+== Calculating interaction effect estimate AB ==
+
+Estimating the interaction effect is similar to estimating main effects. The difference is that for interaction estimates the rows that match effect A level 1 are combined with the effect B level 1 and all combinations of effects and levels are cycled through. In our example setting, with four time point and three dosage levels there are 12 interaction sets {A1-B1, A1B2, A2B1, A2B2 and so on}. It is important to deflate (remove) the main effects before estimating the interaction effect.
+
+== SCA on partitions A, B and AB ==
+
+Simultaneous component analysis is mathematically identical to [[Principal components analysis|PCA]], but is semantically different in that it models different objects or subjects at the same time. 
+The standard notation for a SCA – and PCA – model is:
+
+: <math>X=TP^{'}+E \,</math>
+
+where ''X'' is the data, ''T'' are the component scores and ''P'' are the component loadings. ''E'' is the residual or error matrix. Because ASCA models the variation partitions by SCA, the model for effect estimates looks like this:
+
+: <math>A=T_{a}P_{a}^{'}+E_{a} \,</math>
+
+: <math>B=T_{b}P_{b}^{'}+E_{b} \,</math>
+
+: <math>AB=T_{ab}P_{ab}^{'}+E_{ab} \,</math>
+
+: <math>E=T_{e}P_{e}^{'}+E_{e} \,</math>
+
+Note that every partition has its own error matrix. However, algebra dictates that in a balanced mean centered data set every two level system is of rank one. This results in zero errors, since any rank 1 matrix can be written as the product of a single component score and loading vector.
+
+The full ASCA model with two effects and interaction including the SCA looks like this:
+
+Decomposition:
+
+: <math>X=A+B+AB+E \,</math>
+
+: <math>X=T_{a}P_{a}^{'}+T_{b}P_{b}^{'}+T_{ab}P_{ab}^{'}+T_{e}P_{e}^{'}+E_{a}+E_{b}+E_{ab}+E_{e}+E \,</math>
+
+== Time as an Effect ==
+
+Because 'time' is treated as a qualitative factor in the ANOVA decomposition preceding ASCA, a nonlinear multivariate time trajectory can be modeled. An example of this is shown in Figure 10 of this reference ([http://www3.interscience.wiley.com/journal/121356309/abstract]).
+
+== References ==
+
+* [http://dx.doi.org/10.1093/bioinformatics/bti476]  ANOVA-Simultaneous Component Analysis (ASCA): a new tool for analyzing designed metabolomics data;<br /><small>Age K. Smilde, Jeroen J. Jansen, Huub C. J. Hoefsloot, Robert-Jan A. N. Lamers, Jan van der Greef and Marieke E. Timmerman</small>
+
+* [http://dx.doi.org/10.1002/cem.952]  ASCA: analysis of multivariate data obtained from an experimental design; <br /><small>Jeroen J. Jansen, Huub C. J. Hoefsloot, Jan van der Greef, Marieke E. Timmerman, Johan A. Westerhuis, Age K. Smilde</small>
+
+* [http://dx.doi.org/10.1186/1471-2105-8-322]  Statistical validation of megavariate effects in ASCA;<br /><small>Daniel J Vis, Johan A Westerhuis, Age K Smilde and Jan van der Greef</small>
+
+* [http://www3.interscience.wiley.com/journal/121356309/abstract] The geometry of ASCA;<br /><small>Age K. Smilde, Huub. C.J. Hoefsloot, Johan. A. Westerhuis</small>
+
+[[Category:Analysis of variance]]
+[[Category:Bioinformatics]]
+[[Category:Data analysis]]</body> </html>

@@ -1,0 +1,82 @@
+<html> <head> <title>Joy (programming language)</title></head><body>{{Original research|date=May 2009}}
+{{Unreferenced|date=May 2009}}
+{{Infobox programming language
+|name = Joy
+|logo =
+|paradigm = [[multi-paradigm programming language|multi-paradigm]]: [[functional programming|functional]], [[Stack-oriented programming language|stack-oriented]]
+|year = 2001
+|designer = [[Manfred von Thun]]
+|developer = Manfred von Thun, John Cowan
+|latest release version = March 17, 2003
+|latest release date = March 17, 2003
+|typing = [[strong typing|strong]], [[dynamic typing|dynamic]]
+|implementations = Joy0, Joy1, "Current Joy", "John Cowan's Joy", "JoyJ (Joy in jvmm)"
+|dialects = 
+|influenced_by = [[Scheme (programming language)|Scheme]], [[C (programming language)|C]]
+|influenced = [[Factor (programming language)|Factor]], [[Cat (programming language)|Cat]], [[V (programming language)|V]], [[Trith (programming language)|Trith]]
+}}
+
+The '''Joy programming language''' is a purely [[functional programming language]] that was produced by Manfred von Thun of [[La Trobe University]] in [[Melbourne]], [[Australia]]. Joy is based on composition of functions rather than [[lambda calculus]]. It has turned out to have many similarities to [[Forth (programming language)|Forth]], due not to design but to a sort of parallel evolution and convergence.
+
+== How it works ==
+
+Joy is unusual (except for [[function-level programming]] languages and some esoteric ones, such as [[unlambda]]) in its lack of a [[lambda calculus|lambda]] operator, and therefore lack of [[Parameter (computer science)|formal parameters]]. To illustrate this with a common example, here is how the square function might be defined in an [[imperative programming language]] ([[C (programming language)|C]]):
+
+ int square(int x) {
+   return x*x;
+ }
+
+The variable x is a formal parameter which is replaced by the actual value to be squared when the function is called. Now here's how the same function would be defined in a [[functional programming|functional]] language ([[Scheme (programming language)|Scheme]]):
+
+<source lang="scheme">
+(define square
+  (lambda (x) 
+    (* x x)))
+</source>
+
+This is different in many ways, but it still uses the formal parameter x in the same way. Now here is how the square function would be defined in Joy:
+
+ DEFINE square == dup * .
+
+To explain: In Joy, everything is a function that takes a [[stack (data structure)|stack]] as an argument and returns a stack as a result. For instance, the numeral '5' does not represent an integer constant, but instead a short program that pushes the number 5 onto the stack. 
+
+* The '''dup''' operator simply duplicates the top element of the stack by pushing a copy of it.
+* The '''*''' operator pops two numbers off the stack and pushes their product.
+
+So this definition of the square function says to make a copy of the top element and then multiply the two top elements, leaving the square of the original top element on top of the stack. There is no need for a formal parameter at all. This design gives Joy conciseness and power, as illustrated by this definition of [[quicksort]]:
+
+<pre>
+<nowiki>
+ DEFINE qsort ==
+   [small]
+   []
+   [uncons [>] split]
+   [[swap] dip cons concat]
+   binrec .
+</nowiki>
+</pre>
+
+"binrec" is one of Joy's many [[recursion|recursive]] [[combinator]]s, implementing binary recursion. It expects four quoted programs on top of the stack which represent:
+
+* the termination condition (if a list is "small" (1 or 0 elements) it is already sorted), 
+* what to do if the termination condition is met (in this case nothing), 
+* what to do by default (split the list into two halves by comparing each element with the pivot), and finally 
+* what to do at the end (insert the pivot between the two sorted halves).
+
+== Mathematical purity ==
+In Joy, the [[meaning function]] is a [[homomorphism]] from the [[syntax|syntactic]] [[monoid]] onto the [[semantics|semantic]] [[monoid]]. That is, the syntactic relation of [[concatenation]] of [[symbol]]s maps directly onto the semantic relation of [[Function composition|composition]] of [[function (mathematics)|functions]]. It is a [[homomorphism]] instead of an [[isomorphism]] because it is [[onto]] but not [[one-to-one]], that is, some sequences of symbols have the same meaning (e.g. "dup +" and "2 *") but no symbol has more than one meaning.
+
+Its library routines mirror those of ISO [[C (programming language)|C]], though the current implementation is not easily extensible with functions written in C.
+
+==External links==
+*[http://www.latrobe.edu.au/philosophy/phimvt/joy.html Joy homepage]
+*[http://appforge.apc.edu.ph/projects/joyj/ JoyJ project]
+
+[[Category:Concatenative programming languages]]
+[[Category:Stack-oriented programming languages]]
+[[Category:Functional languages]]
+
+[[de:Joy (Programmiersprache)]]
+[[es:Lenguaje de programación Joy]]
+[[fr:Joy (langage)]]
+[[pt:Joy (linguagem de programação)]]</body> </html>

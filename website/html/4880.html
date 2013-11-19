@@ -1,0 +1,55 @@
+<html> <head> <title>C/AL</title></head><body>{{nofootnotes|date=December 2009}}
+'''C/AL''' ('''C'''lient'''/'''server '''A'''pplication '''L'''anguage) is the programming language used within C/SIDE the '''C'''lient'''/S'''erver '''I'''ntegrated '''D'''evelopment '''E'''nvironment in [[Microsoft Dynamics NAV]] (Formerly known as Navision Attain). C/AL is a database specific programming language, and is primarily used for retrieving, inserting and modifying records in a [[Microsoft Dynamics NAV|Navision]] database. C/AL is simple but effective, and resembles the [[Pascal (programming language)|Pascal language]] it is based on.
+
+== Examples ==
+=== Hello World ===
+This is the classic [[Hello world program|Hello World]] example. Since the [[C/SIDE]] (Client/Server Integrated Development Environment) does not have a console to output text, this example is made using a dialog box as the visual interface.
+<syntaxhighlight lang="pascal">
+  FOR i := 0 TO 10 DO
+    MESSAGE('hello, world');
+</syntaxhighlight>
+
+=== Filtering and retrieving records ===
+
+Variables in C/AL are not defined through code, but are defined via the variable declaration menu in the C/AL editor. In this example  ''Item'' is assumed to be a variable of type Record.
+<syntaxhighlight lang="pascal">
+  IF Item.GET('31260210') THEN
+    MESSAGE('Item name is: %1',Item."Description");
+
+  Item.RESET;
+  item.SETFILTER(...);
+</syntaxhighlight>
+.
+
+=== Looping and data manipulation===
+
+Looping over a recordset and modifying the individual records is achieved with only a few lines of code.
+
+<!-- There was no language setting for "C/AL". Used "pascal"-setting instead. Looks okay. -->
+<syntaxhighlight lang="pascal">
+  Item.SETRANGE("Blocked",TRUE);
+  IF Item.FINDSET THEN
+    REPEAT
+      IF Item."Profit" < 10 THEN BEGIN
+        Item."Profit %" := 20;
+        Item.MODIFY(TRUE);
+      END;
+    UNTIL Item.NEXT = 0;
+  Item.MODIFYALL("Blocked",FALSE);
+</syntaxhighlight>
+
+==See also==
+*[[Microsoft Dynamics NAV]]
+
+==External links==
+*[http://www.microsoft.com/dynamics/nav/default.mspx/ Official site ]
+*[http://www.mibuso.com/ Microsoft Dynamics Development Community ]
+
+{{Pascal programming language family}}
+{{compu-prog-stub}}
+{{DEFAULTSORT:C/Al}}
+[[Category:Pascal programming language family]]
+[[Category:Query languages]]
+
+[[nl:C/AL]]
+[[ru:C/AL]]</body> </html>

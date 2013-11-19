@@ -1,0 +1,243 @@
+<html> <head> <title>Example Pictor Encoder</title></head><body>{{move to Wikibooks}}
+== Pictor PCPaint PIC image format ==
+
+'''[[PICtor PIC image format|PICtor]]''' is an [[graphics file formats|image file format]] developed by [[John Bridges]], the principal author of [[PCPaint]], the first Paintbrush program for the PC. It was also the native file format for [[Pictor Paint]] and [[GRASP (multimedia authoring software)]]  (also by Bridges) and became the first widely accepted [[MS-DOS|DOS]] imaging standard.
+
+The PICtor format is quite well documented, but lacks a programming example like the one below.
+
+==Typical Pictor Encoder ==
+
+<pre>
+
+// This source code is herewith released by me into the Public Domain.
+// Bill Buckels, May 21, 2007
+// You have a royalty-free right to use, modify, reproduce and distribute this
+// source code and the binaries that it produces in any way you find useful
+
+// this is a highly simplified run length encoder for encoding a raw image block
+// of up to 8 bit pixel depth into an encoded block for a Pictor File.
+// if the buffer contains all 256 ascii values the LEAST used byte is used for a marker.
+
+// Note also, if you are encoding a planar image such as an ega 4 plane
+// image, each bit plane must be split into 4 separate contiguous blocks
+// of monochrome data (sometimes referred to a "SEGMENTS") of the height and width
+// of the image that you are encoding before encoding takes place (below).
+// This is done outside of here.
+
+// The code below works for monochrome, 2 bit CGA, 4 bit EGA, and 8 bit MCGA
+
+// I am assuming a 32 bit Windows platform with a BOOL and a TRUE and a FALSE
+// no hardship to compile this in 'nix tho'
+#define PICTOR_Int unsigned short // for 32 bit Windows
+#define SUCCESS 0
+#define FAILURE -1
+
+int WritePictorBlock(unsigned char *buf, unsigned buflen, FILE *fp)
+{
+
+     unsigned idx, jdx, writecnt = 0, offset = 1, runcnt = 1, markerbuf[256];
+     unsigned char markertest, RunMarker, lastbyte, nextbyte, leastused;
+     PICTOR_Int RunLength, BlockSize, RunCount;
+     BOOL bfound = FALSE, endofrun = FALSE;
+     FILE *fpTmp;
+     int c;
+
+     // I am limiting myself to maximum 64000 byte blocks here
+     // since this seems probably enough memory for pictor to allocate
+     // for an unpacking buffer.
+     // my particular algorithm also will not encode less than 2 bytes
+     // which in the grand scheme of things is not a hardship.
+
+     if (buflen < 2 || buflen > 64000)return FAILURE;
+
+     // record all ascii values used in this block
+     // and use one that isn't used for a marker.
+     for (idx = 0; idx < 256; idx++) {
+	markerbuf[idx] = 0;  // initial count
+     }
+
+     for (idx = 0; idx < buflen; idx++) {
+	markertest = buf[idx];
+	markerbuf[markertest] += 1;
+     }
+     
+     // count backwards, I prefer the highest value possible for a marker.
+     markertest = 255;
+     for(;;) {
+	  if (markerbuf[markertest] == 0) {
+		 bfound = TRUE;
+		 RunMarker = markertest;
+		 break;
+	  }
+	  if (markertest == 0) break;
+	  markertest -= 1;
+     }
+
+     // if we found no available markers in this block
+     // all 256 byte values are in use
+
+     // ROT - to avoid complicated algorithms that consider patterning etc.
+     // take John Bridges' early advice...
+     // no unique bytes in scanline, so use the LEAST used byte as a marker
+     // again counting backwards
+     if (bfound == FALSE) {
+
+	leastused = 255;
+        jdx = markerbuf[255];
+	markertest = 254;
+
+	for(;;) {
+
+          idx = (unsigned) markerbuf[markertest];
+          if (idx < jdx) {
+		// only switch for less
+		jdx = idx;
+		leastused = markertest;
+	  }
+	  if (markertest == 0) break;
+	  markertest -= 1;
+	}
+
+	RunMarker = leastused;
+     }
+
+     // now we know what the marker will be so we encode the runs
+     // for this block into a temporary file which tells us the
+     // sum of the compressed block which we require for our header.
+
+     // I could also have done a dry-run, allocated memory and encoded into
+     // a buffer but I am being lazy and these days computers are fast and disk space abundant
+     fpTmp = fopen("ClipShop.$$$", "wb");
+     if (NULL == fpTmp)return FAILURE;
+
+     endofrun = FALSE;  // we are using a look-ahead method, so set a pre-emptive flag
+	                // so we know in advance when we have reached the end
+	                // so we can encode the last data run before end the encoding term
+
+     writecnt = 0;      // we need to track the sum of the packed data
+     lastbyte = buf[0]; // seed value for comparison
+     offset = 1;        // set to second byte - for comparison (one byte delay)
+     runcnt = 1;        // ditto...
+
+     do {
+          nextbyte = buf[offset];
+          offset++;
+
+ // Kiss and Dirty
+ // comes to here after doing the last byte in the buffer
+ // dump the last bytes we read using the same code again
+ RunEnd:
+          // end of run
+          if (nextbyte != lastbyte || endofrun == TRUE) {
+	     // the data has changed so lets decide what to do
+             if (runcnt < 3 && lastbyte != RunMarker) {
+		// write raw bytes if below an efficent blocksize
+		// but never run raw bytes for a run marker.
+		// the ratio of lost efficiency is variable
+		// depending on the pattern alternation and repetition of
+		// the image and it could be great or negligible.
+		// this encoder is not sophisticated enough to decide
+		// to do a precalc on whether or not to encode.
+		// it is very efficient for 8 bit non-planar images but will
+		// probably not do so well for EGA style 4 plane images.
+		// 'Nuff Said.
+		for (idx = 0; idx < runcnt; idx++)fputc(lastbyte,fpTmp);
+		writecnt += runcnt;
+	     }
+	     else if (runcnt < 256) {
+		// write the 3 byte block
+		fputc(RunMarker,fpTmp);
+		fputc((unsigned char)runcnt,fpTmp);
+		fputc(lastbyte,fpTmp);
+		writecnt += 3;
+	     }
+	     else {
+		// write the 6 byte block
+		fputc(RunMarker,fpTmp);          // 1
+		fputc(0,fpTmp);                  // 2
+		RunCount = (PICTOR_Int)runcnt;   // 3,4
+		fwrite(&RunCount,2,1,fpTmp);
+		fputc(lastbyte,fpTmp);           // 5
+		writecnt += 5;
+	     }
+
+	     lastbyte = nextbyte;
+	     runcnt = 0;
+
+          }
+	  if (endofrun == TRUE)break; // we dumped so break
+
+	  runcnt++;
+          if (offset < buflen)continue; // if we are not done get another
+
+	  endofrun = TRUE; // set done and dump the last bytes before breaking
+          goto RunEnd;
+
+	  // the following test is never actually used
+     } while (offset < buflen); // left in place for some semblance of clarity
+
+     fclose(fpTmp);
+     fpTmp = fopen("ClipShop.$$$", "rb");
+     if (NULL == fpTmp)return FAILURE;
+
+     // write the block header
+     BlockSize = 5;
+     BlockSize += writecnt;  // blocksize includes header
+     RunLength = 0;
+     RunLength += buflen;
+
+     fwrite(&BlockSize,2,1,fp);
+     fwrite(&RunLength,2,1,fp);
+     fputc(RunMarker,fp);
+
+     // write the block
+     for (idx = 0; idx < writecnt; idx++) {
+	c = fgetc(fpTmp);
+	if (EOF == c) break;
+	fputc((unsigned char)c,fp);
+     }
+     
+     fclose(fpTmp);
+     remove("ClipShop.$$$");
+     if (EOF == c) return FAILURE;
+
+return SUCCESS;
+
+}
+
+</pre>
+
+{{Empty section|date=July 2010}}
+==References==
+
+Encyclopedia of Graphics File Formats, 2nd Edition
+by Murray, James D. , Van Ryper, William
+ISBN 1-56592-161-5
+http://www.fileformat.info/resource/book/1565921615/index.htm
+
+Pictor PC Paint File Format Summary
+http://www.fileformat.info/format/pictor/
+
+GRASP File Format Summary
+http://www.fileformat.info/format/grasp/
+
+GLPRO
+http://en.wikipedia.org/wiki/GLPro
+
+PCPAINT/Pictor Page Format Description
+Format by John Bridges.
+Document by Microtex Industries, Inc.
+Revision Date: 2/9/88
+http://netghost.narod.ru/gff/vendspec/pictor/pictor.txt
+
+The Graphics File Formats Page 
+GL - Another animation format
+Dr. Martin Reddy
+Technical Lead, R & D, Pixar Animation Studios
+http://www.martinreddy.net/gfx/2d/GL.txt
+
+The formats of GRASP animation files
+By George Phillips 
+http://www.programmersheaven.com/download/2157/Zipfilelist.aspx
+
+[[Category:Graphics file formats]]</body> </html>

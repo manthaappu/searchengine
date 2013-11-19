@@ -1,0 +1,34 @@
+<html> <head> <title>Mangler Pattern</title></head><body>{{Orphan|date=February 2009}}
+{{Unreferenced|date=October 2007}} '''Mangler''' is a software [[design pattern (computer science)|design pattern]]. A Mangler is a pattern that performs multiple operations over a series of data, similar to the [[MapReduce]] function inside of [[BigTable]] and [[Amazon's Dynamo]].  Typically, a mangler is fed a series of Maps from which it performs its internal operations and passes its internal state/data to an external Filter.
+
+A typical usage of the Mangler Pattern is during internal search operations.  When parsing a query from an end-user, the system will try and strip out a series of un-needed tokens, reassembling the original query into a more usable, functional query.
+
+An important distinction between the Mangler and other patterns is the "Modify in place" optimization, pioneered by the pattern's creator.
+
+This pattern was created by [[John Watson (Programmer)|Dr. John Watson]], during his tenure at TransUnion's Research and Development Lab.
+
+== Java ==
+
+<source lang="java">
+// This is a trivial implementation of Mangler in Java.
+
+public interface TokenMangler {
+	List<String> mangleTokens (List<String> tokens);
+}
+
+public class LowerCasingTokenMangler implements TokenMangler {
+
+	List<String> mangleTokens (List<String> tokens) {
+		List<String> results = new ArrayList<String>();
+
+		for (String token : tokens) {
+			results.add(token.toLowerCase());
+		}
+
+		return results;
+	}
+}
+</source>
+
+
+[[Category:Software design patterns]]</body> </html>

@@ -1,0 +1,224 @@
+<html> <head> <title>Packet (information technology)</title></head><body>In [[information technology]], a '''packet''' is a formatted unit of [[data]] carried by a [[packet mode]] [[computer network]]. Computer communications links that do not support packets, such as traditional [[Link (telecommunications)#Point-to-point|point-to-point telecommunications links]], simply transmit data as a series of [[bytes]], [[Character (computing)|characters]], or [[bit]]s alone. When data is formatted into packets, the [[bitrate]] of the communication medium can be better shared among users than if the network were [[circuit switching|circuit switched]]. By using [[packet switching|packet switched]] networking it is also harder to guarantee a lowest possible bitrate.
+
+{{Wiktionary|packet}}
+
+== Packet framing ==
+A packet consists of two kinds of data: control information and user data (also known as ''payload''). The control information provides data the network needs to deliver the user data, for example: source and destination addresses, error detection codes like checksums, and sequencing information. Typically, control information is found in packet headers and trailers, with user data in between.
+
+Different [[communications protocol]]s use different conventions for distinguishing between the elements and for formatting the data. In [[Binary Synchronous Transmission]], the packet is formatted in 8-bit bytes, and special characters are used to delimit the different elements. Other protocols, like [[Ethernet]], establish the start of the header and data elements by their location relative to the start of the packet. Some protocols format the information at a bit level instead of a byte level.
+
+A good analogy is to consider a packet to be like a letter: the header is like the envelope, and the data area is whatever the person puts inside the envelope. A difference, however, is that some networks can break a larger packet into smaller packets when necessary (note that these smaller data elements are still formatted as packets).
+
+A network design can achieve two major results by using packets: ''error detection'' and ''multiple host addressing''.
+
+=== Error detection ===
+It is more efficient and reliable to calculate a [[checksum]] or [[cyclic redundancy check]] over the contents of a packet than to check errors using character-by-character [[parity bit]] checking.
+
+The packet trailer often contains error checking data to detect errors that occur during transmission.
+
+=== Host addressing ===
+Modern networks usually connect three or more host computers together; in such cases the packet header generally contains addressing information so that the packet is received by the correct host computer. In complex networks constructed of multiple routing and switching nodes, like the [[ARPANET]] and the modern [[Internet]], a series of packets sent from one host computer to another may follow different routes to reach the same destination. This technology is called [[packet switching]].
+
+== Packets vs. datagrams ==
+In general, the term '''packet''' applies to any message formatted as a packet, while the term '''datagram''' is generally reserved for packets of an "unreliable" service.<ref name=kurose>Kurose, James F. & Ross, Keith W. (2007), "Computer Networking: A Top-Down Approach" ISBN 0-321-49770-8</ref> A "reliable" service is one that notifies the user if delivery fails, while an "unreliable" one does not notify the user if delivery fails. For example, [[Internet Protocol|IP]] provides an unreliable service. Together, [[Transmission Control Protocol|TCP]] and [[Internet Protocol|IP]] provide a reliable service, whereas [[User Datagram Protocol|UDP]] and [[Internet Protocol|IP]] provide an unreliable one. All these protocols use packets, but [[User Datagram Protocol|UDP]] packets are generally called datagrams.<ref name=kurose />
+
+When the [[ARPANET]] pioneered packet switching, it provided a reliable packet delivery procedure to its connected hosts via its [[BBN Report 1822|1822 interface]]. A host computer simply arranged the data in the correct packet format, inserted the address of the destination host computer, and sent the message across the interface to its connected [[Interface Message Processor|IMP]]. Once the message was delivered to the destination host, an acknowledgement was delivered to the sending host. If the network could not deliver the message, it would send an error message back to the sending host.
+
+Meanwhile, the developers of [[CYCLADES]] and of [[ALOHAnet]] demonstrated that it was possible to build an effective computer network without providing reliable packet transmission. This lesson was later embraced by the designers of [[Ethernet]].
+
+If a network does not guarantee packet delivery, then it becomes the host's responsibility to provide reliability by detecting and retransmitting lost packets. Subsequent experience on the ARPANET indicated that the network itself could not reliably detect all packet delivery failures, and this pushed responsibility for error detection onto the sending host in any case. This led to the development of the [[end-to-end principle]], which is one of the [[Internet]]'s fundamental design assumptions.
+
+== Example: IP packets ==<!-- This section is linked from [[IPsec]] -->
+[[Internet Protocol|IP]] packets are composed of a header and payload. The [[IPv4#Packet structure|IPv4 packet]] header consists of:
+
+# 4 bits that contain the ''version'', that specifies if it's an [[IPv4]] or [[IPv6]] packet,
+# 4 bits that contain the ''Internet Header Length'' which is the length of the header in multiples of 4 bytes (e.g. 5 means 20 bytes).
+# 8 bits that contain the ''Type of Service'', also referred to as [[Quality of Service]] (QoS), which describes what priority the packet should have,
+# 16 bits that contain the ''length'' of the packet in bytes,
+# 16 bits that contain an ''identification tag'' to help reconstruct the packet from several [[IP fragmentation|fragments]],
+# 3 bits that contain a zero, a flag that says whether the packet is allowed to be ''fragmented'' or not (DF: Don't fragment), and a flag to state whether more fragments of a packet follow (MF: More Fragments)
+# 13 bits that contain the ''fragment offset'', a field to identify position of fragment within original packet
+# 8 bits that contain the ''[[Time to live]]'' (TTL) which is the number of hops (router, computer or device along a network) the packet is allowed to pass before it dies (for example, a packet with a TTL of 16 will be allowed to go across 16 routers to get to its destination before it is discarded),
+# 8 bits that contain the ''protocol'' (TCP, UDP, ICMP, etc.)
+# 16 bits that contain the ''Header Checksum,'' a number used in error detection,
+# 32 bits that contain the ''source IP address'',
+# 32 bits that contain the ''destination address''.
+
+After those, optional flags can be added of varied length, which can change based on the protocol used, then the data that packet carries is added. An IP packet has no trailer. However, an IP packet is often carried as the payload inside an Ethernet frame, which has its own header and trailer.
+
+=== Delivery not guaranteed ===
+Many networks do not provide guarantees of delivery, nonduplication of packets, or in-order delivery of packets, ''e.g.'', the [[User Datagram Protocol|UDP]] protocol of the [[Internet protocol suite|Internet]]. However, it is possible to layer a [[transport protocol]] on top of the packet service that can provide such protection; [[Transmission Control Protocol|TCP]] and [[User Datagram Protocol|UDP]] are the best examples of layer 4, the Transport Layer, of the seven layered [[OSI model]].
+
+The header of a packet specifies the data type, packet number, total number of packets, and the sender's and receiver's [[IP address]]es.
+
+The term [[frame (telecommunications)|frame]] is sometimes used to refer to a packet exactly as transmitted over the wire or radio.
+
+== Example: the NASA Deep Space Network ==
+The Consultative Committee for Space Data Systems ([[CCSDS]]) packet telemetry standard defines
+the protocol used for the transmission of spacecraft instrument data over the deep-space channel. Under this standard, an image or other data sent from a spacecraft instrument is transmitted using one or more packets.
+
+=== CCSDS packet definition ===
+A packet is a block of data with length that can vary between successive packets, ranging from 7
+to 65,542 bytes, including the packet header.
+* Packetized data is transmitted via frames, which are fixed-length data blocks. The size of a frame, including frame header and control information, can range up to 2048 bytes.
+* Packet sizes are fixed during the development phase.
+Because packet lengths are variable but frame lengths are fixed, packet boundaries usually do not coincide with frame boundaries.
+
+=== Telecom processing notes ===
+Data in a frame is typically protected from channel errors by error-correcting codes.
+* Even when the channel errors exceed the correction capability of the error-correcting code, the presence of errors nearly always is detected by the error-correcting code or by a separate error-detecting code.
+* Frames for which uncorrectable errors are detected are marked as undecodable and typically are deleted.
+
+=== Handling data loss ===
+Deleted undecodable whole frames are the principal type of data loss that affects compressed data sets. There generally would be little to gain from attempting to use compressed data from a frame marked as undecodable.
+* When errors are present in a frame, the bits of the subband pixels are already decoded before the first bit error will remain intact, but all subsequent decoded bits in the segment usually will be completely corrupted; a single bit error is often just as disruptive as many bit errors.
+* Furthermore, compressed data usually are protected by powerful, long-blocklength error-correcting codes, which are the types of codes most likely to yield substantial fractions of bit errors throughout those frames that are undecodable.
+
+Thus, frames with detected errors would be essentially unusable even if they were not deleted by the frame processor.
+
+This data loss can be compensated for with the following mechanisms.
+* If an erroneous frame escapes detection, the decompressor will blindly use the frame data as if they were reliable, whereas in the case of detected erroneous frames, the decompressor can base its reconstruction on incomplete, but not misleading, data.
+* Fortunately, it is extremely rare for an erroneous frame to go undetected.
+* For frames coded by the CCSDS [[Reed–Solomon error correction|Reed–Solomon code]], fewer than 1 in 40,000 erroneous frames can escape detection.
+* All frames not employing the Reed–Solomon code use a [[cyclic redundancy check]] (CRC) error-detecting code, which has an undetected frame-error rate of less than 1 in 32,000.
+
+== Example: Radio & TV Broadcasting ==
+=== MPEG packetized stream ===
+'''Packetized Elementary Stream (PES)''' is a [[specification]] defined by the [[MPEG]] [[communication protocol]] (see the [[MPEG-2]] standard) that allows an [[elementary stream]] to be divided into packets. The elementary stream is packetized by encapsulating sequential data bytes from the elementary stream inside PES packet headers.
+
+A typical method of transmitting elementary stream data from a video or audio encoder is to first create PES packets from the elementary stream data and then to encapsulate these PES packets inside an [[MPEG transport stream]] (TS) packets or an [[MPEG program stream]] (PS). The TS packets can then be [[multiplexed]] and transmitted using broadcasting techniques, such as those used in an [[ATSC tuner|ATSC]] and [[Digital Video Broadcasting|DVB]].
+
+==== PES packet header ====
+{|class="wikitable"
+!Name!!Size!!Description
+|-
+|Packet start code prefix||3 bytes||0x000001
+|-
+|Stream id||1 byte||Examples: Audio streams (0xC0-0xDF), Video streams (0xE0-0xEF) <ref>http://www.dvb.org/technology/standards/a001r7.tm1214r30.dTS101154.v1.8.1.pdf</ref> 
+<ref>[http://www.freepatentsonline.com/EP1827030.html Method and apparatus for changing codec to reproduce video and/or audio data streams encoded by different codecs within a channel - Patent EP1827030<!-- Bot generated title -->]</ref>
+<ref>[http://www.epo.org/patents/patent-information/european-patent-documents/publication-server.html?iAction=3&cc=EP&pn=1827030&ki=A2 European publication server<!-- Bot generated title -->]</ref><ref>https://publications.european-patent-office.org/PublicationServer/document.jsp?PN=EP1827030%20EP%201827030&iDocId=6296342&iFormat=0</ref>
+|-
+| || ||Note: The above 4 bytes is called the 32 bit [[start code]].
+|-
+|PES Packet length||2 bytes||Can be zero as in not specified for video streams in [[MPEG transport stream]]s
+|-
+|Optional PES header||variable length||
+|-
+|Stuffing bytes||variable length||
+|-
+|Data|| ||See [[elementary stream]]. In the case of private streams the first byte of the payload is the sub-stream number.
+|}
+
+==== Optional PES header ====
+{|class="wikitable"
+!Name!!Number of Bits!!Description
+|-
+|Marker bits||2||'''10''' [[Binary numeral system|binary]] or 0x2 [[Hexadecimal|hex]]
+|-
+|Scrambling control||2||00 implies not scrambled
+|-
+|Priority||1||
+|-
+|Data alignment indicator||1||1 indicates that the PES packet header is immediately followed by the video start code or audio [[syncword]]
+|-
+|Copyright||1||1 implies copyrighted
+|-
+|Original or Copy||1||1 implies original
+|-
+|PTS DTS indicator||2||11 = both present, 10 = only PTS
+|-
+|ESCR flag||1||
+|-
+|ES rate flag||1||
+|-
+|DSM trick mode flag||1||
+|-
+|Additional copy info flag||1||
+|-
+|CRC flag||1||
+|-
+|extension flag||1||
+|-
+|PES header length||8||gives the length of the remainder of the PES header
+|-
+|Optional fields||variable length||presence is determined by flag bits above
+|-
+|Stuffing Bytes||variable length||0xff
+|}
+
+=== NICAM ===
+In order to provide [[Monaural|mono]] "compatibility", the NICAM signal is transmitted on a [[subcarrier]] alongside the sound carrier. This means that the [[Frequency modulation|FM]] or [[Amplitude modulation|AM]] regular mono sound carrier is left alone for reception by monaural receivers.
+
+A NICAM-based stereo-TV infrastructure can transmit a stereo TV programme as well as the mono "compatibility" sound at the same time, or can transmit two or three entirely different sound streams. This latter mode could be used to transmit audio in different languages, in a similar manner to that used for [[in-flight movie]]s on international flights. In this mode, the user can select which soundtrack to listen to when watching the content by operating a "sound-select" control on the receiver.
+
+[[Image:NICAM-spectrum.png|600px]]
+
+NICAM offers the following possibilities. The mode is auto-selected by the inclusion of a 3-bit type field in the data-stream
+* One digital stereo sound channel.
+* Two completely different digital mono sound channels.
+* One digital mono sound channel and a 352 kbit/s data channel.
+* One 704 kbit/s data channel.
+
+The four other options could be implemented at a later date. Only the first two of the ones listed are known to be in general use however. 
+
+'''NICAM packet transmission'''
+
+The NICAM packet (except for the header) is scrambled with a nine-bit pseudo-random bit-generator before transmission.
+* The topology of this pseudo-random generator yields a bitstream with a repetition period of 511 bits.
+* The pseudo-random generator's polynomial is: '''x^9 + x^4 + 1'''.
+* The pseudo-random generator is initialized with: '''111111111'''.
+
+Making the NICAM bitstream look more like [[white noise]] is important because this reduces signal patterning on adjacent TV channels.
+* The NICAM header is not subject to scrambling. This is necessary so as to aid in locking on to the NICAM data stream and resynchronisation of the data stream at the receiver.
+* At the start of each NICAM packet the pseudo-random bit generator's shift-register is reset to all-ones.
+
+==See also==
+*[[Statistical multiplexing]]
+*[[Anti-replay]]
+*[[Packet sniffer]]
+*[[Gigapackets]]
+*[[Mangled packet]]
+*[[TCP segment]]
+*[[TCP/IP]]
+*[[DHCP server]]
+*[[Packet generation model]]
+*[[Louis Pouzin]]
+* [[Tail drop]]
+
+==References==
+<references />
+*Dean, Tamara (2006). Network+ Guide to Networks. Boston, Massachusetts: Thomson Course Technology.
+
+<!-- is this a packet in Basque? -->
+
+{{DEFAULTSORT:Packet (Information Technology)}}
+[[Category:Units of information]]
+[[Category:Packets (information technology)| ]]
+
+[[cs:Paket]]
+[[da:Datapakke]]
+[[de:Datenpaket]]
+[[el:Πακέτο]]
+[[es:Paquete de red]]
+[[eu:Datagrama]]
+[[fa:بسته (فناوری اطلاعات)]]
+[[fr:Paquet (réseau)]]
+[[ga:Paicéad]]
+[[gl:Paquete]]
+[[ko:패킷]]
+[[id:Paket jaringan]]
+[[it:Pacchetto (reti)]]
+[[he:חבילת מידע]]
+[[lv:Pakete (informācijas tehnoloģijās)]]
+[[hu:Csomag (informatika)]]
+[[nl:Packet]]
+[[ja:パケット]]
+[[no:Datapakke]]
+[[pl:Pakiet telekomunikacyjny]]
+[[pt:Pacote]]
+[[sk:Paket (informatika)]]
+[[fi:IP-paketti]]
+[[sv:Paket (nätverk)]]
+[[uk:Пакет (телекомунікації)]]
+[[ur:رزمہ]]
+[[zh:分组]]</body> </html>

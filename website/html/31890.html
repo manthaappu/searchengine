@@ -1,0 +1,25 @@
+<html> <head> <title>Reservation stations</title></head><body>{{Unreferenced|date=August 2008}}
+'''Reservation Stations''' are decentralized features of the [[microarchitecture]] of a [[Central processing unit|CPU]] that allow for [[register renaming]], and are used by the [[Tomasulo algorithm]] for dynamic instruction scheduling.
+
+Reservation stations permit the CPU to fetch and re-use a data value as soon as it has been computed, rather than waiting for it to be stored in a register and re-read.  When instructions are issued, they can designate the reservation station from which they want their input to read.  When multiple instructions need to write to the same register, all can proceed and only the (logically) last one need actually be written.
+It checks if the operands are available ([[Hazard_(computer_architecture)|RAW]]) and if execution unit is free ([[Structural hazard]]) before starting execution. 
+
+Instruction are stored with available parameters, and  executed when ready. Results are identified by the unit that will execute the corresponding instruction.
+Implicitly register renaming solves [[Hazard_(computer_architecture)|WAR]] and [[Hazard_(computer_architecture)|WAW]] hazards. Since this is a fully-associative structure, it has a very high cost in comparators (need to compare all results returned from processing units with all stored addresses).
+
+In Tomasulo's algorithm, instructions are issued in sequence to Reservation Stations which buffer the instruction as well as the operands of the instruction. If the operand is not available, the Reservation Station listens on a Common Data Bus for the operand to become available. When the operand becomes available, the Reservation Station buffers it, and the execution of the instruction can begin.
+
+Functional Units (such as an adder or a multiplier), each have their own corresponding Reservation Station. The output of the Functional Unit connects to the Common Data Bus, where Reservation Stations are listening for the operands they need.
+== External links ==
+* [http://www.cs.iastate.edu/~prabhu/Tutorial/title.html]
+== Bibliography ==
+* ''[http://books.google.com/books?id=pqYl3SWkA64C&pg=PR15&dq=advanced+computer+architecture&hl=en&ei=wwPrTP-mMMfXcb_f9J4P&sa=X&oi=book_result&ct=result&resnum=9&ved=0CFIQ6AEwCA#v=onepage&q=advanced%20computer%20architecture&f=false]'',A Quantitative approach for Computer Architechture
+
+
+[[Category:Instruction processing]]
+
+{{Comp-eng-stub}}
+{{Compu-hardware-stub}}
+
+[[ja:Reservation Station]]
+[[it:Reservation station]]</body> </html>

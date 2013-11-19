@@ -1,0 +1,57 @@
+<html> <head> <title>Database Source Name</title></head><body>:''[[Data source name]]'' links to this article.
+{{Unreferenced|date=January 2009}}
+
+In [[computing]], a '''database source name''' ('''DSN''', often also known as a '''data source name''') specifies a [[data structure]] that contains the information about a specific [[data source]] ([[database]] or other [[data source]]) that an Open Database Connectivity ([[ODBC]]) driver needs in order to connect to it. A DSN may reside either in a [[Windows Registry|registry]] or in a separate text file. It stores information such as:
+
+* name of the data source
+* directory of the data source
+* name of a driver which can access the data source
+* user ID for database access (if required)
+* user password for database access (if required)
+
+The system administrator of a client machine creates a separate DSN for each relevant data source. To connect to a particular data source a developer can specify its DSN within a program or an environment. DSN-less connections, in contrast, require specifying all the necessary information within a program.
+
+Three kinds of DSN exist:
+
+# User DSN (sometimes called machine DSN)
+# System DSN
+# File DSN
+
+User and system DSNs operate specifically on a particular computer, and store DSN information in the registry. A user DSN allows database access for a single user on a single computer, and a system DSN for any user of a particular computer. A file DSN contains the relevant information within a text file with a .DSN [[file extension]]. Users of different computers who have the same drivers installed can use the file.
+
+Standardising DSNs offers the advantage that various different applications (for example: [[Apache HTTP Server|Apache]]/[[PHP]], [[Internet Information Services|IIS]]/[[Active Server Pages|ASP]]) can take advantage of any database which supports that DSN.
+
+==Misuse of Term==
+
+The term DSN is sometimes mistakenly used in place of [[Connection string|Connection String]].  A connection string itself can fully describe a data source while the DSN describes only the name of a collection of settings for a data source found in ODBC.
+
+== Example of use ==
+Using a DSN to connect to [[MySQL]] database through the Web, Web users can submit form-based entries to the MySQL database by establishing a connection to the MySQL database's DSN. 
+
+ASP ([[VBScript]]) code to open a DSN connection might look like the following:
+
+<source lang="vb">
+Dim DatabaseObject1
+Set DatabaseObject1 = Server.CreateObject("ADODB.Connection")
+DatabaseObject1.Open("DSN=DSNname;")
+</source>
+
+In [[PHP]] using the PEAR::DB package to open a connection without an external DSN ("DSN-less connection"), the code might resemble the following:
+
+<source lang="php">
+require_once("DB.php");
+//$dsn = "<driver>://<username>:<password>@<host>:<port>/<database>";
+$dsn = "mysql://john:pass@localhost:port/my_db";
+$db = DB::connect($dsn);
+</source>
+
+[[Category:Databases]]
+
+{{database-stub}}
+
+[[ca:Database Source Name]]
+[[de:Data Source Name]]
+[[es:DSN]]
+[[it:Database Source Name]]
+[[pl:Data Source Name]]
+[[pt:DSN]]</body> </html>

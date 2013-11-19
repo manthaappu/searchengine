@@ -1,0 +1,180 @@
+<html> <head> <title>Spectral method</title></head><body>{{Merge |Spectral element method| date=October 2009}}
+
+'''Spectral methods''' are a class of techniques used in [[applied mathematics]] and [[scientific computing]] to numerically solve certain [[partial differential equation]]s (PDEs), often involving the use of the [[Fast Fourier Transform]]. Where applicable, spectral methods have excellent error properties, with the so called "exponential convergence" being the fastest possible. Spectral methods were developed in a long series of papers by [[Steven Orszag]] starting in 1969 including, but not limited to, Fourier series methods for periodic geometry problems, polynomial spectral methods for finite and unbounded geometry problems, pseudospectral methods for highly nonlinear problems, and spectral iteration methods for fast solution of steady state problems.
+
+PDEs describe a wide array of physical processes such as heat conduction, fluid flow, and sound propagation. In many such equations, there are underlying "basic waves" that can be used to give efficient algorithms for computing solutions to these PDEs. In a typical case, spectral methods take advantage of this fact by writing the solution as its [[Fourier series]], substituting this series into the PDE to get a system of [[ordinary differential equations]] (ODEs) in the time-dependent coefficients of the trigonometric terms in the series (written in complex exponential form), and using a time-stepping method to solve those ODEs.
+
+The spectral method and the [[finite element method]] are closely related and built on the same ideas; the main difference between them is that the spectral method approximates the solution as [[linear combination]] of continuous functions that are generally nonzero over the domain of solution (usually [[sinusoid]]s or [[Chebyshev polynomial]]s), while the finite element method approximates the solution as a linear combination of piecewise functions that are nonzero on small subdomains. Because of this, the spectral method takes on a ''global approach'' while the finite element method is a ''local approach''. This is part of why the spectral method works best when the solution is [[Smooth function|smooth]]. In fact there are no known three-dimensional single domain spectral [[shock capturing]] results <ref name="CHQZ">[http://books.google.com/books?id=7COgEw5_EBQC pp 235, Spectral Methods]: evolution to complex geometries and applications to fluid dynamics, By Canuto, Hussaini, Quarteroni and Zang, Springer, 2007. .</ref>.  
+
+In the finite element community, a method where the degree of the elements is very high or increases as the grid parameter h decreases to zero is sometimes called a [[spectral element method]].
+
+The implementation of the spectral method is normally accomplished either with [[collocation method|collocation]] or a [[Galerkin method|Galerkin]] approach.
+
+==Examples of spectral methods==
+
+===A concrete, linear example===
+
+Here we presume an understanding of basic multivariate [[calculus]] and [[Fourier series]]. If g(x,y) is a known, complex-valued function of two real variables, and g is periodic in x and y (that is, g(x,y)=g(x+2&pi;,y)=g(x,y+2&pi;)) then we are interested in finding a function f(x,y) so that
+
+:<math>\left(\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}\right)f(x,y)=g(x,y)\quad \text{for all } x,y</math>
+<!--math>f_{xx}(x,y)+f_{yy}(x,y)=g(x,y)\quad \text{for all} x,y</math-->
+
+where the expression on the left denotes the second partial derivatives of f in x and y, respectively. This is the [[Poisson equation]], and can be physically interpreted as some sort of heat conduction problem.
+
+If we write f and g in Fourier series:
+
+:<math>f=\sum a_{j,k}e^{ijx+iky}</math>
+:<math>g=\sum b_{j,k}e^{ijx+iky}</math>
+
+and substitute into the differential equation, we obtain this equation:
+
+:<math>\sum -a_{j,k}(j^2+k^2)e^{ijx+iky}=\sum b_{j,k}e^{ijx+iky}</math>
+
+We have exchanged partial differentiation with an infinite sum, which is legitimate if we assume for instance that ''f'' has a continuous second derivative. By the uniqueness theorem for Fourier expansions, we must then equate the Fourier coefficients term by term, giving
+
+:(*) <math>a_{j,k}=-\frac{b_{j,k}}{j^2+k^2}</math>
+
+which is an explicit formula for the Fourier coefficients ''a''<sub>''j'',''k''</sub>.
+
+With periodic bondary-conditions, the [[Poisson equation]] possesses a solution only if ''b''<sub>''0'',''0''</sub> = ''0''. Therefore
+we can freely choose ''a''<sub>''0'',''0''</sub> which will be equal to the mean of the resolution. This corresponds to choosing the
+integration constant.
+
+To turn this into an algorithm, only finitely many frequencies are solved for. This introduces an error which can be shown to be proportional to <math>h^n</math>, where <math>h=1/n</math> and <math>n</math> is the highest frequency treated. 
+
+==== Algorithm ====
+
+# Compute the Fourier transform (''b<sub>j,k''</sub>) of ''g''.
+# Compute the Fourier transform (''a<sub>j,k</sub>'') of ''f'' via the formula (*) and the Fourier transform of ''g''.
+# Compute ''f'' by taking an inverse Fourier transform of (''a<sub>j,k''</sub>).
+
+Since we're only interested in a finite window of frequencies (of size ''n'', say) this can be done using a [[Fast Fourier Transform]] algorithm. Therefore, globally the algorithm runs in time ''O''(''n'' log ''n'').
+
+===A concrete, nonlinear example===
+
+We wish to solve the forced, transient, nonlinear [[Burgers' equation]] using a spectral approach.
+
+Given <math>u(x,0)</math> on the periodic domain
+<math>x\in\left[0,2\pi\right)</math>, find <math>u \in \mathcal{U}</math> such that
+:<math>\partial_{t} u + u \partial_{x} u = \nu \partial_{xx} u + f \quad \forall x\in\left[0,2\pi\right), \forall t>0.</math>
+In weak, conservative form this becomes
+:<math>\langle \partial_{t} u , v \rangle = \langle  \partial_x \left(-\frac{1}{2} u^2 + \nu \partial_{x} u\right) , v \rangle + \langle f, v \rangle \quad \forall v\in \mathcal{V}, \forall t>0</math>
+where <math>\langle f, g \rangle \equiv \int_{0}^{2\pi} f(x)
+  \overline{g(x)}\,dx</math> following [[inner product space|inner product]] notation.  [[integration by parts|Integrating by parts]] and using periodicity grants
+:<math>\langle \partial_{t} u , v \rangle = \langle   \frac{1}{2} u^2 - \nu \partial_{x} u  ,  \partial_x v\rangle+\langle f, v \rangle \quad \forall v\in \mathcal{V}, \forall t>0.</math>
+
+To apply the Fourier−[[Galerkin method]], choose both
+:<math>\mathcal{U}^N = \left\{ u : u(x,t)=\sum_{k=-N/2}^{N/2-1} \hat{u}_{k}(t) e^{i k x}\right\}</math>
+and
+:<math>\mathcal{V}^N =\text{ span}\left\{ e^{i k x} : k\in -N/2,\dots,N/2-1\right\}</math>
+where <math>\hat{u}_k(t)=\frac{1}{2\pi}\langle u(x,t), e^{i k x} \rangle</math>. This reduces the problem to finding <math>u\in\mathcal{U}^N</math> such that
+:<math>\langle \partial_{t} u , e^{i k x} \rangle = \langle  \frac{1}{2} u^2 - \nu \partial_{x} u  ,  \partial_x e^{i k x}  \rangle + \langle f, e^{i k x} \rangle \quad \forall k\in \left\{ -N/2,\dots,N/2-1 \right\}, \forall t>0.</math>
+
+Using the [[orthogonality]] relation <math>\langle e^{i l x}, e^{i k x} \rangle = 2 \pi \delta_{lk}</math> where <math>\delta_{lk}</math> is the [[Kronecker delta]], we simplify the above three terms for each <math>k</math> to see
+:<math>
+\begin{align}
+\langle \partial_{t} u , e^{i k x}\rangle &= \langle     \partial_{t} \sum_{l} \hat{u}_{l} e^{i l x}     ,      e^{i k x} \rangle  = \langle    \sum_{l} \partial_{t} \hat{u}_{l} e^{i l x}    ,     e^{i k x} \rangle = 2 \pi \partial_t \hat{u}_k,
+\\
+\langle f , e^{i k x} \rangle &= \langle    \sum_{l} \hat{f}_{l} e^{i l x}    ,     e^{i k x}\rangle= 2 \pi \hat{f}_k, \text{ and}
+\\
+\langle
+  \frac{1}{2} u^2 - \nu \partial_{x} u
+  ,
+  \partial_x e^{i k x}
+\rangle
+&=
+\langle
+    \frac{1}{2}
+    \left(\sum_{p} \hat{u}_p e^{i p x}\right)
+    \left(\sum_{q} \hat{u}_q e^{i q x}\right)
+    - \nu \partial_x \sum_{l} \hat{u}_l e^{i l x}
+    ,
+    \partial_x e^{i k x}
+\rangle
+\\
+&=
+\langle
+    \frac{1}{2}
+    \sum_{p} \sum_{q} \hat{u}_p \hat{u}_q e^{i \left(p+q\right) x}
+    ,
+    i k e^{i k x}
+\rangle
+-
+\langle
+    \nu i \sum_{l} l \hat{u}_l e^{i l x}
+    ,
+    i k e^{i k x}
+\rangle
+\\
+&=
+-\frac{i k}{2}
+\langle
+    \sum_{p} \sum_{q} \hat{u}_p \hat{u}_q e^{i \left(p+q\right) x}
+    ,
+    e^{i k x}
+\rangle
+- \nu k
+\langle
+    \sum_{l} l \hat{u}_l e^{i l x}
+    ,
+    e^{i k x}
+\rangle
+\\
+&=
+- i \pi k \sum_{p+q=k} \hat{u}_p \hat{u}_q - 2\pi\nu{}k^2\hat{u}_k.
+\end{align}
+</math>
+
+Assemble the three terms for each <math>k</math> to obtain
+:<math>
+2 \pi \partial_t \hat{u}_k
+=
+- i \pi k \sum_{p+q=k} \hat{u}_p \hat{u}_q 
+- 2\pi\nu{}k^2\hat{u}_k
++ 2 \pi \hat{f}_k
+\quad k\in\left\{ -N/2,\dots,N/2-1 \right\}, \forall t>0.
+</math>
+Dividing through by <math>2\pi</math>, we finally arrive at
+:<math>
+\partial_t \hat{u}_k
+=
+- \frac{i k}{2} \sum_{p+q=k} \hat{u}_p \hat{u}_q 
+- \nu{}k^2\hat{u}_k
++ \hat{f}_k
+\quad k\in\left\{ -N/2,\dots,N/2-1 \right\}, \forall t>0.
+</math>
+With Fourier transformed initial conditions <math>\hat{u}_{k}(0)</math> and forcing <math>\hat{f}_{k}(t)</math>, this coupled system of ordinary differential equations may be integrated in time (using, e.g., a [[Runge Kutta]] technique) to find a solution.  The nonlinear term is a [[convolution]], and there are several transform-based techniques for evaluating it efficiently.  See the references by Boyd and Canuto et al. for more details.
+
+
+== A relationship with the spectral element method ==
+
+One can show that if <math>g</math> is infinitely differentiable, then the numerical algorithm using Fast Fourier Transforms will converge faster than any polynomial in the grid size h. That is, for any n>0, there is a <math>C<\infty</math> such that the error is less than <math>Ch^n</math> for all sufficiently small values of <math>h</math>. We say that the spectral method is of order <math>n</math>, for every n>0.
+
+Because a [[spectral element method]] is a [[finite element method]] of very high order, there is a similarity in the convergence properties. However, whereas the spectral method is based on the eigendecomposition of the particular boundary value problem, the spectral element method does not use that information and works for arbitrary [[elliptic boundary value problem]]s.
+
+== See also ==
+* [[Discrete element method]]
+* [[Gaussian grid]]
+* [[Pseudo-spectral method]]
+* [[Spectral element method]]
+* [[Galerkin method]]
+* [[Collocation method]]
+
+{{Template:Numerical PDE}}
+
+== References ==
+* Steven A. Orszag (1969) ''Numerical Methods for the Simulation of Turbulence'', Phys. Fluids Supp. II, 12, 250-257
+* D. Gottlieb and S. Orzag (1977) "Numerical Analysis of Spectral Methods : Theory and Applications", SIAM, Philadelphia, PA
+* J. Hesthaven, S. Gottlieb and D. Gottlieb (2007) "Spectral methods for time-dependent problems", Cambridge UP, Cambridge, UK
+* [http://cdm.unimo.it/home/matematica/funaro.daniele/bube.htmPolynomial Approximation of Differential Equations], by Daniele Funaro, Lecture Notes in Physics, Volume 8, Springer-Verlag, Heidelberg 1992
+* Lloyd N. Trefethen (2000) ''Spectral Methods in MATLAB.'' SIAM, Philadelphia, PA 
+* Bengt Fornberg (1996) ''A Practical Guide to Pseudospectral Methods.'' Cambridge University Press, Cambridge, UK
+* [http://www-personal.umich.edu/~jpboyd/BOOK_Spectral2000.html Chebyshev and Fourier Spectral Methods] by John P. Boyd.
+* Javier de Frutos, Julia Novo: [http://epubs.siam.org/sam-bin/dbq/article/35198 A Spectral Element Method for the Navier--Stokes Equations with Improved Accuracy]
+* Canuto C., [[M. Yousuff Hussaini|Hussaini M. Y.]], Quarteroni A., and Zang T.A. (2006) ''Spectral Methods. Fundamentals in Single Domains.'' Springer-Verlag, Berlin Heidelberg
+{{Reflist}}
+[[Category:Numerical analysis]]
+[[Category:Numerical differential equations]]
+
+[[de:Spektralmethode]]
+[[fa:روش‌های طیفی]]</body> </html>

@@ -1,0 +1,67 @@
+<html> <head> <title>Session hijacking</title></head><body>{{Citations missing|section|June 2010|date=June 2010}}
+In [[computer science]], '''session hijacking''' refers to the exploitation of a valid [[Session (computer science)|computer session]]—sometimes also called a ''session key''—to gain unauthorized access to information or services in a computer system. In particular, it is used to refer to the theft of a [[magic cookie]] used to authenticate a user to a remote server. It has particular relevance to [[web developer]]s, as the [[HTTP cookie]]s used to maintain a session on many web sites can be easily stolen by an attacker using an intermediary computer or with access to the saved cookies on the victim's computer (see [[HTTP_cookie#Cookie_theft|HTTP cookie theft]]).
+
+TCP session hijacking is when a hacker takes over a TCP session between two machines. Since most authentication only occurs at the start of a TCP session, this allows the hacker to gain access to a machine.
+
+A popular method is using [[Source_routing|source-routed]] IP packets. This allows a hacker at point A on the network to participate in a conversation between B and C by encouraging the IP packets to pass through its machine.
+
+If source-routing is turned off, the hacker can use "blind" hijacking, whereby it guesses the responses of the two machines. Thus, the hacker can send a command, but can never see the response. However, a common command would be to set a password allowing access from somewhere else on the net.
+
+A hacker can also be "inline" between B and C using a sniffing program to watch the conversation. This is known as a "[[man-in-the-middle attack]]".
+
+A common component of such an attack is to execute a [[denial-of-service]] (DoS) attack against one end-point to stop it from responding. This attack can be either against the machine to force it to crash, or against the network connection to force heavy packet loss.
+
+==History==
+Session hijacking was not possible with early versions of HTTP.
+
+HTTP protocol versions 0.8 and 0.9 lacked cookies and other features necessary for session hijacking within the HTTP protocol did not exist in webservers or browsers. Version 0.9beta of Mosaic Netscape, released on October 13, 1994, supported cookies.
+
+Early versions of HTTP 1.0 did have some security weaknesses relating to session hijacking, but they were difficult to exploit due to the vagaries of most early HTTP 1.0 servers and browsers. As HTTP 1.0 has been designated as a fallback for HTTP 1.1 since the early 2000s -- and as HTTP 1.0 servers are all essentially HTTP 1.1 servers the session hijacking problem has evolved into a nearly permanent security risk. 
+
+The introduction of supercookies and other features with the modernized HTTP 1.1 has allowed for the hijacking problem to become an ongoing security problem. Webserver and browser state machine standardization has contributed to this ongoing security problem. 
+
+Session hijacking has been an ongoing problem for web browser developers and security experts for at least 5 years [http://www.theinquirer.net/inquirer/news/1811527/fear-baa-firesheep] [http://catless.ncl.ac.uk/Risks/26.19.html#subj7].
+
+==Methods==
+
+There are four main methods used to perpetrate a session hijack. These are:
+
+* '''[[Session fixation]]''', where the attacker sets a user's session id to one known to him, for example by sending the user an email with a link that contains a particular session id. The attacker now only has to wait until the user logs in.
+* '''Session sidejacking''', where the attacker uses [[packet sniffing]] to read network traffic between two parties to steal the session [[Http cookie|cookie]].  Many web sites use [[Secure Sockets Layer|SSL]] encryption for [[Logging (computer security)|login]] pages to prevent attackers from seeing the password, but do not use encryption for the rest of the site once [[authenticate]]d.  This allows attackers that can read the network traffic to intercept all the data that is submitted to the [[web server|server]] or web pages viewed by the client.  Since this data includes the session [[HTTP cookie|cookie]], it allows him to impersonate the victim, even if the password itself is not compromised.<ref>{{cite web|url=http://news.bbc.co.uk/2/hi/technology/6929258.stm|publisher=[[BBC News]]|date=August 3, 2007|title=Warning of webmail wi-fi hijack}}</ref>  Unsecured [[Wi-Fi]] [[Hotspot (Wi-Fi)|hotspots]] are particularly vulnerable, as anyone sharing the network will generally be able to read most of the web traffic between other nodes and the [[access point]].
+* Alternatively, an attacker with physical access can simply attempt to steal the [[session key]] by, for example, obtaining the file or memory contents of the appropriate part of either the user's computer or the server.
+* '''[[Cross-site scripting]]''', where the attacker tricks the user's computer into running code which is treated as trustworthy because it appears to belong to the server, allowing the attacker to obtain a copy of the cookie or perform other operations.
+
+==Prevention==
+
+Methods to prevent session hijacking include:
+
+* An open source solution is [http://arpon.sourceforge.net ArpON] "Arp handler inspectiON". It is a portable ARP handler which detects and blocks all Man In The Middle attacks through ARP poisoning and spoofing attacks with a static ARP inspection (SARPI) and dynamic ARP inspection (DARPI) approach on switched or hubbed [[LAN]]s with or without [[DHCP]].  This requires an agent on every host that is to be protected.
+* Use of a long random number or string as the [[session key]]. This reduces the risk that an attacker could simply guess a valid session key through trial and error or brute force attacks.
+* Regenerating the session id after a successful login. This prevents [[session fixation]] because the attacker does not know the session id of the user after he has logged in.
+* [[Encryption]] of the data passed between the parties; in particular the session key. This technique is widely relied-upon by web-based banks and other e-commerce services, because it completely prevents sniffing-style attacks. However, it could still be possible to perform some other kind of session hijack.
+* Some services make secondary checks against the identity of the user. For example, a web server could check with each request made that the IP address of the user matched the one last used during that session. This does not prevent attacks by somebody who shares the same IP address, however, and could be frustrating for users whose IP address is liable to change during a browsing session.
+* Alternatively, some services will change the value of the cookie with each and every request. This dramatically reduces the window in which an attacker can operate and makes it easy to identify whether an attack has taken place, but can cause other technical problems (for example, preventing the back button from working properly, on the web).
+* Users may also wish to log out of websites whenever they are finished using them.<ref>''See'' {{cite web|url=http://itc.virginia.edu/netbadge/logout.html|title=NetBadge: How To Log Out}}</ref><ref>''See also'' {{cite web|url=http://www.becardsmart.org.uk/always_log_out|title=Be Card Smart Online - Always log out}}</ref>
+
+==Firesheep==
+
+Recently a firefox extension called [[Firesheep]] has exploited and made it easy for public wifi users to be attacked by session hijackers. Websites like [[Facebook]], [[Twitter]], and any that the user adds to their preferences allow the firesheep user to easily access private information from cookies and threaten the public wifi users personal property.
+
+==See also==
+*[[HTTP Cookie]]
+*[[Cross-site request forgery]]
+*[[TCP sequence prediction attack]]
+
+==References==
+<div class="small-references">
+<references/>
+</div>
+
+[[Category:Computer network security]]
+[[Category:Web security exploits]]
+[[Category:Computer security exploits]]
+
+[[de:Session Hijacking]]
+[[hy:SideJacking]]
+[[pl:Session hijacking]]
+[[zh:会话劫持]]</body> </html>

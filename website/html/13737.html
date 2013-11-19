@@ -1,0 +1,74 @@
+<html> <head> <title>FlashPix</title></head><body>{{Infobox file format
+| name                   = FlashPix
+| icon                   = 
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| extension              = .fpx
+| mime                   = 
+| type code              = 
+| uniform type           = 
+| magic                  = 
+| owner                  = 
+| released               = <!-- {{Start date|YYYY|mm|dd|df=yes/no}} -->
+| latest release version = 
+| latest release date    = <!-- {{Start date and age|YYYY|mm|dd|df=yes/no}} -->
+| genre                  = [[bitmap]] [[image file]]
+| container for          = 
+| contained by           = 
+| extended from          = [[IVUE]]
+| extended to            = 
+| standard               = 
+| free                   = 
+| url                    = 
+}}
+'''FlashPix''' is a [[bitmap]]ped [[computer graphics]] file format where the image is saved in more than one [[Display resolution|resolution]]. Though this makes it larger even than a [[TIFF]] file, when a request is sent for the file by a [[Web browser]] only the resolution required for the current screen resolution is sent to the browser; this therefore saves on [[Bandwidth (computing)|bandwidth]] and download time.<ref name="techweb">{{
+cite web
+|url=http://www.techweb.com/encyclopedia/defineterm.jhtml?term=flashpix&x=32&y=16
+|publisher=TechWeb
+|title=TechWeb: TechEncyclopedia
+|date=September 1, 2006
+}}</ref>
+
+== History ==
+'''FlashPix''' is based on the [[IVUE]] file format, the tiled/multi-resolution image file format that was used by the Live Picture software ([[Live Picture Inc]]).
+In 1995, a [[consortium]] of [[Eastman Kodak]] (PhotoCD), [[Microsoft]], [[Hewlett-Packard]], and [[Live Picture Inc]] were looking for a powerful image file solution, and Live Picture's solution was the best approach for handling large image files.
+
+== Technical Overview ==
+FlashPix files have the .fpx [[file extension]]. FlashPix uses Microsoft's [[structured storage]] format<ref name="storage">{{
+cite web
+|url=http://www.i3a.org/technologies/image-formats/flashpix/
+|publisher=International Imaging Industry Association
+|title=AI3A Standards - Initiatives- Flashpix
+|date=September 1, 2006
+}}</ref> which stores hierarchical data in a single file.
+
+Each image is stored with its sub-resolutions.
+Each resolution is divided by 2, until the entire image can fit in a single tile.
+Tile size is variable, but the default usage is to have 64x64 pixels tiles (IVUE was using 256x256 pixels). Each tile can be compressed independently of other tiles using various algorithms (LZH, JPEG, RLE).
+Each pixel can have any number of channel of any size (for instance a 16bits CMYK image), interleaved or not. Including Alpha channel.
+
+The result is a file bigger than the original file (at same compression), but never more than 33%. But it allows user to access only the needed parts of the image without having to read the entire file.
+
+Let's take a 10200x7650 16bits CMYK image... using 64x64 tiles. It would use 595MB of disk-space.
+FlashPix, will store:
+* The original image: 10200x7650 pixels in 160x120 tiles (~ 595MB, but usually less using RLE or LZH per-tile).
+* Sub-resolution 1: 5100x3825 pixels in 80x60 tiles (~ 149MB)
+* Sub-resolution 2: 2550x1913 pixels in 40x30 tiles (~ 37MB)
+* Sub-resolution 3: 1275x957 pixels in 20x15 tiles (~ 9MB)
+* Sub-resolution 4: 638x479 pixels in 10x8 tiles (~ 2.3MB)
+* Sub-resolution 5: 319x240 pixels in 5x4 tiles (~ 598KB)
+* Sub-resolution 6: 160x120 pixels in 3x2 tiles (~ 150KB)
+* Sub-resolution 7: 80x60 pixels in 2x1 tiles (~ 37.5KB)
+* Sub-resolution 8: 40x30 pixels in a single tile (~ 9KB)
+Total size: ~ 793MB
+
+A viewer (like photo editing software) will access only the needed part... In the worst case, for a 1680x1050 display, 53x33 tiles (56MB) are needed in memory, whatever portion of the image is being used. Meaning that on a 2GB computer, 36 such images (595MB) can be used simultaneously in the same project.
+
+== References ==
+<references/>
+{{Graphics file formats}}
+[[Category:Graphics file formats]]
+
+
+{{Compu-graphics-stub}}</body> </html>

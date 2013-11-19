@@ -1,0 +1,226 @@
+<html> <head> <title>Mastermind (board game)</title></head><body>{{Other uses|Mastermind (disambiguation)}}
+{{Infobox Game|
+|  subject_name=Mastermind 
+|  image_link=[[File:Mastermind.jpg|200px]]
+|  image_caption=A game of Mastermind completed.
+|  players=2 
+|  ages= 8 and up
+|  setup_time= < 5 minutes 
+|  playing_time= 10-30 minutes 
+|  complexity=Easy 
+|  strategy=Low 
+|  random_chance=Some 
+|  footnotes =
+}}
+
+'''Mastermind''' or '''Master Mind''' is a [[code]]-breaking game for two players. The modern game with pegs was invented in 1970 by [[Mordecai Meirowitz]], an [[Israel]]i postmaster and telecommunications expert, but the game resembles an earlier pencil and paper game called [[bulls and cows]] that may date back a century or more.
+
+==Gameplay and rules==
+The game is played using:
+*a ''decoding board'', with a ''shield'' at one end covering a row of four large holes, and twelve (or ten, or eight) additional rows containing four large holes next to a set of four small holes;
+*''code pegs'' of six (or more; see [[Mastermind_(board_game)#Variations|Variations]] below) different colors, with round heads, which will be placed in the large holes on the board; and
+*''key pegs'', some colored (often black), some white, which are flat-headed and smaller than the code pegs; they will be placed in the small holes on the board.
+The two players decide in advance how many games they will play, which must be an [[Even and odd numbers|even number]]. One player becomes the ''codemaker'', the other the ''codebreaker''. The codemaker chooses a pattern of four code pegs. Duplicates are allowed, so the player could even choose four code pegs of the same color. The chosen pattern is placed in the four holes covered by the shield, visible to the codemaker but not to the codebreaker.
+
+The codebreaker tries to guess the pattern, in both order and color, within twelve (or ten, or eight) turns. Each guess is made by placing a row of code pegs on the decoding board. Once placed, the codemaker provides feedback by placing from zero to four key pegs in the small holes of the row with the guess. A colored (often black) key peg is placed for each code peg from the guess which is correct in both color and position. A white peg indicates the existence of a correct color peg placed in the wrong position.
+
+If there are duplicate colours in the guess, they cannot all be awarded a key peg unless they correspond to the same number of duplicate colours in the hidden code. For example, if the hidden code is white-white-black-black and the player guesses white-white-white-black, the codemaker will award two colored pegs for the two correct whites, nothing for the third white as there is not a third white in the code, and a colored peg for the black. No indication is given of the fact that the code also includes a second black.
+
+Once feedback is provided, another guess is made; guesses and feedback continue to alternate until either the codebreaker guesses correctly, or twelve (or ten, or eight) incorrect guesses are made.
+
+The codemaker gets one point for each guess a codebreaker makes. An extra point is earned by the codemaker if the codebreaker doesn't guess the pattern exactly in the last guess. (An alternative is to score based on the number of colored key pegs placed.) The winner is the one who has the most points after the agreed-upon number of games are played.
+
+==History==
+{{Expand section|date=May 2008}}
+
+Since 1971, the rights to '''Mastermind''' have been held by [[Invicta Plastics]] of [[Oadby]], near [[Leicester]], [[United Kingdom|UK]]. (Invicta always named the game '''Master Mind'''.) They originally manufactured it themselves, though they have since licensed its manufacture to [[Hasbro]] in most of the world, and two other manufacturers who have the United States and Israel manufacturing rights{{which?|date=December 2010}}.
+
+Starting in 1973, the game box featured a photograph of a well-dressed, distinguished-looking white man seated in the foreground, with an attractive Asian woman standing behind him. The two amateur models (Bill Woodward and Cecilia Fung) reunited in June 2003 to pose for another publicity photo.<ref>{{cite web|url=http://www.le.ac.uk/press/press/landmarkreunion.html|title=Landmark Reunion for Mastermind Box Models|accessdate=2006-10-05}}</ref>
+
+==Algorithms==
+With four pegs and six colors, there are 6<sup>4</sup> = 1296 different patterns (allowing duplicate colors).
+
+===Six-guess algorithm===
+{{Original research|date=June 2008}}
+The following algorithm solves the (six-color) game in six or fewer guesses. It has a general procedure and a few listed exceptions. In this section the six colours are referred to as letters '''a''' through '''f'''.
+
+Divide the 1296 possible games into four categories:
+* 0 duplicates    (e.g. ''abcd'')
+* 1 duplicate     (e.g. ''aabc'')
+* 2 duplicates    (e.g. ''aabb'' or ''aaab'')
+* 3 duplicates    (e.g. ''aaaa'')
+
+The general process is to list all the games that could be correct with the data so far. The list should be sorted by ascending number of duplicates and within each duplicate level alphabetically.  Before guess 1, the list is all 1296 games; thus guess 1 is always "abcd."  If the reply to guess 1 is "0 0," for example, then the list afterwards comprises the 16 games involving only e and f.  Each subsequent guess is the first game remaining in the list, with the following exceptions:
+* Guess 2 is always "bcde"
+* Guess 3 is always "cdef"
+* If the list for guess 4 starts with a game on the left side of the list below, then use the game to its right instead:
+** "acfb" → "dcad"
+** "aebf" → "edfd"
+** "aefb" → "eacc"
+** "afbe" → "bfcd"
+** "bafe" → "eadc"
+** "beaf" → "edae"
+** "befa" → "eeda"
+** "eabf" → "fdfb"
+** "aadb" → "babd"
+** "abae" → "bbcc"
+** "aeaf" → "cffd"
+** "cafa" → "fdfa"
+** "aaee" → "dddf"
+
+===Five-guess algorithm===
+
+In 1977, [[Donald Knuth]] demonstrated that the codebreaker can solve the pattern in five moves or fewer, using an algorithm that progressively reduced the number of possible patterns.<ref>{{Citation |url = http://www.dcc.fc.up.pt/~sssousa/RM09101.pdf | authorlink = Donald Knuth | last = Knuth | first = Donald | title = The Computer as a Master Mind | journal = J. Recr. Math. | issue = 9 | pages = 1–6 | year = 1976-77}}</ref>
+The algorithm works as follows:
+
+#Create a set ''S'' of remaining possibilities (at this point there are 1296). The first guess is aabb.
+#Remove all possibilities from ''S'' that would not give the same score of colored and white pegs if they were the answer.
+#For each possible guess (not necessarily in ''S'') calculate how many possibilites from ''S'' would be eliminated for each possible colored/white score. The score of the guess is the least of such values. Play the guess with the highest score ([[minimax]]).
+#Go back to step 2 until you have got it right.
+
+Subsequent mathematicians have been finding various algorithms that reduce the average number of turns needed to solve the pattern: in 1993, Mami Koyama and [[Tony W. Lai]] found a method that required an average of 4.340 turns to solve, with a worst case scenario of six turns.<ref>{{Citation | last = Koyama | first = Mami | last2 = Lai | first2 = Tony | title = An Optimal Mastermind Strategy | journal = Journal of Recreational Mathematics | issue = 25 | pages = 251–256 | year = 1993}}</ref>
+
+In December 2005, [[Jeff Stuckman]] and [[Guo-Qiang Zhang]] showed in an [[arXiv]] article that the Mastermind Satisfiability Problem is [[NP-complete]].<ref>[http://arxiv.org/abs/cs.CC/0512049 Mastermind is NP-Complete] Retrieved 2010-09-02.</ref>
+
+==Variations==
+Varying the number of colors and the number of holes results in a spectrum of Mastermind games of different levels of difficulty.  Another common variation is to support different numbers of players taking on the roles of codemaker and codebreaker.  The following are some examples of Mastermind games produced by [[Invicta Plastics|Invicta]], [[Parker Brothers]], [[Pressman Toy Corporation|Pressman]], [[Hasbro]], and other game manufacturers:
+
+{| class="wikitable" border="1"
+|-
+! Game !! Year !! Colors !! Holes !! Comments
+|-
+| Mastermind
+|align="right"| 1972
+|align="right"| 6
+|align="right"| 4
+| Original version
+|-
+| Royale Mastermind
+|align="right"| 1972
+|align="right"| 5 colors × 5 shapes
+|align="right"| 3
+|
+|-
+| Mastermind44
+|align="right"| 1972
+|align="right"| 6
+|align="right"| 5
+| For four players
+|-
+| Grand Mastermind
+|align="right"| 1974
+|align="right"| 5 colors × 5 shapes
+|align="right"| 4
+|
+|-
+| Super Mastermind (a.k.a. Deluxe Mastermind; a.k.a. Advanced Mastermind)
+|align="right"| 1975
+|align="right"| 8
+|align="right"| 5
+|
+|-
+| Word Mastermind
+|align="right"| 1975
+|align="right"| 26 letters
+|align="right"| 4
+| Only valid words may be used as the pattern and guessed each turn.
+|-
+| Number Mastermind
+|align="right"| 1976
+|align="right"| 6 digits
+|align="right"| 4
+| Uses numbers instead of colors.  The codemaker may optionally give, as an extra clue, the sum of the digits.
+|-
+| Walt Disney Mastermind
+|align="right"| 1978
+|align="right"| 5
+|align="right"| 3
+| Uses Disney characters instead of colors
+|-
+| Mini Mastermind (a.k.a. Travel Mastermind)
+|align="right"| 1988
+|align="right"| 6
+|align="right"| 4
+| Travel-sized version; room for only six guesses
+|-
+| Mastermind Challenge
+|align="right"| 1993
+|align="right"| 8
+|align="right"| 5
+| Both players simultaneously play code maker and code breaker.
+|-
+| Parker Mastermind
+|align="right"| 1993
+|align="right"| 8
+|align="right"| 4
+|
+|-
+| Mastermind for Kids
+|align="right"| 1996
+|align="right"| 6
+|align="right"| 3
+| Animal theme
+|-
+| Mastermind Secret Search
+|align="right"| 1997
+|align="right"| 26 letters
+|align="right"| 3-6
+| Valid words only; clues are provided letter-by-letter using up/down arrows for earlier/later in the alphabet.
+|-
+| New Mastermind
+|align="right"| 2004
+|align="right"| 8
+|align="right"| 4
+| For up to five players
+|}
+
+The difficulty level of any of the above can be increased by treating “empty” as an additional color or decreased by requiring only that the code's colors be guessed, independent of position.
+
+Computer and [[Online skill-based game|Internet versions]] of the game have also been made, sometimes with variations in the number and type of pieces involved and often under different names to avoid trademark infringement. Mastermind can also be played with [[Paper and pencil game|paper and pencil]].
+
+== See also ==
+*[[Board game]]
+*[[Bulls and cows]]
+*[[Jotto]]
+*[[Supermind (board game)|Supermind]]
+*[[Purble Shop]]
+
+==References==
+<references/>
+
+==External links==
+* [http://mathworld.wolfram.com/Mastermind.html Mathworld article on Mastermind]
+* [http://www.archimedes-lab.org/mastermind.html Mastermind] at [[Archimedes-lab.org]]
+* [http://boardgamegeek.com/game/2392 Mastermind] at [[Boardgamegeek]]
+* [http://mastermind.creativitygames.net Play online Mastermind] includes a general strategy guide.
+* [http://www.dcs.napier.ac.uk/~andrew/gm/ Grand Mastermind online (Javascript)] is based on Invicta's Grand Mastermind game from 1974.
+* [http://www.akendoo.com Simple online mastermind game]
+* [https://sites.google.com/site/goldendrongo/home/games] Source code for mastermind game in turbo c 2 and turbo pascal 3 for windows.
+* [http://qt-apps.org/content/show.php/Mastermind?content=69525] Source code for mastermind game in Qt C++.
+
+{{DEFAULTSORT:Mastermind (Board Game)}}
+[[Category:Abstract strategy games]]
+[[Category:Games of mental skill]]
+[[Category:Logic puzzles]]
+[[Category:NP-complete problems]]
+[[Category:Deduction board games]]
+[[Category:Parker Brothers games]]
+[[Category:Pressman Toy Corporation games]]
+
+[[cs:Logik (hra)]]
+[[de:Mastermind]]
+[[es:Mastermind]]
+[[eu:Mastermind]]
+[[fr:Mastermind]]
+[[it:Mastermind]]
+[[he:בול קליעה]]
+[[nl:Mastermind]]
+[[ja:マスターマインド]]
+[[no:Mastermind]]
+[[pl:Mastermind (gra planszowa)]]
+[[pt:Mastermind]]
+[[sk:Mini Master Mind]]
+[[fi:Mastermind]]
+[[sv:Mastermind]]
+[[zh-yue:Mastermind]]
+[[zh:珠璣妙算]]</body> </html>

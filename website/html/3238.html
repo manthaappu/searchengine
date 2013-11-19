@@ -1,0 +1,73 @@
+<html> <head> <title>Backscatter (e-mail)</title></head><body>'''Backscatter''' (also known as '''outscatter''', '''misdirected bounces''', '''blowback''' or '''collateral spam''') is incorrect automated [[bounce message]]s sent by mail servers, typically as a side effect of incoming [[e-mail spam|spam]]. 
+
+Recipients of such messages see them as a form of [[unsolicited bulk e-mail]] or [[E-mail spam|spam]] since they were not solicited by the recipients, are substantially similar to each other and are delivered in bulk quantities. Systems that generate e-mail backscatter can end up being listed on various [[DNSBL]]s and be in violation of [[internet service provider]]s' [[Terms of Service]].
+
+Backscatter occurs because [[computer worm|worms]] and [[e-mail spam|spam messages]] often forge their [[envelope sender|sender]] address, and mailservers configured by naive administrators send a [[bounce message]] to this address.
+
+Measures to reduce the problem include avoiding the need for [[bounce message]] by doing most rejections at the initial [[SMTP]] connection stage; and sending bounce messages only to addresses which can be reliably judged to have not been forged.
+
+==Cause==
+Authors of spam and viruses wish to make their messages appear to originate from a legitimate source to fool recipients into opening the message so they often use [[web crawler|web-crawling software]] to scan [[usenet]] postings, [[message board]]s, and web pages for legitimate  e-mail addresses.
+
+Due to the design of [[SMTP]] mail, recipient mail servers receiving these forged messages have no simple standard way to determine the authenticity of the sender. If they accept the email during the connection phases then, after further checking refuse it - for example because they believe it to be [[spam (electronic)|spam]] they will use the (potentially forged) sender's address to attempt a good-faith effort to report the problem to the apparent sender.
+
+Mail servers can handle undeliverable messages in three fundamentally different ways:
+
+* '''Reject'''. A receiving server can reject the incoming e-mail during the connection stage ''while the sending server is still connected''. If a message is rejected at connect time with a 5xx error code then the ''sending'' server can report the problem to the real sender cleanly.
+
+* '''Drop'''. A receiving server can initially accept the full message, but then determine that it is spam, and ''quarantine'' it - delivering to "Junk" or "Spam" folders from where it will eventually be deleted automatically. This is common behaviour, even though RFC 5321 says: "''...silent dropping of messages should be considered only in those cases where there is very high confidence that the messages are seriously fraudulent or otherwise inappropriate...''"
+
+* '''Bounce'''. A receiving server can initially accept the full message, but then determine that it is spam or to a non-existent recipient, and generate a [[bounce message]] back to the supposed sender indicating that message delivery failed.
+
+Backscatter occurs when the "bounce" method is used, and the sender information on the incoming e-mail was that of an unrelated third party.
+
+==Reducing the problem==
+:Every step to control  [[computer worm|worms]] and [[e-mail spam|spam messages]] helps reduce backscatter, but there are also several other common approaches:
+
+===Preventing email address collection===
+It is common to attempt to obscure email addresses in a manner that is not easily machine-readable. Several methods are available, such as simply not using a standard text format (''john (at) example.com'') or using a [[bitmap image]] of the address rather than raw text. More complex address obscuration methods are available, such as encoding the addresses using a [[substitution cipher]], embedded as program code within a tiny [[javascript]] or [[Adobe Flash]] program for each address, which when clicked, opens a temporary window and sends the decoded ''mailto:'' address to the local e-mail client, but all such obscuration methods can potentially  be attacked by spammers in the same manner as [[CAPTCHA]]s.
+
+===Connection-stage rejection===
+During the initial [[SMTP]] connection mailservers can do a range of checks, and often reject email with a 5xx error code ''while the sending server is still connected''. Rejecting a message at the connection-stage in this way will usually cause the ''sending'' [[Mail transfer agent|MTA]] to generate a local [[bounce message]] or Non-Delivery Notification (NDN) to a local, authenticated user.<ref>Alternatively, if the MTA is relaying the message, it should only send such an NDN to a plausible <span class="explain" title="envelope sender">originator</span> ''as indicated in the reverse-path'' J. Klensin, "Simple Mail Transfer Protocol", IETF RFC 2821, page 25 e.g. where an [[Sender Policy Framework|SPF]] check has passed.</ref>
+
+Reasons for rejection include:
+* Recipient validation<ref>[http://www.msexchange.org/tutorials/Sender-Recipient-Filtering.html "The Hidden Power of Sender and Recipient Filtering"]</ref><ref>[http://technet.microsoft.com/en-us/library/aa998898.aspx Configuring Recipient Filtering]</ref><ref>[http://www.postfix.org/ADDRESS_VERIFICATION_README.html#recipient Recipient address verification]</ref>
+* Anti-forgery checks such as [[Sender Policy Framework|SPF]], [[DKIM]] or [[Sender ID]]
+* Servers that do not have a [[Forward Confirmed reverse DNS|forward-confirmed reverse DNS entry]]
+* Senders on [[DNSBL|block lists]]<ref>M.N. Marsono, et al., "Rejecting Spam during SMTP Sessions,"
+Proc. Communications, Computers and Signal Processing, 2007.
+PacRim 2007. IEEE Pacific Rim Conference on, 2007, pp. 236-239.</ref>.
+* Temporary rejection via [[greylisting]] methods
+[[Mail transfer agent]]s (MTAs) which forward mail can avoid generating backscatter by using a [[transparent SMTP proxy]].
+
+===Checking bounce recipients===
+Mail servers sending email [[bounce message]]s can use a range of measures to judge whether a return address has been forged.
+
+===Filtering backscatter===
+While preventing backscatter is desirable, it is also possible to reduce its impact by filtering for it, and many spam filtering systems now include the option to attempt to detect and reject<ref>[http://wiki.apache.org/spamassassin/VBounceRuleset "The "Virus Bounce Ruleset" is a SpamAssassin  ruleset to catch ''backscatter''"]</ref> backscatter emails as spam.
+ 
+In addition, systems using schemes such as [[Bounce Address Tag Validation]] "tag" their outgoing email in a way that allows them to reliably detect incoming bogus [[bounce message]]s.
+
+==See also==
+*[[Joe job]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://www.techzoom.net/papers/mail_non_delivery_notice_attacks_2004.pdf Mail DDoS Attacks through Non Delivery Messages]
+*[http://www.postfix.org/BACKSCATTER_README.html Postfix - backscatter page]
+*[http://spamlinks.net/prevent-secure-backscatter.htm SpamLinks - Backscatter]
+*RFC 3834: Recommendations for Automatic Responses to Electronic Mail.
+*[http://www.iki.fi/era/mail/autoresponder-faq.html Moronic Mail Autoresponders (A FAQ From Hell)]
+*[http://www.spamcop.net/fom-serve/cache/329.html Why are auto responders bad?] (a [[SpamCop]] [[FAQ]])
+*[http://www.backscatterer.org/ A DNSBL of Backscatter sources.]
+*[http://www.dontbouncespam.org Dontbouncespam.org Why you shouldn't bounce spam]
+*[http://www.pcworld.com/businesscenter/article/145449/100_e-mail_bouncebacks_youve_been_backscattered.html 100 E-mail Bouncebacks? You've Been Backscattered.]
+
+{{DEFAULTSORT:Backscatter (E-Mail)}}
+[[Category:Spamming]]
+[[Category:Email authentication]]
+
+[[de:Backscatter (E-Mail)]]
+[[pl:Backscatter]]</body> </html>

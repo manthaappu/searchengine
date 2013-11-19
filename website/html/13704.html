@@ -1,0 +1,147 @@
+<html> <head> <title>Fixed effects model</title></head><body>{{Refimprove|date=September 2009}}
+
+In [[econometrics]] and [[statistics]], a '''fixed effects model''' is a [[statistical model]] that represents the observed quantities in terms of explanatory variables that are all treated as if those quantities were non-random. This is in contrast to [[random effects model]]s and [[mixed model]]s in which either all or some of the explanatory variables are treated as if they arise from the random causes. Often the same structure of model, which is usually a [[linear regression]] model, can be treated as any of the three types depending on the analyst's viewpoint, although there may be a natural choice in any given situation.
+
+In [[panel data]] analysis, the term '''fixed effects estimator''' (also known as the '''within estimator''') is used to refer to an [[estimator]] for the [[coefficient]]s in the regression model. If we assume fixed effects, we impose time independent effects for each entity that are possibly correlated with the regressors.
+
+== Qualitative description ==
+
+Such models assist in controlling for unobserved [[heterogeneity]] when this heterogeneity is constant over time and correlated with independent variables. This constant can be removed from the data through differencing, for example by taking a first difference which will remove any time invariant components of the model. 
+
+There are two common assumptions made about the individual specific effect, the random effects assumption and the fixed effects assumption. The random effects assumption (made in a [[random effects model]]) is that the individual specific effects are uncorrelated with the independent variables. The fixed effect assumption is that the individual specific effect is correlated with the independent variables. If the random effects assumption holds, the random effects model is more [[Efficiency (statistics)|efficient]] than the fixed effects model. However, if this assumption does not hold (i.e., if the [[Durbin&ndash;Wu test]] fails), the random effects model is not [[Consistency (statistics)|consistent]].
+
+== Quantitative description ==
+
+Formally the model is 
+
+:<math>y_{it}=\beta_{0}+X_{it}\beta+Z_{i}\gamma+\alpha_{i}+u_{it},</math>
+
+where <math>y_{it}</math> is the dependent variable observed for individual <math>i</math> at time
+<math>t,</math> <math>X_{it}</math> is the time-variant regressor, <math>Z_{i}</math> is the time-invariant
+regressor, <math>\alpha_{i}</math> is the unobserved individual effect, and <math>u_{it}</math> is
+the error term. <math>\alpha_{i}</math> could represent motivation, ability, genetics
+(micro data) or historical factors and institutional factors (country-level data).
+
+The two main methods of dealing with <math> \alpha_{i} </math> are to make the random effects or fixed effects assumption:
+
+1. Random effects (RE): Assume <math> \alpha_{i} </math> is independent of <math> X_{it},Z_{i} </math> or <math> E(\alpha_{i}|X_{it},Z_{i})=0</math> . (In biostatistics, <math> X_{it},Z_{i} </math> are predetermined, <math>\beta</math> and <math>\gamma</math> would be called the population effects or "fixed effects", and the individual effect or "random effect" <math> \alpha_{i} </math> is often denoted <math> b_{i} </math>.)
+
+2. Fixed effects (FE): Assume <math> \alpha_{i} </math> is not independent of <math> X_{it},Z_{i}</math>. (There is no equivalent conceptualization in biostatistics; a predetermined <math> X_{it},Z_{i}</math> cannot vary, and so cannot be probabilistically associated with the random <math> \alpha_{i} </math>.)
+
+To get rid of individual effect <math>\alpha_{i},</math> a differencing or within
+transformation (time arranging) is applied to the data and then <math>\beta</math> is
+estimated via Ordinary Least Squares (OLS). The most common differencing
+methods are: 
+
+1. Fixed effects (FE) model:  <math>y_{it}-\overline{y_{i}}=\left(X_{it}-\overline{X_{i}}\right)  \beta+\left(  u_{it}-\overline{u_{i}}\right)</math>
+where <math>\overline{X_{i}}=\frac{1}{T}\sum\limits_{t=1}^{T}X_{it}</math> and <math>\overline{u_{i}}=\frac{1}{T}\sum\limits_{t=1}^{T}u_{it}</math>.
+
+: <math>\qquad\hat{\beta}_{FE}=\left(  \sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{x}_{it}\right)  ^{-1}\sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{y}_{it}</math> 
+
+where <math>\widehat{x}_{it}=\left(  X_{it}-\overline{X_{i}}\right)  </math> and
+<math>\widehat{y}_{it}=y_{it}-\overline{y_{i}}</math>
+
+2. First difference (FD) model: <math>y_{it}-y_{it-1}=\left(  X_{it}
+-X_{it-1}\right)  \beta+\left(  u_{it}-u_{it-1}\right)  </math>
+
+: <math>\hat{\beta}_{FD}=\left(  \sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{x}_{it}\right)  ^{-1}\sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{y}_{it}</math> 
+
+where <math>\widehat{x}_{it}=\left(  X_{it}-X_{it-1}\right)  </math> and
+<math>\widehat{y}_{it}=y_{it}-y_{it-1}</math>
+
+3. Long difference (LD) model: <math>y_{it}-y_{i1}=\left(  X_{it}-X_{i1}\right)
+\beta+\left(  u_{it}-u_{i1}\right)  </math>
+
+: <math>\hat{\beta}_{LD}=\left(  \sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{x}_{it}\right)  ^{-1}\sum\limits_{i,t}^{I}\widehat{x}_{it}^{\prime
+}\widehat{y}_{it}</math> 
+
+where <math>\widehat{x}_{it}=\left(  X_{it}-X_{i1}\right)  </math> and
+<math>\widehat{y}_{it}=y_{it}-y_{i1}</math>
+
+Another common approach to removing the individual effect is to add a dummy
+variable for each individual <math>i</math>. This is numerically, but not
+computationally, equivalent to the fixed effect model and only works if <math>T,</math>
+the number of time observations per individual, is much larger than the
+number of individuals in the panel. 
+
+A common misconception about fixed effect models is that it is impossible to
+estimate <math>\gamma,</math> the coefficient on the time-invariant regressor. One can estimate <math>\gamma</math> using Instrumental Variables
+techniques. 
+
+Let <math>\widehat{di}=\overline{y_{i}}-\overline{X_{i}}\beta=Z_{i}\gamma
++\varphi_{(\alpha)}</math>
+
+We can't use OLS to estimate <math>\gamma</math> from this equation because <math>Z_{i}</math> is
+correlated with <math>\alpha_{i}</math> (i.e. there is a problem with endogeneity from
+our FE assumption). If there are available instruments one can use IV
+estimation to estimate <math>\gamma</math> or use the [[Hausman&ndash;Taylor method]].
+
+==Hausman&ndash;Taylor method==
+
+Need to have more than one time-variant regressor (<math>X</math>) and time-invariant
+regressor (<math>Z</math>) and at least one <math>X</math> and one <math>Z</math> that are uncorrelated with
+<math>\alpha_{i}</math>.
+
+Partition the <math>X</math> and <math>Z</math> variables such that <math>
+\begin{array}
+[c]{c}
+X=[\underset{TN\times K1}{X_{1it}}\vdots\underset{TN\times K2}{X_{2it}}]\\
+Z=[\underset{TN\times G1}{Z_{1it}}\vdots\underset{TN\times G2}{Z_{2it}}]
+\end{array}
+</math> where <math>X_{1}</math> and <math>Z_{1}</math> are uncorrelated with <math>\alpha_{i}</math>. Need <math>K1>G2</math>.
+
+Estimating <math> \gamma </math> via OLS on <math>\widehat{di}=Z_{i}\gamma+\varphi_{it}</math> using <math>X_1</math> and <math>Z_1</math> as instruments yields a consistent estimate.
+
+==Testing FE vs. RE==
+
+We can test whether a fixed or random effects model is appropriate using a [[Hausman test]].
+
+: <math>H_{0}</math>: <math>\alpha_{i}\perp X_{it},Z_{i}</math>
+
+: <math>H_{a}</math>: <math>\alpha_{i}\not \perp X_{it},Z_{i}</math>
+
+If <math>H_{0}</math> is true, both <math>\widehat{\beta}_{RE}</math> and <math>\widehat{\beta}_{FE}</math> are
+consistent, but only <math>\widehat{\beta}_{RE}</math> is efficient. If <math>H_{a}</math> is true,
+<math>\widehat{\beta}_{FE}</math> is consistent and <math>\widehat{\beta}_{RE}</math> is not.
+
+: <math>\widehat{Q}=</math> <math>\widehat{\beta}_{RE}-\widehat{\beta}_{FE}</math>
+
+: <math>\widehat{HT}=T\widehat{Q}^{\prime}[Var(\widehat{\beta}_{FE})-Var(\widehat
+{\beta}_{RE})]\widehat{Q}\sim\chi_{K}^{2}</math>  where <math>K=\dim(Q)</math>
+
+The Hausman test is a specification test so a large test statistic might be
+indication that there might be Errors in Variables (EIV) or our model is
+misspecified. If the FE assumption is true, we should find that <math>\widehat
+{\beta}_{LD}\approx\widehat{\beta}_{FD}\approx\widehat{\beta}_{FE}</math>.
+
+A simple heuristic is that if <math>\left\vert \widehat{\beta}_{LD}\right\vert
+>\left\vert \widehat{\beta}_{FE}\right\vert >\left\vert \widehat{\beta}
+_{FD}\right\vert </math> there could be EIV.
+
+== See also ==
+* [[Random effects model]]
+* [[Mixed model]]
+
+==References==
+
+* {{cite book
+|title=Plane Answers to Complex Questions: The Theory of Linear Models|last=Christensen|first=Ronald|location=New York|publisher=Springer|year=2002| edition=Third|isbn=0-387-95361-2}}
+
+{{No footnotes|date=September 2009}}
+* {{cite web |url=http://www.stata.com/support/faqs/stat/xt.html |title=FAQ:What is the between estimator?}}
+* {{cite web |url=http://www.stata.com/support/faqs/stat/xtreg.html |title=FAQ: Fixed-, between-, and random-effects and xtreg}}
+
+==External links==
+*[http://www.jr2.ox.ac.uk/bandolier/booth/glossary/fixed.html Fixed effect model at Bandolier (Oxford EBM website)]
+*[http://teaching.sociology.ul.ie/DCW/confront/node45.html Fixed and random effects models]
+*[http://www.pitt.edu/~SUPER1/lecture/lec1171/012.htm How to Conduct a Meta-Analysis: Fixed and Random Effect Models]
+*[http://www.statsoft.com/textbook/glosf.html Fixed Effects (in ANOVA)]
+
+[[Category:Estimation theory]]
+[[Category:Analysis of variance]]
+[[Category:Regression analysis]]</body> </html>

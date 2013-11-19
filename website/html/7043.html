@@ -1,0 +1,64 @@
+<html> <head> <title>Common operator notation</title></head><body>{{about|the concept of operator precedence|operator precedence parsing|operator-precedence parser}}
+{{Unreferenced|date=August 2009}}
+{{Cleanup-reorganize|date=July 2007}}
+In [[programming languages]], '''common operator notation''' is just one way of notating mathematical expressions as a linear sequence of tokens, or [[operator (programming)|operator]]s, but this is not the only way.  The use of operator precedence classes and associativities is just one way.  However, it is not the most general way: this model cannot give an operator more precedence when competing with '−' than it can when competing with '+', while still giving '+' and '−' equivalent precedences and associativities. <!-- speculation... Can it be demonstrated that this is the only sensible way?  I do not know, but any such demonstration would be welcome. --> A generalized version of this model (in which each operator can be given independent left and right precedences) can be found at [http://compilers.iecc.com/comparch/article/01-07-068].
+
+In this model, tokens are divided into two classes: operators and operands.
+
+Operands are mathematical objects upon which the operators operate. These include [[number]]s such as 3 or 1001, [[truth value]]s such as true or false, structures such as vectors, or any other mathematical object. One special type of operand is the parenthesis group.  An expression enclosed in parentheses is evaluated recursively and treated, for operator association purposes, as a single operand.
+
+Each operator is given a position, precedence, and an associativity. The precedence is a number, and '''operator precedence''' is usually ordered with the corresponding number order, although some implementations give higher precedences lower numbers.  In cases in which two operators of different precedences compete for the same operand, the operator with the higher precedence wins.  For example, '×' has a higher precedence than '+', so 3+4×5 = (3+(4×5)), not ((3+4)×5).
+
+[[Operator position]] indicates where, in the sequence, the operator appears.  In terms of operator position, an operator may be prefix, postfix, or infix.  A prefix operator immediately precedes its operand, as in "−x".  A postfix operator immediately succeeds its operand, as in "x!".  An infix operator exists between its left and right operands, as in "A + B".
+
+[[Operator associativity]], loosely speaking, describes what operators are allowed to associate before associating with the operator in question.  In those cases in which operators of equal precedence compete for common operands, operator associativity describes the order of operator association.  An infix operator can be left-associative, right-associative, or non-associative.  A prefix or postfix operator can be either associative or non-associative. If an operator is left-associative, the operators are applied in left-to-right order.  The arithmetic operators '+', '−', '×', and '÷', for example, are all left-associative.  That is,
+
+:<math>3+4+5-6-7 = ((((3+4)+5)-6)-7).</math>
+
+If an operator is right-associative, the operators are applied in right-to-left order.  In the [[Java (programming language)|Java programming language]], the assignment operator "<tt>=</tt>" is right-associative.  That is, the Java statement "<tt>a = b = c;</tt>" is equivalent to "<tt>(a = (b = c));</tt>". It first assigns the value of c to
+b, then assigns the value of b to a.  An operator which is non-associative cannot compete for operands with operators of equal precedence.  For example, in [[Prolog]], the infix operator "<tt>:-</tt>" is non-associative, so constructs such as "<tt>a :- b :- c</tt>" constitute syntax errors.  There may nonetheless be a use for such constructs as "<tt>a =|> b =|> c</tt>".
+
+A prefix or postfix operator is associative if and only if it may compete for operands with operators of equal precedence.  The unary prefix operators '+', '−', and 'sin', for example, are all associative prefix operators.  The unary postfix operator '!' and, in the [[C (programming language)|C]] language, the post-increment and post-decrement operators
+"<tt>++</tt>" and "<tt>--</tt>" are examples of associative postfix operators.  When more than one associative prefix or postfix operator of equal precedence precedes or succeeds an operand, the operators closer to the operand associate first.  For example, −sin x = −(sin(x)) and, in [[C (programming language)|C]], the expression "<tt>x++--</tt>" is equivalent to "<tt>(x++)--</tt>".  When prefix and postfix operators of equal precedence coexist, the order of association is undefined.
+
+Note that, contrary to popular belief, prefix and postfix operators do not necessarily have higher precedence than all infix operators. For example, if the prefix operator 'sin' is given a precedence between that of '+' and '×',
+
+:<math>\sin 4 \cdot 3+2 = ((\sin(4 \cdot 3)) + 2)</math>
+
+not
+
+:<math>(((\sin 4) \cdot 3) + 2)</math>
+
+or
+
+:<math>\sin(((4 \cdot 3)+2))</math>
+
+The rules for expression evaluation are simple:
+
+# Treat any sub-expression in parentheses as a single recursively-evaluated operand.
+# Associate operands with operators of higher precedence before those of lower precedence.
+# Among operators of equal precedence, associate operands with operators according to the associativity of the operators.
+
+Note that an infix operator need not be binary.  [[C (programming language)|C]], for example, has a ternary infix operator "<tt>[[?:]]</tt>".  <!-- speculation Would it, then, be accurate to call parenthesization an n-ary bifix operation? :) -->
+
+Examples:
+
+:<tt>1 + 2 + 3 * 4 * 5 + 6 + 7 = ((((1 + 2) + ((3 * 4) * 5)) + 6) + 7)</tt>
+
+:<tt>4 + -x + 3 = ((4 + (-x)) + 3)</tt>
+
+:<tt>4 * 3! = (4 * (3!))</tt>
+
+:<tt>a++-- = (a++)--</tt>
+
+:<tt>-3! = -(3!)</tt>
+
+==See also==
+*[[Order of operations]]
+*[[Relational operator]]
+*[[Operators in C and C++]]
+
+{{DEFAULTSORT:Common Operator Notation}}
+[[Category:Computer arithmetic]]
+[[Category:Programming constructs]]
+[[Category:Programming language topics]]</body> </html>

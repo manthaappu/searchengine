@@ -1,0 +1,143 @@
+<html> <head> <title>Explicit multi-threading</title></head><body>''' Explicit Multi-Threading ''' (''' XMT ''') is a [[computer science]] paradigm for building and programming parallel computers designed around the [[Parallel Random Access Machine]] ([[PRAM]]) parallel computational model. A more direct explanation of XMT starts with the rudimentary abstraction that made serial computing simple: that any single instruction available for execution in a serial program executes immediately. A consequence of this abstraction is a step-by-step (inductive) explication of the instruction available next for execution. The rudimentary parallel abstraction behind XMT, dubbed Immediate Concurrent Execution (ICE) in {{harvtxt|Vishkin|2011}}, is that indefinitely many instructions available for concurrent execution execute immediately. A consequence of ICE is a step-by-step (inductive) explication of the instructions available next for concurrent execution. Moving beyond the serial von Neumann computer (the only successful general purpose platform to date), the aspiration of XMT is that computer science will again be able to augment mathematical induction with a simple one-line computing abstraction
+
+The [[random access machine]] ([[RAM]]) is an [[abstract machine]] model used in computer science to study algorithms and complexity for standard serial computing. The PRAM computational model is an abstract parallel machine model that had been introduced to similarly study parallel algorithms and complexity for [[parallel computing]], when they were yet to be built. Researchers have developed a large body of knowledge of parallel algorithms for the PRAM model. These parallel algorithms are also known for being simple, by standards of other approaches to parallel algorithms. 
+
+This large body of parallel algorithms knowledge for the PRAM model and their relative simplicity motivated building computers whose programming can be guided by these parallel algorithms. Since productivity of parallel programmers has long been considered crucial for the success a parallel computer, simplicity of  algorithms is important.
+
+[[Multi-core]] computers are built around two or more processor cores integrated on a single integrated circuit die. They are widely used across many application domains including general-purpose computing.
+Explicit Multi-Threading (XMT) is a computing paradigm for building and programming multi-core computers with tens, hundreds or thousands of processor cores.
+
+The XMT paradigm was introduced by [[Uzi Vishkin]]. 
+==The main levels of abstraction of XMT==
+The Explicit Multi-Threading (XMT) computing paradigm integrates several levels of abstraction.
+
+The work-time (WT) (sometimes called work-depth) framework, introduced by {{harvtxt|Shiloach|Vishkin|1982}},  provides a simple way for conceptualizing and describing parallel algorithms. In the WT framework, a parallel algorithm is first described in terms of parallel rounds. For each round, the operations to be performed are characterized, but several issues can be suppressed. For example, the number of operations at each round need not be clear, processors need not be mentioned and any information that may help with the assignment of processors to jobs need not be accounted for. Second, the suppressed information is provided. The inclusion of the suppressed information is, in fact, guided by the proof of a scheduling theorem due to {{harvtxt|Brent|1974}}. The WT framework is useful since while it can greatly simplify the initial description of a parallel algorithm, inserting the details suppressed by that initial description is often not very difficult. For example, the WT framework was adopted as the basic presentation framework in the parallel algorithms books (for the PRAM model) {{harvtxt|JaJa|1992}} and {{harvtxt|Keller|Kessler|Traeff|2001}}, as well as in the class notes {{harvtxt|Vishkin|2009}}. {{harvtxt|Vishkin|2011}} explains the simple connection between the WT framework and the more rudimentary ICE abstraction noted above.
+
+The XMT paradigm can be programmed using [[XMTC]], a parallel multi-threaded programming language which is a small extension of the programming language C. The XMT paradigm include a programmer’s workflow that starts with casting an algorithm in the WT framework and proceeds to programming it in XMTC.
+
+The XMT multi-core computer systems provides run-time load-balancing of multi-threaded programs incorporating several patents. One of them <ref>Vishkin, Uzi. Spawn-join instruction set architecture for providing explicit multithreading. U.S. Patent 6,463,527. See also {{harvtxt|Vishkin|Dascal|Berkovich|Nuzman|1998}}.</ref> generalizes the [[program counter]] concept, which is central to the [[von Neumann architecture]] to multi-core hardware.
+==XMT prototyping and links to more information==
+In January 2007, a 64-processor computer <ref>University of Maryland, press release, June 26, 2007: [http://www.newsdesk.umd.edu/scitech/release.cfm?ArticleID=1459 "Maryland Professor Creates Desktop Supercomputer"].</ref> named Paraleap <ref>University of Maryland, A. James Clark School of Engineering, press release, November 28, 2007: [http://www.eng.umd.edu/media/pressreleases/pr112707_superwinner.html "Next Big "Leap" in Computing Technology Gets a Name"].</ref>, that demonstrates the overall concept was completed. The XMT concept was presented in {{harvtxt|Vishkin|Dascal|Berkovich|Nuzman|1998}} and {{harvtxt|Naishlos|Nuzman|Tseng|Vishkin|2003}}  and the XMT 64-processor computer in {{harvtxt|Wen|Vishkin|2008}}. Since making parallel programming easy is one of the biggest challenges facing computer science today, the demonstration also sought to include teaching the basics of PRAM algorithms and XMTC programming to students ranging from high-school {{harvtxt|Torbert|Vishkin|Tzur|Ellison|2010}} to graduate school.
+==References==
+*{{citation
+ | last1=Brent | first1=Richard P.
+ | title=The parallel evaluation of general arithmetic expressions
+ | journal=Journal of the ACM
+ | year=1974
+ | volume=21
+ | pages=201–208
+ | number=
+ | doi=
+}}.
+*{{Citation
+| last1 = Shiloach | first1 = Yossi
+| last2 = Vishkin | first2 = Uzi
+| year = 1982
+| title = An ''O''(''n''<sup>2</sup> log ''n'') parallel max-flow algorithm
+| journal = Journal of Algorithms
+| volume = 3
+| issue =
+| pages = 128–146
+| doi =
+}}.
+* {{cite book
+ | first = Joseph
+ | last = JaJa
+ | coauthors =
+ | title = [[An Introduction to Parallel Algorithms]]
+ | edition =
+ | publisher = Addison-Wesley
+ | year = 1992
+ | isbn = 0-201-54856-9
+ }}
+* {{cite book
+ | first = Jorg
+ | last = Keller
+ | coauthors = Kessler, Cristoph W.; Traeff, Jesper L.
+ | title = [[Practical PRAM Programming]]
+ | edition =
+ | publisher = Wiley-Interscience
+ | year = 2001
+ | isbn = 0-471-35351-5
+ }}
+*{{Citation
+| last1 = Naishlos | first1 = Dorit
+| last2 = Nuzman | first2 = Joseph
+| last3 = Tseng | first3 = Chau-Wen
+| last4 = Vishkin | first4 = Uzi
+| year = 2003
+| title = Towards a First Vertical Prototyping of an Extremely Fine-Grained Parallel Programming Approach
+| journal = Theory of Computer Systems (Special Issue of 2001 ACM Symp. on Parallel Algorithms and Architecture)
+| volume = 36
+| issue =
+| pages = 551–552
+| doi =
+| url=http://www.umiacs.umd.edu/users/vishkin/XMT/spaa01-j-03.pdf
+}}.
+
+*{{Citation
+| last1 = Torbert | first1 = Shane
+| last2 = Vishkin | first2 = Uzi
+| last3 = Tzur | first3 = Ron
+| last4 = Ellison | first4 = David
+| year = 2010
+| title = Is teaching parallel algorithmic thinking to high-school student possible? One teacher’s experience. 
+| journal = ACM Technical Symposium on Computer Science Education (SIG CSE), Milwaukee, WI, March 10-13, 2010, to appear
+| volume =
+| issue =
+| pages = 
+| doi =
+| url=
+}}.
+*{{Citation
+| last1=Vishkin | first1=Uzi
+| last2=Dascal | first2=Shlomit
+| last3=Berkovich | first3=Efraim
+| last4=Nuzman | first4=Joseph
+| title=Proc. 1998 ACM [[Symposium on Parallel Algorithms and Architectures]] (SPAA)
+| contribution=Explicit Multi-Threading (XMT) bridging models for instruction parallelism
+| pages=140–151
+| year=1998
+| doi=
+| url=http://www.umiacs.umd.edu/users/vishkin/XMT/spaa98.ps
+}}.
+* {{cite book
+ | authorlink = Uzi Vishkin
+ | first = Uzi
+ | last = Vishkin
+ | coauthors =
+ | title = Thinking in Parallel: Some Basic Data-Parallel Algorithms and Techniques, 104 pages
+ | edition =
+ | publisher = Class notes of courses on parallel algorithms taught since 1992 at the University of Maryland, College Park, Tel Aviv University and the Technion
+ | year = 2009
+ | isbn =
+ | url=http://www.umiacs.umd.edu/users/vishkin/PUBLICATIONS/classnotes.pdf
+ }}
+*{{Citation
+| last1=Wen | first1=Xingzhi
+| last2=Vishkin | first2=Uzi
+| title=Proc. 2008 ACM Conference on Computing Frontiers (Ischia, Italy)
+| contribution=FPGA-based prototype of a PRAM-on-chip processor
+| pages=55–66
+| year=2008
+| doi=10.1145/1366230.1366240
+| url=http://www.umiacs.umd.edu/users/vishkin/XMT/CompFrontiers08.pdf
+}}.
+*{{Citation
+| last1=Vishkin | first1=Uzi
+| title=Communications of the ACM, Volume 54 Issue 1, January 2011 
+| contribution=Using simple abstraction to reinvent computing for parallelism
+| pages=75–85
+| year=2011
+| doi=10.1145/1866739.1866757
+| url=10.1145/1866739.1866757
+}}.
+
+==Notes==
+{{reflist|2}}
+
+==External links==
+* [http://www.umiacs.umd.edu/~vishkin/XMT/index.shtml Home page of the XMT project, with links to a software release, on-line tutorial and to material for teaching parallelism].
+
+[[Category:Parallel computing]]
+[[Category:Distributed computing architecture]]</body> </html>

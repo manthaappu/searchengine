@@ -1,0 +1,447 @@
+<html> <head> <title>Description logic</title></head><body>'''Description logics''' (DL) are a family of formal [[knowledge representation]] languages. They are more expressive than [[propositional logic]] but have more efficient [[decision problem]]s than [[first-order predicate logic]].
+
+DLs are used in [[Artificial Intelligence]] for formal reasoning on the concepts of an application domain (known as ''terminological knowledge''). They are of particular importance in providing a logical formalism for [[Ontology (information science)|Ontologies]] and the [[Semantic Web]]. The most notable application outside [[information science]] is in [[bioinformatics]] where DLs assist in the codification of medical knowledge.
+
+== Introduction ==
+
+A Description Logic (DL) models ''concepts'', ''roles'' and ''individuals'', and their relationships.
+
+The fundamental modeling concept of a DL is the ''axiom'' - a logical statement relating roles and/or concepts<ref name="GHMPPS">Bernardo Cuenca Grau, Ian Horrocks, Boris Motik, Bijan Parsia, Peter Patel-Schneider, and Ulrike Sattler ''OWL 2: The next step for OWL''. Journal of Web Semantics, 6(4):309-322, November 2008, DOI: 10.1016/j.websem.2008.05.001</ref>. This is a key difference from the  [[semantic frames|frame]]s paradigm where a ''frame specification'' declares and completely defines a class<ref name="GHMPPS"/>.
+
+== Nomenclature ==
+=== Differences from OWL ===
+{| class="wikitable sortable"
+|+ Synonyms
+|-
+! OWL
+! DL
+|-
+| class
+| concept
+|-
+| property
+| role
+|-
+| object
+| individual
+|}
+
+=== Naming Convention ===
+There are many varieties of Description Logics and there is an informal naming convention, roughly describing the  operators allowed. The [[Expressive power|expressivity]] is encoded in the label for a logic using the following letters:
+{|
+|-
+|<math>\mathcal{F}</math>  ||Functional properties.
+|-
+| ||
+|-
+|<math>\mathcal{E}</math>  ||Full existential qualification (Existential restrictions that have fillers other than <code>owl:thing</code>).
+|-
+| ||
+|-
+|<math>\mathcal{U}</math>  ||Concept union.
+|-
+| ||
+|-
+|<math>\mathcal{C}</math>  ||Complex concept negation.
+|-
+| ||
+|-
+|<math>\mathcal{S}</math>  ||An abbreviation for <math>\mathcal{ALC}</math> with transitive roles.
+|-
+| ||
+|-
+|<math>\mathcal{H}</math>  ||Role hierarchy (subproperties - rdfs:subPropertyOf).
+|-
+| ||
+|-
+|<math>\mathcal{R}</math>  ||Limited complex role inclusion axioms; reflexivity and irreflexivity; role disjointness.
+|-
+| ||
+|-
+|<math>\mathcal{O}</math>  ||Nominals. (Enumerated classes of object value restrictions - <code>owl:oneOf</code>, <code>owl:hasValue</code>).
+|-
+| ||
+|-
+|<math>\mathcal{I}</math>  ||Inverse properties.
+|-
+| ||
+|-
+|<math>\mathcal{N}</math>  ||Cardinality restrictions (<code>owl:Cardinality</code>, <code>owl:MaxCardinality</code>).
+|-
+| ||
+|-
+|<math>\mathcal{Q}</math>  ||Qualified cardinality restrictions (available in OWL 2, cardinality restrictions that have fillers other than <code>owl:thing</code>).
+|-
+| ||
+|-
+|<math>^\mathcal{(D)}</math>  ||Use of datatype properties, data values or data types.
+|}
+
+==== Examples ====
+
+As an example, <math>\mathcal{ALC}</math> is a centrally important description logic from which comparisons with other varieties can be made. <math>\mathcal{ALC}</math> is simply <math>\mathcal{AL}</math> with complement of any concept allowed, not just atomic concepts.
+
+A further example, the description logic <math>\mathcal{SHIQ}</math> is the logic <math>\mathcal{ALC}</math> plus  extended cardinality restrictions, and transitive and inverse roles. The naming conventions aren't purely systematic so that the logic <math>\mathcal{ALCOIN}</math> might be referred to as <math>\mathcal{ALCNIO}</math> and abbreviations are made where possible, <math>\mathcal{ALC}</math> is used instead of the equivalent <math>\mathcal{ALUE}</math>.
+
+The Protégé ontology editor supports <math>\mathcal{SHOIN}^\mathcal{(D)}</math>. Three major bioinformatic terminology bases, [[Snomed]], Galen, and GO, are expressible in <math>\mathcal{EL}</math> (with additional role properties).
+
+OWL 2 provides the expressiveness of  <math>\mathcal{SROIQ}^\mathcal{(D)}</math>, OWL-DL is based on <math>\mathcal{SHOIN}^\mathcal{(D)}</math>, and for OWL-Lite it is <math>\mathcal{SHIF}^\mathcal{(D)}</math>.
+
+==== Exceptions ====
+
+Some canonical DLs that do not exactly fit this convention are:
+{|
+|-
+|<math>\mathcal{AL}</math> ||Attributive language. This is the base language which allows:
+|-
+| ||
+* Atomic negation (negation of concepts that do not appear on the left hand side of axioms)
+* Concept intersection
+* Universal restrictions
+* Limited existential quantification
+|-
+| ||
+|-|<math>\mathcal{FL^-}</math> ||A sub-language of <math>\mathcal{AL}</math>, which is obtained by disallowing atomic negation.
+|-
+| ||
+|-
+|<math>\mathcal{FL}_o</math>||A sub-language of <math>\mathcal{FL^-}</math>, which is obtained by disallowing limited existential quantification.
+|-
+| ||
+|-
+|<math>\mathcal{EL}</math>||Intersection and full existential restriction.
+|}
+
+== History ==
+
+Description logic (DL) was given its current name in the 1980s. Previous to this it was called (chronologically): ''terminological systems'', and ''concept languages''.
+
+=== Knowledge Representation ===
+
+[[semantic frames|Frame]]s and [[semantic network]]s lack formal (logic-based) semantics<ref name="DLHB">Franz Baader, Ian Horrocks, and Ulrike Sattler ''Chapter 3 Description Logics''. In Frank van Harmelen, Vladimir Lifschitz, and Bruce Porter, editors, ''Handbook of Knowledge Representation''. Elsevier, 2007.</ref>. DLs were first introduced into [[Knowledge Representation]] (KR) systems to overcome this deficiency<ref name="DLHB"/>.
+
+The first DL-based KR system was [[KL-ONE]] (by Brachman and Schmolze, 1985). During the '80s other DL-based systems using ''structural subsumption algorithms''<ref name="DLHB"/> were developed including KRYPTON (1983), [[LOOM (ontology)|LOOM]] (1987), BACK (1988), K-REP (1991) and CLASSIC (1991). This approach featured DLs with limited expressiveness but relatively efficient (polynomial time) reasoning <ref name="DLHB"/>.
+
+In the early '90s, the introduction of a new ''tableau based algorithm'' paradigm allowed efficient reasoning on more expressive DLs<ref name="DLHB"/>. DL-based systems using these algorithms - such as KRIS (1991) - show acceptable reasoning performance on typical inference problems even though the worst case complexity is no longer polynomial<ref name="DLHB"/>.
+From the mid '90s, reasoners were created with good practical performance on very expressive DLs with high worst case complexity<ref name="DLHB"/>. Examples from this period include FaCT (1998), RACER (2001), CEL (2005), and [[KAON|KAON 2]] (2005).
+
+=== Semantic Web ===
+
+The [[DARPA Agent Markup Language]] (DAML) and [[Ontology Inference Layer]] (OIL) [[Ontology Language|ontology languages]] for the [[semantic web]] can be viewed as
+[[Syntax (logic)|syntactic]] variants of DLs<ref name="HS">Ian Horrocks and Ulrike Sattler ''Ontology Reasoning in the SHOQ(D) Description Logic'', in  ''Proceedings of the Seventeenth International Joint Conference on Artificial Intelligence'', 2001.</ref>. In particular, the formal semantics and reasoning in OIL use the <math>\mathcal{SHIQ}</math> DL <ref>D. Fensel, F. van Harmelen, I. Horrocks, D. McGuinness, and P. F. Patel-Schneider ''OIL: An Ontology Infrastructure for the Semantic Web''. IEEE Intelligent Systems, 16(2):38-45, 2001. DOI 10.1109/5254.920598.</ref>. The [[DAMLplusOIL|DAML+OIL]] DL was developed as a submission to<ref>Ian Horrocks and Peter F. Patel-Schneider ''The Generation of DAML+OIL''. In ''Proceedings of the 2001 Description Logic Workshop (DL 2001)'', volume 49 of CEUR <http://ceur-ws.org/>, pages 30–35, 2001.</ref> - and formed the starting point of - the [[World Wide Web Consortium]] (W3C) Web Ontology Working Group<ref>Web Ontology Working Group Charter, 2003</ref>. In 2004, the Web Ontology Working Group completed its work by issuing the [[Web Ontology Language|OWL]]<ref>W3C Press Release, 2004</ref> recommendation. The design of OWL is based on the <math>\mathcal{SH}</math> family of DLs<ref name="HPH">Ian Horrocks, Peter F. Patel-Schneider, and Frank van Harmelen ''From SHIQ and RDF to OWL: The Making of a Web Ontology Language''. Journal of Web Semantics, 1(1):7-26, 2003. DOI: 10.1016/j.websem.2003.07.001.</ref> with OWL DL and OWL Lite based on <math>\mathcal{SHOIN}^\mathcal{(D)}</math> and <math>\mathcal{SHIF}^\mathcal{(D)}</math> respectively<ref name="HPH"/>.
+
+The W3C OWL Working Group began work in 2007 on a refinement of - and extension to - OWL<ref>OWL Working Group Charter, 2007</ref>. In 2009, this was completed by the issuance of the [[OWL2]] recommendation<ref name='owl2.primer'>{{cite web |url=http://www.w3.org/TR/2009/REC-owl2-primer-20091027/ |title=OWL 2 Web Ontology Language Primer
+|last1=Hitzler |first1=Pascal | authorlink1=Pascal Hitzler
+|last2=Krötzsch |first2=Markus | authorlink2=Markus Krötzsch
+|last3=Parsia |first3=Bijan | authorlink3=Bijan Parsia
+|last4=Patel-Schneider |first4=Peter F.  | authorlink4=Peter F. Patel-Schneider
+|last5=Rudolph |first5=Sebastian  | authorlink5=Sebastian Rudolph
+|date=27 October 2009 |work=OWL 2 Web Ontology Language  |publisher=World Wide Wed Consortium |accessdate=2010-12-14}}</ref>. OWL2 is based on the description logic <math>\mathcal{SROIQ}(D)</math><ref>{{cite book |title=Foundations of Semantic Web Technologies |author=Pascal Hitzler, Markus Krötzsch, Sebastian Rudolph |publisher=CRCPress |date=August 25, 2009 |isbn=142009050X |url=http://www.semantic-web-book.org}}</ref>. Practical experience demonstrated that OWL DL lacked several key features necessary to model complex domains<ref name="GHMPPS"/>.
+
+== Modeling ==
+
+In DLs, a distinction is drawn between the so-called [[TBox]] (terminological box) and the [[ABox]] (assertional box). In general, the TBox contains sentences describing concept hierarchies (i.e., relations between [[concept]]s) while the ABox contains [[ground sentence]]s stating where in the hierarchy individuals belong (i.e., relations between individuals and concepts). For example, the statement:
+
+(1) Every employee is a person
+
+belongs in the TBox, while the statement:
+
+(2) Bob is an employee
+
+belongs in the ABox.
+
+Note that the TBox/ABox distinction is not significant, in the same sense that the two "kinds" of sentences are not treated differently in first-order logic (which subsumes most DLs). When translated into first-order logic, a subsumption [[axiom]] like (1) is simply a conditional restriction to [[unary operation|unary]] [[Predicate (logic)|predicate]]s (concepts) with only variables appearing in it. Clearly, a sentence of this form is not privileged or special over sentences in which only constants ("grounded" values) appear like (2).
+
+So why was the distinction introduced? The primary reason is that the separation can be useful when describing and formulating decision-procedures for various DLs. For example, a reasoner might process the TBox and ABox separately, in part because certain key inference problems are tied to one but not the other one ('classification' is related to the TBox, 'instance checking' to the ABox). Another example is that the complexity of the TBox can greatly affect the performance of a given decision-procedure for a certain DL, independently of the ABox. Thus, it is useful to have a way to talk about that specific part of the [[knowledge base]].
+
+The secondary reason is that the distinction can make sense from the knowledge base modeler's perspective. It is plausible to distinguish between our conception of terms/concepts in the world (class axioms in the TBox) and particular manifestations of those terms/concepts (instance assertions in the ABox). In the above example: when the hierarchy within a company is the same in every branch but the assignment to employees is different in every department (because there are other people working there), this distinction makes sense to reuse the TBox for different branches.
+
+There are two features of Description Logics that are not shared by most other data description formalisms: DLs do not make the [[Unique Name Assumption]] (UNA) or the [[Closed World Assumption]] (CWA). Not having UNA means that two concepts with different names may be allowed by some inference to be shown to be equivalent. Not having CWA, or rather having the [[Open World Assumption]] (OWA) means that lack of knowledge of a fact does not immediately imply knowledge of the negation of a fact.
+
+== Formal Description ==
+Like [[first order logic]] (FOL), a [[Syntax (logic)|syntax]] defines which collections of symbols are legal expressions in a Description Logic (DL), and [[semantics]] determine meaning. Unlike FOL, a DL may have several well known syntactic variants <ref name="HS"/>.
+
+=== Syntax ===
+
+The syntax of a member of the description logic family is characterized by its recursive definition, in which the constructors that can be used to form concept terms are stated. Some constructors are related to logical constructors in [[first-order logic]] (FOL) such as ''[[intersection (set theory)|intersection]]'' or ''[[logical conjunction|conjunction]]'' of concepts, ''[[union (set theory)|union]]'' or ''[[disjunction]]'' of concepts, ''[[negation]]'' or ''[[complement (set theory)|complement]]'' of concepts, ''[[Universal quantifier|universal restriction]]'' and ''[[Existential quantifier|existential restriction]]''. Other constructors have no corresponding construction in FOL including restrictions on roles for example, inverse, [[transitive relation|transitivity]] and functionality.
+
+==== Notation ====
+
+Let C and D be concepts, a and b be individuals, and R be a role.
+
+{| style="width:100%;"  class="wikitable sortable"
+|+ Conventional Notation
+|-
+! Symbol
+! Description
+! Example
+! Read
+|-
+| <math>\top</math>
+| all concept names
+| <math>\top</math>
+| top
+|-
+| <math>\bot</math>
+| [[empty set|empty]] concept
+| <math>\bot</math>
+| bottom
+|-
+| <math>\sqcap</math>
+| ''[[intersection (set theory)|intersection]]'' or ''[[logical conjunction|conjunction]]'' of concepts
+| <math>C \sqcap D</math>
+| C and D
+|-
+| <math>\sqcup</math>
+| ''[[union (set theory)|union]]'' or ''[[disjunction]]'' of concepts
+| <math>C \sqcup D</math>
+| C or D
+|-
+| <math>\neg </math>
+| ''[[negation]]'' or ''[[complement (set theory)|complement]]'' of concepts
+| <math>\neg C</math>
+| not C
+|-
+| <math>\forall </math>
+| ''[[Universal quantifier|universal restriction]]''
+| <math>\forall R.C</math>
+| all R-successors are in C
+|-
+| <math>\exists </math>
+| ''[[Existential quantifier|existential restriction]]''
+| <math>\exists R.C</math>
+| an R-successor exists in C
+|-
+| <math>\sqsubseteq</math>
+| Concept ''inclusion''
+| <math>C \sqsubseteq D</math>
+| all C are D
+|-
+| <math>\equiv </math>
+| Concept ''equivalence''
+| <math>C \equiv D</math>
+| C is equivalent to D
+|-
+| <math>\dot = </math>
+| Concept ''definition''
+| <math>C \dot = D</math>
+| C is defined to be equal to D
+|-
+| <math> : </math>
+| Concept ''assertion''
+| <math>a : C</math>
+| a is a C
+|-
+| <math> : </math>
+| Role ''assertion''
+| <math>(a,b) : R</math>
+| a is R-related to b
+|}
+
+==== The Description Logic ALC ====
+
+The prototypical DL ''Attributive Concept Language with Complements'' (<math>\mathcal{ALC}</math>) was introduced by Manfred Schmidt-Schauß and Gert Smolka in 1991, and is the basis of many more expressive DLs<ref name="DLHB"/>. The following definitions follow the treatment in Baader et al.<ref name="DLHB"/>
+
+Let <math>N_C</math>, <math>N_R</math> and <math>N_O</math>  be (respectively) [[Set (mathematics)|sets]] of ''concept names'' (also known as an ''atomic concepts''), ''role names'' and ''individual names'' (also known as ''individuals'' or ''objects''). Then the ordered triple (<math>N_C</math>, <math>N_R</math>, <math>N_O</math> ) is the ''signature''.
+
+===== Concepts =====
+
+The set of <math>\mathcal{ALC}</math> ''concepts'' is the smallest set such that:
+
+* The following are ''concepts'':
+** <math>\top</math> (''top'' is a ''concept'')
+** <math>\bot</math> (''bottom'' is a ''concept'')
+** Every <math>A \in N_C</math> (all ''atomic concepts'' are ''concepts'')
+* If <math>C</math> and <math>D</math> are ''concepts'' and <math>R \in N_R</math> then the following are ''concepts'':
+** <math>C\sqcap D</math> (the intersection of two ''concepts'' is a ''concept'')
+** <math>C\sqcup D</math> (the union of two ''concepts'' is a ''concept'')
+** <math>\neg C</math> (the complement of a ''concept'' is a ''concept'')
+** <math>\forall R.C</math> (the universal restriction of a ''concept'' by a ''role'' is a ''concept'')
+** <math>\exists R.C</math> (the existential restriction of a ''concept'' by a ''role'' is a ''concept'')
+
+===== Terminological Axioms =====
+
+A ''general concept inclusion'' (GCI) has the form <math>C \sqsubseteq D</math> where <math>C</math> and <math>D</math> are ''concepts''. Write <math>C \dot = D</math> when <math>C \sqsubseteq D</math> and <math>D \sqsubseteq C</math>. A ''TBox'' is any finite set of GCIs.
+
+===== Assertional Axioms =====
+
+* A ''concept assertion'' is a statement of the form <math>a : C</math> where  <math>a \in N_O</math> and C is a ''concept''.
+* A ''role assertion'' is a statement of the form <math>(a, b) : R</math> where <math>a, b \in N_O</math>  and R is a ''role''.
+
+An ''ABox'' is a finite set of assertional axioms.
+
+===== Knowledge Base =====
+
+A ''knowledge base'' (KB) is an ordered pair <math>(\mathcal{T}, \mathcal{A})</math> for ''TBox'' <math>\mathcal{T}</math> and ''ABox'' <math>\mathcal{A}</math>.
+
+=== Semantics ===
+
+The [[semantics]] of description logics is defined by interpreting concepts as sets of individuals and roles as sets of pairs of individuals. Those individuals are typically assumed from a given domain. The semantics of non atomic concepts and roles is then defined in terms of atomic concepts and roles. This is done by using a recursive definition similar to the syntax.
+
+==== The Description Logic ALC ====
+The following definitions follow the treatment in Baader et al.<ref name="DLHB"/>
+
+A ''terminological interpretation'' <math>\mathcal{I}=(\Delta^{\mathcal{I}}, \cdot^{\mathcal{I}})</math> over a ''signature'' <math>(N_C,N_R,N_O)</math> consists of
+* a non-empty set <math>\Delta^{\mathcal{I}}</math> called the [[domain of discourse|''domain'']]
+* a ''interpretation function'' <math>\cdot^{\mathcal{I}}</math> that maps:
+** every ''individual'' <math>a</math> to an element <math>a^{\mathcal{I}} \in \Delta^{\mathcal{I}}</math>
+** every ''concept'' to a subset of <math>\Delta^{\mathcal{I}}</math>
+** every ''role name'' to a subset of <math>\Delta^{\mathcal{I}}  \times \Delta^{\mathcal{I}}</math>
+such that
+* <math>\top^{\mathcal{I}} = \Delta^{\mathcal{I}}</math>
+* <math>\bot^{\mathcal{I}} = \emptyset</math>
+* <math>(C \sqcup D)^{\mathcal{I}} = C^{\mathcal{I}} \cup D^{\mathcal{I}}</math> ''([[union (set theory)|union]] means [[disjunction]])''
+* <math>(C \sqcap D)^{\mathcal{I}} = C^{\mathcal{I}} \cap D^{\mathcal{I}}</math> ''([[intersection (set theory)|intersection]] means [[Logical conjunction|conjunction]])''
+* <math>(\neg C)^{\mathcal{I}} = \Delta^{\mathcal{I}} \setminus C^{\mathcal{I}} </math> ''([[complement (set theory)|complement]] means [[negation]])''
+* <math>(\forall R.C)^{\mathcal{I}} = \{x \in \Delta^{\mathcal{I}} | \texttt{for} \; \texttt{every} \; y, (x,y) \in R^{\mathcal{I}} \;  \texttt{implies} \; y \in C^{\mathcal{I}} \} </math>
+* <math>(\exists R.C)^{\mathcal{I}} = \{x \in \Delta^{\mathcal{I}} | \texttt{there} \; \texttt{exists} \; y, (x,y) \in R^{\mathcal{I}} \; \texttt{and} \; y \in C^{\mathcal{I}}\} </math>
+
+Define <math>\mathcal{I} \models</math> (read ''I models'') as follows
+
+===== [[TBox]] =====
+* <math>\mathcal{I} \models C \sqsubseteq D</math> if and only if <math>C^{\mathcal{I}} \subseteq D^{\mathcal{I}}</math>
+* <math>\mathcal{I} \models \mathcal{T}</math> if and only if <math>\mathcal{I} \models t</math> for every <math>t \in \mathcal{T}</math>
+
+===== [[ABox]] =====
+* <math>\mathcal{I} \models a : C</math> if and only if <math>a^{\mathcal{I}} \in C^{\mathcal{I}}</math>
+* <math>\mathcal{I} \models (a,b) : R</math> if and only if <math>(a^{\mathcal{I}},b^{\mathcal{I}}) \in R^{\mathcal{I}}</math>
+* <math>\mathcal{I} \models \mathcal{A}</math> if and only if <math>\mathcal{I} \models a</math> for every <math>a \in \mathcal{A}</math>
+
+===== Knowledge Base =====
+
+Let <math>\mathcal{K} = (\mathcal{T}, \mathcal{A})</math> be a knowledge base.
+
+* <math>\mathcal{I} \models \mathcal{K}</math> if and only if <math>\mathcal{I} \models \mathcal{T}</math> and <math>\mathcal{I} \models \mathcal{A}</math>
+
+== Inference ==
+=== Decision Problems ===
+In addition to the ability to describe concepts formally, one also would like to employ the description of a set of concepts to ask questions about the concepts and instances described. The most common decision problems are basic database-query-like questions like ''instance checking'' (is a particular instance (member of an A-box) a member of a given concept) and ''relation checking'' (does a relation/role hold between two instances, in other words does '''a''' have property '''b'''), and the more global-database-questions like ''subsumption'' (is a concept a subset of another concept), and ''concept consistency'' (is there no contradiction among the definitions or chain of definitions). The more operators one includes in a logic and the more complicated the T-box (having cycles, allowing non-atomic concepts to include each other), usually the higher the computational complexity is for each of these problems (see [http://www.cs.man.ac.uk/~ezolin/dl/ Navigator on Description Logic Complexity] for examples).
+
+== Relationship With Other Logics ==
+=== First Order Logic ===
+
+Many Description Logics (DLs) are decidable fragments of [[first order logic]] (FOL)<ref name="DLHB"/>. Some DLs now include operations (for example, transitive closure of roles) that allow efficient inference but cannot be expressed in FOL<ref name="DLHB"/>.
+
+=== Fuzzy Description Logics ===
+
+Fuzzy description logic combines [[fuzzy logic]] with DLs. Since many concepts that are needed for [[Intelligent Systems|intelligent systems]] lack well defined boundaries, or precisely defined criteria of membership, we need fuzzy logic to deal with notions of vagueness and imprecision.  This offers a motivation for a generalization of description logics towards dealing with imprecise and vague concepts.
+
+What people should also think about for intelligent systems is multiple viewpoints of the data.  This will lead to subjective (as opposed to objective) intelligent systems.
+
+=== Modal logics ===
+
+Description Logics (DLs) are related to — but developed independently of — [[modal logic]] (ML)<ref name="DLHB"/>. Many - but not all - DLs are syntactic variants of MLs<ref name="DLHB"/>.
+
+==== Examples ====
+
+{| style="width:20%" class="wikitable sortable"
+|+ Syntactic Variants
+|-
+! DL
+! ML
+|-
+| <math>\mathcal{ALC}</math>
+| '''K'''<ref name="DLHB"/>
+|}
+
+=== Temporal Description Logics ===
+
+Temporal Description Logics represent - and allow reasoning about - time dependent concepts and many different approaches to this problem exist<ref>Alessandro Artale and Enrico Franconi "Temporal Description Logics". In "Handbook of Temporal Reasoning in Artificial Intelligence", 2005.</ref>. For example, a description logic might be combined with a [[modal logic|modal]] [[temporal logic]] such as [[Linear temporal logic]].
+
+== Tools ==
+=== Reasoners ===
+
+There are some [[reasoner]]s to deal with OWL and Description Logics. These are some of the most popular:
+* [http://lat.inf.tu-dresden.de/systems/cel/ CEL] is a free (for non-commercial use) LISP-based reasoner
+* [http://www.cerebra.com/ Cerebra Engine] was a commercial C++-based reasoner, acquired in 2006 by webMethods.
+* [http://owl.man.ac.uk/factplusplus FaCT++ ] is a free open-source C++-based reasoner.
+* [[KAON]]2 is a free (free for non-commercial usage) Java reasoner.
+* [http://www.cs.man.ac.uk/~schmidt/mspass/ MSPASS] is a free open-source C reasoner for numerous description logics.
+* [http://pellet.owldl.com/ Pellet] is a dual-licensed (AGPL and proprietary) commercial, Java-based reasoner.
+* [http://www.racer-systems.com/ RacerPro] of Racer Systems is a commercial (free trials and research licenses are available) lisp-based reasoner.
+* [http://sim-dl.sourceforge.net/ Sim-DL] is a free open-source Java-based reasoner for the language ALCHQ. It also provides a similarity measurement functionality between concepts. To access this functionality a Protégé plugin can be used.
+* [http://hermit-reasoner.com/ HermiT] is an [[open source]] reasoner based on the hypertableaux calculus. It is developed by the [[University of Oxford]].
+
+DL reasoners, such as FaCT, FaCT++, RACER, DLP and Pellet, implement the [[analytic tableau method]].  KAON2 is implemented by algorithms which reduce a SHIQ(D) knowledge base to a disjunctive [[datalog]] program.
+
+=== Editors ===
+
+* [[Protege (software)|Protégé]] is a free, open source ontology editor and knowledge-base framework, which can use DL reasoners which offer a DIG interface as backends for consistency checks.
+* [http://code.google.com/p/swoop/ SWOOP] is an [[open source]] ontology editor originally developed at the [[University of Maryland]].
+
+=== Interfaces ===
+* [http://dig.sourceforge.net/ DIG] Implementation. DIG is an XML interface to DL systems, recommended by the [http://dl.kr.org/dig/ DL Implementation Group]. [http://dl.kr.org/dig/2.0 DIG 2.0] is an ongoing effort for a new DIG interface standard.
+* [http://owlapi.sourceforge.net/ OWL API] is an [[open source]] [[Java (programming language)|Java]] interface to the [[Web Ontology Language|W3C Web Ontology Language OWL]] developed by the [[Manchester University|University Of Manchester]]
+
+== See also ==
+{{Portal box|Computer Science|Logic|Information science}}
+* [[Ontology (computer science)]]
+* [[Ontology language]]
+** [[DARPA Agent Markup Language]] (DAML)
+** [[Ontology Inference Layer]] (OIL)
+** [[DAMLplusOIL|DAML+OIL]]
+** [[Web Ontology Language|OWL]]
+* [[Formal concept analysis]]
+* [[Lattice (order)]]
+* [[Modal logic]]
+* [[SWRL]]
+* [[Analytic tableau method]]
+* [[Semantic parameterization]]
+* [[Semantic Reasoner]]
+
+==Notes==
+{{Reflist|2}}
+
+==References==
+* F. Baader, D. Calvanese, D. L. McGuinness, D. Nardi, P. F. Patel-Schneider: ''The Description Logic Handbook: Theory, Implementation, Applications''. Cambridge University Press, Cambridge, UK, 2003. ISBN 0-521-78176-0
+* Ian Horrocks, Ulrike Sattler: [http://lat.inf.tu-dresden.de/research/papers-2001.html#HorrocksSattler-IJCAI ''Ontology Reasoning in the SHOQ(D) Description Logic''], in  ''Proceedings of the Seventeenth International Joint Conference on Artificial Intelligence'', 2001.
+* D. Fensel, F. van Harmelen, I. Horrocks, D. McGuinness, and P. F. Patel-Schneider: [http://www.comlab.ox.ac.uk/people/ian.horrocks/Publications/download/2001/IEEE-IS01.pdf ''OIL: An Ontology Infrastructure for the Semantic Web'']. IEEE Intelligent Systems, 16(2):38-45, 2001.
+* Ian Horrocks and Peter F. Patel-Schneider: [http://www.comlab.ox.ac.uk/people/ian.horrocks/Publications/download/2001/HoPa01.pdf  ''The Generation of DAML+OIL'']. In ''Proceedings of the 2001 Description Logic Workshop (DL 2001)'', volume 49 of CEUR <http://ceur-ws.org/>, pages 30–35, 2001.
+* Ian Horrocks, Peter F. Patel-Schneider, and Frank van Harmelen: [http://www.comlab.ox.ac.uk/people/ian.horrocks/Publications/download/2003/HoPH03a.pdf ''From SHIQ and RDF to OWL: The Making of a Web Ontology Language'']. Journal of Web Semantics, 1(1):7-26, 2003.
+* Bernardo Cuenca Grau, Ian Horrocks, Boris Motik, Bijan Parsia, Peter Patel-Schneider, and Ulrike Sattler: [http://web.comlab.ox.ac.uk/people/Ian.Horrocks/Publications/download/2008/CHMP+08.pdf ''OWL 2: The next step for OWL'']. Journal of Web Semantics, 6(4):309-322, November 2008.
+* Franz Baader, Ian Horrocks, and Ulrike Sattler: [http://www.comlab.ox.ac.uk/people/ian.horrocks/Publications/download/2007/BaHS07a.pdf ''Chapter 3 Description Logics'']. In Frank van Harmelen, Vladimir Lifschitz, and Bruce Porter, editors, ''Handbook of Knowledge Representation''. Elsevier, 2007.
+* Alessandro Artale and Enrico Franconi: [http://www.inf.unibz.it/~franconi/papers/time-handbook.ps.gz Temporal Description Logics]. In Handbook of Temporal Reasoning in Artificial Intelligence, 2005.
+* [http://www.w3.org/2001/sw/WebOnt/charter Web Ontology (WebONT) Working Group Charter]. W3C, 2003
+* [http://www.w3.org/2004/01/sws-pressrelease World Wide Web Consortium Issues RDF and OWL Recommendations]. Press Release. W3C, 2004.
+* [http://www.w3.org/2007/06/OWLCharter.html OWL Working Group Charter]. W3C, 2007.
+* [http://www.w3.org/2009/10/owl2-pr OWL 2 Connects the Web of Knowledge with the Web of Data]. Press Release. W3C, 2009.
+
+== Further reading ==
+* [http://web.comlab.ox.ac.uk/people/Ian.Horrocks/Publications/download/2008/Horr08a.pdf Ontologies and the Semantic Web] by Ian Horrocks. ''Communications of the ACM'', 51(12):58-67, December 2008.
+* [http://lat.inf.tu-dresden.de/research/papers-2009.html#Baader09 Description Logics] by Franz Baader. In ''Reasoning Web: Semantic Technologies for Information Systems, 5th International Summer School 2009''.
+* [http://www.comlab.ox.ac.uk/people/ian.horrocks/Publications/download/2003/HoPH03a.pdf From SHIQ and RDF to OWL: The Making of a Web Ontology Language] by Ian Horrocks, Peter F. Patel-Schneider, and Frank van Harmelen. ''Journal of Web Semantics'', 1(1):7-26, 2003.
+* [http://web.comlab.ox.ac.uk/people/Ian.Horrocks/Publications/download/2008/CHMP+08.pdf OWL 2: The next step for OWL] by Bernardo Cuenca Grau, Ian Horrocks, Boris Motik, Bijan Parsia, Peter Patel-Schneider, and Ulrike Sattler. ''Journal of Web Semantics'', 6(4):309-322, November 2008.
+* [http://www.inf.unibz.it/~franconi/dl/course/ Introduction to Description Logics] by Enrico Franconi, Faculty of Computer Science, Free University of Bolzano, Italy
+* [http://www.lisperati.com/tellstuff/dl.html Description Logics - The Marriage of Logic and Objects]
+
+==External links==
+* [http://dl.kr.org/ Description Logics], the official web page of the community
+* [http://www.cs.manchester.ac.uk/~ezolin/dl/ Navigator on Description Logic Complexity] at the University of Manchester
+* [http://www.cs.manchester.ac.uk/~sattler/reasoners.html A list of DL reasoners] at the University of Manchester
+
+{{Logic}}
+{{Col-begin}}
+{{Col-1-of-3}}
+{{Computer Science}}
+
+{{DEFAULTSORT:Description Logic}}
+[[Category:Knowledge representation languages]]
+[[Category:Non-classical logic]]
+[[Category:Information science]]
+[[Category:Artificial intelligence]]
+
+[[ca:Lògica de descripció]]
+[[da:Beskrivelseslogik]]
+[[de:Beschreibungslogik]]
+[[es:Lógica de descripción]]
+[[eu:Deskribapen logika]]
+[[fa:منطق‌های توصیف]]
+[[fr:Logique de description]]
+[[it:Logica descrittiva]]
+[[nl:DL]]
+[[pl:DL]]
+[[ru:Дескрипционная логика]]
+[[sv:Bilmodellbeteckningar]]
+[[uk:Описова логіка]]
+[[vi:Logic mô tả]]
+[[zh:描述逻辑]]</body> </html>

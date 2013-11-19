@@ -1,0 +1,69 @@
+<html> <head> <title>Accuracy paradox</title></head><body>{{Refimprove|date=December 2009}}
+The '''accuracy paradox''' for [[predictive analytics]] states that predictive models with a given level of [[accuracy]] may have greater [[predictive power]] than models with higher accuracy. It may be better to avoid the accuracy metric in favor of other metrics such as [[Accuracy and precision|precision]] and [[Recall (information retrieval)|recall]].   
+
+Accuracy is often the starting point for analyzing the quality of a predictive model, as well as an obvious criterion for prediction. Accuracy measures the ratio of correct predictions to the total number of cases evaluated. It may seem obvious that the ratio of correct predictions to cases should be a key metric. A predictive model may have high accuracy, but be useless.
+
+In an example predictive model for an [[insurance fraud]] application, all cases that are predicted as high-risk by the model will be investigated. To evaluate the performance of the model, the insurance company has created a sample data set of 10,000 claims. All 10,000 cases in the [[validation]] sample have been carefully checked and it is known which cases are fraudulent. To analyze the quality of the model, the insurance uses the [[table of confusion]].  The definition of accuracy, the table of confusion for model M<sub>1</sub><sup>Fraud</sup>, and the calculation of accuracy for model M<sub>1</sub><sup>Fraud</sup> is shown below.
+
+<math>\mathrm{A}(M) = \frac{TN + TP}{TN + FP + FN + TP}</math>
+where
+: TN is the number of true negative cases
+: FP is the number of false positive cases
+: FN is the number of false negative cases
+: TP is the number of true positive cases
+
+''Formula 1: Definition of Accuracy''
+
+{|class="prettytable"
+!
+!Predicted Negative
+!Predicted Positive
+|-
+|Negative Cases||9,700||150
+|-
+|Positive Cases||50||100
+|}
+
+''Table 1: Table of Confusion for Fraud Model M<sub>1</sub><sup>Fraud</sup>.''
+
+<math>\mathrm A (M) = \frac{9,700 + 100}{9,700 + 150 + 50 + 100} = 98.0%</math>
+
+''Formula 2: Accuracy for model M<sub>1</sub><sup>Fraud</sup>''
+
+With an accuracy of 98.0% model M<sub>1</sub><sup>Fraud</sup> appears to perform fairly well. The paradox lies in the fact that accuracy can be easily improved to 98.5% by always predicting "no fraud". The table of confusion and the accuracy for this trivial “always predict negative” model M<sub>2</sub><sup>Fraud</sup> and the accuracy of this model are shown below.
+
+{|class="prettytable"
+!
+!Predicted Negative
+!Predicted Positive
+|-
+|Negative Cases||9,850||0
+|-
+|Positive Cases||150||0
+|}
+
+''Table 2: Table of Confusion for Fraud Model M<sub>2</sub><sup>Fraud</sup>.''
+
+<math>\mathrm{A}(M) = \frac{9,850 + 0}{9,850 + 150 + 0 + 0} = 98.5%</math>
+
+''Formula 3: Accuracy for model M<sub>2</sub><sup>Fraud</sup>''
+
+Model M<sub>2</sub><sup>Fraud</sup>reduces the rate of inaccurate predictions from 2% to 1.5%. This is an apparent improvement of 25%. The new model M<sub>2</sub><sup>Fraud</sup> shows fewer incorrect predictions and markedly improved accuracy, as compared to the original model M<sub>1</sub><sup>Fraud</sup>, but is obviously useless. 
+
+The alternative model M<sub>2</sub><sup>Fraud</sup> does not offer any value to the company for preventing fraud. The less accurate model is more useful than the more accurate model.  
+
+Model improvements should not be measured in terms of accuracy gains. It may be going too far to say that accuracy is irrelevant, but caution is advised when using accuracy in the evaluation of predictive models.
+
+==See also==
+*[[Receiver operating characteristic]] for other measures of how good model predictions are.
+
+==Bibliography==
+{{refbegin}}
+* {{citation |last=Zhu |first=Xingquan |title=Knowledge Discovery and Data Mining: Challenges and Realities |publisher=IGI Global | url=http://books.google.com/?id=zdJQAAAAMAAJ&q=data+mining+challenges+and+realities&dq=data+mining+challenges+and+realities |year=2007 |isbn=9781599042527 |pages=118–119}}
+*  {{doi|10.1117/12.785623}}
+* pp 86-87 of [http://www.utwente.nl/ewi/trese/graduation_projects/2009/Abma.pdf this Master's thesis]
+{{refend}}
+
+[[Category:Statistical paradoxes]]
+[[Category:Machine learning]]
+[[Category:Data mining]]</body> </html>

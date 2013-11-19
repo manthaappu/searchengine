@@ -1,0 +1,142 @@
+<html> <head> <title>Classful network</title></head><body>A '''classful network''' is a network addressing architecture used in the [[Internet]] from 1981 until the introduction of [[Classless Inter-Domain Routing]] in 1993. The method divides the [[IP address|address]] space for Internet Protocol Version 4 ([[IPv4]]) into five address classes. Each class, coded in the first four bits of the address, defines either a different network size, i.e. number of [[Host (network)|hosts]] for [[unicast]] addresses (classes A, B, C), or a [[multicast]] network (class D). The fifth class (E) address range is reserved for future or experimental purposes.
+
+Since its discontinuation, remnants of classful network concepts remain in practice only in limited scope in the default configuration parameters of some network software and hardware components (e.g., default [[subnet mask]]), but the terms are often still heard in general discussions of network structure among network administrators.
+
+[[Image:Internet map in February 82.jpg|thumb|300px|right|Map of the prototype Internet in [[1982]], showing 8-bit-numbered networks (ovals) only, interconnected by [[router]]s (rectangles).]]
+
+==Background==
+Originally, a 32-bit IPv4 address was logically subdivided into the ''network number'' field, the most-significant 8 bits of an address, which specified the particular network a host was attached to, and the local address, also called ''rest field'' (the rest of the address), which uniquely identifies a host connected to that network. This format was sufficient at a time when only a few large networks existed, such as the [[ARPANET]] which was assigned the network number 10, and before the wide proliferation of [[local area network]]s (LANs). As a consequence of this architecture, the address space supported only a low number (254) of independent networks, and it became clear very early on that this would not be enough.
+
+==Introduction of address classes==
+Expansion of the network had to ensure compatibility with the existing address space and the [[Internet Protocol]] (IP) packet structure, and avoid the renumbering of the existing networks. The solution was to expand the definition of the network number field to include more bits, allowing more networks to be designated, each potentially having fewer hosts. All existing network numbers at the time were smaller than 64, they only used the 6 least-significant bits of the network number field. Thus it was possible to use the most-significant bits of an address to introduce a set of address classes, while preserving the existing network numbers in the first of these classes.
+
+The new addressing architecture was introduced by RFC 791 in 1981 as a part of the specification of the Internet Protocol.<ref name=rfc791>RFC 791, ''Internet Protocol'', Information Sciences Institute (September 1981)</ref> It divided the address space into primarily three address formats, henceforth called address ''classes'', and left a fourth range reserved to be defined later.
+
+The first class, designated as ''Class A'', contained all addresses in which the most significant bit is zero. The network number for this class is given by the next 7 bits, therefore accommodating 128 networks in total, including the zero network, and including the existing IP networks already allocated. A ''Class B'' network was a network in which all addresses had the two most-significant bits set to 1 and 0. For these networks, the network address was given by the next 14 bits of the address, thus leaving 16 bits for numbering host on the network for a total of {{gaps|65|536}} addresses per network. ''Class C'' was defined with the 3 high-order bits set to 1, 1, and 0, and designating the next 21 bits to number the networks, leaving each network with 256 local addresses.
+
+The leading bit sequence ''111'' designated an "''escape to extended addressing mode''",<ref name=rfc791/> which was later subdivided in to Class D (''1110'') for multicast addressing, while leaving as reserved for future use the ''1111'' block designated as Class E.
+
+This addressing scheme is illustrated in the following table:
+{| class="wikitable"
+! Class
+! Leading <br>bits
+! Size of ''network <br>number'' bit field
+! Size of ''rest''<br>bit field
+! Number<br>of networks
+! Addresses<br>per network
+! Start address
+! End address
+|-
+| Class A
+|     0
+|     8
+|     24
+|     128  (2<sup>7</sup>)
+|     16,777,216 (2<sup>24</sup>)
+| 0.0.0.0
+| 127.255.255.255<!--DO NOT CHANGE THIS, 0/8 and 127/8 ARE CLASS A NETWORKS AS WELL-->
+|-
+| Class B
+|     10
+|     16
+|     16
+|     16,384 (2<sup>14</sup>)
+|     65,536 (2<sup>16</sup>)
+| 128.0.0.0
+| 191.255.255.255
+|-
+| Class C
+|     110
+|     24
+|     8
+|     2,097,152 (2<sup>21</sup>)
+|     256 (2<sup>8</sup>)
+| 192.0.0.0
+| 223.255.255.255
+|-
+| Class D ([[multicast]])
+|     1110
+|     not defined
+|     not defined
+|     not defined
+|     not defined
+| 224.0.0.0
+| 239.255.255.255
+|-
+| Class E (reserved)
+|     1111
+|     not defined
+|     not defined
+|     not defined
+|     not defined
+| 240.0.0.0
+| 255.255.255.255
+|}
+
+The number of addresses usable for addressing specific hosts in each network is always 2<sup>N</sup> - 2 (where N is the number of rest field bits, and the subtraction of 2 adjusts for the use of the all-bits-zero host portion for network address and the all-bits-one host portion as a broadcast address.  Thus, for a Class C address with 8 bits available in the host field, the number of hosts is 254.
+
+Today, IP addresses are associated with a [[netmask|subnet mask]]. This was not required in a classful network because the mask was implicitly derived from the IP address itself. Any network device would inspect the first few bits of the IP address to determine the class of the address.
+
+===Bit-wise representation===
+In the following table:
+* ''n'' indicates a binary slot used for network ID.
+* ''H'' indicates a binary slot used for host ID.
+* ''X'' indicates a binary slot (without specified purpose)
+
+<pre>
+Class A
+  0.  0.  0.  0 = 00000000.00000000.00000000.00000000
+127.255.255.255 = 01111111.11111111.11111111.11111111
+                  0nnnnnnn.HHHHHHHH.HHHHHHHH.HHHHHHHH
+
+Class B
+128.  0.  0.  0 = 10000000.00000000.00000000.00000000
+191.255.255.255 = 10111111.11111111.11111111.11111111
+                  10nnnnnn.nnnnnnnn.HHHHHHHH.HHHHHHHH
+
+Class C
+192.  0.  0.  0 = 11000000.00000000.00000000.00000000
+223.255.255.255 = 11011111.11111111.11111111.11111111
+                  110nnnnn.nnnnnnnn.nnnnnnnn.HHHHHHHH
+
+Class D
+224.  0.  0.  0 = 11100000.00000000.00000000.00000000
+239.255.255.255 = 11101111.11111111.11111111.11111111
+                  1110XXXX.XXXXXXXX.XXXXXXXX.XXXXXXXX
+
+Class E
+240.  0.  0.  0 = 11110000.00000000.00000000.00000000
+255.255.255.255 = 11111111.11111111.11111111.11111111
+                  1111XXXX.XXXXXXXX.XXXXXXXX.XXXXXXXX
+</pre>
+
+==The replacement of classes==
+The first architecture change extended the addressing capability in the Internet, but did not prevent [[IP address shortage]]. The principal problem was that many sites needed larger address blocks than a Class C network provided, and therefore they received a Class B block, which was in most cases much larger than required. In the rapid growth of the Internet, the pool of unassigned Class B addresses (2<sup>14</sup>, or about 16,000) was rapidly being depleted. Classful networking was replaced by [[Classless Inter-Domain Routing]] (CIDR), starting in 1993 with the specification of RFC 1518 and RFC 1519, to attempt to solve this problem.
+
+Early allocations of IP addresses by the [[Internet Assigned Numbers Authority]] (IANA) were in some cases not made efficiently, which contributed to the problem. However, the commonly held notion that some American organizations unfairly or unnecessarily received Class A networks is wrong; most such allocations date to the period before the introduction of address classes, when the only address blocks available were what later became known as Class A networks.<ref>[http://www.potaroo.net/ietf/ien/ien46.txt IEN46, ''A proposal for addressing and routing in the Internet''], David D. Clark, June 1978</ref>
+
+==See also==
+* [[IPv4 subnetting reference]]
+* [[Classless Inter-Domain Routing]]
+* [[List of assigned /8 IP address blocks]]
+* [[Subnetwork]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://www.iana.org/assignments/ipv4-address-space IANA, Current IPv4 /8 delegations]
+* [http://oreilly.com/catalog/coreprot/chapter/appb.html Overview of IP addressing, both classless and classful]
+
+[[Category:Internet architecture]]
+
+[[ar:شبكة فئوية]]
+[[de:Netzklasse]]
+[[fr:Classe d'adresse IP]]
+[[ko:네트워크 클래스]]
+[[it:Classi di indirizzi IP]]
+[[no:Nettverksklasse]]
+[[ru:Классовая адресация]]
+[[sr:Класна мрежа]]
+[[tr:Classfull]]
+[[zh:分类网络]]</body> </html>

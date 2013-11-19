@@ -1,0 +1,1031 @@
+<html> <head> <title>IBM System/360 architecture</title></head><body>{{Merge to |IBM System/360 |discuss=Talk:IBM System/360#Merge IBM System/360 architecture into IBM System/360 |date=November 2010}}
+{{Multiple issues
+|lead rewrite=December 2010
+|citations missing=December 2010
+}}
+{{condense|date=December 2010}}
+{{Infobox CPU architecture
+|name = System/360
+|designer = [[IBM]]
+|bits = 32
+|introduced = 1964
+|design = CISC
+|type = Register-Register/Register-Memory/Memory-Memory
+|encoding = Variable <small>(2, 4 or 6 bytes long)</small>
+|branching = Condition code, indexing, counting
+|endianness = Big
+|extensions =
+|open = Yes
+|page size = N/A, but see [[IBM System/360 Model 67]]
+|gpr = 16 32-bit
+|fpr = 4 64-bit
+}}
+{{IBM mainframes}}
+
+'''IBM System/360 architecture'''
+
+While this is currently a stand-alone article, the intent is to eventually merge it into [[IBM System/360]]
+
+Some models had features that were not part of the S/360 architecture but became part of the S/370 architecture. However, the Control Register mapping, PSW format and storage assignments were not the same as in the S/370.
+
+Some deviations from the architecture were notable because they served as prototypes for features of the [[IBM System/370|S/370]] architecture or because of their importance in scientific computing; these are included in some of the reference charts with footnotes that they are not part of the architecture. Any more detailed explanations should go in the articles on the respective models or on the S/370, not here.
+
+<!-- ==Architecture== -->
+
+IBM documented the processor<ref name=A22-6821/><ref name=A22-6821-7/> and I/O<ref name=A22-6843/> architecture of the S/360 in manuals that apply to all models of the System/360 with the exception of the 360/20 and the 360/44. The 360/20 is radically different and should not be considered to be a S/360. The 360/44 is missing certain instructions, but the ''Commercial Instruction Feature'' allows the simulation of the missing instructions in hidden memory, and thereby the use of standard S/360 operating systems and applications. Some models have features beyond those specified in the architecture, e.g., emulation instructions, paging. Finally, some models have minor deviations from the architecture.{{#tag:ref|The multisystem feature on the 360/65<ref name=A22-6884/> modifies the behavior of the direct control feature and of the Set System Mask (SSM) instruction. The 360/67-2<ref name=GA27-2719/> had similar, but incompatible, changes.|group=NB|name=M65MP}}<ref group=NB name=multimpr/>.
+
+The architecture of the System/360 is independent of its implementation on any specific processor, and includes the following elements.
+
+===Memory===
+Memory (''storage'') in the S/360 is addressed in terms of 8-bit bytes. Various instructions operate on larger units called ''halfword'' (2 bytes), ''fullword'' (4 bytes), ''doubleword'' (8 bytes), ''quad word'' (16 bytes) and 2048 byte storage block, specifying the leftmost (lowest address) of the unit. Within a halfword, fullword, doubleword or quadword, low numbered bytes are more significant than high numbered bytes; this is sometimes referred to as [[Endianness#Big-endian#with 8-bit atomic element size and 1-byte (octet) address increment|big-endian]]. Many uses for these units require aligning them on the corresponding boundaries. Within this article the unqualified term ''word'' refers to a ''fullword''.
+
+The architecture of System/360 provided for up to 2<sup>24</sup> = {{val|16777216}} bytes of memory; however, the 360/67 extended the architecture and allowed 2<sup>32</sup> = {{val|4294967296}}<ref group=NB>Twice the size of the later System/370</ref> bytes of virtual memory.
+
+===Addressing===
+The S/360 uses truncated addressing. That means that instructions do not contain complete addresses, but rather specify base address and offsets past those base addresses. In the case of the S/360 the base address is contained in one of 15 general registers. In some instructions, e.g., shifts, the same computations are performed for 32-bit quantities that are not addresses.
+
+===Data formats===
+The S/360 architecture defines formats for characters, integers, decimal integers and hexadecimal floating point numbers. Character and integer instructions are mandatory, but decimal and floating point instructions are part of the Decimal arithmetic and Floating-point arithmetic features.
+
+====Character data====
+Characters are stored as 8-bit bytes. Character strings are from 1 to 256 consecutive characters.
+
+====Integer data====
+Integers are stored as two's complement binary halfword or fullword values.
+
+====Packed decimal data====
+Packed decimal numbers are stored as 1-16 8-bit bytes containing an odd number of decimal digits followed by a 4-bit sign. Sign values of hexadecimal A, C, E and F are positive and sign values of hexadecimal B and D are negative. Digit values of hexadecimal A-F and sign values of 0-9 are invalid, but the PACK and UNPK instructions do not test for validity.
+
+====Zoned decimal data====
+Zoned decimal numbers are stored as 1-16 8-bit bytes, each containing a zone in bits 0-3 and a digit in bits 4-7. The zone of the rightmost byte is interpreted as a sign.
+
+====Floating point data====
+On older models, floating-point numbers are stored only as fullword or doubleword values. On the 360/85<ref name=A22-6916/> and 360/195<ref name=A22-6943/> there are also extended precision floating poin numbers stored as quadwords. For all three formats, bit 0 is a sign and bits 0-7 are a characteristic (exponent, biased by 64). Bits 8-31 (8-63) are a hexadecimal fraction. For extended precision, the low order doubleword has its own sign and characteristic, which are ignored on input and generated on output.
+
+===Instruction formats===
+Instructions in the S/360 are two, four or six bytes in length, with the opcode in byte 0.  Instructions have one of the following formats:
+*RR (two bytes). Generally byte 1 specifies two 4-bit register numbers, but in some cases, e.g., SVC, byte 1 is a single 8-bit immediate field.
+*RS (four bytes). Byte 1 specifies two register numbers; bytes 2-3 specify a base and displacement.
+*RX (four bytes). Byte 1 bits 0-3 specifies either a register number or a modifier; byte 1 bits 4-7 specifies the number of the general register to be used as an index; bytes 2-3 specify a base and displacement.
+*SI (four bytes). Byte 1 specifies an immediate field; bytes 2-3 specify a base and displacement.
+*SS (six bytes). Byte 1 specifies two 4-bit length fields or one 8-bit length field; bytes 2-3 and 4-5 each specify a base and displacement. The encoding of the length fields is length-1.
+
+Instructions must be on a two-byte boundary in memory; hence the low-order bit of the instruction address is always 0.
+
+===Program Status Word (PSW)===
+The '''Program Status Word''' ('''PSW''')<ref name=A22-6821-7/>{{rp|pages=71-72}} contains a variety of controls for the currently operating program
+{| class="wikitable collapsible"
+|+PSW format
+|-
+!valign=top style="text-align:right;width:6em"|bits
+!
+!valign=top style="text-align:left;width:25em"|contents
+!valign=top style="text-align:left"|Explanation
+|-
+|align=right valign=top|00-07
+|valign=top|SM
+|valign=top style="align:left;width:25em"|
+<span id=System_Mask>System Mask</span>
+|valign=top | See below; 1 if enabled<sup class=reference>[[#Pops|PoOps]]</sup>{{{rp|page=71}}
+|-
+|align=right|00
+|
+|
+:Channel 0
+|
+|-
+|align=right|01
+|
+|
+:Channel 1
+|
+|-
+|align=right|02
+|
+|
+:Channel 2
+|
+|-
+|align=right|03
+|
+|
+:Channel 3
+|
+|-
+|align=right|04
+|
+|
+:Channel 4
+|
+|-
+|align=right|05
+|
+|
+:Channel 5
+|
+|-
+|align=right valign=top|06
+|
+|
+:Channel 6
+:All remaining channels{{#tag:ref|On a processor that complies with the S/360 architecture, the highest channel number is 6, 11 bits are sufficient to identify the cuu and 7 bits are sufficient to provide masking of I/O interrupts. However, On a 360/67-2 with two 2846 Channel Controllers, channels are numbered 0-6 and 8-14<ref name=GA27-2719/>{{rp|page=15}}; similarly, the 360/195 had an extended channel
+feature<ref name=A22-6943/>{{rp|page=21}} but numbered the channels 0 through 13<ref name=A22-6943/>{{rp|page=25}}. I/O interrupts for Channel Controller 1 on the 360/67-2 were masked using control registers, and the 360/195 used bit 7 (Channel 6) of the System Mask as a summary mask bit for channels 6 and up. ''Interruptions from More than Seven Channels''<sup>[[#PoOps|PoOps]]</sup>{{rp|page=121.4}} describes the summary masking for additional channels, but other text in Principles of Operation still refers to a limit of 7 channels. Standard software supported channels 0-F.|group=NB|name=ChanNum}}
+|
+|-
+|align=right valign=top|07
+|
+|
+:Timer
+:Interrupt key
+:External signal
+|valign=top|
+:External interrupts
+|-
+|align=right|08-11
+|Key
+|
+<span id=Key>Key</span>
+|CPU protection key to compare against storage protection keys
+|-
+|align=right|12-15
+|
+<span id=AMWP>AMWP</span>
+|
+|See below; 1 if enabled
+|-
+|align=right valign=top|12
+|valign=top|
+:A
+|valign=top|
+:ASCII
+|
+:ASCII<ref group=NB>Because the design of the S/360 occurred simultaneously with the development of ASCII, IBM's ASCII support did not match the standard that was ultimately adopted.</ref> mode for packed decimal instructions
+:Never used by IBM software.
+|-
+|align=right|13
+|valign=top|
+:M
+|
+:Machine check
+|
+:Allow machine-check interrupts.
+|-
+|align=right valign=top|14
+|valign=top|
+:W
+|valign=top|
+:Wait State
+|
+:Processor is halted.  An interrupt, if enabled, will cause the processor to resume executing instructions.
+|-
+|align=right valign=top|15
+|valign=top|
+:P
+|valign=top|
+:Problem state
+|
+:Forbids use of certain instructions reserved for supervisor state
+|-
+|align=right valign=top|16-31
+|valign=top|IC
+|valign=top|
+<span id=Interruption_Code>Interruption Code<span>
+|Interpretation depends on type of interrupt.<br>This field is not used in the PSW itself, but a value is inserted when the PSW is stored as part of processing an interrupt.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=77}}  During Initial Program Load, this is the address of the device from which the program was loaded.
+|-
+|align=right|32-33
+|ILC
+|<span id=InstructionLengthCode>Instruction Length Code</span>
+|Interpreted as 2-bit number: length in halfwords or 0 if unavailable.
+|-
+|align=right|34-35
+|CC
+|<span id=ConditionCode>Condition Code</span>
+|See individual instructions for encoding
+|-
+|align=right|36-39
+|PM
+|<span id=Program_Mask>Program Mask</span>
+|See below; 1 if enabled<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=71}}
+|-
+|align=right|36
+|
+|
+:Fixed-point overflow
+|-
+|align=right|37
+|
+|
+:Decimal overflow
+|-
+|align=right|38
+|
+|
+:Exponent underflow
+|-
+|align=right|39
+|
+|
+:Significance
+|-
+|align=right valign=top|40-63
+|valign=top|IA
+|valign=top|<span id=Instruction_Address>Instruction Address</span>
+|valign=top | Address of currently executing instruction; stored as address of next instruction, except for Program interruption with ILC 0.
+|}
+
+===Interrupt system===
+{{create-list|section|date=December 2010}}
+An [[interrupt]] is a mechanism for automatically changing the program state; it is used for both synchronous<ref group=NB>The S/360 literature does not use the terms fault or [[Trap (computing)|trap]]</ref> and [[asynchrony|asynchronous]] events. The architecture<ref name=A22-6821-7/>{{rp|pages=77-83}} defines 5 classes of interrupt. There are two storage fields assigned to each class of interrupt on the S/360; an old PSW double-word and a new PSW double-word. The processor stores the PSW, with an interrupt code inserted, into the old PSW location and then loads the PSW from the new PSW location.  This replaces the interrupt mask and instruction address, thus branching and (optionally) disabling interrupts.
+
+The S/360 architecture defines a priority to each interrup class, but it is only relevant when two interrupts occur simultaneously; an interrupt routine can be interrupted by any other enabled interrupt, including another occurrence of the initial interrupt. For this reason, it is normal practice to specify all of the mask bits for an interrupt routine as 0, with the exception of machine-check.
+
+{| class="wikitable collapsible"
+|-
+! Interrupt class !! Old PSW<br>hex dec !! New PSW<br>hex dec
+! align=right valign=top| Priority
+|-
+| [[#Input/Output interrupt|Input/Output]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=78-79}} || 38   56 || 78  120 || align=right |  4
+|-
+| [[#Program interrupt|Program]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=79-80.1}} || 28   40 || 68 104 || align=right |  2
+|-
+| [[#Supervisor Call interrupt|Supervisor Call]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=80.1-81}} || 20   32 || 60   96 || align=right |  2
+|-
+| [[#External interrupt|External]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=81-82}} || 18   24 || 58   88 || align=right |  3
+|-
+| [[#Machine Check interrupt|Machine Check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=82-83}} || 30   48 || 70  112 || align=right |  1
+|}
+
+====Input/Output interrupt====
+An I/O interrupt<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=78-79}} occurs at the completion of a channel program, after fetching a CCW with the PCI bit set and also for [[asynchrony|asynchronous]] events detected by the device, control unit or channel, e.g., completion of a mechanical movement. The system stores the device address into the interrupt code and stores channel status into the [[#Channel Status Word|CSW]] at location 64 ('40'X).
+
+====Program interrupt====
+
+A Program interrupt<ref name=A22-6821-7/>{{rp|pages=16,79-80.1}} occurs when an instruction encounters one{{#tag:ref|On the 360/91<ref name=A22-6907/>{{rp|page=15}}, 360/95 and 360/195<ref name=A22-6943/>{{rp|page=14}} a Program interrupt may occur for multiple imprecise exceptions. The ILC in the Program Old PSW is 0, bits 26-31 are 0 and bits 16-27 are a mask indicating which exceptions occurred; there is no provision for reporting multiple occurrences of the same exception. Reporting of multiple imprecise exceptions is not part of the S/360 architecture.|group=NB|name=multimpr}} of 15{{#tag:ref|There are 17 possible exceptions on the 360/67<ref name=GA27-2719/>{{rp|page=17}}, but page exception and segment exception are not part of the S/360 architecture; similarly, the interrupt code 18 ('0012'X) on a 360/65 multiprocessor<ref group=NB name=M65MP/> is not part of the S/360 architecture.|group=NB|name=NotArchExc}} exceptions; however, if the [[#Program Mask|Program Mask]] bit corresponding to an exception is 0 then there is no interrupt for that exception. The Interrupt code may be any of
+
+{| class="wikitable collapsible"
+|+Interrupt codes for Program interrupts<br>old PSW bits 26-31
+|-
+!style="text-align:right;width:6em"|hex<br>bits 26-31
+!Dec
+!style="wisth:20m"|Exception
+|-
+| align=right valign=top | 0
+| align=right valign=top | 0
+|
+Imprecise interrupt<ref group=NB name=multimpr/> on 360/91<ref name=A22-6907/>{{rp|page=15}}, 360/95 or 360/195<ref name=A22-6943/>{{rp|page=14}}
+{| class="wikitable collapsible collapsed"
+|+Old PSW bits for multiple imprecise interrupt codes
+|-
+!style="text-align:right;width:6em"|bit
+!Exception
+|-
+|16
+|Protection
+|-
+|17
+|Addressing
+|-
+|18
+|Specification<ref group=NB>The Specification bit is not used for imprecise interrupts on the 360/195</ref>
+|-
+|19
+|Data
+|-
+|20
+|Fixed-Point Overflow
+|-
+|21
+|Fixed-Point Divide
+|-
+|22
+|Exponent Overflow
+|-
+|23
+|Exponent Underflow
+|-
+|24
+|Significance
+|-
+|25
+|Floating-Point Divide
+|-
+|26
+|Decimal Overflow<ref group=NB name=NoDec>Not Used on 360/91</ref>
+|-
+|27
+|Decimal Divide<ref group=NB name=NoDec/>
+|}
+|-
+| align=right | 1
+| align=right | 1
+| [[#Operation exception|Operation]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}}
+|-
+| align=right | 2
+| align=right | 2
+| [[#Privileged operation exception|Privileged operation]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}}
+|-
+| align=right | 3
+| align=right | 3
+| [[#Execute exception|Execute]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}}
+|-
+| align=right | 4
+| align=right | 4
+| [[#Protection exception|Protection]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}}
+|-
+| align=right | 5
+| align=right | 5
+| [[#Addressing exception|Addressing exception]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=79-80}}
+|-
+| align=right | 6
+| align=right | 6
+| [[#Specification exception|Specification]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | 7
+| align=right | 7
+| [[#Data exception|Data]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | 8
+| align=right | 8
+| [[#Fixed-point overflow exception|Fixed-point overflow]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | 9
+| align=right | 9
+| [[#Fixed-point divide exception|Fixed-point divide]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | A
+| align=right | 10
+| [[#Decimal overflow exception|Decimal overflow]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | B
+| align=right | 11
+| [[#Decimal divide exception|Decimal divide]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | C
+| align=right | 12
+| [[#Exponent overflow exception|Exponent overflow]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | D
+| align=right | 13
+| [[#Exponent underflow exception|Exponent underflow]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | E
+| align=right | 14
+| [[#Significance exception|Significance]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}}
+|-
+| align=right | F
+| align=right | 15
+| [[#Floating-point divide exception|Floating-point divide]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80.1}}
+|-
+| align=right | 10
+| align=right | 16
+|
+Segment Translation<ref name=GA27-2719/>{{rp|page=17}}<ref group=NB name=NotArchExc/>
+|-
+| align=right | 11
+| align=right | 17
+|
+Page Translation<ref name=GA27-2719/>{{rp|page=17}}<ref group=NB name=NotArchExc/>
+|-
+| align=right | 12
+| align=right | 18
+|
+SSM Exception<ref name=A22-6884/><ref group=NB name=M65MP/><ref group=NB name=NotArchExc/>
+|}
+
+=====Operation exception=====
+An operation exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}} is recognized when a program attempts to execute an instruction with an opcode that the computer does not implement. In particular, an operation exception is recognized when a program is written for an optional feature, e.g., floating point, that is not installed.
+
+=====Privileged operation exception=====
+A privileged operation exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}} is recognized when a program attempts to execute a privileged instruction when the problem state bit in the PSW is 1.
+
+=====Execute exception=====
+An execute exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}} is recognized when the operand of an EXECUTE instruction is another EXECUTE instruction.
+
+=====Protection exception=====
+A protection exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=79}} is recognized when a program attempts to store into a location whose storage protect key does not match<ref group=NB>A PSW key of 0 matches any storage key.</ref> the PSW key, or to fetch from a fetch protected location whose storage protect key does not match the PSW key.
+
+=====Addressing exception=====
+An addressing exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=79-80}} is recognized when a program attempts to access a storage location that is not currently available. This normally occurs with an address beyond the capacity of the machine, but it may also occur on machines that allow blocks of storage to be taken offline.
+
+=====Specification exception=====
+A specification exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when an instruction has a length or register field with values not permitted by the operation, or when it has an operand address that does not satisfy the alignment requirements of the opcode, e.g., a LH instruction with an odd operand address on a machine without the byte alignment feature.
+
+=====Data exception=====
+A data exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when a decimal instruction specifies invalid operands, e.g., invalid data, invalid overlap.
+
+=====Fixed-point overflow exception=====
+A fixed-point overflow exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when significant bits are lost in a fixed point arithmetic or shift instruction, other than divide.
+
+=====Fixed-point divide exception=====
+A fixed-point divide exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when significant bits are lost in a fixed point divide or Convert to Binary instruction.
+
+=====Decimal overflow exception=====
+A decimal overflow  exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when significant digits are lost in a decimal arithmetic instruction, other than divide
+
+=====Decimal divide exception=====
+A decimal divide exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when significant bits are lost in a decimal divide instruction. The destination is not altered.
+
+=====Exponent overflow exception=====
+An exponent overflow exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when the characteristic in a floating-point arithmetic operation exceeds 127 and the fraction is not zero.
+
+=====Exponent underflow exception=====
+An exponent underflow exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when the characteristic in a floating-point arithmetic operation is negative and the fraction is not zero.
+
+=====Significance exception=====
+A significance exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80}} is recognized when the fraction in a floating-point add or subtract operation is zero.
+
+=====Floating-point divide exception=====
+A floating-point divide exception<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=80.1}} is recognized when the fraction in the divisor of a floating-point divide operation is zero.
+
+====Supervisor Call interrupt====
+A Supervisor Call interrupt<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=80.1-81}} occurs as the result of a Supervisor Call instruction; the system stores bits 8-15 of the SVC instruction as the Interrupt Code.
+
+====External interrupt====
+An External<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=81}}<ref group=NB>Even though a timer expiration is an internal event, it causes an External interrupt</ref> interrupt occurs as the result of certain asynchronous events. Bits 16-24 of the External Old PSW are set to 0 and one ore more of bits 24-31 is set to 1
+
+{| class="wikitable collapsible"
+|+Interrupt codes for External interrupts
+|-
+! valign=top style="text-align:right;width:8em"|PSW bit
+! Type of external interrupt
+|-
+| align=right|
+24
+|Timer
+|-
+| align=right|
+25
+|Interrupt key
+|-
+| align=right valign=top|
+26
+||External signal 2<br>Malfunction alert<ref group=NB name=M65MP/> on 360/65<ref name=A22-6884/> in Multisystem mode
+|-
+| align=right valign=top|
+27
+|External signal 3<br>System Call<ref group=NB name=M65MP/> on 360/65<ref name=A22-6884/> in Multisystem mode
+|-
+| align=right|
+28
+|External signal 4
+|-
+| align=right|
+29
+|External signal 5
+|-
+| align=right|
+30
+|External signal 6
+|-
+| align=right|
+31
+|External signal 7
+|}
+
+====Machine Check interrupt====
+A Machine Check interrupt<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=82-83}} occurs to report unusual conditions associated with the channel or CPU that cannot be reported by another class of interrupt. The most important class of conditions causing a Machine Check is a hardware error such as a parity error found in registers or storage, but some models may use it to report less serious conditions. Both the interrupt code and the data stored in the scanout area at '80'x (128 decimal) are model dependent.
+
+===I/O===
+This article describes I/O from the CPU perspective. It does not discuss the channel cable or connectors, but there is a summary [[IBM System/360#Channels|elsewhere]] and details can be found in the IBM literature<ref name=A22-6843/>.
+
+I/O was carried out by a conceptually separate processor called a channel.  Channels had their own instruction set, and accessed memory independently of the program running on the CPU.  On the smaller models (through 360/50) a single microcode engine ran both the CPU program and the channel program.  On the larger models the channels were in separate cabinets and had their own interfaces to memory.
+
+There are three types of channels on the S/360:
+*A byte multiplexor channel is capable of executing multiple '''CCW''''s concurrently; it is normally used to attach slow device such as card readers and telecommunications lines.  A byte multiplexor channel could have a number of selector subchannels, which behaved like low-speed selector channels.
+*A selector channel is only capable of executing one channel command at a time. It is normally used to attach fast devices that are not capable of exploiting a block multiplexor channel, such as magnetic tape drives.
+*A block multiplexor channel is capable of concurrently running multiple channel programs, but only one at a time can be active. The control unit can request suspension at the end of a channel command and can later request resumption. This is intended for devices in which there is a mechanical delay after completion of data transfer, e.g., for seeks on moving-head DASD.  The block multiplexor channel was a late addition to the System/360 architecture; early machines had only byte multiplexor channels and selector channels.
+
+Conceptually peripheral equipment is attached to a S/360 through ''control units'', which in turn are attached through channels. However, the architecture does not require that control units be physically distinct, and in practice they are sometimes integrated with the devices that they control. Similarly, the architecture does not require the channels to be physically distinct from the processor, and the smaller S/360 models (through 360/50) have integrated channels that steal cycles from the processor.
+
+Peripheral devices are addressed with 16-bit<ref group=NB>Because of the limits on the channel number, S/360 and early S/370 software only used 12 bits to store device addresses.</ref> addresses.<ref name=A22-6821-7/>{{rp|page=89}}, referred to as ''cua'' or ''cuu''; this article will use the term ''cuu''. The high 8 bits identify a channel, numbered from 0 to 6<ref group=NB name=ChanNum/>, while the low 8 bits identify a device on that channel. A device may have multiple ''cuu'' addresses.
+
+There are three storage fields reserved for I/O; a double word I/O old PSW, a doubleword I/O new PSW and a fullword ''Channel Address Word'' ('''CAW'''). Performing an I/O normally requires the following:
+
+*initializing the '''CAW''' with the storage key and the address of the first CCW
+*Issuing a ''Start I/O'' ('''SIO''') instruction that specifies the ''cuu'' for the operation
+*Waiting<ref group=NB>But continuing with unrelated work.</ref> for an I/O interrupt
+*Handling any unusual conditions indicated in the ''Channel Status Word'' ('''CSW''').
+
+A channel program consists of a sequence of ''Channel Control Words'' ('''CCW''''s) chained together (see below.) Normally the channel fetches '''CCW''''s from consecutive doublewords, but a control unit can direct the channel to skip a CCW and a ''Transfer In Channel'' ('''TIC''') '''CCW''' can direct the channel to start fetching '''CCW''''s from a new location.
+
+There are several defined ways for a channel command to complete. Some of these allow the channel to continue fetching CCW's, while others terminate the channel program. In general, if the CCW does not have the chain-command bit set and is not a TIC, then the channel will terminate the I/O operation and cause an I/O interrupt when the command completes. Certain status bits from the control unit suppress chaining.
+
+The most common ways for a command to complete are for the count to be exhausted when chain-data is not set and for the control unit to signal that no more data transfers should be made. If Suppress-Length-Indication (SLI) is not set and one of those occurs without the other, chaining is not allowed. The most common situations that suppress chaining are unit-exception and unit-check.
+
+In addition to the interrupt sent to the CPU when an I/O operation is complete, a channel can also send a Program-Controlled interrupt (PCI) to the CPU while the channel program is running, without terminating the operation, and a delayed device-end interrupt after the I/O completion interrupt.
+
+====Channel status====
+These conditions are detected by the channel and indicated in the [[#Channel Status Word|CSW]].<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=116-118}}
+
+=====Program-controlled interruption=====
+[[#CSW_Program-controlled_interruption|Program-controlled interruption]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=116-117}} indicates that the channel has encountered a CCW with the PCI bit set.  The channel continues processing; this interrupt simply informs the CPU of the channel's progress.
+
+Program-controlled interruption could be used for rotational position sensing, as follows: imagine that the channel program consists of an endless loop of CCWs which seek the next sector of the drum and do nothing.  The do nothing CCW has the PCI bit set, so the CPU is always aware of the last sector header read.  When the operating system needs to allocate a page on the drum, it can allocate the page just after the current position, and modify the do nothing CCW to write that page, changing the CCW back to doing nothing on the next PCI interrupt.
+
+Using this technique saves rotation time on the drum, thereby improving throughput.
+
+=====Incorrect length=====
+[[#CSW_Incorrect_length|Incorrect length]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=117}} indicates that the data transfer for a command completed before the Count was exhausted. This indication is suppressed if the [[#CCW-SuppressLengthIndication|Suppress-Length-Indication]] bit in the CCW is set.
+
+=====Program check=====
+[[#CSW_Program_check|Program check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=117}} indicates one of the following errors
+*Nonzero bits where zeros are required
+*An invalid data or CCW address
+*The CAW or a TIC refers to a TIC
+
+=====Protection check=====
+[[#CSW_Protection_check|Protection check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=117-118}} indicates that the protection key in the CAW is non-zero and does not match the storage protection key.
+
+=====Channel data check=====
+[[#CSW_Channel_data_check|Channel data check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}} indicates a parity error during a data transfer.
+
+=====Channel control check=====
+[[#CSW_Channel_control_check|Channel control check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}} indicates a channel malfunction other than [[#Channel data check|Channel data check]] or [[#Interface control check|Interface control check]].
+
+=====Interface control check=====
+[[#CSW_Interface_control_check|Interface control check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}} indicates an invalid signal in the channel to control unit interface.
+
+=====Chaining check=====
+[[#CSW_Chaining_check|Chaining check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}} indicates lost data during data chaining.
+
+====Unit status====
+These conditions are presented to the channel by the control unit or device.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-116}} In some cases they are handled by the channel and in other cases they are indicated in the [[#Channel Status Word|CSW]]. There is no distinction between conditions detected by the control unit and conditions detected by the device.
+
+=====Attention=====
+[[#CSW_Attention|Attention]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=113}} indicates an unusual condition not associated with an ongoing channel program.  It often indicates some sort of operator action like requesting input, in which case the CPU would respond by issuing a read command.
+
+=====Status modifier=====
+
+[[#CSW_Status_modifier|Status modifier]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-114}} (SM) indicates one of three unusual conditions
+*A Test I/O instruction was issued to a device that does not support it.
+*A [[#Busy|Busy]] status refers to the control unit rather than to the device.
+*A device has detected a condition that requires skipping a CCW. A CCW with a command for which Status Modifer is possible will normally specify command chaining, in which case the SM is processed by the channel and does not cause an interrupt.
+
+A typical channel program where SM occurs is
+
+ ...
+ Search Id Equal
+ TIC               *-8
+ Read Data
+
+where the TIC causes the channel to refetch the search until the device indicates a successful search by raising SM.
+
+=====Control unit end=====
+[[#CSW_Control_unit_end|Control unit end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=114}} indicates that a previous control unit busy status has been cleared.
+
+=====Busy=====
+[[#CSW_Busy|Busy]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=114-115}} indicates that a device ([[Status modifier|SM]]=0) or a control unit ([[Status modifier|SM]]=1) is busy.
+
+=====Channel end=====
+[[#CSW_Channel_end>|Channel end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=115}} indicates that the device has completed the data transfer for a channel command. There may also be an [[#Incorrect length|Incorrect length]] indication if the Count field of the CCW is exhausted, depending on the value of the [[#CCW-SuppressLengthIndication|Suppress-Length-Indication]] bit.
+
+=====Device end=====
+[[#CSW_Device_end|Device end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=115}} indicates that the device has completed an operation and is ready to accept another. DE may be signalled concurrently with [[#Channel en|CE]] or may be delayed.
+
+=====Unit check=====
+[[#CSW_Unit_check|Unit check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=115-116}} indicates that the device or control unit has detected an unusual conditions and that details may be obrained by issuing a Sense command.
+
+=====Unit exception=====
+[[#CSW_Unit_exception|Unit exception]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=116}} indicates that the device has detected an unusual condition, e.g., end of file.
+
+====Channel Address Word====
+The fullword ''Channel Address Word''<ref name=A22-6821-7/>{{rp|page=99}} (CAW) contains a 4-bit storage protection key and a 24-bit address of the channel program to be started.
+
+====Channel Command Word====
+A ''Channel Command Word'' is a doubleword containing the following
+*An 8-bit channel [[#CCW Command codes|Command Code]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=100}}
+*A 24-bit address<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=100-101}}
+*A 5-bit flag field<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=99-100,101-105}}
+*An unsigned halfword Count field<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=100-101}}
+
+=====CCW Command codes=====
+The low order 2 or 4 bits determine the six commands that the channel recognizes<ref name=A22-6821-7/>{{rp|pages=100,105}}; the high order bits sent to the control unit and device are known as modifier bits and their use is determined by the control unit and device. The encoding is
+{| class="wikitable collapsible"
+|+ CCW Command codes
+|-
+! style="font-family:monospace; width:7em" | bits
+! Command
+|-
+| style="font-family:monospace" | **** 0000
+| Invalid
+|-
+| style="font-family:monospace" |  MMMM 0100
+| Sense<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=106-107}}
+|-
+| style="font-family:monospace" |  **** 1000
+| Transfer in Channel (TIC)<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=107-108}}
+|-
+| style="font-family:monospace" |  MMMM 1100
+| Read Backward<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=105-106}}
+|-
+| style="font-family:monospace" |  MMMM MM01
+| Write<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=105}}
+|-
+| style="font-family:monospace" |  MMMM MM10
+| Read<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=105}}
+|-
+| style="font-family:monospace" |  MMMM MM11
+| Control<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=106-107}}
+|}
+
+Control is used to cause a state change in a device or control unit, often associated with mechanical motion, e.g., rewind, seek.
+
+Sense is used to read data describing the status of the device. The most important case is that when a command terminates with unit check, the specific cause can only be determined by doing a Sense and examining the data returned. A Sense command with the modifier bits all zero is always valid.
+
+A noteworthy deviation from the architecture is that DASD use Sense command codes for Reserve and Release, instead of using Control.
+
+=====CCW flags=====
+The flags in a CCW affect how it executes and terminates.
+{| class="wikitable collapsible"
+|+ CCW flags
+|-
+! align=right valign=top style="width:5em" | bit
+!
+! flag
+! effect
+|-
+| align=right valign=top | 32
+| valign=top | <span id=CCW-CD>CD</span>
+| valign=top | <span id=CCW-ChainData>Chain-Data</span>
+| Continue operation using the storage area defined by the next CCW.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=101-103}}
+|-
+|-
+| align=right valign=top | 33
+| valign=top | <span id=CCW-CC>CC</span>
+| valign=top | <span id=CCW-ChainCommand>Chain-Command</span>
+| Continue with the Command in the next CCW.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=101,103}}
+|-
+| align=right valign=top | 34
+| valign=top | <span id=CCW-SLI>SLI</span><ref group=NB>Also known as Suppress Incorrect Length Indication (SILI)</ref>
+| valign=top | <span id=CCW-SuppressLengthindication>Suppress-Length-Indication</span>
+| Continue channel program after count mis-match.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=99-100}}
+|-
+| align=right valign=top | 35
+| valign=top | <span id=CCW-SKIP>SKIP</span>
+| valign=top | Skip
+| Do not read from or write into storage.| Do not read from or write into storage.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=103-104}}
+|-
+| align=right valign=top | 36
+| valign=top | <span id=CCW-PCI>PCI</span>
+| valign=top | <span id=CCW-ProgramControlledInterupt>Program-Controlled-Interruption</span>
+| Request interrupt when fetching CCW.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=104-105}}
+|}
+
+====Channel Status Word====
+
+The ''Channel Status Word'' (CSW)<ref name=A22-6821-7/>{{rp|pages=113-121}} provides data associated with an I/O interrupt.
+{| class="wikitable collapsible"
+|+ CSW format
+|-
+! align=right valign=top style="width:5em"| bits
+! field
+|-
+| align=right | 0-3
+| Key<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=119}}
+|-
+| align=right | 4-7
+| 0000
+|-
+| align=right | 8-31
+| Command Address<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=119}}
+|-
+| align=right | 32-47
+| Status<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-118}}
+|-
+| align=right valign=top | 32-39
+| valign=top |
+:Unit Status Conditions<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-116}}
+:Detected by the device or control unit
+|-
+| align=right | <span id=CSW_Attention>32</span>
+|
+:[[#Attention|Attention]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=113}}
+|-
+| align=right | <span id=CSW_Status_modifier>33</span>
+|
+:[[#Status modifier|Status modifier]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-114}}
+|-
+| align=right | <span id=CSW_Control_unit_end>34</span>
+|
+:[[#Control unit end|Control unit end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=114}}
+|-
+| align=right | <span id=CSW_Busy>35</span>
+|
+:[[#Busy|Busy]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=114-115}}
+|-
+| align=right | <span id=CSW_Channel_end>36</span>
+|
+:[[#Channel end|Channel end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=115}}
+|-
+| align=right | <span id=CSW_Device_end>37</span>
+|
+:[[#Device end|Device end]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=115}}
+|-
+| align=right | <span id=CSW_Unit_check>38</span>
+|
+:[[#Unit check|Unit check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=115-116}}
+|-
+| align=right | <span id=CSW_Unit_exception>39</span>
+|
+:[[#Unit exception|Unit exception]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=116}}
+|-
+| align=right valign=top | 40-47
+| valign=top |
+:Channel Status Conditions<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=116-118}}
+:Detected by the channel.
+|-
+| align=right | <span id=CSW_Program-controlled_interruption>40</span>
+|
+:[[#Program-controlled interruption|Program-controlled interruption]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=116-117}}
+|-
+| align=right | <span id=CSW_Incorrect_length>41</span>
+|
+:[[#Incorrect length|Incorrect length]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=117}}
+|-
+| align=right | <span id=CSW_Program_check>42</span>
+|
+:[[#Program check|Program check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=117}}
+|-
+| align=right | <span id=CSW_Protection_check>43</span>
+|
+:[[#Protection check|Protection check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=117-118}}
+|-
+| align=right | <span id=CSW_Channel_data_check>44</span>
+|
+:[[#Channel data check|Channel data check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}}
+|-
+| align=right | <span id=CSW_Channel_control_check>45</span>
+|
+:[[#Channel control check|Channel control check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}}
+|-
+| align=right | <span id=CSW_Interface_control_check>46</span>
+|
+:[[#Interface control check|Interface control check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}}
+|-
+| align=right | <span id=CSW_Chaining_check>47</span>
+|
+:[[#Chaining check|Chaining check]]<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=118}}
+|-
+| align=right | 48-63
+| Count<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=120}}
+|}
+
+=====CSW Protection Key=====
+For an I/O complete or PCI interrupt, this contains the protect key from the CAW at the time that the I/O operation was initiated.<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=119}}
+
+=====CSW Command Address=====
+For an I/O complete or PCI interrupt, this normally contains the address+8 of the last CCW fetched. However, there are 9 exceptions<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=119}}.
+
+=====CSW Status=====
+This field contains one byte of [[#Channel status|Channel status]] bits, indicating conditions detected by the channel<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=116-118}}, and one  byte of [[#Unit status|Unit status]] bits, indicating conditions detected by the I/O unit<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=113-116}}. There is no distinction between conditions detected by the control unit and conditions detected by the device.
+
+=====CSW residual Count=====
+This half word gives the number of bytes in the area described by the CCW that have not been transferred to or from the channel<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=120}}. The difference between the count in the CCW and the residual count gives the number of bytes transferred.
+
+===Operator Controls===
+[[Image:IBM System 360 operator controls.png|200px|thumb|right|operator controls]]
+The architecture of System/360 specified the existence of several common functions, but did not specify their means of implementation. This allowed IBM to use different physical means, e.g., dial, keyboard, pushbutton, roller, image or text on a CRT, for selecting the functions and values on different processors. Any reference to ''key'' or ''switch'' should be read as applying to, e.g., a light-pen selection, an equivalent keyboard sequence.
+
+====System Reset====
+
+''System Reset'' sends a reset signal on every I/O channel and clears the processor state; all pending interrupts are cancelled. System Reset is not guarantied to correct parity errors in general registers, floating point registers or storage. System Reset does not reset the state of shared I/O devices.
+
+====Initial Program Load====
+''Initial Program Load''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=123}} is an process for loading a program when there isn't a loader available in storage, usually because the machine was just powered on or to load an alternate operating system.<ref name=A22-6821-7/>{{rp|page=123}} This process is sometimes known as [[Booting]].
+
+As part of the IPL facility the operator has a means of specifying a 12-bit<ref group=NB name=ChanNum/> device address, typically with three dials as shown in the operator controls drawing. When the operator<ref group=NB>Or an equivalent automated facility.</ref> selects the ''Load'' function, the system performs a ''System Reset'', sends a Read IPL<ref group=NB>Read with all modifier bits zero</ref> channel command to the selected device in order to read 24 bytes into locations 0-23 and causes the channel to begin fetching ''CCW'''s at location 8; the effect is as if the channel had fetched a CCW with a length of 24, and address of 0 and the flags containing Command Chaining + Suppress Length Indication. At the completion of the operation, the system stores the I/O address in the halfword at location 2 and loads the PSW from location 0.
+
+Initial program loading is typically done from a tape, a card reader, or a disk drive.  Generally, the operating system was loaded from a disk drive; IPL from tape or cards was used only for diagnostics or for installing an operating system on a new computer.
+
+====Emergency pull switch====
+The ''Emergency pull switch''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} (Emergency power off, EPO) sends an EPO signal to every I/O channel, then turns off power to the processor complex. Because EPO bypasses the normal sequencing of power down, damage can result, and the EPO control has a mechanical latch to ensure that a customer engineer inspects the equipment before attempting to power it back on.
+
+====Power on====
+''Power on''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} powers up all components of the processor complex and performs a system reset.
+
+====Power off====
+''Power off''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} initiates an orderly power-off sequence. Although the contents of storage are preserved, the associated storage keys may be lost.
+
+====Interrupt====
+The ''Interrupt'' key<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} causes an [[#External interrupt|external interrupt]] with bit 25 set in the External Old PSW.
+
+====Wait light====
+The ''Wait light''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} indicates that the [[#Program Status Word (PSW)|PSW]] has bit 14 (wait) set; the processor is temporarily halted but resumes operation when an interrupt condition occurs.
+
+====Manual light====
+The ''Manual light''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} indicates that the CPU is in a stopped state.
+
+====System light====
+The ''System light''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} indicates that a meter is running, either due to CPU activity or due to I/O channel activity.
+
+====Test light====
+The ''Test light''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} test light indicates that certain operator controls are active, when certain facilities, e.g., INSTRUCTION STEP, have been used by a Diagnose instruction or when abnormal thermal conditions exist. The details are model dependent.
+
+====Load light====
+The ''Load light''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=124}} is turned on by IPL and external start. It is turned off by loading the PSW from location 0 at the completion of the load process.
+
+====Load unit====
+The ''Load unit''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=124-125}} controls provide the rightmost 11<ref group=NB>There is an inconsistency, in that <sup class=reference>''Interruptions from More than Seven Channels''[[#PoOps|PoOps]]</sup>{{rp|page=121.4}} allows for more channels.</ref> bits of the device from which to perform an IPL.
+
+====Load Key====
+The ''Load Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} start the [[#Initial Program Load|IPL]] sequence.
+
+====Prefix Select Key Switch====
+The ''Prefix Select Key Switch''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} selects whether [[#Initial Program Load|IPL]] will used the primary prefix or the alternat prefix.
+
+====System-Reset Key====
+The ''System-Reset Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} initiates a [[#System Reset|System Reset]].
+
+====Stop Key====
+The ''Stop Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} puts the CPU in a stopped state; channel programs continue running and interrupt conditions remain pending.
+
+====Rate Switch====
+The ''Rate Switch''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} determines the mode in which the processor fetches instructions. Two modes are defined by the architecture:
+*PROCESS
+*INSTRUCTION STEP
+
+====Start Key====
+The ''Start Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=125}} initiates instruction fetching in accordance with the setting of the [[#Rate Switch|Rate Switch]].
+
+====Storage-Select Switch====
+The ''Storage-Select Switch''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} determines the type of resource accessed by the [[#Store Key|Store Key]] and [[#Display Key|Display Key]]. Three selections are defined by the architecture:
+*Main storage
+*General registers
+*floating-point registers
+
+====Address Switches====
+The ''Address Switches''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} specify the address or register number for the [[#Store Key|Store Key]], [[#Display Key|Display Key]] and, on some models, the [[#Set IC Key|Set IC Key]]..
+
+====Data Switches====
+The ''Data Switches''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} specify the data for the [[#Store Key|Store Key]] and, on some models, the [[#Set IC Key|Set IC Key]].
+
+====Store Key====
+The ''Store Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} stores the value in the [[#Data Switches|Data Switches]] as specified by the [[#|Storage-Select Switch]] and the [[#Address Switches|Address Switches]].
+
+====Display Key====
+The ''Display Key''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} displays the value specified by the [[#|Storage-Select Switch]] and the [[#Address Switches|Address Switches]].
+
+====Set IC Key====
+The ''Set IC=''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} sets the instruction address portion of the PSW from the [[#Data Switches|Data Switches]] or the [[#Address Switches|Address Switches]], depending on the model.
+
+====Address-Compare Switches====
+The ''Address-Compare Switches''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} select the mode of comparison and what is compared. Stop on instruction address compare is present on all models, but stop on data address compare is only present on some models.
+
+====Alternate-Prefix Light====
+The ''Alternate-Prefix Ligh''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=126}} is on when the prefix trigger is in the alternate state.
+
+===Optional features===
+====Byte-aligned operands====
+On some models the alignment requirements for some problem-state instructions were relaxed. There is no mechanism to turn off this feature, and programs depending on receiving a program check type 6 (alignment) on those instructions must be modified.
+
+====Decimal arithmetic====
+The decimal arithmetic feature provides instructions that operate on packed decimal data. A packed decimal number has 1-31 decimal digits followed by a 4-bit sign. All of the decimal arithmetic instructions except PACK and UNPACK generate a Data exception if a digit is not in the range 0-9 or a sign is not in the range A-F.
+
+====Direct Control====
+The ''Direct Control''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|page=17.1}} feature provides six external signal lines and an 8-bit data path to/from storage.<ref name=A22-6845/>
+
+====Floating-point arithmetic====
+The floating-point arithmetic feature provides 4 64-bit floating point registers and instructions to operate on 32 and 64 bit hexadecimal floating point numbers. The 360/85 and 360/195 also support 128 bit extended precision floating point numbers.
+
+====Interval timer====
+
+If the interval timer feature<ref name=A22-6821-7/>{{rp|page=17.1}} is installed, the processor decrements the word at location 80 ('50'X) at regular intervals; the architecture does not specify the interval but does require that value subtracted make it appear as though 1 were subtracted from bit 23 300 times per second. The smaller models decremented at the same frequency (50 Hz or 60 Hz) as the AC power supply, but larger models had a high resolution timer feature. The processor casues an External interrupt when the timer goes to zero.
+
+====Multi-system operation====
+''Multi-system operation''<sup class=reference>[[#PoOps|PoOps]]</sup>{{rp|pages=17.1-18}} is a set of features to support multi-processor systems, e.g., [[#Direct Control|Direct Control]], direct address relocation (prefixing).
+
+====Storage protection====
+If the storage protection feature<ref name=A22-6821-7/>{{rp|pages=17-17.1}} is installed, then there is a 4-bit storage key associated with every 2,048-byte block of storage and that key is checked when storing into any address in that block by either a CPU or an I/O channel. A CPU or channel key of 0 disables the check; a nonzero CPU or channel key allows data to be stored only in a block with the matching key.
+
+Storage Protection was used to prevent a defective application from writing over storage belonging to the operating system or another application.  This permitted testing to be performed along with production.  Because the key was only four bits in length, the maximum number of different applications that could be run simultaneously was 15.
+
+An additional option available on some models was fetch protection.  It allowed the operating system to specify that blocks were protected from fetching as well as from storing.
+
+== Notes ==
+<references group=NB/>
+
+== References ==
+<!--- See http://en.wikipedia.org/wiki/Wikipedia:Footnotes on how to create references using <ref></ref> tags which will then appear here automatically -->
+{{Reflist| refs=
+<ref name=A22-6821>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Principles of Operation
+ |         id = A22-6821-0
+ |       date = 1964
+ |    Version = First Edition
+ |        url = http://bitsavers.org/pdf/ibm/360/princOps/A22-6821-0_360PrincOps.pdf
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6821-7>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Principles of Operation
+ |         id = A22-6821-7
+ |        ref = PoOps
+ |       date = September 1968
+ |    Version = Eighth Edition
+ |        url = http://www.bitsavers.org/pdf/ibm/360/princOps/A22-6821-7_360PrincOpsDec67.pdf
+ |  separator = ,
+ }} revised by {{cite manual
+ |     author = IBM
+ |         id = GN22-0354
+ |       date = May 12, 1970
+ |  separator = ,
+ }} and {{cite manual
+ |     author = IBM
+ |         id = GN22-0361
+ |       date = June 8, 1970
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6843>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 I/O Interface Channel to Control Unit Original Equipment Manufacturers' Information
+ |         id = A22-6843-3
+ |    version = Fifth Edition
+ |        url = http://www.bitsavers.org/pdf/ibm/360/A22-6843-3_360channelOEM.pdf
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6845>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Direct Control and External Interrupt Features Original Equipment Manufacturers' Information
+ |         id = A22-6845-2
+ |    version = Third Edition
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6884>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Model 65 Punctional Characteristics
+ |         id = A22-6884-3
+ |    version = Fourth Edition
+ |    section = Appendix A. Multiprocessing System
+ |      pages = 30-34
+ |       date = September 1968
+ |        url = http://bitsavers.org/pdf/ibm/360/funcChar/A22-6884-3_360-65_funcChar.pdf
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6907>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Model 91 Functional Characteristics
+ |         id = A22-6907-2
+ |        ref = A22-6907-2
+ |       date = 3/18/68
+ |    version = Third Edition
+ |        url = http://bitsavers.org/pdf/ibm/360/funcChar/A22-6907-2_360-91_funcChar.pdf
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6916>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Model 85 Functional Characteristics
+ |         id = A22-6916-1
+ |        url = http://www.bitsavers.org/pdf/ibm/360/funcChar/A22-6916-1_360-85_funcChar_Jun68.pdf
+ |    version = SECOND EDITION
+ |       date = June, 1968
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=A22-6943>
+{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Model 195 Functional Characteristics
+ |         id = GA22-6943-1
+ |        url = http://www.bitsavers.org/pdf/ibm/360/funcChar/GA22-6943-1_360-195_funcChar_Aug70.pdf
+ |    version = Second Edition
+ |       date = August 1970
+ |  separator = ,
+ }}
+</ref>
+
+<ref name=GA27-2719>{{cite manual
+ |     author = IBM
+ |      title = IBM System/360 Model 67 Functional Characteristics
+ |         id = GA27-2719-2
+ |        ref = GA27-2719-2
+ |       date = February, 1972
+ |    version = Third Edition
+ |        url = http://bitsavers.org/pdf/ibm/360/funcChar/GA27-2719-2_360-67_funcChar.pdf
+ |  separator = ,
+ }}
+</ref>
+}}
+
+<!--- Categories --->
+
+{{DEFAULTSORT:Ibm System/360 Architecture}}
+[[Category:Articles created via the Article Wizard]]
+[[Category:Computer architecture]]
+[[Category:Computing platforms]]
+[[Category:IBM System/360 mainframe line|System/360]]
+[[Category:Instruction set architectures]]
+[[Category:1964 introductions]]</body> </html>

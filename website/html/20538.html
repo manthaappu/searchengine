@@ -1,0 +1,124 @@
+<html> <head> <title>Kermeta</title></head><body>'''Kermeta''' is a modeling and programming language for [[metamodel]] engineering.
+
+==History==
+The '''Kermeta''' language was initiated by Franck Fleurey in 2005 within the [http://www.irisa.fr/triskell Triskell] team of [[IRISA]] (gathering researchers of the [[INRIA]], [[CNRS]], [[Institut national des sciences appliquées|INSA]] and the [[University of Rennes]] 1). 
+
+The Kermeta language borrows concepts from languages such [[Meta-Object Facility|MOF]], [[Object Constraint Language|OCL]] and [[QVT]], but also from BasicMTL, a model transformation language implemented in 2004 in the Triskell team by D. Vojtisek and F. Fondement.  It is also inspired by the previous experience on MTL, the first transformation language created by Triskell, and by the [[Xion]] action language for [[Unified Modeling Language|UML]].  
+
+The name Kermeta is an abbreviation for "Kernel Metamodeling" and reflects the fact that the language is conceived as a core for (meta-)modeling. The [[Breton language]] consonance of this name is an intentional reflection of the Triskell team's location in Britanny.
+
+Kermeta, and its execution platform under [[Eclipse (software)|Eclipse]] is currently available under its version 1.4.1. It is [[open-source]], under the [[Eclipse Public License]].
+
+==Philosophy==
+Kermeta is a modeling and [[aspect oriented programming]] language.  Its underlying metamodel conforms to the [[EMOF]] standard.  It is designed to write programs which are also models, to write transformations of models (programs that transform a model into another), to write constraints on these models, and to execute them 1).  The goal of this model approach is to bring an additional level of abstraction on top of the "object" level and thus to see a given system like a set of concepts (and instances of concepts) that form an explicitly coherent whole, which one will call a model. 
+
+Kermeta thus brings:
+
+* all the concepts of EMOF used for the specifications of a model.
+* a real concept of model, more precisely of model type (Jim Steel).
+* a concrete syntax that fits well to model and metamodel writing.
+* two paradigms:  the object, and the model. 
+* a bridge towards the Eclipse [[ECore]] formalism
+
+==Characteristics ==
+The main characteristics of the Kermeta language are :
+
+*[[imperative programming|imperative]]: traditional structures of control
+*[[object-oriented]]: multiple inheritance, late binding
+*[[model-oriented]]: first-class concepts of associations and composition 
+*[[aspect-oriented]]: integrate a simple but powerful weaver for simple meta-modeling tasks. Arbitrary complex weaving is achieved using a dedicated composer written in Kermeta. This allows to extend existing metamodel. Especially in order to add behavior to them by weaving behavioral [[Formal semantics of programming languages|semantic]] (operational or translational).
+*[[design by contract]]: operations support pre and post conditions, classes use invariants.
+*[[functional programming|functional]]:  functions and first class lambda-expressions
+*statically typed:  genericity for the classes and the operations, function types... 
+*complete [[Type introspection|introspection]]:  the complete model of the program is available during execution.
+
+==Syntax==
+The curious reader will find further information on the [http://www.kermeta.org Kermeta website]. 
+
+==Example==
+<code java>
+ package fsm;
+ 
+ require kermeta
+ 
+ using kermeta::standard
+ 
+ class FSM
+ {
+    attribute ownedState : set State[0..*]#owningFSM
+    reference initialState : State[1..1] 
+    reference currentState : State 
+ 
+    /**
+     * Print the FSM on the standard output
+     */
+    operation printFSM() is do
+        self.ownedState.each 
+        { s | 
+            stdio.writeln("State : " + s.name)
+            s.outgoingTransition.each 
+            { t | 
+                stdio.writeln("  Transition : " + t.source.name + 
+                "-(" + t.input + "/" + t.output + ")->" + t.target.name)
+            }
+        }
+    end
+ }
+ 
+ class State {
+    attribute name : String
+    reference owningFSM : FSM#ownedState
+    attribute outgoingTransition : set Transition[0..*]#source
+    reference incomingTransition : set Transition[0..*]#target
+    
+    operation step(c : String) : String is do
+        // Get the valid transitions
+        var validTransitions : Collection<Transition> 
+        validTransitions :=    outgoingTransition.select { t | t.input.equals(c) }
+        // Check if there is one and only one valid transition
+        if validTransitions.empty then raise "No Transition!" end
+        if validTransitions.size > 1 then raise "Non Determinism" end
+        // fire the transition
+        result := validTransitions.one.fire
+    end
+    
+    
+ }
+ 
+ class Transition 
+ {
+    reference source : State[1..1]#outgoingTransition
+    reference target : State[1..1]#incomingTransition
+    attribute output : String
+    attribute input : String
+    
+    operation fire() : String is do
+        // update FSM current state
+        source.owningFSM.currentState := target
+        result := output
+    end
+ }
+ </code>
+
+==See also==
+*[[Model Driven Engineering]]
+*[[Domain Specific Language]] 
+*[[Domain-specific modelling|Domain Specific Modelling]] 
+*[[Model-based testing|Model-Based Testing]] 
+*[[Meta-modeling|Metamodeling]]
+*[[OCL]]
+*[[Model Transformation Language]]
+*[[Meta-Object Facility]]
+
+==References==
+*[http://www.irisa.fr/triskell/publis/2005/Muller05a.pdf Weaving Executability into Object-Oriented Meta-Languages] Pierre-Alain Muller, Franck Fleurey, and Jean-Marc Jézéquel. In S. Kent L. Briand, editor, Proceedings of MODELS/UML'2005, LNCS, Montego Bay, Jamaica, October 2005. Springer.
+
+==External links==
+*[http://www.kermeta.org/ Kermeta official website]
+*[http://www.kermeta.org/documents/articles/ article list]
+
+[[Category:Unified Modeling Language]]
+[[Category:Java platform software]]
+[[Category:Free UML tools]]
+
+[[fr:Kermeta]]</body> </html>

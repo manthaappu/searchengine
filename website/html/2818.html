@@ -1,0 +1,166 @@
+<html> <head> <title>AutoIt</title></head><body>{{Infobox Software
+| name = AutoIt
+| logo = [[Image:Autoitlogo.png]]
+| screenshot = 
+| caption = 
+| developer = Jonathan Bennett & AutoIt Team
+| latest_release_version = 3.3.6.1
+| latest_release_date =  {{Release date|2010|04|16}}
+| latest preview version = 3.3.5.6
+| latest preview date    = {{Release date|2010|2|28}}
+| operating_system = [[Microsoft Windows]]
+| genre = [[Graphical user interface|GUI]] [[Scripting language]] [[Automation]] 
+| license = [[Freeware]] closed source
+| website = [http://www.autoitscript.com/autoit3/ www.autoitscript.com/autoit3/]
+}}
+
+'''AutoIt''' (pronounced '''aw'''-tow-it)<ref>[http://www.autoitscript.com/forum/index.php?s=&showtopic=22349&view=findpost&p=155491 Reply by Jon (AutoIt creator) to a forum topic discussing correct pronunciation]</ref> is a [[freeware]] [[automation]] [[programming language|language]] for [[Microsoft Windows]]. In its earliest release, the software was primarily intended to create  automation scripts (sometimes called [[Macro (computer science)|macros]]) for Microsoft Windows programs<ref name="Kaplan000">{{cite book | last = Kaplan | first = Steve | title = Citrix Metaframe Access Suite for Windows Server 2003 | publisher = McGraw-Hill | location = New York | year = 2003 | isbn = 0072195665 }}</ref> but has since grown to include enhancements in both programming language design and overall functionality.
+
+With the release of Version 3, the syntax of AutoIt has been restructured to be more like the [[BASIC]] family of languages. It is a [[third-generation programming language]] using a classical data model, utilizing a variant data type that can store several types of data, including arrays. It is compatible with Windows [[Windows 95|95]], [[Windows 98|98]], [[Windows Me|ME]], [[Windows NT4|NT4]], [[Windows 2000|2000]], [[Windows XP|XP]], [[Windows 2003|2003]] and [[Windows Vista|Vista]] (however, support for operating systems older than [[Windows 2000]] was [http://www.autoitscript.com/forum/index.php?showtopic=86590&st=0&entry620851 discontinued with the release of v3.3.0]).
+
+An AutoIt automation script can be compiled into a compressed, stand-alone executable which can be run on computers that do not have the AutoIt interpreter installed.  A wide range of function libraries (known as UDF's, or "User Defined Functions")<ref>http://www.autoitscript.com/autoit3/udfs/UDF_Standards.htm</ref> are also included as standard or are available from the website to add specialized functionality.  AutoIt is also distributed with an [[Integrated development environment|IDE]] based on the free [[SciTE]] editor. The compiler and help text are fully integrated and provide a de facto standard environment for developers using AutoIt.
+
+==Features==
+[[Image:exampleau3.png|275px|thumb||The AutoIt [[SciTE]] editor.]]
+*Scripting language with BASIC-like structure for Windows Desktop Environment.
+*Add-on libraries and modules for specific applications.
+*On-line support forum for AutoIt users and developers.
+*Supports [[Transmission Control Protocol|TCP]] and [[User Datagram Protocol|UDP]] protocols.
+*Supports COM ([[component object model]]ling) objects.
+*Call functions in [[Microsoft Dynamic Link Library|Win32 DLLs]].
+*Run console applications and access the [[standard streams]].
+*Include files in the compiled file to be extracted when run.
+*[[Graphical User Interface|GUI]] interfaces, create message and input boxes.
+*Play sounds, pause, resume, stop, seek, get the current position of the sound and get the length of the sound.
+*Simulate [[Mouse (computing)|mouse]] movements.
+*Manipulate windows and processes.
+*Automate sending user input and keystrokes to applications, as well as to individual controls within an application.
+*Scripts can be compiled into standalone executables.
+*Unicode support from version 3.2.4.0.
+*64 bit code support from version 3.2.10.0.
+*Supports [[regular expressions]].
+*Works with Windows Vista's [[User Account Control]].
+*Object oriented design through library<ref>[http://autoitobject.origo.ethz.ch/ AutoitObject. a library to use object oriented design in autoit]</ref>
+
+==Limitations==
+*AutoIt is single [[Thread (computer science)|threaded]] which makes asynchronous programming, concurrency and parallelism (e.g.  communications applications) extremely difficult.
+(This can be worked around through the use of such things as multiple [[Process (computing)|processes]], [[Component Object Model]] etc. but it would be much less onerous if a [[Thread (computer science)|multithreading]] API was provided for in the language itself or its libraries.)
+*AutoIt applications are often picked up as a false positive by virus scanners using heuristics as its nature is a self extracting executable
+
+==Usage==
+AutoIt can be used to produce [[utility software]] for [[Microsoft Windows]] and automate common tasks, such as [[website monitoring]], [[network monitoring]], [[disk defragging]] and [[backup]].  It is also used to simulate [[end-user (computer science)|application users]], whereby an [[application software|application]] is ''driven'' by an AutoIt script in place of manual application control during [[software testing]].
+
+== Examples ==
+=== Hello world ===
+<source lang="autoit">
+; Displays "Hello, world!" in a MsgBox and exits.
+MsgBox(0, "Title", "Hello, world!")
+Exit
+
+</source>
+
+=== Find Average ===
+<source lang="autoit">
+
+;Finds the average of numbers specified by a user.
+;The numbers must be delimited by commas.
+#NoTrayIcon
+#include <GUIConstantsEx.au3>
+#include <Array.au3>
+
+#region---------------GUI----------------------- 
+$form = GUICreate("Average Finder", 300, 100)
+$label = GUICtrlCreateLabel("Enter the numbers to be averaged separated by commas", 19, 0)
+$textbox = GUICtrlCreateInput("", 20, 20, 220)
+$label1 = GUICtrlCreateLabel("=", 245, 20, 30, 20)
+$ansLabel = GUICtrlCreateLabel("", 255, 20, 50, 20)
+$button = GUICtrlCreateButton("Find Average", 100, 40)
+GUISetState(@SW_SHOW)
+#region---------------END GUI-----------------------
+
+While 1
+	$msg = GUIGetMsg()
+	If $msg == $GUI_EVENT_CLOSE Then Exit
+	If $msg == $button Then
+		If _findAvg(GUICtrlRead($textbox)) == "malform1" Then
+			GUICtrlSetData($ansLabel,"Error")
+		Else
+			GUICtrlSetData($ansLabel, _findAvg(GUICtrlRead($textbox)))
+		EndIf
+	EndIf
+WEnd
+
+Func _findAvg($nums)
+	;Clean up input format----------------->
+	$chk = StringRight($nums, 5)
+	If $chk == "," Then $nums = StringTrimRight($nums, 1)
+	If StringInStr($nums, ",") == 0 Then
+		Return ("malform1")
+	EndIf
+	;---------------------------------->
+	$sData = StringSplit($nums, ",")
+	$ans = 0
+	$i = 1
+	While $i <= $sData[0]
+		$ans = $ans + $sData[$i]
+		$i += 1
+	WEnd
+	$ans = $ans / $sData[0]
+	Return ($ans)
+EndFunc   ;==>_findAvg
+</source>
+
+==History==
+*December 1998 - Idea of C program that should send keystrokes
+*January 1999 - First AutoIt Version (1.0)
+*August 1999 - AutoIt v2 and AutoItX
+*September 1999 - First AutoIt version with Compiler
+*December 2002 - AutoIt v3 (Public Beta)
+*February 2004 - AutoIt v3 (Stable)
+*September 2006 - Auto3Lib started
+*November 2007 - AutoIt v3.2.10.0 released, Auto3Lib incorporated into AutoIt v3
+*May 2008 - AutoIt v3.2.12.0 released, incorporating added GUI functionality
+*December 2008 - AutoIt (and AutoItX) v3.3.0.0 released
+*December 2009 - AutoIt v3.3.2.0 released
+*January 2010 - AutoIt v3.3.4.0 released
+*March 2010 - AutoIt v3.3.6.0 released
+*April 2010 - AutoIt v3.3.6.1 released
+The developers of AutoIt originally released the source code under the GPL license but the practice was discontinued beginning with version 3.2.0 in August 2006. This led to the fork of some code of version 3.1 by the [[AutoHotkey]] project<ref>[http://www.autohotkey.com/forum/viewtopic.php?p=19710#19710 Chris Mallet (author of AutoHotkey)'s post]</ref>, where now the community is continuing to develop the code as GPL.
+
+==Notes and references==
+{{Reflist}}
+
+==See also==
+*[[AutoHotkey]]
+*[[Automator (software)|Automator]] (for Macintosh)
+*[[iMacros]]
+*[[thinBasic]]
+*[[Visual Basic]]
+*[[Winbatch]]
+
+==External links==
+*[http://www.autoitscript.com/ Official Homepage]
+
+{{BASIC}}
+
+{{DEFAULTSORT:Autoit}}
+[[Category:Scripting languages]]
+[[Category:GUI automation]]
+
+[[cs:AutoIt]]
+[[da:Autoit]]
+[[de:AutoIt]]
+[[es:AutoIt]]
+[[fr:AutoIt]]
+[[ko:오토잇]]
+[[it:AutoIt]]
+[[nl:AutoIt]]
+[[ja:AutoIt]]
+[[oc:AutoIt]]
+[[pl:AutoIt]]
+[[ru:AutoIt]]
+[[sk:AutoIt]]
+[[fi:AutoIt]]
+[[sv:AutoIt]]
+[[tr:AutoIt]]
+[[vi:AutoIt]]</body> </html>

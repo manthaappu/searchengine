@@ -1,0 +1,287 @@
+<html> <head> <title>HMPP Open Standard</title></head><body>HMPP for Hybrid Multicore Parallel Programming.
+
+Based on a set of directives, '''HMPP Open Standard''' is a programming model designed to handle [[hardware accelerator]]s without the complexity associated with [[GPGPU|GPU programming]]. This approach based on directives has been implemented because they enable a loose relationship between an application code and the use of a hardware accelerator.
+<br />
+<br />
+This article deals with '''HMPP directives''' which constitute '''HMPP Open Standard''', but does not address the execution of the directives linked to the directives implementation.
+
+== Introduction ==
+The HMPP directive-based programming model offers a syntax to efficiently offload computations on hardware accelerators and to optimize data movement to/from the hardware memory.
+<br />
+The model is based on works initialized by [http://www.irisa.fr/caps/ CAPS (Compiler  and Architecture for Embedded and Superscalar Processors)], a common project from INRIA, CNRS, the University of Rennes 1 and the INSA of Rennes.
+
+== HMPP Open Standard concept ==
+
+HMPP Open Standard is based on the concept of codelets, functions that can be remotely executed on [[Hardware|HWAs]].
+
+=== The HMPP Codelet Concept ===
+A codelet has the following properties:
+# It is a pure function.
+#* It does not contain static or volatile variable declarations nor refer to any global variables except if these have been declared by a HMPP directive “resident”
+#* It does not contain any function calls with an invisible body (that cannot be inlined). This includes the use of libraries and system functions such as malloc, printf, ...
+#* Every function call must refer to a static pure function (no function pointers).
+# It does not return any value (void function in C or a subroutine in FORTRAN).
+# The number of arguments should be fixed (i.e. no variable number of arguments like vararg in C).
+# It is not recursive.
+# Its parameters are assumed to be non-aliased.
+# It does not contain callsite directives (i.e. RPC to another codelet) or other HMPP directives.
+These properties ensure that a codelet [[Remote procedure call|RPC]] can be remotely executed by a HWA. This RPC and its associated data transfers can be asynchronous.
+
+=== Codelet RPCs ===
+HMPP provides synchronous and asynchronous RPC. 
+Implementation of asynchronous operation is hardware dependent.
+[[File:HMPP RPC.png|center|thumb|upright=1.75|Synchronous versus asynchronous RPC]]
+
+=== HMPP Memory Model ===
+HMPP considers two address spaces: the host processor one and the HWA memory.
+
+[[File:HMPP Memory Model.png|center|thumb|upright=1.7|HMPPP memory Model]]
+
+=== Directives Concept ===
+The HMPP directives may be seen as “meta-information” added in the application source code.They are safe meta-information i.e. they do not change the original code behavior. They address the remote execution (RPC) of a function as well as the transfers of data to/from the HWA memory. 
+
+The table below introduces the HMPP directives. HMPP directives address different needs: some of them are dedicated to declarations and others are dedicated to the management of the execution.
+
+{| class="wikitable" style="cellspacing: 4 px; cellpdding : 4px"
+|- style="background: #412682; color: #FFFFFF;"
+| 
+| Control flow instructions
+| Directives for data management
+|- 
+| style="background: #412682; color: #FFFFFF;" | Declarations 
+| codelet<br />group
+| resident<br />map<br />mapbyname 
+|-
+| style="background: #412682; color: #FFFFFF;" | Operational Directives 
+| callsite<br />synchronize<br />region
+| allocate<br />release<br />advancedload<br />delegatedstore 
+|}
+
+=== Concept of set of directives ===
+One of the fundamental points of the HMPP approach is the concept of directives and their associated labels which makes it possible to expose a coherent structure on a whole set of directives disseminated in an application. 
+
+There are two kinds of labels: 
+* One associated to a codelet. In general, the directives carrying this kind of labels are limited to the management of only one codelet (called stand-alone codelet in the remainder of the document to distinguish it from the group of codelets).
+* One associated to a group of codelets. These labels are noted as follow: “<LabelOfGroup>“, where “LabelOfGroup” is a name specified by the user. In general, the directives which have a label of this type relate to the whole group. The concept of group is reserved to a class of problems which requires a specific management of the data throughout the application to obtain performance.
+
+=== HMPP Directives Syntax ===
+In order to simplify the notations, [[regular expression]]s will be used to describe the syntax of the HMPP directives. 
+
+The color convention below is used for the description of syntax directives: 
+* Reserved HMPP keywords are in <font color="#0070C0">'''blue'''</font>;
+* Elements of grammar which can be declined in HMPP keywords are in <font color="#990000">'''red'''</font>;
+* User’s variables remain in black.
+
+===== General syntax =====
+The general syntax of HMPP directives is: 
+* For C language:
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> [codelet_label]? <font color="990000">directive_type</font> [<font color="#0070C0">,</font><font color="990000">directive_parameters</font>]* [<font color="#0070C0">&</font>]
+
+* For FORTRAN language:
+ <font color="#0070C0">!$hmpp <</font>grp_label<font color="#0070C0">></font> [codelet_label]? <font color="990000">directive_type</font> [<font color="#0070C0">,</font><font color="990000">directive_parameters</font>]* [<font color="#0070C0">&</font>]
+
+Where:
+*<code><grp_label></code>: is a unique identifier naming a group of codelets. In cases where no groups are defined in the application, this label can simply miss. Legal label name must follow this grammar: [a-z,A-Z,_][a-z,A-Z,0-9,_]*. Note that the “< >” characters belong to the syntax and are mandatory for this kind of label. 
+*<code>codelet_label</code>: is a unique identifier naming a codelet. Legal label name must follow this grammar: [a-z,A-Z,_][a-z,A-Z,0-9,_]*
+*<code>directive</code>: is the name of the directive;
+*<code>directive_parameters</code>: designates some parameters associated to the directive. These parameters may be of different kinds and specify either some arguments given to the directive either a mode of execution (asynchronous versus synchronous for example);
+*<code>[&]</code>: is a character used to continue the directive on the next line (same for C and FORTRAN).
+
+===== Directive parameters =====
+The parameters associated to a directive may be of different types. 
+Below are the directive parameters defined in HMPP: 
+*<code>version = major.minor[.micro]</code>: specifies the version of the HMPP directives to be considered by the preprocessor.
+*<code>args[arg_items].size={dimsize[,dimsize]*}</code>: specifies the size of a non scalar parameter (an array).
+*<code>args[arg_items].io=[in|out|inout]</code>: indicates that the specified function arguments are either input, output or both. By default, unqualified arguments are inputs.
+*<code>cond = "expr"</code>: specifies an execution condition as a boolean C or Fortran expression that needs to be true in order to start the execution of the group or codelets.
+*<code>target=target_name[:target_name]*</code>: specifies which targets to try to use in the given order.
+*<code>asynchronous</code>: specifies that the codelet execution is not blocking (default is synchronous).
+*<code>args[<arg_items>].advancedload=true</code>: indicates that the specified parameters are preloaded. Only in or inout parameters can be preloaded.
+*<code>args[arg_items].noupdate=true</code>: this property specifies that the data is already available on the HWA and so that no transfer is needed. When this property is set, no transfer is done on the considered argument
+*<code>args[<arg_items>].addr="<expr>"</code>: <code><expr></code> is an expression that gives the address of the data to upload.
+*<code>args[<arg_items>].const=true</code>: indicates that the argument is to be uploaded only once.
+
+== HMPP Directives ==
+=== Directives for declaring and executing a codelet ===
+A <code>codelet</code> directive declares a computation to be remotely executed on a hardware accelerator.<br />
+For the <code>codelet</code> directive: 
+*The codelet label is mandatory and must be unique in the application
+*The group label is not required if no group is defined.
+*The codelet directive is inserted just before the function declaration.
+
+The syntax of the directive is: 
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> codelet_label <font color="#0070C0">codelet</font> 
+                             [<font color="#0070C0">, version</font> = major.minor[.micro]?]?
+                             [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].io=</font>[[<font color="#0070C0">in</font>|<font color="#0070C0">out</font>|<font color="#0070C0">inout</font>]]*
+                             [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].size={</font>dimsize[,dimsize]*<font color="#0070C0">}</font>]*
+                             [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].const=true</font>]*
+                             [<font color="#0070C0">, cond =</font> "expr"]
+                             [<font color="#0070C0">, target=</font><font color="#990000">target_name</font>[:<font color="#990000">target_name</font>]*]
+
+More than one codelet directive can be added to a function in order to specify different uses or different execution contexts. However, there can be only one codelet directive for a given call site label.
+
+The <code>callsite</code> directive specifies how the use a codelet at a given point in the program. 
+<br />
+The syntax of the directive is:
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> codelet_label <font color="#0070C0">callsite</font>
+                      [<font color="#0070C0">, asynchronous</font>]?
+                      [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].size={</font>dimsize[,dimsize]*<font color="#0070C0">}</font>]*
+                      [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].advancedload=</font>[[<font color="#0070C0">true</font>|<font color="#0070C0">false</font>]]*
+                      [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].addr="</font>expr<font color="#0070C0">"</font>]*
+                      [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].noupdate=true</font>]*
+
+An example is shown here : 
+ /* declaration of the codelet */
+ #pragma hmpp simple1 codelet, args[outv].io=inout, target=CUDA
+ static void matvec(int sn, int sm, loat inv[sm], float inm[sn][sm], float *outv){
+     int i, j;
+     for (i = 0 ; i < sm ; i++) {
+       float temp = outv[i];
+       for (j = 0 ; j < sn ; j++) {
+         temp += inv[j] * inm[i][ j];
+     }
+    outv[i] = temp;
+  }
+  
+  int main(int argc, char **argv) {
+    int n;
+    ........
+  
+  /* codelet use */
+  #pragma hmpp simple1 callsite, args[outv].size={n}
+  matvec(n, m, myinc, inm, myoutv);
+    ........
+  }
+
+In some cases, a specific management of the data throughout the application is required (CPU/GPU data movements optimization, shared variables...).<br />
+The <code>group</code> directive allows the declaration of a group of codelets. The parameters defined in this directive are applied to all codelets belonging to the group. 
+The syntax of the directive is:
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">> group</font> 
+                           [<font color="#0070C0">, version =</font> <major>.<minor>[.<micro>]?]? 
+                           [<font color="#0070C0">, target =</font> <font color="#990000">target_name</font>[:<font color="#990000">target_name</font>]*]]? 
+                           [<font color="#0070C0">, cond  = “</font>expr<font color="#0070C0">”</font>]?
+
+=== Data transfers directives to optimize communication overhead ===
+When using a HWA, the main bottleneck is often the data transfers between the HWA and the main processor.<br />
+To limit the communication overhead, data transfers can be overlapped with successive executions of the same codelet by using the asynchronous property of the HWA.
+
+* allocate directive
+The <code>allocate</code> directive locks the HWA and allocates the needed amount of memory.
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">> allocate</font> [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].size={</font>dimsize[,dimsize]*<font color="#0070C0">}</font>]*
+
+* release directive 
+The <code>release</code> directive specifies when to release the HWA for a group or a stand-alone codelet.
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">> release</font>
+
+* advancedload directive 
+The <code>advancedload</code> directive prefetches data before the remote execution of the codelet.<br />
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> [codelet_label]? <font color="#0070C0">advancedload</font>
+                   <font color="#0070C0">,args[</font>arg_items<font color="#0070C0">]</font>
+                   [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].size={</font>dimsize[,dimsize]*<font color="#0070C0">}</font>]*
+                   [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].addr="</font>expr<font color="#0070C0">"</font>]*
+                   [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].section={</font>[<font color="#990000">subscript_triplet</font><font color="#0070C0">,</font>]+<font color="#0070C0">}</font>]*
+                   [<font color="#0070C0">,asynchronous</font>]
+
+* delegatedstore directive 
+The <code>delegatedstore</code> directive is a synchronization barrier to wait for an asynchronous codelet execution to complete and to then download the results.<br />
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> [codelet_label]? <font color="#0070C0">delegatedstore</font> 
+                 <font color="#0070C0">,args[</font>arg_items<font color="#0070C0">]</font>
+                 [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].addr="</font>expr<font color="#0070C0">"</font>]*
+                 [<font color="#0070C0">,args[</font>arg_items<font color="#0070C0">].section={</font>[<font color="#990000">subscript_triplet</font><font color="#0070C0">,</font>]+<font color="#0070C0">}</font>]*
+
+* Asynchronous Computations 
+The <code>synchronize</code> directive specifies to wait until the completion of an asynchronous callsite execution. 
+For the synchronize directive, the codelet label is always mandatory and the group label is required if the codelet belongs to a group.
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">></font> codelet_label <font color="#0070C0">synchronize</font>
+
+* Example
+In the following example, the device initialization, memory allocation and upload of the input data are done only once outside the loop and not in each iteration of the loop.<br />
+The <code>synchronize</code> directive allows to wait for the asynchronous execution of the codelet to complete before launching another iteration. Finally the <code>delegatedstore</code> directive outside the loop uploads the sgemm result.
+
+ int main(int argc, char **argv) {
+ 
+ #pragma hmpp sgemm allocate, args[vin1;vin2;vout].siez={size,size}
+ #pragma hmpp sgemm advancedload, args[vin1;vin2;vout], args[m,n,k,alpha,beta]
+   
+ for ( j = 0 ; j < 2 ; j ++) {
+    #pragma hmpp sgemm callsite, asynchronous, args[vin1;vin2;vout].advancedload=true, args[m,n,k,alpha,beta].advancedload=true
+    sgemm (size, size, size, alpha, vin1, vin2, beta, vout);
+    #pragma hmpp sgemm  synchronize
+ }
+ 
+ #pragma hmpp sgemm delegatedstore, args[vout]
+ #pragma hmpp sgemm release
+
+=== Sharing Data Between Codelets ===
+Those directives map together all the arguments sharing the given name for all the group.<br />
+The types and dimensions of all mapped arguments must be identical.
+
+The <code>map</code> directive maps several arguments on the device. 
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">>  map, args[</font>arg_items<font color="#0070C0">]</font>
+
+This directive is quite similar as the <code>map</code> directive except that the arguments to be mapped are directly specified by their name. The <code>mapbyname</code> directive is equivalent to multiple <code>map</code> directives. 
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">> mapbyname</font> [<font color="#0070C0">,</font>variableName]+
+
+=== Global Variable ===
+The <code>resident</code> directive declares some variables as global within a group. Those variables can then be directly accessed from any codelet belonging to the group. 
+This directive applies to the declaration statement just following it in the source code. 
+
+The syntax of this directive is: 
+
+ <font color="#0070C0">#pragma hmpp <</font>grp_label<font color="#0070C0">> resident</font> 
+                [<font color="#0070C0">, args[::</font>var_name<font color="#0070C0">].io=</font>[[<font color="#0070C0">in</font>|<font color="#0070C0">out</font>|<font color="#0070C0">inout</font>]]*
+                [<font color="#0070C0">, args[::</font>var_name<font color="#0070C0">].size={</font>dimsize[,dimsize]*<font color="#0070C0">}</font>]*
+                [<font color="#0070C0">, args[::</font>var_name<font color="#0070C0">].addr="</font>expr<font color="#0070C0">"</font>]*
+                [<font color="#0070C0">, args[::</font>var_name<font color="#0070C0">].const=true</font>]*
+
+The notation <code>::var_name</code>  with the prefix <code>::</code>, indicates an  application’s variable declared as resident.
+
+=== Acceleration of Regions ===
+A region is a merge of the codelet/callsite directives. The goal is to avoid code restructuration to build the codelet. Therefore, all the attributes available for <code>codelet</code> or <code>callsite</code> directives can be used on <code>regions</code> directives.
+
+In C language:
+
+ <font color="#0070C0">#pragma hmpp [<</font>MyGroup<font color="#0070C0">>] [</font>label<font color="#0070C0">] region</font>         
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].io=</font>[[<font color="#0070C0">in</font>|<font color="#0070C0">out</font>|<font color="#0070C0">inout</font>]]*
+                            [<font color="#0070C0">, cond = "</font>expr<font color="#0070C0">"]</font><
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].const=true</font>]*
+                            [<font color="#0070C0">, target=</font><font color="#990000">target_name</font>[<font color="#0070C0">:</font><font color="#990000">target_name</font>]*]
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].size={</font>dimsize[<font color="#0070C0">,</font>dimsize]*<font color="#0070C0">}</font>]*
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].advancedload=</font>[[<font color="#0070C0">true</font>|<font color="#0070C0">false</font>]]*
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].addr="</font>expr<font color="#0070C0">"</font>]*
+                            [<font color="#0070C0">, args[</font>arg_items<font color="#0070C0">].noupdate=true</font>]*
+                            [<font color="#0070C0">, asynchronous</font>]?
+                            [<font color="#0070C0">, private=[</font>arg_items<font color="#0070C0">]</font>]*
+    {
+ C BLOCK STATEMENTS
+    }
+
+== Implementations ==
+The HMPP Open Standard is based on HMPP Version 2.3 (May 2009, CAPS entreprise).
+
+The HMPP directive-based programming model is implemented in:
+*HMPP Workbench, the CAPS Entreprise compiler for hybrid computing
+*PathScale ENZO Compiler Suite (support the NVIDIA GPUs)
+<br />
+Moreover, HMPP Open Standard is used by [[High-performance computing|HPC]] actors in Oil & Gas, Energy, Manufacturing, Finance, Education & Research to allow their developers to take the most of multicore processors while preserving their legacy source.
+
+== See also ==
+* [[GPGPU]]
+* [[Parallel computing]]
+
+== References ==
+* [http://www.caps-entreprise.com/upload/ckfinder/userfiles/files/caps-hmpp-gpgpu-Boston-Workshop-Oct-2007.pdf HMPP: A Hybrid Multi-core Parallel Programming Environment]
+* [http://investing.businessweek.com/research/stocks/private/snapshot.asp?privcapId=2839086 CAPS Entreprise SAS and PathScale, LLC to Jointly Collaborate on Making HMPP a New Open Standard]
+* [http://www.informit.com/articles/article.aspx?p=1638075 How Hardware Will Shape Languages] By David Chisnall
+* [http://www.ichec.ie/research/hmpp_intro.pdf Code acceleration with HMPP] By ICHEC (Irish Center for High-End Computing)
+* [http://www-irma.u-strasbg.fr/irmawiki/index.php?title=Exp%C3%A9rience_de_programmation_avec_HMPP&redirect=no Expérience de programmation avec HMPP] By IRMA (Institut de Recherche Mathématique Avancée) - FORTRAN examples
+* [http://www.iiis.org/CDs2008/CD2009SCI/CCCT2009/PapersPdf/T030UF.pdf Directive-based Heterogeneous Programming - A GPU-Accelerated RTM Use Case] By TOTAL Technical and Scientific Center and CAPS Entreprise
+* [http://www.prace-project.eu/documents/04_teslahmpp_gcdv.pdf HMPP Port] By CEA (Commissariat à l'Energie Atomique et aux Energies Alternatives) for PRACE (Partnership for Advanced Computing in Europe)
+
+[[Category:Fortran]]
+[[Category:C programming language family]]
+[[Category:Parallel computing]]
+[[Category:Application programming interfaces]]
+
+[[fr:HMPP Open Standard]]
+[[zh:HMPP开放标准]]</body> </html>

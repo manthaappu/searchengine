@@ -1,0 +1,142 @@
+<html> <head> <title>Server Side Includes</title></head><body>{{No footnotes|date=August 2009}}
+'''Server Side Includes''' ('''SSI''') is a simple interpreted [[server-side scripting]] language used almost exclusively for the [[World Wide Web|web]].
+
+The most frequent use of SSI is to include the contents of one or more files into a web page on a [[web server]]. For example, a web page containing a daily quote could include the quote by placing the following code into the file of the web page:
+<source lang="xml"><!--#include virtual="../quote.txt" --></source>
+With one change of the <code>quote.txt</code> file, all pages including the file will display the latest daily quote. The inclusion is not limited to files. In this very example{{Clarify|reason=This example shows how to copy the text from some file and send it to the web browser. We need a separate example to illustrate running an executable file, and sending the output (not the file itself) to the web browser.|date=July 2010}}, on a server that can run [[Fortune (Unix)|fortune]], the output of it, a randomly selected quote, can also be included.
+
+Server Side Includes are useful for including a common piece of code throughout a site, such as a page header, a page footer and a navigation menu. Conditional navigation menus can be conditionally included using control directives.
+
+In order for a web server to recognize an SSI-enabled [[HTML]] file and therefore carry out these instructions, either the filename should end with a special [[Filename extension|extension]], by default <code>.shtml</code>, <code>.stm</code>, <code>.shtm</code>, or, if the server is configured to allow this, set the execution bit of the file.
+
+As a simple programming language, SSI supports only one [[Data type|type]]: text. Its [[control flow]] is rather simple, choice is supported, but loops are not natively supported and can only be done by recursion using include or using HTTP redirect. The simple design of the language makes it easier to learn and use than most server-side scripting languages, while complicated server-side processing is often done with [[Server-side scripting#Examples|one of the more feature-rich programming languages]]. SSI is [[Turing completeness|Turing complete]]<ref>http://www.janschejbal.de/projekte/ssituring/ Server Side Includes Turing machine, Jan Schejbal. Retrieved 2010-08-12.</ref>.
+
+[[Apache HTTP Server|Apache]], [[lighttpd]] and [[Internet Information Services|IIS]] are the three major web servers that support this language.
+
+== Basic syntax ==
+SSI has a simple syntax: <code><!--#directive parameter=value parameter=value --></code>. Directives are placed in HTML comments so that if SSI isn't enabled, users won't see the SSI directives on the page, unless they look at its source.  Note that the syntax does not allow spaces between the leading "<" and the directive.
+<ref>{{cite web|url=http://httpd.apache.org/docs/2.0/howto/ssi.html#basic|title=Basic SSI Directives and Syntax|accessdate=2010-01-20|date=2010-01-20}}</ref>
+
+== Directives ==
+===Most common directives===
+
+{| class="wikitable"
+! Directive
+! Parameters
+! Description
+! Example
+|-
+| include
+| file, direct or virtual
+| This is probably the most used SSI directive, allowing the content of one document to be included in another. The file or virtual parameters specify the file ([[HTML]] page, text file, script, etc.) to be included. The file parameter defines the included file as relative to the document path; the virtual parameter defines the included file as relative to the document root.
+| <code style="white-space: nowrap;"><nowiki><!--#include virtual="header.html" --></nowiki></code></br> Apache tutorial on SSI stipulates the format requires a space character before the "-->" that closes the element.
+|-
+| include
+| file or virtual
+| Includes the contents of another file or the result of running a [[Common Gateway Interface|CGI]] script.  If the process doesn't have access to read the file or execute the script, the include will fail.  "virtual" specifies the target relative to the domain root, while "file" specifies the path relative to the directory of the current file.  When using "file" it is forbidden to reference to absolute paths. Higher directories (..) are usually forbidden, unless explicitly configured.  The Apache documentation recommends using "virtual" in preference to "file".
+| <code style="white-space: nowrap;"><nowiki><!--#include virtual="menu.cgi" --></nowiki></code><br/>or<br/><code style="white-space: nowrap;"><nowiki><!--#include file="footer.html" --></nowiki></code>
+|-
+| exec
+| cgi or cmd
+| This directive executes a program, script, or shell command on the server. The cmd parameter specifies a server-side command; the cgi parameter specifies the path to a [[Common Gateway Interface|CGI]] script. The PATH_INFO and QUERY_STRING of the current SSI script will be passed to the CGI script, as a result "exec cgi" should be used instead of "include virtual".
+| <code style="white-space: nowrap;"><nowiki><!--#exec cgi="/cgi-bin/foo.cgi" --></nowiki></code><br/>or<br/><code style="white-space: nowrap;"><nowiki><!--#exec cmd="ls -l" --></nowiki></code>
+|-
+| echo
+| var
+| This directive displays the contents of a specified [[HTTP]] [[environment variable]]. Variables include HTTP_USER_AGENT, LAST_MODIFIED, and HTTP_ACCEPT.
+| <code style="white-space: nowrap;"><nowiki><!--#echo var="REMOTE_ADDR" --></nowiki></code>
+|-
+| config
+| timefmt, sizefmt, or errmsg
+| This directive configures the display formats for the date, time, filesize, and error message (returned when an SSI command fails).
+| <code style="white-space: nowrap;"><nowiki><!--#config timefmt="%y %m %d" --></nowiki></code><br/>or<br/><code style="white-space: nowrap;"><nowiki><!--#config sizefmt="bytes" --></nowiki></code><br/>or<br/><code style="white-space: nowrap;"><nowiki><!--#config errmsg="SSI command failed!" --></nowiki></code>
+|-
+| flastmod or fsize
+| file or virtual
+| These directives display the date when the specified document was last modified, or the specified document's size. The file or virtual parameters specify the document to use. The file parameter defines the document as relative to the document path; the virtual parameter defines the document as relative to the document root.
+| <code style="white-space: nowrap;"><nowiki><!--#flastmod virtual="index.html" --></nowiki></code><br/>or<br/><code style="white-space: nowrap;"><nowiki><!--#fsize file="script.pl" --></nowiki></code>
+|-
+| printenv
+|  
+| This directive outputs a list of all variables and their values, including environmental and user-defined variables. It has no attributes.
+| <code style="white-space: nowrap;"><nowiki><!--#printenv --></nowiki></code>
+|}
+
+===Control directives===
+
+{| class="wikitable"
+! Directive
+! Parameters
+! Description
+! Example
+|-
+| if
+| expr
+| Used for condition tests that may determine and generate multiple logical pages from one single physical page.
+| <code style="white-space: nowrap;"><nowiki><!--#if expr="${Sec_Nav}" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#include virtual="" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#endif --></nowiki></code>
+|-
+| elif
+| expr
+| Serves the same purpose as further conditioning in programming languages.
+| <code style="white-space: nowrap;"><nowiki><!--#if expr="${Sec_Nav}" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#include virtual="secondary_nav.txt" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#elif expr="${Pri_Nav}" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#include virtual="primary_nav.txt" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#endif --></nowiki></code>
+|-
+| else
+|
+| If none of the if and elif directive catches the present condition, things in here should happen.
+| <code style="white-space: nowrap;"><nowiki><!--#if expr="${Sec_Nav}" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#include virtual="secondary_nav.txt" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#else --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#include virtual="article.txt" --></nowiki></code><br/><code style="white-space: nowrap;"><nowiki><!--#endif --></nowiki></code>
+|-
+| endif
+|
+| Termination of a conditional construct.
+| See above for example.
+|-
+| set
+| var, value
+| Sets the value of a SSI variable.  (Not supported by all implementations)
+| <code style="white-space: nowrap;"><nowiki><!--#set var="foo" value="bar" --></nowiki></code>
+|}
+
+The <code style="white-space: nowrap;"><nowiki><!--#set --></nowiki></code> command is supported in both Apache httpd and lighttpd.
+
+==Client Side Includes==
+'''Client Side Includes''' are HTML includes achieved on the [[client-side]].  This means that the inclusions can be cached on the client.  It also means that web pages with includes can be viewed locally on the file system without a web server.
+
+However, while HTML allows the direct inclusion of CSS, JavaScript and Image files into a web page it has never allowed direct inclusion of HTML. There are several tricks to achieve this, each with their own problems.  These include:-
+* Using an [[HTML element#Frames|IFrame]], which includes content in a clearly separate, fixed size area.
+* Converting the HTML code into a JavaScript program that inserts the HTML into the DOM. 
+* Using JavaScript with [[Ajax (programming)|Ajax]] to load the HTML.  No modern web browsers will generally allow this to work directly from the file system due to security concerns.
+
+These client-side includes are relatively complex, are not accessible to WYSIWYG editors, and rely on the client's support of their respective technologies.  In the case of frames and iframes, they are less accessible.
+
+At first it seems that manually copying and recopying HTML fragments from page to page is the easiest way, but SSI/CSI pays off. In the future, browsers may implement the W3C [[XInclude]] specification which enables client-side includes. Similarly, client-side XML includes may be done in some browsers today through the use of [[Document Type Definition|DTD]]s and external entities.
+
+== See also ==
+*[[Apache HTTP Server]]
+*[[Edge Side Includes|ESI (Edge Side Includes)]]
+*[[Transclusion]]
+
+== References ==
+{{Reflist}}
+
+== External links ==
+* [http://httpd.apache.org/docs/2.2/mod/mod_include.html Apache mod_include Reference]
+* [http://httpd.apache.org/docs/2.2/howto/ssi.html Apache SSI Tutorial]
+* [http://hoohoo.ncsa.uiuc.edu/docs/tutorials/includes.html Original NCSA HTTPd SSI Reference]
+* [http://www.yourhtmlsource.com/sitemanagement/includes.html Server-Side Includes Tutorial]
+* [http://www.andreas.com/faq-ssi.html Plain-English Guide to SSI]
+* [http://www.ssi-developer.net/ssi/ SSI-Developer, Apache Server Side Includes]
+
+[[Category:Scripting languages]]
+
+[[de:Server Side Includes]]
+[[fr:Server Side Includes]]
+[[it:Server Side Include]]
+[[he:Server Side Includes]]
+[[ka:Server Side Includes]]
+[[nl:Server Side Includes]]
+[[ja:Server Side Includes]]
+[[pl:Server Side Includes]]
+[[ru:SSI (программирование)]]
+[[fi:Server Side Includes]]
+[[sv:Server Side Includes]]
+[[uk:SSI]]</body> </html>

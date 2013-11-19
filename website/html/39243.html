@@ -1,0 +1,44 @@
+<html> <head> <title>Variational Monte Carlo</title></head><body>In [[mathematical physics]], '''variational Monte Carlo (VMC)''' is a [[quantum Monte Carlo]] method that applies the [[Variational method (quantum mechanics)|variational method]] to approximate the ground state of the system.  
+
+The [[expectation value]] necessary can be written in the <math>x</math> representation as
+
+: <math> \frac{\langle \Psi(a) | H | \Psi(a) \rangle} {\langle \Psi(a) |  \Psi(a) \rangle } = \frac{\int | \Psi(X,a) | ^2 \frac{H\Psi(X,a)}{\Psi(X,a)} \, dX} { \int | \Psi(X,a)|^2 \, dX}. </math>
+
+Following the [[Monte Carlo method]] for evaluating integrals, we can interpret <math> \frac{ | \Psi(X,a) | ^2 } { \int | \Psi(X,a) | ^2 \, dX } </math>
+
+as a [[probability distribution]] function, sample it, and evaluate the energy expectation value <math> E(a) </math> as the average of the local function <math> \frac{H\Psi(X,a)}{\Psi(X,a)} </math>, and minimize <math> E(a) </math>.  
+
+VMC is no different from any other variational method, except that since the many-dimensional integrals are evaluated numerically, we only need to calculate the value of the possibly very complicated wave function, which gives a large amount of flexibility to the method.  One of the largest gains in accuracy over writing the wave function separably comes from the introduction of the so-called Jastrow factor, where the wave function is written as <math> exp(\sum{u(r_{ij})})</math>, where <math> r_{ij} </math> is the distance between a pair of quantum particles.  With this factor, we can explicitly account for particle-particle correlation, but the many-body integral becomes unseparable, so Monte Carlo is the only way to evaluate it efficiently.  In chemical systems, slightly more sophisticated versions of this factor can obtain 80&ndash;90% of the correlation energy (see [[electronic correlation]]) with less than 30 parameters.  In comparison, a configuration interaction calculation may require around 50,000 parameters to reach that accuracy, although it depends greatly on the particular case being considered.  In addition, VMC usually scales as a small power of the number of particles in the simulation, usually something like ''N''<sup>2&minus;4</sub> for calculation of the energy expectation value, depending on the form of the wave function.
+
+== Wave function optimization in VMC ==
+
+QMC calculations crucially depend on the quality of the trial-function, and so it is essential to have an optimized wave-function as close as possible to the ground state.
+The problem of function [[Optimization (mathematics)|optimization]] is a very important research topic in numerical simulation. In QMC, in addition to the usual difficulties to find the minimum of multidimensional parametric function, the statistical noise is present in the estimate of the cost function (usually the energy), and its derivatives, required for an efficient optimization.
+
+Different cost functions and different strategies were used to optimize a many-body trial-function. Usually three cost functions were used in QMC optimization energy, variance or a linear combination of them.  The variance optimization method has the advantage that the exact wavefunction's variance is known.  (Because the exact wavefunction is an eigenfunction of the Hamiltonian, the variance of the local energy is zero).  This means that variance optimization is ideal in that it is bounded by below, it is positive defined and its minimum is known.  Energy minimization may ultimately prove more effective, however, as different authors recently showed that the energy optimization is more effective than the variance one.
+
+There are different motivations for this: first, usually one is interested in the lowest energy rather than in the lowest variance in both variational and diffusion Monte Carlo; second, variance optimization takes many iterations to optimize determinant parameters and often the optimization can get stuck in multiple local minimum and it suffers of the "false convergence" problem; third energy-minimized wave functions on average yield more accurate values of other expectation values than variance minimized wave functions do.
+
+The optimization strategies can be divided into three categories. The first strategy is based on correlated sampling together with deterministic optimization methods. Even if this idea yielded very accurate results for the first-row atoms, this procedure can have problems if parameters affect the nodes, and moreover density ratio of the current and initial trial-function increases exponentially with the size of the system. In the second strategy one use a large bin to evaluate the cost function and its derivatives in such way that the noise can be neglected and deterministic methods can be used.
+
+The third approach, is based on an iterative technique to handle directly with noise functions. The first example of these methods is the so called Stochastic Gradient Approximation (SGA), that was used also for structure optimization. Recently an improved and faster approach of this kind was proposed the so called Stochastic Reconfiguration (SR) method.
+
+== References ==
+
+* [http://prola.aps.org/abstract/PR/v138/i2A/pA442_1] W. L. McMillan, Phys. Rev. '''138''', A442 (1965)
+* [http://link.aps.org/abstract/PRB/v16/p3081] D. Ceperley, G. V. Chester and M. H. Kalos, Phys. Rev. B '''16''', 3081 (1977)
+
+* Wave-function optimization in VMC
+** [http://link.aip.org/link/%3FJCPSA6/115/1166/1] M. Snajdr. and S. M. Rothstein., J. Chem. Phys. '''112''', 4935 (2000) 
+** [http://arxiv.org/abs/physics/0110003] D. Bressanini ''et al.'', J. Chem. Phys. '''116''', 5345 (2002)
+** [http://link.aps.org/doi/10.1103/PhysRevLett.60.1719] J. W. Wilkins C. J. Umrigar and K. G. Wilson, Phys. Rev. Lett. '''60''', 1719 (1988)
+** [http://prola.aps.org/abstract/PRB/v59/i19/p12344_1] P. R. C. Kent, R. J. Needs and G. Rajagopal, Phys. Rev. B, '''59''', 12344 (1999)
+** [http://arxiv.org/abs/physics/9911005] X. Lin, H. Zhang and A. M. Rappe, J. Chem. Phys., '''112''', 2650 (2000)
+** [http://prola.aps.org/abstract/PRL/v79/i7/p1173_1] A. Harju, B. Barbiellini, S. Siljamaki, R. M. Nieminen and G. Ortiz,  Phys. Rev. Lett. '''79''', 1173 (1997)
+** [http://link.aip.org/link/%3FJCPSA6/100/7416/1] S. Tanaka, J. Chem. Phys., '''100''', 7416 (1994)
+** [http://arxiv.org/abs/cond-mat/0409644] M. Casula, C. Attaccalite and S. Sorella,  J. Chem. Phys. '''121''', 7110 (2004)
+** [http://link.aps.org/doi/10.1103/PhysRevB.72.085124] N. D. Drummond and R. J. Needs, Phys. Rev. B '''72''', 085124 (2005).
+
+[[Category:Quantum chemistry]]
+[[Category:Quantum Monte Carlo]]
+[[Category:Mathematical optimization]]</body> </html>

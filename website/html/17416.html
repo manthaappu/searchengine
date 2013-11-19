@@ -1,0 +1,102 @@
+<html> <head> <title>ICMPv6</title></head><body>'''Internet Control Message Protocol version 6''' ('''ICMPv6''') is the implementation of the [[Internet Control Message Protocol]] (ICMP) for [[Internet Protocol version 6]] (IPv6). ICMPv6 is an integral part of IPv6 and performs error reporting, diagnostic functions (e.g., [[ping]]), [[Neighbor Discovery Protocol|neighbor discovery]], and a framework for extensions to implement future Internet Protocol control aspects. ICMPv6 is defined in RFC 4443.<ref>RFC 4443, ''Internet Control Message Protocol (ICMPv6) for the Internet Protocol Version 6 (IPv6) Specification''</ref>
+
+{{IPstack}}
+==Technical details==
+ICMPv6 messages may be classified into two categories: ''error messages'' and ''information messages''.
+ICMPv6 messages are transported by IPv6 packets in which the [[IPv6#Packet format|IPv6 Next Header]] value for ICMPv6 is set to 58.
+
+==Packet format==
+The ICMPv6 packet consists of a header and the protocol payload. The header contains only three fields: ''type'' (8 bits), ''code'' (8 bits), and ''checksum'' (16 bits). ''type'' specifies the type of the message. Values in the range from 0 to 127 (high-order bit is 0) indicate an error message, and, when the high-order bit is 1 (128 to 255), it is an information message. The ''code'' field value depends on the message type and provides an additional level of message granularity. The ''checksum'' field provides a minimal level of integrity verification for the ICMP message.
+
+{| class="wikitable" style="text-align:center"
+|+ICMPv6 packet
+|-
+! Bit offset !! colspan="8" width="22%" | 0–7 !! colspan="8" width="22%" | 8–15 !! colspan="16" width="44%"| 16–31  
+|-
+| '''0''' || colspan="8"| Type || colspan="8"| Code || colspan="16"| Checksum
+|-
+| '''32''' || colspan="32"| Message body
+|-
+|}
+
+==Types of ICMPv6 messages==
+{| class="wikitable"
+! Type !! Meaning
+|-
+! colspan="2" align="center"| ICMPv6 Error Messages
+|-
+| 1 || Destination Unreachable
+|-
+| 2 || Packet Too Big
+|-
+| 3 || Time Exceeded
+|-
+| 4 || Parameter Problem
+|-
+| 100 || Private experimentation
+|-
+| 101 || Private experimentation
+|-
+| 127 || Reserved for expansion of ICMPv6 error messages
+|-
+! colspan="2" align="center"| ICMPv6 Informational Messages
+|-
+| 128 || Echo Request
+|-
+| 129 || Echo Reply
+|-
+| 133 || Router Solicitation
+|-
+| 134 || Router Advertisement
+|-
+| 135 || Neighbor Solicitation
+|-
+| 136 || Neighbor Advertisement
+|-
+| 151 || Multicast Router Advertisement
+|-
+| 152 || Multicast Router Solicitation
+|-
+| 153 || Multicast Router Termination
+|-
+| 200 || Private experimentation
+|-
+| 201 || Private experimentation
+|-
+| 255 || Reserved for expansion of ICMPv6 informational messages
+|}
+
+Note that the table above is not comprehensive. The current complete list of assigned ICMPv6 types can be found at this link: [http://www.iana.org/assignments/icmpv6-parameters IANA: ICMPv6 Parameters].
+
+==Operation==
+===Message checksum===
+ICMPv6 provides a minimal level of message integrity verification by the inclusion of a 16-bit [[checksum]] in its header. The checksum is calculated starting with a pseudo-header of IPv6 header fields according to the IPv6 standard,<ref>RFC 2460,  '' Internet Protocol, Version 6 (IPv6) Specification'', Section 8.1 (''Upper-Layer Checksum''), S. Deering, R. Hinden (December 1998)</ref> which consists of the source and destination addresses, the packet length and the next header field, the latter of which is set to the value 58. Following this pseudo header, the checksum is continued with the ICMPv6 message in which the checksum is initially set to zero. The checksum computation is performed according to Internet protocol standards using 16-bit [[one's complement]] summation, followed by complementing the checksum itself and inserting it into the checksum field.<ref>RFC 1071, ''Computing the Internet Checksum'', R. Braden, D. Borman, C. Partridge (September 1988)</ref>
+
+===Message processing===
+When an ICMPv6 node receives a packet, it must undertake actions that depend on the type of message. The ICMPv6 protocol must limit the number of error messages sent to the same destination to avoid network overloading. For example, if a node continues to forward erroneous packets, ICMP will signal the error to the first packet and then do so periodically, with a fixed minimum period or with a fixed network maximum load. An ICMP error message must never be sent in response to another ICMP error message.
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://www.iana.org/assignments/icmpv6-parameters IANA: ICMPv6 Parameters]
+* RFC 2894, ''Router Renumbering for IPv6''
+
+{{IPv6}}
+
+[[Category:Internet protocols]]
+[[Category:Internet Layer protocols]]
+[[Category:Network layer protocols]]
+[[Category:IPv6]]
+
+[[cs:ICMPv6]]
+[[de:ICMPv6]]
+[[es:ICMPv6]]
+[[fr:Internet Control Message Protocol V6]]
+[[it:ICMPv6]]
+[[ja:Internet Control Message Protocol for IPv6]]
+[[pl:ICMPv6]]
+[[pt:ICMPv6]]
+[[ru:ICMPv6]]
+[[tr:ICMPv6]]
+[[zh:ICMPv6]]</body> </html>

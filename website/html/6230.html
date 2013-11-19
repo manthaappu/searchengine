@@ -1,0 +1,81 @@
+<html> <head> <title>Chroot</title></head><body>{{lowercase|title=chroot}}
+A '''chroot''' on [[Unix]] [[operating system]]s is an operation that changes the apparent disk [[root directory]] for the current running process and its children. A program that is re-rooted to another directory cannot access or name files outside that directory, and the directory is called a "chroot [[Jail_(computer_security)|jail]]" or (less commonly) a "chroot prison". The term "chroot" may refer to the <tt>chroot(2)</tt> [[system call]] or the <tt>chroot(8)</tt> wrapper program.
+
+==History==
+The chroot system call was introduced during development of [[Version 7 Unix]] in 1979, and also added to BSD by [[Bill Joy]] on 18 March 1982 — 17 months before [[BSD|4.2BSD]] was released — in order to test its installation and build system.
+
+==Uses==
+A chroot environment can be used to create and host a separate [[jail (computer security)|virtualized]] copy of the software system. This can be useful for:
+; Testing and development : A test environment can be set up in the chroot for software that would otherwise be too risky to deploy on a production system.
+; Dependency control : Software can be developed, built and tested in a chroot populated only with its expected dependencies. This can prevent some kinds of linkage skew that can result from developers building projects with different sets of program libraries installed.
+; Compatibility : Legacy software or software using a different [[application binary interface|ABI]] must sometimes be run in a chroot because their supporting libraries or data files may otherwise clash in name or linkage with those of the host system.
+; Recovery : Should a system be rendered unbootable, a chroot can be used to move back into the damaged environment after bootstrapping from an alternate root file system (such as from installation media, or a [[Live CD]]).
+; Privilege separation : Programs are allowed to carry open [[file descriptor]]s (for files, [[pipeline (Unix)|pipelines]] and network connections) into the chroot, which can simplify jail design by making it unnecessary to leave working files inside the chroot directory. This also simplifies the common arrangement of running the potentially-vulnerable parts of a privileged program in a sandbox, in order to pre-emptively contain a security breach.  Note that chroot is not necessarily enough to contain a process with root privileges.
+
+==Limitations==
+
+* The chroot mechanism is not intended to defend against intentional tampering by privileged (root) users. On most systems, chroot contexts do not stack properly and chrooted programs with sufficient privileges may perform a [http://www.bpfh.net/simes/computing/chroot-break.html second chroot] to break out. To mitigate the risk of this security weakness, chrooted programs should relinquish root privileges as soon as practical after chrooting, or other mechanisms - such as [[FreeBSD_jail|FreeBSD Jails]] - should be used instead. Note that some systems, such as [[FreeBSD]], take precautions to prevent the second chroot attack<ref>http://man.freebsd.org/chroot/2</ref>.
+
+* On systems that support device nodes on ordinary filesystems, a chrooted [[superuser|root user]] can still create device nodes and mount the file systems on them; thus, the chroot mechanism is not intended by itself to be used to block low-level access to system devices by privileged users.
+
+* At startup, programs expect to find [[scratch space]], configuration files, [[device node]]s and [[shared library|shared libraries]] at certain preset locations. For a chrooted program to successfully start, the chroot directory must be populated with a minimum set of these files. This can make chroot difficult to use as a general sandboxing mechanism.
+
+* Only the [[superuser|root user]] can perform a chroot. This is intended to prevent users from putting a [[setuid]] program inside a specially-crafted chroot jail (for example, with a fake <tt>/etc/passwd</tt> and <tt>/etc/shadow</tt> file) that would fool it into a [[privilege escalation]].
+
+* The chroot mechanism in itself also is not intended to restrict the use of resources like [[Input/output|I/O]], bandwidth, disk space or CPU time. Most Unixes are not completely file system-oriented and leave potentially disruptive functionality like networking and process control available through the system call interface to a chrooted program.
+
+Some Unixes offer extensions of the chroot mechanism — broadly termed [[operating system-level virtualization]] — to address at least some of these limitations. These include:
+* [[Workload Partitions]] in [[IBM AIX (operating system)|AIX]]
+* [[Solaris Containers|Containers]] in [[Solaris Operating System|Solaris]]
+* [[Linux-VServer]], [[FreeVPS]], and [[OpenVZ]] for [[Linux]]
+* [[FreeBSD jail|Jails]] in [[FreeBSD]]
+* [[sysjail|Sysjails]] in [[NetBSD]] and [[OpenBSD]]
+* [[DragonFly BSD jails]] in [[DragonFly BSD]]
+
+== Graphical Applications on chroot ==
+It is possible to run graphical applications on a chrooted environment, using some methods<ref>http://wiki.mandriva.com/en/Development/Howto/Chroot#Launch_X_Applications_inside_the_chroot</ref><ref>http://gentoo-wiki.com/HOWTO_startx_in_a_chroot</ref>:
+* Use [[xhost]] (or copy the secret from .Xauthority)
+* Use a nested X server like [[Xnest]] or the more modern [[Xephyr]] (or start a real X server from inside the jail)
+* Access the chroot via [[SSH]] using the X11 forwarding (ssh -X) feature
+* use [http://www.elstel.com/openroot/ openroot] if your X server has been started with -nolisten tcp and if you do not run an ssh server.
+* using an X11 [[VNC]] server and connecting a [[VNC]] client outside the environment
+
+==Notable applications==
+* The [[Postfix (software)|Postfix]] mail transfer agent operates as a pipeline of individually-chrooted helper programs.
+* Like 4.2BSD before it, the Debian and Ubuntu internal package-building farms use chroots extensively to catch unintentional build dependencies between packages. [[SUSE]] uses a similar method with its ''build'' program.  Fedora, Red Hat, and various RPM-based distributions build all RPMs using a chroot tool such as [http://fedoraproject.org/wiki/Projects/Mock mock].
+* Many [[FTP server]]s for POSIX systems use the chroot mechanism to sandbox untrusted FTP clients. This may be done by forking a process to handle an incoming connection, then chrooting the child (to avoid having to populate the chroot with libraries required for program startup).
+* If privilege separation is enabled, the [[OpenSSH]] daemon will chroot an unprivileged helper process into an empty directory to handle pre-authentication network traffic for each client. The daemon can also sandbox SFTP and shell sessions in a chroot (from version 4.9p1 onwards).<ref>{{cite web|title = sshd_config(5) manual page|url = http://www.openbsd.org/cgi-bin/man.cgi?query=sshd_config|accessdate = 2008-04-27|date = 2008-04-05}}</ref>
+
+==References==
+{{refbegin}}
+<references/>
+* {{man|2|chroot|FreeBSD|change root directory}}
+* {{man|8|chroot|FreeBSD|change root directory}}
+* {{man|2|chroot|Linux|change root directory}}
+{{refend}}
+* [http://www.elstel.com/openroot/ openroot - an extended chroot with X11 access, /dev & /media automounting & more.]
+
+==See also==
+* [[List of Unix programs]]
+* [[Operating system-level virtualization]]
+
+{{unix commands}}
+
+[[Category:Computer security procedures]]
+[[Category:Free virtualization software]]
+[[Category:Unix process and task management-related software]]
+[[Category:Virtualization_software]]
+
+[[cs:Chroot]]
+[[de:Chroot]]
+[[es:Chroot]]
+[[fr:Chroot]]
+[[it:Chroot]]
+[[ja:Chroot]]
+[[pl:Chroot]]
+[[pt:Chroot]]
+[[ro:Chroot]]
+[[ru:Chroot]]
+[[sv:Chroot]]
+[[uk:Chroot]]
+[[zh:Chroot]]</body> </html>

@@ -1,0 +1,50 @@
+<html> <head> <title>Heuristic function</title></head><body>{{citations missing|article|date=October 2007}}
+A '''heuristic function''', or simply a '''heuristic''', is a [[Function (mathematics)|function]] that ranks alternatives in various [[search algorithm]]s at each branching step based on the available information ([[heuristic]]ally) in order to make a decision about which branch to follow during a search.
+
+==Shortest paths==
+
+For example, for [[shortest path problem]]s, a ''heuristic'' is a [[function (mathematics)|function]], <math>h(n)</math> defined on the nodes of a [[search tree]], which serves as an estimate of the cost of the cheapest path from that node to the [[Objective (goal)|goal]] node. Heuristics are used by [[informed search algorithm]]s such as [[Greedy best-first search]] and [[A-star search algorithm|A*]] to choose the best node to explore. Greedy best-first search will choose the node that has the lowest value for the heuristic function. A* search will expand nodes that have the lowest value for <math> g(n)+h(n) </math>, where <math>g(n)</math> is the (exact) cost of the path from the initial state to the current node. If <math>h(n)</math> is [[Admissible heuristic|''admissible'']]&mdash;that is, if <math>h(n)</math> never overestimates the costs of reaching the goal&mdash;, then A* will always find an [[Optimization (mathematics)|optimal]] solution.
+
+The classical problem involving heuristics is the [[n-puzzle]]. Commonly used heuristics for this problem include counting the number of misplaced tiles and finding the sum of the [[Manhattan distance]]s between each block and its position in the goal configuration. Note that both are admissible.
+
+===Effect of heuristics on computational performance===
+
+In any searching problem where there are <math>b</math> choices at each node and a depth of <math>d</math> at the goal node, a naive searching algorithm would have to potentially search around <math>b^d</math> nodes before finding a solution. Heuristics improve the efficiency of search algorithms by reducing the [[branching factor]] from <math>b</math> to a lower constant <math>b'</math>, using a cutoff mechanism.  The branching factor can be used for defining a [[partial order]] on the heuristics, such that <math>h_1(n) < h_2(n)</math> if <math>h_1(n)</math> has a lower branch factor than <math>h_2(n)</math> for a given node <math>n</math> of the search tree.  Heuristics giving lower branching factors at every node in the search tree are preferred for the resolution of a particular problem, as they are more computationally efficient.
+
+===Finding heuristics===
+
+The problem of finding an admissible heuristic with a low branching factor for common search tasks has been extensively researched in the [[artificial intelligence]] community. 
+Several common techniques are used:
+
+* Solution costs of '''sub-problems''' often serve as useful estimates of the overall solution cost. These are always admissible. For example, a heuristic for a 10-puzzle might be the cost of moving tiles 1-5 into their correct places. A common idea is to use a pattern database that stores the exact solution cost of every subproblem instance.
+
+* The solution of a '''relaxed problem''' often serves as a useful admissible estimate of the original. For example, manhattan distance is a relaxed version of the n-puzzle problem, because we assume we can move each tile to its position independently of moving the other tiles. 
+
+* Given a set of admissible heuristic functions <math>h_1(n), h_2(n), ..., h_i(n)</math>, the function <math>h(n) = \max\{h_1(n), h_2(n), ..., h_i(n)\}</math> is an admissible heuristic that dominates all of them.       
+
+Using these techniques a program called ABSOLVER was written (1993) by A.E. Prieditis for automatically generating heuristics for a given problem. ABSOLVER generated a new heuristic for the [[n-puzzle|8-puzzle]] better than any pre-existing heuristic and found the first useful heuristic for solving the [[Rubik's Cube]].
+
+
+===Consistency and Admissibility===
+If a Heuristic function never over-estimates the cost reaching to goal, then it is called an Admissible heuristic function.
+
+If <math>H(n)</math> is consistent then the value of <math>H(n)</math> for each node along a path to goal node are non decreasing.
+
+==See also==
+* [[Heuristic algorithm]]
+* [[Artificial intelligence]]
+* [[Consistent heuristic]]
+* [[Expert system]]
+* [[Heuristic evaluation]]
+* [[Inference engine]]
+* [[Inquiry]]
+* [[Problem solving]]
+* [[Admissible heuristic]]
+
+==References==
+<references/>
+*{{Russell Norvig 2003}} -- Chapter 4
+
+[[Category:Heuristics]]
+
+[[ko:휴리스틱 함수]]</body> </html>

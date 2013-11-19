@@ -1,0 +1,265 @@
+<html> <head> <title>A* search algorithm</title></head><body>{{dablink|For other uses of "A*" and "A star", see [[A* (disambiguation)]].}}
+{{graph search algorithm}}
+In [[computer science]], '''A*''' (pronounced "A star") is a [[computer algorithm]] that is widely used in [[pathfinding]] and [[graph traversal]], the process of plotting an efficiently traversable path between points, called nodes. Noted for its [[Computer performance|performance]] and accuracy, it enjoys widespread use. [[Peter E. Hart|Peter Hart]], [[Nils Nilsson (researcher)|Nils Nilsson]], and [[Bertram Raphael]] first described the algorithm in 1968<ref>{{cite journal
+ | first = P. E.
+ | last = Hart
+ | coauthors = Nilsson, N. J.; Raphael, B.
+ | title = A Formal Basis for the Heuristic Determination of Minimum Cost Paths
+ | journal = [[Institute of Electrical and Electronics Engineers|IEEE]] Transactions on Systems Science and Cybernetics SSC4
+ | issue = 2
+ | pages = 100–107
+ | year = 1968
+ | doi = 10.1109/TSSC.1968.300136
+ | volume = 4
+ }}
+</ref>. It is an extension of Edsger Dijkstra's [[Dijkstra's algorithm|1959 algorithm]]. A* achieves better performance (with respect to time) by using [[heuristics]].
+
+==Description==
+
+A* uses a [[best-first search|best-first]] search and finds the least-cost path from a given initial [[node (graph theory)|node]] to one [[goal node]] (out of one or more possible goals).
+
+It uses a distance-plus-cost [[heuristic]] function (usually denoted <math>f(x)</math>) to determine the order in which the search visits nodes in the tree. The distance-plus-cost heuristic is a sum of two functions: 
+* the path-cost function, which is the cost from the starting node to the current node (usually denoted <math>g(x)</math>)
+* and an [[Admissible heuristic|admissible]] "heuristic estimate" of the distance to the goal (usually denoted <math>h(x)</math>).
+
+The <math>h(x)</math> part of the <math>f(x)</math> function must be an [[admissible heuristic]]; that is, it must not overestimate the distance to the goal. Thus, for an application like [[routing]], <math>h(x)</math> might represent the straight-line distance to the goal, since that is physically the smallest possible distance between any two points or nodes.
+
+If the [[heuristic]] ''h'' satisfies the additional condition <math>h(x) \le d(x,y) + h(y)</math> for every edge ''x, y'' of the graph (where ''d'' denotes the length of that edge), then ''h'' is called [[Consistent heuristic|monotone, or consistent]]. In such a case, A* can be implemented more efficiently—roughly speaking, no node needs to be processed more than once (see ''closed set'' below)—and A* is equivalent to running [[Dijkstra's algorithm]] with the [[reduced cost]] <math>d'(x, y) := d(x, y) - h(x) + h(y)</math>.
+
+Note that A* has been generalized into a bidirectional heuristic search algorithm; see [[bidirectional search]].
+
+==History==
+In 1964 Nils Nilsson invented a heuristic based approach to increase the speed of Dijkstra's algorithm. This algorithm was called A1. In 1967 Bertram Raphael made dramatic improvements upon this algorithm, but failed to show optimality. He called this algorithm A2. Then in 1968 Peter E. Hart introduced an argument that proved A2 was optimal when using a consistent heuristic with only minor changes. His proof of the algorithm also included a section that showed that the new A2 algorithm was the best algorithm possible given the conditions. He thus named the new algorithm in [[Kleene star]] syntax to be the algorithm that starts with A and includes all possible version numbers or A*.
+<ref>http://www.eecs.berkeley.edu/~klein/
+</ref>
+
+==Concepts==
+
+As A* traverses the graph, it follows a path of the lowest ''known'' cost, keeping a sorted [[priority queue]] of alternate path segments along the way. If, at any point, a segment of the path being traversed has a higher cost than another encountered path segment, it abandons the higher-cost path segment and traverses the lower-cost path segment instead. This process continues until the goal is reached.
+
+==Process==
+
+[[Image:A+ Pathfinding Algorithm.png|thumb|A single-step simulation]]
+Like all [[informed search algorithm]]s, it first searches the routes that ''appear'' to be most likely to lead towards the goal. What sets A* apart from a [[greedy algorithm|greedy]] [[best-first search]] is that it also takes the distance already traveled into account; the <math>g(x)</math> part of the heuristic is the cost from the start, not simply the local cost from the previously expanded node.
+
+Starting with the initial node, it maintains a [[priority queue]] of nodes to be traversed, known as the ''open set'' (not to be confused with [[open set]]s in [[topology]]). The lower <math>f(x)</math> for a given node <math>x</math>, the higher its priority. At each step of the algorithm, the node with the lowest <math>f(x)</math> value is removed from the queue, the <math>f</math> and <math>h</math> values of its neighbors are updated accordingly, and these neighbors are added to the queue. The algorithm continues until a goal node has a lower <math>f</math> value than any node in the queue (or until the queue is empty). (Goal nodes may be passed over multiple times if there remain other nodes with lower <math>f</math> values, as they may lead to a shorter path to a goal.) The <math>f</math> value of the goal is then the length of the shortest path, since <math>h</math> at the goal is zero in an admissible heuristic. If the actual shortest path is desired, the algorithm may also update each neighbor with its immediate predecessor in the best path found so far; this information can then be used to reconstruct the path by working backwards from the goal node. Additionally, if the heuristic is ''monotonic'' (or [[Consistent heuristic|consistent]], see below), a ''closed set'' of nodes already traversed may be used to make the search more efficient.
+
+==Pseudocode==
+
+The following [[pseudocode]] describes the algorithm:
+<source lang="matlab">
+ function A*(start,goal)
+     closedset := the empty set                 // The set of nodes already evaluated.     
+     openset := set containing the initial node // The set of tentative nodes to be evaluated.
+     came_from := the empty map                 // The map of navigated nodes.
+     g_score[start] := 0                        // Distance from start along optimal path.
+     h_score[start] := heuristic_estimate_of_distance(start, goal)
+     f_score[start] := h_score[start]           // Estimated total distance from start to goal through y.
+     while openset is not empty
+         x := the node in openset having the lowest f_score[] value
+         if x = goal
+             return reconstruct_path(came_from, came_from[goal])
+         remove x from openset
+         add x to closedset
+         foreach y in neighbor_nodes(x)
+             if y in closedset
+                 continue
+             tentative_g_score := g_score[x] + dist_between(x,y)
+             
+             if y not in openset
+                 add y to openset
+                 tentative_is_better := true
+             elseif tentative_g_score < g_score[y]
+                 tentative_is_better := true
+             else
+                 tentative_is_better := false
+             if tentative_is_better = true
+                 came_from[y] := x
+                         
+                 g_score[y] := tentative_g_score
+                 h_score[y] := heuristic_estimate_of_distance(y, goal)
+                 f_score[y] := g_score[y] + h_score[y]
+     return failure
+
+ function reconstruct_path(came_from, current_node)
+     if came_from[current_node] is set
+         p = reconstruct_path(came_from, came_from[current_node])
+         return (p + current_node)
+     else
+         return current_node
+</source>
+
+The closed set can be omitted (yielding a tree search algorithm) if a solution is guaranteed to exist, or if the algorithm is adapted so that new nodes are added to the open set only if they have a lower <math>f</math> value than at any previous iteration.
+
+===Example===
+An example of A star (A*) algorithm in action where nodes are cities connected with roads and h(x) is the straight-line distance to target point: 
+
+[[File:AstarExample.gif|An example of A star (A*) algorithm in action (nodes are cities connected with roads, h(x) is the straight-line distance to target point) Green: Start, Blue: Target, Orange: Visited]]
+
+'''Key:''' green: start; blue: goal; orange: visited
+
+'''Note:''' This example uses a comma as the [[decimal separator]].
+
+==Properties==
+Like [[breadth-first search]], A* is ''complete'' and will always find a solution if one exists.
+
+If the heuristic function <math>h</math> is [[Admissible heuristic|admissible]], meaning that it never overestimates the actual minimal cost of reaching the goal, then A* is itself admissible (or ''optimal'') if we do not use a closed set. If a closed set is used, then <math>h</math> must also be ''monotonic'' (or [[Consistent heuristic|consistent]]) for A* to be optimal. This means that for any pair of adjacent nodes <math>x</math> and <math>y</math>, where <math>d(x,y)</math> denotes the length of the edge between them, we must have:
+
+:<math>h(x) \le d(x,y) + h(y)</math>
+
+This ensures that for any path <math>X</math> from the initial node to <math>x</math>:
+
+:<math>L(X) + h(x) \le L(X) + d(x,y) + h(y) = L(Y) + h(y)</math>
+
+where <math>L(\cdot)</math> denotes the length of a path, and <math>Y</math> is the path <math>X</math> extended to include <math>y</math>. In other words, it is impossible to decrease (total distance so far + estimated remaining distance) by extending a path to include a neighboring node. (This is analogous to the restriction to nonnegative edge weights in [[Dijkstra's algorithm]].) Monotonicity implies admissibility when the heuristic estimate at any goal node itself is zero, since (letting <math>P = (f,v_1,v_2,\ldots,v_n,g)</math> be a shortest path from any node <math>f</math> to the nearest goal <math>g</math>):
+
+:<math>h(f) \le d(f,v_1) + h(v_1) \le d(f,v_1) + d(v_1,v_2) + h(v_2) \le \ldots \le L(P) + h(g) = L(P)</math>
+
+A* is also optimally efficient for any heuristic <math>h</math>, meaning that no algorithm employing the same heuristic will expand fewer nodes than A*, except when there are multiple partial solutions where <math>h</math> exactly predicts the cost of the optimal path. Even in this case, for each graph there exists some order of breaking ties in the priority queue such that A* examines the fewest possible nodes.
+
+===Special cases===
+[[Dijkstra's algorithm]], as another example of a uniform-cost search search algorithm, can be viewed as a special case of A* where <math>h(x) = 0</math> for all <math>x</math>. General [[depth-first search]] can be implemented using the A* by considering that there is a global counter ''C'' initialized with a very large value. Every time we process a node we assign ''C'' to all of its newly discovered neighbors. After each single assignment, we decrease the counter ''C'' by one. Thus the earlier a node is discovered, the higher its <math>h(x)</math> value.  It should be noted, however, that both Dijkstra's algorithm and depth-first search can be implemented more efficiently without including a <math>h(x)</math> value at each node.
+
+===Implementation details===
+There are a number of simple optimizations or implementation details that can significantly affect the performance of an A* implementation.  The first detail to note is that the way the priority queue handles ties can have a significant effect on performance in some situations.  If ties are broken so the queue behaves in a [[LIFO (computing)|LIFO]] manner, A* will behave like [[depth-first search]] among equal cost paths. 
+
+When a path is required at the end of the search, it is common to keep with each node a reference to that node's parent.  At the end of the search these references can be used to recover the optimal path.  If these references are being kept then it can be important that the same node doesn't appear in the priority queue more than once (each entry corresponding to a different path to the node, and each with a different cost).  A standard approach here is to check if a node about to be added already appears in the priority queue.  If it does, then the priority and parent pointers are changed to correspond to the lower cost path.  When finding a node in a queue to perform this check, many standard implementations of a [[Heap (data structure)|min-heap]] require <math>O(n)</math> time.  Augmenting the heap with a [[hash table]] can reduce this to constant time.
+
+==Admissibility and optimality{{anchor|Admissibility and Optimality}}==
+A* is admissible and considers fewer nodes than any other admissible search algorithm with the same heuristic. This is because A* uses an "optimistic" estimate of the cost of a path through every node that it considers—optimistic in that the true cost of a path through that node to the goal will be at least as great as the estimate. But, critically, as far as A* "knows", that optimistic estimate might be achievable.
+
+Here is the main idea of the proof:
+
+When A* terminates its search, it has found a path whose actual cost is lower than the estimated cost of any path through any open node. But since those estimates are optimistic, A* can safely ignore those nodes. In other words, A* will never overlook the possibility of a lower-cost path and so is admissible.
+
+Suppose now that some other search algorithm B terminates its search with a path whose actual cost is ''not'' less than the estimated cost of a path through some open node. Based on the heuristic information it has, Algorithm B cannot rule out the possibility that a path through that node has a lower cost. So while B might consider fewer nodes than A*, it cannot be admissible. Accordingly, A* considers the fewest nodes of any admissible search algorithm.
+
+This is only true if both:
+
+* A* uses an [[admissible heuristic]]. Otherwise, A* is not guaranteed to expand fewer nodes than another search algorithm with the same heuristic. See (Generalized best-first search strategies and the optimality of A*, Rina Dechter and Judea Pearl, 1985<ref>{{cite journal
+ | first = Rina
+ | last = Dechter
+ | coauthors = Judea Pearl
+ | title = [http://portal.acm.org/citation.cfm?id=3830&coll=portal&dl=ACM Generalized best-first search strategies and the optimality of A*]
+ | journal = [[Journal of the ACM]]
+ | volume = 32
+ | issue = 3
+ | pages = 505–536
+ | year = 1985
+ | doi = 10.1145/3828.3830 
+ }}
+</ref>)
+
+* A* solves only one search problem rather than a series of similar search problems. Otherwise, A* is not guaranteed to expand fewer nodes than [[incremental heuristic search]] algorithms. See (Incremental heuristic search in artificial intelligence, Sven Koenig, Maxim Likhachev, Yaxin Liu and David Furcy, 2004<ref>{{cite journal
+ | first = Sven
+ | last = Koenig
+ | coauthors = Maxim Likhachev, Yaxin Liu, David Furcy
+ | title = [http://portal.acm.org/citation.cfm?id=1017140 Incremental heuristic search in AI]
+ | journal = [[AI Magazine]]
+ | volume = 25
+ | issue = 2
+ | pages = 99–112
+ | year = 2004
+ }}
+</ref>)
+
+==Complexity==
+The [[computational complexity theory|time complexity]] of A* depends on the heuristic. In the worst case, the number of nodes expanded is [[exponential time|exponential]] in the length of the solution (the shortest path), but it is [[polynomial time|polynomial]] when the search space is a tree, there is a single goal state, and the heuristic function ''h'' meets the following condition:
+
+:<math>|h(x) - h^*(x)| = O(\log h^*(x))</math>
+
+where <math>h^*</math> is the optimal heuristic, the exact cost to get from <math>x</math> to the goal. In other words, the error of ''h'' will not grow faster than the [[logarithm]] of the “perfect heuristic” <math>h^*</math> that returns the true distance from ''x'' to the goal (see Pearl 1984<ref>{{cite book
+ | first = Judea
+ | last = Pearl
+ | title = Heuristics: Intelligent Search Strategies for Computer Problem Solving
+ | publisher = Addison-Wesley
+ | year = 1984
+ | isbn = 0-201-05594-5
+ }}</ref> and also Russell and Norvig 2003, p. 101<ref>{{cite book
+ | first = S. J.
+ | last = Russell
+ | coauthors = Norvig, P.
+ | title = [[Artificial Intelligence: A Modern Approach]]
+ | year = 2003
+ | pages = 97–104
+ | isbn = 0-13-790395-2
+ | publisher = Prentice Hall
+ | location = Upper Saddle River, N.J.
+ }}</ref>)
+
+==Variants of A*==
+*[[D*]]
+*[[Incremental heuristic search|D* Lite]]
+*[[Any-angle path planning|Field D*]]
+*[[IDA*]]
+*[[Incremental heuristic search|Fringe Saving A* (FSA*)]]
+*[[Incremental heuristic search|Generalized Adaptive A* (GAA*)]]
+*[[Incremental heuristic search|Lifelong Planning A* (LPA*)]]
+*[[Any-angle path planning|Theta*]]
+*[[SMA*]]
+
+==References==
+* {{cite journal
+ | first = P. E.
+ | last = Hart
+ | coauthors = Nilsson, N. J.; Raphael, B.
+ | title = Correction to "A Formal Basis for the Heuristic Determination of Minimum Cost Paths"
+ | journal = [[Association for Computing Machinery|SIGART]] Newsletter
+ | volume = 37
+ | pages = 28–29
+ | year = 1972
+ }}
+* {{cite book
+ | first = N. J.
+ | last = Nilsson
+ | title = Principles of Artificial Intelligence
+ | publisher = Tioga Publishing Company
+ | location = Palo Alto, California
+ | year = 1980
+ | isbn = 0935382011
+ }}
+* {{cite book
+ | first = Judea
+ | last = Pearl
+ | title = Heuristics: Intelligent Search Strategies for Computer Problem Solving
+ | publisher = Addison-Wesley
+ | year = 1984
+ | isbn = 0-201-05594-5
+ }}
+{{Reflist}}
+
+==External links==
+* [http://theory.stanford.edu/~amitp/GameProgramming/ Clear visual A* explanation, with advice and thoughts on path-finding]
+* Variation on A* called [http://www.cs.ualberta.ca/~mmueller/ps/hpastar.pdf Hierarchical Path-Finding A* (HPA*)]
+* [http://code.google.com/p/jianwikis/wiki/AStarAlgorithmForPathPlanning A* Algorithm for Path Planning in Java]
+* [http://www.stackframe.com/software/PathFinder A Java library for path finding with A* and example applet]
+* [http://www.codeproject.com/KB/recipes/fast_astar_2D_algorithm.aspx A fast, generic C# implementation of A* on 2D-Grids]
+* [http://code.google.com/p/a-star-algorithm-implementation A fast, memory efficient C++ implementation of A*]
+* [https://code.google.com/p/straightedge/ StraightEdge] open source java 2D path finding and lighting project focused on performance. Includes applet demos.
+
+{{DEFAULTSORT:A Search Algorithm}}
+[[Category:Graph algorithms]]
+[[Category:Routing algorithms]]
+[[Category:Search algorithms]]
+[[Category:Combinatorial optimization]]
+[[Category:Game artificial intelligence]]
+[[Category:Articles with example pseudocode]]
+
+{{Link GA|de}}
+
+[[ar:خوارزمية البحث بأولوية الأفضل]]
+[[cs:A*]]
+[[de:A*-Algorithmus]]
+[[es:Algoritmo de búsqueda A*]]
+[[fr:Algorithme A*]]
+[[ko:A* 알고리즘]]
+[[it:A*]]
+[[nl:A*-algoritme]]
+[[ja:A*]]
+[[pl:Algorytm A*]]
+[[pt:Algoritmo A*]]
+[[ru:Алгоритм поиска A*]]
+[[fi:A*-algoritmi]]
+[[uk:Алгоритм пошуку A*]]
+[[vi:Giải thuật tìm kiếm A*]]
+[[zh:A*搜寻算法]]</body> </html>

@@ -1,0 +1,90 @@
+<html> <head> <title>Expressive power</title></head><body>In [[computer science]], the '''expressive power''' of a language describes the ideas expressible in that language. 
+
+For example, the [[Web Ontology Language|OWL2]] EL profile lacks ideas (such as negation) which can be expressed in OWL2 RL. OWL2 EL may therefore be said to have less ''expressive power'' than OWL2 RL. These restrictions allow more efficient ([[polynomial time]]) reasoning in OWL2 EL than in OWL2 RL. So OWL2 EL trades some expressive power for more efficient reasoning.
+<ref name='grau.2008'>
+{{cite journal |
+title = OWL 2: The next step for OWL |
+journal = Web Semantics: Science, Services and Agents on the World Wide Web |
+volume = 6 |
+number = 4 |
+pages = 309–322 |
+year = 2008 |
+note = Semantic Web Challenge 2006/2007 |
+issn = 1570-8268 |
+doi = DOI: 10.1016/j.websem.2008.05.001 |
+url = http://www.sciencedirect.com/science/article/B758F-4TP1FC8-1/2/9d2f647c7ac874b8f8baa9cf92cf73a3 |
+first1=Bernardo Cuenca |last1=Grau | authorlink1=Bernardo Grau |
+first2=Ian |last2=Horrocks | authorlink2=Ian Horrocks |
+first3=Boris |last3=Motik | authorlink3=Boris Motik |
+first4=Bijan |last4=Parsia | authorlink4=Bijan Parsia |
+first5=Peter |last5=Patel-Schneider | authorlink5=Peter Patel-Schneider |
+first6=Ulrike |last6=Sattler | authorlink6=Ulrike Sattler }}
+</ref>
+
+== Information Description ==
+
+The term ''expressive power'' may be used with a range of meaning. It may mean a measure of the ideas expressible in that language<ref name=farmer:2007>
+{{cite book 
+|title=From Insight to Proof: Festschrift in Honour of Andrzej Trybulec
+|chapter=Chiron: A multi-paradigm logic 
+|last= Farmer
+|first= William
+|authorlink= William Farmer
+|editor1=R. Matuszewski
+|editor2=A. Zalewska
+|year=2007 
+|isbn=9788374311281
+|pages= 1–19
+|series=Studies in Logic, Grammar and Rhetoric
+}}
+</ref>:
+* regardless of ease (''theoretical expressivity'')
+* concisely and readily (''practical expressivity'')
+
+The first sense dominates in areas of [[mathematics]] and [[logic]] that deal with the formal description of languages and their meaning, such as [[formal language theory]], [[mathematical logic]] and [[process algebra]].<ref name=farmer:2007/>
+
+In informal discussions, the term often refers to the second sense, or to both.  This is often the case when discussing [[programming language]]s<ref>''[[Structure and Interpretation of Computer Programs]]'', by [[Harold Abelson|Abelson]] and [[Gerald Jay Sussman|Sussman]]</ref>.  Efforts have been made to formalize these informal uses of the term <ref>[http://citeseer.ist.psu.edu/felleisen90expressive.html ''On the Expressive Power of Programming Languages'', by Matthias Felleisen (1990)]</ref>.
+
+The notion of expressive power is always relative to a particular kind of thing that  the language in question can describe, and the term is normally used when comparing languages that describe the same kind of things, or at least comparable kinds of things.{{Citation needed|date=May 2010}}
+
+The design of languages and formalisms involves a trade-off between expressive power and analyzability.  The more a formalism can express, the harder it becomes to understand what instances of the formalism say.  [[Decision problem]]s become harder to answer or completely [[undecidable]].{{Citation needed|date=May 2010}}
+
+== Examples ==
+=== Expressive power in formal language theory ===
+
+{{Refimprove|date=April 2010}}
+
+[[Formal language theory]] mostly studies formalisms to describe sets of strings, such as [[context-free grammar]]s and [[regular expression]]s.  Each instance of a formalism, e.g. each grammar and each regular expression, describes a particular set of strings.  In this context, the expressive power of a formalism is the set of sets of strings its instances describe, and comparing expressive power is a matter of comparing these sets.
+
+An important yardstick for describing the relative expressive power of formalisms in this area is the [[Chomsky hierarchy]].  It says, for instance, that [[regular expression]]s, [[nondeterministic finite-state machine]]s and [[regular grammar]]s have equal expressive power, while that of [[context-free grammar]]s is greater; what this means is that the sets of sets of strings described by the first three formalisms are equal, and a proper subset of the set of sets of strings described by context-free grammars.
+
+In this area, the cost of expressive power is a central topic of study.  It is known, for instance, that deciding whether two arbitrary regular expressions describe the same set of strings is hard, while doing the same for arbitrary context-free grammars is [[undecidable|completely impossible]].  However, it can still be efficiently decided whether any given string is in the set.
+
+For more expressive formalisms, this problem can be harder, or even undecidable.  For a [[Turing complete]] formalism, such as arbitrary [[formal grammar]]s, not only this problem, but ''every'' nontrivial property regarding the set of strings they describe is undecidable, a fact known as [[Rice's Theorem]].
+
+There are some results on conciseness as well; for instance, nondeterministic state machines and regular grammars are more concise than regular expressions, in the sense that the latter can be translated to the former without a blowup in size (i.e. in [[O(1)]]), while the reverse is not possible.
+
+Similar considerations apply to formalisms that describe not sets of strings, but sets of trees (e.g. [[XML Schema Language Comparison|XML schema languages]]), of graphs, or other structures.
+
+=== Expressive power in database theory ===
+
+[[Database theory]] is concerned, among other things, with [[database query|database queries]], e.g. formulas that given the contents of a database extract certain information from it.  In the predominant [[relational database]] paradigm, the contents of a database are described as a finite set of finite mathematical relations; Boolean queries, that always yield ''true'' or ''false'', are formulated in [[first-order logic]].
+
+It turns out that [[first-order logic]] is lacking in expressive power: it cannot express certain types of Boolean queries, e.g. queries involving [[transitive closure]]<ref>[[Serge Abiteboul]], [[Richard B. Hull]], [[Victor Vianu]]: Foundations of Databases. Addison-Wesley, 1995.</ref>.  However, adding expressive power must be done with care: it must still remain possible to evaluate queries with reasonable efficiency, which is not the case, e.g., for [[second-order logic]].  Consequently, a literature sprang up in which many [[query language]]s and language constructs were compared on expressive power and efficiency, e.g. various versions of [[Datalog]]<ref>[[Evgeny Dantsin]], [[Thomas Eiter]], [[Georg Gottlob]], and [[Andrei Voronkov (computer scientist)|Andrei Voronkov]]: Complexity and expressive power of logic programming. ACM Comput. Surv. 33(3): 374-425 (2001).</ref>.
+
+Similar considerations apply for query languages on other types of data, e.g. XML query languages such as [[XQuery]].
+
+== References ==
+{{Reflist}}
+
+== See also ==
+
+{{Portal|Computer Science}}
+
+* [[Turing tarpit]]
+
+{{Computer Science}}
+
+{{DEFAULTSORT:Expressive Power}}
+[[Category:Programming language topics]]
+[[Category:Ontology languages]]</body> </html>

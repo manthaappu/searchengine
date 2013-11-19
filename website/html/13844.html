@@ -1,0 +1,95 @@
+<html> <head> <title>Flow network</title></head><body>In [[graph theory]], a '''flow network''' is a [[Graph (mathematics)#Directed graph|directed graph]] where each edge has a '''capacity''' and each edge receives a flow. The amount of flow on an edge cannot exceed the capacity of the edge. Often in Operations Research, a directed graph is called a '''network''', the vertices are called '''nodes''' and the edges are called '''arcs'''.  A flow must satisfy the restriction that the amount of flow into a node equals the amount of flow out of it, except when it is a '''source''', which has more outgoing flow, or '''sink''', which has more incoming flow.  A network can be used to model traffic in a road system, fluids in pipes, currents in an electrical circuit, or anything similar in which something travels through a network of nodes.
+
+==Definition==
+
+<math>\ G(V,E)</math> is a finite [[directed graph]] in which every [[edge (graph theory)|edge]] <math>\ (u,v) \in E</math> has a non-negative, real-valued capacity <math>\ c(u,v)</math>. If <math>\ (u, v) \not \in E</math>, we assume that <math>\ c(u, v) = 0</math>. We distinguish two vertices: a source <math>\ s</math> and a sink <math>\ t</math>. A flow network is a [[real number|real]] [[function (mathematics)|function]] <math>\ f:V \times V \rightarrow \mathbb{R}</math> with the following three properties for all nodes <math>\ u</math> and <math>\ v</math>:
+
+:{|
+| '''Capacity constraints''': || <math>\ f(u,v) \le c(u,v)</math>. The flow along an edge cannot exceed its capacity.
+|-
+| '''Skew symmetry''': || <math>\ f(u,v) = - f(v,u)</math>. The net flow from <math>\ u</math> to <math>\ v</math> must be the opposite of the net flow from <math>\ v</math> to <math>\ u</math> (see example).
+|-
+| '''Flow conservation''': || <math>\ \sum_{w \in V} f(u,w) = 0</math>, unless <math>\ u=s</math> or <math>\ w=t</math>. The net flow to a node is zero, except for the source, which "produces" flow, and the sink, which "consumes" flow.
+|}
+
+Notice that <math>\ f(u,v)</math> is the ''net'' flow from <math>\ u</math> to <math>\ v</math>. If the graph represents a physical network, and if there is a real flow of, for example, 4 units from <math>\ u</math> to <math>\ v</math>, and a real flow of 3 units from <math>\ v</math> to <math>\ u</math>, we have <math>\ f(u,v)=1</math> and <math>\ f(v,u)=-1</math>.
+
+The '''residual capacity''' of an edge is <math>\ c_f(u,v) = c(u,v) - f(u,v)</math>. This defines a '''residual network''' denoted <math>\ G_f(V,E_f)</math>, giving the amount of ''available'' capacity. See that there can be an edge from <math>\ u</math> to <math>\ v</math> in the residual network, even though there is no edge from <math>\ u</math> to <math>\ v</math> in the original network. Since flows in opposite directions cancel out, ''decreasing'' the flow from <math>\ v</math> to <math>\ u</math> is the same as ''increasing'' the flow from <math>\ u</math> to <math>\ v</math>. An '''augmenting path''' is a path <math>\ (u_1,u_2,\dots,u_k)</math> in the residual network, where <math>\ u_1=s</math>, <math>\ u_k=t</math>, and <math>\ c_f(u_i, u_{i+1}) > 0</math>. A network is at maximum flow if and only if there is no augmenting path in the residual network.
+
+==Example==
+
+[[File:network flow.png|right|frame|100px|A flow network showing flow and capacity]]
+To the right you see a flow network with source labeled <math>s</math>, sink <math>t</math>, and four additional nodes. The flow and capacity is denoted <math>f/c</math>. Notice how the network upholds skew symmetry, capacity constraints and flow conservation. The total amount of flow from <math>s</math> to <math>t</math> is 5, which can be easily seen from the fact that the total outgoing flow from <math>s</math> is 5, which is also the incoming flow to <math>t</math>. We know that no flow appears or disappears in any of the other nodes.
+
+[[File:network flow residual.png|right|frame|Residual network for the above flow network, showing residual capacities]]
+Below you see the residual network for the given flow. Notice how there is positive residual capacity on some edges where the original capacity is zero, for example for the edge <math>(d,c)</math>. This flow is not a [[max flow|maximum flow]]. There is available capacity along the paths <math>(s,a,c,t)</math>, <math>(s,a,b,d,t)</math> and <math>(s,a,b,d,c,t)</math>, which are then the augmenting paths. The residual capacity of the first path is
+<math>\min(c(s,a)-f(s,a), c(a,c)-f(a,c), c(c,t)-f(c,t))</math><math>= \min(5-3, 3-2, 2-1) = \min(2, 1, 1) = 1</math>. Notice that augmenting path <math>(s,a,b,d,c,t)</math> does not exist in the original network, but you can send flow along it, and still get a legal flow.
+
+If this is a real network, there might actually be a flow of 2 from <math>a</math> to <math>b</math>, and a flow of 1 from <math>b</math> to <math>a</math>, but we only maintain the '''net''' flow.
+
+==Applications==
+{{see also|Pipe network analysis}}
+
+Picture a series of water pipes, fitting into a network. Each pipe is of a certain diameter, so it can only maintain a flow of a certain amount of water. Anywhere that pipes meet, the total amount of water coming into that junction must be equal to the amount going out, otherwise we would quickly run out of water, or we would have a build up of water. We have a water inlet, which is the source, and an outlet, the sink. A flow would then be one possible way for water to get from source to sink so that the total amount of water coming out of the outlet is consistent. Intuitively, the total flow of a network is the rate at which water comes out of the outlet.
+
+Flows can pertain to people or material over transportation networks, or to electricity over [[electrical distribution]] systems.  For any such physical network, the flow coming into any intermediate node needs to equal the flow going out of that node.  [[Béla Bollobás|Bollobás]] characterizes this constraint in terms of [[Kirchhoff's current law]], while later authors (i.e.: Chartrand) mention its generalization to some conservation equation.
+
+Flow networks also find applications in [[ecology]]: flow networks arise naturally when considering the flow of nutrients and energy between different organizations in a [[food web]].  The mathematical problems associated with such networks are quite different from those that arise in networks of fluid or traffic flow.  The field of ecosystem network analysis, developed by [[Robert Ulanowicz]] and others, involves using concepts from [[information theory]] and [[thermodynamics]] to study the evolution of these networks over time.
+
+The simplest and most common problem using flow networks is to find what is called the [[maximum flow problem|maximum flow]], which provides the largest possible total flow from the source to the sink in a given graph. There are many other problems which can be solved using max flow algorithms, if they are appropriately modeled as flow networks, such as [[bipartite matching]], the [[assignment problem]] and the [[transportation problem]].
+
+In a [[multi-commodity flow problem]], you have multiple sources and sinks, and various "commodities" which are to flow from a given source to a given sink. This could be for example various goods that are produced at various factories, and are to be delivered to various given customers through the ''same'' transportation network.
+
+In a [[minimum cost flow problem]], each edge <math>u,v</math> has a given cost <math>k(u,v)</math>, and the cost of sending the flow <math>f(u,v)</math> across the edge is <math>f(u,v) \cdot k(u,v)</math>. The objective is to send a given amount of flow from the source to the sink, at the lowest possible price.
+
+In a [[circulation problem]], you have a lower bound <math>l(u,v)</math> on the edges, in addition to the upper bound <math>c(u,v)</math>. Each edge also has a cost. Often, flow conservation holds for ''all'' nodes in a circulation problem, and there is a connection from the sink back to the source. In this way, you can dictate the total flow with <math>l(t,s)</math> and <math>c(t,s)</math>. The flow ''circulates'' through the network, hence the name of the problem.
+
+In a '''network with gains''' or '''generalized network''' each edge has a '''[[gain graph|gain]]''', a real number (not zero) such that, if the edge has gain ''g'', and an amount ''x'' flows into the edge at its tail, then an amount ''gx'' flows out at the head.
+
+==See also==
+* [[Constructal theory]]
+* [[Ford-Fulkerson algorithm]]
+* [[Flow (computer networking)]]
+* [[Max-flow min-cut theorem]]
+* [[Oriented matroid]]
+* [[Shortest path problem]]
+
+==References==
+{{Unreferenced|date=May 2008}}
+
+== Further reading ==
+* {{cite book | author=George T. Heineman, Gary Pollice, and Stanley Selkow | title= Algorithms in a Nutshell | publisher=[[Oreilly Media]] | year=2008 | chapter=Chapter 8:Network Flow Algorithms | pages = 226–250 | isbn=978-0-596-51624-6 }}
+* {{cite book | author=Ravindra K. Ahuja, [[Thomas L. Magnanti]], and James B. Orlin | title= Network Flows: Theory, Algorithms and Applications | publisher=Prentice Hall | year=1993 | isbn=0-13-617549-X }}
+* {{cite book | author=[[Béla Bollobás|Bollobás, Béla]] | title= Graph Theory: An Introductory Course | location=Heidelberg | publisher=Springer-Verlag | year=1979 | isbn=3-540-90399-2}}
+* {{cite book | author=[[Gary Theodore Chartrand|Chartrand, Gary]] & Oellermann, Ortrud R. | title=Applied and Algorithmic Graph Theory | location=New York | publisher=McGraw-Hill | year=1993 | isbn=0-07-557101-3}}
+* {{cite book | author=Even, Shimon | title=Graph Algorithms | location=Rockville, Maryland | publisher=Computer Science Press | year=1979 | isbn=0-914894-21-8}}
+* {{cite book | author=Gibbons, Alan | title=Algorithmic Graph Theory | location=Cambridge | publisher=Cambridge University Press | year=1985 | isbn=0-521-28881-9  ISBN 0-521-24659-8 }}
+* {{cite book | author = [[Thomas H. Cormen]], [[Charles E. Leiserson]], [[Ronald L. Rivest]], and [[Clifford Stein]] | title = [[Introduction to Algorithms]] | origyear = 1990 | edition = 2nd edition | year = 2001 | publisher = MIT Press and McGraw-Hill | pages = 696–697 | chapter = 26 | isbn = 0-262-03293-7}}
+
+==External links==
+* [http://www-b2.is.tokushima-u.ac.jp/~ikeda/suuri/maxflow/Maxflow.shtml Maximum Flow Problem]
+* [http://www.topcoder.com/tc?module=Static&d1=tutorials&d2=maxFlow Maximum Flow]
+* [http://www.dis.uniroma1.it/~challenge9/download.shtml Real graph instances]
+* [http://www.di.unipi.it/di/groups/optimize/ Software, papers, test graphs, etc.]
+* [ftp://dimacs.rutgers.edu/pub/netflow Solutions for network flow problems]
+* [http://www.avglab.com/andrew/soft.html Software and papers for network flow problems]
+* [http://lemon.cs.elte.hu/ Lemon C++ library with several maximum flow and minimum cost circulation algorithms]
+* [http://quickgraph.codeplex.com/ QuickGraph], graph data structures and algorithms for .Net
+
+[[Category:Network flow]]
+[[Category:Graph algorithms]]
+[[Category:Operations research]]
+[[Category:Directed graphs]]
+
+[[ca:Xarxa de flux]]
+[[cs:Tok v síti]]
+[[de:Flüsse und Schnitte in Netzwerken]]
+[[es:Red de flujo]]
+[[fa:شبکه شاره]]
+[[he:רשת זרימה]]
+[[ja:フローネットワーク]]
+[[pl:Sieć przepływowa]]
+[[ru:Транспортная сеть]]
+[[th:การไหลในเครือข่าย]]
+[[vi:Luồng trên mạng]]
+[[zh:网络流]]</body> </html>

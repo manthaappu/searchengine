@@ -1,0 +1,67 @@
+<html> <head> <title>Normal mapping</title></head><body>{{No footnotes|date=February 2010}}
+[[Image:Normal map example.png|thumb|Normal mapping used to re-detail simplified meshes.]]
+In [[3D computer graphics]], '''normal mapping''', or "Dot3 bump mapping", is a technique used for faking the lighting of bumps and dents. It is used to add details without using more [[polygonal modeling|polygon]]s. A normal map is usually an [[RGB]] image that corresponds to the X, Y, and Z coordinates of a [[surface normal]] from a more detailed version of the object. A common use of this technique is to greatly enhance the appearance and details of a [[low poly|low polygon model]] by generating a normal map from a high polygon model.
+
+== History ==
+The idea of taking geometric details from a high polygon model was introduced in "Fitting Smooth Surfaces to Dense Polygon Meshes"
+by Krishnamurthy and Levoy, Proc. [[SIGGRAPH]] 1996, where this approach was used for creating [[displacement mapping|displacement maps]] over [[nurbs]]. In 1998, two papers were presented with the idea of transferring details with normal maps from high to low polygon meshes: "Appearance Preserving Simplification", by Cohen et al. SIGGRAPH 1998, and  "A general method for preserving attribute values on simplified meshes" by Cignoni et al. IEEE Visualization '98. 
+The former presented a particular constrained simplification algorithm that during the simplification process tracks how the lost details should be mapped over the simplified mesh. The latter presented a simpler approach that decouples the high and low polygonal mesh and allows the recreation of the lost details in a way that is not dependent on how the low model was created. This latter approach (with some minor variations) is still used by most currently available tools.
+
+==How it works==
+To calculate the [[Lambertian]] (diffuse) lighting of a surface, the unit [[Vector (geometric)|vector]] from the shading point to the light source is [[dot product|dotted]] with the unit vector normal to that surface, and the result is the intensity of the light on that surface. Imagine a polygonal model of a sphere - you can only approximate the shape of the surface. By using a 3-channel bitmap textured across the model, more detailed normal vector information can be encoded. Each channel in the bitmap corresponds to a spatial dimension (X, Y and Z). These spatial dimensions are relative to a constant coordinate system for object-space normal maps, or to a smoothly varying coordinate system (based on the derivatives of position with respect to texture coordinates) in the case of tangent-space normal maps. This adds much more detail to the surface of a model, especially in conjunction with advanced lighting techniques.
+
+==Calculating Tangent Space==
+In order to find the perturbation in the normal the tangent space must be correctly calculated.
+Most often the normal is perturbed in a fragment shader after applying the model and view matrices.
+Typically the geometry provides a normal and tangent.  The tangent is part of the tangent plane
+and can be transformed simply with the [[Affine_transformation | linear]] part of the matrix
+(the upper 3x3).  However, the normal needs to be transformed by the [[Surface_normal#Transforming_normals|inverse transpose]]. Most applications will want bitangent to
+match the transformed geometry (and associated uv's).  So instead of enforcing the bitanget to
+be normal to the tangent, it is generally preferable to transform the bitangent just like the
+tangent.  Let ''t'' be tangent, ''n'' be normal, ''b'' be bitangent, ''M<sub>3x3</sub>'' be linear part of model matrix, and ''V<sub>3x3</sub>'' be the linear part of the view matrix.
+:<math>t' = t \times M_{3x3} \times V_{3x3}</math>
+:<math>n' = n \times (M_{3x3} \times V_{3x3})^{-1T} = n \times M_{3x3}^{-1T} \times V_{3x3}^{-1T}</math>
+:<math>b' = b \times M_{3x3} \times V_{3x3}</math>
+
+==Normal mapping in video games==
+Interactive normal map rendering was originally only possible on [[PixelFlow]], a [[parallel rendering]] machine built at the [[University of North Carolina at Chapel Hill]]. It was later possible to perform normal mapping on high-end [[Silicon Graphics|SGI]] workstations using multi-pass rendering and [[framebuffer]] operations or on low end PC hardware with some tricks using paletted textures.  However, with the advent of [[shader]]s in personal computers and game consoles, normal mapping became widely used in [[Proprietary software|proprietary]] [[Commerce|commercial]] video games starting in late 2003, and followed by open source games in later years. Normal mapping's popularity for real-time rendering is due to its good quality to processing requirements ratio versus other methods of producing similar effects.  Much of this efficiency is made possible by distance-indexed detail scaling, a technique which selectively decreases the detail of the normal map of a given texture (cf. [[mipmapping]]), meaning that more distant surfaces require less complex lighting simulation.
+
+Basic normal mapping can be implemented in any hardware that supports palettized textures. The first game console to have specialized normal mapping hardware was the Sega [[Dreamcast]]. However, Microsoft's [[Xbox]] was the first console to widely use the effect in retail games. Out of the [[History of video game consoles (sixth generation)|sixth generation consoles]], only the [[PlayStation 2]]'s [[PlayStation 2#Technical specifications|GPU]] lacks built-in normal mapping support. Games for the [[Xbox 360]] and the [[PlayStation 3]] rely heavily on normal mapping and are beginning to implement [[parallax mapping]]. The [[Nintendo 3DS]] has been shown to support normal mapping, as demonstrated by [[Resident Evil: Revelations]] and [[Metal Gear Solid: Snake Eater#Metal Gear Solid 3: Snake Eater 3D|Metal Gear Solid: Snake Eater]].
+
+==See also==
+* [[Texture mapping]]
+* [[Bump mapping]]
+* [[Parallax mapping]]
+* [[Displacement mapping]]
+* [[Reflection (physics)]]
+
+==References==
+{{refs}}
+* [http://www-graphics.stanford.edu/papers/surfacefitting/ Fitting Smooth Surfaces to Dense Polygon Meshes], Krishnamurthy and Levoy, SIGGRAPH 1996
+* '''(PDF)''' [http://www.cs.unc.edu/~geom/APS/APS.pdf Appearance-Preserving Simplification], Cohen et al., SIGGRAPH 1998
+* '''(PDF)''' [http://vcg.isti.cnr.it/publications/papers/rocchini.pdf A general method for recovering attribute values on simplifed meshes], Cignoni et al., IEEE Visualization 1998
+* '''(PDF)''' [http://www.cs.ubc.ca/~heidrich/Papers/Siggraph.99.pdf Realistic, Hardware-accelerated Shading and Lighting], Heidrich and Seidel, SIGGRAPH 1999
+
+==External links==
+* [http://liman3d.com/tutorial_normalmaps.html Undestanding Normal Maps]
+* [http://www.game-artist.net/forums/vbarticles.php?do=article&articleid=16 Introduction to Normal Mapping]
+* [http://mediawiki.blender.org/index.php/Manual/Bump_and_Normal_Maps Blender Normal Mapping]
+* [http://vcg.isti.cnr.it/activities/geometryegraphics/bumpmapping.html Normal Mapping with paletted textures] using old OpenGL extensions.
+* [http://zarria.net/nrmphoto/nrmphoto.html Normal Map Photography] Creating normal maps manually by layering digital photographs
+* [http://www.3dkingdoms.com/tutorial.htm Normal Mapping Explained]
+* [http://www.xnormal.net xNormal] A closed source, free normal mapper for [[Microsoft Windows|Windows]].
+
+[[Category:Demo effects]]
+[[Category:Texture mapping]]
+[[Category:Virtual reality]]
+
+[[ar:خريطة النواظم]]
+[[de:Normal Mapping]]
+[[es:Normal mapping]]
+[[fr:Normal mapping]]
+[[it:Normal mapping]]
+[[ja:法線マッピング]]
+[[pl:Mapowanie normalnych]]
+[[pt:Normal map]]
+[[th:Normal mapping]]
+[[zh:法线贴图]]</body> </html>

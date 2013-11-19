@@ -1,0 +1,28 @@
+<html> <head> <title>BSD checksum</title></head><body>The '''BSD checksum algorithm''' is commonly used, legacy [[checksum]] algorithms. It has been implemented in [[Berkeley Software Distribution|BSD]] and is also available through the [[sum (Unix)|GNU sum]] command line utility.
+
+==Newer checksum algorithms==
+The manual page of the GNU sum utility program (that implements the BSD checksum algorithm) states: ''sum is provided for compatibility; the cksum program is preferable in new applications''.
+
+==Computation of the BSD checksum==
+Here is the relevant part of the [[GNU]] sum source code ([[GPL]] licensed):
+<pre>
+FILE *fp;             /* The file handle for input data* /
+int ch;               /* Each character read. */
+int checksum = 0;     /* The checksum mod 2^16. */
+
+while ((ch = getc (fp)) != EOF)
+  {
+    ...
+    checksum = (checksum >> 1) + ((checksum & 1) << 15);
+    checksum += ch;
+    checksum &= 0xffff;       /* Keep it within bounds. */
+  }
+</pre>
+
+==Description of the algorithm==
+This algorithm computes a 16-bit checksum by adding up all 16-bit words of the input data stream. In order to avoid many of the weaknesses of simply adding the data, the accumulator is rotated to the right by one bit at each step.
+
+==Sources==
+* [http://www.gnu.org/software/coreutils/manual/html_node/sum-invocation.html official GNU sum manual page]
+* [http://www.gnu.org/software/coreutils/ coreutils download page] --- find and unpack the newest version of the coreutils package, read src/sum.c 
+[[Category:Checksum algorithms]]</body> </html>

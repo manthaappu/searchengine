@@ -1,0 +1,126 @@
+<html> <head> <title>Polygonal modeling</title></head><body>In [[3D computer graphics]], '''polygonal modeling''' is an approach for modeling objects by representing or approximating their [[surface]]s using [[polygon]]s.  Polygonal modeling is well suited to [[scanline rendering]] and is therefore the method of choice for [[real-time computer graphics]].  Alternate methods of representing 3D objects include [[NURBS]] surfaces, [[subdivision surface]]s, and equation-based representations used in [[Ray tracing (graphics)|ray tracers]]. See [[polygon mesh]] for a description of how polygonal models are represented and stored.
+
+== Geometric theory and polygons ==
+The basic object used in mesh modeling is a [[vertex (geometry)|vertex]], a point in three dimensional space. Two vertices connected by a straight line become an [[edge (graph theory)|edge]].  Three vertices, connected to the each other by three edges, define a [[triangle]], which is the simplest polygon in [[Euclidean space]].  More complex [[polygons]] can be created out of multiple triangles, or as a single object with more than 3 vertices.  Four sided polygons (generally referred to as quads) and triangles are the most common shapes used in polygonal modeling.  A group of polygons, connected to each other by shared vertices, is generally referred to as an '''element'''.  Each of the polygons making up an element is called a '''face'''.
+
+In [[Euclidean geometry]], any three non-colinear points determine a [[mathematical plane|plane]].  For this reason, triangles always inhabit a single plane.  This is not necessarily true of more complex polygons, however.  The flat nature of triangles makes it simple to determine their [[surface normal]], a three-dimensional vector perpendicular to the triangle's surface.  Surface normals are useful for determining light transport in ray tracing, and are a key component of the popular [[Phong shading]] model.  Some rendering systems use [[vertex normal]]s instead of face normals to create a better-looking lighting system at the cost of more processing.  Note that every triangle has two face normals, which are on the same line but opposite from each other.  In many systems only one of these normals is considered valid – the other side of the polygon is referred to as a '''backface''', and can be made visible or invisible depending on the programmer’s desires.
+
+Many [[modeling program]]s do not strictly enforce geometric theory; for example, it is possible for two vertices to have two distinct edges connecting them, occupying exactly the same spatial location.  It is also possible for two vertices to exist at the same spatial coordinates, or two faces to exist at the same location.  Situations such as these are usually not desired and many packages support an auto-cleanup function. If auto-cleanup is not present, however, they must be deleted manually.
+
+A group of polygons which are connected together by shared vertices is referred to as a '''mesh'''.  In order for a mesh to appear attractive when [[Rendering (computer graphics)|rendered]], it is desirable that it be '''non-self-intersecting''', meaning that no edge passes through a polygon.  Another way of looking at this is that the mesh cannot pierce itself.  It is also desirable that the mesh not contain any errors such as doubled vertices, edges, or faces.   For some purposes it is important that the mesh be a [[manifold]] – that is, that it does not contain holes or singularities (locations where two distinct sections of the mesh are connected by a single vertex).
+
+== Construction of polygonal meshes ==
+Although it is possible to construct a mesh by manually specifying vertices and faces, it is much more common to build meshes using a variety of tools.  A wide variety of [[3D computer graphics software|3d graphics software]] packages are available for use in constructing polygon meshes.
+
+One of the more popular methods of constructing meshes is [[box modeling]], which uses two simple tools:
+
+* The '''subdivide''' tool splits faces and edges into smaller pieces by adding new vertices.  For example, a square would be subdivided by adding one vertex in the center and one on each edge, creating four smaller squares.
+* The '''extrude''' tool is applied to a face or a group of faces.  It creates a new face of the same size and shape which is connected to each of the existing edges by a face.  Thus, performing the '''extrude''' operation on a square face would create a cube connected to the surface at the location of the face.
+
+A second common modeling method is sometimes referred to as '''inflation modeling''' or '''extrusion modeling'''.  In this method, the user creates a 2d shape which traces the outline of an object from a photograph or a drawing.  The user then uses a second image of the subject from a different angle and extrudes the 2d shape into 3d, again following the shape’s outline.  This method is especially common for creating faces and heads.  In general, the artist will model half of the head and then duplicate the vertices, invert their location relative to some plane, and connect the two pieces together.  This ensures that the model will be symmetrical.
+
+Another common method of creating a polygonal mesh is by connecting together various '''primitives''', which are predefined polygonal meshes created by the modeling environment.  Common primitives include:
+* Cubes
+* Pyramids
+* Cylinders
+* 2D primitives, such as squares, triangles, and disks
+* Specialized or esoteric primitives, such as the [[Utah Teapot]] or Suzanne, [[Blender (software)|Blender's]] monkey mascot.
+* Spheres - Spheres are commonly represented in one of two ways:
+** '''[[Icosphere]]s''' are [[icosahedron]]s which possess a sufficient number of triangles to resemble a sphere.
+** '''[[UV sphere|UV Spheres]]''' are composed of quads, and resemble the grid seen on some globes - quads are larger near the "equator" of the sphere and smaller near the "poles," eventually terminating in a single vertex.
+
+Finally, some specialized methods of constructing high or low detail meshes exist. [[Sketch based modeling]] is a user-friendly interface for constructing low-detail models quickly, while [[3d scanner]]s can be used to create high detail meshes based on existing real-world objects in almost automatic way.  These devices are very expensive, and are generally only used by researchers and industry professionals but can generate high accuracy sub-millimetric digital representations.
+
+== Operations ==
+There are a very large number of operations which may be performed on polygonal meshes. Some of these roughly correspond to real-world manipulations of 3D objects, while others do not. 
+
+Polygonal mesh operations:<br>
+'''Creations - Create new geometry from some other mathematical object'''<br>
+[[Loft (3D)|''Loft'']]  - generate a mesh by sweeping a shape along a path<br>
+Extrude - same as loft, except the path is always a line<br>
+Revolve - generate a mesh by revolving (rotating) a shape around an axis<br>
+Marching cubes - algorithm to construct a mesh from an [[implicit function]]
+
+'''Binary Creations - Create a new mesh from a binary operation of two other meshes'''<br>
+Add - boolean addition of two meshes<br>
+Subtract - boolean subtraction of two meshes<br>
+Intersect - boolean intersection <br>
+Union - boolean union of two meshes<br>
+Attach - attach one mesh to another (removing the interior surfaces)<br>
+Chamfer - create a beveled surface which smoothly connected two surfaces
+
+'''Deformations - Move only the verticies of a mesh'''<br>
+Deform - systematically move verticies (according to certain functions or rules)<br>
+Weighted Deform - move verticies based on localized weights per vertex<br>
+Morph - move verticies smoothly between a source and target mesh<br>
+Bend - move verticies to "bend" the object<br>
+Twist - move verticies to "twist" the object
+
+'''Manipulations - Modify the geometry of the mesh, but not necessarily topology'''<br>
+Displace - introduce additional geometry based on a "displacement map" from the surface<br>
+Simplify - systematically remove and average verticies <br>
+Subdivide - smooth a course mesh by subdividing the mesh (Catmull-Clark, etc.)<br>
+Convex Hull - generate another mesh which minimally encloses a given mesh (think shrink-wrap)<br>
+Cut - create a hole in a mesh surface<br>
+Stitch - close a hole in a mesh surface
+
+'''Measurements - Compute some value of the mesh'''<br>
+Volume - compute the 3D volume of a mesh (discrete volumetric integral)<br>
+Surface Area - compute the surface area of a mesh (discrete surface integral)<br>
+Collision Detection - determine if two complex meshes in motion have collided<br>
+Fitting - construct a parametric surface (NURBS, bicubic spline) by fitting it to a given mesh<br>
+Point-Surface Distance - compute distance from a point to the mesh<br>
+Line-Surface Distance - compute distance from a line to the mesh<br>
+Line-Surface Intersection - compute intersection of line and the mesh<br>
+Cross Section - compute the curves created by a cross-section of a plane through a mesh<br>
+Centroid - compute the centroid, geometric center, of the mesh<br>
+Center-of-Mass - compute the center of mass, balance point, of the mesh
+
+== Extensions ==
+Once a polygonal mesh has been constructed, further steps must be taken before it is useful for games, animation, etc.  The model must be [[texture mapped]] to add colors and texture to the surface and it must be given a skeleton for animation.  Meshes can also be assigned weights and centers of gravity for use in [[physical simulation]].  
+
+In order to display a model on a computer screen outside of the modeling environment, it is necessary to store that model in one of the [[file format]]s listed below, and then use or write a program capable of loading from that format.  The two main methods of displaying 3d polygon models are [[OpenGL]] and [[Direct3D]].  Both of these methods can be used with or without a 3d accelerated [[graphics card]].
+
+== Advantages and disadvantages ==
+There are many disadvantages to representing an object using polygons.  Polygons are incapable of accurately representing curved surfaces, so a large number of them must be used to approximate curves in a visually appealing manner.  The use of complex models has a cost in lowered speed.  In [[scanline rendering|scanline conversion]], each polygon must be converted and displayed, regardless of size, and there are frequently a large number of models on the screen at any given time.  Often, programmers must use multiple models at varying [[Level of detail (programming)|levels of detail]] to represent the same object in order to cut down on the number of polygons being rendered.
+
+The main advantage of polygons is that they are faster than other representations.  While a modern graphics card can show a highly detailed scene at a [[frame rate]] of 60 frames per second or higher, [[Ray tracing (graphics)|raytracers]], the main way of displaying non-polygonal models, are incapable of achieving an interactive frame rate (10 frame/s or higher) with a similar amount of detail.
+
+== File formats ==
+A variety of formats are available for storing 3d polygon data.  The most popular are:
+* .3ds, .max,  which is associated with [[3D Studio Max]]
+* .mb and .ma, which are associated with [[Maya (software)|Maya]]
+* .lwo, which is associated with [[Lightwave]]
+* .lxo, which is associated with [[modo (software)]]
+* [[Wavefront .obj file|.obj]] (Wavefront's "The Advanced Visualizer")
+* .c4d associated with [[Cinema 4D]]
+* .[[dxf]], .dwg, .dwf, associated with [[AutoCAD]]
+* [[.md2]], [[.md3]], associated with the [[Quake (series)|Quake]] series of games
+* .fbx (Alias)
+* .rwx (Renderware)
+* .wrl (VRML 2.0)
+* .blend, which is associated with [[Blender (software)|Blender]]
+* [[JT (visualization format)|.jt]] ([[UGS Corp.|UGS]])
+* [[STL (file format)|.stl]] used in [[rapid prototyping]]
+* [[PLY (file format)|.ply]] used to store data from [[3D scanner]]s
+* .dae ([[COLLADA]])
+
+== See also ==
+* [[Finite element method]]
+* [[Polygon mesh]]
+* [[Vector graphics]]
+* [[Geometry processing]]
+
+== References ==
+# OpenGL SuperBible (3rd ed.), by Richard S Wright and Benjamin Lipchak ISBN 0-672-32601-9
+# OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 1.4, Fourth Edition by OpenGL Architecture Review Board ISBN 0-321-17348-1
+# OpenGL(R) Reference Manual : The Official Reference Document to OpenGL, Version 1.4 (4th Edition) by OpenGL Architecture Review Board ISBN 0-321-17383-X
+# Blender documentation: http://www.blender.org/cms/Documentation.628.0.html
+# Maya documentation: packaged with Alias Maya, http://www.alias.com/eng/index.shtml
+
+{{DEFAULTSORT:Polygonal Modeling}}
+[[Category:3D computer graphics]]
+
+[[bs:Poligon rendering]]
+[[ru:Полигональное моделирование]]
+[[zh:多边形造型]]</body> </html>

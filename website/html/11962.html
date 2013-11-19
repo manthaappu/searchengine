@@ -1,0 +1,63 @@
+<html> <head> <title>Elias delta coding</title></head><body>'''Elias delta code''' is a [[Universal code (data compression)|universal code]] encoding the positive integers developed by [[Peter Elias]]. To code a number:
+#Write it in binary.
+#Count the bits and write down that number of bits in binary (X).
+#Use the binary representation written in step 1 again, remove the leading bit and write down the remaining bits (Y).
+#Append the second binary representation (Y) to the first binary representation (X).
+#Count the bits written in step 2 (X), subtract 1 from that number and prepend that many zeros.
+
+An equivalent way to express the same process:
+#Separate the integer into the highest power of 2 it contains (2<sup>''N' ''</sup>) and the remaining ''N''' binary digits of the integer.
+#Encode ''N = N' + 1'' with [[Elias gamma coding]].
+#Append the remaining ''N''' binary digits to this representation of ''N''.
+
+The code begins:
+
+                                        Implied probability
+  1 = 2<sup>0</sup> => N' = 0, N = 1 => 1             1/2
+  2 = 2<sup>1</sup> + ''0'' => N' = 1, N = 2 => 010''0''      1/16
+  3 = 2<sup>1</sup> + ''1'' => N' = 1, N = 2 => 010''1''       "
+  4 = 2<sup>2</sup> + ''0'' => N' = 2, N = 3 => 011''00''     1/32
+  5 = 2<sup>2</sup> + ''1'' => N' = 2, N = 3 => 011''01''      "
+  6 = 2<sup>2</sup> + ''2'' => N' = 2, N = 3 => 011''10''      "
+  7 = 2<sup>2</sup> + ''3'' => N' = 2, N = 3 => 011''11''      "
+  8 = 2<sup>3</sup> + ''0'' => N' = 3, N = 4 => 00100''000''  1/256
+  9 = 2<sup>3</sup> + ''1'' => N' = 3, N = 4 => 00100''001''   "
+ 10 = 2<sup>3</sup> + ''2'' => N' = 3, N = 4 => 00100''010''   "
+ 11 = 2<sup>3</sup> + ''3'' => N' = 3, N = 4 => 00100''011''   "
+ 12 = 2<sup>3</sup> + ''4'' => N' = 3, N = 4 => 00100''100''   "
+ 13 = 2<sup>3</sup> + ''5'' => N' = 3, N = 4 => 00100''101''   "
+ 14 = 2<sup>3</sup> + ''6'' => N' = 3, N = 4 => 00100''110''   "
+ 15 = 2<sup>3</sup> + ''7'' => N' = 3, N = 4 => 00100''111''   "
+ 16 = 2<sup>4</sup> + ''0'' => N' = 4, N = 5 => 00101''0000'' 1/512
+ 17 = 2<sup>4</sup> + ''1'' => N' = 4, N = 5 => 00101''0001''  "
+
+To decode an Elias delta-coded integer:
+#Read and count zeroes from the stream until you reach the first one.  Call this count of zeroes ''L''.
+#Considering the one that was reached to be the first digit of an integer, with a value of 2<sup>''L''</sup>, read the remaining ''L'' digits of the integer.  Call this integer ''N''.
+#Put a one in the first place of our final output, representing the value 2<sup>''N-1''</sup>.  Read and append the following ''N-1'' digits.
+
+Example:
+ 001010001
+ 1. 2 leading zeros in 001
+ 2. read 2 more bits i.e. 00101
+ 3. decode N = 00101 = 5
+ 4. get N' = 5 - 1 = 4 remaining bits for the complete code i.e. '0001'
+ 5. encoded number = 2<sup>4</sup> + 1 = 17
+
+This code can be generalized to zero or negative integers in the same ways described in [[Elias gamma coding#Generalizations|Elias gamma coding]].
+
+== See also ==
+*[[Elias gamma coding]]
+*[[Elias omega coding]]
+
+== References ==
+{{Unreferenced|date=April 2007}}
+{{Compression Methods}}
+
+[[Category:Numeration]]
+[[Category:Lossless compression algorithms]]
+
+[[fr:Codage delta]]
+[[ko:엘리어스 델타 부호]]
+[[ja:デルタ符号]]
+[[ru:Дельта-код Элиаса]]</body> </html>

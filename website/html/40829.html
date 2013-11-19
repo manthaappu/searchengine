@@ -1,0 +1,76 @@
+<html> <head> <title>YAFFS</title></head><body>{{Infobox filesystem
+| name = YAFFS
+| developer = Charles Manning
+| full_name = Yet Another Flash File System
+| introduction_date =
+| introduction_os =
+| partition_id =
+| directory_struct =
+| file_struct =
+| bad_blocks_struct =
+| max_file_size =
+| max_files_no =
+| max_filename_size =
+| max_volume_size =
+| dates_recorded =
+| date_range =
+| date_resolution =
+| forks_streams =
+| attributes =
+| file_system_permissions =
+| compression =
+| encryption =
+| OS = [[Linux]], [[Microsoft Windows CE|Windows CE]], [[pSOS]], [[eCos]], [[ThreadX]]
+}}
+{{Unreferenced|date=October 2009}}
+'''YAFFS''' ('''Yet Another Flash File System''') was designed and written by [[Charles Manning]], of [[Whitecliffs]], New Zealand, for the company [http://www.yaffs.net/ Aleph One].
+
+Yaffs1 is the first version of this file system and works on NAND chips that have 512 [[byte]] pages + 16 byte spare (OOB;Out-Of-Band) areas.{{clarify|date=October 2010}}  These older [[Integrated circuit|chips]] also generally allow 2 or 3 write cycles per page,{{clarify|date=October 2010}} which YAFFS takes advantage of - i.e. [[dirty page]]s are marked by writing to a specific spare area byte.
+
+Newer NAND flash chips have larger pages, 2048 bytes + 64 bytes spare areas, and stricter write requirements.  Each page within an erase block (128 kilobytes) must be written to in sequential order, and each page must be written only once.  YAFFS2 was designed to accommodate these newer chips.  YAFFS2 is based on the YAFFS1 source code, with the major difference being that internal structures are not fixed to assume 512 byte sizing, and a block sequence number is placed on each written page.  In this way older pages can be logically overwritten without violating the "write once" rule.{{clarify|date=October 2010}}
+
+YAFFS is a robust [[log-structured file system]] that holds [[data integrity]] as a high priority. A secondary YAFFS goal is high performance. YAFFS will typically outperform most alternatives. It is also designed to be portable and has been used on [[Linux]], [[WinCE]], [[pSOS]], [[eCos]], [[ThreadX]] and various special-purpose OSes. A variant 'YAFFS/Direct' is used in situations where there is no OS, embedded OSes and bootloaders: it has the same core filesystem but simpler interfacing to the OS and NAND flash hardware.
+
+The filesystem is licensed both under the [[GNU General Public License|GPL]] and under per-product licenses available from Aleph One.
+
+==YAFFS1==
+YAFFS has no inherent [[format]]ting, an erased flash chip is formatted.  It follows the smart media scheme of marking the 5th byte of the spare area for [[bad block]]s, and ignores any blocks where the spare area byte 5 is not 0xFF.{{clarify|date=October 2010}}
+
+To write file data, YAFFS initially writes a whole page (chunk in YAFFS terminology) that describes the file [[metadata]], such as [[timestamp]]s, name, path, etc.  The new file is assigned a unique object ID number; every data chunk within the file will contain this unique object ID within the spare area.  YAFFS maintains a tree structure in [[RAM]] memory of the physical location of these chunks.  When a chunk is no longer valid (the file is deleted, or parts of the file are overwritten), YAFFS marks a particular byte in the spare area of the chunk as ‘dirty’.  When an entire block (32 pages) is marked as dirty, YAFFS can erase the block and reclaim the space.  If free space on the [[Computer hardware|device]] is low, YAFFS may need to choose a block that has some number of dirty pages and some number of good pages, move the good pages to a new block, mark the old pages as dirty and erase the block.  The process of moving good pages & erasing blocks is called [[garbage collection (computer science)|garbage collection]].
+
+When a YAFFS system [[Mount (computing)|mount]]s a [[NAND flash]] device, it must scan the spare areas of every block to check for valid data, whereby it can then reconstitute the tree data structures.
+
+==YAFFS2==
+YAFFS2 is similar in concept to YAFFS1, and shares much the same code; and the YAFFS2 code base supports YAFFS1 data formats through backward compatibility.  The main difference is that YAFFS2 needs to jump through significant hoops to meet the "write once" requirement of modern NAND flash.<ref>{{cite web| title=YAFFS 2 Specification and Development Notes |url=http://www.yaffs.net/yaffs-2-specification-and-development-notes}}</ref>
+
+YAFFS2 marks every newly written block with a sequence number that is [[Monotonic function|monotonically increasing]]. The sequence of the chunks can be inferred from the block sequence number and the chunk offset within the block.   Thereby when YAFFS2 scans the flash and detects multiple chunks that have identical ObjectIDs and ChunkNumbers, it can choose which to use by taking the greatest sequence number.  For efficiency reasons YAFFS2 also introduces the concept of shrink headers.  For example when a file is resized to a smaller size, YAFFS1 will mark all of the affected chunks as dirty - YAFFS2 cannot do this due to the "write once" rule.  YAFFS2 instead writes a "shrink header", which indicates that a certain number of pages before that point are invalid.  This lets YAFFS2 reconstruct the final state of the filesystem when the system reboots.
+
+YAFFS2 uses a more abstract definition of the NAND flash allowing it to be used with a wider variety of flash parts with different geometries, bad block handling rules etc.
+
+YAFFS2 now supports "checkpointing" which bypasses normal mount scanning, allowing very fast mount times. Mileage will vary, but mount times of 3 seconds for 2 [[gigabyte|GB]] have been reported.
+
+==See also==
+
+* [[List of file systems]]
+* [[JFFS]]
+* [[JFFS2]]
+* [[UBIFS]]
+* [[LogFS]]
+* [[Open NAND Flash Interface Working Group]]
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://www.yaffs.net/ YAFFS - Yet Another Flash Filing System main website] &ndash; a filing system optimised for NAND Flash chips (for embedded use)
+*[http://www.linuxdevices.com/articles/AT9680239525.html Introducing YAFFS, the first NAND-specific flash file system]
+* [http://code.google.com/p/unyaffs/ Unyaffs]: A simple program to unpack YAFFS2 images.
+{{Filesystem}}
+
+{{DEFAULTSORT:Yaffs}}
+[[Category:Flash file systems]]
+[[Category:Embedded Linux]]
+
+[[es:YAFFS]]
+[[ja:YAFFS]]
+[[ru:YAFFS]]</body> </html>

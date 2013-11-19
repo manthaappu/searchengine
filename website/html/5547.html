@@ -1,0 +1,57 @@
+<html> <head> <title>Carry bypass adder</title></head><body>{{Unreferenced stub|auto=yes|date=December 2009}}
+{{Orphan|date=December 2009}}
+
+A ''carry bypass adder'' improves the delay of a [[Ripple_carry_adder#Ripple_carry_adder|ripple-carry adder]].
+
+The two addends are split in blocks of ''n'' bits.  The output carry of each block is dependent on the input carry only if, for each of the ''n'' bits in the block, at least one addend has a ''1'' bit (see the definition of carry propagation under ''[[Carry lookahead adder]]'').  The output carry <math>\mathrm{Cout}_{i+n-1}</math>, for the block corresponding to bits ''i'' to ''i+n-1'' is obtained from a multiplexer, wired as follows:
+
+* <math>SEL = (A_i + B_i) (A_{i+1} + B_{i+1}) ... (A_{i+n-1} + B_{i+n-1})</math>
+* <math>A = \mathrm{C}_{ripple,i+n-1}</math> (the carry output for the ripple adder summing bits ''i'' to ''i+n-1'')
+* <math>B = \mathrm{C}_{out,i-1}</math>
+
+==Implementation Overview==
+Breaking this down into more specific terms, in order to build a 4-bit carry bypass adder, 6 [[Full_adder#Full_adder|full adders]] would be needed. The input buses would be a 4-bit ''A'' and a 4-bit ''B'', with a carry in (''CIN'') signal. The output would be a 4-bit bus X and a carry out signal (''COUT'').
+
+The first two full adders would add the first two bits together. The carry out signal from the second full adder (<math>C_1</math>)would drive the select signal for three 2 to 1 multiplexers. The second set of 2 full adders would add the last two bits assuming <math>C_1</math> is a logical 0. And the final set of full adders would assume that <math>C_1</math> is a logical 1.
+
+The multiplexers then control which output signal is used for ''COUT'', <math>X_2</math> and <math>X_3</math>.
+
+===Verilog===
+    module cba_4(A, B, X, CIN, COUT);
+    	input [3:0]A, B;
+    	input CIN;
+    	output [3:0]X;
+    	output COUT;
+    	
+    	reg [3:0]X;
+    	reg [2:0]base;
+    	reg [2:0]ifzero;
+    	reg [2:0]ifone;
+    	reg COUT;
+    	
+    	always @(A or B or CIN)
+    	begin
+    		base = A[1:0] + B[1:0] + {1'b0, CIN};
+    		ifzero = A[3:2] + B[3:2];
+    		ifone = A[3:2] + B[3:2] + 2'b01;
+    		
+    		if(base[2])
+    		begin
+    			X = {ifone[1:0], base[1:0]};
+    			COUT = ifone[2];
+    		end
+    		else
+    		begin
+    			X = {ifzero[1:0], base[1:0]};
+    			COUT = ifzero[2];
+    		end
+    		
+    	end
+    	
+    endmodule
+
+{{DEFAULTSORT:Carry Bypass Adder}}
+[[Category:Adders]]
+
+
+{{Compu-hardware-stub}}</body> </html>

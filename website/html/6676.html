@@ -1,0 +1,38 @@
+<html> <head> <title>Code audit</title></head><body>A software '''code audit''' is a comprehensive analysis of [[source code]] in a [[programming]] project with the intent of discovering bugs, security breaches or violations of programming conventions. It is an integral part of the [[defensive programming]] paradigm, which attempts to reduce errors before the software is released. C and C++ source code is the most common code to be audited since many higher-level languages, such as Python, have fewer potentially vulnerable functions (e.g., functions that do not check bounds).
+
+== Guidelines ==
+When auditing software, every critical component should be audited separately and together with the entire program. It is a good idea to search for high-risk [[Vulnerability (computing)|vulnerabilities]] first and work down to low-risk vulnerabilities. Vulnerabilities in between high-risk and low-risk generally exist depending on the situation and how the source code in question is being used. Application penetration testing tries to identify vulnerabilities in software by launching as many known attack techniques as possible on likely access points in an attempt to bring down the application.<ref name="source-code-audit-faq">{{cite web|title=Source Code Audit - FAQ|url=http://www.ouncelabs.com/resources/code-audit-faq.asp}}</ref> This is a common auditing method and can be used to find out if any specific vulnerabilities exist, but not where they are in the source code.
+
+=== High-risk vulnerabilities ===
+Some common high-risk vulnerabilities may exist due to the use of:
+* Non-bounds-checking functions (e.g., strcpy, sprintf, vsprintf, and sscanf) that could lead to a [[buffer overflow]] vulnerability <ref name="guidelines-for-c-source-code-auditing">{{cite web|title=Guidelines for C source code auditing|url=http://mixter.void.ru/vulns.html}}</ref>
+* Pointer manipulation of buffers that may interfere with later bounds checking, e.g.: <code>if ((bytesread = net_read(buf,len)) > 0) buf += bytesread;</code> <ref name="guidelines-for-c-source-code-auditing"/>
+* Calls like execve(), execution pipes, system() and similar things, especially when called with non-static arguments <ref name="guidelines-for-c-source-code-auditing"/>
+* Input validation, e.g. (in SQL): <code>statement := "SELECT * FROM users WHERE name = '" + userName + "';"</code> is an example of a [[SQL injection]] vulnerability
+* File inclusion functions, e.g. (in PHP): <code>include($page . '.php');</code> is an example of a [[Remote File Inclusion]] vulnerability
+
+=== Low-risk vulnerabilities ===
+The following is a list of low-risk vulnerabilities that should be found when auditing code, but do not produce a high risk situation.
+* Client-side code vulnerabilities that do not affect the server side (e.g., [[cross-site scripting]])
+* Username enumeration
+* Directory traversal (in [[Web applications]])
+
+== Tools ==
+Source code auditing tools generally look for common vulnerabilities and only work for specific [[programming languages]]. Such automated tools could be used to save time, but should not be relied on for an in-depth audit. Applying such tools as part of a policy-based approach is recommended.<ref>"[http://searchsoftwarequality.techtarget.com/tip/0,289483,sid92_gci1331438,00.html Static analysis at the end of the SDLC doesn't work]" by Wayne Ariola, SearchSoftwareQuality.com, September 22, 2008 </ref> 
+
+== See also ==
+* [[Information technology audit]]
+* [[Defensive programming]]
+* [[Remote File Inclusion]]
+* [[SQL injection]]
+* [[Buffer overflow]]
+* [[List of tools for static code analysis]]
+
+== References ==
+{{reflist}}
+
+{{compsci-stub}}
+
+[[Category:Information technology audit]]
+
+[[fr:Audit de code]]</body> </html>

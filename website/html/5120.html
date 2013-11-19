@@ -1,0 +1,307 @@
+<html> <head> <title>COCOMO</title></head><body>{{Distinguish|Docomo|Kokomo}}
+{{Expert-subject|Computer science|date=November 2008}}
+
+The '''Constructive Cost Model''' ('''COCOMO''') is an algorithmic [[Estimation in software engineering|software cost estimation model]] developed by [[Barry Boehm]]. The model uses a basic [[Regression analysis|regression]] formula, with parameters that are derived from historical project data and current project characteristics.
+
+COCOMO was first published in 1981 [[Barry Boehm|Barry W. Boehm's]] Book ''Software engineering economics''<ref name="cocomo1">[[Barry Boehm]]. ''[[Software engineering economics (book)|Software engineering economics]]''. Englewood Cliffs, NJ:Prentice-Hall, 1981. ISBN 0-13-822122-7</ref> as a model for estimating effort, cost, and schedule for software projects. It drew on a study of 63 projects at [[TRW]] Aerospace where [[Barry Boehm]] was Director of Software Research and Technology in 1981. The study examined projects ranging in size from 2,000 to 100,000 [[lines of code]], and programming languages ranging from [[assembly language|assembly]] to [[PL/I]]. These projects were based on the [[waterfall model]] of software development which was the prevalent software development process in 1981.
+
+References to this model typically call it ''COCOMO 81''. In 1997 ''COCOMO II'' was developed and finally published in 2000 in the book ''Software Cost Estimation with COCOMO II''.<ref name="cocomo2">[[Barry Boehm]],  Chris Abts, A. Winsor Brown, Sunita Chulani, Bradford K. Clark, Ellis Horowitz, Ray Madachy, Donald J. Reifer, and Bert Steece''[[Software cost estimation with COCOMO II (book)|Software cost estimation with COCOMO II]]''  (with CD-ROM). Englewood Cliffs, NJ:Prentice-Hall, 2000. ISBN 0-13-026692-2</ref> COCOMO II is the successor of COCOMO 81 and is better suited for estimating modern software development projects. It provides more support for modern [[software development process]]es and an updated project database. The need for the new model came as software development technology moved from mainframe and overnight batch processing to desktop development, code reusability and the use of off-the-shelf software components. This article refers to ''COCOMO 81''.
+
+COCOMO consists of a hierarchy of three increasingly detailed and accurate forms. The first level, ''Basic COCOMO'' is good for quick, early, rough order of magnitude estimates of software costs, but its accuracy is limited due to its lack of factors to account for difference in project attributes (''Cost Drivers''). ''Intermediate COCOMO'' takes these Cost Drivers into account and ''Detailed COCOMO'' additionally accounts for the influence of individual project phases.
+
+== Basic COCOMO ==
+
+'''Basic COCOMO''' computes software development effort (and cost) as a function of program size. Program size is expressed in estimated thousands of lines of code ([[Source lines of code|KLOC]]) 
+
+COCOMO applies to three classes of software projects: 
+* Organic projects - "small" teams with "good" experience working with "less than rigid" requirements
+* Semi-detached projects - "medium" teams with mixed experience working with a mix of rigid and less than rigid requirements
+* Embedded projects - developed within a set of "tight" constraints (hardware, software, operational, ......)
+
+The basic COCOMO equations take the form
+
+:'''Effort Applied''' = a<sub>b</sub>(KLOC)<sup>b<sub>b</sub></sup> '''[ [[man-month]]s ]'''
+:'''Development Time''' = c<sub>b</sub>(Effort Applied)<sup>d<sub>b</sub></sup> '''[months]'''
+:'''People required''' = Effort Applied / Development Time '''[count]'''
+
+The coefficients ''a<sub>b</sub>'', ''b<sub>b</sub>'', ''c<sub>b</sub>'' and ''d<sub>b</sub>'' are given in the following table.
+
+{| class="wikitable"
+! Software project
+! ''a''<sub>''b''</sub>
+! ''b''<sub>''b''</sub>
+! ''c''<sub>''b''</sub>      
+! ''d''<sub>''b''</sub>
+|-
+| Organic
+| 2.4
+| 1.05    
+| 2.5     
+| 0.38
+|-
+| Semi-detached
+| 3.0
+| 1.12
+| 2.5
+| 0.35
+|-
+| Embedded
+| 3.6
+| 1.20
+| 2.5
+| 0.32
+|}
+
+Basic COCOMO is good for quick estimate of software costs. However it does not account for differences in hardware constraints, personnel quality and experience, use of modern tools and techniques, and so on.
+
+== Intermediate COCOMOs ==
+''Intermediate COCOMO'' computes software development effort as function of program size and a set of "cost drivers" that include subjective assessment of product, hardware, personnel and project attributes. This extension considers a set of four "cost drivers",each with a number of subsidiary attributes:-
+
+* Product attributes
+** Required software reliability
+** Size of application database
+** Complexity of the product
+* Hardware attributes
+** Run-time performance constraints
+** Memory constraints
+** Volatility of the virtual machine environment
+** Required turnabout time
+* Personnel attributes
+** Analyst capability
+** Software engineering capability
+** Applications experience
+** Virtual machine experience
+** Programming language experience
+* Project attributes
+** Use of software tools
+** Application of software engineering methods
+** Required development schedule
+
+'''Each of the 15 attributes receives a rating on a six-point scale that ranges from "very low" to "extra high" (in importance or value). An effort multiplier from the table below applies to the rating. The product of all effort multipliers results in an ''effort adjustment factor (EAF)''. Typical values for EAF range from 0.9 to 1.4.'''
+
+{| border="0" cellspacing="4"
+|rowspan="2" valign="bottom"|Cost Drivers
+!colspan="6"|Ratings
+|-
+|align="center" valign="bottom" width="10%"|Very Low
+|align="center" valign="bottom" width="10%"|Low
+|align="center" valign="bottom" width="10%"|Nominal
+|align="center" valign="bottom" width="10%"|High
+|align="center" valign="bottom" width="10%"|Very High
+|align="center" valign="bottom" width="10%"|Extra High
+|-
+!align="left"|Product attributes
+|-
+|Required software reliability
+|align="center"|0.75
+|align="center"|0.88
+|align="center"|1.00
+|align="center"|1.15
+|align="center"|1.40
+|align="center"| 
+|-
+|Size of application database
+|align="center"| 
+|align="center"|0.94
+|align="center"|1.00
+|align="center"|1.08
+|align="center"|1.16
+|align="center"| 
+|-
+|Complexity of the product
+|align="center"|0.70
+|align="center"|0.85
+|align="center"|1.00
+|align="center"|1.15
+|align="center"|1.30
+|align="center"|1.65
+|-
+!align="left"|Hardware attributes
+|-
+|Run-time performance constraints
+|align="center"| 
+|align="center"| 
+|align="center"|1.00
+|align="center"|1.11
+|align="center"|1.30
+|align="center"|1.66
+|-
+|Memory constraints
+|align="center"| 
+|align="center"| 
+|align="center"|1.00
+|align="center"|1.06
+|align="center"|1.21
+|align="center"|1.56
+|-
+|Volatility of the virtual machine environment
+|align="center"| 
+|align="center"|0.87
+|align="center"|1.00
+|align="center"|1.15
+|align="center"|1.30
+|align="center"| 
+|-
+|Required turnabout time
+|align="center"| 
+|align="center"|0.87
+|align="center"|1.00
+|align="center"|1.07
+|align="center"|1.15
+|align="center"| 
+|-
+!align="left"|Personnel attributes
+|-
+|Analyst capability
+|align="center"|1.46
+|align="center"|1.19
+|align="center"|1.00
+|align="center"|0.86
+|align="center"|0.71
+|align="center"| 
+|-
+|Applications experience
+|align="center"|1.29
+|align="center"|1.13
+|align="center"|1.00
+|align="center"|0.91
+|align="center"|0.82
+|align="center"| 
+|-
+|Software engineer capability
+|align="center"|1.42
+|align="center"|1.17
+|align="center"|1.00
+|align="center"|0.86
+|align="center"|0.70
+|align="center"| 
+|-
+|Virtual machine experience
+|align="center"|1.21
+|align="center"|1.10
+|align="center"|1.00
+|align="center"|0.90
+|align="center"| 
+|align="center"| 
+|-
+|Programming language experience
+|align="center"|1.14
+|align="center"|1.07
+|align="center"|1.00
+|align="center"|0.95
+|align="center"| 
+|align="center"| 
+|-
+!align="left"|Project attributes
+|-
+|Application of software engineering methods 
+|align="center"|1.24
+|align="center"|1.10
+|align="center"|1.00
+|align="center"|0.91
+|align="center"|0.82
+|align="center"| 
+|-
+|Use of software tools
+|align="center"|1.24
+|align="center"|1.10
+|align="center"|1.00
+|align="center"|0.91
+|align="center"|0.83
+|align="center"| 
+|-
+|Required development schedule
+|align="center"|1.23
+|align="center"|1.08
+|align="center"|1.00
+|align="center"|1.04
+|align="center"|1.10
+|align="center"| 
+|}
+
+The Intermediate Cocomo formula now takes the form:
+
+:'''E=''a''<sub>''i''</sub>(KLoC)<sup>''(b''<sub>''i''</sub>'')''</sup>.EAF'''
+
+where E is the effort applied in person-months, '''KLoC''' is the estimated number of thousands of delivered lines of code for the project, and '''EAF''' is the factor calculated above. The coefficient '''a<sub>i</sub>''' and the exponent '''b<sub>i</sub>''' are given in the next table.
+
+:{| border="0" cellspacing="4"
+!Software project
+!width="20%"|a<sub>i</sub>
+!width="20%"|b<sub>i</sub>
+|-
+|Organic
+|align="center"|3.2
+|align="center"|1.05
+|-
+|Semi-detached
+|align="center"|3.0
+|align="center"|1.12
+|-
+|Embedded
+|align="center"|2.8
+|align="center"|1.20
+|}
+
+The Development time '''D''' calculation uses '''E''' in the same way as in the Basic COCOMO.
+
+== Detailed COCOMO ==
+
+Detailed COCOMO - incorporates all characteristics of the intermediate version with an assessment of the cost driver's impact on each step (analysis, design, etc.) of the software engineering process
+1. the detailed model uses different efforts multipliers for each cost drivers attribute these '''Phase Sensitive''' effort multipliers are each to determine the amount of effort required to complete each phase.
+
+== Projects using COCOMO ==
+five phases of detailed cocomo are:-
+-plan and requirement.
+-system design.
+-detailed design.
+-module cod and test.
+-integration and test.
+* [[Ohloh]]
+
+== See also ==
+* [[Estimation in software engineering]]
+* [[Comparison of development estimation software]]
+* [[Cosysmo|COSYSMO]]
+* [[Software engineering economics]]
+* [[Cost overrun]]
+* [[Putnam model]]
+* [[SEER-SEM]]
+
+== References ==
+{{reflist}}
+
+== Further reading ==
+
+* [[Stan Malevanny]]. Case Study: [http://www.codeproject.com/KB/architecture/cocomo2.aspx  Software Project Cost Estimates Using COCOMO II Model], 2005.
+*{{cite web
+  | last = Kemerer
+  | first = Chris F.
+  | title = An Empirical Validation of Software Cost Estimation Models
+  | publisher = Communications of the ACM
+  | date = May, 1987
+  | url = http://www.pitt.edu/~ckemerer/CK%20research%20papers/EmpiricalValidationSwCost_Kemerer87.pdf}}
+
+== External links ==
+<!-- Do not add links to commercial products here - it will be deleted as SPAM -->
+* [http://sunset.usc.edu/csse/research/COCOMOII/cocomo_main.html COCOMO II website]
+* [http://www.cms4site.ru/utility.php?utility=cocomoii COCOMO II online calculator]
+* [http://cost.jsc.nasa.gov/COCOMO.html NASA basic COCOMO online calculator]
+* [http://sunset.usc.edu/research/COCOMOII/cocomo81_pgm/cocomo81.html COCOMO 81 Calculator]
+
+<br>
+
+{{DEFAULTSORT:Cocomo}}
+[[Category:Software engineering costs]]
+
+[[ar:طريقة كوكومو]]
+[[de:COCOMO]]
+[[es:COCOMO]]
+[[fr:Constructive Cost Model]]
+[[it:COCOMO]]
+[[pl:COCOMO]]
+[[pt:Método COCOMO]]
+[[ru:COCOMO]]
+[[fi:COCOMO]]
+[[sv:Cocomo]]
+[[zh:COCOMO]]</body> </html>

@@ -1,0 +1,129 @@
+<html> <head> <title>Partition problem</title></head><body>In [[computer science]], the '''partition problem''' is an [[NP-complete]] problem.  The problem is to decide whether a given [[multiset]] of integers can be [[partition of a set|partitioned]] into two "halves" that have the same sum.  More precisely, given a multiset ''S'' of integers, is there a way to partition ''S'' into two subsets ''S''<sub>1</sub> and ''S''<sub>2</sub> such that the sum of the numbers in ''S''<sub>1</sub> equals the sum of the numbers in ''S''<sub>2</sub>?  The subsets ''S''<sub>1</sub> and ''S''<sub>2</sub> must form a [[Partition of a set|partition]] in the sense that they are [[Disjoint sets|disjoint]] and they  [[Cover (topology)|cover]] ''S''. The [[optimization problem|optimization version]] asks for the "best" partition, and can be stated as: Find a partition into two subsets <math>S_1, S_2</math> such that <math>\max(\operatorname{sum}(S_1), \operatorname{sum}(S_2))</math> is minimized (sometimes with the additional constraint that the sizes of the two sets in the partition must be equal, or differ by at most 1).
+
+The partition problem is equivalent to the following special case of the [[subset sum problem]]: given a set ''S'' of integers, is there a subset ''S''<sub>1</sub> of ''S'' that sums to exactly ''t'' /2 where ''t'' is the sum of all elements of ''S''?  (The equivalence can be seen by defining ''S''<sub>2</sub> to be the [[Set difference|difference]] ''S'' &minus; ''S''<sub>1</sub>.)  Therefore, the [[pseudo-polynomial time]] dynamic programming solution to subset sum applies to the partition problem as well.
+
+A variation of the partition problem is the [[3-partition problem]], in which the set ''S'' must be partitioned into |''S''|/3 triples each with the same sum.  In contrast to partition, 3-partition has no pseudo-polynomial time algorithm unless '''[[P = NP]]''': 3-partition remains NP-complete even when using [[unary coding]].
+
+==Methods==
+Although the partition problem is NP-complete, there are heuristics that solve the problem in many instances, either optimally or approximately. For this reason, it has been called "The Easiest Hard Problem" by [[Brian Hayes (scientist)|Brian Hayes]].<ref name=hayes>{{Harvnb|Hayes|2002}}</ref>
+
+The [[pseudo-polynomial time]] [[dynamic programming]] solution for the [[subset sum problem]] applies to the partition problem as well, and gives an exact answer in polynomial time when the size of the given integers is bounded. In general, however, the numbers in the input may be exponential in the input size, and this approach may not be feasible.
+
+One approach to the problem, imitating the way children choose teams for a game, is the ''greedy algorithm'', which goes through the numbers in descending order, assigning each of them to whichever subset has the smaller sum. This works well when the numbers in the set are of about the same size as its cardinality or less. Another heuristic, due to [[Narendra Karmarkar]] and [[Richard Karp]],<ref>{{Harvnb|Karmarkar|Karp|1982}}</ref> is the ''differencing'' algorithm, which at each step removes two numbers from the set and replaces them by their difference. This represents the decision to put the two numbers in different sets, without immediately deciding which one is in which set. The differencing heuristic performs better than the greedy one, but is still bad for instances where the numbers are exponential in the size of the set.<ref name=hayes>{{Harvnb|Hayes|2002}}</ref>
+
+Both heuristics have a [[running time]] of <math>O(n^2)</math> or less. The greedy algorithm is known to give a 4/3-[[approximation algorithm|approximation]] to the optimal solution of the optimization version. (In other words, if the greedy algorithm gives two sets <math>S_1, S_2</math>, then <math>\max(\operatorname{sum}(S_1), \operatorname{sum}(S_2)) \le 4/3\mathrm{OPT}</math>.) More generally, we can consider a version that takes the <math>K</math> largest elements, and for each partition of them, extends the partition by adding the remaining elements successively to whichever set is smaller. (The greedy algorithm corresponds to <math>K=2</math>.) This version runs in time <math>O(2^K n^2)</math> and is known to give a <math>(K+2)/(K+1)</math> approximation; thus we have a [[polynomial-time approximation scheme]] (PTAS) for the number partition problem, though this is not an FPTAS (the running time is exponential in the desired approximation guarantee). However, there are variations of this idea that ''are'' fully polynomial-time approximation schemes for the subset-sum problem, and hence for the partition problem as well.<ref name=knapsack/> On the other hand, the problem of minimizing the ''square'' of the difference <math>\left(\operatorname{sum}(S_1)-\operatorname{sum}(S_2)\right)^2</math> has no FPTAS unless P=NP.<ref name=whenfptas/>
+
+There are also [[anytime algorithm]]s, based on the differencing heuristic, that first find the solution returned by the differencing heuristic, then find progressively better solutions as time allows (possibly requiring exponential time to reach optimality, for the worst instances).<ref>{{Harvnb|Korf|1998}}, {{Harvnb|Mertens|1999}}</ref>
+
+==Hard instances==
+When the values are small compared to the size of the set, perfect partitions are more likely. Of the 10 billion sets of 10 integers in 1 to 10, {{gaps|9|989|770|790}} of them have a perfect partition, into two sets of equal sum.<ref name=hayes/> The problem is known to undergo a "phase transition", being easy for <math>m/n < 1</math> and hard otherwise (the probability of a perfect partition goes to 1 and 0 respectively). This was originally argued using methods from physics by Stephan Mertens,<ref>{{Harvnb|Mertens|1998}}, {{Harvnb|Mertens|2001}}</ref> and later proved by [[Christian Borgs|Borgs]], [[Jennifer Tour Chayes|Chayes]], and [[Boris Pittel|Pittel]].<ref>{{Harvnb|Borgs|Chayes|Pittel|2001}}</ref>
+
+== See also ==
+* [[Subset sum problem]]
+* [[Bin packing problem]]
+
+== Notes ==
+{{reflist|refs=
+<ref name=knapsack>{{citation | year=2004 | title = Knapsack problems | author1=Hans Kellerer | author2=Ulrich Pferschy | author3=David Pisinger | publisher=Springer | isbn=9783540402862 | page=97 | url=http://books.google.com/?id=u5DB7gck08YC&pg=PA97}}</ref>
+<ref name=whenfptas>{{Citation
+| doi = 10.1287/ijoc.12.1.57.11901
+| volume = 12
+| issue = 1
+| pages = 57–74
+| last = Woeginger
+| first = Gerhard J.
+| title = When Does a Dynamic Programming Formulation Guarantee the Existence of a Fully Polynomial Time Approximation Scheme (FPTAS)?
+| journal = Informs Journal on Computing
+| accessdate = 2009-10-05
+| date = 2000-01-01
+| url = http://joc.journal.informs.org/cgi/content/abstract/12/1/57
+}}</ref>
+}}
+
+==References==
+* {{citation | url=http://www.americanscientist.org/issues/pub/2002/3/the-easiest-hard-problem |title=The Easiest Hard Problem | magazine=[[American Scientist]] | last=Hayes|first=Brian|authorlink=Brian Hayes (scientist) | date=May-June 2002 }}
+*{{Citation
+| last = Karmarkar
+| first = Narenda
+| last2= Karp
+| first2 = Richard M
+| title = The Differencing Method of Set Partitioning
+| journal = Technical Report UCB/CSD 82/113
+| publisher = Computer Science Division (EECS)
+| location = University of California at Berkeley
+| year = 1982
+}}
+*{{Citation
+| doi = 10.1103/PhysRevLett.81.4281
+| volume = 81
+| issue = 20
+| pages = 4281
+| last = Mertens
+| first = Stephan
+| title = Phase Transition in the Number Partitioning Problem
+| journal = Physical Review Letters
+| accessdate = 2009-10-03
+| date = November 1998
+| url = http://link.aps.org/abstract/PRL/v81/p4281
+}}
+* {{Citation
+| doi = 10.1016/S0304-3975(01)00153-0
+| last = Mertens
+| first = Stephan
+| title = A physicist's approach to number partitioning
+| journal = Theoretical Computer Science
+| volume = 265
+| pages = 79–108
+| accessdate = 2009-10-03
+| year = 2001
+}}
+*{{citation | year=2006 | chapter=The Easiest Hard Problem: Number Partitioning | last=Mertens|first=Stephan | title = Computational complexity and statistical physics | editor1=Allon Percus | editor2=Gabriel Istrate | editor3=Cristopher Moore | publisher=Oxford University Press US | isbn=9780195177374 | page=125 | url=http://books.google.com/?id=4YD6AxV95zEC&pg=PA125}} {{arXiv|cond-mat/0310317v2}}
+*{{Citation
+| doi = 10.1002/rsa.10004
+| volume = 19
+| issue = 3-4
+| pages = 247–288
+| last1 = Borgs
+| first1 = Christian
+| last2 = Chayes
+| first2 = Jennifer
+| last3 = Pittel
+| first3 = Boris
+| title = Phase transition and finite-size scaling for the integer partitioning problem
+| journal = Random Structures and Algorithms
+| accessdate = 2009-10-04
+| year = 2001
+| url = http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.89.9577
+}}
+* {{Citation
+| doi = 10.1016/S0004-3702(98)00086-1
+| issn = 0004-3702
+| volume = 106
+| issue = 2
+| pages = 181–203
+| last = Korf
+| first = Richard E.
+| title = A complete anytime algorithm for number partitioning
+| journal = Artificial Intelligence
+| accessdate = 2009-10-04
+| year = 1998
+| url = http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.90.993
+}}
+*{{Citation
+| last = Mertens
+| first = Stephan
+| title = A complete anytime algorithm for balanced number partitioning
+| accessdate = 2009-10-04
+| year = 1999
+}} {{arXiv|cs/9903011}}
+
+[[Category:NP-complete problems]]
+
+
+{{comp-sci-stub}}
+
+[[cs:Problém dvou loupežníků]]
+[[de:Partitionsproblem]]
+[[es:Problema de la partición]]
+[[ko:분할 문제]]
+[[pl:Problem podziału]]</body> </html>

@@ -1,0 +1,35 @@
+<html> <head> <title>Integrated Encryption Scheme</title></head><body>'''Integrated Encryption Scheme (IES)''' is a [[public-key cryptography|public-key]] [[encryption]] scheme which provides [[semantic security]] against an [[Adversary (cryptography)|adversary]] who is allowed to use chosen-plaintext and chosen-ciphertext attacks. The scheme is based on [[Diffie–Hellman problem]]. Two incarnations of the IES are standardized: [[Discrete logarithm|Discrete Logarithm]] Integrated Encryption Scheme (DLIES) and [[Elliptic curve|Elliptic Curve]] Integrated Encryption Scheme (ECIES), which is also known as the Elliptic Curve Augmented Encryption Scheme or simply the Elliptic Curve Encryption Scheme. These two incarnations are identical up to the change of an underlying group and so to be concrete we concentrate on the latter.
+
+To send an encrypted message to [[Alice and Bob|Bob]] using ECIES Alice needs the following information:
+* cryptographic suite to be used:
+** [[Key derivation function|KDF]], e.g., ''ANSI-X9.63-KDF with SHA-1 option'';
+** [[Message authentication code|MAC]], e.g., ''HMAC-SHA-1-160 with 160-bit keys'' or ''HMAC-SHA-1-80 with 80-bit keys'';
+** [[Symmetric-key algorithm|symmetric encryption scheme]] <math>E</math>, e.g., ''[[TDEA]] in [[cipher block chaining|CBC]] mode'' or ''XOR encryption scheme'';
+* EC domain parameters: <math>(p,a,b,G,n,h)</math> for a curve over prime field or <math>(m,f(x),a,b,G,n,h)</math> for a curve over binary field;
+* Bob's public key: <math>K_B</math> (Bob generates it as follows: <math>K_B = k_B G</math>, where <math>k_B</math> is the private key he chooses at random: <math>k_B \in [1, n-1]</math>);
+* optional shared information: <math>S_1</math> and <math>S_2</math>.
+
+To encrypt a message <math>m</math> Alice does the following:
+# generates a random number <math>r \in [1, n-1]</math> and calculates <math>R = r G</math>;
+# derives a shared secret: <math>S = P_x</math>, where <math>P = (P_x, P_y) = r K_B</math> (and <math>P \ne O</math>);
+# uses KDF to derive a symmetric encryption and a MAC keys: <math>k_E \| k_M = \textrm{KDF}(S\|S_1)</math>;
+# encrypts the message: <math>c = E(k_E; m)</math>;
+# computes the tag of encrypted message and <math>S_2</math>: <math>d = \textrm{MAC}(k_M; c \| S_2)</math>;
+# outputs <math>R \| c \| d</math>.
+
+To decrypt the ciphertext <math>R \| c \| d</math> Bob does the following:
+# derives the shared secret: <math>S = P_x</math>, where <math>P = (P_x, P_y) = k_B R</math> (it is the same as the one Alice derived because <math>P = k_B R = k_B r G = r k_B G = r K_B</math>), or outputs ''failed'' if <math>P=O</math>;
+# derives keys the same way as Alice did: <math>k_E \| k_M = \textrm{KDF}(S\|S_1)</math>;
+# uses MAC to check the tag and outputs ''failed'' if <math>d \ne \textrm{MAC}(k_M; c \| S_2)</math>;
+# uses symmetric encryption scheme to decrypt the message <math>m = E^{-1}(k_E; c)</math>.
+
+==References==
+* Victor Shoup, [http://www.shoup.net/papers/iso-2_1.pdf A proposal for an ISO standard for public key encryption], Version 2.1, December 20, 2001.
+* Certicom Research, [http://www.secg.org/download/aid-385/sec1_final.pdf Standards for efficient cryptography, SEC 1: Elliptic Curve Cryptography], Version 1.0, September 20, 2000.
+
+
+{{Crypto navbox | public-key}}
+
+[[Category:Asymmetric-key cryptosystems]]
+
+[[de:Elliptic Curve Integrated Encryption Scheme]]</body> </html>

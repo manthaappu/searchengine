@@ -1,0 +1,118 @@
+<html> <head> <title>NAR 1</title></head><body>{{Unreferenced|date=December 2009}}
+'''NAR 1''' or just '''NAR''' ([[Serbian language|Serbian]] '''Na'''stavni '''R'''ačunar, [[English language|en.]] ''Educational Computer'') was a theoretical model of a computer created by Faculty of Mathematics of [[University of Belgrade]] professor [[Nedeljko Parezanović]].  It was used for [[Assembly language]] and [[Computer architecture]] courses.
+
+==Specifications==
+NAR 1 [[Central Processing Unit|processor]] has a 5-[[bit]] [[address bus]] (32 [[byte]]s of addressable memory) and 8-bit [[data bus]]. [[machine language|Machine]] [[instruction (computer science)|instruction]]s were single-byte with three [[most significant bit]]s specifying the [[opcode]] and 5 [[least significant bit]]s the parameter - [[memory address]]. A single 8-bit [[Accumulator (computing)|accumulator register]] was available and there were no [[Flag (computing)|flags or flag registers]]. Only [[Addressing mode#Absolute|absolute addressing mode]] was available and all others were achieved by [[self-modifying code]]. 
+
+Even though this is only a theoretical computer the following physical characteristics were given:
+
+* Memory cycle: 1μs
+* Arithmetic operation (SABF) cycle: 0.9μs (900ns)
+* Control panel facilitates power on and off, memory data entry and readout, instruction counter entry and selection of either program execution mode or control panel mode.
+
+==Instruction coding and set==
+* '''SABF''' (001aaaaa, [[Serbian language|sr.]] '''Sab'''eri u '''F'''iksnom zarezu, [[English language|en.]] Add Fixed point) loads the content of memory location specified by the address parameter, adds it to the current value of the accumulator and stores the result into the accumulator
+* '''PZAF''' (010xxxxx, [[Serbian language|sr.]] '''P'''romeni '''Z'''nak '''A'''kumulatora u '''F'''iksnom zarezu, [[English language|en.]] Change the sign of the accumulator in fixed point) Negates the fixed point (such as integer) value in the accumulator
+* '''AUM''' (011aaaaa, [[Serbian language|sr.]] '''A'''kumulator '''U''' '''M'''emoriju, [[English language|en.]] Accumulator Into Memory) stores the content of the accumulator into memory location specified by the address parameter
+* '''MUA''' (100aaaaa, [[Serbian language|sr.]] '''M'''emorija '''U''' '''A'''kumulator, [[English language|en.]] Memory Into Accumulator) loads the content of memory location specified by the address parameter into the accumulator
+* '''NES''' (101aaaaa, [[Serbian language|sr.]] '''Ne'''gativni '''S'''kok, [[English language|en.]] Negative Jump) performs a [[Branch (computer science)|conditional jump]] to the address specified by the parameter if the current value of the accumulator is negative
+* '''ZAR''' (110xxxxx, [[Serbian language|sr.]] '''Za'''ustavi '''R'''ačunar, [[English language|en.]] Stop the Computer) stops any further processing.
+
+Two more instructions were not specified but were commonly present in simulators and took instruction codes 000aaaaa and 111aaaaa:
+* '''BES''' ([[Serbian language|sr.]] '''Be'''zuslovni '''S'''kok, [[English language|en.]] Unconditional Jump) performs an [[Jump instruction|unconditional jump]] to the address specified by the parameter
+* '''NUS''' ([[Serbian language|sr.]] '''Nu'''la-'''S'''kok, [[English language|en.]] Zero Jump) performs a [[Branch (computer science)|conditional jump]] to the address specified by the parameter if the current value of the accumulator is zero
+
+==Example programs==
+A sample program that sums up an array of 8-bit integers:
+
+<pre>
+00:     0         ; input: 0 or value 22, output: result
+01..21: 0,0,0...  ; input: values 1..21
+22:     MUA  0    ; Start of program; Load accumulator from address 0
+23:     SABF 1    ; Add value from address 1 to accumulator
+24:     AUM  0    ; Store accumulator to address 0
+25:     MUA  23   ; Load instruction at address 23 (SABF)
+26:     SABF 31   ; Add value from address 31 (+1) to accumulator
+27:     AUM  23   ; Store accumulator to address 23 (modifies SABF instruction)
+28:     SABF 30   ; Add value from address 30 to accumulator
+29:     NES  22   ; Jump back to 22 if accumulator value is negative
+30:     ZAR  10   ; Stop the computer. Argument makes this byte have the value of -(SABF 22) = -54.
+31:     1         ; Value to add to address in each iteration
+</pre>
+
+Above program adds up to 22 8-bit values if executed from address 22:
+* Values 1-21 stored at locations 1-21
+* Value 22 stored at location 0, instead of the constant 0 and will be replaced by the result
+
+NAR 1 programs are commonly self-modifying. Unlike in some other architectures, this is not a 'trick'. As memory can not be addressed by a register, the only way to dynamically manipulate memoory data is to modify memory manipulation instructions. Above example also contains a typical trick to save memory - instruction (at address 30) is reused as data by another instruction (at address 28).
+
+If initial accumulator value can be controlled from the control pane, a 23rd value can be stored in it. Above program has to be only slightly modified - instruction SABF 1 at address 23 has to be changed to SABF 0 and the program should be executed from that address (23) and not from 22.
+
+Other tricks included the use of the changes of the sign after instruction is modified, as shown in the following example:
+
+<pre>
+00..21: 0,0,0...  ; input values 22 to 1
+22:     0         ; input: 0 or value 23, output: result
+23:     MUA  21   ; start of program; Load (next) value
+24:     SABF 22   ; Add subtotal at 22 to accumulator
+25:     AUM  22   ; Store new subtotal to 22
+26:     MUA  23   ; Load instruction 23 into accumulator
+27:     SABF 31   ; Decrement instruction by 1
+28:     AUM  23   ; Update instruction
+29:     NES  23   ; Repeat if the instruction is still negative
+30:     ZAR       ; Otherwise, stop the computer
+31:     -1        ; Constant needed for instruction at 27
+</pre>
+
+Here the instruction "MUA 21" at address 23 has the binary value 10010101, which is -107 decimal when treated like signed integer in [[two's complement]]. Instructions at addresses 26, 27 and 28 decrement this value by 1 in each iteration. This will modify the 5 least significant bits specifying the address and will not touch the three bits indicating the instruction until that instruction becomes MUA 0 (10000000 binary = -128 decimal, negative). Once this is decremented by one it becomes 01111111 (+127 decimal) which is no longer negative and will cause the jump-if-negative instruction at 29 to pass, proceeding to "stop the computer" at 30.
+
+Similarly to above, this program can add between 22 and 24 values, depending on whether address 22 can be used for both input and output and whether initial value of the accumulator can be used as input (the program should then be executed from address 24 and instruction at 23 should be MUA 22).
+
+If particular implementation stops the computer if it encounters an unknown opcode or it implements additional unconditional jump instruction with opcode "111aaaaa", then such behaviour can be used as follows:
+
+<pre>
+00..22: 0,0,0...  ; input values 23 to 1
+23:     0         ; input: 0 or value 24, output: result
+24:     MUA  22   ; start of program; Load (next) value
+25:     SABF 23   ; Add subtotal at 23 to accumulator
+26:     AUM  23   ; Store new subtotal to 23
+27:     MUA  24   ; Load instruction 24 into accumulator
+28:     SABF 31   ; Decrement instruction by 1
+29:     AUM  24   ; Update instruction
+30:     NES  24   ; Repeat if the instruction is still negative
+31:     -1        ; BES 31 or invalid instruction & constant for instruction at 28
+</pre>
+
+Above, the value of "-1" found at address 31 can either be treated as invalid instruction causing the computer to stop or as unconditional jump (BES 31) to the same address, resulting in infinite loop that does not affect the result (control panel can be used to display it).
+
+Finally, depending on whether it is decided that a computer will stop program execution if it reaches the end of memory (address 31, will not roll back to address 0), above program can be reorganized to take one value more by eliminating the need for "stop the computer" instruction altogether, as follows:
+
+<pre>
+00..22: 0,0,0...  ; input values 23 to 1
+23:     0         ; input: 0 or value 24, output: result
+24:     -1        ; Constant needed for instruction at 29
+25:     MUA  22   ; start of program; Load (next) value
+26:     SABF 23   ; Add subtotal at 23 to accumulator
+27:     AUM  23   ; Store new subtotal to 23
+28:     MUA  25   ; Load instruction 25 into accumulator
+29:     SABF 24   ; Decrement instruction by 1
+30:     AUM  25   ; Update instruction
+31:     NES  25   ; Repeat if the instruction is still negative
+; ------------- end of memory
+</pre>
+
+==Trivia==
+* Word "nar" means [[Pomegranate]] in [[Serbian language]]
+* Many NAR 1 simulators were created. One was named "Šljiva" ([[English language|en.]] ''[[plum]]'') as that fruit grows in [[Serbia]], while "nar" does not.
+* One of frequently given taks was to create a program that adds as many numbers as possible, having those numbers stored in 32-byte memory along with the program.
+* Some assembly language protocols are derived from the NAR1 khulil code
+
+==See also==
+* [[NAR 2]]
+
+{{Serbian computers}}
+
+{{DEFAULTSORT:Nar 1}}
+[[Category:Computational models]]
+
+[[sr:НАР 1]]</body> </html>

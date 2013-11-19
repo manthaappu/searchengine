@@ -1,0 +1,116 @@
+<html> <head> <title>Setuid</title></head><body>{{lowercase}}
+'''setuid''' and '''setgid''' (short for '''set''' '''u'''ser '''ID''' upon execution and '''set''' '''g'''roup '''ID''' upon execution, respectively) are [[Unix]] access rights flags that allow users to run an [[executable]] with the permissions of the executable's owner or group. They are often used to allow users on a computer system to run programs with temporarily elevated privileges in order to perform a specific task.  While the assumed user id or group id privileges provided are not always elevated, at a minimum they are specific.
+
+setuid and setgid are needed for tasks that require higher privileges than those which common users have, such as changing their login password. Some of the tasks that require elevated privileges may not immediately be obvious, though &mdash; such as the [[ping]] command, which must send and listen for [[Internet Control Message Protocol|control packet]]s on a network interface. 
+
+==setuid on executables==
+
+When a ''[[Binary file|binary]]'' executable file has been given the setuid attribute, normal users on the system who have permission to execute this file gain the privileges of the user who owns the file (commonly [[superuser|root]]) within the created [[process (computing)|process]]. When root privileges have been gained within the process, the application can then perform tasks on the system that regular users normally would be restricted from doing. The invoking user will be prohibited by the system from altering the new process in any way, such as by using [[ptrace]], <tt>LD_LIBRARY_PATH</tt> or sending signals to it (signals from the terminal will still be accepted, however). Due to the increased likelihood of security flaws<ref>http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html</ref>, many operating systems ignore the setuid attribute when applied to executable ''[[Shell script|shell scripts]]''.
+
+While this setuid feature is very useful in many cases, it can pose a security risk if the setuid attribute is assigned to [[executable]] programs that are not carefully designed. Users can [[exploit (computer security)|exploit]] vulnerabilities in flawed programs to gain permanent [[Privilege escalation|elevated privileges]], or unintentionally execute a [[Trojan horse (computing)|trojan horse]] program.
+
+The setgid attribute will allow for changing the group based privileges within a process, like the setuid flag does for user based privileges.
+
+The presence of setuid executables justifies the fact that the [[chroot]] system call is not available to non-[[superuser|root]] users on Unix. See [[chroot#Limitations|limitations of chroot]] for more details.
+
+The setuid and setgid bits are normally set with the command [[chmod]] by setting the high-order octet to 4 (for setuid) or 2 (for setgid). `chmod 6711` will set the setuid and setgid bit (6) make the file read/write/executable for the owner (7) and executable by the group (first 1) and others (second 1). All chmod flags are octal, and the least significant bit of the high-order octet is used for a special mode known as the [[sticky bit]].  
+
+Most implementations of the chmod command also support finer-grained, symbolic arguments to set these bits.  This is shown in the demonstration below as the `chmod ug+s` command.  
+
+The demonstration C program below simply obtains and reveals the real and effective user and group id currently assigned to the process.  The commands shown first compile the process as user `bob` and subsequently use `chmod` to establish the setuid and setgid bits.  The `su` command, itself a client of the setuid feature, is then used to assume the id of `alice`.  The effectiveness of the `chmod` command is checked with `ls -l`, and finally the demonstration program is run, revealing the expected identity change, consistent with the /etc/passwd file.
+
+Note that the demonstration program listed below will silently fail to change the effective UID if run on a volume mounted with the `nosuid` option.
+
+=== Demonstration ===
+<source lang="bash">
+[bob@foo]$ cat /etc/passwd
+alice:x:1007:1007::/home/alice:/bin/bash
+bob:x:1008:1008::/home/bob:/bin/bash
+[bob@foo]$ cat printid.c
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int main(void) {
+    printf(
+        "Real      UID = %d\n"
+        "Effective UID = %d\n"
+        "Real      GID = %d\n"
+        "Effective GID = %d\n",
+        getuid (),
+        geteuid(),
+        getgid (),
+        getegid()
+    );
+    return 0;
+}
+
+[bob@foo]$ gcc -Wall printid.c -o printid
+[bob@foo]$ chmod ug+s printid
+[bob@foo]$ su alice 
+Password: 
+[alice@foo]$ ls -l
+-rwsr-sr-x 1 bob bob 6944 2007-11-06 10:22 printid
+[alice@foo]$ ./printid 
+Real      UID = 1007
+Effective UID = 1008
+Real      GID = 1007
+Effective GID = 1008
+[alice@foo]$
+</source>
+
+==setuid and setgid on directories==
+
+The setuid and setgid flags, when set on a directory, have an entirely different meaning.
+
+Setting the setgid permission on a directory (chmod g+s) causes new files and subdirectories created within it to '''inherit its groupID''', rather than the primary groupID of the user who created the file (the ownerID is never affected, only the groupID). Newly created subdirectories inherit the setgid bit. Note that setting the setgid permission on a directory only affects the groupID of new files and subdirectories created after the setgid bit is set, and is not applied to existing entities. Setting the setgid bit on existing subdirectories must be done manually, with a command such as the following:
+
+<code>
+ [root@foo]# find /path/to/directory -type d -exec chmod g+s '{}' \;</code>
+
+The setuid permission set on a directory is ignored on [[UNIX]] and [[Linux]] systems <ref>{{cite web|last=Bauer|first=Mick|year=2004|url=http://www.linuxjournal.com/article/7727|title=Paranoid Penguin - Linux Filesystem Security, Part II|publisher=linuxjournal.com}}</ref>. [[FreeBSD]] can be configured to interpret it analogously to setgid, namely, to force all files and sub-directories to be owned by the top directory owner.<ref>{{cite web|url=http://www.freebsd.org/cgi/man.cgi?query=chmod&apropos=0&sektion=0&manpath=FreeBSD+6.1-RELEASE&format=html|title=chmod manpage on www.freebsd.org}}</ref>
+
+== Security ==
+Programs that use this bit must be carefully designed to be immune to buffer overrun attacks. Successful buffer overrun attacks on vulnerable applications allow the attacker to execute arbitrary code under the rights of the process being exploited. In the event a vulnerable process uses the setuid bit to run as root, the code will be executed with root privileges, in effect giving the attacker root access to the system on which the vulnerable process is running.
+
+==History==
+The setuid bit was invented by [[Dennis Ritchie]]. His employer, AT&T, applied for a patent in 1972; the patent was granted in 1979 as patent number {{patent|US|4135240|"Protection of data file contents"}}. The patent was later placed in the public domain.<ref>{{cite web| url=http://www.textfiles.com/law/softpat.txt|title=Summary of key software patents}}</ref>
+
+== See also ==
+* [[Confused deputy problem]]
+* [[sudo]]
+* [[PolicyKit]]
+* [[Unix security]]
+* [[chmod]]
+* [[User identifier (Unix)]]
+* [[Group identifier (Unix)]]
+* [[File system permissions]]
+* [[Privilege revocation]]
+* [[Privilege separation]]
+* [[Environment variable]]
+
+== References ==
+{{Reflist}}
+
+==External links==
+* Hao Chen, [[David A. Wagner|David Wagner]], Drew Dean: [http://www.cs.berkeley.edu/~daw/papers/setuid-usenix02.pdf <cite>Setuid Demystified</cite>] (pdf)
+* Dan Tsafrir, Dilma Da Silva, [[David A. Wagner|David Wagner]]: [http://www.eecs.berkeley.edu/~daw/papers/setuid-login08b.pdf<cite>The Murky Issue of Changing Process Identity: Revising Setuid Demystified</cite>] (pdf)
+
+* Wayne Pollock: [http://wpollock.com/AUnix1/FilePermissions.htm Unix File and Directory <cite>Permissions and Modes</cite>]
+
+[[Category:Articles with example C code]]
+[[Category:Computer security procedures]]
+[[Category:Unix]]
+[[Category:Patents placed into the public domain]]
+
+[[de:Setuid]]
+[[es:Setuid]]
+[[eu:Setuid]]
+[[fr:Setuid]]
+[[it:Setuid e setgid]]
+[[ja:Setuid]]
+[[pl:Setuid]]
+[[pt:Setuid]]
+[[ru:Suid]]
+[[sk:Setuid]]</body> </html>

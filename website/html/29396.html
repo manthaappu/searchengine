@@ -1,0 +1,39 @@
+<html> <head> <title>Plate notation</title></head><body>'''Plate notation''' is a method of representing variables that repeat in a [[graphical model]].  Instead of drawing each repeated variable individually, a plate or rectangle is used to group variables into a subgraph that repeat together, and a number is drawn on the plate to represent the number of repetitions of the subgraph in the plate.<ref>{{cite speech
+ | title = Graphical models
+ | author = Ghahramani, Zoubin
+ | first = Zoubin
+ | last = Ghahramani
+ | date = 2007/08
+ | location = Tübingen, Germany
+ | url = http://videolectures.net/mlss07_ghahramani_grafm/
+ | accessdate = 2008-02-21
+}}</ref>  The assumptions are that the subgraph is duplicated that many times, the variables in the subgraph are indexed by the repetition number, and any links that cross a plate boundary are replicated once for each subgraph repetition.<ref>{{cite journal
+  | last = Buntine
+  | first = Wray L.
+  | title = Operations for Learning with Graphical Models
+  | journal = Journal of Artificial Intelligence Research
+  | volume = 2
+  | pages = 159–225
+  | publisher = AI Access Foundation
+  | date = December 1994
+  | url = http://www.cs.cmu.edu/afs/cs/project/jair/pub/volume2/buntine94a.pdf
+  | format = [[PDF]]
+  | issn = 11076-9757
+  | accessdate = 2008-02-21 }}</ref>
+
+==Example==
+[[Image:Latent Dirichlet allocation.svg|thumb|right|300px|Plate notation for [[Latent Dirichlet allocation]]]]
+
+In this example, we consider [[Latent Dirichlet allocation]], a [[Bayesian network]] that models how documents in a corpus are topically related.  There are two variables not in any plate; ''α'' is the parameter of the uniform [[Dirichlet distribution|Dirichlet]] prior on the per-document topic distributions, and ''β'' is the parameter of the uniform Dirichlet prior on the per-topic word distribution.
+
+The outermost plate represents all the variables related to a specific document, including <math>\theta_i</math>, the topic distribution for document ''i''.  The ''M'' in the corner of the plate indicates that the variables inside are repeated ''M'' times, once for each document.  The inner plate represents the variables associated with each of the <math>N_i</math> words in document ''i'': <math>z_{ij}</math> is the topic for the ''j''th word in document ''i'', and <math>w_{ij}</math> is the actual word used.
+
+The ''N'' in the corner represents the repetition of the variables in the inner plate <math>N_i</math> times, once for each word in document ''i''.  The circle representing the individual words is shaded, indicating that each <math>w_{ij}</math> is [[observable variable|observable]], and the other circles are empty, indicating that the other variables are [[latent variable]]s.  The directed edges between variables indicate dependencies between the variables: for example, each <math>w_{ij}</math> depends on <math>z_{ij}</math> and ''β''.
+
+==References==
+<references />
+
+{{DEFAULTSORT:Plate Notation}}
+[[Category:Graphical models]]
+[[Category:Bayesian networks]]
+[[Category:Mathematical notation]]</body> </html>

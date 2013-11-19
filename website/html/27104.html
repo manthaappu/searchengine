@@ -1,0 +1,91 @@
+<html> <head> <title>Odds algorithm</title></head><body>The '''odds-algorithm'''  is a mathematical method to compute  optimal
+strategies for a class of problems  which  belong to the domain  of [[optimal stopping]]. Its solution determines the ''odds-strategy'', and the importance of the
+odds-strategy lies in its optimality, as explained below. 
+
+The odds-algorithm applies to a class of problems called  ''last-success''- problems. Formally the objective is to maximize the probability of identifying in a 
+sequence of sequentially observed independent events  a last specific event. This identification must be done at the time of observation. No recall on preceding observations is permitted. Usually a specific
+event is defined by the decision maker as an event which is of true interest in the view of "stopping" in order to take a well-defined action. Such problems  are encountered  in several situations.
+
+==Examples==
+Two different situations exemplify  the  interest in maximizing the probability to stop on a last specific event.
+ 
+# Suppose a car is advertised for sale to the highest bidder (best "offer").  n potential buyers respond and ask to see the car. Each insists upon an immediate decision from the seller to accept the bid, or not. Define a bid as ''interesting'', and coded ''1''  if it is better than all preceding bids, and coded  ''0'' otherwise. The bids will form a random sequence of 0's and 1's. Only 1's interest the seller, who may fear that each successive 1 might be the last. It follows from the definition that the very last 1 is the highest bid. Maximizing the probability of selling on the last 1 therefore means maximizing the probability of selling ''best''.
+# A physician, using a special treatment, may use the code 1 for a successful treatment, 0 otherwise. The physician treats a sequence of n patients the same way, and wants to minimize any suffering, and to achieve success with every patient in the sequence. Stopping on the last 1 in such a random sequence of 0's and 1's would achieve this objective.  Since the physician is no prophet, the objective is to maximize the probability of stopping on the last 1.
+
+== Definitions ==
+Consider a sequence of n independent events. Associate with this sequence another sequence <math> I_1,\, I_2,\, \dots ,\, I_n </math>  with values 1 or 0.   Here  <math> \,I_k =1</math> stands for
+the event that the kth observation is interesting (as defined by the decision maker), and <math>\, I_k=0</math> for non-interesting.
+Let <math> \,p_k = P( \,I_k\,=1)</math> be the probability that the kth event is interesting. Further let
+<math> \,q_k = \,1- p_k </math> and <math> \,r_k = p_k/q_k</math>. Note that 
+<math> \,r_k</math> represents the [[odds]] of the kth event turning out to be interesting, 
+explaining the name of the odds-algorithm.
+
+== Algorithmic procedure of the odds-algorithm==
+
+The odds-algorithm sums up the odds in reverse order 
+
+:<math> r_n + r_{n-1} + r_{n-2}\, +\cdots, \,  </math> 
+
+until this sum reaches or exceeds the value 1 for the first time. If this happens at index ''s'', it saves ''s'' and the corresponding sum 
+
+:<math> R_s = \,r_n + r_{n-1} + r_{n-2}  + \cdots + r_s. \, </math>
+
+If the sum of the odds  does not reach 1, it sets ''s'' = 1.  At the same time it computes 
+
+:<math> Q_{s}=q_n q_{n-1}\cdots q_s.\,</math>
+
+The output is
+
+# <math>\,s</math>, the stopping threshold
+# <math>\,w = Q_s R_s</math>, the win probability.
+
+== Odds-strategy==
+The odds-strategy is the rule to observe the events one after the other and to stop
+on the first interesting event from index ''s'' onwards (if any), where ''s'' is the stopping threshold of output a).
+
+The importance of the odds-strategy, and hence of the odds-algorithm, lies in the following odds-theorem.
+
+==Odds-theorem ==
+The odds-theorem states that 
+
+# The odds-strategy is ''optimal'', that is, it maximizes the probability of stopping on the last 1.
+# The win probability of the odds-strategy equals   <math>\,w= Q_s R_s  </math>
+# If <math>\, R_s \ge \,1 </math>, the win probability <math>\, w</math> is always at least <math> \,1/e = 0.368\dots</math>, and this lower bound is ''best possible''.
+
+==Features of the odds-algorithm==
+The odds-algorithm computes the optimal ''strategy'' and the optimal ''win probability'' at the same time. Also, the number of operations of the odds-algorithm is (sub)linear in n. Hence no quicker algorithm can possibly
+exist for all sequences, so that the odds-algorithm is, at the same time, optimal as an algorithm.
+
+==Source==
+F. T. Bruss (2000) devised the odds algorithm, and coined its name. It is also known as Bruss-algorithm (strategy). Free implementations can be found on the web.
+
+==Applications==
+Applications reach from medical questions in [[clinical trial]]s over sales problems, [[secretary problems]], [[portfolio (finance)|portfolio]] selection, (one-way) search strategies, trajectory problems and the [[parking problem]] to problems in on-line [[maintenance]] and others.
+
+There exists, in the same spirit, an Odds-Theorem for continuous-time arrival processes with independent increments such as the [[Poisson process]] (Bruss (2000)). In some cases, the odds are not necessarily known in advance (as in Example 2 above) so that the application of the odds-algorithm is not directly possible. In this case each step can use [[sequential estimates]] of the odds. This is meaningful, if the number of unknown parameters is not large compared with the number n of observations. The question of optimality is then more complicated, however, and requires additional studies.  Generalizations of the odds-algorithm allow for different rewards for failing to stop
+and wrong stops as well as replacing independence assumptions by weaker ones (Ferguson (2008))
+
+== See also ==
+
+* [[Secretary problem]]
+* [[Clinical trial]]
+* [[Maintenance, repair and operations]]
+* [[House selling problem]]
+* [[Parking problem]]
+
+== References ==
+
+* [[F. Thomas Bruss]]:'' Sum the Odds to One and Stop'', [[Annals of Probability]]  Vol. 28, 1384&ndash;1391 (2000).
+* &mdash;:'' A note on Bounds for the Odds-Theorem of Optimal Stopping'', [[Annals of Probability]]  Vol. 31,  1859&ndash;1862,   (2003).
+* &mdash;:'' The art of a right decision.''  Newsletter of the [[European Mathematical Society]], Issue 62, 14&ndash;20,  (2005).
+* Mitsushi Tamaki:''Optimal Stopping on Trajectories and the Ballot Problem'', [[Journal of Applied Probability]]  Vol.  38, 946&ndash;959 (2001).
+* Shoo-Ren Hsiao and Jiing-Ru. Yang: ''Selecting the Last Success in Markov-Dependent Trials'',  [[Journal of Applied Probability]],  Vol. 93,  271&ndash;281,  (2002.)
+* E. Thomas, E. Levrat, B. Iung: ''L'algorithme de Bruss comme contribtion à une maintenance préventive'', [[Sciences et Technologies de l'automation]], Vol. 4, 13-18 (2007).
+*T.S. Ferguson:  (2008, unpublished) 
+==External links==
+* Bruss-Algorithmus http://www.p-roesler.de/odds.html
+
+{{DEFAULTSORT:Odds Algorithm}}
+[[Category:Mathematical optimization]]
+[[Category:Statistical algorithms]]
+[[Category:Optimal decisions]]</body> </html>

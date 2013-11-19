@@ -1,0 +1,159 @@
+<html> <head> <title>Semiparametric regression</title></head><body>In [[statistics]], '''semiparametric regression''' includes [[Regression analysis|regression]] models that combine [[parametric model|parametric]]  and [[Kernel regression|nonparametric]] models. They are often used in situations where the fully nonparametric model may not perform well or when the researcher wants to use a parametric model but the functional form with respect to a subset of the regressors or the density of the errors is not known. Semiparametric regression models are a particular type of [[semiparametric model|semiparametric modelling]] and, since semiparametric models contain a parametric component, they rely on parametric assumptions and may be [[Specification (regression)|misspecified]] and [[Consistent estimator|inconsistent]], just like a fully parametric model.
+
+== Methods ==
+Many different semiparametric regression methods have been proposed and developed. The most popular methods are the partially linear, index and varying coefficient models.
+
+=== Partially linear models ===
+A partially linear model is given by 
+
+: <math> Y_i = X'_i \beta + g\left(Z_i \right) + u_i, \, </math>
+
+: <math> i = 1,\ldots,n, \, </math>
+
+where <math> Y_{i} </math> is the dependent variable, <math> X_{i} </math> and <math> Z_{i} </math> are <math> p \times 1 </math> vectors of explanatory variables, <math> \beta </math> is a <math> p \times 1 </math> vector of unknown parameters and <math>  Z_{i} \in \operatorname{R}^{q} </math>. The parametric part of the partially linear model is given by the parameter vector <math> \beta </math> while the nonparametric part is the unknown function <math> g\left(Z_{i}\right) </math>. The data is assumed to be i.i.d. with <math> E\left(u_{i}|X_{i},Z_{i}\right) = 0 </math> and the model allows for a conditionally [[heteroskedastic]] error process <math> E\left(u^{2}_{i}|x,z\right) = \sigma^{2}\left(x,z\right) </math> of unknown form. This type of model was proposed by Robinson (1988) and extended to handle categorical covariates by Racine and Liu (2007). 
+
+This method is implemented by obtaining a <math> \sqrt{n} </math> consistent estimator of <math> \beta </math> and then deriving an estimator of <math> g\left(Z_{i}\right) </math> from the [[Kernel regression|nonparametric regression]] of <math> Y_{i} - X'_{i}\hat{\beta} </math> on <math> z </math> using an appropriate nonparametric regression method <ref> See Li and Racine (2007) for an in depth look at nonparametric regression methods. </ref>.
+\times
+
+=== Index models ===
+A [[single index model]] takes the form 
+
+: <math> Y = g\left(X'\beta_{0}\right) + u, \, </math> 
+
+where <math> Y </math>, <math> X </math> and <math> \beta_{0} </math> are defined as earlier and the error term <math> u </math> satisfies <math> E\left(u|X\right) = 0 </math>. The single index model takes its name from the parametric part of the model <math> x'\beta </math> which is a ''scalar'' single index. The nonparametric part is the unknown function <math> g\left(\cdot\right) </math>.
+
+==== Ichimura's method ====
+The single index model method developed by Ichimura (1993) is as follows. Consider the situation in which <math> y </math> is continuous. Given a known form for the function <math> g\left(\cdot\right) </math>, <math> \beta_{0} </math> could be estimated using the [[Non-linear least squares|nonlinear least squares]] method to minimize the function 
+
+: <math> \sum_{i=1} \left(Y_i - g\left(X'_i \beta\right)\right)^2. </math>
+
+Since the functional form of <math> g\left(\cdot\right) </math> is not known, we need to estimate it. For a given value for <math> \beta </math> an estimate of the function 
+
+: <math> G\left(X'_i \right) = E\left(Y_i |X'_i \beta\right) = E\left[g\left(X'_i\beta_o \right)|X'_i \beta\right] </math>
+
+using [[Kernel density estimation|kernel]] method. Ichimura (1993) proposes estimating <math> g\left(X'_{i}\beta\right) </math> with 
+
+: <math> \hat{G}_{-i}\left(X'_i \beta\right),\, </math>
+
+the [[Resampling (statistics)|leave-one-out]] [[Kernel density estimation|nonparametric kernel]] estimator of <math> G\left(X'_{i}\beta\right) </math>. 
+
+==== Klein and Spady's estimator ====
+If the dependant variable <math> y </math> is binary and <math> X_{i} </math> and <math> u_{i} </math> are assumed to be [[Independence (probability theory)|independent]], Klein and Spady (1993) propose a technique for estimating <math> \beta </math> using [[maximum likelihood]] methods. The log-likelihood function is given by 
+
+: <math> L\left(\beta\right) = \sum_i \left(1-Y_i\right)\ln\left(1-\hat{g}_{-i}\left(X'_i\beta\right)\right) + \sum_{i}Y_i\left(\hat{g}_{-i}\left(X'_i \beta\right)\right), </math>
+
+where <math> \hat{g}_{-i}\left(X'_{i}\beta\right) </math> is the [[Resampling (statistics)|leave-one-out]] estimator.
+
+=== Smooth coefficient\varying coefficient models ===
+Hastie and Tibshirani (1993) propose a smooth coefficient model given by 
+
+: <math> Y_i = \alpha\left(Z_i\right) + X'_i\beta\left(Z_i\right) + u_i 
+ = \left(1 + X'_i\right)\left(\begin{array}{c} \alpha\left(Z_i\right) \\ \beta\left(Z_i\right) \end{array}\right) + u_i 
+ = W'_i\gamma\left(Z_i\right) + u_i, </math>
+
+where <math> X_{i} </math> is a <math> k \times 1 </math> vector and <math> \beta\left(z\right) </math> is a vector of unspecified smooth functions of <math> z </math>.
+
+<math> \gamma\left(\cdot\right) </math> may be expressed as
+
+: <math> \gamma\left(Z_i\right) = \left(E\left[W_i W'_i|Z_i \right]\right)^{-1}E\left[W_i Y_i|Z_i\right]. </math>
+
+== Notes ==
+{{reflist}}
+
+== References == 
+
+* {{ cite journal
+ | last = Robinson
+ | first = P.M.
+ | authorlink = 
+ | coauthors = 
+ | title = Root-''n'' Consistent Semiparametric Regression
+ | journal = Econometrica
+ | volume = 56
+ | issue = 4
+ | pages = 931–954
+ | date = 1988
+ | doi =10.2307/1912705
+ | url = http://jstor.org/stable/1912705
+ | publisher = The Econometric Society 
+ }}
+
+* {{ cite book
+ | last = Li 
+ | first = Qi
+ | authorlink = 
+ | coauthors = Racine, Jeffrey S.
+ | title = Nonparametric Econometrics: Theory and Practice
+ | publisher = Princeton University Press
+ | date = 2007
+ | location = 
+ | pages = 
+ | url = 
+ | doi = 
+ | id = 
+ | isbn = 0691121613
+ }}
+
+* {{ cite journal
+ | last = Racine
+ | first = J.S.
+ | authorlink = 
+ | coauthors = Qui, L.
+ | title = A Partially Linear Kernel Estimator for Categorical Data
+ | journal = Unpublished Manuscript, Mcmaster University
+ | volume = 
+ | issue = 
+ | pages = 
+ | date = 2007
+ | doi = 
+ }}
+
+* {{ cite journal
+ | last = Ichimura
+ | first = H.
+ | authorlink = 
+ | coauthors = 
+ | title = Semiparametric Least Squares (SLS) and Weighted SLS Estimation of Single Index Models
+ | journal = Journal of Econometrics
+ | volume = 58
+ | issue = 
+ | pages = 71–120
+ | date = 1993
+ | doi =10.1016/0304-4076(93)90114-K 
+ }}
+
+* {{ cite journal
+ | last = Klein
+ | first = R. W.
+ | authorlink = 
+ | coauthors = R. H. Spady
+ | title = An Efficient Semiparametric Estimator for Binary Response Models
+ | journal = Econometrica
+ | volume = 61
+ | issue = 2
+ | pages = 387–421
+ | date = 1993
+ | doi =10.2307/2951556
+ | url = http://jstor.org/stable/2951556
+ | publisher = The Econometric Society 
+ }}
+
+* {{ cite journal
+ | last = Hastie
+ | first = T.
+ | authorlink = 
+ | coauthors = R. Tibshirani
+ | title = Varying-Coefficient Models
+ | journal = Journal of the Royal Statistical Society Series B
+ | volume = 55
+ | issue = 
+ | pages = 757–796
+ | date = 1993
+ | doi = 
+ }}
+
+
+[[Category:Regression analysis]]
+[[Category:Non-parametric statistics]]
+
+{{statistics}}</body> </html>

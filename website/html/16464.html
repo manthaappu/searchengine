@@ -1,0 +1,52 @@
+<html> <head> <title>Heckman correction</title></head><body>The '''Heckman correction''' (the two-stage method, Heckman's [[lambda]] or the Heckit method<ref>Heckit: 'Heck-' from Heckman and '-it' as in [[probit]], [[Tobit model|tobit]], and [[logit]].</ref>) is any of a number of related statistical methods developed by [[James Heckman]] in 1976 through 1979 which allow the researcher to correct for  [[selection bias]].<ref>{{cite journal | doi = 10.2307/1912352 | last1 = Heckman | first1 = J. | year = 1979 | title = Sample selection bias as a specification error | url = http://jstor.org/stable/1912352| journal = Econometrica | volume = 47 | issue = 1| pages = 153–61 }}</ref> Selection bias problems are endemic to applied [[econometrics|econometric]] problems, which make Heckman’s original technique, and subsequent refinements by both himself and others, indispensable to applied [[econometrician]]s.  In 2000 Heckman received the [[Nobel Memorial Prize in Economic Sciences|Economics Nobel Prize]] for this achievement while working at the [[University of Chicago]].
+
+== The Method ==
+
+Statistical analyses based on those non-randomly selected samples can lead to erroneous conclusions and poor policy. The Heckman correction, a two-step statistical approach, offers a means of correcting for non-randomly selected samples.  
+
+Heckman discussed bias from using nonrandom selected samples to estimate behavioral relationships as a specification error. He suggests a two-stage estimation method to correct the bias. The correction is easy to implement and has a firm basis in statistical theory. Heckman’s correction involves a [[normal distribution|normality]] assumption, provides a test for sample selection bias and formula for bias corrected model.  
+
+Suppose that a researcher wants to estimate the determinants of wage offers, but has access to wage observations for only those who work.  Since people who work are selected non-randomly from the population, estimating the determinants of wages from the subpopulation who work may introduce bias.  The Heckman correction takes place in two stages. First, the researcher formulates a model, based on [[economic theory]], for the probability of working.  The canonical specification for this relationship is a [[probit]] regression of the form
+
+: <math> \operatorname{Prob}( D = 1 | Z ) = \Phi(Z\gamma),\,  </math>
+
+where ''D'' indicates employment (''D'' = 1 if the respondent is employed and ''D'' = 0 otherwise), ''Z'' is a vector of explanatory variables, <math>\gamma</math> is a vector of unknown parameters, and Φ is the [[cumulative distribution function]] of the standard [[normal distribution]].  Estimation of the model yields results that can be used to predict this probability for each individual. In the second stage, the researcher corrects for self-selection by incorporating a transformation of these predicted individual probabilities as an additional explanatory variable.  The wage equation may be specified,
+
+: <math> w^* = X\beta + u\, </math>
+
+where <math>w^*</math> denotes an underlying wage offer, which is not observed if the respondent does not work.  The conditional expectation of wages given the person works is then
+
+: <math> E [ w | X, D=1 ] = X\beta + E [ u | X, D=1 ].\, </math>
+
+Under the assumption that the [[errors and residuals in statistics|error terms]] are [[multivariate normal distribution|jointly normal]], we have
+
+: <math> E [ w | X, D=1 ] = X\beta + \rho\sigma_u \lambda(Z\gamma),\, </math>
+
+where ''ρ'' is the correlation between unobserved determinants of propensity to work <math>\varepsilon</math> and unobserved determinants of wage offers ''u'', ''σ''<sub> ''u''</sub> is the standard deviation of <math> u </math>, and <math>\lambda</math> is the [[inverse Mills ratio]] evaluated at <math> Z\gamma </math>. This equation demonstrates Heckman's insight that sample selection can be viewed as a form of [[omitted-variables bias]], as conditional on both ''X'' and on <math>\lambda</math> it is as if the sample is randomly selected.  The wage equation can be estimated by replacing <math>\gamma</math> with Probit estimates from the first stage, constructing the <math>\lambda</math> term, and including it as an additional explanatory variable in [[OLS|linear regression]] estimation of the wage equation.  Since <math>\sigma_u > 0</math>, the coefficient on <math>\lambda</math> can only be zero if <math>\rho=0</math>, so testing the null that the coefficient on <math>\lambda</math> is zero is equivalent to testing for sample selectivity.
+
+Heckman's achievements have generated a large number of empirical applications in economics as well as in other social sciences. The original method has subsequently been generalized, by Heckman and by others.<ref>Lee, L.F. (2001) Self-selection.  In B. Baltagi (ed) ''Companion to Theoretical Econometrics'', Oxford: Blackwell,</ref>
+
+== Disadvantages ==
+*The two-step estimator discussed above is a limited information maximum likelihood (LIML) estimator.  In asymptotic theory and in finite samples as demonstrated by Monte Carlo simulations, the full information (FIML) estimator exhibits better statistical properties.  However, the FIML estimator is more computationally difficult to implement.<ref name=puhani>{{cite journal | doi = 10.1111/1467-6419.00104 | last1 = Puhani | first1 = P. | year = 2000 | title = The Heckman Correction for sample selection and its critique | url = | journal = Journal of Economic Surveys | volume = 14 | issue = 1| pages = 53–68 }}</ref>
+
+*The covariance matrix generated by OLS estimation of the second stage is inconsistent. Correct standard errors and other statistics can be generated from an asymptotic approximation or by resampling, such as through a [[bootstrap (statistics)|bootstrap]].
+
+*The canonical model assumes the errors are jointly normal.  If that assumption fails, the estimator is generally inconsistent and can provide misleading inference in small samples.<ref>Goldberger, A. (1984) Abnormal selection bias, in Karlin, Samuel, Takeshi Amemiya and Leo Goodman, (eds.), ''Studies in Econometrics, Time Series, and Multivariate Statistics,'' New York: Academic Press, 1983.</ref> Semiparametric and other robust alternatives can be used in such cases.<ref>{{cite journal | last1 = Newey | first1 = Whitney | last2 = Powell | first2 = J. | last3 = Walker | first3 = James R. | year = 1990 | title = Semiparametric estimation of selection models: Some empirical results | url = | journal = American Economic Review | volume = 80 | issue = 2| pages = 324–28 }}</ref>  
+
+*The model obtains formal identification from the normality assumption when the same covariates appear in the selection equation and the equation of interest, but identification will be tenuous unless there are many observations in the tails where there is substantial nonlinearity in the Inverse Mills Ratio.  Generally, an exclusion restriction is required to generate credible estimates: there must be at least one variable which appears with a non-zero coefficient in the selection equation but does not appear in the equation of interest, essentially an [[instrumental variable|instrument]].  If no such variable is available, it may be difficult to correct for sampling selectivity.<ref name=puhani/>
+
+==References==
+<references/>
+
+== External links ==
+* [http://www.britannica.com/eb/topic-734492/Heckman-correction  Encyclopedia Britannica article] 
+* [http://www.columbia.edu/~ap2231/ET/et18-oct00.htm Article] on Heckman-MacFadden Nobel Prize.
+* [http://nobelprize.org/nobel_prizes/economics/laureates/2000/public.html Nobel prize official description.]
+
+{{Statistics}}
+{{least squares and regression analysis}}
+
+[[Category:Sampling (statistics)]]
+[[Category:Regression analysis]]
+[[Category:Econometrics]]
+[[Category:Statistical terminology]]</body> </html>

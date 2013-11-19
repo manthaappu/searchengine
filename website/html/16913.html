@@ -1,0 +1,145 @@
+<html> <head> <title>Homomorphic encryption</title></head><body>'''Homomorphic encryption''' is a form of [[encryption]] where a specific algebraic operation performed on the [[plaintext]] is equivalent to another (possibly different) algebraic operation performed on the [[ciphertext]]. Depending on one's viewpoint, this can be seen as either a positive or negative attribute of the cryptosystem. Homomorphic encryption schemes are [[malleability (cryptography)|malleable]] by design. The homomorphic property of various cryptosystems can be used to create secure voting systems,<ref>{{cite web
+|author=Ron Rivest
+|date=2002-10-29
+|title=Lecture Notes 15: Voting, Homomorphic Encryption
+|url=http://web.mit.edu/6.857/OldStuff/Fall02/handouts/L15-voting.pdf
+}}</ref> collision-resistant hash functions, and [[private information retrieval]] schemes.
+
+There are several efficient, partially homomorphic cryptosystems, and two fully homomorphic, but less efficient cryptosystems.
+
+==Partially homomorphic cryptosystems==
+In the following examples, the notation <math>\mathcal{E}(x)</math> is used to denote the encryption of the message ''x''.
+
+===Unpadded RSA===
+If the [[RSA cryptosystem|RSA]] public key is modulus <math>m</math> and exponent <math>e</math>, then the encryption of a message <math>x</math> is given by <math>\mathcal{E}(x) = x^e \mod m</math>. The homomorphic property is then
+
+:<math>\mathcal{E}(x_1) \cdot \mathcal{E}(x_2) = x_1^e x_2^e \mod m = (x_1x_2)^e \mod m = \mathcal{E}(x_1 \cdot x_2)</math>
+
+===ElGamal===
+In the [[ElGamal|ElGamal cryptosystem]], in a group <math>G</math>, if the public key is <math>(G, q, g, h)</math>, where <math>h = g^x</math>, and <math>x</math> is the secret key, then the encryption of a message <math>m</math> is <math>\mathcal{E}(m) = (g^r,m\cdot h^r)</math>, for some <math>r \in  \{0, \ldots, q-1\}</math>. The homomorphic property is then
+
+:<math>\mathcal{E}(x_1) \cdot \mathcal{E}(x_2) = (g^{r_1},x_1\cdot h^{r_1})(g^{r_2},x_2 \cdot h^{r_2}) = (g^{r_1+r_2},(x_1\cdot x_2) h^{r_1+r_2}) = \mathcal{E}(x_1 \cdot x_2)</math>
+
+===Goldwasser-Micali===
+In the [[Goldwasser-Micali cryptosystem]], if the public key is the modulus ''m'' and quadratic non-residue ''x'', then the encryption of  a bit ''b'' is <math>\mathcal{E}(b) = r^2 x^b \mod m</math>. The homomorphic property is then
+
+:<math>\mathcal{E}(b_1)\cdot \mathcal{E}(b_2) = r_1^2 x^{b_1} r_2^2 x^{b_2} = (r_1r_2)^2 x^{b_1+b_2} = \mathcal{E}(b_1 \oplus b_2)</math>
+
+where <math>\oplus</math> denotes addition modulo 2, (i.e. [[Exclusive disjunction|exclusive-or]]).
+
+===Benaloh===
+In the [[Benaloh cryptosystem]], if the public key is the modulus ''m'' and the base ''g'' with a blocksize of ''r'', then the encryption of a message ''x'' is <math>g^x u^r \mod m</math>. The homomorphic property is then
+
+<math>\mathcal{E}(x_1) \cdot \mathcal{E}(x_2) = (g^{x_1} u_1^r)(g^{x_2} u_2^r) = g^{x_1+x_2} (u_1u_2)^r = \mathcal{E}(x_1 + x_2 \mod r )</math>
+
+===Paillier===
+In the [[Paillier cryptosystem]], if the public key is the modulus ''m'' and the base ''g'', then the encryption of a message ''x'' is <math>\mathcal{E}(x) = g^x r^m \mod m^2</math>. The homomorphic property is then
+
+:<math>\mathcal{E}(x_1) \cdot \mathcal{E}(x_2) = (g^{x_1} r_1^m)(g^{x_2} r_2^m) = g^{x_1+x_2} (r_1r_2)^m = \mathcal{E}( x_1 + x_2 \mod m)</math>
+
+===Other partially homomorphic cryptosystems===
+*[[Okamoto–Uchiyama cryptosystem]]
+*[[Naccache–Stern cryptosystem]]
+*[[Damgård–Jurik cryptosystem]]
+*[[Boneh–Goh–Nissim cryptosystem]]
+
+==Fully homomorphic encryption==
+Each of the examples listed above allows homomorphic computation of only one operation (either addition or multiplication) on plaintexts. A cryptosystem which supports both addition and multiplication (thereby preserving the [[Ring (mathematics)|ring]] structure of the plaintexts) would be far more powerful. Using such a scheme, any circuit could be homomorphically evaluated, effectively allowing the construction of programs which may be run on encryptions of their inputs to produce an encryption of their output. Since such a program never decrypts its input, it could be run by an untrusted party without revealing its inputs and internal state. The existence of an efficient and fully homomorphic cryptosystem would have great practical implications in the outsourcing of private computations, for instance, in the context of [[cloud computing]].<ref>{{cite web
+|title=A First Glimpse of Cryptography's Holy Grail
+|author=Daniele Micciancio
+|url=http://cacm.acm.org/magazines/2010/3/76275-a-first-glimpse-of-cryptographys-holy-grail/fulltext
+|publisher=[[Association for Computing Machinery]]
+|date=2010-03-01
+|page=96
+|accessdate=2010-03-17
+}}</ref>
+
+The "homomorphic" part of a fully homomorphic encryption scheme can also be described in terms of [[category theory]].  If ''C'' is the [[Category_(mathematics)|category]] whose objects are integers (i.e., finite streams of data) and whose morphisms are [[Computable_function|computable functions]], then (ideally) a fully homomorphic encryption scheme elevates an encryption function to a [[functor]] from ''C'' to itself.
+
+The utility of fully homomorphic encryption has been long recognized. The problem of constructing such a scheme was first proposed within a year of the development of RSA.<ref>R. L. Rivest, L. Adleman, and M. L. Dertouzos. On data banks and privacy homomorphisms. In ''Foundations of Secure Computation'', 1978.</ref> A solution proved more elusive; for more than 30 years, it was unclear whether fully homomorphic encryption was even possible. During this period, the best result was the Boneh-Goh-Nissim cryptosystem which supports evaluation of an unlimited number of addition operations but at most one multiplication. 
+
+In 2009, Craig Gentry<ref>
+Craig Gentry. [http://portal.acm.org/citation.cfm?id=1536414.1536440 Fully Homomorphic Encryption Using Ideal Lattices]. In ''the 41st ACM Symposium on Theory of Computing (STOC)'', 2009.</ref> using [[lattice-based cryptography]] showed the first fully homomorphic encryption scheme as announced by IBM on June 25.<ref>http://www-03.ibm.com/press/us/en/pressrelease/27840.wss</ref><ref>
+{{cite web
+|title=IBM touts encryption innovation
+|url=http://www.computerworld.com/s/article/9134823/IBM_touts_encryption_innovation?taxonomyId=152&intsrc=kc_top&taxonomyName=compliance
+|publisher=[[Computer World]]
+|date=2009-06-25
+|accessdate=2009-07-14
+|author=Michael Cooney
+}}</ref> His scheme supports evaluations of arbitrary depth circuits.
+His construction starts from a ''somewhat homomorphic'' encryption scheme using ideal lattices that is limited to evaluating low-degree polynomials over encrypted data.  (It is limited because each ciphertext is noisy in some sense, and this noise grows as one adds and multiplies ciphertexts, until ultimately the noise makes the resulting ciphertext indecipherable.) He then shows how to modify this scheme to make it ''bootstrappable'' -- in particular,  he shows that by modifying the somewhat homomorphic scheme slightly, it can actually evaluate its own decryption circuit, a self-referential property. Finally, he shows that any bootstrappable somewhat homomorphic encryption scheme can be converted into a fully homomorphic encryption through a recursive self-embedding. In the particular case of Gentry's ideal-lattice-based somewhat homomorphic scheme, the effect of this bootstrapping procedure is to "refresh" a ciphertext -- i.e., to reduce the noise associated to a ciphertext -- so that it can thereafter be used in more additions and multiplications without resulting in an indecipherable ciphertext. Gentry based the security of his scheme on the assumed hardness of two problems -- certain worst-case problems over ideal lattices, and the sparse (or low-weight) subset sum problem.
+
+Regarding performance, ciphertexts in Gentry's scheme remain compact -- that is, their length does not depend at all on the complexity of the function that is evaluated over the encrypted data.  The computational time only depends linearly on the number of operations performed. However, the scheme is impractical for many applications, because ciphertext size and computation time increase sharply as one increases the security level. To obtain 2<sup>''k''</sup> security against known attacks, the computation time and ciphertext size are high-degree polynomials in ''k''.  Recently, Stehle and Steinfeld reduced the dependence on ''k'' substantially.<ref>
+{{cite web
+|title=Faster Fully Homomorphic Encryption
+|url=http://eprint.iacr.org/2010/299
+|publisher=International Association for Cryptologic Research
+|date=2010-05-19
+|accessdate=2010-09-15
+|author=Damien Stehle
+|coauthors=Ron Steinfeld
+|format=PDF
+}}</ref>
+They presented optimizations that permit the computation to be only quasi-''k''<sup>3.5</sup> per boolean gate of the function being evaluated.
+
+Gentry's Ph.D. thesis<ref>
+{{cite web
+|title=A Fully Homomorphic Encryption Scheme (Ph.D. thesis)
+|url=http://crypto.stanford.edu/craig/
+|author=Craig Gentry
+|format=PDF
+}}</ref>
+provides additional details.
+Gentry also published a high-level overview of the van Dijk et al. construction (described below) in the March 2010 issue of Communications of the ACM.<ref>
+{{cite web
+|title=Computing Arbitrary Functions of Encrypted Data
+|url=http://cacm.acm.org/magazines/2010/3/76272-computing-arbitrary-functions-of-encrypted-data/fulltext
+|publisher=[[Association for Computing Machinery]]
+|author=Craig Gentry
+}}</ref>
+
+In 2009, Marten van Dijk, Craig Gentry, Shai Halevi and Vinod Vaikuntanathan presented a second fully homomorphic encryption scheme,<ref>
+{{cite web
+|title=Fully Homomorphic Encryption over the Integers
+|url=http://eprint.iacr.org/2009/616
+|publisher=International Association for Cryptologic Research
+|date=2009-12-11
+|accessdate=2010-03-18
+|author=Marten van Dijk
+|coauthors=Craig Gentry, Shai Halevi, and Vinod Vaikuntanathan
+|format=PDF
+}}</ref>
+which uses many of the tools of Gentry's construction, but which does not require ideal lattices. Instead, they show that the somewhat homomorphic component of Gentry's scheme (which uses ideal lattices) can be replaced with a very simple somewhat homomorphic scheme that uses integers. The scheme is therefore conceptually simpler than Gentry's ideal lattice scheme, but has similar properties with regards to homomorphic operations and efficiency. The somewhat homomorphic component in the work of van Dijk et al. is similar to an encryption scheme proposed by Levieil and Naccache in 2008,<ref>{{cite web
+|title=Cryptographic Test Correction
+|url=http://en.wikipedia.org/wiki/Cryptographic_Test_Correction
+}}</ref> and also to one that was proposed by Bram Cohen in 1998.<ref>
+{{cite web
+|title=Simple Public Key Encryption
+|url=http://bramcohen.com/simple_public_key.html
+|url=http://en.wikipedia.org/wiki/Cohen's_cryptosystem 
+|author=Bram Cohen
+}}</ref> 
+Cohen's method is not even additively homomorphic, however. The Levieil-Naccache scheme is additively homomorphic, and can be modified to support also a small number of multiplications.
+
+In 2010, [[Nigel Smart (cryptographer)|Nigel P. Smart]] and [[Frederik Vercauteren]] presented a refinement of Gentry's scheme giving smaller key and ciphertext sizes, but which is still not fully practical.<ref>[http://www.zdnet.co.uk/news/emerging-tech/2010/05/26/british-researcher-cracks-crypto-problem-40089057 News report] http://www.info.unicaen.fr/M2-AMI/articles-2009-2010/smart.pdf paper] [http://www.math.leidenuniv.nl/~dfreeman/smart.pdf pdf slides]</ref>  At the rump session of Eurocrypt 2010, Craig Gentry and Shai Halevi presented a working implementation of fully homomorphic encryption -- that is, an implementation of the entire bootstrapping procedure -- together with performance numbers.<ref>
+{{cite web
+|title=A Working Implementation of Fully Homomorphic Encryption
+|url=http://eurocrypt2010rump.cr.yp.to/9854ad3cab48983f7c2c5a2258e27717.pdf
+|author=Craig Gentry
+|coauthor=Shai Halevi
+|format=PDF
+}}</ref>
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://research.cyber.ee/~lipmaa/crypto/link/public/homomorphic.php Homomorphic encryption] in [http://research.cyber.ee/~lipmaa/crypto/ Cryptology Pointers]
+*[http://code.google.com/p/thep/ The Homomorphic Encryption Project]
+
+{{DEFAULTSORT:Homomorphic Encryption}}
+[[Category:Cryptography]]
+
+[[pl:Szyfrowanie homomorficzne]]
+[[ru:Гомоморфное шифрование]]</body> </html>

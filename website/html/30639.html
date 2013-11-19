@@ -1,0 +1,58 @@
+<html> <head> <title>QCDOC</title></head><body>The '''QCDOC''', ''[[Quantum chromodynamics|Quantum ChromoDynamics]] On a Chip'', is a [[supercomputer]] technology focusing on using relatively cheap [[Low-power electronics|low power]] [[Microprocessor|processing elements]] to produce a [[Massive parallel processing|massively parallel]] machine. As the name suggests, the machine is custom made to solve small but extremely demanding problems in the fields of [[quantum physics]].
+
+== Overview ==
+The computers were designed and built jointly by [[University of Edinburgh]] (UKQCD) , [[Columbia University]], the [[RIKEN]] Brookhaven Research Center and [[IBM]]. The purpose of the collaboration was to exploit computing facilities for [[Lattice QCD|lattice field theory]] calculations whose primary aim is to increase the predictive power of the [[Standard Model]] of elementary particle interactions through numerical simulation of quantum chromodynamics (QCD). The target was to build a massively parallel supercomputer able to peak at 10 [[FLOPS|Tflops]] with sustained power at 50% capacity. 
+
+There are three QCDOCs in service each reaching 10 Tflops peak operation.
+* [[University of Edinburgh]]'s Parallel Computing Centre ([[EPCC]]). In operation by the UKQCD since 2005
+* RIKEN Brookhaven Research Center at [[Brookhaven National Laboratory]]
+* [[United States Department of Energy|U.S. Department of Energy]] Program in High Energy and Nuclear Physics at Brookhaven National Laboratory
+
+Around 23 [[UK]] academic staff, their postdocs and students, from seven universities, belong to UKQCD. Costs were funded through a Joint Infrastructure Fund Award of £6.6 million. Staff costs (system support, physicist programmers and postdocs) are around £1 million per year, other computing and operating costs are around £0.2 million per year.[http://www.scitech.ac.uk/roadmap/rmProject.aspx?q=82]  
+
+QCDOC was to replace an earlier design, '''QCDSP''', where the power came from connecting large amounts of [[Digital signal processor|DSPs]] together in a similar fashion. The QCDSP strapped 12.288 nodes to a 4D network and reached 1 Tflops in 1998.
+
+QCDOC can be seen as a predecessor to the highly successful [[Blue Gene/L]] supercomputer. They share a lot of design traits, and similarities go beyond superficial characteristics. Blue Gene is also a massively parallel supercomputer built with a large amount of cheap, relatively weak [[PowerPC 400#PowerPC 440|PowerPC 440]] based [[system on a chip|SoC]] nodes connected with a high bandwidth multidimensional mesh. They differ, however, in that the computing nodes in BG/L are more powerful and are connected with a faster, more sophisticated network that scales up to several hundred thousand nodes per system.
+
+== Architecture ==
+[[Image:QCDOC chip schema.png|right|thumb|Logic schematic of the QCDOC ASIC]]
+==== Computing node ====
+The computing nodes are custom [[ASIC]]s with about fifty million transistors each. They are mainly made up of existing building blocks from [[IBM]]. They are built around a 500 MHz [[PowerPC 400#PowerPC 440|PowerPC 440]] core with 4 MB [[DRAM]], memory management for external [[DDR SDRAM]], system I/O for internode communications, and dual Ethernet built in. The computing node is capable of 1 double precision [[Gflops]]. Each node has one [[DIMM]] socket capable of holding between 128 and 2048 MB of 333 MHz [[Error_detection_and_correction#Error-correcting_code|ECC]] [[DDR SDRAM]].
+
+==== Inter node communication ====
+Each node has the capability to send and receive data from each of its twelve nearest neighbors in a six-dimensional mesh at a rate of 500 Mbit/s each. This provides a total off-node bandwidth of 12 Gbit/s. Each of these 24 channels has [[Direct Memory Access|DMA]] to the other nodes' on-chip DRAM or the external SDRAM. In practice only four dimensions will be used to form a communications sub-torus where the remaining two dimensions will be used to partition the system.
+
+The operating system communicates with the computing nodes using the Ethernet network. This is also used for diagnostics, configuration and communications with disk storage.
+
+==== Mechanical design ====
+Two nodes are placed together on a daughter card with one DIMM socket and a 4:1 Ethernet hub for off-card communications. The daughter cards have two connectors, one carrying the internode communications network and one carrying power, Ethernet, clock and other house keeping facilities.
+
+Thirty-two daughter cards are placed in two rows on a motherboard that supports 800 Mbit/s off-board Ethernet communications. Eight motherboards are placed in crates with two backplanes supporting four motherboards each. Each crate consists of 512 processor nodes a and a 2<sup>6</sup> hypercube communications network. One node consumes about 5 W of power, and each crate is air and water cooled. A complete system can consist of any number of crates, for a total of up to several tens of thousands of nodes.
+
+=== Operating system ===
+The QCDOC runs a custom-built operating system, '''QOS''', which facilitates boot, runtime, monitoring, diagnostics, and performance and simplifies management of the large number of computing nodes. It uses a custom embedded [[Kernel (computer science)|kernel]] and provides single process [[POSIX]] ("unix-like") compatibility using the Cygnus [[newlib]] library. The kernel includes a specially written [[User Datagram Protocol|UDP]]/[[Internet Protocol|IP]] stack and [[Network File System (protocol)|NFS]] client for disk access.
+
+The operating system also maintains system partitions so several users can have access to separate parts of the system for different applications. Each partition will only run one client application at any given time. Any multitasking is scheduled by the host controller system which is a regular computer using a large amounts of Ethernet ports connecting to the QCDOC.
+
+== See also ==
+* [[Norman Christ]]
+* [[PowerPC 400#PowerPC 440|PowerPC 440]]
+* [[BlueGene/L]]
+* [[QPACE]]
+* [[Power Architecture]]
+* [[Supercomputer]]
+
+== References ==
+
+* [http://phys.columbia.edu/~cqft/ Computational Quantum Field Theory at Columbia – Columbia University]
+* [http://www.research.ibm.com/journal/rd/492/boyle.html Overview of the QCDSP and QCDOC computers – IBM]
+* [http://phys.columbia.edu/~cqft/qcdoc/qcdoc.htm QCDOC Architecture – Columbia University]
+* [http://www.scitech.ac.uk/roadmap/rmProject.aspx?q=82 UKQCD – Science and Technology Facilities Council]
+* [http://www.bnl.gov/lqcd/linkable_files/pdf/pap231.pdf QCDOC: A 10 Teraﬂops Computer for Tightly-coupled Calculations] ([[Brookhaven National Laboratory|BNL]])
+* [http://www.theregister.co.uk/2008/03/07/edinburgh_qcdoc_calculations/ UK supercomputer probes secrets of universe], The Register
+*[http://news.softpedia.com/news/World-s-Most-Efficient-HPC-QPACE-Stands-at-the-Top-of-the-Green500-list-127626.shtml IBM QPACE (TOP500)], Softpedia
+
+{{DEFAULTSORT:Qcdoc}}
+[[Category:Supercomputers]]
+[[Category:Power Architecture]]
+[[Category:Parallel computing]]</body> </html>

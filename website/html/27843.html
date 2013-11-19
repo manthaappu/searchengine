@@ -1,0 +1,67 @@
+<html> <head> <title>Oscillatory integral</title></head><body>In [[mathematical analysis]] an '''oscillatory integral''' is a type of [[distribution (mathematics)|distribution]]. Oscillatory integrals make rigorous many arguments that, on a naive level, appear to use divergent integrals. It is possible to represent approximate solution operators for many differential equations as oscillatory integrals.
+
+==Definition==
+
+An oscillatory integral <math> f(x) </math> is written formally as
+
+:<math> f(x) = \int e^{i \phi(x,\xi)}\, a(x,\xi) \, \mathrm{d} \xi </math>
+
+where <math> \phi(x,\xi) </math> and <math> a(x,\xi) </math> are functions defined on <math> \mathbb{R}_x^n \times \mathrm{R}^N_\xi </math> with the following properties. 
+
+:1) The function <math> \phi </math> is real valued, [[homogeneous function#Positive homogeneity|positive homogeneous]] of degree 1, and infinitely differentiable away from <math> \{\xi = 0 \} </math>. Also, we assume that <math> \phi </math> does not have any [[critical point (mathematics)#Several variables|critical points]] on the [[support (mathematics)|support]] of <math> a </math>. Such a function, <math> \phi </math> is usually called a '''phase function'''. In some contexts more general functions are considered, and still referred to as phase functions.
+
+:2) The function <math> a </math> belongs to one of the [[Pseudo-differential_operator#Symbol_Classes_and_Pseudo-Differential_Operators|symbol classes]] <math> S^m_{1,0}(\mathbb{R}_x^n \times \mathrm{R}^N_\xi) </math> for some <math> m \in \mathbb{R}</math>. Intuitively, these symbol classes generalize the notion of positively homogeneous functions of degree <math> m </math>. As with the phase function <math> \phi </math>, in some cases the function <math> a </math> is taken to be in more general, or just different, classes.
+
+When <math> m < -n + 1 </math> the formal integral defining <math> f(x) </math> converges for all <math> x </math> and there is no need for any further discussion of the definition of <math> f(x) </math>. However, when <math> m \geq - n+1</math> the oscillatory integral is still defined as a distribution on <math> \mathbb{R}^n </math> even though the integral may not converge. In this case the distribution <math> f(x) </math> is defined by using the fact that <math> a(x,\xi) \in S^m_{1,0}(\mathbb{R}_x^n \times \mathrm{R}^N_\xi) </math> may be approximated by functions that have exponential decay in <math> \xi</math>. One possible way to do this is by setting
+
+:<math> f(x) = \lim \limits_{\epsilon \rightarrow 0^+} \int e^{i \phi(x,\xi)}\, a(x,\xi) e^{-\epsilon |\xi|^2/2} \, \mathrm{d} \xi </math>
+
+where the limit is taken in the sense of [[Tempered_distributions#Tempered_distribution|tempered distributions]]. Using integration by parts it is possible to show that this limit is well defined, and that there exists a [[differential operator]] <math> L </math> such that the resulting distribution <math> f(x) </math> acting on any <math> \psi </math> in the [[Schwartz function|Schwarz space]] is given by
+
+:<math> \langle f, \psi \rangle = \int e^{i \phi(x,\xi)} L \left ( a(x,\xi) \, \psi(x) \right ) \, \mathrm{d} x \, \mathrm{d} \xi </math>
+
+where this integral converges absolutely. The operator <math> L </math> is not uniquely defined, but can be chosen in such a way that depends only on the phase function <math> \phi </math>, the order <math> m </math> of the symbol <math> a </math>, and <math> N</math>. In fact, given any integer <math> M </math> it is possible to find an operator <math> L </math> so that the integrand above is bounded by <math> C (1 + |\xi|)^{-M} </math> for <math> |\xi| </math> sufficiently large. This is the main purpose of the definition of the [[Pseudo-differential_operator#Symbol_Classes_and_Pseudo-Differential_Operators|symbol classes]].
+
+==Examples==
+
+Many familiar distributions can be written as oscillatory integrals.
+
+:1) The [[Fourier inversion theorem]] implies that the [[Dirac delta function|delta function]], <math> \delta(x) </math> is equal to
+
+::<math> \frac{1}{(2 \pi)^n} \int_{\mathbb{R}^n} e^{i x \cdot \xi} \, \mathrm{d} \xi. </math>
+
+:If we apply the first method of defining this oscillatory integral from above, as well as the Fourier transform of the Gaussian, we obtain a well known sequence of functions which approximate the delta function:
+
+::<math> \delta(x) = \lim_{\varepsilon \rightarrow 0^+}\frac{1}{(2 \pi)^n} \int_{\mathbb{R}^n} e^{i x\cdot \xi} e^{-\varepsilon |\xi|^2/2} \mathrm{d} \xi = \lim_{\varepsilon \rightarrow 0^+} \frac{1}{(\sqrt{2 \pi \varepsilon})^n} e^{-|\xi|^2/(2 \varepsilon)}. </math>
+
+:An operator <math> L </math> in this case is given for example by
+
+::<math> L = \frac{(1 - \Delta_x)^k}{(1 + |\xi|^2)^k} </math>
+
+:where <math> \Delta_x </math> is the [[Laplace operator|Laplacian]] with respect to the <math> x </math> variables, and <math> k </math> is any integer greater than <math> (n-1)/2</math>. Indeed, with this <math> L </math> we have
+
+::<math> \langle \delta, \psi \rangle = \psi(0) = \frac{1}{(2 \pi)^n}\int_{\mathbb{R}^n} e^{i x \cdot \xi} L(\psi)(x,\xi)\, \mathrm{d} \xi \, \mathrm{d} x, </math>
+
+:and this integral converges absolutely.
+
+:2) The [[Schwartz kernel theorem|Schwartz kernel]] of any differential operator can be written as an oscillatory integral. Indeed if
+
+::<math> L = \sum \limits_{|\alpha| \leq m} p_\alpha(x) D^\alpha </math>
+
+:where <math> D^\alpha = \partial^\alpha_{x}/i^{|\alpha|} </math>, then the kernel of <math> L </math> is given by
+
+::<math> \frac{1}{(2\pi)^n}\int_{\mathbb{R}^n} e^{i \xi \cdot (x - y)} \sum \limits_{|\alpha| \leq m} p_\alpha(x) \, \xi^\alpha \, \mathrm{d} \xi. </math>
+
+==Relation to Lagrangian distributions==
+
+Any Lagrangian distribution can be represented locally by oscillatory integrals (see {{harvtxt|Hörmander|1983}}). Conversely any oscillatory integral is a Lagrangian distribution. This gives a precise description of the types of distributions which may be represented as oscillatory integrals.
+
+==References==
+
+*{{Citation|first=Lars|last=[[Lars Hörmander|Hörmander]]|title=The Analysis of Linear Partial Differential Operators IV|publisher=Springer-Verlag|year=1983|isbn=0-387-13829-3}}
+
+*{{Citation|first=Lars|last=[[Lars Hörmander|Hörmander]]|title=Fourier integral operators I|journal=Acta Math.|year=1971|volume=127|pages=79–183}}
+
+[[Category:Mathematical analysis]]
+
+[[de:Oszillierendes Integral]]</body> </html>

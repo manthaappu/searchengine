@@ -1,0 +1,66 @@
+<html> <head> <title>Potentially visible set</title></head><body>'''Potentially Visible Sets''' are used to accelerate the rendering of 3D environments.  This is a form of [[occlusion culling]], whereby a candidate set of ''potentially visible'' polygons are pre-computed, then indexed at run-time in order to quickly obtain an estimate of the visible geometry.  The term ''PVS'' is sometimes used to refer to any occlusion culling algorithm (since in effect, this is what all occlusion algorithms compute), although in almost all the literature, it is used to refer specifically to occlusion culling algorithms that pre-compute visible sets and associate these sets with regions in space.  In order to make this association, the camera view-space (the set of points from which the camera can render an image) is typically subdivided into (usually convex) regions and a PVS is computed for each region.
+
+== Benefits vs. Cost ==
+The benefit of offloading visibility as a pre-process are:
+* The application just has to look up the pre-computed set given its view position.  This set may be further reduced via frustum culling.  Computationally, this is far cheaper than computing occlusion based visibility every frame.
+* Within a frame, time is limited.  Only 1/60th of a second (assuming a 60 Hz frame-rate) is available for visibility determination, rendering preparation (assuming graphics hardware), AI, physics, or whatever other app specific code is required.  In contrast, offline pre-processing can take as long as required in order to compute accurate visibility.
+
+The disadvantages are:
+* There are additional storage requirements for the PVS data.
+* Preprocessing times may be long or inconvenient.
+* Can't be used for completely dynamic scenes.
+* The visible set for a region can in some cases be much larger than for a point.
+
+== Primary Problem ==
+The primary problem in PVS computation then becomes: For a set of polyhedral regions, for each region compute the set of polygons that can be visible from anywhere inside the region.
+
+There are various classifications of PVS algorithms with respect to the type of visibility set they compute.<ref name="NIRENSTEIN2002"> S. Nirenstein, E. Blake, and J. Gain. ''Exact from-region visibility culling.'' In Proceedings of the 13th workshop on Rendering, pages 191–202. Eurographics Association, June 2002.</ref><ref name="COHEN-OR2003">Daniel Cohen-Or, Yiorgos Chrysanthou, Cl´audio T. Silva, and Fr´edo Durand. ''A survey of visibility for walkthrough applications.'' IEEE TVCG, 9(3):412–431, July-September 2003.</ref>
+
+=== Conservative algorithms === 
+These overestimate visibility consistently, such that no triangle that is visible may be omitted.  The net result is that no image error is possible, however, it is possible to greatly over-estimate visibility, leading to inefficient rendering (due to the rendering of invisible geometry).  The focus on conservative algorithm research is maximizing ''occluder fusion'' in order to reduce this overestimation.  The list of publications on this type of algorithm is extensive - good surveys on this topic include Cohen-Or et al.<ref name="COHEN-OR2003" /> and Durand.<ref name="DURAND1999">''3D Visibility: Analytical study and Applications.'' Frédo Durand, PhD thesis, Université Joseph Fourier, Grenoble, France, July 1999. is strongly related to exact visibility computations.</ref>
+
+=== Aggressive algorithms === 
+These underestimate visibility consistently, such that no redundant (invisible) polygons exist in the PVS set, although it may be possible to miss a polygon that is actually visible leading to image errors.  The focus on aggressive algorithm research is to reduce the potential error.<ref>Shaun Nirenstein and Edwin Blake, ''Hardware Accelerated Aggressive Visibility Preprocessing using Adaptive Sampling'', Rendering Techniques 2004: Proceedings of the 15th Eurographics Symposium on Rendering, 207- 216, Norrköping, Sweden, June 2004.</ref><ref>Peter Wonka, Michael Wimmer, Kaichi Zhou, Stefan Maierhofer, Gerd Hesina, Alexander Reshetov. ''Guided Visibility Sampling'', ACM Transactions on Graphics. volume 25. number 3. pages 494 - 502. 2006. Proceedings of SIGGRAPH 2006.</ref>
+
+=== Approximate algorithms === 
+These can result in both redundancy and image error. <ref>Craig Gotsman, Oded Sudarsky, and Jeffrey A. Fayman. ''Optimized occlusion culling using five-dimensional subdivision''.  Computers & Graphics, 23(5):645–654, October 1999.</ref>
+
+=== Exact algorithms ===
+These provide optimal visibility sets, where there is no image error and no redundancy.  They are, however, complex to implement and typically run a lot slower than other PVS based visibility algorithms. Teller computed exact visibility for a scene subdivided into cells and portals<ref name="TELLER1992">Seth Teller, ''Visibility Computations in Densely Occluded Polyhedral Environments'' (Ph.D. dissertation, Berkeley, 1992)</ref> (see also [[portal rendering]]).  
+
+The first general tractable 3D solutions were presented in 2002 by Nirenstein et al.<ref name="NIRENSTEIN2002"/> and Bittner<ref>Jiri Bittner. ''Hierarchical Techniques for Visibility Computations,'' PhD Dissertation. Department of Computer Science and Engineering. Czech Technical University in Prague. Submitted October 2002, defended March 2003.</ref>.  Haumont et al.<ref>Denis Haumont, Otso Mäkinen and Shaun Nirenstein, ''A low Dimensional Framework for Exact Polygon-to-Polygon Occlusion Queries'', Rendering Techniques 2005: Proceedings of the 16th Eurographics Symposium on Rendering, 211-222, Konstanz, Germany, June 2005</ref> improve on the performance of these techniques significantly.  Bittner et al.<ref>Jiri Bittner, Peter Wonka, Michael Wimmer. ''Fast Exact From-Region Visibility in Urban Scenes.'' In Proceedings of Eurographics Symposium on Rendering 2005, pages 223-230.</ref> solve the problem for 2.5D urban scenes.  Although not quite related to PVS computation, the work on the 3D Visibility Complex and 3D Visibility Skeleton by Durand <ref name="DURAND1999" /> provides an excellent theoretical background on analytic visibility.
+
+Visibility in 3D is inherently a 4-Dimensional problem.  To tackle this, solutions are often performed using Plücker (see [[Julius Plücker]]) coordinates, which effectively linearize the problem in a 5D [[projective space]].  Ultimately, these problems are solved with higher dimensional [[constructive solid geometry]].
+
+== Secondary Problems ==
+Some interesting secondary problems include: 
+*Compute an optimal sub-division in order to maximize visibility culling. <ref name="TELLER1992"/><ref>D. Haumont, O. Debeir and F. Sillion, Graphics Forum, ''Volumetric Cell-and-Portal Generation Computer,'' Volume 22, Number 3, pages 303-312, September 2003</ref><ref>Oliver Mattausch, Jiri Bittner, Michael Wimmer, ''Adaptive Visibility-Driven View Cell Construction.'' In Proceedings of Eurographics Symposium on Rendering 2006.</ref>
+*Compress the visible set data in order to minimize storage overhead.<ref>Michiel van de Panne and A. James Stewart, ''Effective Compression Techniques for Precomputed Visibility'', Eurographics Workshop on Rendering, 1999, pg. 305-316, June.</ref>
+
+== Implementation Variants ==
+
+*It is often undesirable or inefficient to simply compute triangle level visibility.  Graphics hardware prefers objects to be static and remain in video memory.  Therefore, it is generally better to compute visibility on a per-object basis and to sub-divide any objects that may be too large individually.  This adds conservativity, but the benefit is better hardware utilization and compression (since visibility data is now per-object, rather than per-triangle).
+*Computing cell or sector visibility is also advantageous, since by determining visible ''regions of space'', rather than visible objects, it is possible to not only cull out static objects in those regions, but dynamic objects as well.
+
+== References ==
+{{reflist}}
+
+==External links==
+Cited author's pages (including publications):
+* [http://www.cgg.cvut.cz/~bittner/ Jiri Bittner]
+* [http://www.math.tau.ac.il/~dcor/ Daniel Cohen-Or]
+* [http://people.csail.mit.edu/fredo/ Fredo Durand]
+* [http://www.ulb.ac.be/polytech/sln/team/dhaumont/dhaumont.html Denis Haumont]
+* [http://www.nirenstein.com Shaun Nirenstein]
+* [http://people.csail.mit.edu/seth/ Seth Teller]
+* [http://www.public.asu.edu/~pwonka/ Peter Wonka]
+
+Other links:
+* [http://artis.imag.fr/~Xavier.Decoret/bib/visibility/ Selected publications on visibility]
+
+[[Category:3D computer graphics]]
+
+[[de:Sichtbarkeitsproblem]]
+[[fr:Potentially visible set]]
+[[es:Determinación de cara oculta]]
+[[pl:Usuwanie niewidocznych powierzchni]]</body> </html>

@@ -1,0 +1,77 @@
+<html> <head> <title>Automatically switched optical network</title></head><body>'''ASON''' (Automatically Switched [[Optical Network]]) is a concept for the evolution of transport networks which allows for dynamic policy-driven control of an [[optical]] or [[SDH]] network based on signaling between a user and components of the network. <ref name=ITUPromo>[http://www.itu.int/itudoc/gs/promo/tsb/80686.pdf ITU-T Promotional Document] </ref> Its aim is to automate the resource and connection management within the network. The [[IETF]] defines ASON as an alternative/supplement to NMS based connection management. <ref name=IETF> Automatically Switched Optical Networks (ASON) and Generalized MPLS (GMPLS," Route into Common Future" - Slide 6 [http://www.ietf.org/proceedings/01dec/slides/plenary-2/sld006.htm] </ref>
+
+== The Need for ASON ==
+
+In an optical network without ASON, whenever a user requires more bandwidth, there is a request for a new connection<sup>[By whom?, To Whom?]</sup>. The service provider must then manually plan and configure the route in the network. This is not only time consuming, but also wastes bandwidth if the user sparingly uses the connection. Bandwidth is increasingly becoming a precious resource and expectations from future optical networks are that they should be able to efficiently handle resources as quickly as possible. ASON fulfills some of the requirements of optical networks such as:
+* Fast and automatic end-to-end provisioning
+* Fast and efficient re-routing
+* Support of different clients, but optimized for [[Internet Protocol|IP]]
+* Dynamic set up of connections
+* Support of Optical [[Virtual Private Networks]] (OVPNs)
+* Support of different levels of quality of service
+
+( These requirements are not restricted to optical networks and can be applied to any transport network (including SDH Networks). )<ref name=eurescom>Automatic Switched Optical Networks: functionality and architectural components, Roberto Clemente and Giuseppe Ferraris , 2nd Eurescom WDM Hungarian Workshop Budapest, March 27th 2001 [http://www.eurescom.de/~projects-workspace/P1000-series/P1012/presentations/pdf/2nd%20Hungarian%20WDM%20workshop.pdf] </ref>
+
+== Logical Architecture of An ASON ==
+[[Image:ASON Logical Architecture.jpg|thumb|Logical Architecture of ASON]]
+
+The [[logical]] architecture of an ASON can be divided into 3 planes:
+* Transport Plane
+* Control Plane
+* Management Plane
+
+'''The Transport Plane''' contains a number of switches (optical or otherwise) responsible for transporting user data via connections. These switches are connected to each other via PI (Physical Interface).
+
+'''The Control Plane''' is responsible for the actual resource and connection management within an ASN network. It consists of a series of OCC (Optical Connection Controllers), interconnected via NNIs (Network to Network Interfaces).  These OCCs have the following functions:
+* [[Network topology]] discovery (resource discovery)
+* Signaling, [[routing]], address assignment
+* Connection set-up/tear-down
+* Connection protection/restoration
+* [[Traffic engineering]]
+* Wavelength assignment
+<ref name=eurescom/>
+
+'''The Management Plane''' is responsible for managing the Control plane. Its responsibilities include Configuration Management of the Control Plane Resources, Routing Areas, Transport resource in Control Plane and Policy. It also provides Fault Management, Performance Management, Accounting and Security Management functions. <ref>Management of ASON-capable Network and its Control Plane, by H. Kam LAM, ITU-T Workshop “NGN and its Transport Networks“ Kobe, 20-21 April 2006 [http://www.itu.int/ITU-T/worksem/ngn/200604/presentation/s4_lam.pdf] </ref> The Management Plane contains the Network Management Entity which is connected to an OCC in Control Plane via the NMI-A ( Network Management Interface for ASON Control Plane) and to one of the switches via NMI-T ( Network Management Interface for the Transport Network).
+
+The traffic from user connected to an ASON network contains data for both Transport and Control Plane. The user is connected to Transport plane via a PI (Physical Interface), while it communicates with the Control plane via a UNI ( User Network Interface). <ref name=eurescom/>
+
+== The Role of IETF ==
+
+While [[ITU]] has worked on the requirements and architecture of ASON based on the requirements on its members, it is explicitly aiming to avoid the development of new protocols, when existing ones will work fine. The [[IETF]], on the other hand , has been tasked with the development of new protocols in response to general industry requirement. Therefore, while ITU already include the [[PNNI]] protocol for signaling in the Control plane, IETF has been developing GMPLS as a second option protocol to be used in the Control Plane for signalling. <ref> ASON AND GMPLS - THE BATTLE OF
+THE OPTICAL CONTROL PLANE, Nick Larkin, Data Connection Ltd. Whitepaper [http://www.dataconnection.com/network/download/whitepapers/asongmpls.pdf] </ref>  As a product of IETF, [[GMPLS]] (Generalized [[MPLS]]) uses [[Internet Protocol|IP]] to communicate between different components in the Control Plane.<ref name=IETF2> Automatically Switched Optical Networks (ASON) and Generalized MPLS (GMPLS) Route into Common Future - Slide 2 [http://www.ietf.org/proceedings/01dec/slides/plenary-2/sld002.htm] </ref>
+
+== ITU-T documentation for ASON standardization ==
+
+The following is a list and description of architecture and requirements as published by ITU-T 
+
+*'''G.8080/Y.1304''', Architecture for the automatically switched optical network (ASON)
+*'''G.807/Y.1302''', Requirements for automatic switched transport networks (ASTN) Call and Connection Management
+*'''G.7713/Y.1704''', Distributed call and connection management (DCM)
+*'''G.7713.1/Y.1704.1''', DCM signalling mechanism using PNNI/Q.2931
+*'''G.7713.2/Y.1704.2''', DCM signalling mechanism using GMPLS RSVP-TE
+*'''G.7713.3/Y.1704.3''', DCM signalling mechanism using GMPLS CR-LDP Discovery and Link Management
+*'''G.7714/Y.1705''', Generalized automatic discovery techniques
+*'''G.7715/Y.1706''', Architecture and requirements of routing for automatic switched transport network
+*'''G.7716/Y.1707''', Architecture and requirements of link resource management for automatically switched transport networks
+*'''G.7717/Y.1708''', ASTN connection admission control. Other Related Recommendations
+*'''G.872''', Architecture of optical transport networks
+*'''G.709/Y.1331''', Interface for the optical transport network (OTN)
+*'''G.959.1''', Optical transport network physical layer interfaces
+*'''G.874''', Management aspects of the optical transport network element
+*'''G.874.1''', Optical transport network (OTN) protocolneutral management information model for the network element view.
+*'''G.875''', Optical transport network (OTN) management information model for the network element view
+*'''G.7041/Y.1303''', Generic framing procedure (GFP)
+*'''G.7042/Y.1305''', Link capacity adjustment scheme (LCAS) for virtual concatenated signals
+*'''G.65x''', series on optical fibre cables and test methods
+*'''G.693''', Optical interfaces for intra-office systems
+*'''G.7710/Y.1701''', Common equipment management function requirements
+*'''G.7712/Y.1703''', Architecture and specification of data communication network.
+*'''G.806''', Characteristics of transport equipment . Description methodology and generic functionality. <ref name=ITUPromo/>
+
+== References ==
+
+<references/>
+
+{{DEFAULTSORT:Automatically Switched Optical Network}}
+[[Category:Fiber-optic communications]]
+[[Category:Network protocols]]</body> </html>

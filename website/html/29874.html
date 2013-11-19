@@ -1,0 +1,102 @@
+<html> <head> <title>Preprocessor</title></head><body>In [[computer science]], a '''preprocessor''' is a [[Computer program|program]] that processes its input data to produce output that is used as input to another program. The output is said to be a '''preprocessed''' form of the input data, which is often used by some subsequent programs like [[compiler]]s. The amount and kind of processing done depends on the nature of the preprocessor; some preprocessors are only capable of performing relatively simple textual substitutions and [[Macro (computer science)|macro]] expansions, while others have the power of fully-fledged [[programming language]]s.
+
+A common example from [[computer programming]] is the processing performed on [[source code]] before the next step of compilation.
+In some [[computer language]]s (e.g., [[C (programming language)|C]] and [[PL/I (programming language)|PL/I]] ) there is a phase of [[compiler|translation]] known as ''preprocessing''.
+
+==Lexical preprocessors==
+Lexical preprocessors are the lowest-level of preprocessors, insofar as they only require [[lexical analysis]], that is, they operate on the source text, prior to any [[parser|parsing]], by performing simple substitution of [[lexer|tokenized]] character sequences for other tokenized character sequences, according to user-defined rules. They typically perform [[macro substitution]], [[header file|textual inclusion]] of other files, and conditional [[compilation]] or inclusion.
+
+===C preprocessor===
+The most common example of this is the [[C preprocessor]], which takes lines beginning with '#' as directives. Because it knows nothing about the underlying language, its use has been criticized and many of its features built directly into other languages. For example, macros replaced with aggressive inlining and templates, includes with compile-time imports (this requires the preservation of type information in the object code, making this feature impossible to retrofit into a language); conditional compilation is effectively accomplished with <code>if-then-else</code> and dead code elimination in some languages.
+
+===Other lexical preprocessors===
+Other lexical preprocessors include the general-purpose [[m4 (language)|m4]], most commonly used in cross-platform build systems such as [[autoconf]], and [[general purpose macro processor|GEMA]], an open source macro processor which operates on patterns of context.
+
+==Syntactic preprocessors==
+Syntactic preprocessors were introduced with the [[Lisp programming language|Lisp]] family of languages. Their role is to transform syntax trees according to a number of user-defined rules. For some programming languages, the rules are written in the same language as the program (compile-time reflection). This is the case with [[Lisp programming language|Lisp]] and [[OCaml]]. Some other languages rely on a fully external language to define the transformations, such as the [[XSLT]] preprocessor for [[XML]], or its statically typed counterpart [[CDuce]].
+
+Syntactic preprocessors are typically used to customize the syntax of a language, extend a language by adding new primitives, or embed a [[Domain-specific programming language|Domain-Specific Programming Language]] inside a general purpose language.
+
+===Customizing syntax===
+A good example of syntax customization is the existence of two different syntaxes in the [[OCaml|Objective Caml]] programming language.<ref>[http://caml.inria.fr/pub/docs/manual-camlp4/manual007.html The Revised syntax] from The Caml language website</ref> Programs may be written indifferently using the "normal syntax" or the "revised syntax", and may be pretty-printed with either syntax on demand.
+
+Similarly, a number of programs written in [[OCaml]] customize the syntax of the language by the addition of new operators.
+
+===Extending a language===
+The best examples of language extension through macros are found in the [[Lisp programming language|Lisp]] family of languages. While the languages, by themselves, are simple dynamically-typed functional cores, the standard distributions of [[Scheme (programming language)|Scheme]] or [[Common Lisp]] permit imperative or object-oriented programming, as well as static typing. Almost all of these features are implemented by syntactic preprocessing, although it bears noting that the "macro expansion" phase of compilation is handled by the compiler in Lisp. This can still be considered a form of preprocessing, since it takes place before other phases of compilation.
+
+Similarly, statically-checked, type-safe [[regular expressions]] or [[code generation]] may be added to the syntax and semantics of [[OCaml]] through macros, as well as micro-threads (also known as [[coroutines]] or [[fiber (computer science)|fibers]]), [[Monads in functional programming|monads]] or transparent XML manipulation.
+
+===Specializing a language===
+One of the unusual features of the [[Lisp programming language|Lisp]] family of languages is the possibility of using macros to create an internal
+[[Domain-specific programming language|Domain-Specific Programming Language]]. Typically, in a large [[Lisp programming language|Lisp]]-based project, a module may be written in a variety of such minilanguages, one perhaps using a [[SQL]]-based dialect of [[Lisp programming language|Lisp]], another written in a dialect specialized for GUIs or pretty-printing, etc. [[Common Lisp]]'s standard library contains an example of this level of syntactic abstraction in the form of the LOOP macro, which implements an Algol-like minilanguage to describe complex iteration, while still enabling the use of standard Lisp operators.
+
+The [[MetaOCaml]] preprocessor/language provides similar features for external [[Domain-specific programming language|Domain-Specific Programming Languages]]. This preprocessor takes the description of the semantics of a language (i.e. an interpreter) and, by combining compile-time interpretation and code generation, turns that definition into a compiler to the [[OCaml]] programming language—and from that language, either to bytecode or to native code.`
+<!--
+Please provide an authoritative cite defining "general purpuse(sic) preprocessor" and
+"general purpuse template engine" or else remove this.
+==Preprocessors as template engines==
+Any "general purpuse preprocessor", like [[M4 (computer language)|M4]], can be used as a [[template engine]].
+
+"General purpuse preprocessors" and "general purpuse template engines" are the same kind of softwares.
+--~~~~
+-->
+
+==General purpose preprocessor==
+Most preprocessors are specific to a particular data processing task (e.g., [[compilers|compiling]] the [[C (programming language)|C]] language). A preprocessor may be promoted as being ''general purpose'', meaning that it is not aimed at a specific usage or programming language, and is intended to be used for a wide variety of text processing tasks.
+
+[[M4 (computer language)|M4]] is probably the most well known example of such a general purpose preprocessor, although the [[C (programming language)|C]] preprocessor is sometimes used in a non-C specific role. Examples:
+* using [[C preprocessor]] for [[Javascript]] preprocessing <ref>Show how to use [[C preprocessor|C-preprocessor]] on JavaScript files. [http://web.archive.org/web/20080116034428/http://blog.inetoffice.com/?p=12 "JavaScript is Not Industrial Strength"] ''by T. Snyder''.</ref>.
+* using [[M4 (computer language)|M4]] <small>(see on-article example)</small> or [[C preprocessor]] <ref>Show how to use [[C preprocessor|C-preprocessor]] as [[template engine (web)|template engine]].
+[http://www.cs.tut.fi/~jkorpela/html/cpre.html "Using a C preprocessor as an HTML authoring tool"] ''by J. Korpela'', 2000.</ref> as a [[template engine]], to [[HTML]] generation.
+* [[imake]], a [[make (software)|make]] interface using the [[C preprocessor]], used in the [[X Window System]] but now deprecated in favour of [[automake]].
+* [[grompp]], a preprocessor for simulation input files for [[GROMACS]] (a fast, free, open-source code for some problems in [[computational chemistry]] which calls the system [[C preprocessor]] (or other preprocessor as determined by the simulation input file) to parse the topology, using mostly the #define and #include mechanisms to determine the effective topology at grompp run time.
+
+==See also==
+{{Wiktionary|preprocessor}}
+* [[Directive (programming)]]
+* [[Metaprogramming]]
+* [[Macro (computer science)|Macros]]
+* [[Snippet management]]
+* [[Template engine]]
+* The [[C preprocessor]]
+* The [[camlp4|OCaml preprocessor-pretty-printer]]
+* The [[Windows software trace preprocessor]]
+<!-- open link
+* The [[MetaOCaml]] metaprogramming language
+* The [[Epigram (metaprogramming language)|Epigram]] metaprogramming language
+* [[Oracle Pro*C]]
+-->
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://lispm.dyndns.org/news?ID=NEWS-2005-07-08-1 DSL Design in Lisp]
+* [http://www.paulgraham.com/progbot.html Programming from the bottom up]
+* The [http://www.owl-s.org/tools.en.html#gpp Generic PreProcessor]
+* Gema, the [http://gema.sourceforge.net General Purpose Macro Processor]
+* The [[PIKT]] [http://pikt.org/pikt/ref/ref.4.piktc.html piktc] [http://pikt.org/pikt/ref/ref.3.html text, script, and configuration file preprocessor]
+* [http://freshmeat.net/projects/minimac-macro-processor minimac, a minimalist macro processor]
+* [http://igormaznitsa.com/projects/jcp/index.html Java Comment Preprocessor]
+
+[[Category:Programming language implementation]]
+
+[[bg:Предпроцесор]]
+[[cs:Preprocesor]]
+[[da:Præprocessor]]
+[[de:Präprozessor]]
+[[el:Προεπεξεργαστής]]
+[[es:Preprocesador]]
+[[fa:پیش‌پردازنده]]
+[[fr:Préprocesseur]]
+[[it:Preprocessore]]
+[[lt:Parengiamoji doroklė]]
+[[nl:Preprocessor]]
+[[ja:プリプロセッサ]]
+[[pl:Preprocesor]]
+[[pt:Pré-processador]]
+[[ru:Препроцессор]]
+[[fi:Esikääntäjä]]
+[[uk:Препроцесор]]
+[[zh:预处理器]]</body> </html>

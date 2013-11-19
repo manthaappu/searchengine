@@ -1,0 +1,52 @@
+<html> <head> <title>Wait (command)</title></head><body>{{this|the Unix command|Wait}}
+{{lowercase|title=wait}}
+In [[computing]], '''<code>wait</code>''' is a [[command (computing)|command]] which pauses until execution of a [[Background (computer software)|background process]] has ended.
+
+==Usage==
+<source lang="bash">
+ wait [n]
+</source>
+
+where '''n''' is the [[process identifier|pid]] or [[Job control (Unix)#Job ID|job ID]] of a currently executing background process (job). If '''n''' is not given, the command waits until all jobs known to the invoking shell have terminated.
+
+'''wait''' normally returns the [[exit status]] of the last job which terminated. It may also return 127 in the event that '''n''' specifies a non-existent job or zero if there were no jobs to wait for.
+
+Because <code>wait</code> needs to be aware of the job table of the current shell execution environment, it is usually implemented as a [[shell builtin]].
+
+==Example==
+This command can be useful where part of a script can execute in parallel to implement a barrier where an upcoming section depends on the successful completion of the preceding sections.
+
+The following example will fetch the '''src/''' directory from a machine named '''iona''' using [[rsync]] and simultaneously update the libraries on which this program depends, before building the combination.
+
+<source lang="bash">
+#!/bin/bash
+
+# Parallel update script which makes use of the wait command
+
+# Update local copy
+rsync iona:src/ . &
+# Upgrade required libraries, or exit indicating failure if make failed for some reason
+make -C lib || exit 1
+
+# Wait for rsync to terminate (may have already happened) and finish the job, unless rsync failed
+wait && make
+</source>
+
+==See also==
+* [[Wait (system call)]]
+
+==External links==
+*[http://www.gnu.org/software/bash/manual/bashref.html GNU bash reference manual]
+
+{{unix commands}}
+[[Category:Unix SUS2008 utilities]]
+[[Category:Unix process and task management-related software]]
+
+[[ca:Wait]]
+[[cs:Wait (Unix)]]
+[[el:Wait (Unix)]]
+[[es:Wait]]
+[[ja:Wait]]
+[[pl:Wait (Unix)]]
+[[ru:Wait (команда)]]
+[[uk:Wait]]</body> </html>

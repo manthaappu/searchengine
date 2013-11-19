@@ -1,0 +1,26 @@
+<html> <head> <title>Gang scheduling</title></head><body>In [[Computer science]], '''Gang scheduling''' is a [[scheduling algorithm]] for parallel systems that schedules related [[thread (computer science)|thread]]s or [[process (computing)|process]]es to run simultaneously on different [[central processing unit|processor]]s. Usually these will be threads all belonging to the same process, but they may also be from different processes, for example when the processes have a producer-consumer relationship, or when they all come from the same [[Message Passing Interface|MPI]] program.
+
+Gang scheduling is used so that if two or more threads or processes communicate with each other, they will all be ready to communicate at the same time. If they were not gang-scheduled, then one could wait to send or receive a message to another while it is sleeping, and vice-versa. When processors are over-subscribed and gang scheduling is not used within a group of processes or threads which communicate with each other, it can lead to situations where each communication event suffers the overhead of a context switch. 
+
+Technically, gang scheduling is based on a data structure called the Ousterhout matrix.  In this matrix each row represents a time slice, and each column a processor.  The threads or processes of each job are packed<ref>Dror G. Feitelson (1996). [http://dx.doi.org/10.1007/BFb0022289 ''Packing schemes for gang scheduling'']. In Job Scheduling Strategies for Parallel Processing, Springer-Verlag Lecture Notes in Computer Science Vol. 1162, pp. 89-110.</ref> into a single row of the matrix.  During execution, coordinated context switching is performed across all nodes to switch from the processes in one row to those in the next row.
+
+Gang scheduling is stricter than [[Coscheduling]].<ref>Dror G. Feitelson, Larry Rudolph (1992). [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.79.7070&rep=rep1&type=pdf ''Gang Scheduling Performance Benefits for Fine-Grain Synchronization'']. Journal of Parallel and Distributed Computing, volume 16, pages 306--318.</ref> It requires all threads of the same process to run concurrently, while Coscheduling allows for ''fragments'', which are sets of threads that do not run concurrently with the rest of the gang.
+
+Gang scheduling was implemented and used in production mode on several parallel machines, most notably the [[Connection Machine]] CM-5.
+
+== See also ==
+
+* [[Coscheduling]]
+* [[Parallel computing]]
+
+== References ==
+* [http://www.llnl.gov/asci/pse_trilab/sc98.summary.html Gang Scheduling, Timesharing on Parallel Computers, SC98, November 1998 (a summary)]
+* [http://www.llnl.gov/asci/pse_trilab/sc97.paper.html Performance Characteristics of Gang Scheduling in Multiprogrammed Environments, SC97, November 1997]
+
+{{reflist}}
+
+{{DEFAULTSORT:Gang Scheduling}}
+[[Category:Scheduling algorithms]]
+
+
+{{comp-sci-stub}}</body> </html>

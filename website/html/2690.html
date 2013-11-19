@@ -1,0 +1,35 @@
+<html> <head> <title>Atomicity (database systems)</title></head><body>{{Unreferenced|date=December 2009}}
+{{Other uses|Atomicity (disambiguation)}}
+
+In [[database system]]s, '''atomicity''' (or '''atomicness''') is one of the [[ACID]] [[database transaction|transaction]] properties. In an '''atomic transaction''', a series of database operations either ''all'' occur, or ''nothing'' occurs. A guarantee of atomicity prevents updates to the database occurring only partially, which can cause greater problems than rejecting the whole series outright.
+
+The etymology of the phrase originates in the Classical Greek concept of a fundamental and indivisible component; see [[atom]].
+
+An example of atomicity is ordering an airline ticket where two actions are required: payment, and a seat reservation. The potential passenger must either: 
+# both pay for and reserve a seat; OR 
+# neither pay for nor reserve a seat.
+The booking system does not consider it acceptable for a customer to pay for a ticket without securing the seat, nor to reserve the seat without payment succeeding.
+
+==Orthogonality==
+Atomicity does not behave completely [[Orthogonality#Computer science|orthogonally]] with regard to the other [[ACID]] properties of the transactions. For example, [[isolation (computer science)|isolation]] relies on atomicity to roll back changes in the event of isolation failures such as [[deadlock]]; [[database consistency|consistency]] also relies on rollback in the event of a consistency-violation by an illegal transaction. Finally, atomicity itself relies on [[durability (computer science)|durability]] to ensure the atomicity of transactions even in the face of external failures.
+
+As a result of this, failure to detect errors and manually roll back the enclosing transaction may cause failures of isolation and consistency.
+
+==Implementation==
+Typically, systems implement atomicity by providing some mechanism to indicate which transactions have started and which finished; or by keeping a copy of the data before any changes occurred.  Several filesystems have developed methods for avoiding the need to keep multiple copies of data, using journaling (see [[journaling file system]]). Databases usually implement this using some form of logging/journaling to track changes. The system synchronizes the logs (often the [[metadata]]) as necessary once the actual changes have successfully taken place. Afterwards, crash recovery simply ignores incomplete entries. Although implementations vary depending on factors such as concurrency issues, the principle of atomicity — i.e. complete success or complete failure — remain.
+
+Ultimately, any application-level implementation relies on [[operating system|operating-system]] functionality, which in turn makes use of specialized hardware to guarantee that an operation remains non-interruptible: either by software attempting to re-divert system resources (see [[pre-emptive multitasking]]) or by resource-unavailability (such as power-outages).  For example, [[POSIX]]-compliant systems provide the open(2) [[system call]] which allows applications to atomically open a file. Other popular system-calls that may assist in achieving atomic operations from [[userspace]] include mkdir(2), flock(2), fcntl(2), rasctl(2) (NetBSD re-startable sequences), semop(2), sem_wait(2), sem_post(2), fdatasync(2), fsync(2) and rename(2).
+
+The hardware level requires [[linearizability|atomic operations]] such as [[test-and-set]] (TAS), and/or atomic increment/decrement operations. In their absence, or when necessary, raising the interrupt level to disable all possible interrupts (of hardware and software origin) may serve to implement the atomic synchronization function [[language primitive|primitives]]. Systems often implement these low-level operations  in [[machine language]] or in [[assembly language]].
+
+==See also==
+* [[Atomic operation]]
+* [[Transaction processing]]
+* [[Long-running transaction]]
+
+{{DEFAULTSORT:Atomicity (Database Systems)}}
+[[Category:Data management]]
+[[Category:Transaction processing]]
+
+[[es:Atomicidad]]
+[[simple:Atomicity]]</body> </html>

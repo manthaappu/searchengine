@@ -1,0 +1,145 @@
+<html> <head> <title>Akaike information criterion</title></head><body>The '''Akaike information criterion''' is a measure of the [[goodness of fit]] of a [[statistical model]]. It was developed by [[Hirotsugu Akaike]], under the name of "an information criterion" ('''AIC'''), and was first published by Akaike in 1974.<ref name="Akaiki1974">Akaike, 1974</ref> It is grounded in the concept of [[information entropy]], in effect offering a relative measure of the [[Kullback-Leibler divergence|information lost]] when a given model is used to describe reality.  It can be said to describe the tradeoff between [[bias]] and [[variance]] in model construction, or loosely speaking that of accuracy and complexity of the model.
+
+The AIC is not a test of the model in the sense of hypothesis testing; rather, it provides a means for comparison among models&mdash;a tool for  [[model selection]]. Given a data set, several candidate models may be ranked according to their AIC, with the model having the minimum AIC being the best. From the AIC values one may also infer that e.g. the top two models are roughly in a tie and the rest are far worse.
+
+==Definition==
+In the general case, the AIC is
+
+:<math>\mathit{AIC} = 2k - 2\ln(L)\,</math>
+
+where ''k'' is the number of [[parameter]]s in the [[statistical model]], and ''L'' is the maximized value of the [[likelihood]] function for the estimated model.
+
+Given a set of candidate models for the data, ''the preferred model is the one with the minimum AIC value.''  Hence AIC not only rewards goodness of fit, but also includes a penalty that is an increasing function of the number of estimated parameters. This penalty discourages [[overfitting]] (increasing the number of free parameters in the model improves the goodness of fit, regardless of the number of free parameters in the data-generating process). 
+
+The AIC methodology attempts to find the model, among a candidate set of models, that best explains the data with the fewest free parameters. By contrast, more traditional approaches to modeling start from a [[null hypothesis]].
+
+From a Bayesian perspective, the AIC corresponds to adopting a prior <math> P(k) \propto \exp{(-k)}</math>
+to penalise models with large numbers of parameters <math>k</math>.{{Citation needed|date=October 2010}}  The posterior is then
+<math> P(k|data) \propto P(data|k) P(k) = \exp{(-\mathit{AIC}/2)}</math>.
+
+==How to apply AIC in practice==
+AIC estimates relative support for a model.  To apply this in practice, we start with a set of candidate models, and then find the models' corresponding AIC values.  Next, identify the minimum AIC value.  The selection of a model can then be made as follows.
+
+<blockquote>As a rough rule of thumb, models having their AIC within 1&ndash;2 of the minimum have substantial support and should receive consideration in making inferences.  Models having their AIC within about 4&ndash;7 of the minimum have considerably less support, while models with their AIC > 10 above the minimum have either essentially no support and might be omitted from further consideration or at least fail to explain some substantial structural variation in the data.<ref>Burnham & Anderson, 2002, p.446, slightly paraphrased</ref></blockquote>
+
+==Partial derivation==
+For this section, it will be assumed that the model errors are normally and independently distributed. Let ''n'' be the number of [[observation]]s and ''RSS'' be
+:<math>\mathit{RSS} =  \sum_{i=1}^n \hat{\varepsilon}_i^2,</math>
+the [[residual sum of squares]]. We further assume that the variance of the model errors is unknown but equal for them all. Maximizing the likelihood with respect to this variance, the AIC becomes
+
+:<math>\mathit{AIC}=2k + n[\ln(2\pi \mathit{RSS}/n) + 1]\,.</math>
+
+This can be simplified by factoring out the term <math>n*\ln(2\pi)</math>. This is a constant term added to the AIC value of all the competing models. Therefore it can't affect the order in which we rank them and we can safely remove this term. When we also factor out the constant <math>n</math>, AIC simplifies to:
+
+:<math>\mathit{AIC}=2k + n[\ln(\mathit{RSS})]\,.</math>
+
+==Relevance to <math>\chi^2</math>-fitting==
+Often, one wishes to select amongst competing models where the likelihood function assumes that the underlying errors are normally distributed and independent. This assumption leads to <math>\chi^2</math> data fitting.
+
+For any set of models where the data points are used, one can use a slightly altered AIC. For the purposes of this article, this will be called <math>AIC_{\chi^2}</math>. It differs from the AIC only through an additive constant, which is a function only of the data points and not of the model. As only differences in the AIC are relevant, this constant can be ignored.
+
+For <math>\chi^2</math> fitting, the likelihood is given by
+:<math>L=\prod_{i=1}^n \left(\frac{1}{2 \pi \sigma_i^2}\right)^{1/2} \exp \left( -\sum_{i=1}^{n}\frac{(y_i-f(\mathbf{x}))^2}{2\sigma_i^2}\right)</math>
+:<math>\therefore \ln L = \ln\left(\prod_{i=1}^n\left(\frac{1}{2\pi\sigma_i^2}\right)^{1/2}\right) - \frac{1}{2}\sum_{i=1}^n \frac{(y_i-f(\mathbf{x}))^2}{\sigma_i^2}</math>
+:<math>\therefore \ln L = C - \chi^2/2 \,</math>, where C is a constant independent of the model used, and dependent only on the use of particular data points. i.e. it does not change if the data do not change.
+
+The AIC is therefore given by <math>AIC = 2k - 2\ln(L) = 2k - 2(C-\chi^2/2) = 2k -2C + \chi^2 \,</math>. As only differences in AICc are meaningful, the constant C can be omitted provided the same data points are used, giving
+:<math>AIC_{\chi^2}=\chi^2 + 2k</math>
+
+This form is often convenient in that data fitting programs produce <math>\chi^2</math> as a statistic for the fit. For models with the same number of data points, the one with the lowest <math>AIC_{\chi^2}</math> should be preferred.
+
+Similarly, if one has available the statistic <math>R^2</math> ("Variance Explained"), one may write
+
+:<math>AIC_{R^2}=n\ln\frac{1-R^2}{n}+2k.\ </math>
+
+The Pearson correlation <math>r=R</math> is a special case of this. Here, independence of the observations is assumed.
+
+==AICc and AICu==
+AICc is AIC with a second-order correction for finite sample sizes:
+
+:<math>AICc = AIC + \frac{2k(k + 1)}{n - k - 1} = \chi^2 + \frac{2k}{ 1 - \frac{k-1}{n} } .\,</math>
+
+where ''k'' denotes the number of model parameters.  Burnham & Anderson (2002) strongly recommend using AICc, rather than AIC, if ''n'' is small or ''k'' is large. Since AICc converges to AIC as ''n'' gets large, AICc generally should be employed regardless.<ref>Burnham & Anderson, 2004</ref>  
+
+Brockwell & Davis (p.273) advise using AICc as the primary criterion in selecting the orders of an [[ARMA]] model for time series.
+
+McQuarrie & Tsai (1998: 22) define AICc as:
+
+:<math>AICc = \ln{\frac{RSS}{n}} + \frac{n+k}{n-k-2}\ ,</math>
+
+and propose (p. 32) the closely related measure:
+
+:<math>AICu = \ln{\frac{RSS}{n-k}} + \frac{n+k}{n-k-2}\ .</math>
+
+McQuarrie & Tsai ground their high opinion of AICc and AICu on extensive simulation work.
+
+==QAIC==
+QAIC (the quasi-AIC) is defined as:
+
+:<math>QAIC = 2k-\frac{1}{c}2\ln{L}\,</math>
+
+where ''c'' is a variance inflation factor. QAIC adjusts for over-dispersion or lack of fit. The small sample version of QAIC is
+
+:<math>QAICc = QAIC + \frac{2k(k + 1)}{n - k - 1}.\,</math>
+
+
+==Schwarz criterion==
+The AIC penalizes free parameters less strongly than does the [[Schwarz criterion]].  After Schwarz developed his [[Schwarz Information Criterion]] in 1978 using Bayesian formalism, Akaike was inspired to develop a Bayesian version of his information criteria as well often denoted the ABIC (for "a Bayesian Information Criterion") or commonly referred to as Akaike's Bayesian Information Criterion. The fact that Akaike developed two similar Information Critera during the 1970's has created some confusion in the literature as to what is precisely the AIC. It is of the general form
+
+:<math>\mathit{ABIC}=[-2\ln({L}_{marginal})+2(k)]\,.</math>
+
+In a more tractable setting, the ABIC for a polynomial of degree k is, 
+
+:<math>\mathit{ABIC}=n[\ln(\mathit{RSS})]+2k\,.</math>
+
+Since the this information criterion has the same relationship to approximating the evidence (the likelihood probability times the prior probability), then it too can claim status as a Bayesian Information Criterion.
+==See also==
+*[[Bayesian information criterion]]
+*[[Deviance (statistics)|deviance]]
+*[[Deviance information criterion]]
+*[[Hannan-Quinn information criterion]]
+*[[Jensen-Shannon divergence]]
+*[[Kullback-Leibler divergence]]
+*[[Likelihood ratio test]]
+*[[Occam's Razor]]
+
+==Notes==
+{{reflist}}
+
+== References ==
+<references/>
+*{{cite journal
+ | first = Hirotugu
+ | last = Akaike
+ | authorlink = Hirotsugu Akaike
+ | year = 1974
+ | title = A new look at the statistical model identification
+ | journal = IEEE Transactions on Automatic Control
+ | volume = 19
+ | issue = 6
+ | pages = 716–723
+ | doi = 10.1109/TAC.1974.1100705
+ | id = {{MR|0423716}}
+ }}
+*Akaike, H.,  1980. "Likelihood and the Bayes procedure", ''Bayesian Statistics'', Ed. [[José-Miguel Bernardo|J.M. Bernardo]] et. al., Valencia: University Press.
+*Brockwell, P.J., and Davis, R.A., 2009. ''Time Series: Theory and Methods'', 2nd ed. Springer.  
+*Burnham, K. P., and Anderson, D.R., 2002. ''Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach'', 2nd ed. Springer-Verlag. ISBN 0-387-95364-7.  [This has over 9000 citations on [[Google Scholar]].]
+*--------, 2004. ''[http://www2.fmg.uva.nl/modelselection/presentations/AWMS2004-Burnham.pdf Multimodel Inference: understanding AIC and BIC in Model Selection]'', Amsterdam Workshop on Model Selection.
+* Hurvich, C. M., and Tsai, C.-L., 1989. "Regression and time series model selection in small samples", ''[[Biometrika]]'', Vol 76. pp. 297–307
+* McQuarrie, A. D. R., and Tsai, C.-L., 1998. ''Regression and Time Series Model Selection''. World Scientific. ISBN 981023242X
+
+== External links ==
+* [http://www.garfield.library.upenn.edu/classics1981/A1981MS54100001.pdf Hirotogu Akaike comments on how he arrived at the AIC in This Week's Citation Classic]
+
+{{DEFAULTSORT:Akaike Information Criterion}}
+[[Category:Regression variable selection]]
+[[Category:Model selection]]
+
+[[de:Informationskriterium]]
+[[fa:معیار اطلاعاتی آکائیک]]
+[[it:Test di verifica delle informazioni di Akaike]]
+[[ja:赤池情報量規準]]
+[[pl:Kryterium informacyjne Akaikego]]
+[[ru:Информационный критерий Акаике]]
+[[su:Akaike information criterion]]
+[[zh:赤池信息量准则]]</body> </html>

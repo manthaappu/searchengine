@@ -1,0 +1,77 @@
+<html> <head> <title>Fuzz testing</title></head><body>{{Redirect|Fuzzing||Fuzz (disambiguation)}}
+'''Fuzz testing''' or '''fuzzing''' is a [[software testing]] technique that provides invalid, unexpected, or [[random data]] to the inputs of a [[computer program|program]]. If the program fails (for example, by [[Crash (computing)|crashing]] or failing built-in code [[assertion (computing)|assertion]]s), the defects can be noted.
+
+The term Fuzz originated from a class project topic in Prof. Barton Miller's graduate Advanced Operating System class at the University of Wisconsin in the Fall of 1988. The assignment was titled "Operating System Utility Program Reliability - The Fuzz Generator".<ref>Barton Miller (2008). "Preface". In Ari Takanen, Jared DeMott and Charlie Miller, ''Fuzzing for Software Security Testing and Quality Assurance'', ISBN 978-1-59693-214-2</ref> In quality assurance and testing, the same approach (using unexpected data or syntax) has been called [[robustness testing]], [[syntax testing]] or [[negative testing]]. Even [[white-noise testing]] can be thought of as fuzzing.
+
+[[File format]]s and [[Protocol (computing)|network protocols]] are the most common targets of fuzz testing, but any type of program input can be fuzzed.  Interesting inputs include [[environment variable]]s, keyboard and mouse [[event (computing)|event]]s, and sequences of [[application programming interface|API]] calls.  Even items not normally considered "input" can be fuzzed, such as the contents of [[database]]s, [[shared memory]], or the precise interleaving of [[thread (computer science)|thread]]s.
+
+For the purpose of security, input that crosses a [[trust boundary]] is often the most interesting.<ref>{{cite web | author=John Neystadt | title=Automated Penetration Testing with White-Box Fuzzing | url=http://msdn.microsoft.com/en-us/library/cc162782.aspx | publisher=Microsoft | date=2008-02 | accessdate=2009-05-14}}</ref>  For example, it is more important to fuzz code that handles the upload of a file by any user than it is to fuzz the code that parses a configuration file that is accessible only to a privileged user.
+
+{{Portal|Software Testing}}
+
+==Uses==
+Fuzz testing is often used in large software development projects that employ [[black-box testing]]. These projects usually have a budget to develop test tools, and fuzz testing is one of the techniques which offers a high benefit to cost ratio.
+
+However, fuzz testing is not a substitute for exhaustive testing or [[formal methods]]: it can only provide a random sample of the system's behavior, and in many cases passing a fuzz test may only demonstrate that a piece of software can handle exceptions without crashing, rather than behaving correctly. Thus, fuzz testing can only be regarded as an assurance of overall quality rather than a bug-finding tool.
+
+As a gross measurement of reliability, fuzzing can suggest which parts of a program should get special attention, in the form of a [[code audit]], application of [[static code analysis|static analysis]], or partial [[rewrite (programming)|rewrite]]s.
+
+==Techniques==
+The simplest form of fuzzing technique is sending a stream of random bits to software, either as command line options, randomly mutated protocol packets, or as events.
+The oldest folklore on testing similar to fuzzing tells about The Monkey, from before 1983, which used journaling hooks to feed random events to [[Macintosh]] applications.<ref>{{cite web|url=http://www.folklore.org/StoryView.py?story=Monkey_Lives.txt |title=Macintosh Stories: Monkey Lives |publisher=Folklore.org |date=1999-02-22 |accessdate=2010-05-28}}</ref>
+The first command line fuzzer originated from Prof. Barton Miller's
+group at the University of Wisconsin in 1988.<ref>{{cite web|title=Fuzz Testing of Application Reliability|url=http://pages.cs.wisc.edu/~bart/fuzz/|publisher=University of Wisconsin-Madison|accessdate=2009-05-14}}</ref>
+This technique of random inputs still continues to be a powerful tool to find bugs in command-line applications, network protocols, and GUI-based applications and services. Another common technique that is easy to implement is mutating existing input (e.g. files from a [[test suite]]) by flipping bits at random or moving blocks of the file around. However, the most successful fuzzers have detailed understanding of the format or protocol being tested.
+
+The understanding can be based on a [[specification (technical standard)#Software development|specification]]. A specification-based fuzzer involves writing the entire array of specifications into the tool, and then using model-based test generation techniques in walking through the specifications and adding anomalies in the data contents, structures, messages, and sequences. This "smart fuzzing" technique is also known as robustness testing, syntax testing, grammar testing, and (input) fault injection.<ref>{{cite web|url=http://wurldtech.com/resources/SB_002_Robustness_Testing_With_Achilles.pdf |title=Robustness Testing Of Industrial Control Systems With Achilles |format=PDF |date= |accessdate=2010-05-28}} {{Dead link|date=November 2010|bot=H3llBot}}</ref><ref>{{cite web|url=http://www.amazon.com/Software-Testing-Techniques-Boris-Beizer/dp/1850328803 |title=Software Testing Techniques by Boris Beizer. International Thomson Computer Press; 2 Sub edition (June 1990) |publisher=Amazon.com |date= |accessdate=2010-05-28}}</ref><ref>{{cite web|url=http://www.vtt.fi/inf/pdf/publications/2001/P448.pdf |title=Kaksonen, Rauli. (2001) A Functional Method for Assessing Protocol Implementation Security (Licentiate thesis). Espoo. Technical Research Centre of Finland, VTT Publications 447. 128 p. + app. 15 p. ISBN 951-38-5873-1 (soft back ed.) ISBN 951-38-5874-X (on-line ed.). |format=PDF |date= |accessdate=2010-05-28}}</ref><ref>http://www.amazon.com/Software-Fault-Injection-Inoculating-Programs/dp/0471183814</ref>
+The protocol awareness can also be created [[heuristic algorithm|heuristically]] from examples using a tool such as [http://sequitur.info/ Sequitur].<ref>{{cite web|url=http://usenix.org/events/lisa06/tech/slides/kaminsky.pdf|author=Dan Kaminski|title=Black Ops 2006|year=2006}}</ref>  These fuzzers can ''generate'' [[test case]]s from scratch, or they can ''mutate'' examples from [[test suite]]s or real life.  They can concentrate on ''valid'' or ''invalid'' input, with ''mostly-valid'' input tending to trigger the "deepest" error cases.
+
+There are two limitations of protocol-based fuzzing based on protocol implementations of published specifications: 1) Testing cannot proceed until the specification is relatively mature, since a specification is a prerequisite for writing such a fuzzer; and 2) Many useful protocols are proprietary, or involve proprietary extensions to published protocols. If fuzzing is based only on published specifications, test coverage for new or proprietary protocols will be limited or nonexistent.
+
+Fuzz testing can be combined with other testing techniques.  '''White-box fuzzing''' uses [[symbolic execution]] and [[constraint solving]].<ref>{{cite web|url=http://people.csail.mit.edu/akiezun/pldi-kiezun.pdf|title=Grammar-based Whitebox Fuzzing|publisher=Microsoft Research|author=Patrice Godefroid, Adam Kiezun, Michael Y. Levin}}</ref>  '''Evolutionary fuzzing''' leverages feedback from [[code coverage]],<ref>{{cite web|url=http://www.vdalabs.com/tools/efs_gpf.html|title=VDA Labs}}</ref> effectively automating the approach of ''[[exploratory testing]]''.
+
+==Types of bugs found==
+Straight-up failures such as crashes, assertion failures, and [[memory leak]]s are easy to detect.  The use of a [[memory debugger]] can help find bugs too subtle to always crash.
+
+Fuzz testing is especially useful against large applications, where any bug affecting [[memory safety]] is likely to be a severe [[vulnerability (computing)|vulnerability]].  It is these security concerns that motivate the development of most fuzzers.
+
+Since fuzzing often generates invalid input, it is especially good at testing error-handling routines, which are important for software that does not control its input.  As such, simple fuzzing can be thought of as a way to automate [[negative test]]ing.  More sophisticated fuzzing tests more "main-line" code, along with error paths deep within it.
+
+Fuzzing can also find some types of "correctness" bugs.  For example, it can be used to find incorrect-[[serialization]] bugs by complaining whenever a program's serializer emits something that the same program's parser rejects.<ref>{{cite web | url=http://www.squarefree.com/2007/08/02/fuzzing-for-correctness/ | author=Jesse Ruderman | title=Fuzzing for correctness}}</ref>  It can also find unintentional differences between two versions of a program<ref>{{cite web | url=http://www.squarefree.com/2008/12/23/fuzzing-tracemonkey/ | author=Jesse Ruderman | title=Fuzzing TraceMonkey}}</ref> or between two implementations of the same specification.<ref>{{cite web | url=http://www.squarefree.com/2008/12/23/differences/ | author=Jesse Ruderman | title=Some differences between JavaScript engines}}</ref>
+
+==Reproduction and isolation==
+As a practical matter, developers need to reproduce errors in order to fix them. For this reason, almost all fuzz testing makes a record of the data it manufactures, usually before applying it to the software, so that if the computer fails dramatically, the test data is preserved. If the fuzz stream is [[pseudo-random number]] generated it may be easier to store the seed value to reproduce the fuzz attempt.
+
+Once a bug found through fuzzing is reproduced, it is often desirable to produce a simple [[test case]] to make the issue easier to understand and [[debug]].  A simple testcase may also be faster and therefore more suitable for inclusion in a [[test suite]] that is run frequently.  It can even help to hide the way in which the bug was found.  Some fuzzers are designed to work well with testcase reduction programs such as [http://delta.tigris.org/ Delta] or [http://www.squarefree.com/2007/09/15/introducing-lithium-a-testcase-reduction-tool/ Lithium].
+
+==Advantages and disadvantages==
+The main problem with fuzzing to find program faults is that it generally only finds very simple faults. The computational complexity of the software testing problem is of [[Big-oh|exponential order]] ([[Big-oh|<math>O(c^n),\;c>1</math>]]) and every fuzzer takes shortcuts to find something interesting in a timeframe that a human cares about. A primitive fuzzer may have poor [[code coverage]]; for example, if the input includes a [[checksum]] which is not properly updated to match other random changes, only the checksum validation code will be verified. Code coverage tools are often used to estimate how "well" a fuzzer works, but these are only guidelines to fuzzer quality. Every fuzzer can be expected to find a different set of bugs.
+
+On the other hand, bugs found using fuzz testing are sometimes severe, exploitable bugs that could be used by a real attacker. This has become more common as fuzz testing has become more widely known, as the same techniques and tools are now used by attackers to exploit deployed software. This is a major advantage over binary or source auditing, or even fuzzing's close cousin, [[fault injection]], which often relies on artificial fault conditions that are difficult or impossible to exploit.
+
+The randomness of inputs used in fuzzing is often seen as a disadvantage, as catching a boundary value condition with random inputs is highly unlikely.
+
+Fuzz testing enhances [[software security]] and [[safety engineering|software safety]] because it often finds odd oversights and defects which human testers would fail to find, and even careful human test designers would fail to create tests for.
+
+== References ==
+{{Reflist}}
+
+==Further reading==
+* ISBN 0321446119, ''Fuzzing: Brute Force Vulnerability Discovery'', Michael Sutton, Adam Greene, Pedram Amini
+* ISBN 978-1-59693-214-2, ''Fuzzing for Software Security Testing and Quality Assurance'', Ari Takanen, Jared D. DeMott, Charles Miller
+
+==External links==
+* [http://www.cs.wisc.edu/~bart/fuzz University of Wisconsin Fuzz Testing (the original fuzz project)] Source of papers and fuzz software.
+* [http://iac.dtic.mil/iatac/download/Vol10_No1.pdf Look out! It's the Fuzz! (IATAC IAnewsletter 10-1)]
+* [http://video.google.com/videoplay?docid=6509883355867972121 Designing Inputs That Make Software Fail], conference video including fuzzy testing
+* [http://www.ee.oulu.fi/research/ouspg/ Link to the Oulu (Finland) University Secure Programming Group]
+* [http://video.google.com/videoplay?docid=-1551704659206071145 JBroFuzz - Building A Java Fuzzer], conference presentation video
+
+{{DEFAULTSORT:Fuzz Testing}}
+[[Category:Software testing]]
+[[Category:Computer security procedures]]
+
+[[de:Fuzzing]]
+[[fr:Fuzzing]]
+[[ja:ファジング]]
+[[ru:Fuzzing]]</body> </html>

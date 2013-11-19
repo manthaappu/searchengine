@@ -1,0 +1,70 @@
+<html> <head> <title>Non-volatile random access memory</title></head><body>{{Memory types}}
+
+'''Non-volatile random access memory''' ('''NVRAM''') is [[random access memory]] that retains its information when power is turned off, which is described technically as being [[non-volatile]]. This is in contrast to the most common forms of random access memory today, [[dynamic random access memory]] (DRAM) and [[static random access memory]] (SRAM), which both require continual power in order to maintain their data. NVRAM is a subgroup of the more general class of non-volatile memory types, the difference being that NVRAM devices offer [[random access]], unlike [[hard disk]]s.
+
+The best-known form of NVRAM memory today is [[flash memory]]. Some drawbacks to flash memory include the requirement to write it in larger blocks than many computers can automically address, and the relatively limited longevity of flash memory due to its finite number of write-erase cycles (most consumer flash products at the time of writing can only withstand around 100,000 rewrites before memory begins to deteriorate).  Another drawback is the performance limitations preventing flash from matching the response times and, in some cases, the random addressability offered by traditional forms of RAM. Several newer technologies are attempting to replace flash in certain roles, and some even claim to be a truly [[Universal_Memory|universal memory]], offering the performance of the best SRAM devices with the non-volatility of flash. To date these alternatives have not yet become mainstream.
+
+==Early NVRAMs==
+
+Early computers used a variety of memory systems, some of which happened to be non-volatile, although not typically by design but simply as a side effect of their construction. The most common form of memory through the 1960s was [[magnetic core memory]], which stored data in the polarity of small magnets. Since the magnets held their state even with the power removed, core memory was also non-volatile.
+
+Rapid advances in [[semiconductor fabrication]] in the 1970s led to a new generation of [[Solid state (electronics)|solid state]] memories that core simply could not compete with. Relentless market forces have dramatically improved these devices over the years, and today the low-cost and high-performance [[DRAM]] forms the vast majority of a typical computer's [[main memory]]. However there are many roles where non-volatility is important, either in cases where the power will be removed for periods of time, or alternately where the constant power needs of DRAM conflicts with low power devices. For many years there was no practical RAM-like device to fill this niche, and many systems used a combination of RAM and some form of ROM for these roles.
+
+Custom [[Read-only memory|ROM]] was the earliest solution, but had the disadvantage of being able to be written to only once, when the chip was initially designed. ROMs consist of a series of [[diode]]s permanently wired to return the required data, the diodes being built in this configuration when they are being fabricated.
+
+[[Programmable read-only memory|PROM]] improved on this design, allowing the chip to be written to electrically by the end-user. PROM consists of a series of diodes that are initially all set to a single value, "1" for instance. By applying higher power than normal, a selected diode can be "burned out" (like a [[Fuse (electrical)|fuse]]), thereby permanently setting that bit to "0". PROM was a boon to companies who wished to update the contents with new revisions, or alternately produce a number of different products using the same chip. For instance, PROM was widely used for [[game console]] cartridges in the 1980s.
+
+For those who required real RAM-like performance and non-volatility typically have to use conventional RAM devices and a battery backup. This was a common solution in earlier computer systems like the original [[Apple Macintosh]], which used a small amount of memory powered by a watch [[Button cell|"button" battery]] for storing basic setup information like the selected boot volume. Much larger battery backed memories are still used today as [[cache]]s for high-speed [[database]]s, requiring a performance level newer NVRAM devices have not yet managed to meet.
+
+==The floating-gate transistor==
+
+A huge advance in NVRAM technology was the introduction of the [[floating-gate transistor]], which led to the introduction of ''erasable programmable read-only memory'', or [[EPROM]]. EPROM consists of a grid of transistors whose ''gate'' terminal (the "switch") is protected by a high-quality insulator. By "pushing" electrons onto the base with the application of higher-than-normal voltage, the electrons become trapped on the far side of the insulator, thereby permanently switching the transistor "on" ("1"). EPROM can be re-set to the "base state" (all "1"s or "0"s, depending on the design) by applying [[ultraviolet]] light (UV). The UV [[photon]]s have enough energy to push the electrons through the insulator and return the base to a ground state. At that point the EPROM can be re-written from scratch.
+
+An improvement on EPROM, [[EEPROM]], soon followed. The extra "E" stands for ''electrically'', referring to the ability to reset EEPROM using electricity instead of UV, making the devices much easier to use in practice. The bit are re-set with the application of even higher power through the other terminals of the transistor (''source'' and ''drain''). This high power pulse basically sucks the electrons through the insulator, returning it to the ground state. This process has the disadvantage of mechanically degrading the chip, however, so memory systems based on floating-gate transistors generally have short write-lifetimes, on the order of 10<small><sup>5</sup></small> writes to any particular bit.
+
+One approach to overcoming the rewrite count limitation is to have a standard [[Shadow_Random_Access_Memory|SRAM]] where each bit is backed up by an EEPROM bit. In normal operation the chip functions as a fast SRAM and in case of power failure the content is quickly transferred to the EEPROM part, from where it gets loaded back at the next power up. Such chips were called NOVRAMs<ref>[http://www.intersil.com/data/an/AN1146.pdf X4C105 NOVRAM Features and Applications, Intersil Application Note]</ref> by their manufacturers.
+
+The basis of [[flash memory]] is identical to EEPROM, and differs largely in internal layout. Flash allows its memory to be written only in blocks, which greatly simplifies the internal wiring and allows for higher densities. [[Memory storage density]] is the main determinant of cost in most computer memory systems, and due to this flash has evolved into one of the lowest cost solid-state memory devices available. Starting around 2000, demand for ever-greater quantities of flash have driven manufacturers to use only the latest fabrication systems in order to increase density as much as possible. Although fabrication limits are starting to come into play, new "multi-bit" techniques appear to be able to double or quadruple the density even at existing linewidths.
+
+==Newer Approaches==
+
+Flash and EEPROM's limited write-cycles are a serious problem for any real RAM-like role, however. Additionally, the high power needed to write the cells is a problem in low-power roles, where NVRAM is often used. The power also needs time to be "built up" in a device known as a [[charge pump]], which makes writing dramatically slower than reading, often as much as 1,000 times. A number of new memory devices have been proposed to address these shortcomings.
+
+To date, the only such system to enter widespread production is [[ferroelectric RAM]], or FeRAM. FeRAM uses a [[ferroelectric]] layer in a cell that is otherwise similar to conventional DRAM, this layer holding the charge in a 1 or 0 even with the power removed. To date, FeRAM has been produced on very old fabs, and even the most advanced research samples are still twice the linewidth of most flash devices. Although this difference might be addressable under normal circumstances, as flash moves to multi-bit cells the difference in memory density appears to be growing, rather than shrinking.
+
+Another approach to see major development effort is [[MRAM|Magnetoresistive Random Access Memory]], or MRAM, which uses magnetic elements and generally operates in a fashion similar to core, at least for the 1st generation technology. Only one MRAM chip has entered production to date: [[Freescale Semiconductor|Everspin Technologies]]' 4 Mbit part, which is a 1st generation MRAM that utilizes cross-point field induced writing<ref>http://www.everspin.com/technology.html</ref>. Two 2nd generation techniques are currently in development: [[Thermal Assisted Switching]] (TAS)<ref>The Emergence of Practical MRAM http://www.crocus-technology.com/pdf/BH%20GSA%20Article.pdf</ref> which is being developed by [[Crocus Technology]], and [[Spin torque transfer|Spin Torque Transfer]] (STT) on which [[Crocus Technology|Crocus]], [[Hynix]], [[IBM]], and several other companies are working<ref>http://www.eetimes.com/news/latest/showArticle.jhtml?articleID=218000269</ref>. STT-MRAM appears to allow for much higher densities than the 1st generation, but is lagging behind flash for the same reasons as FeRAM &ndash; enormous competitive pressures in the flash market.
+
+Another solid-state technology to see more than purely experimental development is [[Phase-change RAM]], or PRAM. PRAM is based on the same storage mechanism as writable [[Compact Disk|CDs]] and [[DVD]]s, but reads them based on their changes in electrical resistance rather than changes in their optical properties. Considered a "dark horse" for some time, in 2006 [[Samsung]] announced the availability of a 512 Mb part, considerably higher capacity than either MRAM or FeRAM. The areal density of these parts appears to be even higher than modern flash devices, the lower overall storage being due to the lack of multi-bit encoding. This announcement was followed by one from [[Intel]] and [[STMicroelectronics]], who demonstrated their own PRAM devices at the 2006 [[Intel Developer Forum]] in October.  One of the most attended sessions in the IEDM December 2006 was the presentation by IBM of their PRAM technology.
+
+Also seeing renewed interest is silicon-oxide-nitride-oxide-silicon ([[SONOS]]) memory.
+
+Perhaps one of the more innovative solutions is [[IBM Millipede|millipede memory]], developed by [[IBM]]. Millipede is essentially a [[punched card]] rendered using [[nanotechnology]] in order to dramatically increase areal density. Although it was planned to introduce millipede as early as 2003, unexpected problems in development delayed this until 2005, by which point it was no longer competitive with flash. In theory the technology offers storage densities on the order of 1 Tbit/in², far greater than even the best [[hard drive]] technologies currently in use ([[perpendicular recording]] offers about 230 Gbit/in²) . However, slow read and write times for memories this large seem to limit this technology to hard drive replacements as opposed to high-speed RAM-like uses, although to a very large degree the same is true of flash as well. It remains to be seen if this technology will ever become practical.
+
+A number of more esoteric devices have been proposed, including [[Nano-RAM]] based on [[Carbon nanotube|carbon nanotube technology]], but these are currently far from commercialization. The advantages that nanostructures such as [[quantum dots]], [[carbon nanotubes]] and [[nanowires]] offer over their silicon-based predecessors include their tiny size, speed and their density. Several concepts of molecular-scale memory devices have been developed recently.
+
+== See also ==
+*[[Random Access Memory|RAM]]
+*[[Static random access memory|Static RAM]] (SRAM)
+*[[Dynamic Random Access Memory|Dynamic RAM]] (DRAM)
+*[[Non-volatile memory]]
+*[[MRAM]]
+*[[EEPROM]]
+
+==References==
+{{reflist}}
+
+[[Category:Non-volatile memory]]
+[[Category:Computer memory]]
+
+[[ar:ذاكرة الوصول العشوائي غير المتطايرة]]
+[[da:Nvram]]
+[[de:NVRAM]]
+[[es:Memoria de acceso aleatorio no volátil]]
+[[fr:Mémoire non volatile]]
+[[hr:NVRAM]]
+[[ja:不揮発性メモリ]]
+[[mk:Non-volatile random access memory]]
+[[pl:NVRAM]]
+[[pt:NVRAM]]
+[[ru:Энергонезависимая память]]
+[[sk:NVRAM]]</body> </html>

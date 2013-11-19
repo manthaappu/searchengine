@@ -1,0 +1,64 @@
+<html> <head> <title>NanoLanguage</title></head><body>'''NanoLanguage''' is a [[scripting]] interface built on top of the [[interpreted programming language]] [[Python language|Python]], and is primarily intended for simulation of physical and chemical properties of [[Nanotechnology|nanoscale systems.]] 
+
+== Introduction ==
+Over the years, several electronic-structure codes based on [[density functional theory]] have been developed by different groups of academic researchers; [[Vienna Ab-initio Simulation Package|VASP]], [[Abinit]], [[SIESTA (computer program)|SIESTA]], and [[Gaussian]] are just a few examples. The input to these programs is usually a simple text file written in a code-specific format with a set of code-specific keywords.
+<ref>[http://cms.mpi.univie.ac.at/vasp/vasp/vasp.html vasp<!-- Bot generated title -->]</ref>
+<ref>[http://www.abinit.org/documentation/ Abinit Faq Page<!-- Bot generated title -->]</ref> 
+<ref>[http://www.uam.es/departamentos/ciencias/fismateriac/siesta/ SIESTA (Spanish Initiative for Electronic Simulations with Thousands of Atoms)<!-- Bot generated title -->]</ref>
+
+NanoLanguage was introduced by [[Atomistix]] A/S as an interface to [[Atomistix ToolKit]] (version 2.1) in order to provide a more flexible input format. A NanoLanguage script (or input file) is just a Python program and can be anything from a few lines to a script performing complex numerical simulations, communicating with other scripts and files, and communicating with other software (e.g. plotting programs). 
+NanoLanguage is not a [[Property|proprietary]] product of Atomistix and can be used as an interface to other [[density functional theory]] codes as well as to codes utilizing e.g. [[Tight binding|tight-binding]], k.p, or [[quantum chemistry|quantum-chemical]] methods. <ref>Atomistix unveils open software platform for nanotech modeling, SmallTimes, 2006 [http://www.smalltimes.com/articles/article_display.cfm?Section=ONART&C=Mater&ARTICLE_ID=274363&KEYWORDS=atomistix&p=109]</ref>
+<ref>[http://www.atomistix.com/manuals/ATK_2.2/html/index.html Introduction to NanoLanguage]</ref>
+
+== Features ==
+Built on top of [[Python language|Python]], NanoLanguage includes the same functionality as Python and with the same syntax. Hence, NanoLanguage contains, among other features, common programming elements ([[for loop]]s, [[conditional statement|if statements]], etc), mathematical functions, and data [[array data structure|arrays]].
+
+In addition, a number of concepts and [[object (computer science)|objects]] relevant to [[quantum chemistry]] and physics are built into NanoLanguage, e.g. a [[periodic table]], a unit system (including both [[SI units]] and atomic units like [[Ångström]]), [[constructor (computer science)|constructor]]s of atomic geometries, and different functions for density-functional theory and transport calculations.
+<ref>[http://www.atomistix.com/index.php?id=nanolanguage atomistix | NanoLanguage<!-- Bot generated title -->]</ref>
+
+== Example ==
+This NanoLanguage script uses the [[Kohn-Sham equations|Kohn-Sham method]] to calculate the total energy of a water molecule as a function of the bending angle.
+
+<source lang="python">
+#Define function for molecule setup
+def waterConfiguration(angle,bondLength):
+    from math import sin,cos
+    
+    theta = angle.inUnitsOf(radians)
+    positions = [(0.0, 0.0, 0.0)*Angstrom,
+           (1.0, 0.0, 0.0)*bondLength,
+           (cos(theta), sin(theta), 0.0)*bondLength]
+    elements = [Oxygen] + [Hydrogen]*2
+    
+    return MoleculeConfiguration(elements,positions)
+
+   
+#Choose DFT method with default arguments
+method = KohnShamMethod()
+
+#Scan different bending angles and calculate the total energy
+for i in range(30,181,10):
+    theta = i*degrees
+    h2o = waterConfiguration(theta, 0.958*Angstrom)
+    scf = method.apply( h2o )
+    print 'Angle = ', theta, ' Total Energy = ',calculateTotalEnergy(scf)
+ </source>
+
+== External links ==
+*http://www.atomistix.com/index.php?id=nanolanguage
+*http://www.atomistix.com/manuals/ATK_2.2/html/index.html Introduction to NanoLanguage
+
+==See also==
+*[[List of software for nanostructures modeling]]
+
+== References ==
+<references/>
+
+[[Category:Nanotechnology]]
+[[Category:Computational science]]
+[[Category:Computational chemistry software]]
+[[Category:Physics software]]
+{{nano-tech-stub}}
+{{science-software-stub}}
+
+[[ar:لغة نانو]]</body> </html>

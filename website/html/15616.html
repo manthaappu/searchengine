@@ -1,0 +1,87 @@
+<html> <head> <title>GrGen</title></head><body>[[Image:GrGenNETKochSnowflakeMatch.png|thumb|Debugging of a sequence generating a Koch-snowflake (the rules on the left, GrShell with highlighted current rule below, yComp with highlighted match in the host graph on the right)]]
+[[Image:GrGenNETKochSnowflakeRewrite.png|thumb|Execution of the replace step]]
+'''GrGen.NET''' (Graph Rewrite GENerator, .NET version) is a [[graph transformation]] tool which generates efficient [[C Sharp (programming language)|C#]]-code (or [[.NET assembly|.NET-assemblies]]) out of declarative [[Graph rewriting|graph rewrite]] rule specifications. 
+[[Graph (mathematics)|Graphs]] and graph rewrite rules are specified by intuitive [[Domain Specific Language|domain specific languages]] (semantics based on the SPO-approach, DPO available as well); they may get used from graph rewrite sequences, a simple, yet for most graph transformation tasks sufficient, special purpose programming language, or via an [[API]] by any [[List of CLI languages|.NET language]].
+GrGen is meant to be used for generating the [[Algorithm|algorithmic]] kernel of applications processing [[Graph (data structure)|graph structured data]] (program graphs, [[Social network|social nets]], [[Chemical graph|chemical structures]], ...). 
+For rapid prototyping and debugging, an interactive shell and a (VCG-)graph viewer are included in the package, which executes under [[Microsoft Windows|Windows]] and [[Linux]] ([[Mono (software)|Mono]] required) and is [[open source]] available under [[LGPL]] v3.
+
+== Specification sample ==
+
+An example containing some graph model and rule specifications from the GrGen.NET-solution to the [http://www.fots.ua.ac.be/events/grabats2008/cases/grabats2008performancecase.pdf AntWorld-challenge] posed at [http://www.fots.ua.ac.be/events/grabats2008 Grabats 08].
+
+Graph model:
+
+ '''node class''' GridNode {
+     food:int;
+     pheromones:int;
+ }
+ '''node class''' GridCornerNode '''extends''' GridNode;
+ '''node class''' AntHill '''extends''' GridNode {
+     foodCountdown:int = 10;
+ }
+ '''node class''' Ant {
+     hasFood:boolean;
+ }
+ 
+ '''edge class''' GridEdge '''connect''' GridNode[1] -> GridNode[1];
+ '''edge class''' PathToHill '''extends''' GridEdge;
+ '''edge class''' AntPosition;
+
+Rewrite Rules:
+
+ '''rule''' TakeFood(curAnt:Ant)
+ {
+     curAnt -:AntPosition-> n:GridNode\AntHill;
+     '''if''' { !curAnt.hasFood && n.food > 0; }
+    
+     '''modify''' {
+         '''eval''' {
+             curAnt.hasFood = true;
+             n.food = n.food - 1;
+         }
+     }
+ }
+ 
+ '''rule''' SearchAlongPheromones(curAnt:Ant)
+ {
+     curAnt -oldPos:AntPosition-> old:GridNode <-:PathToHill- new:GridNode;
+     '''if''' { new.pheromones > 9; }
+     
+     '''modify''' {
+         delete(oldPos);
+         curAnt -:AntPosition-> new;
+     }
+ }
+ 
+ '''test''' ReachedEndOfWorld(curAnt:Ant) : (GridNode)
+ {
+     curAnt -:AntPosition-> n:GridNode\AntHill;
+     '''negative''' { 
+         n <-:PathToHill-;
+     }
+     '''return''' (n);
+ }
+
+== External links ==
+* Homepage of the [http://www.grgen.net GrGen.NET]-project
+* [http://www.info.uni-karlsruhe.de/software/grgen/GrGenNET-Manual.pdf GrGen.NET User Manual]
+* [http://www.info.uni-karlsruhe.de/software/grgen/agtive_2007_grgennet.pdf Short introduction into GrGen.NET]
+
+== Conference papers ==
+* [http://www.springerlink.com/content/291511p891rn6616 GrGen: A Fast SPO-Based Graph Rewriting Tool]/[http://www.info.uni-karlsruhe.de/papers/grgen_icgt2006.pdf] - ICGT 06
+* [http://www-users.cs.york.ac.uk/~det/Papers/agtive.07.pdf Generation of Sierpinski Triangles: A Case Study for Graph Transformation Tools] - AGTIVE 07
+* [http://www.info.uni-karlsruhe.de/papers/agtive_2007_firm.pdf Graph Rewriting for Hardware Dependent Program Optimizations] - AGTIVE 07
+* [http://www.info.uni-karlsruhe.de/papers/agtive_2007_search_plan.pdf A First Experimental Evaluation of Search Plan Driven Graph Pattern Matching] - AGTIVE 07 
+* [http://www.ipd.uka.de/Tichy/uploads/publikationen/180/gramot2-gelhausen.pdf Customizing GrGen.NET for Model Transformation] - GraMoT 08
+* [http://www.informatik.uni-bremen.de/~hof/papers/08-GCM.pdf Graph Rewrite Rules with Structural Recursion] - ICGT/GCM 08 
+
+== See also ==
+* [[Graph transformation| Graph transformation / rewriting]] 
+* [[Domain Specific Language]] (DSL)
+* [[Automatic programming|Source Code Generation]]
+
+[[Category:Domain-specific programming languages]]
+[[Category:Graph rewriting]]
+
+[[de:GrGen]]
+[[pt:GrGen]]</body> </html>

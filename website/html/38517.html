@@ -1,0 +1,201 @@
+<html> <head> <title>Type theory</title></head><body>In [[mathematics]], [[logic]] and [[computer science]], '''type theory''' is any of several [[formal systems]] that can serve as alternatives to [[naive set theory]], or the study of such formalisms in general.  In [[programming language theory]], a branch of [[computer science]], ''type theory'' can refer to the design, analysis and study of [[type system]]s, although some computer scientists limit the term's meaning to the study of abstract formalisms such as [[typed lambda calculus|typed λ-calculi]].
+
+[[Bertrand Russell]] invented the first type theory in response to his discovery that [[Gottlob Frege]]'s version of [[naive set theory]] was afflicted with [[Russell's paradox]].  This theory of types features prominently in [[Alfred North Whitehead|Whitehead]] and [[Bertrand Russell|Russell]]'s ''[[Principia Mathematica]]''.  It avoids Russell's paradox by first creating a hierarchy of types, then assigning each mathematical (and possibly other) entity to a type. Objects of a given type are built exclusively from objects of preceding types (those lower in the hierarchy), thus preventing loops.
+
+[[Alonzo Church]], inventor of the [[lambda calculus]], developed a [[higher-order logic]] commonly called ''Church's Theory of Types'',<ref name="church">[[Alonzo Church]], [http://www.jstor.org/stable/2266170 ''A formulation of the simple theory of types''], The Journal of Symbolic Logic 5(2):56&ndash;68 (1940)</ref> in order to avoid the [[Kleene–Rosser paradox]] afflicting the original pure lambda calculus.  Church's type theory is a variant of the lambda calculus in which expressions (also called formulas or λ-terms) are classified into types, and the types of expressions restrict the ways in which they can be combined.  In other words, it is a [[typed lambda calculus]].  Today many other such calculi are in use, including [[Per Martin-Löf]]'s [[Intuitionistic type theory]], [[Jean-Yves Girard]]'s [[System F]] and the [[Calculus of Constructions]].  In typed lambda calculi, types play a role similar to that of [[Set (mathematics)|sets]] in [[set theory]].
+
+==Simple theory of types==
+
+In the 1920s, [[Leon Chwistek]]<ref>L. Chwistek, Antynomje logikiformalnej, Przeglad Filozoficzny 24 (1921) 164–171</ref> and [[Frank P. Ramsey]]<ref>F.P. Ramsey, The foundations of mathematics, Proceedings of the London Mathematical Society, Series 2 25 (1926) 338–384.</ref> noticed that, if one is willing to give up the [[vicious circle principle]],
+the hierarchy of levels of types in the "ramified theory of types" (see the History section for more on this) can be collapsed. The resulting simplified logic is called
+the simple theory of types or, more briefly, simple type theory. ST is equivalent with Russell's ramified theory plus the [[Axiom of reducibility]]. Detailed formulations of simple type theory were published in the late 1920s and early 1930s
+by R. Carnap, K. Gödel, W.V.O. Quine, and A. Tarski. In 1940 [[Alonzo Church]] (re)formulated it as [[simply typed lambda calculus]].<ref>A. Church, A formulation of the simple theory of types, Journal of Symbolic Logic 5 (1940) 56–68.</ref>
+
+The following system is Mendelson's (1997, 289–293) '''ST'''. The [[domain of discourse|domain of quantification]] is partitioned into an ascending hierarchy of types, with all [[individual]]s assigned a type. Quantified variables range over only one type; hence the underlying logic is [[first-order logic]]. '''ST''' is "simple" (relative to the type theory of ''[[Principia Mathematica]]'') primarily because all members of the [[relation (mathematics)|domain]] and [[relation (mathematics)|codomain]] of any [[relation (mathematics)|relation]] must be of the same type.
+There is a lowest type, whose individuals have no members and are members of the second lowest type. Individuals of the lowest type correspond to the [[urelement]]s of certain set theories. Each type has a next higher type, analogous to the notion of [[successor function|successor]] in [[Peano arithmetic]]. While '''ST''' is silent as to whether there is a maximal type, a [[transfinite]] number of types poses no difficulty. These facts, reminiscent of the Peano axioms, make it convenient and conventional to assign a [[natural number]] to each type, starting with 0 for the lowest type. But type theory does not require a prior definition of the naturals.
+
+The symbols peculiar to '''ST''' are primed variables and infix <math>\in</math>. In any given formula, unprimed variables all have the same type, while primed variables (<math>x'</math>) range over the next higher type. The [[atomic formula]]s of '''ST''' are of two forms, <math>x=y</math> ([[identity (mathematics)|identity]]) and <math>y\in x'</math>. The [[infix]] symbol <math>\in</math> suggests the intended [[model theory|interpretation]], set membership.
+
+All variables appearing in the definition of identity and in the axioms ''Extensionality'' and ''Comprehension'', range over individuals of one of two consecutive types. Only unprimed variables (ranging over the "lower" type) can appear to the left of '<math>\in</math>', where as to its right, only primed variables (ranging over the "higher" type) can appear. The first-order formulation of '''ST''' rules out quantifying over types. Hence each pair of consecutive types requires its own axiom of Extensionality and of Comprehension, which is possible if ''Extensionality'' and ''Comprehension'' below are taken as [[axiom scheme|axiom schemata]] "ranging over" types.
+
+* '''Identity''', defined by <math>x=y\leftrightarrow\forall z' [x\in z'\leftrightarrow y\in z']</math>.
+
+* '''[[Axiom of extensionality|Extensionality]]'''.  An [[axiom schema]]. <math>\forall x[x\in y' \leftrightarrow x\in z'] \rightarrow y'=z'</math>.
+
+: Let <math>\Phi(x)</math> denote any [[first-order logic|first-order formula]] containing the [[free variable]] <math>x</math>.
+
+* '''Comprehension'''.  An [[axiom schema]]. <math>\exists z'\forall x[x\in z'\leftrightarrow \Phi(x)]</math>.
+
+: ''Remark''. Any collection of elements of the same type may form an object of the next higher type. Comprehension is schematic with respect to <math>\Phi(x)</math> as well as to types.
+
+* '''[[Axiom of infinity|Infinity]]'''.  There exists a nonempty [[binary relation]] <math>R</math> over the individuals of the lowest type, that is [[Reflexive relation|irreflexive]], [[transitive relation|transitive]], and strongly connected: <math>\forall x,y [x\neq y\rightarrow[xRy\vee yRx]]</math>.
+
+: ''Remark''. Infinity is the only true axiom of '''ST''' and is entirely mathematical in nature. It asserts that <math>R</math> is a strict [[total order]], with a [[relation (mathematics)|domain]] identical to its [[relation (mathematics)|codomain]]. If 0 is assigned to the lowest type, the type of <math>R</math> is 3. Infinity can be satisfied only if the (co)domain of <math>R</math> is [[infinite]], thus forcing the existence of an infinite set. If relations are defined in terms of [[ordered pair]]s, this axiom requires a prior definition of ordered pair; the Kuratowski definition, adapted to '''ST''', will do. The literature does not explain why the usual [[axiom of infinity]] (there exists an [[inductive set (axiom of infinity)|inductive set]]) of [[ZFC]] of other set theories could not be married to '''ST'''.
+
+'''ST''' reveals how type theory can be made very similar to [[axiomatic set theory]]. Moreover, the more elaborate [[Ontology (information science)|ontology]] of '''ST''', grounded in what is now called the "iterative conception of set," makes for axiom (schemata) that are far simpler than those of conventional set theories, such as [[ZFC]], with simpler ontologies. Set theories whose point of departure is type theory, but whose axioms, [[Ontology (information science)|ontology]], and terminology differ from the above, include [[New Foundations]] and [[Scott&ndash;Potter set theory]].
+
+=== Formulations based on equality ===
+{{See also|simply typed lambda calculus}}<!-- this should really be "main", but that article needs some work too to connect with this -->
+{{Expand section|date=September 2009}}
+
+Church’s type theory has been extensively studied by two of Church’s students, [[Leon Henkin]] and [[Peter B. Andrews (mathematician)|Peter B. Andrews]]. Since '''ST''' is a [[higher order logic]], and in higher order logics one can define propositional connectives in terms of [[logical equivalence]] and quantifiers, in 1963 Henkin developed a formulation of '''ST''' based on equality, but in which he restricted attention to propositional types. This was simplified later that year by Andrews in his
+[[Q zero|theory '''Q<sub>0</sub>''']].<!--does anyone else call it this way? --><ref>[[Stanford Encyclopedia of Philosophy]]: [http://plato.stanford.edu/entries/type-theory-church/ Church's Type Theory]" &ndash; by Peter Andrews (adapted from his book).</ref> In this respect '''ST''' can be seen as a particular kind of a higher-order logic, classified by [[P.T. Johnstone]] in ''Sketches of an Elephant'', as having a [[lambda-signature]], that is a higher-order [[signature (logic)|signature]] that contains no relations, and uses only products and arrows (function types) as [[type constructors]]. Furthermore, as Johnstone put it, '''ST''' is "logic-free" in the sense that it contains no logical connectives or quantifiers in its formulae.<ref>P.T. Johnstone, ''Sketches of an elephant'', p. 952</ref>
+
+== Extensions ==
+=== Type polymorphism ===
+{{Main|type polymorphism}}
+{{Expand section|date=September 2009}}
+
+=== Dependent types ===
+{{Main|dependent types}}
+{{Expand section|date=September 2009}}
+
+==History==
+=== 1900 - 1927 ===
+'''Origin of Russell's Theory of Types''': In a letter to [[Gottlob Frege]] (1902) Russell announced his discovery of the paradox in Frege's [[Begriffsschrift]]<ref>Russell's (1902) ''Letter to Frege'' appears, with commentary, in van Heijenoort 1967:124-125.</ref>. Frege promptly responded, acknowledging the problem and proposing a solution in a technical discussion of "levels". To quote Frege: "Incidentally, it seems to me that the expression "a [[predicate]] is predicated of itself" is not exact. A predicate is as a rule a first-level function, and this function requires an object as argument and cannot have itself as argument (subject). Therefore I would prefer to say "a concept is predicated of its own extension"<ref>Frege (1902) ''Letter to Russell'' appears, with commentary, in van Heijenoort 1967:126-128.</ref>. He goes about showing how this might work but seems to pull back from it. (In a footnote, van Heijenoort notes that in Frege ''1893'' Frege had used a symbol (horseshoe) "for reducing second-level functions to first-level functions"<ref>van Hiejenoort 1967:128</ref>). As a consequence of what has become known as [[Russell's paradox]] both Frege and Russell had to quickly emend works that they had at the printers. In an Appendix B that Russell tacked on to his 1903 [[Principles of Mathematics]] one finds his "tentative" "theory of types"<ref>cf Quine's commentary before Russell (1908a) ''Mathematical Logic as based on the theory of types'' in van Heijenoort 1967:150</ref>.
+
+The matter plagued Russell for about five years (1903–1908). [[Willard Quine]] in his preface to Russell's (1908a) ''Mathematical logic as based on the theory of types''<ref>cf commentary by W. V. O. Quine before Russell's (1908a) ''Mathematical logic as based on the theory of types'' in van Hiejenoort 1967:150-153</ref> presents a historical synopsis of the origin of the theory of types and the "ramified" theory of types: Russell proposed in turn a number of alternatives: (i) abandoning the theory of types (1905) followed by three theories in 1905: (ii.1) the zigzag theory, (ii.2) theory of limitation of size, (ii.3) the no-class theory (1905–1906), then (iii) readopting the theory of types (1908ff)".
+
+Quine observes that Russell's introduction of the notion of "[[apparent variable]]" had the following result: "the distinction between 'all' and 'any': 'all' is expressed by the bound ('apparent') variable of universal quantification, which ranges over a type, and 'any' is expressed by the free ('real') variable which refers schematically to any unspecified thing irrespective of type". Quine dismisses this notion of "bound variable" as "pointless apart from a certain aspect of the theory of types"<ref>Quine's commentary before Russell (1908a) ''Mathematical logic as based on the theory of types'' cf van Heijenoort 1967:151</ref>.
+
+==== The  1908 "ramified" theory of types ====
+Quine explains the ''ramified'' theory as follows: "It has been so called because the type of a function depends both on the types of its arguments and on the types of the apparent variables contained in it (or in its expresion), in case these exceed the types of the arguments"<ref>Quine's commentary commentary before Russell (1908a) ''Mathematical logic as based on the theory of types'' cf van Heijenoort 1967:151</ref>. [[Stephen Kleene]] in his 1952 ''Introduction to Metamathematics'' describes the ''ramified'' theory of types this way:
+
+:The primary objects or individuals (i.e. the given things not being subjected to logical analysis) are assigned to one type (say ''type 0''), the properties of individuals to ''type 1'', properties of properties of individuals to ''type 2'', etc.; and no properties are admitted which do not fall into one of these logical types (e.g. this puts the properties 'predicable' and 'impredicable' ... outside the pale of logic). A more detailed account would describe the admitted types for other objects as relations and classes. Then to exclude [[impredicativity|impredicative]] definitions within a type, the types above type 0 are further separated into orders. Thus for type 1, properties defined without mentioning any totality belong to ''order 0'', and properties defined using the totality of properties of a given order belong to the next higher order. ... But this separation into orders makes it impossible to construct the familiar analysis, which we saw above contains impredicative definitions. To escape this outcome, Russell postulated his ''[[axiom of reducibility]]'', which asserts that to any property belonging to an order above the lowest, there is a coextensive property (i.e. one possessed by exactly the same objects) of order 0. If only definable properties are considered to exist, then the axiom means that to every impredicative definition within a given type there is an equivalent predicative one (Kleene 1952:44-45).
+
+==== The axiom of reducibility and the notion of "matrix" ====
+But because the stipulations of the ramified theory would prove (to quote Quine) "onerous", Russell in his 1908 ''Mathematical logic as based on the theory of types''<ref>Russell (1908a) ''Mathematical Logic as based on the theory of types'' in van Heijenoort 1967:153-182</ref> also would propose his ''[[axiom of reducibility]]''. By 1910 Whitehead and Russell in their ''Principia Mathematica'' would further augment this axiom with the notion of a '' matrix '' -- a fully-extensional specification of a function. From its matrix a function could be derived by the process of "generalization" and vice versa, i.e. the two processes are reversible -- (i) generalization from a matrix to a function ( by use apparent variables ) and (ii) the reverse process of reduction of type by courses-of-values substitution of arguments for the apparent variable. By this method impredicativity could be avoided<ref>cf in particular p. 51 in Chapter II ''The theory of Logical Types'' and *12 ''The Hierarchy of Types and the Axiom of Reducibility'' pp. 162-167. Whitehead and Russell (1910-1913, 1927 2nd edition) ''Principia Mathematica''</ref>.
+
+==== Truth tables ====
+Eventually [[Emil Post]] (1921) would lay waste to Russell's "cumbersome"<ref>Post (1921) ''Introduction to a general theory of elementary propositions'' in van Heijenoort 1967:264-283, in particular p. 265"</ref> Theory of Types with his "truth functions" and their truth tables. In his "Introduction" to his 1921 Post places the blame on Russell's notion of apparent variable: "Whereas the complete theory [of Whitehead and Russell (1910, 1912, 1913)] requires for the enunciation of its propositions real and apparent variables, which represent both individuals and [[propositional function]]s of different kinds, and as a result necessitates the cumbersome theory of types, this subtheory uses only real variables, and these real variables represent but one kind of entity, which the authors have chosen to call elementary propositions".
+
+At about the same time [[Ludwig Wittgenstein]] made short work of the theory of types in his 1922 work [[Tractatus Logico-Philosophicus]] in which he points out the following in parts 3.331&ndash;3.333:
+
+{{quote|3.331 From this observation we get a further view &ndash; into Russell's Theory of Types. Russell's error is shown by the fact that in drawing up his symbolic rules he has to speak of the meanings of his signs.
+
+3.332 No proposition can say anything about itself, because the propositional sign cannot be contained in itself (that is the whole "theory of types").
+
+3.333 A function cannot be its own argument, because the functional sign already contains the prototype of its own argument and it cannot contain itself...}}
+
+Wittgenstein proposed the truth-table method as well. In his 4.3 through 5.101, Wittgenstein adopts an unbounded [[Sheffer stroke]] as his fundamental logical entity and then lists all 16 functions of two variables (5.101).
+
+The notion of matrix-as-truth-table appears as late as the 1940-1950's in the work of Tarski, e.g. his 1946 indexes "Matrix, see: Truth table"<ref>Tarski 1946, ''Introduction to Logic and to the Methodology of Deductive Sciences'', Dover republication 1995</ref>
+
+==== Russell's doubts ====
+Russell in his 1920 ''Introduction to Mathematical Philosophy'' devotes an entire chapter to "The axiom of Infinity and logical types" wherein he states his concerns: "Now the theory of types emphatically does not belong to the finished and certain part of our subject: much of this theory is still inchoate, confused, and obscure. But the need of ''some'' doctrine of types is less doubtful than the precise form the doctrine should take; and in connection with the axiom of infinity it is particularly easy to see the necessity of some such doctrine"<ref>Russell 1920:135</ref>.
+
+'''Russell abandons the axiom of reducibility''': In the second edition of ''Principia Mathematica'' (1927) he acknowledges Wittgenstein's argument<ref>cf "Introduction" to 2nd edition, Russell 1927:xiv and Appendix C</ref>. At the outset of his Introduction he declares "there can be no doubt ... that there is no need of the distinction between real and apparent variables..."<ref>cf "Introduction" to 2nd edition, Russell 1927:i</ref>. Now he fully embraces the matrix notion and declares "A ''function can only appear in a matrix through its values''" (but demurs in a footnote: "It takes the place (not quite adequately) of the axiom of reducibility"<ref>cf "Introduction" to 2nd edition, Russell 1927:xxix</ref>). Furthermore, he introduces a new (abbreviated, generalized) notion of "matrix", that of a "logical matrix . . . one that contains no constants. Thus ''p''|''q'' is a logical matrix"<ref>The vertical bar " | " is the Sheffer stroke. cf "Introduction" to 2nd edition, Russell 1927:xxxi</ref>. Thus Russell has virtually abandoned the axiom of reducibility<ref>"The theory of classes is at once simplified in one direction and complicated in another by the assumption that functions only occur through their values and by the abandonment of the axiom of reducibility" cf "Introduction" to 2nd edition, Russell 1927:xxxix</ref>, but in his last paragraphs he states that from "our present primitive propositions" he cannot derive "Dedekindian relations and well-ordered relations" and observes that if there is a new axiom to replace the axiom of reducibility "it remains to be discovered"<ref>These quotes from "Introduction" to 2nd edition, Russell 1927:xliv-xlv.</ref>.
+
+=== 1927 - present ===
+{{Expand section|date=September 2009}}
+<!-->Quine reports that Ramsey 1931 urged the "dropping of the ramification and the axiom of reducibility"; Quine opines that "Russell's failure [was] due to this failure to distinguish between propositional functions as notations and propositional functions as attributes and relations.[Quine's commentary before Russell 1908 in van Heijenoort 1967:151-152]."</!-->
+
+==Practical impact==
+===Computing===
+The most obvious application of type theory is in constructing type checking algorithms in the semantic analysis phase of [[compiler]]s for programming languages.
+
+===Linguistics===
+Type theory is also widely in use in theories of [[semantics]] of [[natural language]], especially [[Montague grammar]] and its descendants. The most common construction takes the basic types <math>e</math> and <math>t</math> for individuals and [[truth-value]]s, respectively, and defines the set of types recursively as follows:
+
+* if <math>a</math> and <math>b</math> are types, then so is <math>\langle a,b\rangle</math>.
+* Nothing except the basic types, and what can be constructed from them by means of the previous clause are types.
+
+A complex type <math>\langle a,b\rangle</math> is the type of [[Function (mathematics)|functions]] from entities of type <math>a</math> to entities of type <math>b</math>. Thus one has types like <math>\langle e,t\rangle</math> which are interpreted as elements of the set of functions from entities to truth-values, i.e. [[characteristic function]]s of sets of entities.  An expression of type <math>\langle\langle e,t\rangle,t\rangle</math> is a function from sets of entities to truth-values, i.e. a (characteristic function of a) set of sets. This latter type is standardly taken to be the type of natural language quantifiers, like '' everybody'' or '' nobody'' (Montague 1973, Barwise and Cooper 1981).
+
+===Social sciences===
+[[Gregory Bateson]] introduced a theory of logical types into the social sciences; his notions of [[double bind]] and [[Neurology|logical levels]] are based on Russell's theory of types.
+
+{{Expand section|date=May 2008}}
+
+==Connections to constructive logic==
+{{Main|Curry&ndash;Howard correspondence}}
+
+{{Expand section|date=May 2008}}
+
+==Relation to other topics==
+{{Empty section|date=May 2008}}
+
+==Type system==
+{{Main|Type system}}
+
+Definitions of ''type system'' vary, but the following one due to [[Benjamin C. Pierce]] roughly corresponds to the current consensus in the programming language theory community:
+
+{{quotation|[A type system is a] tractable syntactic method for proving the absence of certain program behaviors by classifying phrases according to the kinds of values they compute.<ref>''[[Types and Programming Languages]]'', [[Benjamin C. Pierce]], The MIT Press, Cambridge, MA. (2002), ISBN 0-262-16209-1.</ref>}}
+
+In other words, a type system divides program [[value (programming)|value]]s into sets called ''types'' — this is called a ''type assignment'' — and makes certain program behaviors illegal on the basis of the types that are thus assigned.  For example, a type system may classify the value "hello" as a [[string (computer science)|string]] and the value 5 as a [[number]], and prohibit the programmer from adding "hello" to 5 based on that type assignment.  In this type system, the program
+
+{{quotation|<code>"hello" + 5</code>}}
+
+would be illegal.  Hence, any program permitted by the type system would be provably free from the erroneous behavior of adding strings and numbers.
+
+The design and implementation of type systems is a topic nearly as broad as the topic of programming languages itself.  In fact, type theory proponents commonly proclaim that the design of type systems is the very essence of programming language design: "Design the type system correctly, and the language will design itself."
+
+==See also==
+* [[Category theory]]
+* [[Data type]] for concrete types of data in programming
+* [[Domain theory]]
+* [[Type system]] for a more practical discussion of type systems for programming languages
+* [[Type (model theory)]]
+
+==References==
+{{refbegin}}
+*Mendelson, Elliot, 1997. ''Introduction to Mathematical Logic'', 4th ed. Chapman & Hall.
+*W. Farmer, ''The seven virtues of simple type theory'', Journal of Applied Logic, Vol. 6, No. 3. (September 2008), pp. 267–286.
+{{refend}}
+{{reflist|colwidth=30em}}
+
+==Further reading==
+* Constable, Robert L., 2002, "[http://www.nuprl.org/documents/constable/naive.pdf Naïve Computational Type Theory,]" in H. Schwichtenberg and R. Steinbruggen (eds.), ''Proof and System-Reliability'': 213&ndash;259. Intended as an type theory counterpart of [[Paul Halmos]]'s (1960) ''[[Naive Set Theory (book)|Naïve Set Theory]]''
+* Andrews, Peter B., 2002. ''[http://www.springeronline.com/sgw/cda/frontpage/0,11855,4-0-22-33641956-0,00.html?referer=www.springeronline.com/isbn/1-4020-0763-9 An Introduction to Mathematical Logic and Type Theory: To Truth Through Proof]'', 2nd ed. Kluwer Academic Publishers.
+*{{cite book
+  | first = Bart
+  | last = Jacobs
+  | title = Categorical Logic and Type Theory
+  | year = 1999
+  | publisher = North Holland, Elsevier
+  | isbn =  0-444-50170-3
+  | series = Studies in Logic and the Foundations of Mathematics 141
+  | url = http://www.cs.ru.nl/B.Jacobs/CLT/bookinfo.html }} Covers type theory in depth, including polymorphic and dependent type extensions. Gives [[categorical semantics]].
+* Cardelli, Luca, 1997, "[http://citeseer.ist.psu.edu/cardelli97type.html Type Systems,]" in Allen B. Tucker, ed., ''The Computer Science and Engineering Handbook''. CRC Press: 2208&ndash;2236.
+* Thompson, Simon, 1991. ''[http://www.cs.kent.ac.uk/people/staff/sjt/TTFP/ Type Theory and Functional Programming]''. Addison-Wesley. ISBN 0-201-41667-0.
+* [[J. Roger Hindley]], ''Basic Simple Type Theory'' , Cambridge University Press, 2008, ISBN 0521054222 (also 1995, 1997).<!-- no idea why these get different ISBNs, they don't appear to be different editions--> A good introduction to simple type theory for computer scientists; the system described is not exactly Church's STT though. [http://www.iwu.edu/~htiede/papers/pdf/jolli-review.pdf Book review]
+* [[Stanford Encyclopedia of Philosophy]]: [http://plato.stanford.edu/entries/type-theory/ Type Theory]" &ndash; by [[Thierry Coquand]].
+* Fairouz D. Kamareddine, Twan Laan, Rob P. Nederpelt, ''A modern perspective on type theory: from its origins until today'', Springer, 2004, ISBN 1402023340
+* José Ferreirós, José Ferreirós Domínguez, ''Labyrinth of thought: a history of set theory and its role in modern mathematics'', Edition 2, Springer, 2007, ISBN 3764383496, chapter X "Logic and Type Theory in the Interwar Period"
+
+=== Sources for History section ===
+* Bertrand Russell (1903) ''The Principles of Mathematics: Vol. 1'', Cambridge at the University Press, Cambridge, UK, republished as a googlebook.
+* Bertrand Russell (1920) ''Introduction to Mathematical Philosophy'' (second edition), Dover Publishing Inc., New York NY, ISBN 0-486-27724-0 (pbk).
+* Alfred Tarski (1946) ''Introduction to Logic and to the Methodology of Deductive Sciences'', republished 1995 by Dover Publications, Inc., New York, NY ISBN 0-486-28462-x
+* Jean van Heijenoort (1967, 3rd printing 1976), ''From Frege to Godel: A Source Book in Mathematical Logic, 1879-1931'', Harvard University Press, Cambridge, MA, ISBN 0-674-32449-8 (pbk)
+** Bertrand Russell (1902) ''Letter to Frege'' with commentary by van Heijenoort, pages 124-125. Wherein Russell announces his discovery of a "paradox" in Frege's work.
+** Gottlob Frege (1902) ''Letter to Russell'' with commentary by van Heijenoort, pages 126-128.
+** Bertrand Russell (1908a) ''Mathematical logic as based on the theory of types'', with commentary by [[Willard Quine]], pages 150-182.
+** Emil Post (1921) ''Introduction to a general theory of elementary propositions'', with commentary by van Heijenoort, pages 264-283.
+* Alfred North Whitehead and Bertrand Russell(1910–1913, 1927 2nd edition reprinted 1962), ''Principia Mathematica to *56'', Cambridge at the University Press, London UK, no ISBN or US card catalog number.
+* Ludwig Wittgenstein (republished 2009) ''Major Works: Selected Philosophical Writings", HarperCollins, New York. ISBN 978-0-06-155024-9. Wittgenstein's (1921 in English) ''Tractatus Logico-Philosophicus'' pages 1–82.
+
+==External links==
+* [http://www.cs.chalmers.se/Cs/Research/Logic/Types/tutorials.html Types Project lecture notes] of summer schools 2005-2008
+** The [http://www.cs.chalmers.se/Cs/Research/Logic/TypesSS05/program.html 2005 summer school] has introductory lectures
+* [ftp://ftp.cs.cornell.edu/pub/nuprl/doc/book.ps.gz The Nuprl Book]: "[http://www.cs.cornell.edu/Info/Projects/NuPrl/book/node31.html Introduction to Type Theory.]"
+
+{{Logic}}
+
+{{DEFAULTSORT:Type Theory}}
+[[Category:Systems of formal logic]]
+[[Category:Type theory| ]]
+
+[[ar:نظرية النمط]]
+[[de:Typentheorie]]
+[[es:Teoría de tipos]]
+[[eo:Teorio de tipoj]]
+[[fa:نظریه نوع‌ها]]
+[[fr:Théorie des types]]
+[[it:Teoria dei tipi]]
+[[he:טיפוס (לוגיקה מתמטית)]]
+[[nl:Typentheorie]]
+[[ja:型理論]]
+[[pt:Teoria dos tipos]]
+[[ru:Теория типов]]
+[[zh:类型论]]</body> </html>

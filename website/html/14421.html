@@ -1,0 +1,49 @@
+<html> <head> <title>Fuser (Unix)</title></head><body>{{lowercase|title=fuser}}
+'''fuser''' is a [[UNIX]] command used to show which [[process (computing)|process]]es are using a specified [[file (computing)|file]], [[file system]], or socket. For example:
+<source lang="bash">
+ # fuser -m -u /mnt/usb1
+ /mnt/usb1:   1347c(root)  1348c(guido)  1349c(guido)
+</source>
+
+fuser displays the PIDs of processes using the specified files or  file
+systems.   In the default display mode, each file name is followed by a
+letter denoting the type of access:
+
+; c : current directory.
+; e : executable being run.
+; f : open file.
+; F : open file for writing. 
+; r : root directory.
+; m : mmap'ed file or shared library
+
+fuser  returns a non-zero code if none of the files are
+accessed or in case of a fatal error. If at least one access has succeeded, fuser returns zero. 
+The output of "fuser" may be useful in diagnosing "resource busy" messages arising when attempting to [[mount (Unix)|unmount]] filesystems.
+
+==Options==
+
+; -k : kills all process accessing a file. For example <tt>fuser -k /path/to/your/filename</tt> kills all processes accessing this directory without confirmation. Use -i for confirmation
+; -i : interactive mode. Prompt before killing process
+; -v : verbose.
+; -u : append username
+; -a : display all files
+; -m : <tt>name</tt> specifies a file on a mounted file system or a block device that is mounted. All processes accessing files on that file system are listed.  If a directory file is specified, it is automatically changed to <tt>name</tt>/. to use any file system that might be mounted on that directory.
+
+Also note that -k sends a SIGKILL to all process. Use the -signal to send a different signal. For a list of signals supported by the fuser run 'fuser -l'
+
+==Related commands==
+* The list of all open files and the processes that have them open can be obtained through the [[lsof]] command.
+* The equivalent command on BSD operating systems is <tt>fstat(1)</tt>
+
+==External links==
+{{man|1|fuser||identify processes using files or sockets}}
+
+
+{{unix-stub}}
+{{unix commands}}
+[[Category:Unix SUS2008 utilities]]
+[[Category:Unix process and task management-related software]]
+
+[[it:Fuser (Unix)]]
+[[ru:Fuser]]
+[[uk:Fuser]]</body> </html>

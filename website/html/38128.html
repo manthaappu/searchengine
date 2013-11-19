@@ -1,0 +1,92 @@
+<html> <head> <title>Translinear circuit</title></head><body>A '''translinear circuit''' is a circuit that carries out its function using the translinear principle. These are current-mode circuits that can be made using transistors that obey an [[Exponential function|exponential]] current-voltage characteristic—this includes [[BJT]]s and [[CMOS transistor]]s in weak inversion.
+
+The word translinear (TL) was invented by [[Barrie Gilbert]] in 1975<ref name=Gilbert75>{{Cite journal| last = Gilbert | first = Barrie | title = Translinear circuits: a proposed classification | journal = Electronics Letters | volume = 11 | issue = 1 | pages = 14–16 | date = 1975-01-09 | doi = 10.1049/el:19750011 }}</ref> to describe circuits that used the exponential current-voltage relation of BJTs<ref name=aVLSI>{{Cite book| title = Analog VLSI: Circuits and Principles | author = Liu, Shih-Chii |coauthors = Jörg Kramer, Giacomo Indiveri, Tobias Delbrück, and Rodney Douglas | publisher = MIT Press | year = 2002 | isbn = 0262122553 | url = http://books.google.com/?id=ewqb4aurZtMC&printsec=frontcover&dq=analog+vlsi  }}</ref><ref name=staticTL>{{Cite journal| author = Minch, Bradley A. | title = Analysis and Synthesis of Translinear Circuits | date = 2000 | url = http://www.csl.cornell.edu/TR/CSL-TR-2000-1002.pdf | format = [[PDF]] | accessdate = 2008-02-21}}</ref>. By using this exponential relationship, this class of circuits can implement multiplication, amplification and power-law relationships. When  Barrie Gilbert described this class of circuits he also described the translinear principle (TLP) which made the analysis of these circuits possible in a way that the previous view of BJTs as linear current amplifiers did not allow. TLP was later extended to include other elements that obey an exponential current-voltage relationship (such as CMOS transistors in weak inversion).
+
+The TLP has been used in a variety of circuits including vector arithmetic circuits<ref name=Gilbert76>{{Cite journal| last = Gilbert | first = Barrie | title = High-accuracy vector-difference and vector-sum circuits | journal = Electronics Letters | volume = 12 | issue = 11 | pages = 293–294 | date = 1976-05-27 | doi = 10.1049/el:19760226}}</ref>, current conveyors, current-mode [[operational amplifier]]s, and [[RMS]]-DC converters<ref name=Ashok76>{{Cite journal| last = Ashok | first = S. | title = Translinear root-difference-of-squares circuit | journal = Electronics Letters | volume = 12 | issue = 8 | pages = 194–195 | date = 1976-04-15 | doi = 10.1049/el:19760150}}</ref>. It has been in use since the 1960s (by Gilbert), but was not formalized until 1975<ref name=Gilbert75/>. In the 1980s, Evert Seevinck's work helped to create a systematic process for translinear circuit design. In 1990 Seevinck invented a circuit he called a companding current-mode integrator<ref name=Seevinck90>{{Cite journal| last = Seevinck| first = Evert | title = Companding current-mode integrator: a new circuit principle for continuous-time monolithic filters | journal = Electronics Letters | volume = 26 | issue = 24 | pages = 2046–2047 | date = 1990-11-22 | doi = 10.1049/el:19901319}}</ref> that was effectively a first-order [[log-domain filter]]. A version of this was generalized in 1993 by Douglas Frey and the connection between this class of filters and TL circuits was made most explicit in the late 90s work of Jan Mulder et al. where they describe the ''dynamic translinear principle''. More work by Seevinck led to synthesis techniques for extremely low-power TL circuits<ref name=Seevinck00>{{Cite journal| last = Seevinck| first = Evert | title = CMOS Translinear Circuits for Minimum Supply Voltage | journal = IEEE Transactions on Circuits and Systems-II: Analog and Digital Signal Processing | volume = 47 | issue = 12 | pages = 1560–1564 | date = December, 2000 | doi = 10.1109/82.899656 | last2 = Vittoz | first2 = E.A. | last3 = Du Plessi | first3 = M. | last4 = Joubert | first4 = T.H. | last5 = Beetge | first5 = W.}}</ref>. More recent work in the field has led to the voltage-translinear principle, multiple-input translinear element networks, and [[field-programmable analog array]]s (FPAAs).
+
+<!-- still need seevinck references (80s), a mulder reference, and the 1993 frey reference, also: voltage-translinear, FPAA, MITEs()? -->
+
+==The Translinear Principle==
+The '''translinear principle''' is that in a closed loop containing an even number of translinear elements (TEs) with an equal number of them arranged clockwise and counter-clockwise, the product of the currents through the clockwise TEs equals the product of the currents through the counter-clockwise TEs or <math>\,\! \prod_{n \epsilon CW}I_n = \prod_{n \epsilon CCW}I_n</math>
+
+The TLP is dependent on the exponential current-voltage relationship of a circuit element. Thus, an ideal TE follows the relationship
+
+<math>I=\lambda I_s e^{\eta V / U_T}</math>
+
+where <math>I_s</math> is a pre-exponential scaling current, <math>\lambda</math> is a dimensionless multiplier to <math>I_s</math>, <math>\eta</math> is a dimensionless multiplier to the gate-emitter voltage and <math>U_T</math> is the thermal voltage <math>kT/q</math>.
+
+In a circuit, TEs are described as either clockwise (CW) or counterclockwise (CCW). If the arrow on the emitter point clockwise, it's considered a CW TE, if it points counterclockwise, it's considered a CCW TE. Consider an example:
+
+{{MultiCol}}
+{{ColBreak}}
+[[Image:unbiased alt TL squaring.png|frame|A circuit with a translinear loop]]
+{{ColBreak}}
+{{EndMultiCol}}
+
+By [[Kirchoff's Voltage Law]], the voltage around the loop that goes from <math>V_{ref}</math> to <math>V_{ref}</math> must be 0. In other words, the voltage drops must equal the voltage increases. When a loop that only goes through the emitter-gate connections of TEs exists, we call it a translinear loop. Mathematically, this becomes
+
+<math>\,\! \sum_{n \epsilon CW}V_n = \sum_{n \epsilon CCW}V_n</math>
+
+Because of the exponential current-voltage relationship, this implies TLP:
+
+<math>\,\! \prod_{n \epsilon CW}I_n = \prod_{n \epsilon CCW}I_n</math>
+
+this is effectively because current is used as the signal. Because of this, voltage is the log of the signal and addition in the log domain is like multiplication of the original signal (ie <math>log(a) + log(b) = log(ab)</math>). This rule, that the product of the current through CW TEs is equal to the current through CCW TEs in a translinear loop is known as the translinear principle.
+
+For a detailed derivation of the TLP, and physical interpretations of the parameters in the ideal TE law, please refer to <ref name=aVLSI /> or <ref name=staticTL />.
+
+A derivation of the TLP based on graph theory concepts has been given by [[Rafael Vargas-Bernal]] et al. in 2000<ref>{{Cite journal|first1=Rafael|last1=Vargas-Bernal|first2=Arturo Sarmiento|last2=Reyes|first3=Wouter A.|last3=Serdijn|contribution=Identifying Translinear Loops in the Circuit Topology|title=Proceedings of the IEEE International Symposium on Circuits and Systems (ISCAS), Geneva, Switzerland|volume=2|pages=585–588|date=28–31 May 2000|doi=10.1109/ISCAS.2000.856396|postscript=<!--None-->}}</ref><ref>{{Cite journal|first=Rafael|last=Vargas-Bernal|contribution=Prediction of Multiple DC Operating Points in a CMOS Log-Domain Filter|title=Proceedings of the IEEE Latin-American CAS Tour, Puebla Mexico|date=November 2002|pages=70–73.|postscript=<!--None-->}}</ref>. In this work, it is illustrated as a graphical representation can be used for the future development of a verification tool that plays an important and fundamental role in the structured design of translinear circuits.
+
+==Example Translinear Circuits==
+===Squaring Circuit===
+
+{{MultiCol}}
+{{ColBreak}}
+[[Image:unbiased alt TL squaring.png|frame|A TL squaring circuit using an alternating TL loop]]
+{{ColBreak}}
+{{EndMultiCol}}
+
+According to TLP,
+<math>\,\! \prod_{n \epsilon CW}I_n = \prod_{n \epsilon CCW}I_n</math>.
+This means that <math>\,\! I_yI_y=I_xI_u</math> where <math>I_u</math> is the unit scaling current (ie the definition of unity for the circuit). This is effectively a squaring circuit where <math>\,\! I_x=I_y^2</math>. This particular circuit is designed in what is known as an alternating topology, which means that CW TEs alternate with CCW TEs. Here's the same circuit in a stacked topology.
+
+{{MultiCol}}
+{{ColBreak}}
+[[Image:unbiased stacked TL squaring.png|frame|A TL squaring circuit using a stacked TL loop]]
+{{ColBreak}}
+{{EndMultiCol}}
+
+The same equation applies to this circuit as to the alternating topology according to TLP. Neither of these circuits can be implemented in real life without biasing the transistors such that the currents expected to flow through them can actually do so. Here are some example biasing schemes:
+
+{{MultiCol}}
+[[Image:biased alt TL squaring.png|frame|A biasing scheme for the alternating squaring circuit using diode connections.]]
+{{ColBreak}}
+[[Image:biased alt TL squaring2.png|frame|A biasing scheme for the alternating squaring circuit using diode connections and a feedback connection between the collector and emitter of the TE (EP connection).]]
+{{ColBreak}}
+[[Image:biased stacked TL squaring.png|frame|A biasing scheme for the stacked squaring circuit using diode connections and an EP connection.]]
+{{EndMultiCol}}
+
+===2-Quadrant Multiplier===
+The design of a 2-quadrant multiplier can be easily done using TLP. The first issue with this circuit is that negative values of currents need to be represented. Since all currents must be positive for the exponential relationship to hold (the log operation is not defined for negative numbers), positive currents must represent negative currents. The way this is done is by defining two positive currents whose difference is the current of interest.
+
+A two quadrant multiplier has the relationship <math>\,\! z=xy</math> hold while allowing <math>\,\! x</math> to be either positive or negative. We'll let <math>\,\! z=z^+-z^-</math> and <math>\,\! x=x^+-x^-</math>. Also note that <math>\,\! x=I_x/I_u</math> and <math>\,\! x^+=I_x^+/I_u</math> etc. Plugging these values into the original equation yields <math>\,\! \left(\frac{I_z^+}{I_u}-\frac{I_z^-}{I_u}\right)=\left(\frac{I_x^+}{I_u}-\frac{I_x^-}{I_u}\right)\left(\frac{I_y}{I_u}\right)</math>. This can be rephrased as <math>\,\! (I_z^+I_u-I_z^-I_u)=(I_x^+-I_x^-)(I_y)</math>. By equating the positive and negative portions of the equation, two equations that can be directly built as translinear loops arise:
+
+<math>I_yI_x^+=I_uI_z^+</math>
+
+<math>I_yI_x^-=I_uI_z^-</math>
+
+The following are the alternating loops that implement the desired equations and some biasing schemes for the circuit.
+
+[[Image:unbiased alt TL twoquadmult.png|frame|left|The translinear loops that implement our desired equations.]]
+
+[[Image:biased alt TL twoquadmult.png|frame|left|A biasing scheme for the alternating TL two-quadrant multiplier circuit using diode connections and an EP connection.]]
+
+[[Image:biased alt TL twoquadmult2.png|frame|left|A biasing scheme that consolidates some current sources.]]
+<br style="clear:both;"/>
+
+==References==
+{{Reflist}}
+{{Use dmy dates|date=September 2010}}
+
+{{DEFAULTSORT:Translinear Circuit}}
+[[Category:Electronic circuits]]</body> </html>

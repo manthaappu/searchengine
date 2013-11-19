@@ -1,0 +1,229 @@
+<html> <head> <title>ProActive</title></head><body>{{refimprove|date=November 2010}}
+{{Infobox software
+| name                   = ProActive
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| collapsible            = 
+| developer              = [[OW2 Consortium]]
+| latest_release_version = 
+| latest_release_date    = 
+| latest_preview_version = 
+| latest_preview_date    = 
+| operating_system       = [[Cross-platform]]
+| programming_language   = [[Java (programming language)|Java]]
+| genre                  = [[Grid Computing]]
+| license                = [[GNU General Public License]]
+| website                = {{URL|proactive.inria.fr}}
+}}
+'''ProActive''' is [[Java language|Java]] [[Grid Computing|grid]] [[middleware]]  for parallel, distributed, and multi-threaded computing. It is developed by the [[OW2 Consortium]], including [[Inria|INRIA]], [[CNRS]], [[University of Nice Sophia Antipolis]], and [[ActiveEon]]. It is [[open-source software]] released under the [[GPL]] license.
+
+ProActive provides a comprehensive framework and [[parallel programming model]] to simplify the programming and execution of parallel applications running on multi-core processors, distributed on Local Area Network ([[LAN]]), on [[Computer cluster|clusters]] and [[data center]]s, on [[intranet]]s, and on [[Grid computing|Internet grids]].
+
+The ProActive programming model combines the [[active object]] design pattern with [[futures and promises|futures]] objects.
+
+==Programming model==
+The model was created by Denis Caromel, professor at [[University of Nice Sophia Antipolis]].<ref>{{cite journal
+	| title = Towards a Method of Object-Oriented Concurrent Programming
+	| last = Caromel
+	| first = Denis
+	| doi = 10.1.1.34.1074
+	| pages = 90–102
+	| journal = Communications of the ACM
+	| volume = 36
+	| number = 9
+	| date = September 1993
+	| accessdate = November 6, 2010
+}}</ref> 
+Several extensions of the model were made later on by members of the OASIS team at [[Inria|INRIA]].<ref>{{cite journal
+	| url = http://www-sop.inria.fr/oasis/personnel/mmorel/publis/programmingcomposingdeploying.pdf
+	| type = PDF
+	| title = Programming, Composing, Deploying for the Grid
+	| last = Baduel
+	| first = Laurent
+	| last2 = Baude
+	| first2 = Françoise
+	| last3 = Caromel
+	| first3 = Denis
+	| last4 = Contes
+	| first4 = Arnaud
+	| last5 = Huet
+	| first5 = Fabrice
+	| last6 = Morel
+	| first6 = Matthieu
+	| last7 = Quilici
+	| first7 = Romain
+	| journal = Grid Computing: Software Environments and Tools
+	| publisher = Sprinter-Verlag
+	| date = January 2006
+	| doi = 10.1.1.58.7806
+	| editor-last = Cunha
+	| editor-first = José C.
+	| editor2-last = Rana
+	| editor2-first = Omer F.
+}}</ref>
+The book ''A Theory of Distributed Objects'' presents the  ASP calculus that formalizes ProActive features, and provides [[Formal semantics of programming languages|formal semantics]] to the calculus, together with properties of ProActive program execution.<ref>{{Cite book
+	| isbn=978-3-540-20866-2 
+	| title = A Theory of Distributed Objects: asynchrony, mobility, groups, components
+	| last = Caromel
+	| first = Denis
+	| last2 = Henrio
+	| first2 = Ludovic
+	| publisher = Springer
+	| location = Berlin
+	| year = 2005
+	| id = {{LCCN|2005||923024}}
+}}</ref>
+
+==Active objects==
+Active objects are the basic units of activity and distribution used for building [[concurrency (computer science)|concurrent]] applications using ProActive. An active object runs with its own [[thread (computer science)|thread]]. This thread only executes the methods invoked on this active object by other active objects, and those of the passive objects of the subsystem that belongs to this active object. With ProActive, the programmer does not have to explicitly manipulate Thread objects, unlike in standard Java.
+
+Active objects can be created on any of the hosts involved in the computation. Once an active object is created, its activity (the fact that it runs with its own thread) and its location (local or remote) are perfectly transparent. Any active object can be manipulated as if it were a passive instance of the same class.
+
+An ''active object'' is composed of two objects: a ''body'', and a standard Java object. The body is not visible from the outside of the active object.
+
+The body is responsible for receiving calls (or ''requests'') on the active object and storing them in a queue of pending calls. It executes these calls in an order specified by a synchronization policy. If a synchronization policy is not specified, calls are managed in a "[[First in, first out]]" (FIFO) manner.
+
+The thread of an active object then chooses a method in the queue of pending requests and executes it. No parallelism is provided inside an active object; this is an important decision in ProActive's design, enabling the use of "pre-post" conditions and [[class invariant]]s.
+
+On the side of the subsystem that sends a call to an active object, the active object is represented by a ''proxy''. The proxy generates future objects for representing future values, transforms calls into Request objects (in terms of metaobject, this is a [[Reification (computer science)|reification]]) and performs [[Deep copy|deep copies]] of passive objects passed as parameters.
+
+===Active object basis===
+ProActive is a library designed for developing applications in the model introduced by Eiffel//, a parallel extension of the [[Eiffel (programming language)|Eiffel programming language]]. 
+
+In this model, the application is structured in ''subsystems''. There is one active object (and therefore one thread) for each subsystem, and one subsystem for each active object (or thread). Each subsystem is thus composed of one active object and any number of passive objects—possibly no passive objects. The thread of one subsystem only executes methods in the objects of this subsystem. There are no "shared passive objects" between subsystems.
+
+[[Image:activeObjectMethodCall.png|thumb|A call onto an active object, as opposed to a call onto passive one]]
+These features impact the application's topology. Of all the objects that make up a subsystem—the active object and the passive objects—only the active object is known to objects outside of the subsystem. All objects, both active and passive, may have references onto active objects. If an object ''o1'' has a reference onto a passive object ''o2'', then ''o1'' and ''o2'' are part of the same subsystem.
+
+[[Image:Sequential 2 Distributed.png|thumb|left|The model: Sequential, multithreaded, distributed]]
+This has also consequences on the semantics of message-passing between subsystems. When an object in a subsystem calls a method on an active object, the parameters of the call may be references on passive objects of the subsystem, which would lead to shared passive objects. This is why passive objects passed as parameters of calls on active objects are always passed by [[Deep copy|deep-copy]]. Active objects, on the other hand, are always passed by [[Reference (computer science)|reference]]. Symmetrically, this also applies to objects returned from methods called on active objects.
+
+Thanks to the concepts of [[Parallel computing|asynchronous calls]], futures, and no data sharing, an application written with ProActive doesn't need any structural change—actually, hardly any change at all—whether it runs in a sequential, [[Multithreaded|multi-threaded]], or [[Distributed computing|distributed]] environment.
+
+==Asynchronous calls and futures==
+
+Whenever possible, a method call on an active object is [[Reification (computer science)|reified]] as an asynchronous request. If not possible, the call is synchronous, and [[Blocking (computing)|blocks]] until the reply is received. If the request is asynchronous, it immediately returns a ''future object''.
+
+[[Image:futureObject.png|thumb|A future object]]
+The future object acts as a placeholder for the result of the not-yet-performed method invocation. As a consequence, the calling thread can go on with executing its code, as long as it doesn't need to invoke methods on the returned object. If the need arises, the calling thread is automatically blocked if the result of the method invocation is not yet available. Although a future object has structure similar to that of an active object, a future object is not active. It only has a Stub and a Proxy.
+
+===A simple example===
+The code excerpt below highlights the notion of future objects. Suppose a user calls a method <tt>foo</tt> and a method <tt>bar</tt> from an active object <tt>a</tt>; the <tt>foo</tt> method returns void and the <tt>bar</tt> method returns an object of class <tt>V</tt>:
+
+<source lang="java">
+// a one way typed asynchronous communication towards the (remote) AO a
+// a request is sent to a
+a.foo (param);
+
+// a typed asynchronous communication with result.
+// v is first an awaited Future, to be transparently filled up after
+// service of the request, and reply
+V v = a.bar (param);
+...
+// use of the result of an asynchronous call.
+// if v is still an awaited future, it triggers an automatic
+// wait: Wait-by-necessity
+v.gee (param);
+</source>
+
+When <tt>foo</tt> is called on an active object <tt>a</tt>, it returns immediately (as the current thread cannot execute methods in the other subsystem). Similarly, when <tt>bar</tt> is called on <tt>a</tt>, it returns immediately but the result <tt>v</tt> can't be computed yet. A future object, which is a placeholder for the result of the method invocation, is returned. From the point of view of the caller subsystem, there is no difference between the future object and the object that would have been returned if the same call had been issued onto a passive object.
+
+After both methods have returned, the calling thread continues executing its code as if the call had been effectively performed. The role of the future mechanism is to block the caller thread when the <tt>gee</tt> method is called on <tt>v</tt> and the result has not yet been set : this inter-object synchronization policy is known as ''wait-by-necessity''.
+
+==References==
+{{Reflist|2}}
+
+==Further reading==
+{{refbegin|2}}
+* {{cite journal
+	| url = http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4536336 
+	| title = Scheduling ProActive activities with an XPDL-based workflow engine
+	| last = Ranaldo
+	| first = N.
+	| last2 = Tretola
+	| first2 = G.
+	| last3 = Zimeo
+	| first3 = E.
+	| pages = 1–8
+	| journal = Parallel and Distributed Processing
+	| issn = 1530-2075
+	| location = Miami
+	| publisher = [[IEEE]]
+	| doi = 10.1109/IPDPS.2008.4536336
+	| date = April 14–18, 2008
+	| isbn = 978-1-4244-1693-6 }}
+* {{cite book
+	| url = http://www.springerlink.com/content/k0675q5167w8m787
+	| chapter = Early Experience of Remote and Hot Service Deployment with Trustworthiness in CROWN Grid
+	| last = Sun
+	| first = Hailong
+	| last2 = Zhu
+	| first2 = Yanmin
+	| last3 = Hu
+	| first3 = Chunming
+	| last4 = Huai
+	| first4 = Jinpeng
+	| last5 = Liu
+	| first5 = Yunhao
+	| last6 = Li
+	| first6 = Jianxin
+	| title = Advanced Parallel Processing Technologies
+	| series = Lecture Notes in Computer Science
+	| year = 2005
+	| publisher = Springer
+	| location = Berlin
+	| doi = 10.1007/11573937_33
+	| pages = 301–312
+	| volume = 3756
+	| editor-last = Cao
+	| editor-first = Jiannong
+	| editor2-last = Nejdl
+	| editor2-first = Wolfgang
+	| editor3-last = Xu
+	| editor3-first = Ming }}
+* {{cite book
+	| url = http://www.springerlink.com/content/kjctv8gd80ym3x06
+	| chapter = Asynchronous, Hierarchical, and Scalable Deployment of Component-Based Applications
+	| last = Quéma
+	| first = Vivien
+	| last2 = Balter
+	| first2 = Roland
+	| last3 = Bellissard
+	| first3 = Luc
+	| last4 = Féliot
+	| first4 = David
+	| last5 = Freyssinet
+	| first5 = André
+	| last6 = Lacourte
+	| first6 = Serge
+	| title = Component Deployment
+	| series = Lecture Notes in Computer Science
+	| year = 2004
+	| publisher = Springer
+	| location = Berlin
+	| doi = 10.1007/978-3-540-24848-4_4
+	| pages = 50–64
+	| volume = 3083
+	| editor-last = Emmerich
+	| editor-first = Wolfgang
+	| editor2-last = Wolf
+	| editor2-first = Alexander L. }}
+{{refend}}
+
+==External links==
+* [http://proactive.inria.fr/ The ProActive website]
+* [http://proactive.inria.fr/index.php?page=ic2d The ProActive IC2D eclipse plugin]
+* [http://www.coregrid.net/mambo/images/stories/Deliverables/d.pm.04.pdf The Grid Component Model specification]
+*[http://www.activeeon.com ActiveEon]
+
+{{Parallel Computing}}
+
+{{DEFAULTSORT:Proactive}}
+[[Category:Grid computing products]]
+[[Category:Middleware]]
+[[Category:Job scheduling]]
+[[Category:Parallel computing]]
+[[Category:Cross-platform software]]
+[[Category:Cloud computing]]
+[[Category:Cluster computing]]</body> </html>

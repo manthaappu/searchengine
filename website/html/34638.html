@@ -1,0 +1,108 @@
+<html> <head> <title>Slide attack</title></head><body>{{nofootnotes|date=March 2009}}
+The '''slide attack''' is a form of [[cryptanalysis]] designed to deal with the prevailing idea that even weak [[cipher]]s can become very strong by increasing the number of rounds, which can ward off a [[differential attack]]. The slide attack works in such a way as to make the number of rounds in a cipher irrelevant. Rather than looking at the data-randomizing aspects of the block cipher the slide attack works by analyzing the [[key schedule]] and exploiting weaknesses in it to break the cipher. The most common one is the keys repeating in a cyclic manner. 
+
+The attack was first described by [[David A. Wagner|David Wagner]] and [[Alex Biryukov]]. [[Bruce Schneier]] first suggested the term ''slide attack'' to them, and they used it in their 1999 paper describing the attack.
+
+The only requirements for a slide attack to work on a cipher is that it can be broken down into multiple rounds of an identical ''F'' function. This probably means that it has a cyclic key schedule. The ''F'' function must be vulnerable to a [[known-plaintext attack]]. The slide attack is closely related to the [[related-key attack]].
+
+The idea of the slide attack has roots in a paper published by [[Edna Grossman]] and [[Bryant Tuckerman]] in an IBM Technical Report in 1977. Grossman and Tuckerman demonstrated the attack on a weak [[block cipher]] named [[New Data Seal]] (NDS). The attack relied on the fact that the cipher has identical subkeys in each round, so the cipher had a cyclic key schedule with a cycle of only one key, which makes it an early version of the slide attack. A summary of the report, including a description of the NDS block cipher and the attack, is given in ''Cipher Systems'' (Beker & Piper, 1982).
+
+== The actual attack ==
+
+First, to introduce some notation. In this section assume the cipher takes ''n'' bit blocks and has a key-schedule using <math>K_1 \cdots K_m</math> as keys of any length.
+
+The slide attack works by breaking the cipher up into identical permutation
+functions, ''F''. This ''F'' function may consist of more than one round
+of the cipher; it is defined by the key-schedule. For example, if a cipher uses an alternating key schedule where it switches between a <math>K_1</math> and <math>K_2</math> for each round, the ''F'' function would consist of two rounds. Each of the <math>K_i</math> will
+appear at least once in ''F''.
+
+The next step is to collect <math>2^{n/2}</math> plaintext-ciphertext pairs. Depending on
+the characteristics of the cipher fewer may suffice, but by the [[birthday paradox]] no more than <math>2^{n/2}</math> should be needed. These pairs, which denoted as <math>(P,C)</math> are then used to find a '''slid pair''' which denoted <math>(P_0,C_0) (P_1,C_1)</math>. A slid pair has the property that <math>P_0 = F(P_1)</math> and that <math>C_0 = F(C_1)</math>. Once  a slid pair is identified, the cipher is broken because of the vulnerability to known-plaintext attacks. The key can easily be extracted from this pairing.
+The slid pair can be thought to be what happens to a message after one application of the function ''F''. It is ’slid’ over one encryption round and this is where the attack gets its
+name.
+
+[[Image:Slideattack.jpg]]
+
+The process of finding a slid pair is somewhat different for each cipher
+but follows the same basic scheme. One uses the fact that it is relatively
+easy to extract the key from just one iteration of ''F''. Choose any pair of
+plaintext-ciphertext pairs, <math>(P_0,C_0) (P_1,C_1)</math> and check to see what the keys corresponding to <math>P_0 = F(P_1)</math> and <math>C_0 = F(C_1)</math> are. If these keys match, this is a slid pair; otherwise move on to the next pair. 
+
+With <math>2^{n/2}</math> plaintext-ciphertext pairs one slid pair is expected, along with a small number of false-positives depending on the structure of the cipher. The false positives
+can be eliminated by using the keys on a different message-ciphertext pair to see if the encryption is correct. The probability that the wrong key will correctly encipher two or more messages is very low for a good cipher.
+
+Sometimes the structure of the cipher greatly reduces the number of
+plaintext-ciphertext pairs needed, and thus also a large amount of the work.
+The clearest of these examples is the [[Feistel cipher]] using a cyclic key schedule.
+The reason for this is given a <math>P = (L_0,R_0)</math> the search is for a <math>P_0=(R_0, L_0 \bigoplus F(R_0,K))</math>. This reduces the possible paired messages from <math>2^n</math>
+down to <math>2^{n/2}</math> (since half the message is fixed) and so at most <math>2^{n/4}</math> plaintext-ciphertext pairs are needed in order to find a slid-pair.
+
+== References ==
+* {{cite paper
+    | author = E.K. Grossman and B. Tuckerman
+    | title = Analysis of a Feistel-like cipher weakened by having no rotating key
+    | publisher = IBM Thomas J. Watson Research Report RC 6375
+    | year = 1977 }}
+* {{cite book
+    | author = Henry Beker and Fred Piper
+    | title = Cipher Systems: The Protection of Communications
+    | publisher = [[John Wiley & Sons]]
+    | year = 1982
+    | pages = 263&ndash;267
+    | isbn = 0-471-89192-4 }} (contains a summary of the paper by Grossman and Tuckerman)
+* {{cite conference
+    | author = [[Alex Biryukov]] and [[David A. Wagner|David Wagner]]
+    | title = Slide Attacks
+    | booktitle = 6th International Workshop on [[Fast Software Encryption]] (FSE '99)
+    | pages = pp.245&ndash;259
+    | publisher = [[Springer-Verlag]]
+    | date = March 1999
+    | location = [[Rome]]
+    | url = http://citeseer.ist.psu.edu/190677.html
+    | format = [[PDF]]/[[PostScript]]
+    | accessdate = 2007-09-03 }}
+* {{cite conference
+    | author = Alex Biryukov and David Wagner
+    | title = Advanced Slide Attacks
+    | booktitle = Advances in Cryptology, Proceedings of [[EUROCRYPT]] 2000
+    | pages = pp.589&ndash;606
+    | publisher = Springer-Verlag
+    | date = May 2000
+    | location = [[Bruges]]
+    | url = http://citeseer.ist.psu.edu/303568.html
+    | format = PDF/PostScript
+    | accessdate = 2007-09-03 }}
+* {{cite conference
+    | author = S. Furuya
+    | title = Slide Attacks with a Known-Plaintext Cryptanalysis
+    | booktitle = 4th International Conference on Information Security and Cryptology (ICISC 2001)
+    | pages = pp.214&ndash;225
+    | publisher = Springer-Verlag
+    | date = December 2001
+    | location = [[Seoul]]
+    | url = http://register.itfind.or.kr/Report01/200401/IITA/IITA-0763-017/IITA-0763-017.pdf
+    | format = PDF
+    | accessdate = 2007-09-03 }}
+* {{cite journal
+    | author = [[Eli Biham]]
+    | title = New Types of Cryptanalytic Attacks Using Related Keys
+    | journal = [[Journal of Cryptology]]
+    | volume = 7
+    | issue = 4
+    | issn = 0933-2790
+    | pages = pp.229&ndash;246
+    | year = 1994
+    | url = http://citeseer.ist.psu.edu/biham94new.html
+    | format = PDF/PostScript
+    | accessdate = 2007-09-03 }}
+* {{cite paper
+    | author = M. Ciet, G. Piret, [[Jean-Jacques Quisquater|J. Quisquater]]
+    | title = Related-Key and Slide Attacks: Analysis, Connections, and Improvements
+    | year = 2002
+    | url = http://citeseer.ist.psu.edu/560898.html
+    | format = PDF/PostScript
+    | accessdate = 2007-09-04 }}
+
+{{crypto navbox | block}}
+
+[[Category:Cryptographic attacks]]</body> </html>

@@ -1,0 +1,35 @@
+<html> <head> <title>Security Support Provider Interface</title></head><body>'''Security Support Provider Interface (SSPI)''' is an [[Application programming interface|API]] used by Microsoft Windows systems to perform a variety of security related operations such as authentication.
+
+SSPI functions as a common interface to several Security Support Providers (SSPs):<ref> [http://msdn.microsoft.com/en-us/library/aa380502(VS.85).aspx SSP Packages Provided by Microsoft]</ref> A Security Support Provider is a dynamic-link library (DLL) that makes one or more security packages available to applications.
+
+==Windows SSPs==
+The following SSPs are installed with Windows:
+
+* [[NTLMSSP|NTLM]] (Introduced in [[Windows NT 3.51]]) (Msv1_0.dll) -  Provides [[NTLM]] challenge/response authentication for client-server domains prior to [[Windows 2000]] and for non-domain authentication ([[Server Message Block|SMB]]/CIFS).<ref>[http://technet.microsoft.com/hi-in/library/cc938854(en-us).aspx User Authentication - Security (Windows 2000 Resource Kit Documentation) : MSDN]</ref>
+* [[Kerberos (protocol)|Kerberos]] (Introduced in [[Windows 2000]] and updated in [[Windows Vista]] to support [[Advanced Encryption Standard|AES]]) <ref>[http://technet.microsoft.com/en-us/library/cc749438(WS.10).aspx Kerberos Enhancements in Windows Vista: MSDN]</ref> (secur32.dll) - Preferred for mutual client-server domain authentication in Windows 2000 and later.<ref>[http://technet.microsoft.com/en-us/library/bb742431.aspx Windows 2000 Kerberos Authentication]</ref> 
+* [[SPNEGO|Negotiate]] (Introduced in Windows 2000) (secur32.dll) - Selects Kerberos and if not available, NTLM protocol. Negotiate SSP provides [[single sign-on]] capability called as [[Integrated Windows Authentication]].<ref>[http://technet.microsoft.com/en-us/library/cc755284(WS.10).aspx Windows Authentication]</ref> On Windows 7 and later, NEGOExts is introduced which negotiates the use of installed custom SSPs which are supported on the client and server for authentication.
+* Secure channel (aka SChannel) (Introduced in [[Windows 2000]] and updated in [[Windows Vista]] to support stronger AES encryption and [[Elliptic curve cryptography|ECC]]) <ref>[http://technet.microsoft.com/en-us/library/cc766285(WS.10).aspx TLS/SSL Cryptographic Enhancements in Windows Vista]</ref> (schannel.dll) -  ([[Private Communications Technology|PCT]] (obsolete) and Microsoft's implementation of [[TLS/SSL]]) - [[Public key cryptography]] SSP that provides encryption and secure communication for authenticating clients and servers over the internet.<ref> [http://msdn.microsoft.com/en-us/library/aa380123(VS.85).aspx Secure Channel: SSP Packages Provided by Microsoft]</ref> Updated in Windows 7 to support TLS 1.2.
+* [[Digest access authentication|Digest SSP]] (Introduced in [[Windows XP]]) (wdigest.dll) - Provides challenge/response based HTTP and [[Simple Authentication and Security Layer|SASL]] authentication between Windows and non-Windows systems where Kerberos is not available.<ref>[http://msdn.microsoft.com/en-us/library/aa378745(VS.85).aspx Microsoft Digest SSP: SSP Packages provided by Microsoft]</ref>
+* Credential (CredSSP) (Introduced in [[Windows Vista]] and available on Windows XP SP3) (credssp.dll) - Provides SSO and [[Network Level Authentication]] for [[Remote Desktop Services]].<ref>[http://technet.microsoft.com/en-us/library/cc749211(WS.10).aspx Credential Security Service Provider and SSO for Terminal Services Logon]</ref>
+* Distributed Password Authentication (DPA) - (Introduced in Windows 2000) (Msapsspc.dll) - Provides internet authentication using [[public key certificate|digital certificates]].<ref>[http://msdn.microsoft.com/en-us/library/ms809340.aspx#dcomtec_sec DCOM Technical Overview: Security on the Internet]</ref>
+* Public Key Cryptography User-to-User (PKU2U) (Introduced in [[Windows 7]]) (Pku2u.dll) - Provides peer-to-peer authentication using digital certificates between systems that are not part of a domain.
+
+==Comparison==
+SSPI is a proprietary variant of [[Generic Security Services Application Program Interface|GSSAPI]] with extensions and very Windows-specific data types. It shipped with [[Windows NT 3.51]] and [[Windows 95]] with the [[NTLM|NT LAN Manager]] [[NTLMSSP|Security Support Provider]] ([[NTLMSSP]]). For Windows 2000, an implementation of Kerberos 5 was added, using token formats conforming to the official protocol standard RFC 1964 (The Kerberos 5 GSSAPI mechanism) and providing wire-level interoperability with Kerberos 5 implementations from other vendors.
+
+The tokens generated and accepted by the SSPI are mostly compatible with the GSS-API so an SSPI client on Windows may be able to authenticate with a GSS-API server on UNIX depending on the specific circumstances.
+One significant shortcoming of SSPI is its lack of {{explain|channel bindings|Channel binding is a way to cryptographically bind end-to-end authentication at the application layer to a secure channel at a lower layer. This cryptographic binding is a way to eliminate man-in-the-middle attacks in that secure channel. It is particularly useful to applications that intend to rely on TLS or IPsec for session/transport security. Channel bindings also stimulate the development of APIs for IPsec and an unauthenticated mode of IPsec.}}, which makes some GSSAPI interoperability impossible.
+
+Another fundamental difference between the [[IETF]]-defined GSSAPI and Microsoft's SSPI is the concept of "[[Access token#Types of tokens|impersonation]]". In this model, a server can switch to and operate with the FULL privileges of the authenticated client, so that the operating system performs all [[access control]] checks, e.g. when opening new files. Whether these are less privileges or more privileges than that of the original service account depends entirely on which client connects/authenticates. In the traditional (GSSAPI) model, a server runs under a service account, cannot elevate its privileges, and has to perform access control in a client-specific and application-specific fashion. The obvious negative security implications of the impersonation concept are mitigated in Windows Vista by restricting impersonation to selected service accounts.<ref> [http://blogs.technet.com/askperf/archive/2008/02/03/ws2008-windows-service-hardening.aspx Windows Service Hardening: AskPerf blog]</ref>
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://msdn2.microsoft.com/en-us/library/aa380493.aspx SSPI Reference on MSDN]
+* [http://win32.mvps.org/security/sspi.html SSPI Information and Win32 samples]
+
+{{Microsoft APIs}}
+
+[[Category:Microsoft application programming interfaces]]
+[[Category:Microsoft Windows security technology]]</body> </html>

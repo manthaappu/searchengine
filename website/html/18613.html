@@ -1,0 +1,151 @@
+<html> <head> <title>Integer (computer science)</title></head><body>{{Refimprove|date=January 2008}}
+In computer science, the term '''integer''' is used to refer to a [[data type]] which represents some finite subset of the mathematical [[integer]]s.  These are also known as '''integral data types'''.<ref>"C provides six operators for bit manipulation; these may only be applied to integral operands, that is, char, short, int and long, whether signed or unsigned." section 2.9. Kernighan & Ritchie, The C Programming Language - Second Edition, 43rd printing (c) 2008</ref>
+
+== Value and representation ==
+
+The ''value'' of a [[data|datum]] with an integral type is the mathematical integer that it corresponds to. Integral types may be ''unsigned'' (capable of representing only non-negative integers) or ''signed'' (capable of representing negative integers as well).
+
+An integer is typically specified in the program as a sequence of digits, without spaces or thousands separators, optionally prefixed with + or -. Sometimes also alternative notations are allowed, such as hexadecimal (base 16) or octal (base 8). 
+
+The ''internal representation'' of this datum is the way the value is stored in the computer’s memory. 
+Unlike mathematical integers, a typical datum in a computer has some minimal and maximum possible value. Typically all integers from the minimum through the maximum can be represented.
+
+The maximum is sometimes called MAXINT or—as in the C standard library [[limits.h]] header—INT_MAX.
+
+The most common representation of a positive integer is a string of [[bit]]s, using the [[binary numeral system]].  The order of the memory bytes storing the bits varies; see [[endianness]].  The ''width'' or ''precision'' of an integral type is the number of bits in its representation.  An integral type with ''n'' bits can encode 2<sup>''n''</sup> numbers; for example an unsigned  type typically represents the non-negative values 0 through 2<sup>''n''</sup>&minus;1.
+
+There are four different ways to represent negative numbers in a binary numeral system.  The most common is [[two's complement|two’s complement]], which allows a signed integral type with ''n'' bits to represent numbers from &minus;2<sup>(n&minus;1)</sup> through 2<sup>(n&minus;1)</sup>&minus;1.  Two’s complement arithmetic is convenient because there is a perfect [[bijection|one-to-one correspondence]] between representations and values (in particular, no separate +0 and -0), and because [[addition]], [[subtraction]] and [[multiplication]] do not need to distinguish between signed and unsigned types. The other possibilities are [[offset binary]], sign-magnitude and ones' complement. See [[Signed number representations]] for details.
+
+Another, rather different, representation for integers is [[binary-coded decimal]], which is still commonly used in [[Mainframe computer|mainframe]] financial applications and in databases.
+
+== Common integral data types ==
+
+{| class="wikitable"
+|-
+! Bits 
+! Name
+! Range (assuming [[two's complement]] for signed)
+! Decimal digits
+!scope=col colspan="2"| Uses
+|-
+|rowspan=2| 4
+|rowspan=2| [[nibble]], [[semioctet]]
+|''Signed:'' From <math>-8</math> to <math>7</math>, from <math>-(2^3)</math> to <math>2^3-1</math>
+|1
+|rowspan=2 colspan="2"| [[Binary-coded decimal]], single decimal kamal digit representation.
+|-
+|''Unsigned:'' From <math>0</math> to <math>15</math> which equals to <math>2^4 -1</math>
+|2
+|-
+|rowspan=2| 8
+|rowspan=2| [[byte]], [[octet (computing)|octet]]
+|''Signed:'' From [[127 (number)|<math>-128</math> to <math>127</math>]], from <math>-(2^7)</math> to <math>2^7-1</math>
+| 3
+|rowspan=2 colspan="1"| [[ASCII]] characters, [[C (programming language)|C]]/C++ char, C/C++ uint8_t, int8_t, C# byte (unsigned), T-SQL tinyint, Delphi Byte, Shortint, Java byte
+|-
+|''Unsigned:'' From <math>0</math> to <math>255</math> which equals to <math>2^8 -1</math>
+|3
+|-
+|rowspan=2| 16
+|rowspan=2| halfword, [[word (computing)|word]], [[short integer|short]], short
+|''Signed:'' From [[30000 (number)|<math>-32,768</math> to <math>32,767</math>]], from <math>-(2^{15})</math> to <math>2^{15}-1</math>
+| 5
+|rowspan=2 colspan="1"| [[UCS-2]] characters, C/C++ short, C/C++ int (minimum), C/C++ uint16_t, int16_t, C# short, Delphi Word, Smallint, T-SQL smallint, Java char/short
+|-
+|''Unsigned:'' From <math>0</math> to <math>65,535</math> which equals to <math>2^{16} -1</math>
+|5
+|-
+|rowspan=2| 32
+|rowspan=2| word, [[long integer|long]], doubleword, longword, int
+|''Signed:'' From [[2147483647 (number)|<math>-2,147,483,648</math> to <math>2,147,483,647</math>]], from <math>-(2^{31})</math> to <math>2^{31}-1</math>
+| 10
+|rowspan=2 colspan="1"| [[UCS-4]] characters, [[Truecolor]] with alpha, C/C++ int (with some compilers, 32 and 64 bit),<ref>"On compilers for 32 bit and larger processors (including Intel x86 processors executing in 32 bit mode, such as Win32 or Linux) an int is usually 32 bits long and has exactly the same representation as a long." The Int Types Jack Klein, Integer Types In C and C++, http://jk-technology.com/c/inttypes.html (c) 2008</ref> C/C++ long (on Windows and 32-bit DOS and Unix), C/C++ uint32_t, int32_t, C# int, [[FourCC]], Delphi Cardinal, Integer, LongWord, LongInt, T-SQL int, Java int
+|-
+|''Unsigned:'' From <math>0</math> to <math>4,294,967,295</math> which equals to <math>2^{32} -1</math>
+|10
+|-
+|rowspan=2| 64
+|rowspan=2| doubleword, longword, long long, quad, quadword, int64
+|''Signed:'' From <math>-9,223,372,036,854,775,808</math> to <math>9,223,372,036,854,775,807</math>, from <math>-(2^{63})</math> to <math>2^{63}-1</math>
+| 19
+|rowspan=2 colspan="1"| C/C++ long (on 64-bit Unix<ref name=agnerfog/><ref name=drdobbsinteger/><ref name=c99/>), C/C++ long long, C/C++ uint64_t, int64_t, C# long, ulong, Delphi Int64, T-SQL bigint, Java long
+|-
+|''Unsigned:'' From <math>0</math> to <math>18,446,744,073,709,551,615</math> which equals to <math>2^{64} -1</math>
+|20
+|-
+|rowspan=2| 128
+|rowspan=2| octaword, double quadword
+|''Signed:'' From <math>-170,141,183,460,469,231,731,687,303,715,884,105,728</math> to <math>170,141,183,460,469,231,731,687,303,715,884,105,727</math>, from <math>-(2^{127})</math> to <math>2^{127}-1</math>
+| 39
+|rowspan=2 colspan="2"| C only available as non-standard compiler-specific extension
+|-
+|''Unsigned:'' From <math>0</math> to <math>340,282,366,920,938,463,463,374,607,431,768,211,455</math> which equals to <math>2^{128} -1</math>
+|39
+|-
+|rowspan=2| ''n''
+|rowspan=2| ''n''-bit integer<br> (general case)
+| ''Signed:'' <math>(-2^{n-1})</math> to <math>(2^{n-1} -1)</math>
+| <math>\lceil (n-1) \log_{10}{2} \rceil</math>
+|rowspan=1 colspan="2"| [[Ada (programming language)|Ada]] <code>range -2**(n-1)..2**(n-1)-1</code>
+|-
+|''Unsigned:'' 0 to <math>(2^{n}-1)</math>
+|<math>\lceil n \log_{10}{2} \rceil</math>
+|rowspan=1 colspan="2"| Ada <code>range 0..2**n-1</code>, Ada <code>mod 2**n</code>
+|}
+Different [[Central processing unit|CPUs]] support different integral data types. Typically,
+hardware will support both signed and unsigned types but only a small,
+fixed set of widths.
+
+The table above lists integral type widths that are supported in hardware by common processors.  High level programming languages provide more possibilities. It is common to have a ‘double width’ integral type that has twice as many bits as the biggest hardware-supported type.  Many languages also have ''bit-field'' types (a specified number of bits, usually constrained to be less than the maximum hardware-supported width) and ''range'' types (which can represent only the integers in a specified range).
+
+Some languages, such as [[Lisp programming language|Lisp]], [[Smalltalk]], [[REXX]] and [[Haskell (programming language)|Haskell]], support ''arbitrary precision'' integers (also known as ''infinite precision integers'' or ''[[bignum]]s''). Other languages which do not support this concept as a top-level construct may have libraries available to represent very large numbers using arrays of smaller variables, such as Java's <code>[[BigInteger]]</code> class or [[Perl]]'s "<code>bigint</code>" package. These use as much of the computer’s memory as is necessary to store the numbers; however, a computer has only a finite amount of storage, so they too can only represent a finite subset of the mathematical integers. These schemes support very large numbers, for example one kilobyte of memory could be used to store numbers up to 2466 decimal digits long.
+
+A [[Boolean datatype|Boolean]] or [[Flag (computing)|Flag]] type is a type which can represent only two values: 0 and 1, usually identified with ''false'' and ''true'' respectively.  <!-- Pascal has them the other way around --> This type can be stored in memory using a single bit, but is often given a full byte for convenience of addressing and speed of access.
+
+A four-bit quantity is known as a ''[[nibble]]'' (when eating, being smaller than a ''bite'') or ''nybble'' (being a pun on the form of the word ''byte'').  One nibble corresponds to one digit in [[hexadecimal]] and holds one digit or a sign code in binary-coded decimal.
+
+== Bytes and octets ==
+{{Main|Byte}}
+The term ''byte'' initially meant ‘the smallest addressable unit of memory’.  In the past, 5-, 6-, 7-, 8-, and 9-bit bytes have all been used.  There have also been computers that could address individual bits (‘bit-addressed machine’), or that could only address 16- or 32-bit quantities (‘word-addressed machine’).  The term ''byte'' was usually not used at all in connection with bit- and word-addressed machines.
+
+The term ''octet'' always refers to an 8-bit quantity.  It is mostly used in the field of [[computer network]]ing, where computers with different byte widths might have to communicate.  
+
+In modern usage ''byte'' almost invariably means eight bits, since all other sizes have fallen into disuse; thus ''byte'' has come to be synonymous with ''octet''.
+
+== Words ==
+
+{{Main|Word (computing)}}
+The term 'word' is used for a small group of bits which are handled simultaneously by processors of a particular [[computer architecture|architecture]].  The size of a word is thus CPU-specific.  Many different word sizes have been used, including 6-, 8-, 12-, 16-, 18-, 24-, 32-, 36-, 39-, 48-, 60-, and 64-bit. Since it is architectural, the size of a ''word'' is usually set by the first CPU in a family, rather than the characteristics of a later compatible CPU. The meanings of terms derived from ''word'', such as ''longword'', ''doubleword'', ''quadword'', and ''halfword'', also vary with the CPU and OS.<ref name=agnerfog/>
+
+Practically all new desktop processors are capable of using 64-bit words, though [[Embedded system|embedded processors]] with 8- and 16-bit word size are still common.  The [[36-bit word length]] was common in the early days of computers.
+
+One important cause of non-portability of software is the incorrect assumption that all computers have the same word size as the computer used by the programmer. For example, if a programmer using the C language incorrectly declares as <code>int</code> a variable that will be used to store values greater than 2<sup>16</sup>-1, the program will fail on computers with 16-bit integers. That variable should have been declared as <code>long</code>, which has at least 32 bits on any computer. Programmers may also incorrectly assume that a pointer can be converted to an integer without loss of information, which may work on (some) 32-bit computers, but fail on 64-bit computers with 64-bit pointers and 32-bit integers.
+
+== See also ==
+
+*[[Signed number representations]]
+*[[Integer]] (the mathematical concept)
+
+== Notes ==
+{{Reflist|refs=<ref name=drdobbsinteger>{{cite web |url=http://www.drdobbs.com/184401323 |title=The New C: Integers in C99, Part 1 |date=2000-12-01 |accessdate=2010-09-04 |last=Meyers |first=Randy |publisher=drdobbs.com }}</ref><ref name=c99>{{cite web| url=http://www.ericgiguere.com/articles/ansi-c-summary.html|title=The ANSI Standard: A Summary for the C Programmer |first=Eric |last=Giguere |date=1987-12-18 |accessdate=2010-09-04}}</ref>
+<ref name=agnerfog>{{cite web|url=http://www.agner.org/optimize/calling_conventions.pdf |title=Calling conventions for different C++ compilers and operating systems: Chapter 3, Data Representation |date=2010-02-16 |accessdate=2010-08-30 |last=Fog |first=Agner}}</ref>}}
+
+{{Data types}}
+
+{{DEFAULTSORT:Integer (Computer Science)}}
+[[Category:Data types]]
+[[Category:Computer arithmetic]]
+[[Category:Primitive types]]
+
+[[de:Integer (Datentyp)]]
+[[es:Tipo de dato entero]]
+[[fr:Entier (informatique)]]
+[[is:Heiltölutag]]
+[[it:Numero intero (informatica)]]
+[[hu:Egész (informatika)]]
+[[nl:Integer (informatica)]]
+[[ja:整数型]]
+[[pl:Liczba całkowita (typ danych)]]
+[[pt:Inteiro (tipo de dado)]]
+[[ru:Целый тип]]
+[[sv:Integer]]</body> </html>

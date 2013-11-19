@@ -1,0 +1,63 @@
+<html> <head> <title>Midpoint method</title></head><body>{{For|the midpoint rule in numerical [[quadrature]]|rectangle method}}
+
+[[Image:Midpoint method illustration.png|right|thumb|Illustration of the midpoint method assuming that <math>y_n</math> equals the exact value <math>y(t_n).</math> The midpoint method computes <math>y_{n+1}</math> so that the red chord is approximately parallel to the tangent line at the midpoint (the green line).]]
+In [[numerical analysis]], a branch of [[applied mathematics]], the '''midpoint method''' is a one-step method for solving the [[ordinary differential equation|differential equation]] 
+:<math> y'(t) = f(t, y(t)), \quad y(t_0) = y_0 </math>
+[[Numerical ordinary differential equations|numerically]], and is given by the formula
+:<math> y_{n+1} = y_n + hf\left(t_n+\frac{h}{2},y_n+\frac{h}{2}f(t_n, y_n)\right),  \qquad\qquad (1)</math>
+for <math>n=0, 1, 2, \dots</math> Here, <math>h</math> is the ''step size'' &mdash; a small positive number, <math>t_n=t_0 + n h,</math> and <math>y_n</math> is the computed approximate value of <math>y(t_n).</math>
+
+The name of the method comes from the fact that in the formula above the function <math>f</math> is evaluated at <math>t=t_n+h/2,</math> which is the midpoint between <math>t_n</math> at which the value of ''y''(''t'') is known and <math>t_{n+1}</math> at which the value of ''y''(''t'') needs to be found.
+
+The error at each step of the midpoint method is of order <math>O\left(h^3\right).</math>  Thus, while more computationally intensive than [[Euler's method]], the midpoint method generally gives more accurate results.
+
+The method is an example of a class of higher-order methods known as [[Runge-Kutta methods]].
+
+==Derivation of the midpoint method==
+[[Image:Numerical integration illustration, h=1.png|right|thumb|Illustration of numerical integration for the equation <math>y'=y, y(0)=1.</math> Blue: the [[Euler method]], green: the midpoint method, red: the exact solution, <math>y=e^t.</math> The step size is <math>h=1.0.</math>]]
+[[Image:Numerical integration illustration, h=0.25.png|right|thumb|The same illustration for <math>h=0.25.</math> It is seen that the midpoint method converges faster than the Euler method.]]
+
+The midpoint method is a refinement of the Euler's method
+:<math> y_{n+1} = y_n + hf(t_n,y_n),\, </math>
+and is derived in a similar manner. 
+The key to deriving Euler's method is the approximate equality
+:<math> y(t+h) \approx y(t) + hf(t,y(t)) \qquad\qquad (2)</math>
+which is obtained from the slope formula
+:<math> y'(t) \approx \frac{y(t+h) - y(t)}{h} \qquad\qquad (3)</math>
+and keeping in mind that <math> y' = f(t, y).</math>
+
+For the midpoint method, one replaces (3) with the more accurate
+:<math> y'\left(t+\frac{h}{2}\right) \approx \frac{y(t+h) - y(t)}{h} </math>
+when instead of (2) we find
+:<math> y(t+h) \approx y(t) + hf\left(t+\frac{h}{2},y\left(t+\frac{h}{2}\right)\right). \qquad\qquad (4)</math>
+
+One cannot use this equation to find <math> y(t+h)</math> as one does not know <math>y</math> at <math>t+h/2.</math> The solution is then to use a [[Taylor series]] expansion exactly as if using the [[Euler method]] to solve for <math>y(t+h/2)</math>: 
+:<math>y\left(t + \frac{h}{2}\right) \approx y(t) + \frac{h}{2}y'(t)=y(t) + \frac{h}{2}f(t, y(t)),</math>
+which, when plugged in (4), gives us
+:<math>y(t + h) \approx y(t) + hf\left(t + \frac{h}{2}, y(t) + \frac{h}{2}f(t, y(t))\right)</math>
+and the midpoint method (1).
+
+==See also==
+* [[Rectangle method]]
+* [[Heun's method]]
+* [[Leapfrog integration]] and [[Verlet integration]]
+
+==References==
+
+* {{cite book
+|author=Griffiths,D. V.; Smith, I. M.
+|title=Numerical methods for engineers: a programming approach
+|publisher=CRC Press
+|location=Boca Raton
+|year=1991
+|isbn=0-8493-8610-1
+|oclc=
+|doi=
+|page=218
+}}
+
+{{Numerical integrators}}
+[[Category:Numerical differential equations]]
+[[Category:Runge–Kutta methods]]
+
+[[eo:Vikipedio:Projekto matematiko/Mezpunkta maniero]]</body> </html>

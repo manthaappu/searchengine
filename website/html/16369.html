@@ -1,0 +1,92 @@
+<html> <head> <title>Hashcash</title></head><body>'''Hashcash''' is a [[proof-of-work system]] designed to limit [[E-mail spam|email spam]] and [[denial of service]] attacks. It was proposed in March 1997 by [[Adam Back]] [http://www.hashcash.org/papers/announce.txt].
+
+==How it works==
+Hashcash is a method of adding a textual stamp to the [[header (information technology)|header]] of an email to prove the sender has expended a modest amount of CPU time calculating the stamp prior to sending the email. In other words, as the sender has taken a certain amount of time to generate the stamp and send the email, it is unlikely that they are a spammer. The receiver can, at negligible computational cost, verify that the stamp is valid.  However, the only known way to find a header with the necessary properties is [[Brute force attack|brute force]], trying random values until the answer is found; though testing an individual string is easy, if satisfactory answers are rare enough it will require a substantial number of tries to find the answer.
+
+The theory is that spammers, whose business model relies on their ability to send large numbers of emails with very little cost per message, cannot afford this investment into each individual piece of spam they send. Receivers can verify whether a sender made such an investment and use the results to help filter email.
+
+== Technical details ==
+
+The header line looks something like [http://hashcash.org/docs/hashcash.txt]
+
+    X-Hashcash: 1:20:060408:adam@cypherspace.org::1QTjaYd7niiQA/sc:ePa
+
+The header contains: the recipient's email address, the date, and information proving the required computation has been performed.  The presence of the recipient's email address requires that a new header be computed for each recipient, and the date allows the recipient to record headers received recently and make sure the header is unique to this email.
+
+===Sender's side===
+
+The sender prepares a header and adds an initial random number.  It then computes the 160 bit [[SHA-1]] [[hash function (cryptography)|hash]] of the header.  If the first 20 bits of the hash are zeros then this is an acceptable header.  If not then the sender increments the random number and tries again.  Since 1 in 2<sup>20</sup> headers will have 20 zeros as the beginning of the hash the sender will on average have to try half that many (524288) random numbers to find a valid header.  Given reasonable estimates of the time needed to compute the hash, this would take about 1 second to find.  At this time no more efficient method is known to find a valid header.
+
+A normal user would not be significantly impacted by the processing time required to generate the Hashcash string.  However, spammers would suffer a significant impact due to the high number of spam messages required.
+
+===Recipient's side===
+
+Technically the system is implemented as follows:
+* The recipient's computer calculates the 160 bit [[SHA-1]] [[hash function (cryptography)|hash]] of the entire string "1:20:060408:adam@cypherspace.org::1QTjaYd7niiQA/sc:ePa". This takes about two microseconds on a 1 GHz machine—far shorter than the time it took for the rest of the e-mail to be received. If the first 20 bits are all zero, then it is valid. Later versions may require more bits to be zero.
+* The recipient's computer checks the date in that header "060408" (8 Apr 2006). If it's within 2 days of today, it's valid (to compensate for clock skew and routing time).
+* The recipient's computer checks to see if the e-mail address in the hashcash header is (any of) the valid e-mail address(es) of the recipient (or any mailing lists to which the recipient is subscribed).
+* If all the other checks are valid, the recipient's computer puts that string in a database. If that string was '''not''' already in the database, it is valid.
+
+All these tests take far less time and disk space than receiving the rest of the e-mail.
+
+===Required effort===
+
+The time needed to compute such a hash collision is [[exponential growth|exponential]] with the number of zero bits.  So one can keep adding zero bits (doubling the amount of time needed to send with each zero bit) until it is too expensive for spammers to generate valid header lines. (Confirming the header is valid always takes the same amount of time, no matter how many zero bits are required for a valid header.)
+
+==Advantages and disadvantages==
+{{Refimprove|section|date=August 2010}}
+The Hashcash system has the advantage over [[micropayment]] proposals applying to legitimate email that no real money is involved.  Neither the sender nor recipient need pay, thus the administrative issues involved with all micropayment systems are entirely avoided.
+
+On the other hand, as Hashcash requires significant computational resources to be expended on each e-mail being sent, it is impractical to use with low-end [[embedded systems]] without the help of an external server.{{Citation needed|date=August 2010}}
+
+Hashcash is also fairly simple to implement in mail user agents and spam filters.
+No central server is needed.
+Hashcash can be incrementally deployed—the extra Hashcash header is ignored when it is received by mail clients that do not understand it.
+
+Some plausible estimates [http://www.hashcash.org/papers/proof-work.pdf] come to the
+conclusion that you can only have one of these: Either good e-mail
+will get stuck due to lack of processing power of the sender, or bad
+e-mail is bound to still get through.{{Citation needed|date=August 2010}}  The reasons for this are
+[[botnet]]s or cluster farms with which spammers can increase their
+processing power enormously, or centralized e-mail-topologies like
+mailing lists, in which some server is to send an enormous amount of
+legitimate e-mails.
+
+Most of these issues may be addressed.  E.g., botnets may expire
+faster because users notice the high CPU load and take
+counter-measures, and mailing list servers can be registered in white
+lists on the subscribers' hosts and thus be relieved from the hashcash
+challenges.  But they represent serious obstacles to hashcash
+deployment that need to be addressed <em>somehow</em>.{{Citation needed|date=September 2008}}
+
+Another projected problem is that computers continue to get faster according to [[Moore's law]]. So the difficulty of the calculations required must be increased over time. However, developing countries can be expected to use older hardware, which means that they will find it increasingly difficult to participate in the email system. This also applies to lower-income individuals in developed countries who cannot afford the latest hardware.
+
+==Implementations==
+===Email clients===
+[http://pennypost.sourceforge.net/ Penny Post] implements Hashcash in the [[Mozilla Thunderbird]] email client.<ref>http://pennypost.sourceforge.net/PostageStamps</ref>
+
+===Blogs===
+Like e-mail, [[blog]]s often fall victim to [[comment spam]].
+Some blog owners have used hashcash scripts written in the [[JavaScript]] language to slow down comment spammers.<ref>[http://elliottback.com/wp/archives/2005/10/23/wordpress-hashcash-30-beta/] by Elliott Back</ref>  Some scripts (such as wp-hashcash) claim to implement hashcash but instead depend on JavaScript obfuscation to force the client to generate a matching key; while this does require some processing power, it does not use the hashcash algorithm or hashcash stamps.
+
+==See also==
+* [[Penny Black (research project)]]
+
+==References==
+*  Adam Back, "Hashcash - A Denial of Service Counter-Measure", technical report, August 2002 [http://www.hashcash.org/papers/hashcash.pdf (PDF)].
+*  Ben Laurie and Richard Clayton, "'Proof-of-Work' Proves Not to Work", WEAS 04.  [http://www.hashcash.org/papers/proof-work.pdf (PDF)].
+*  Dwork, C. and Naor, M. (1992) "Pricing via Processing or Combating Junk Mail", Crypto '92, pp. 139–147. [http://dsns.csie.nctu.edu.tw/research/crypto/HTML/PDF/C92/139.PDF (PDF)]
+
+<references />
+
+==External links==
+* http://hashcash.org — Hashcash homepage
+* [http://www-106.ibm.com/developerworks/linux/library/l-hashcash.html?ca=dgr-lnxw01HashCash Beat spam using hashcash] — David Mertz's article on hashcash, its applications and an implementation in [[Python (language)|Python]].
+* [http://www.ietf.org/ietf/IPR/rsa-ipr-draft-jennings-sip-hashcash-00.txt RSA IPR note to the IETF about hashcash] (2004)
+
+[[Category:Cryptographic protocols]]
+[[Category:Spam filtering]]
+[[Category:Email authentication]]
+
+[[de:Hashcash]]
+[[fr:Hashcash]]</body> </html>

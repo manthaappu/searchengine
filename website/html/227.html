@@ -1,0 +1,69 @@
+<html> <head> <title>A20 line</title></head><body>{{refimprove|date=October 2010}}
+The '''A20''' or ''addressing line 20'' is one of the plethora of [[electrical]] lines that make up the [[system bus]] of an [[x86]]-based computer system. The A20 line in particular is used to transmit the 21st bit on the [[address bus]].
+
+A microprocessor will typically have a number of addressing lines equal to the base-two [[logarithm]] of its physical addressing space. For example a processor with 4 [[Gibibyte|GiB]] of physical addressing space requires 32 lines, which are named A0 through A31. The lines are named after the number of the bit in the address they are transmitting. Thus, A0 will transmit the [[least significant bit]], which is bit 0. A20 transmits bit 21 and will become active once addresses reach 1 [[Mebibyte|MiB]] or 2<sup>20</sup>. 
+[[File:IBM PC Memory areas.svg|thumb|right|The high memory area is available in real mode on 80286 processors if the A20 gate is not disabled]]
+
+== History ==
+The early [[Intel 8086]], [[Intel 8088]], and [[Intel 80186]] processors had 20 address lines, numbered A0 to A19, with these the processor can access 2<sup>20</sup> bytes or 1 [[Mebibyte|MiB]]. The processors were designed to access only blocks ("segments") of 64 [[Kibibyte|KiB]] directly (64KiB = 2<sup>16</sup> - 16-bit offset). Which chunk of physical memory this offset actually pointed to, was pre-selected with a 16-bit "segment-register" which could be moved in steps of 16 bytes. The resulting address is equal to Segment * 16 + Offset.
+
+In consequence there were various ways to address the same byte in memory. Exemplary, four of 4096 different segment:offset combinations, all referencing the byte whose physical address is 0x000FFFFF (the last byte in 1 MiB-memory space), are:
+
+:F000:FFFF
+:FFFF:000F
+:F555:AAAF
+:F800:7FFF 
+
+Referenced the last way, an increase of one in the offset yields F800:8000, which is a proper address for the processor, but since it translates to the physical address 0x00100000 (the first byte over 1 MiB) the processor would need another address-line to actually access this byte. Since such a line doesn't exist on the 8086 line of processors, the 21<sup>st</sup> bit above, while set, gets dropped, causing the address F800:8000 to "wrap around" and to actually point to the physical address 0x0000000. 
+
+Because loading segment registers was very slow on early processors, this trick was used by some DOS programmers, for example, to have one segment that has access to program data (e.g. from F800:0000 to F800:7FFF, pointing to the physical addresses 0x000F8000 - 0x000FFFFF) as well as the I/O data (e.g. keyboard buffer) that was located in the first memory segment (with addresses F800:8000 to F800:FFFF pointing to the physical addresses 0x00000000 to 0x00007FFF).{{Citation needed|date=December 2010}}
+
+When [[IBM]] designed the [[IBM PC AT]] machine, they decided to use the new higher-performance [[Intel 80286]] microprocessor. The 80286 could address up to 16 [[Mebibyte|MiB]] of system memory, thus removing the ability for memory addresses to wrap around: Since the required address line now existed, the combination F800:8000 would no longer point to the physical address 0x0000000 but the correct address 0x00100000. As a result some DOS programs would no longer work. In order to remain compatible with these programs, IBM decided to fix the problem themselves, on the [[motherboard]].
+
+This was accomplished by inserting a [[logic gate]] on the A20 line between the processor and system bus, which logically got named ''Gate-A20''. Gate-A20 can be enabled or disabled by software to allow or prevent the address bus from receiving a signal from A20. It is set to non-passing for the execution of older programs which rely on the wrap-around. At boot time, the [[BIOS]] first enables Gate-A20 when counting and testing all of the system's memory, and disables it before transferring control to the operating system.
+
+Originally, the logic gate was a gate connected to the [[Intel 8042]] keyboard controller. Controlling it was a relatively slow process. Other methods have since been added to allow for more efficient multitasking of programs which require this wrap-around with programs that access all of the system's memory. There was at first a variety of methods, but eventually the industry settled on the PS/2 method of using a bit in port 92h to control the A20 line.
+
+Disconnecting A20 would not wrap '''all''' memory accesses above 1 MiB, just those in the 1 MiB-2 MiB, 3 MiB-4 MiB, 5 MiB-6 MiB, etc. ranges. [[Real mode]] software only cared about the area slightly above 1 MiB, so Gate-A20 was enough.
+
+Enabling the Gate-A20 line is one of the first steps a [[protected mode]] [[x86]] [[operating system]] does in the bootup process, often before control has been passed onto the kernel from the [[booting|bootstrap]] (in the case of Linux, for example).
+
+[[Virtual 8086 mode]], introduced with the [[Intel 80386]], allows the A20 wrap-around to be simulated by using the [[virtual memory]] facilities of the processor: physical memory may be mapped to multiple virtual addresses thus allowing the memory mapped at first mebibyte of virtual memory may be mapped again in the second mebibyte of virtual memory. The operating system may intercept changes to Gate A20 and make corresponding changes to the virtual memory address space, which also makes irrelevant the efficiency of Gate-A20 toggling.
+
+==A20 handler==
+The '''A20 handler''' is [[IBM PC]] [[memory manager]] software controlling access to the [[high memory area]] (HMA). [[Extended memory]] managers usually provide this functionality. A20 handlers are named after the 21st address line of the microprocessor, the A20 line.
+
+In MS-DOS, [[high memory area]] managers, such as [[HIMEM.SYS]] has the "extra task" of managing A20. [[HIMEM.SYS]] provided an [[API]] for opening/closing A20. DOS itself could utilize the area for some of its storage needs, thereby freeing up more conventional memory for programs. This functionality was enabled by the "DOS=HIGH" directive in the [[CONFIG.SYS]] configuration file.
+
+==A20 gate==
+Controlling the A20 line was an important feature at one stage in the growth of the IBM PC architecture, as it added access to an additional 65520 bytes (64 KiB - 16 B) of memory in [[real mode]] without dramatic software changes.
+
+In what was arguably a "hack", the A20 gate was originally part of the keyboard controller on the motherboard, which could open/close it depending on what behaviour was desired. <ref> Tom Shanley, Don Anderson, John Swindle, ''
+ISA system architecture'', Addison-Wesley, 1995, ISBN 0-201-40996-8, pp.79-80 </ref> 
+The A20 gate is still present on all modern PC's and the gate is initially closed right after boot. Modern [[protected mode]] operating systems typically open the A20 gate early during the boot process and never close it again. These operating systems do not have the compatibility reasons for keeping it closed and they gain access to the full range of physical addresses available by opening it.
+
+The [[Intel 80486]] and [[Pentium]] added a special pin named ''A20M#'', which when asserted low forces bit 20 of the physical address to be zero for all on-chip cache or external memory accesses. This enhancement is mostly significant for mainboard manufacturers, because it makes parts of the external Gate A20 circuitry unnecessary. Software still needs to manipulate the gate and must still deal with external peripherals (the [[chipset]]) for that. <ref> Tom Shanley,''Protected mode software architecture'', Taylor & Francis, 1996 ,ISBN 0-201-55447-X, page  60 </ref>
+
+
+{{FOLDOC}}
+
+[[Category:X86 memory management]]
+[[Category:Memory expansion]]
+
+
+==See also==
+* [[Computer storage]]
+* [[High memory area]] (HMA)
+
+==References==
+<references/>
+==External links==
+*[http://www.win.tue.nl/~aeb/linux/kbd/A20.html A20 - a pain from the past]
+
+[[Category:X86 architecture]]
+[[Category:IBM PC compatibles]]
+
+[[de:A20-Gate]]
+[[it:Linea A20]]
+[[nl:A20 (informatica)]]
+[[zh:A20总线]]</body> </html>

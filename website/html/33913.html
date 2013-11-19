@@ -1,0 +1,42 @@
+<html> <head> <title>Sentinel node</title></head><body>{{about|the computer programming idiom|the body part|Sentinel lymph node}}
+A sentinel node is a [[programming idiom]] used to speed up some operations on [[linked list]]s and [[Tree (data structure)|trees]]. It refers to a special type of object that represents the end of a [[data structure]]. Linked list data structures may use a sentinel object to indicate the end of a [[list (computing)|list]]. Similarly, a tree data structure can use a sentinel to indicate a [[node (computer science)|node]] without children. It is not always necessary to use a sentinel node; often [[null pointer|null]] is used instead.
+
+== Example ==
+Below is an example of a sentinel node in a [[binary tree]] implementation:<ref>http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx</ref>
+
+<source lang="c">
+struct jsw_node {
+  int data;
+  int level;
+  struct jsw_node *link[2];
+};
+
+struct jsw_node *nil;
+
+int jsw_init ( void )
+{
+  nil = malloc ( sizeof *nil );
+  if ( nil == NULL )
+    return 0;
+
+  nil->level = 0;
+  nil->link[0] = nil->link[1] = nil;
+
+  return 1;
+}
+</source>
+
+As nodes that would normally link to NULL now link to "nil" (including nil itself), it removes the need for an expensive branch operation to check for NULL. NULL itself is known as a ''[[sentinel value]]'', a different approach to the same problem.
+
+Sentinel nodes are often used when implementing [[linked list]]s.
+
+==References==
+<references/>
+
+{{Compu-prog-stub}}
+
+[[Category: Programming idioms]]
+[[Category:Linked lists]]
+[[Category:Trees (structure)]]
+
+[[pl:Wartownik]]</body> </html>

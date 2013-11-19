@@ -1,0 +1,139 @@
+<html> <head> <title>Micro Channel architecture</title></head><body>{{Infobox computer hardware bus
+| name        = MCA
+| fullname    = Micro Channel architecture
+| image       = MCA IBM XGA-2.jpg
+| alt         = MCA graphics card
+| caption     = 32-bit Graphics Card IBM XGA-2
+| invent-date = 1987
+| invent-name = [[International Business Machines|IBM]]
+| super-name  = [[Conventional PCI|PCI]]
+| super-date  = 1993
+| replaces    = [[Industry Standard Architecture|ISA]]
+| width       = 32
+| numdev      = 
+| speed       = 10 MHz
+| style       = p
+| hotplug     = no
+| external    = no
+}}
+
+'''Micro Channel Architecture''' was a [[proprietary hardware|proprietary]] [[16-bit|16-]] or [[32-bit]] [[parallel communications|parallel]] [[computer bus]] created by [[International Business Machines|IBM]] in the 1980s for use on their new [[IBM Personal System/2|PS/2]] computers.
+
+== History ==
+Micro-Channel architecture was designed by IBM engineer [[Chet Heath]] and first introduced on the high-end PS/2 series of machines in 1987; it slowly spread to IBM's entire computer line.<ref>http://www-03.ibm.com/ibm/history/exhibits/pc25/pc25_tenyears.html</ref>
+
+[[NCR Corporation]] also designed and built high-performance personal computer, workstation and server platforms supporting MCA, including their own MCA-based logic componentry, including SCSI, graphics, networking, and audio.
+
+In 1988 [[Intel]] made an i82310 MCA chipset.
+
+For a time, MCA could be found in the PS/2, [[RS/6000]], [[AS/400]], and even some of the [[System/370]] [[Mainframe computer|mainframes]]. However, most of these systems later were redesigned to incorporate [[Peripheral Component Interconnect|PCI]]. MCA is no longer used in new designs.
+
+== Why the interface was created ==
+=== Overview of the technology issues of that time ===
+Micro Channel was an attempt to address, once and for all, the problems that had come to plague the PC bus (later known as [[Industry Standard Architecture|ISA]]).
+
+The principal design problems of ISA were:
+* A slow bus speed.
+* A limited number of interrupts, fixed in hardware.
+* A limited number of I/O device addresses, also fixed in hardware
+* Hardwired and complex configuration with no conflict resolution.
+* Poor grounding and power distribution.
+* Undocumented bus interface standards that varied between systems and manufacturers.
+
+Most of the problems were not a big issue in the early days of IBM PC computers, but came to the surface as the range of tasks and peripherals, and number of manufacturers for PCs grew.
+
+=== ISA design issues ===
+Another problem for the IBM designers was that the original ISA bus design was deeply linked to the [[Central processing unit|CPU]] architecture of the 80x86 chip family, principally the
+* [[Intel 8088]]
+* [[Intel 8086]]
+* [[Intel 80286]]
+
+Use of the ISA bus outside of machines employing the 80x86 cpu family was rare.  Notable non-x86 hardware that used the ISA bus include the [[IBM RT/PC]] and [[BeBox]].
+
+IBM was already investigating the use of [[RISC]] processors in desktop machines, and could, in theory, save considerable money if a single well-documented bus could be used across their entire computer lineup.
+
+=== Marketshare issues ===
+A final problem was that IBM had lost control of the hardware market for PCs. Anyone could create an ISA card and plug it into any ISA bus-equipped computer. It was thought that by creating a new standard, IBM would regain control of standards via the required licencing. As patents can take three years or more to be granted, however, only those relating to ISA could be licensed when MCA was announced. Patents on important Micro Channel features, such as Plug and Play automatic configuration, were not granted to IBM until after PCI had replaced MCA in the marketplace.
+
+== Sound Cards ==
+Compared to [[sound card]]s produced for ISA and PCI computers, very few MCA sound cards were ever produced. Some examples include:
+*[[Ad_Lib,_Inc.#AdLib_Gold|AdLib Gold 2000MC]]<ref>http://www.computercraft.com/docs/ps2faq54.shtml</ref>
+*[[ChipChat]] Sound-16<ref>http://www.chipchat.com/mca/SoundCard/</ref>
+*[[ChipChat]] Sound-32<ref>http://www.chipchat.com/mca/SoundCard/</ref>
+*[[Creative Labs]] [[Sound Blaster]] MCV, [[Stock-keeping_unit|SKU]]:CT5320 <ref>http://www.ask.asia.creative.com/wwenglish/general/Products_list_audio.htm</ref>
+*[[Creative Labs]] [[Sound Blaster]] Pro 2 MCV, [[Stock-keeping_unit|SKU]]:CT5330 <ref>http://www.ask.asia.creative.com/wwenglish/general/Products_list_audio.htm</ref>
+*[[IBM]] Audiovation, [[Stock-keeping_unit|SKU]]: 92G7463, 92G7464 <ref>http://ohlandl.ipv7.net/sound/Audiovation.html</ref>
+*[[Roland Corporation|Roland]] MPU-IMC <ref>http://www.computercraft.com/docs/ps2faq54.shtml</ref>
+
+== Design features ==
+[[Image:MCA NIC IBM 83X9648.jpg|thumb|280px|16-bit Network Interface Card IBM 83X9648.]] 
+
+MCA was primarily a 32-bit bus, but the system also supported a 16-bit mode designed to lower the cost of connectors and logic in Intel-based machines like the IBM PS/2.
+
+The situation was never that simple, however, as both the 32-bit and 16-bit versions initially had a number of additional optional connectors for memory cards which resulted in a huge number of physically incompatible cards for bus attached memory. In time, memory moved to the CPU's local bus, thereby eliminating the problem. On the upside, signal quality was greatly improved as MCA added ground and power pins and arranged the pins to minimize interference, a ground or a supply was thereby located within 3 pins of every signal.
+
+Another connector extension was included for graphics cards. This extension was used for analog output from the video card, which was then routed through the system board to the system's own monitor output. The advantage of this was that Micro Channel system boards could have a basic VGA or MCGA graphics system on board, and higher level graphics (XGA or other accelerator cards) could then share the same port. The add-on cards were then able to be free of 'legacy' VGA modes, leveraging the on-board graphics system when needed, and allowing a single system board connector for graphics that could be upgraded.
+
+MCA cards also featured a unique, 16-bit software-readable ID, which formed the basis of an early plug and play system.    The BIOS and/or OS can read IDs, compare against a list of known cards, and perform automatic system configuration to suit. This led to boot failures whereby an older [[BIOS]] would not recognize a newer card, causing an error at startup. In turn, this required IBM to release updated Reference Disks (The CMOS Setup Utility) on a regular basis. A fairly complete list of known IDs is available (see External links section). To accompany these reference disks were ADF files which were read by the CMOS which in turn provided configuration information for the Card. The ADF was a simple text file, containing information about the card's Memory addressing and Interrupts.
+
+== Data transmission features ==
+The basic data rate of MCA was increased from ISA's 8 MHz to 10 MHz. This may have been a modest increase in terms of clock rate, but the greater bus width, coupled with a dedicated bus controller that utilized [[burst mode]] transfers, meant that effective throughput was up to five times faster than ISA. For faster transfers the [[address bus]] could be reused for data, further increasing the effective width of the bus. Around 40 MB/s of throughput was observed (the theoretical maximum for MCA was 66 MB/s).
+
+With bus mastering, each card could talk to another directly.  This allowed performance that was independent of the CPU.  One potential drawback of multi-master design was the possible collisions when more than one card would try to bus master, but MCA included an arbitration feature to correct for these situations, and also allowed a master to use a ''[[burst-mode]]''. MCA cards had complete control for up to 12 milliseconds. This was long enough to permit the maximum number of other devices on the bus to buffer inbound data from over-runnable devices like tape and communications.
+
+Multiple bus-master support and improved arbitration means that several such devices could coexist and share the system bus. MCA bus-master-capable devices can even use the bus to talk directly to each other (peer to peer) at speeds faster than the system CPU, without any other system intervention. In theory, MCA systems could be expanded, like mainframes, with only the addition of intelligent masters, without periodic need to upgrade the central processor. 
+
+Arbitration enhancement ensures better system throughput, since control is passed more efficiently. Advanced interrupt handling refers to the use of level sensitive interrupts to handle system requests.  Rather than a dedicated interrupt line, several lines can be shared to provide more possible interrupts, addressing the ISA-bus interrupt line conflict problems.
+
+All interrupt request signals were "public" on MCA permitting any card on the bus to function as an I/O processor for direct service of I/O device interrupts. ISA had limited all such processing to  just the system's CPU. Likewise, bus master request and grant signals were public, such that bus attached devices could monitor latency to control internal buffering for I/O processors. These features were not adopted for PCI, requiring all I/O support to come uniquely from the system board processor. 
+
+The final major MCA improvement was '''POS''', the ''Programmable Option Select'', which allowed all setup to take place in software. This feature is taken for granted now, but at the time setup was a huge chore for ISA systems. POS was a simple system that included device IDs in firmware, which the drivers in the computer were supposed to interpret. This software-configuration is known as ''[[plug-and-play]]'' today.
+
+== Why MCA was not widely adopted ==
+Although MCA was a huge technical improvement over ISA, its introduction and marketing by IBM was poorly handled. IBM did not develop a peripheral card market for MCA, as it had done for the PC. It did not offer a number of peripheral cards that utilized the advanced bus-mastering and I/O processing capabilities of MCA. Absent a pattern, few peripheral card manufacturers developed such designs on their own. Consequently customers were not provided many advanced capabilities to justify the purchase of comparatively more expensive MCA systems and opted for the plurality of cheaper ISA designs offered by IBM's competition. 
+
+IBM used MCA for all but the lowest end machines, as did [[NCR Corporation|NCR]], but other manufacturers such as [[Apricot Computers|Apricot]], [[Dell]], [[Tandy Corporation|Tandy]], [[RM plc|Research Machines]] and [[Olivetti]] who adopted it used it for only part of their PC range. 
+IBM had patents on MCA system features and required MCA system manufacturers to pay a licence fee.
+As a reaction to this, in late 1988 the "[[Gang of Nine]]", led by [[Compaq]], announced a rival bus - [[Extended Industry Standard Architecture|EISA]]. Offering similar performance benefits, it had the advantage of being able to accept older [[XT bus architecture|XT]] and [[Industry Standard Architecture|ISA]] boards. 
+
+While [[Extended Industry Standard Architecture|EISA]] and MCA battled it out in the server arena, the desktop PC largely stayed with [[Industry Standard Architecture|ISA]] up until the arrival of [[Peripheral Component Interconnect|PCI]], although the [[VESA Local Bus]], an acknowledged stopgap, was briefly popular. 
+
+The failure of MCA adoption, and the broader industry support for [[Extended Industry Standard Architecture|EISA]], was made very clear when IBM themselves produced some EISA bus servers.<ref>{{cite web |url=http://www-306.ibm.com/common/ssi/fcgi-bin/ssialias?infotype=an&subtype=ca&appname=redbooks&htmlfid=897/ENUS196-134 |title=IBM PC Server 520 -- New 166MHz SMP Models and Feature Enhancements |publisher=IBM |date=June 18, 1996 |accessdate=2010-01-31}}</ref>
+
+MCA disappeared within a few years after the introduction of the [[Peripheral Component Interconnect|PCI]] bus, which had much wider industry support. Intel's establishment of a PCI Special Interest Group (PCI SIG) among card manufacturers and system developers encouraged the development of the PCI market and standardized the technical implementation of PCI.
+
+== See also ==
+* [[Industry Standard Architecture]]  (ISA)
+* [[Extended Industry Standard Architecture]] (EISA)
+* [[NuBus]]
+* [[VESA Local Bus]] (VESA)
+* [[Peripheral Component Interconnect]] (PCI)
+* [[Accelerated Graphics Port]] (AGP)
+* [[PCI Express]] (PCIe)
+* [[List of device bandwidths]]
+
+==References==
+{{reflist}}
+
+== External links ==
+* [http://www.mcamafia.de/ MCA Enthusiasts Page]
+* [http://pinouts.ru/Slots/mca_32bit_pinout.shtml MCA connector pinout and signals]
+* [http://members.datafast.net.au/dft0802/mca.htm Craig Hart's freeware MCA card IDs list]
+
+{{Computer-bus}}
+
+[[Category:Computer buses]]
+[[Category:IBM personal computers]]
+
+[[bs:MCA]]
+[[de:Micro Channel Architecture]]
+[[es:Bus MCA]]
+[[fr:Micro Channel Architecture]]
+[[hr:Micro Channel Architecture]]
+[[id:Bus MCA]]
+[[ja:Micro Channel Architecture]]
+[[pl:MCA]]
+[[pt:Micro Channel architecture]]
+[[ru:Micro Channel Architecture]]
+[[fi:MCA]]
+[[sv:Micro Channel Architecture]]</body> </html>

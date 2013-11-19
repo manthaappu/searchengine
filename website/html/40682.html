@@ -1,0 +1,81 @@
+<html> <head> <title>XML Catalog</title></head><body>[[XML]] documents typically refer to external entities, for example the public and/or system ID for the [[Document Type Definition]]. These external relationships are expressed using URIs, typically as URLs.
+
+However, if they are absolute URLs, they only work when your network can reach them. Relying on remote resources makes XML processing susceptible to both planned and unplanned network downtime.
+
+Conversely, if they are relative URLs, they're only useful in the context where they were initially created. For example, the URL "../../xml/dtd/docbookx.xml" will usually only be useful in very limited circumstances.
+
+One way to avoid these problems is to use an entity resolver (a standard part of [[Simple API for XML|SAX]]) or a URI Resolver (a standard part of [[JAXP]]). A resolver can examine the URIs of the resources being requested and determine how best to satisfy those requests. The XML catalog is a document describing a mapping between external entity references and locally-cached equivalents.
+
+==Example Catalog.xml==
+The following simple catalog shows how one might provide locally-cached DTDs for an XHTML page validation tool, for example.
+<source lang=xml> 
+  <?xml version="1.0"?>
+  <!DOCTYPE catalog
+    PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN"
+           "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+
+  <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+           prefer="public">
+
+    <public publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
+            uri="dtd/xhtml1/xhtml1-strict.dtd"/>
+
+    <public publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+            uri="dtd/xhtml1/xhtml1-transitional.dtd"/>
+
+    <public publicId="-//W3C//DTD XHTML 1.1//EN"
+            uri="dtd/xhtml11/xhtml11-flat.dtd"/>
+
+  </catalog>
+</source>
+
+This catalog makes it possible to resolve <tt>-//W3C//DTD XHTML 1.0 Strict//EN</tt> to the local URI <tt>dtd/xhtml1/xhtml1-strict.dtd</tt>. Similarly, it provides local URIs for two other public IDs.
+
+Note that the document above includes a DOCTYPE - this may cause the parser to attempt to access the system ID URL for the DOCTYPE (i.e. <tt>http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd</tt>) before the catalog resolver is fully functioning, which is probably undesirable. To prevent this, simply remove the DOCTYPE declaration.
+
+The following example shows this, and also shows the equivalent <tt><system/></tt> declarations as an alternative to <tt><public/></tt> declarations.
+
+<source lang=xml>
+  <?xml version="1.0"?>
+  <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+    <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+            uri="dtd/xhtml1/xhtml1-strict.dtd"/>
+
+    <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+            uri="dtd/xhtml1/xhtml1-transitional.dtd"/>
+
+    <system systemId="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+            uri="dtd/xhtml11/xhtml11-flat.dtd"/>
+
+  </catalog>
+</source>
+
+==Using a Catalog - Java SAX Example==
+Catalog resolvers are available for various programming languages. The following example shows how, in Java, a [[Simple API for XML|SAX]] parser may be created to parse some input source in which the <tt>org.apache.xml.resolver.tools.CatalogResolver</tt> is used to resolve external entities to locally-cached instances. This resolver originates from [[Apache Software Foundation|Apache]] [[Xerces]] but is now included with the Sun Java runtime.
+
+Simply create a <tt>SAXParser</tt> in the normal way, using factories. Obtain the XML reader and set the entity resolver to the standard one (<tt>CatalogResolver</tt>) or another of your own.
+
+<source lang=java>
+  final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+  final XMLReader reader = saxParser.getXMLReader();
+
+  final ContentHandler handler = ...;
+  final InputSource input = ...;
+
+  reader.setEntityResolver( new CatalogResolver() );
+  reader.setContentHandler( handler );
+  reader.parse( input );
+</source>
+
+It is important to call the <tt>parse</tt> method on the reader, ''not'' on the SAX parser.
+
+==See also==
+*[http://www.oasis-open.org/committees/download.php/14810/xml-catalogs.pdf XML Catalogs. OASIS Standard, Version 1.1. 07-October-2005.]
+*[http://java.sun.com/webservices/docs/1.6/jaxb/catalog.html XML Entity and URI Resolvers], Sun
+*[http://xmlcatmgr.sourceforge.net/ XML Catalog Manager] project on Sourceforge
+*[http://xmlcatalog.net/ XML Catalogs for .NET and Mono]
+
+[[Category:XML]]
+
+[[de:XML Catalogs]]</body> </html>

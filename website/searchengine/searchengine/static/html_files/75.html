@@ -1,0 +1,22 @@
+<html> <head> <title>26-bit</title></head><body>{{N-bit|26|}}
+
+In the [[ARM Limited|ARM]] [[ARM_architecture|processor architecture]], '''26-bit''' refers to the design used in the original ARM processors, where the [[Program Counter]] ('''PC''') and [[Status_register|Processor Status Register]] ('''PSR''') were combined into one 32-bit [[Processor_registers|register]] (R15), the status flags filling the high 6 bits and the Program Counter taking up the lower 26 bits.
+
+In fact, because the program counter is always word-aligned the lowest two bits are always zero which allowed the designers to reuse these two bits to hold the processor's mode bits too. The four modes allowed were USR26, SVC26, IRQ26, FIQ26; contrast this with the 32 possible modes available when the program status was separated from the program counter in more recent [[ARM Architecture|ARM architectures]].
+
+This design enabled more efficient [[Computer_program|program]] execution, as the Program Counter and status flags could be saved and restored with a single operation. This resulted in faster [[subroutine]] calls and [[interrupt]] response than traditional designs, which would have to do two register loads or saves when calling or returning from a subroutine.
+
+==History==
+
+Despite being [[32-bit]] internally, processors prior to the ARM6 had only a 26-bit PC and [[address bus]], and were consequently limited to 64 MB of addressable [[Random_Access_Memory|memory]]. This was still a vast amount of memory at the time, but because of this limitation, architectures since have included various steps away from the original 26-bit design.
+
+The ARM6 introduced a 32-bit PC and separate PSR, as well as a 32-bit address bus, allowing 4 GB of memory to be addressed. The change in the PC/PSR layout caused incompatibility with code written for previous architectures, so the processor also included a 26-bit compatibility mode which used the old PC/PSR combination. The processor could still address 4 GB in this mode, but could not [[Execution_(computers)|execute]] anything above address 3FFFFFC (64 MB). This mode was used by [[RISC OS]] running on the [[Risc_PC|Acorn Risc PC]] to utilise the new processors while retaining compatibility with existing software.
+
+More recent ARM architectures such as [[Intel]]'s [[XScale]] have dropped the 26-bit mode altogether.
+
+==External links==
+*[http://web.archive.org/web/20070809230809/http://www.arm.com/pdfs/Apps11vC.html Differences Between ARM6 and Earlier ARM Processors]
+*[http://www.iyonix.com/32bit/download/32bit_dev.pdf "Using the Acorn C/C++ Development Environment to write 32-bit RISC OS software"] - Details on the architectural changes and converting code between 26-bit and 32-bit.
+* http://www.heyrick.co.uk/assembler/32bit.html - Information on converting assembler to 32-bit
+
+[[Category:ARM architecture]]</body> </html>

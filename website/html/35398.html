@@ -1,0 +1,92 @@
+<html> <head> <title>Splitting circle method</title></head><body>In [[mathematics]], the '''splitting circle method''' is a [[numerical analysis|numerical algorithm]] for the numerical factorization of a [[polynomial]] and, ultimately, for finding its [[complex number|complex]] [[Root of a function|roots]]. It was introduced by [[Arnold Schönhage]] in his 1982 paper ''The fundamental theorem of algebra in terms of computational complexity'' (Technical report, Mathematisches Institut der Universität Tübingen). A revised algorithm was presented by [[Victor Pan]] in 1998. An implementation was provided by [[Xavier Gourdon]] in 1996 for the [[Magma computer algebra system|Magma]] and [[PARI/GP]] computer algebra systems.
+
+==General description==
+
+The fundamental idea of the '''splitting circle method''' is to use methods of [[complex analysis]], more precisely the [[residue theorem]], to construct factors of polynomials. With those methods it is possible to construct a factor of a given polynomial <math>  p(x)=x^n+p_{n-1}x^{n-1}+\cdots+p_0  </math> for any region of the complex plane with a piecewise smooth boundary. Most of those factors will be trivial, that is constant polynomials. Only regions that contain roots of ''p(x)'' result in nontrivial factors that have exactly those roots of ''p(x)'' as their own roots, preserving multiplicity.
+
+In the numerical realization of this method one uses disks ''D''(''c'',''r'') (center ''c'', radius ''r'') in the complex plane as regions. The boundary circle of a disk splits the set of roots of ''p''(''x'') in two parts, hence the name of the method. To a given disk one computes approximate factors following the analytical theory and refines them using [[Newton's method]]. To avoid numerical instability one has to demand that all roots are well separated from the boundary circle of the disk. So to obtain a good splitting circle it should be embedded in a root free annulus ''A''(''c'',''r'',''R'') (center ''c'', inner radius ''r'', outer radius ''R'') with a large relative width ''R/r''.
+
+Repeating this process for the factors found, one finally arrives at an approximative factorization of the polynomial at a required precision. The factors are either linear polynomials representing well isolated zeros or higher order polynomials representing clusters of zeros.
+
+==Details of the analytical construction==
+
+The [[Newton's identities]] are a bijective relation between the [[elementary symmetric polynomial]]s of a tuple of complex numbers and its sums of powers. Therefore, it is possible to compute the coefficients of a polynomial
+
+:<math>p(x)=x^n+p_{n-1}x^{n-1}+\cdots+p_0=(x-z_1)\cdots(x-z_n)</math>
+
+(or of a factor of it) from the sums of powers of its zeros
+
+:<math>t_m=z_1^m+\cdots+z_n^m</math>, <math>m=0,1,\dots,n</math>
+
+by solving the triangular system that is obtained by comparing the powers of ''u'' in the following identity of [[formal power series]]
+
+: <math>a_{n-1}+2\,a_{n-2}\,u+\cdots+(n-1)\,a_1\,u^{n-2}+n\,a_0\,u^{n-1}</math>
+
+: <math> = -(1+a_{n-1}\,u+\cdots+a_1\,u^{n-1}+a_0\,u^n)\cdot(t_1+t_2\,u+t_3\,u^2+\dots+t_n\,u^{n-1}+\cdots).</math>
+
+If <math>G\subset\mathbb C</math> is a domain with piecewise smooth boundary ''C'' and if the zeros of ''p''(''x'') are pairwise distinct and not on the boundary ''C'', then from the [[residue theorem]] of residual calculus one gets
+
+:<math>
+\frac1{2\pi\,i}\oint_C \frac{p'(z)}{p(z)}z^m\,dz
+=\sum_{z\in G:\,p(z)=0}\frac{p'(z)z^m}{p'(z)}
+=\sum_{z\in G:\,p(z)=0}z^m.
+</math>
+
+The identity of the left to the right side of this equation also holds for zeros with multiplicities. By using the Newton identities one is able to compute from those sums of powers the factor
+
+:<math>f(x):=\prod_{z\in G:\,p(z)=0}(x-z)</math>
+
+of ''p''(''x'') corresponding to the zeros of ''p''(''x'') inside ''G''. By polynomial division one also obtains the second factor ''g''(''x'') in ''p''(''x'') = ''f''(''x'')''g''(''x'').
+
+The commonly used regions are circles in the complex plane. Each circle gives raise to a split of the polynomial ''p''(''x'') in factors ''f''(''x'') and ''g''(''x''). Repeating this procedure on the factors using different circles yields finer and finer factorizations. This recursion stops after a finite number of proper splits with all factors being nontrivial powers of linear polynomials.
+
+The challenge now consists in the conversion of this analytical procedure into a numerical algorithm with good running time. The integration is approximated by a finite sum of a numerical integration method, making use of the [[fast Fourier transform]] for the evaluation of the polynomials ''p''(''x'') and ''p''<nowiki>'</nowiki>(''x''). The polynomial ''f''(''x'') that results will only be an approximate factor. To ensure that its zeros are close to the zeros of ''p'' inside ''G'' and only to those, one must demand that all zeros of ''p'' are far away from the boundary ''C'' of the region ''G''.
+
+==Basic numerical observation==
+
+(Schönhage 1982) Let <math>p\in\mathbb C[X]</math> be a polynomial of degree ''n'' has ''k'' zeros inside the circle of radius ''1/2'' and the remaining ''n-k'' zeros outside the circle of radius ''2''. With ''N=O(k)'' large enough, the approximation of the contour integrals using ''N'' points results in an approximation <math>f_0</math> of the factor ''f'' with error
+:<math>\|f-f_0\|\le 2^{2k-N}\,nk\,100/98</math>,
+where the norm of a polynomial is the sum of the moduli of its coefficients. 
+
+Since the zeros of a polynomial are continuous in its coefficients, one can make the zeros of <math>f_0</math> as close as wanted to the zeros of ''f'' by choosing ''N'' large enough. However, one can improve this approximation faster using a Newton method. Division of ''p'' with remainder yields an approximation <math>g_0</math> of the remaining factor ''g''. Now
+:<math>p-f_0g_0=(f-f_0)g_0+(g-g_0)f_0+(f-f_0)(g-g_0)</math>,
+so discarding the last second order term one has to solve <math>p-f_0g_0=f_0\Delta g+g_0\Delta f</math> using any variant of the extended [[euclidian algorithm]] to obtain the incremented approximations <math>f_1=f_0+\Delta f</math> and <math>g_1=g_0+\Delta g</math>. This is repeated until the increments are zero relative to the chosen precision.
+
+==Graeffe iteration==
+
+The crucial step in this method is to find an annulus of relative width ''4'' in the complex plane that contains no zeros of ''p'' and contains approximately as many zeros of ''p'' inside as outside of it. Any annulus of this characteristic can be transformed, by translation and scaling of the polynomial, into the annulus between the radii 1/2 and 2 around the origin. But, not every polynomial admits such a splitting annulus. 
+
+To remedy this situation, the [[Graeffe iteration]] is applied. It computes a sequence of polynomials 
+
+:<math>p_0=p,\qquad p_{j+1}(x)=(-1)^{\deg p}p(\sqrt x)\,p(-\sqrt x),</math>
+
+where the roots of <math>p_j(x)</math> are the <math>2^j</math>-th dyadic powers of the roots of the initial polynomial ''p''. By splitting <math>p_j(x)=e(x)+x\,o(x)</math> into even and odd parts, the succeeding polynomial is obtained by purely arithmetic operations as <math>p_{j+1}(x)=(-1)^{\deg p}(e(x)^2-x\,o(x)^2)</math>. The ratios of the absolute moduli of the roots increase by the same power <math>2^j</math> and thus tend to infinity. Choosing ''j'' large enough one finally finds a splitting annulus of relative width 4 around the origin.
+
+The approximate factorization of <math>p_j(x)\approx f_j(x)\,g_j(x)</math> is now to be lifted back to the original polynomial. To this end an alternation of Newton steps and [[Padé approximant|Pade approximation]]s is used. It is easy to check that
+:<math>\frac{p_{j-1}(x)}{g_j(x^2)}\approx \frac{f_{j-1}(x)}{g_{j-1}(-x)}</math>
+holds. The polynomials on the left side are known in step ''j'', the polynomials on the right side can bo obtained as [[Padé approximant]]s of the corresponding degrees for the power series expansion of the fraction on the left side.
+
+==Finding a good circle==
+
+Making use of the Graeffe iteration and any known estimate for the absolute value of the largest root one can find estimates ''R'' of this absolute value of any precision. Now one computes estimates for the largest and smallest distances <math>R_j>r_j>0</math> of any root of ''p''(''x'') to any of the five center points 0, 2''R'', &minus;2''R'', 2''Ri'', &minus;2''Ri'' and selects the one with the largest ratio <math>R_j/r_j</math> between the two. By this construction it can be guaranteed that <math>R_j/r_j>e^{0{.}3}\approx 1.35</math> for at least one center. For such a center there has to be a root-free annulus of relative width <math>\textstyle e^{0{.}3/n}\approx 1+\frac{0{.}3}{n}</math>. After <math>\textstyle 3+\log_2(n)</math> Graeffe iterations, the corresponding annulus of the iterated polynomial has a relative width greater than 11 > 4, as required for the initial splitting described above (see Schönhage (1982)). After <math>\textstyle 4+\log_2(n)+\log_2(2+\log_2(n))</math> Graeffe iterations, the corresponding annulus has a relative width greater than <math>\textstyle 2^{13{.}8}\cdot n^{6{.}9}>(64\cdot n^3)^2</math>, allowing a much simplified initial splitting (see Malajovich/Zubelli (1997))
+
+To locate the best root-free annulus one uses a consequence of the [[Rouché theorem]]: For ''k'' = 1, ..., ''n'' &minus; 1 the polynomial equation
+
+:<math>\,0=\sum_{j\ne k}|p_j|u^j-|p_k|u^k,</math>
+
+''u'' > 0, has, by [[Descartes' rule of signs]] zero or two positive roots <math>u_k<v_k</math>. In the latter case, there are exactly ''k'' roots inside the (closed) disk <math>D(0,u_k)</math> and <math>A(0,u_k,v_k)</math> is a root-free (open) annulus.
+
+==References==
+* Schönhage, Arnold (1982): [http://www.informatik.uni-bonn.de/~schoe/fdthmrep.ps.gz ''The fundamental theorem of algebra in terms of computational complexity.''] Preliminary Report, Math. Inst. Univ. Tübingen (1982), 49 pages. (ps.gz)
+* {{cite book|last=Gourdon|first=Xavier|title=Combinatoire, Algorithmique et Geometrie des Polynomes|publisher=Ecole Polytechnique|location= Paris|year=1996|url=http://algo.inria.fr/gourdon/thesis.html}}
+* {{cite journal|author=V. Y. Pan|title=Optimal and nearly optimal algorithms for approximating polynomial zeros|journal=Comput. Math. Appl.|volume=31|year=1996|pages=97–138|doi=10.1016/0898-1221(96)00080-6}}
+* {{cite journal|author=V. Y. Pan|title=Solving a polynomial equation: Some history and recent progresses|journal=SIAM Review|volume=39|year=1997|pages=187–220|doi=10.1137/S0036144595288554|issue=2}}
+* {{cite journal|author=Gregorio Malajovich and Jorge P. Zubelli|title=A fast and stable algorithm for splitting polynomials|journal=Computers & Mathematics with Applications|volume=33 No 3|pages=1–23|year=1997|url=http://www.labma.ufrj.br/~gregorio/papers.php#splittin|doi=10.1016/j.jco.2007.09.003}}
+* Pan, Victor (1998). [http://algo.inria.fr/seminars/sem97-98/pan.html ''Algorithm for Approximating Complex Polynomial Zeros'']
+* Pan, Victor (2002). [http://comet.lehman.cuny.edu/vpan/pdf/JSCOptimal.pdf ''Univariate Polynomials: Nearly Optimal Algorithms for Numerical Factorization and Root-finding''] 
+* Magma documentation. [http://magma.maths.usyd.edu.au/magma/htmlhelp/text598.htm#5334 Real and Complex Fields: Element Operations].
+
+[[Category:Root-finding algorithms]]
+
+[[de:Trennkreisverfahren]]
+[[fr:Méthode du cercle de séparation]]</body> </html>

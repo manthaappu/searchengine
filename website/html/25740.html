@@ -1,0 +1,117 @@
+<html> <head> <title>Named entity recognition</title></head><body>'''Named entity recognition''' (NER) (also known as '''entity identification''' and '''entity extraction''') is a subtask of [[information extraction]] that seeks to locate and classify atomic elements in text into predefined categories such as the names of persons, organizations, locations, expressions of times, quantities, monetary values, percentages, etc. 
+
+Most research on NER systems has been structured as taking an unannotated block of text, such as this one:
+
+:''Jim bought 300 shares of Acme Corp. in 2006.'' 
+
+And producing an annotated block of text, such as this one:
+
+:'''''<ENAMEX TYPE="PERSON">'''Jim'''</ENAMEX>''' bought '''<NUMEX TYPE="QUANTITY">'''300'''</NUMEX>''' shares of '''<ENAMEX TYPE="ORGANIZATION">'''Acme Corp.'''</ENAMEX>''' in '''<TIMEX TYPE="DATE">'''2006'''</TIMEX>'''''. 
+
+In this example, the annotations have been done using so-called '''ENAMEX''' tags that were developed for the [[Message Understanding Conference]] in the 1990s. 
+
+State-of-the-art NER systems for [[English language|English]] produce near-human performance. For example, the best system entering [[MUC-7]] scored 93.39% of [[Information_retrieval#F-measure|f-measure]] while human annotators scored 97.60% and 96.95%.<ref>
+Elaine Marsh, Dennis Perzanowski, "MUC-7 Evaluation of IE Technology: Overview of Results", 29 April 1998 [http://www-nlpir.nist.gov/related_projects/muc/proceedings/muc_7_proceedings/marsh_slides.pdf PDF]</ref><ref>[http://www.itl.nist.gov/iad/894.02/related_projects/muc/proceedings/muc_7_toc.html currently dead link]</ref> These algorithms had roughly twice the error rate (6.61%) of human annotators (2.40% and 3.05%).
+
+==Approaches==
+NER systems have been created that use linguistic [[formal grammar|grammar]]-based techniques as well as [[statistical model]]s. Hand-crafted grammar-based systems typically obtain better precision, but at the cost of lower recall and months of work by experienced [[Computational linguistics|computational linguists]]. Statistical NER systems typically require a large amount of manually [[annotation|annotated]] training data.
+
+==Problem domains==
+Research indicates that even state-of-the-art NER systems are brittle, meaning that NER systems developed for one domain do not typically perform well on other domains.<ref>Poibeau, Thierry and Kosseim, L. (2001) Proper Name Extraction from Non-Journalistic Texts. Proc. Computational Linguistics in the Netherlands. </ref>. Considerable effort is involved in tuning NER systems to perform well in a new domain; this is true for both rule-based and trainable statistical systems. 
+
+Early work in NER systems in the 1990s was aimed primarily at extraction from journalistic articles. Attention then turned to processing of military dispatches and reports. Later stages of the Automatic Content Extraction (ACE) evaluation also included several types of informal text styles, such as weblogs and text transcripts from conversational telephone speech conversations. Since about 1998, there has been a great deal of interest in entity identification in the [[molecular biology]], [[bioinformatics]], and medical [[natural language processing]] communities.  The most common entity of interest in that domain has been names of genes and gene products.
+
+==Named entity types==
+
+In the expression ''named entity'', the word ''named'' restricts the task to those entities for which one or many [[rigid designator]]s, as defined by [[Saul Kripke|Kripke]], stands for the referent. For instance, the ''automotive company created by Henry Ford in 1903'' is referred to as ''Ford'' or ''Ford Motor Company''. Rigid designators include proper names as well as certain natural kind terms like biological species and substances. 
+
+There is a general agreement to include [[temporal expressions]] and some numerical expressions (i.e., money, percentages, etc.) as instances of named entities in the context of the NER task. While some instances of these types are good examples of rigid designators (e.g., the year 2001) there are also many invalid ones (e.g., I take my vacations in “June”). In the first case, the year ''2001'' refers to the ''2001st year of the Gregorian calendar''. In the second case, the month ''June'' may refer to the month of an undefined year (''past June'', ''next June'', ''June 2020'', etc.). It is arguable that the named entity definition is loosened in such cases for practical reasons. The definition of the term ''named entity'' is therefore not strict and often has to be explained in the context it is used<ref>http://www.webknox.com/blog/2010/09/named-entity-definition/</ref>.
+
+At least two [[Hierarchy|hierarchies]] of named entity types have been proposed in the literature. [[BBN Technologies|BBN]] categories, proposed in 2002, is used for [[Question Answering]] and consists of 29 types and 64 subtypes.<ref>http://www.ldc.upenn.edu/Catalog/docs/LDC2005T33/BBN-Types-Subtypes.html</ref> Sekine's extended hierarchy, proposed in 2002, is made of 200 subtypes.<ref>http://nlp.cs.nyu.edu/ene/</ref>
+
+==NER evaluation forums==
+Evaluation of NER systems is critical to scientific progress of this field.
+
+Most evaluation of these systems has been performed at conferences or contests put on by government organizations, sometimes acting in concert with contractors or academics. 
+{| border="0" cellpadding="2" cellspacing="2" align="top"
+|-style="background:#bfbfbf; font-weight:bold"
+!width="350"|Conference
+!Acronym
+!Language(s)
+!Year(s)
+!Sponsor
+!Archive Site
+|-
+|[[Message Understanding Conference]]
+|MUC
+|English
+|1987-1999
+|[[DARPA]]
+| [http://www.itl.nist.gov/iaui/894.02/related_projects/muc/index.html]
+|-
+|[[Multilingual Entity Task Conference]]
+|MET
+|Chinese and Japanese
+|1998
+|US
+|[http://www-nlpir.nist.gov/related_projects/tipster/met.htm]
+|-
+|[[Automatic Content Extraction Program]]
+|ACE
+|English
+|2000-2008
+|NIST
+|[http://www.nist.gov/speech/tests/ace/]
+|-
+|[[Conference on Computational Natural Language Learning]]
+|CoNLL
+|Spanish and Dutch
+|2002-2003
+|
+|[http://www.cnts.ua.ac.be/conll/]
+|-
+|Evaluation contest for named entity recognizers in Portuguese 
+|HAREM
+|Portuguese
+|2004-2008
+|[http://www.linguateca.pt Linguateca]
+|[http://www.linguateca.pt/HAREM/]
+|-
+| Information Retrieval and Extraction Exercise
+| IREX
+| Japanese
+| 1998-1999
+| 
+| [http://portal.acm.org/citation.cfm?id=992814&dl=acm&coll=&CFID=15151515&CFTOKEN=6184618]
+|-
+| ACL Special Interest Group in Chinese
+| SIGHan
+| Chinese
+| 2006
+|
+|[http://sighan.cs.uchicago.edu/bakeoff2006/]
+|-
+|[[TAC Knowledge Base Population Evaluation]]
+|TAC/KBP
+|English
+|2009-
+|NIST
+|[http://www.nist.gov/tac/]
+|}
+
+==References==
+{{reflist}}
+
+== See also==
+[[Information extraction]]
+
+==External links==
+*[http://nlp.stanford.edu/ner/index.shtml Stanford NER] NER client tool based on Java. Uses [[Conditional random field|CRF]] algorithm.
+* [http://sites.google.com/site/khaledshaalan/publications/journal-papers/NERA_paper.pdf?attredirects=0 Named entity recognition for Arabic] - Issues and challenges in morphologically rich languages such as Arabic
+*[http://l2r.cs.uiuc.edu/~cogcomp/asoftware.php?skey=FLBJNE Illinois NER] NER system implemented in Java.
+
+[[Category:Computational linguistics]]
+[[Category:Tasks of Natural language processing]]
+[[es:Reconocimiento de nombres de entidades]]
+[[fr:Entités nommées]]
+[[ja:固有表現抽出]]</body> </html>

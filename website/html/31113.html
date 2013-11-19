@@ -1,0 +1,149 @@
+<html> <head> <title>Radeon R200</title></head><body>{{Infobox GPU
+| name = ''Radeon 8500 - 9250 Series''
+| image = 8500logo.png
+| img_w = 230px
+| codename = Chaplin
+| caption = 
+| created = Late 2001
+| entry = 9200SE
+| midrange = 9000, 9200, 9250, 8500LE/9100
+| highend = 8500
+| openglversion = 1.3
+| d3dversion = 8.1, Shader Model 1.4
+| predecessor = [[Radeon R100|Radeon 32/64, <br />Radeon 7000 series]]
+| successor = [[Radeon R300|Radeon 9500-X600 series]]
+}}
+
+{{Infobox chipset
+|Table_name=Radeon R200-based chipsets
+|CPU= Pentium M, Pentium 4-M
+|Socket=[[Socket 478]], [[Socket 479]]
+|Desktop=y
+|Value=9000 Pro IGP
+|Mainstream=9000/9100 IGP
+|Performance=9100 Pro IGP
+|Enthusiast=
+|Date=June 23, 2003<br>May 5, 2004 (9000/9100 Pro IGP)
+|Predecessor=[[Radeon R100|Radeon 300/Mobility Radeon 7000 series IGP]]
+|Successor=[[Radeon R300|Radeon 9500 - X600 Series]]
+}}
+
+The '''Radeon R200''' is the second generation of [[Radeon]] graphics chips from [[ATI Technologies]]. The architecture features [[3D computer graphics|3D acceleration]] based upon [[Microsoft Direct3D]] 8.0 and [[OpenGL|OpenGL 1.3]], a major improvement in features and performance compared to the preceding [[Radeon R100]] design. The GPU also includes [[2D computer graphics|2D GUI acceleration]], [[video]] acceleration, and multiple display outputs. "R200" refers to the development codename of the initially released GPU of the generation. It is the basis for a variety of other succeeding products.
+
+==Architecture==
+
+R200's 3D hardware consists of 4 [[Graphics pipeline#Scan conversion or rasterization|pixel pipeline]]s, each with 2 texture sampling units. It has 2 vertex shaders and a legacy Direct3D 7 [[Transform, clipping, and lighting|TCL]] unit, marketed as ''Charisma Engine II''. It is ATI's first GPU with programmable pixel and vertex processors, called ''Pixel Tapestry II'' and compliant with Direct3D 8.1. R200 has advanced memory bandwidth saving and overdraw reduction hardware called ''HyperZ II'' that consists of [[occlusion culling]] (hierarchical Z), fast [[z-buffering|z-buffer]] clear, and z-buffer compression. The GPU is capable of dual display output (''[[ATI HydraVision|HydraVision]]'') and is equipped with a video decoding engine (''[[Video Immersion|Video Immersion II]]'') with adaptive hardware [[deinterlacing]], temporal filtering, [[motion compensation]], and [[Discrete cosine transform|iDCT]].
+
+R200 introduced [[pixel shader]] version 1.4 (PS1.4), a significant enhancement to prior PS1.x specifications. Notable instructions include "phase", "texcrd", and "texld". The phase instruction allows a shader program to operate on two separate "phases" (2 passes through the hardware), effectively doubling the maximum number of texture addressing and arithmetic instructions, and potentially allowing the number of passes required for an effect to be reduced. This allows not only more complicated effects, but can also provide a speed boost by utilizing the hardware more efficiently. The "texcrd" instruction moves the texture coordinate values of a texture into the destination register, while the "texld" instruction will load the texture at the coordinates specified in the source register to the destination register.
+
+Compared to R100's 2x3 pixel pipeline architecture, R200's 4x2 design is more robust despite losing one texture unit per pipeline. Each pipeline can now address a total of 6 texture layers per pass. The chip achieves this by using a method known as 'loop-back'. Increasing the number of textures accessed per pass reduces the number of times the card is forced into multi-pass rendering.
+
+The texture filtering capabilities of R200 are also improved over its predecessor. For [[anisotropic filtering]], Radeon 8500 uses a technique similar to that used in R100, but improved with [[trilinear filtering]] and some other refinements. However, it is still highly angle-dependent and the driver sometimes forces [[bilinear filtering]] for speed. NVIDIA's [[GeForce 4 Series|GeForce 4 Ti]] series offered a more accurate anisotropic implementation, but with a greater performance impact.
+
+R200 has ATI's first implementation of a hardware-accelerated [[tessellation]] engine (a.k.a. higher order surfaces), called [[Truform]], which can automatically increase the geometric complexity of 3D models. The technology requires developer support and is not practical for all scenarios. It can undesirably round-out models. As a result of very limited adoption, ATI dropped TruForm support from its future hardware.
+
+{| width=80% align="center" border="0" cellpadding="5" cellspacing="2"
+|- style="background:#ccccff;"
+!  || DirectX 8.0<BR>''Pixel Shader 1.1'' || DirectX 8.1<BR>''Pixel Shader 1.4''
+|-
+| '''Max. Texture Inputs'''
+| align="center"| 4
+| align="center"| 6
+||
+|-
+| '''Max. Program Length'''
+| align="center"| 12 instructions<BR><font size=1>(up to 4 texture sampling, 8 color blending)</font>
+| align="center"| 22 instructions<BR><font size=1>(up to 6 texture sampling, 8 texture addressing, 8 color blending)</font>
+||
+|-
+| '''Instruction Set'''
+| align="center"| 13 address operations, 8 color operations
+| align="center"| 12 address / color operations
+||
+|-
+| '''Texture Addressing Modes'''
+| align="center"| 40
+| align="center"| virtually unlimited
+||
+|}
+
+==Performance==
+
+Radeon 8500's biggest disappointment was its early driver releases. At launch, the card's performance was below expectations and it had numerous software flaws that caused problems with games. The chip's [[anti-aliasing]] support was only functional in Direct3D and was very slow. To dampen excitement for 8500, competitor [[nVidia]] released their Detonator4 driver package on the same day as most web sites previewed the Radeon 8500. nVidia's drivers  were of better quality, and they also further boosted the [[GeForce 3]]'s performance.
+
+Several hardware review sites discovered that the performance of the Radeon 8500 in some actual game tests was lower than benchmarks reflected. For example, ATI was detecting the executable "Quake3.exe" and forcing the texture filtering quality to much lower than normally produced by the card.  [[HardOCP]] was the first hardware review web site to bring the issue to the community, and proved its existence by renaming all instances of "Quake" in the executable to "Quack."<ref>Bennett, Kyle. [http://www.hardocp.com/article.html?art=MTEx Optimizing or Cheating Radeon 8500 Drivers], Hard OCP, October 23, 2001.</ref>  The result was improved image quality, but lower performance.
+
+However, even with the Detonator4 drivers, the Radeon 8500 was able to outperform the [[GeForce 3]] (which the 8500 was intended to compete against) and in some circumstances its faster revision, the Ti500, the higher clocked derivative Nvidia had rolled out in response to the R200 project. Later, driver updates helped to further close the performance gap between the 8500 and the Ti500, while the 8500 was also significantly less expensive and offered additional multimedia features such as dual-monitor support. Though the GeForce 3 Ti200 did become the first DirectX 8.0 card to offer 128 MiB of video memory, instead of the common 64 MiB norm for high-end cards of the time, it turned out that the GeForce 3's limitations prevented it from taking full advantage of it, while the Radeon 8500 was able to more successfully exploit that potential.
+
+In early 2002, to compete with the cheaper GeForce 3 Ti200 and GeForce 4 MX 460, ATI launched the slower-clocked 8500LE (known as 9100 in Europe) which became popular with OEMs and enthusiasts due to its lower price, and overclockability to 8500 levels. Though the GeForce 4 Ti 4600 took the performance crown, it was a top line solution that was priced almost double that of the Radeon 8500 (MSRP of $350-399 versus $199 USD), so it didn't offer direct competition. With the delayed release of the potentially competitive GeForce 4 Ti 4200, plus ATI's initiative in rolling out 128 MiB versions of the 8500/LE kept the R200 line popular among the mid-high performance niche market. The greater features of the All-In-Wonder (AIW) Radeon 8500 DV and the AIW Radeon 8500 128 MB proved superior to Nvidia's Personal Cinema equivalents which used the faster GeForce 4 Ti 4200.
+
+==Implementations==
+===Radeon 8500/8500LE/9100===
+[[File:Radeon9250.JPG|thumb|Ati Radeon 9250]]
+ATI's first R200-based card was the ''Radeon 8500'', launched in October 2001. In early 2002, ATI launched the ''Radeon 8500LE'' (re-released later as the ''Radeon 9100'' in Europe), an identical chip with a lower clock speed and slower memory. Whereas the full 8500 was clocked at 275 MHz core and 275 MHz RAM, the 8500LE was clocked more conservatively at 250 MHz for the core and 200 or 250 MHz for the RAM. Both video cards were first released in 64 [[MB]] [[DDR SDRAM]] configurations; the later 128 MB Radeon 8500 boards received a small performance boost resulting from a memory [[interleave]] mode.
+
+In November 2001 was the release of the ''All-In-Wonder Radeon 8500 DV'', with 64 MB and a slower clock speed like the 8500LE. In 2002, three 128 MB cards were rolled out, the Radeon 8500, 8500LE, and the ''All-In-Wonder Radeon 8500 128 MB'', which was clocked at full 8500 speeds but had fewer video-related features than the AIW 8500 DV.
+
+===Radeon 8500XT (canceled)===
+An updated chip, the ''Radeon 8500XT'' (R250) was planned for a mid-2002 release, to compete against the [[GeForce 4]] Ti line, particularly the top line Ti 4600 (which retailed for an MSRP of $350-399 USD). Prerelease information touted a 300 MHz core and RAM clock speed for the "R250" chip.
+
+A Radeon 8500 running at 300 MHz clock speeds would have hardly defeated the GeForce 4 Ti4600, let alone a newer card from NVIDIA. At best it could have been a better performing mid-range solution than the lower-complexity Radeon 9000 (RV250, see below), but it would also have cost more to produce and would have been poorly suited to the Radeon 9000's dual laptop/desktop roles due to die size and power draw. Notably, overclockers found that Radeon 8500 and Radeon 9000 could not reliably overclock to 300 MHz without additional voltage, so undoubtedly R250 would have had similar issues because of its greater complexity and equivalent manufacturing technology, and this would have resulted in poor chip yields, and thus, higher costs.[http://www.xbitlabs.com/articles/video/display/radeon8500-overclocking.html] [http://www.pcstats.com/articleview.cfm?articleID=953]
+
+ATI, perhaps mindful of what had happened to [[3dfx]] when they took focus off their "Rampage" processor, abandoned the R250 refresh in favor of finishing off their next-generation [[Radeon R300|DirectX 9.0]] card which was released as the Radeon 9700. This proved to be a wise move, as it enabled ATI to take the lead in development for the first time instead of trailing NVIDIA. The new Radeon 9700 flagship, with its next-generation architecture giving it unprecedented features and performance, would have been superior to any R250 refresh, and it easily took the performance crown from the Ti4600. 
+
+===Radeon 9000/9200===
+The ''Radeon 9000'' (RV250) was launched alongside the [[Radeon R300|Radeon 9700]]. The 9000 succeeded the [[Radeon R100|Radeon 7500]] (RV200) in the mainstream market segment, with the latter being moved to the budget segment. This chip was a significant redesign of R200 to reduce cost and power usage. Among hardware removed is one of the two [[Graphics pipeline|texture unit]]s, the "TruForm" function, Hierarchical-Z, the DirectX 7 TCL unit and one of the two vertex shaders. In games, the Radeon 9000 performs similarly to the [[GeForce 4]] MX 440. Its main advantage over the MX 440 was that it had a full [[DirectX]] 8.1 vertex and pixel shader implementation. While the 9000 was not quite as fast as the 8500LE or the Nvidia GeForce 3 Ti200, the 8500LE and Ti200 were to be discontinued.
+
+A later revision of the 9000 was the ''Radeon 9200'' (RV280), which aside from supporting [[Accelerated Graphics Port|AGP]] 8X, was identical. There was also a cheaper version, the ''9200SE'', which only had a 64-bit [[memory bus]]. Another board, called the ''Radeon 9250'' was launched in summer 2004, being simply a lower-clocked RV280.
+
+ATI had re-branded its products in 2001, intending the 7xxx series to indicate DirectX 7.0 capabilities, 8xxx for DirectX 8.0, and so on. However in naming the Radeon 9000/9200, which only had DirectX 8.0 rendering features, ATI advertised them as "DirectX 9.0 compatible" while the truly DirectX 9.0-spec Radeon 9700 was "DirectX 9.0 compliant".
+
+==Mobility==
+The ''Mobility Radeon 9000'' was launched in early summer 2002 and was the first DirectX 8 laptop chip. It outperformed the DirectX 7-based nVidia [[GeForce 2 Series|GeForce 2 Go]] and was more feature-rich than the [[GeForce 4 Series|GeForce 4 Go]].
+
+A ''Mobility Radeon 9200'' later followed as well, derived from the desktop 9200.
+
+==Models==
+{{main|Comparison of ATI Graphics Processing Units}}
+
+== Drivers ==
+===UNIX-related operating systems===
+
+[[ATI Technologies|ATI]] has released no driver support for [[BSD]] based operating systems, however they do provide drivers for the [[X Window System]] running on [[Linux]]. Despite this, newer ATI Catalyst driver for [[Linux]] [[X Window System]] does not offer support for any R200 or older architecture product. Users are referred to using older drivers for older kernels, or the open source "radeon" driver for newer kernels. The PowerPC-based [[Mac mini]] and [[iBook G4]], which run on [[Mac OS X]], were supplied with Radeon 9200 cards.
+
+Some segments of the Linux user community, which prefer to avoid the [[Intellectual property|IP]]-encumbered ATI drivers due to stability and long term maintainability reasons, or run Linux on hardware platform not supported by the official binary-only drivers still prefer the R200-based chips, as they are among the fastest modern video cards with stable [[open source software|open source]] 3D drivers.
+
+===Windows drivers===
+This series of Radeon graphics cards is supported by AMD under [[Microsoft Windows]] operating systems including [[Windows XP]] (except [[Windows XP Professional x64 Edition|x64]]), [[Windows 2000]], [[Windows Me]], and [[Windows 98]]. Other operating systems may have support in the form of a generic driver that lacks complete support for the hardware. Driver development for the R200 line ended with the Catalyst 6.11 drivers for Windows XP.
+
+===Classic Mac OS===
+The Radeon 9200 was the final ATI card to officially support [[Mac OS 9]].
+
+==See also==
+*[[ATI Technologies]]
+*[[Comparison of ATI Graphics Processing Units]]
+
+==References==
+{{Reflist}}
+*[http://www.beyond3d.com/reviews/ati/radeon8500/ "ATi Radeon 8500 64 MB Review (Part 1)"] by Dave Baumann, Beyond3D.Com, March 29, 2002, retrieved January 14, 2006
+*[http://www.beyond3d.com/reviews/ati/radeon8500p2/ "ATi Radeon 8500 64 MB Review (Part 2)"] by Dave Baumann, Beyond3D.Com, April 4, 2002, retrieved January 14, 2006
+*[http://www.xbitlabs.com/articles/video/display/radeon-9100.html "ATI RADEON 9100 Based Graphics Cards Review: Gigabyte and PowerColor Solutions"] by Tim Tscheblockov, X-Bit Labs, February 5, 2003, retrieved January 9, 2006
+*[http://www.anandtech.com/showdoc.aspx?i=1517 "ATI's Radeon 8500 & 7500: A Preview"] by Anand Lal Shimpi, Anandtech, August 14, 2001, retrieved January 9, 2006
+*[http://www.anandtech.com/showdoc.aspx?i=1544 "ATI's Radeon 8500: She's got potential"] by Anand Lal Shimpi, Anandtech, October 17, 2001, retrieved January 9, 2006
+*[http://www.beyond3d.com/resources/chip/13 "ATI R200 Chip Details"] by Beyond3D, retrieved August 30, 2010
+*[http://www.beyond3d.com/resources/chip/16 "ATI RV250 Chip Details"] by Beyond3D, retrieved August 30, 2010
+*[http://www.beyond3d.com/resources/chip/17 "ATI RV280 Chip Details"] by Beyond3D, retrieved August 30, 2010
+
+{{ATI}}
+
+[[Category:ATI Technologies products]]
+[[Category:Video cards]]
+
+[[ar:ريدون آر 200]]
+[[cs:Radeon R200]]
+[[de:ATI-Radeon-8000-Serie]]
+[[fr:Radeon R200]]
+[[ko:라데온 R200]]
+[[pt:Radeon R200]]
+[[fi:Radeon 8000 -sarja]]
+[[zh:Radeon R200]]</body> </html>

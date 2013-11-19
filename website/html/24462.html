@@ -1,0 +1,217 @@
+<html> <head> <title>Microsoft Macro Assembler</title></head><body>{{Infobox software
+| name                   = Microsoft Macro Assembler
+| logo                   = 
+| developer              = [[Microsoft]]
+| latest_release_version = 10.0.30319.1
+| latest_release_date    = {{release date|2010|04|12}}
+| operating_system       = [[Microsoft Windows]] and [[MS-DOS]]
+| genre                  = [[Assembly language#Assembler|Assembler]] 
+| license                = [[Microsoft]] [[EULA]]
+| website                = 
+}}
+
+The '''Microsoft Macro Assembler''' ('''MASM''') is an [[X86 architecture|x86]] assembler for [[MS-DOS]] and [[Microsoft Windows]].  It supports a wide variety of [[Macro (computer science)|macro]] facilities and [[structured programming]] idioms, including [[High-level programming language|high-level]] functions for [[Control_flow#Loops|looping]] and [[Subroutine|procedures]].<ref name="WhichAsm">{{cite web|url=http://webster.cs.ucr.edu/AsmTools/WhichAsm.html|title=Which Assembler is the Best?|accessdate=2008-06-27|author=Randall Hyde}}</ref> Later versions added the capability of producing programs for Windows. MASM is one of the few Microsoft development tools that target [[16-bit]], [[32-bit]] and is supplied as a 64 bit version ML64.EXE for [[64-bit]] [[Computing platform|platform]]s. Versions 5.0 and earlier were [[MS-DOS]] applications. Versions 5.1 and 6.0 were available as both [[MS-DOS]] and [[OS/2]] applications.<ref name = "InfoWorld Apr 1991">{{Cite journal | last = Marshall | first = Martin | title = Macro Assembler Update Adds High-Level Features | journal = InfoWorld | volume = 13 | issue = 17 | page = p. 21 | date = April 29, 1991 | url = http://books.google.com/books?id=y1AEAAAAMBAJ&pg=PT20 | issn = 0199-6649}}</ref> Versions 6.12 to 6.14 were implemented as patches for version 6.11 which converted them from 16 bit MZ executables to 32 bit PE executable files. All later versions have been 32 bit PE executable files built as [[Win32 console]] mode applications.
+
+==History==
+The Microsoft Assembler has been in production since 1981 and is upgraded by Microsoft to keep abreast with operating system needs and processor developments.<ref name = "InfoWorld Jan 1985">{{Cite journal | last = Watt | first = Peggy | coauthors = Christine McGeever | title = Macintosh Vs. IBM PC At One Year | journal = InfoWorld | volume = 7 | issue = 1 | pages = pp. 15–16 | date = January 7, 1985 | url = http://books.google.com/books?id=-i4EAAAAMBAJ&pg=PA16 | issn = 0199-6649}} The IBM PC Macro Assembler was released in December 1981.</ref>  Prior to Microsoft Assembler, the abbreviation MASM referred to Meta Assembler.<ref name = "Sperry Unisys">{{Cite web | title = Sperry and Unisys Reference Manuals, 1977-1997. | work = Online Finding Aids | publisher = University of Minnesota Libraries | url = http://discover.lib.umn.edu/cgi/f/findaid/findaid-idx?c=umfa;cc=umfa;rgn=main;view=text;didno=cbi000187 | accessdate = February 2, 2010}} Meta-Assembler [MASM] Programming Reference Manual - MASM Usage, undated.</ref>  MASM 6.0 was released in 1992 and was the first version to include high-level programming support (in particular if/endif macros) and a more [[C (programming language)|C]]-like syntax. By the end of the year, version 6.1A updated the memory management to be compatible with code produced by [[Visual C++]]. In 1993, full support for 32-bit applications and the [[Intel P5 (microarchitecture)|Pentium]] instruction set had been added, plus [[Phar Lap (company)|Phar Lap]]'s DOS extender. By the end of 1997, MASM fully supported Windows 95, did not require the DOS extender, and included some [[AMD]]-specific instructions.<ref name="harvey">{{cite web |archiveurl=http://web.archive.org/web/20080216121237/http://ourworld.compuserve.com/homepages/r_harvey/doc_book.htm |archivedate=16 February 2008 |year=2007 |accessdate=4 February 2010 |title=Assemblers |author=R. E. Harvey |url=http://ourworld.compuserve.com/homepages/r_harvey/doc_book.htm}}</ref>
+
+In 1999, Intel released macros for [[SIMD]] and [[MMX (instruction set)|MMX]] instructions, which were shortly after supported natively by MASM. With the 6.15 release in 2000, Microsoft discontinued support for MASM as a separate product, instead subsuming it into the [[Visual Studio]] toolset, though it was still compatible with [[Windows 98]], though current versions of Visual Studio were not.<ref name="harvey" /> Support for 64-bit processors was not added until the release of [[Visual Studio 2005]], with MASM given the version number 8.0.
+
+==Usage==
+The Microsoft assembler has been the main vehicle for preserving the earlier Intel assembler notation and it can still be written as a fully specified language, a format that many dis-assemblers produce. The most common notation of this type are the data size specifiers,
+
+    '''BYTE PTR'''  The data size specifier for the target being 8 bit.
+    '''WORD PTR'''  The data size specifier for the target being 16 bit.
+    '''DWORD PTR''' The data size specifier for the target being 32 bit.
+
+===Addressing Notation===
+ML.EXE maintains the historical distinction between transient stack addressing and fixed data addressing by using the notation '''OFFSET''' to denote data in either the initialised or uninitialised data sections. Transient stack addressing is handled by a number of methods. With a procedure that uses a stack frame, named LOCAL variables are used for readability purposes and where the address of the variable is required it can be accessed by the '''LEA''' mnemonic or in an INVOKE call by the '''ADDR''' operator. The '''LOCAL''' variables are [EBP] stack addresses when used within a procedure. Procedures written without a stack frame are generally written purely in mnemonics using direct [ESP] based argument addressing. To maintain compatibility with the historical MASM method of pseudo high level notation, there is a notation to turn off the stack frame generation for the procedure on a needs basis.
+
+===Square Brackets===
+ML.EXE does not require the addition of square brackets around a named variable but will tolerate such notation deviation by ignoring the notation. This notation difference has at time been a source of confusion for programmers familiar with other assemblers that use the square brackets to denote an address.
+
+    '''mov eax, local_var'''     ; Standard ML.EXE notation
+    '''mov eax, [local_var]'''   ; Square brackets are ignored by ML.EXE in this context.
+
+There is no Intel mnemonic that will produce the extra level of indirection implied by placing un-necessary square brackets around a named variable and the practice leads to confusion of programmers who are experienced in using other x86 assemblers that use the square bracket notation differently. ML.EXE uses square brackets around direct mnemonic code to perform the dereferencing operation as in the following example.
+
+    '''lea eax, variable_name'''    ; load the address of a stack variable into the EAX register
+    '''mov eax, [eax]'''            ; dereference the '''CONTENT''' of the variable and copy it into the EAX register.
+
+ML.EXE will allow the following.
+
+    '''mov eax, [eax+ebx]'''
+    '''mov eax, [eax][ebx]'''
+
+In this context the second pair of square brackets perform the '''ADDITION''' function within the complex addressing notation
+
+===Notation Abbreviation===
+Over a long period a form of shorthand notation has developed as the parsers in early versions improved.  Generally the data size specifier is not necessary if the assembler can determine the size of the data, although it still can be used. This shorthand has confused some users who have used other assemblers which are not by default data size specified tools. It can lead to problems when the user is not familiar with the default data size specifiers while using the shorthand notation.
+
+    '''movzx eax, [esi]'''             ; This fails as the assembler cannot determine the size of data to be zero extended into the EAX register.<br />
+    '''movzx eax, BYTE PTR [esi]'''    ; this is the correct notation if the programmer wishes to zero extend a BYTE into a 32 bit register.
+
+===Limited Type Checking===
+From at least version 6.0, ML.EXE has supported a pseudo high level notation for creating procedures that perform argument size and count checking. It is part of a system using the '''PROC ENDP PROTO''' and '''INVOKE''' operators. The '''PROTO''' operator is used to define a function prototype that has a matching '''PROC''' that is terminated with the '''ENDP''' operator. The prototyped procedure can then be called with the '''INVOKE''' operator which is protected by the limited size and argument count checking. There is additional notation at a more advanced level for turning off the automatically generated stack frame for the procedure where stack overhead in the procedure call may have an effect with very small procedures. ML.EXE is also capable of being written completely free of the pseudo high level notation using only bare Intel mnemonics.
+
+Using an example prototype from the 32 bit [[Windows API]] function set,
+
+    SendMessage '''PROTO''' STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+    SendMessage equ <SendMessageA>
+
+The code to call this function using the '''INVOKE''' notation is as follows.
+
+    '''invoke SendMessage,hWin,WM_COMMAND,wParam,lParam'''
+
+Which is translated exactly to,
+
+    '''push lParam'''
+    '''push wParam'''
+    '''push WM_COMMAND'''
+    '''push hWin'''
+    '''call SendMessage'''
+
+The advantage of the '''INVOKE''' method is that it tests the size of the data types and the argument count and generates an assembly time error if the arguments do not match the prototype.
+
+Note that ML64.EXE does not currently support the '''INVOKE''' notation and may not in the future. Based on Microsoft's history of updating earlier versions of ML.EXE on a needs basis for their own internal usage, this feature set may not be developed unless they have a need to add it.
+
+===Calling Conventions===
+ML.EXE supports a number of different calling conventions on both the 16 bit real mode DOS operating system, the 16 bit Windows versions and the later 32 bit versions. ML.EXE supports the '''C''', '''SYSCALL''', '''STDCALL''', '''BASIC''', '''FORTRAN''' and '''PASCAL''' [[x86 calling conventions|calling conventions]].<ref>ALANG.HLP standard installation Masm 6.11d</ref>
+
+===Pseudo High Level Emulation===
+ML.EXE provides a notation to emulate a variety of high level control and loop structures.<br />
+It supports the '''.IF''' block structure,
+
+  '''.if'''
+    -
+  '''.elseif'''
+    -
+  '''.else'''
+    -
+  '''.endif'''
+
+It also supports the '''.WHILE''' loop structure,
+
+  '''.while eax > 0'''
+    '''sub eax, 1'''
+  '''.endw'''
+
+And the '''.REPEAT''' loop structure.
+
+  '''.repeat'''
+    '''sub eax, 1'''
+  '''.until eax''' < 1
+
+The high level emulation also supports C runtime comparison operators that work according to the same rules as Intel mnemonic comparisons.<ref>http://www.intel.com/products/processor/manuals/</ref> For the .IF block notation the distinction between SIGNED and UNSIGNED data is handled with a minor data type notation variation; the storage size DWORD, (which is by default UNSIGNED) can also be specified as SDWORD for SIGNED comparison. This data type distinction is only appropriate for the pseudo high level notation.  It is unused at the mnemonic level of code where the distinction is determined by the range of conditional evaluation techniques available in the Intel mnemonics.
+
+The combined pseudo high level emulation allows MASM to more easily interface with the later current operating systems that use a C style application programming interface.<ref>http://msdn.microsoft.com/en-us/library/default.aspx</ref> Generally the pseudo high level interface is used for non-speed critical code where clarity and readability are the most important factors, speed critical code is usually written in directly in mnemonics.
+
+Note that ML64.EXE does not support all of the earlier pseudo high level notation and may not in the future. Based on Microsoft's history of updating earlier versions of ML.EXE on a needs basis for their own internal usage, this feature set may not be developed unless they have a need to add it.
+
+===Pre-Processor===
+The Microsoft assembler has a very powerful pre-processor that has considerably more functionality than modern C compilers which is consistent with its designation as a '''macro assembler''' and it has been designed from the introduction of ML.EXE version 6.0 with C style pseudo high level functionality for programmers who prefer to use this style of notation for code that is not speed critical. On the down side the pre-processor is an old design that is known to be quirky in its operation and reasonably difficult to use without a lot of experience when writing macros that are of a more complex nature.
+
+At their simplest macros written for the ML.EXE pre-processor are useful for automating many different simple tasks.
+
+    ; ----------------------------
+    ; memory to memory assignment
+    ; ----------------------------
+      m2m MACRO M1, M2
+        push M2
+        pop  M1
+      ENDM
+
+    ; --------------------------------------------------
+    ; memory to memory assignment using the EAX register
+    ; --------------------------------------------------
+      mrm MACRO m1, m2
+        mov eax, m2
+        mov m1, eax
+      ENDM
+
+Using the '''EXITM <return item>''' notation a macro can return a value or register in a way that can used similar to a high level function call. Using a very simple example,
+
+    addregs32 MACRO reg1, reg2
+      add reg1, reg2
+      EXITM <reg1>
+    ENDM
+
+In the '''.CODE''' section.
+
+    mov ecx, 16
+    mov edx, 8
+    
+    mov eax, addregs32(ecx, edx)
+
+Which disassembles exactly to the following mnemonics.
+
+    0040102B B910000000             mov     ecx,10h
+    00401030 BA08000000             mov     edx,8
+    00401035 03CA                   add     ecx,edx
+    00401037 8BC1                   mov     eax,ecx
+
+At a slightly more complex level the pre-processor can be used to emulate higher level languages which allows non-critical code to be simplified for higher programming throughput.
+
+    '''fn''' MessageBox,0,'''str$'''(eax),"Title",MB_OK<ref>MASM32 Main macro file '''MACROS.ASM'''</ref>
+
+In this working example '''fn''' is a macro that encapsulates the INVOKE notation and adds functionality so that quoted text can be inserted directly into the API function call in much the same way as a high level language. The '''str$()''' macro is an emulation of traditional basic for converting numeric data as either a memory operand or a register into string data for display.
+
+==Object Module Compatibility==
+The 32 bit versions of ML.EXE introduced with the patches for the last commercial version onwards produce object modules in both the older OMF format and the Microsoft version of the '''Portable Executable'''<ref>http://download.microsoft.com/download/e/b/a/eba1050f-a31d-436b-9281-92cdfeae4b45/pecoff.doc</ref><ref>http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx</ref> specification [[COFF]] format. The object module format is compatible with modern Microsoft C compilers and object modules produced by either ML.EXE or CL.EXE can be routinely intermixed and linked into applications written either with ML.EXE or CL.EXE.
+
+==Support==
+===IDE Support===
+* [[Microsoft Visual Studio]]
+* RadAsm<ref>http://radasm.cherrytree.at/</ref>
+* WinAsm Studio<ref>http://www.winasm.net/</ref>
+* EasyCode<ref>http://www.easycode.cat/English/index.htm</ref>
+
+===Debuggers===
+* OllyDbg<ref>http://www.ollydbg.de/</ref>
+
+===Disassemblers===
+* IDAPro the [[Interactive Disassembler]]
+
+There are many projects that support MASM, including IDEs (such as WinAsm Studio and RadASM<ref>{{cite web|url=http://radasm.cherrytree.at/|title=RadASM|date=|accessdate=2010-07-07|author=}}</ref>), [[debugger]]s (such as [[OllyDbg]]<ref>{{cite web|url=http://www.ollydbg.de/|title=OllyDbg|date=2008-05-24|accessdate=2008-06-27|author=}}</ref>), and [[disassembler]]s (including IDAPro, the [[Interactive Disassembler]]). The MASM32 project has developed a [[library (computer science)|library]], sample code repository, and documentation for MASM users. Support can also be found at several forums. Also, along the lines of products such as [[Visual Basic]], or [[Visual C++]], ''EasyCode'' is an IDE for the MASM language that provides "Visual" capabilities.<ref>{{cite web|url=http://www.easycode.cat/English/index.htm|title=Easy Code|date=|accessdate=2008-06-27|author=}}</ref>  Microsoft continues to provide MASM as part of [[Visual Studio]] .<ref>
+{{cite web
+|url=http://msdn.microsoft.com/en-us/library/afzk3475%28VS.100%29.aspx
+|title=Microsoft Macro Assembler Reference
+|work=MSDN: Microsoft Visual Studio 2010/.NET Framework 4
+|publisher=Microsoft
+|accessdate=4 February 2010
+}}</ref>
+
+==MASM Compatible Assemblers==
+For assembler programmers who are unable to use the Microsoft assembler for licencing reasons there are two directly MASM compatible assemblers that can build almost all MASM code apart from the more complex macros developed under MASM.
+
+* '''Pelle's Macro Assembler''' which is a component of the [[Pelles C]] development environment.
+* '''[[JWASM]] Macro Assembler''' licenced under the Sybase Open Watcom EULA.
+
+==See also==
+* [[Assemblers]]
+* [[High Level Assembler]]
+* [[Comparison of assemblers]]
+
+==Footnotes==
+{{reflist}}
+
+== External links ==
+* [http://msdn.microsoft.com/en-us/library/afzk3475.aspx Official Microsoft Macro Assembler Reference]
+* [http://www.infernodevelopment.com/introduction-masm32 Intro to MASM Win32]
+* [http://www.win32developer.com/asm/windows_tutorial_1.shtm Win32 assembly tutorials using MASM]
+
+{{X86_assembly_topics}}
+
+[[Category:Assemblers]]
+[[Category:Microsoft development tools]]
+[[Category:DOS software]]
+[[Category:Windows software]]
+
+[[cs:Microsoft Macro Assembler]]
+[[de:Microsoft Macro Assembler]]
+[[es:Microsoft Macro Assembler]]
+[[fr:Microsoft Macro Assembler]]
+[[ja:Microsoft Macro Assembler]]
+[[pt:Microsoft Macro Assembler]]
+[[ru:MASM]]
+[[zh:MASM]]</body> </html>

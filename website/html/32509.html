@@ -1,0 +1,82 @@
+<html> <head> <title>Row-major order</title></head><body>In computing, '''row-major order''' and '''column-major order''' describe methods for storing multidimensional arrays in linear memory. Following standard [[matrix (mathematics)|matrix]] notation, rows are identified by the first index of a two-dimensional array and columns by the second index. Array layout is critical for correctly passing arrays between programs written in different languages. It is also important for performance when traversing an array because accessing array elements that are contiguous in memory is usually faster than accessing elements which are not, due to [[caching]].
+
+Row-major order is used in C; column-major order is used in Fortran and Matlab.
+
+==Row-major order==
+In row-major storage, a multidimensional array in linear memory is accessed such that rows are stored one after the other. It is the approach used by the [[C (programming language)|C programming language]] as well as many other languages, with the notable exceptions of [[Fortran]] and [[MATLAB]].
+
+When using row-major order, the difference between addresses of array cells in increasing rows is larger than addresses of cells in increasing columns. For example, consider this 2&times;3 array:
+
+:<math> \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \end{bmatrix}</math>
+
+An array declared in C as 
+
+<source lang="c">int A[2][3] = { {1, 2, 3}, {4, 5, 6} };</source>
+
+would be laid out [[contiguous#Computer_science|contiguously]] in linear memory as:
+
+  1  2  3  4  5  6
+
+The difference in offset from one column to the next is 1 and from one row to the next is 3. The linear offset from the beginning of the array to any given element A[row][column] can then be computed as:
+<!-- The   code doesn't seem to be working, so I have to put this on a separate line and center it -->
+<center>'''offset = row*NUMCOLS + column'''</center>
+Where NUMCOLS is the number of columns in the array.
+
+The above formula only works when using the C convention of labeling the first element 0. In other words, row 1, column 2 in matrix A, would be represented as A[0][1]
+
+Note that this technique generalizes, so a 2&times;2&times;2 array looks like:
+
+<source lang="c">int A[2][2][2] = {{{1,2}, {3,4}}, {{5,6}, {7,8}}};</source>
+
+and the array would be laid out in linear memory as:
+
+  1  2  3  4  5  6  7  8
+
+==Column-major order==
+'''Column-major order''' is a similar method of flattening arrays onto linear memory, but the columns are listed in sequence. The programming languages [[Fortran]], [[MATLAB]],<ref>Matlab documentation, [http://www.mathworks.com/access/helpdesk/help/techdoc/apiref/mxcalcsinglesubscript.html mxCalcSingleSubscript function] (retrieved from Mathworks.com, March 2010).</ref> [[GNU_Octave|Octave]] and [[R_(programming_language)|R]]<ref>''An Introduction to R'', [http://cran.r-project.org/doc/manuals/R-intro.html#Arrays Section 5.1: Arrays] (retrieved March 2010).</ref> use column-major ordering. The array
+
+:<math> \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \end{bmatrix}</math>
+
+if stored [[Contiguous#Computer_science|contiguously]] in linear memory with column-major order would look like the following:
+
+  1  4  2  5  3  6
+
+The memory offset could then be computed as:
+<!-- The   code doesn't seem to be working, so I have to put this on a separate line and center it -->
+<center>'''offset = row + column*NUMROWS'''</center>
+where NUMROWS represents the number of rows in the array&mdash;in this case, 2.
+
+Treating a row-major array as a column-major array is the same as [[transpose|transposing]] it.  Because performing a transpose requires data movement, and is quite difficult to do [[in-place matrix transposition|in-place for non-square matrices]], such transpositions are rarely performed explicitly.  For example, [[software libraries]] for [[linear algebra]], such as the [[BLAS]], typically provide options to specify that certain matrices are to be interpreted in transposed order to avoid the necessity of data movement.
+
+== Generalization to higher dimensions ==
+
+It is possible to generalize both of these concepts to arrays with greater than two dimensions. For higher-dimensional arrays, the ordering determines which dimensions of the array are more consecutive in memory. Any of the dimensions could be consecutive, just as a two-dimensional array could be listed column-first or row-first. The difference in offset between listings of that dimension would then be determined by a product of other dimensions. It is uncommon, however, to have any variation except ordering dimensions first to last or last to first.  These two variations correspond to row-major and column-major, respectively.
+
+More explicitly, consider a ''d''-dimensional array with dimensions ''N''<sub>''k''</sub> (''k''=1...''d'').  A given element of this array is specified by a [[tuple]] <math>(n_1, n_2, \ldots, n_d)</math> of ''d'' (zero-based) indices <math>n_k \in [0,N_k - 1]</math>.  In row-major order, the memory-offset of this element is given by:
+
+:<math>n_d + N_d \cdot (n_{d-1} + N_{d-1} \cdot (n_{d-2} + N_{d-2} \cdot (\cdots + N_2 n_1)\cdots)))
+= \sum_{k=1}^d \left( \prod_{\ell=k+1}^d N_\ell \right) n_k
+</math>
+
+In column-major order, the memory-offset of this element is given by:
+
+:<math>n_1 + N_1 \cdot (n_2 + N_2 \cdot (n_3 + N_3 \cdot (\cdots + N_{d-1} n_d)\cdots)))
+= \sum_{k=1}^d \left( \prod_{\ell=1}^{k-1} N_\ell \right) n_k
+</math>
+
+Note that the difference between row-major and column-major order is simply that the order of the dimensions is reversed.  Equivalently, in row-major order the rightmost indices vary faster as one steps through consecutive memory locations, while in column-major order the leftmost indices vary faster.
+
+== See also ==
+* [[Matrix representation]]
+* [[Vectorization (mathematics)]], the equivalent of turning a matrix into the corresponding column-major vector.
+
+==References==
+* Donald E. Knuth, ''[[The Art of Computer Programming]] Volume 1: Fundamental Algorithms'', third edition, section 2.2.6 (Addison-Wesley: New York, 1997).
+
+<references/>
+
+[[Category:Arrays]]</body> </html>

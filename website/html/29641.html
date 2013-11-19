@@ -1,0 +1,56 @@
+<html> <head> <title>Portable Distributed Objects</title></head><body>'''Portable Distributed Objects''', or '''PDO''', is a [[programming]] [[Application programming interface|API]] for creating [[object-oriented]] code that can be executed remotely on a [[computer network|network]] of computers. It was created by [[NeXT Computer, Inc.]] using their [[OpenStep]] system, whose use of [[Objective-C]] made the package very easy to write. It was characterized by its very light weight and high speed in comparison to similar systems such as [[CORBA]].
+
+Versions of PDO were available for [[Solaris (operating system)|Solaris]], [[HP-UX]] and all versions of the OPENSTEP system. A version that worked with [[Microsoft]] [[Object Linking and Embedding|OLE]] was also available called ''D'OLE'',<ref>{{cite web
+  |url = http://findarticles.com/p/articles/mi_m0EIN/is_1996_Jan_15/ai_17811753
+  |title = NeXT Ships D'OLE Release 3.5 and Enterprise Objects Framework 1.1 for Windows NT
+  |accessdate = 2008-02-08
+  |author = 
+  |date = January 15, 1996
+  |work = [[Business Wire]]
+  |publisher = Business Wire
+}}</ref>  allowing distributed code written using PDO on any platform to be presented on Microsoft systems as if they were local OLE objects.
+
+PDO was one of a number of [[distributed object]] systems created in the early 1990s, a design model where "front end" applications on [[GUI]]-based microcomputers would call code running on [[Mainframe computer|mainframe]] and [[minicomputer]]s for their processing and data storage. Microsoft was evolving OLE into the [[Component Object Model]] (COM) and a similar distributed version called '''DCOM''',{{Fact|date=February 2007}} [[IBM]] had their [[System Object Model]] (SOM/DSOM), [[Sun Microsystems]] was promoting their [[Distributed Objects Everywhere]], and there were a host of smaller players as well. With the exception of the limited functionality in COM,{{Fact|date=February 2007}} most of these systems were extremely heavyweight, tended to be very large and slow, and often were very difficult to use.
+
+PDO, on the other hand, relied on a small number of features in the Objective C [[Run time system|runtime]] to handle both portability as well as distribution. The key feature was the language's support for a "second chance" method in all classes; if a method call on an object failed because the object didn't support it (normally not allowed in most languages due to [[strong typing]]), the runtime would then bundle the message into a compact format and pass it back into the object's <code>forwardInvocation</code> method.
+
+The normal behavior for <code>forwardInvocation</code> was to return an error, including details taken from the message (the "invocation").{{Clarify me|date=March 2008}} <!-- normal as defined by what?  In all other distributed object systems or just some? --> PDO instead supplied a number of new objects with <code>forwardInvocation</code> methods that passed the invocation object to another machine on the network, with various versions to support different networks and platforms. Calling methods on remote objects was almost invisible; after some network setup (a few lines typically) PDO objects were instantiated locally and called the same way as any other object on the system. The PDO object then forwarded the invocation to the remote computer for processing and unbundled the results when they were returned.
+
+In comparison with [[CORBA]], PDO programs were typically 1/10th or less in size; it was common for NeXT staffers to write into magazines showing how to re-implement a multi-page CORBA article in perhaps 15 lines of code.<ref>{{cite web
+  |url = http://www.ddj.com/architect/184409611
+  |title = Implementing Distributed Objects
+  |accessdate = 2008-02-08
+  |author = Ernest N. Prabhakar
+  |date = August 1, 1995
+  |work = [[Dr. Dobb's Journal]]
+  |publisher = [[CMP Technology]]
+}}</ref> From a programming standpoint, there was nearly nothing as easy to use as PDO.
+
+However, PDO was also reliant entirely on Objective C to function. This was a price most were unwilling to pay, as at the time [[C++]] was more widely used and the effort to shift codebases to an entirely new language and paradigm was considered too onerous.{{Fact|date=February 2007}} PDO never saw much use, and NeXT's emphasis shifted to its new [[WebObjects]] framework in 1995.
+
+PDO continues to be used by [[Mac OS X]] programmers as a method for interprocess and interapplication communication, and for communication between networked applications that only need compatibility with other Mac OS X applications.
+
+In addition to the OS X platform, there is [[GNUstep]], which has its own implementation of Distributed Objects.<ref>{{cite web
+  |url = http://www.gnustep.org/resources/documentation/Developer/Base/ProgrammingManual/manual_7.html
+  |title = Distributed Objects
+  |accessdate = 2007-08-09
+  |author = Adam Fedor
+  |date = May 26, 2007
+  |work = Objective-C GNUstep Base Programming Manual
+  |publisher = [[GNUstep]] project
+}}</ref>
+
+== See also ==
+
+* [[Cocoa (API)]]
+
+== References ==
+
+{{Reflist}}
+
+==External links==
+* [http://www.stepwise.com/Articles/Technical/TalkToMe.html PDO History]
+* [http://developer.apple.com/documentation/Cocoa/Conceptual/DistrObjects/index.html Distributed Objects] &mdash; a guide by [[Apple Computer|Apple]]
+
+[[Category:Mac OS X APIs]]
+[[Category:Parallel computing]]</body> </html>

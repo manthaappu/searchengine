@@ -1,0 +1,315 @@
+<html> <head> <title>Master boot record</title></head><body>{{Expert-subject|Computing|date=May 2010}}
+
+{| class="wikitable" style="float: right; width: 512px; margin: 1em;"
+|+ Structure of a master boot record
+|-
+! colspan="3" | Address
+! rowspan="2" style="vertical-align: middle" colspan="2" | Description
+! rowspan="2" style="vertical-align: middle" | Size in [[byte]]s
+|-
+! style="width: 3em" | [[Hexadecimal|Hex]]
+! style="width: 3em" | [[Octal|Oct]]
+! style="width: 3em" | [[Decimal|Dec]]
+|-
+| style="text-align: center" | <code>0000</code>
+| style="text-align: center" | <code>0000</code>
+| style="text-align: center" | 0 || colspan="2" | code area
+| style="text-align: center" | '''440'''<br />(max. 446)
+|-
+| style="text-align: center" | <code>01B8</code>
+| style="text-align: center" | <code>0670</code>
+| align="center" | 440 || colspan="2" | disk signature (optional)
+| style="text-align: center" | '''4'''
+|-
+|-
+| style="text-align: center" | <code>01BC</code>
+| style="text-align: center" | <code>0674</code>
+| align="center" | 444 || colspan="2" | Usually nulls; 0x0000
+| style="text-align: center" | '''2'''
+|-
+| style="text-align: center" | <code>01BE</code>
+| style="text-align: center" | <code>0676</code>
+| style="text-align: center" | 446 || colspan="2" | '''Table of primary partitions'''<br />(Four 16-byte entries, IBM partition table scheme)
+| style="text-align: center" | '''64'''
+|-
+| style="text-align: center" | <code>01FE</code>
+| style="text-align: center" | <code>0776</code>
+| style="text-align: center" | 510
+| style="text-align: center" | 55h
+| rowspan="2" style="vertical-align: middle; text-align: center" | MBR signature;<br />0xAA55
+| rowspan="2" style="text-align: center" | '''2'''
+|-
+| style="text-align: center" | <code>01FF</code>
+| style="text-align: center" | <code>0777</code>
+| style="text-align: center" | 511
+| style="text-align: center" | AAh
+|-
+! colspan="5" align="right" | MBR, total size: 446 + 64 + 2 =
+! style="text-align: center" | 512
+|}
+
+A '''master boot record''' ('''MBR'''), or '''partition sector''', is the 512-[[byte]] [[boot sector]] that is the first [[disk sector|sector]] ("[[logical block addressing|LBA]]/absolute sector 0") of a [[Disk partitioning|partitioned]] [[data storage device]] such as a [[hard disk]]. (The boot sector of a non-partitioned device is a [[Volume Boot Record|volume boot record]]. These are usually different, although it is possible to create a record that acts as both; it is called a multiboot record.)
+
+The MBR may be used for one or more of the following:
+* Holding a disk's primary [[partition table]].
+* [[Bootstrapping (computing)|Bootstrapping]] [[operating systems]], after the computer's [[BIOS]] passes execution to [[machine code]] instructions contained within the MBR.
+* Uniquely identifying individual disk media, with a 32-bit ''disk signature''; even though it may never be used by the machine the disk is running on.<ref>{{cite book|title=Peter Norton's New Inside the PC|author=Peter Norton and Scott Clark|pages=360&ndash;361|year=2002|publisher=Sams Publishing|isbn=0672322897}}</ref><ref>{{cite book|title=A+ Guide To PC Hardware Maintenance and Repair|author=Michael W. Graves|pages=276|year=2004|publisher=Thomson Delmar|isbn=1401852300}}</ref><ref>{{cite book|title=Upgrade and Repair with Jean Andrews|author=Jean Andrews|pages=646|year=2003|publisher=Thomson Course Technology|isbn=1592001122}}</ref><ref>{{cite book|title=Inside Windows Server 2003|author=William Boswell|pages=13|year=2003|publisher=Addison-Wesley Professional|isbn=0735711585}}</ref>
+
+Due to the broad popularity of [[IBM PC-compatible]] computers, this type of MBR is widely used, to the extent of being supported by and incorporated into other computer types including newer [[cross-platform]] standards for bootstrapping and partitioning.{{Citation needed|date=September 2007}}
+
+== Disk partitioning ==
+
+{| class="wikitable" style="float: right; width: 512px; margin: 1em;"
+|+ Layout of one 16-byte partition record
+|-
+! Offset !! Field<br>length<br>(bytes) !! Description
+|-
+| 0x00 || 1 || status (0x80 = bootable (''active''), 0x00 = non-bootable, other = invalid ) {{Ref|a|[a]}}
+|-
+| 0x01 || 3 || [[Cylinder-head-sector|CHS address]] of first absolute sector in partition. {{Ref|b|[b]}} The format is described by 3 bytes, see the next 3 rows.
+|-
+| 0x01 || 1 ||
+{| class="wikitable"
+|-
+| colspan="8" style="text-align: center;" | h<sub>7-0</sub>
+| rowspan="2" | head {{Ref|c|[c]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x02 || 1 ||
+{| class="wikitable"
+|-
+| colspan="2" style="text-align: center;" | c<sub>9-8</sub>
+| colspan="6" style="text-align: center;" | s<sub>5–0</sub>
+| rowspan="2" | sector is in bits 5–0;  bits 9–8 of cylinder are in bits 7–6 {{Ref|c|[c]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x03 || 1 ||
+{| class="wikitable"
+|-
+| colspan="8" style="text-align: center;" | c<sub>7-0</sub>
+| rowspan="2" |  bits 7–0 of cylinder {{Ref|d|[d]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x04 || 1 || [[partition type]]<ref>{{cite web|url=http://www.win.tue.nl/~aeb/partitions/partition_types-1.html|title=List of partition identifiers for PCs|work=Partition types|author=[[Andries Brouwer]]}}</ref><ref>{{cite web|url=http://mirror.href.com/thestarman/asm/mbr/PartTypes.htm|title=Listing of MBR/EBR Partition Types|work=Partition types|author=[[Daniel B. Sedory]]}}</ref>
+|-
+| 0x05 || 3 || [[Cylinder-head-sector|CHS address]] of last absolute sector in partition. {{Ref|b|[b]}} The format is described by 3 bytes, see the next 3 rows.
+|-
+| 0x05 || 1 ||
+{| class="wikitable"
+|-
+| colspan="8" style="text-align: center;" | h<sub>7-0</sub>
+| rowspan="2" | head {{Ref|c|[c]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x06 || 1 ||
+{| class="wikitable"
+|-
+| colspan="2" style="text-align: center;" | c<sub>9-8</sub>
+| colspan="6" style="text-align: center;" | s<sub>5–0</sub>
+| rowspan="2" | sector is in bits 5–0, bits 9–8 of cylinder are in bits 7–6 {{Ref|c|[c]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x07 || 1 ||
+{| class="wikitable"
+|-
+| colspan="8" style="text-align: center;" | c<sub>7-0</sub>
+| rowspan="2" |  bits 7–0 of cylinder {{Ref|d|[d]}}
+|-
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+| x
+|}
+|-
+| 0x08 || 4 || [[Logical block addressing|LBA]] of first absolute sector in the partition {{Ref|e|[e]}}
+|-
+| 0x0C || 4 || Number of sectors in partition, in little-endian format  {{Ref|e|[e]}}
+|-
+| colspan="3"| '''Notes''':
+{{note|a}}'''a'''  Formally, status values other than <code>0x00</code> and <code>0x80</code> are ''undefined''. {{-}}
+
+{{note|b}}'''b''' ''Starting Sector'' fields are limited to 1024 cylinders, 255 heads, and 63 sectors; {{Citation needed|date=November 2010}}  ''Ending Sector'' fields have the same limitations.{{-}}
+
+{{note|c}}'''c''' The range for sector is 1 through 63; the range for cylinder is 0 through 1023; the range for head is 0 through 254 inclusive. {{Citation needed|date=November 2010}}  {{-}}
+
+{{note|d}}'''d''' The 10-bit cylinder value is split into two bytes. The value can be reassembled using this formula: cylinder = ((byte[2] & 0xc0) << 2) | byte[3] {{-}}
+
+{{note|e}}'''e''' Used by OSes only in certain circumstances; in such cases the CHS addresses are ignored.<ref name=lbablocks>[Microsoft (2000). ''Microsoft Windows 2000 Server Operations Guide'', Microsoft Press. pp. 18.]</ref>
+|}
+
+The MBR is not located in a partition, it is located at a main boot record area in front of (with a lower LBA sector number than) the first partition.  In cases where the disk has a [[interrupt vector|BIOS overlay]] or [[boot manager]] installed, the partition table may be moved to some other physical location on the drive; e.g., [[Disk Manager|Ontrack Disk Manager]] often places a copy of the original MBR contents in the second sector ("<code>sector 1</code>") then ''hides itself'' from any subsequently booted OS or application, so the MBR copy in sector 1 is treated as if it were still residing in the first sector.
+
+On all [[IBM PC]], [[PC compatible]] or any other [[Endianness|little-endian]] computers, [[hexadecimal]] numbers of two or more bytes are always stored on media or in memory in reverse order (for more efficient CPU processing). Thus, the MBR signature, hex number 0xAA55 (or AA55h), will appear in a [[disk editor]] as the sequence: <code>55 AA</code>.
+
+When a data storage device has been partitioned with the MBR partition table scheme (i.e., the conventional [[IBM PC]] partitioning scheme), the master boot record contains the primary partition entries in its partition table. The partition table may also contain entries for other, secondary partitions which are stored in [[extended boot record]]s (EBRs), [[BSD disklabel]]s, and [[Logical Disk Manager]] metadata partitions that are described by those primary entries.<ref>{{cite book|title=The Multi-Boot Configuration Handbook|author=Roderick W. Smith|pages=260&ndash;261|year=2000|publisher=Que Publishing|isbn=0789722836}}</ref>
+
+By convention, there are exactly four primary partition table entries in the MBR partition table scheme, although some DOS operating systems did extend this to five (PTS-DOS)<ref>{{cite web|url=http://www.win.tue.nl/~aeb/partitions/partition_types-2.html|title=Properties of partition tables|work=Partition types|author=Andries Brouwer}}. PTS-DOS uses "a special 5th partition entry in front of the other four entries in the MBR and corresponding AAP-aware MBR bootstrap code." (Brouwer).</ref> or even eight (AST or NEC DOS)<ref>Brouwer, ibid. Some OEM systems, such as AST DOS (type '''14'''h) and NEC DOS (type '''24'''h) had 8 instead of 4 partition entries in their MBR sectors.</ref><ref>{{cite web|url=http://mirror.href.com/thestarman/asm/mbr/DOS33MBR.htm|title=Notes on the Differences in one OEM version of the DOS 3.30 MBR|work=Master Boot Records|author=Daniel B. Sedory}} Shows an 8-entry partition table and where its boot code differs from MS-DOS 3.30.</ref> entries.
+
+Both the partition length and partition start address are stored as 32-bit quantities. Because the sector size is 512 (2<sup>9</sup>) bytes, this implies that either the maximum size of a partition or the maximum start address (both in bytes) cannot exceed 2.19 [[TB]] or 2 [[TiB]]−512 bytes (2,199,023,255,040 bytes or 4,294,967,295 (2<sup>32</sup>−1) sectors × 512 (2<sup>9</sup>) bytes per sector). Alleviating this capacity limitation is one of the prime motivations for the development of the [[GUID Partition Table|GUID partition table]] (GPT).
+
+Sector indices have always begun with a 1, not a zero, and due to an early error in MS-DOS, the heads are generally limited to 255{{Citation needed|date=November 2010}} instead of 256.   When a CHS address is too large to fit into these fields, the [[tuple]] (1023, 254, 63) is used, which is 0xfeffff. (If the situation involves a "protective" MBR on a disk with a [[GUID Partition Table|GUID partition table]], Intel's [[Extensible Firmware Interface]] specification requires that the [[tuple]] (1023, 255, 63) be used, which is 0xffffff.) The 10-bit cylinder value is recorded within two bytes in order to facilitate making calls to the original/legacy [[INT 13]] BIOS disk access routines, where 16 bits were divided into sector and cylinder parts, and not on byte boundaries. {{Citation needed|date=November 2010}}
+
+Where a data storage device has been partitioned with the GPT scheme, the master boot record will still contain a partition table, but its only purpose is to indicate the existence of the GPT and to prevent utility programs which understand only the MBR partition table scheme from creating any partitions in what they would otherwise see as free space on the disk, thereby accidentally erasing the GUID table.
+
+==System bootstrapping ==
+The ''Status'' fields in an non-extended partition table record are used by the embedded bootstrap code within the MBR to determine which partition is bootable (it is referred to as the ''active'' partition, and there can be only one active/bootable partition within the MBR). The status fields in an extended partition table record may also be used by boot manager programs to determine which partitions are bootable, even though values other than <code>0x00</code> and <code>0x80</code> are ''undefined'' and the bootstrap program may display an error message if this occurs. In practice, their parsing depends upon what the actual bootstrap code within the MBR has been coded to accept: some MBR bootstrap programs specifically look for the value 0x80 to indicate the bootable ("active") partition, others simply look for a non-zero value, and yet others look for any value with the top bit set.
+
+On [[IA-32]] [[IBM PC compatible]] machines using the MBR partition table scheme, the bootstrapping [[firmware]] contained within the [[read-only memory|ROM]] [[BIOS]] loads and executes the master boot record.  Because the i386 family of processors boot up in [[real mode]], the code in the MBR uses real mode [[machine language]] instructions. This code normally passes control by [[chain loading]] the [[volume boot record]] (VBR) of the active (primary) partition, although some [[boot manager]]s replace that conventional code with their own.
+
+The conventional MBR code expects the MBR partition table scheme to have been used, and scans the list of (primary) partition entries in its embedded partition table to find the only one that is marked with the ''active flag''. It then loads and runs the volume boot record for that partition. (Thus the master boot record, like other boot sectors, is a target for [[boot sector]]-infecting [[computer virus]]es .)
+
+The MBR replacement code in some boot managers can perform a variety of tasks; what those tasks are varies from boot manager to boot manager. In some, for example, it loads the remainder of the boot manager code from the first track of the disk, which it assumes to be "free" space that is not allocated to any disk partition, and executes it. In others, it uses a table of embedded disk locations to locate the remainder of the boot manager code to load and to execute. (Both approaches have problems. The first relies on behavior that is not universal across all disk partitioning utilities, most notably those which read and write [[GUID Partition Table|GPT]]s. The second requires that the embedded list of disk locations be updated when changes are made that would relocate the remainder of the code.)
+
+On machines that do not use [[IA-32]] processors, and on machines that use [[Extensible Firmware Interface]] (EFI) firmware, this design is unsuitable, and the MBR is not used as part of the system bootstrap. On the latter, the firmware is instead capable of directly understanding the [[GUID Partition Table|GPT]] partitioning scheme and the [[File Allocation Table|FAT]] filesystem format, and loads and runs programs held as files in the [[EFI System partition]]. The MBR will be involved only insofar as it might contain the partition table if the GPT partition table scheme has been used.
+
+There is some MBR replacement code that emulates EFI firmware's bootstrap, which makes non-EFI machines capable of booting from disks using the GPT partitioning scheme. (A typical example is a [[multi boot]] record, which can be used as a MBR and as a [[volume boot record]] in the bootstrap process and hence the name. It detects a GPT and loads the EFI compatible code from disk to complete this task.)
+
+== Disk identity ==
+[[File:Qtparted-usb-hdd-snapshot.png|thumb|200px|right|Information contained in the Partition Table of an external hard drive as it appears in the utility program [[QtParted]], running under Linux.]]
+In addition to the bootstrap code and a partition table, master boot records may contain a [[Windows NT]] disk signature. This is a 32-bit value that is intended to identify uniquely the disk medium (as opposed to the disk unit &mdash; the two not necessarily being the same for removable hard disks).
+
+The disk signature was introduced by Windows NT version 3.5, but is now used by several operating systems, including the [[Linux]] kernel version 2.6 and later. Linux uses the NT disk signature at boot time to determine the location of the boot volume.<ref>{{cite web|url=http://lkml.org/lkml/2003/12/19/139|title=Re: RFC 2.6.0 EDD enhancements|work=Linux Kernel Mailing List|author=Matt Domsch}}</ref>
+
+Windows NT (and later Microsoft operating systems) uses the disk signature as an index to all the partitions on any disk ever connected to the computer under that OS; these signatures are kept in [[Windows Registry|registry]] keys, primarily for storing the persistent mappings between disk partitions and drive letters. It may also be used in [[boot.ini]] files (though most do not), to describe the location of bootable Windows NT (or later) partitions.<ref>{{cite web|url=http://support.microsoft.com/kb/227704|author=Microsoft|work=KnowledgeBase|title=Windows May Use Signature() Syntax in the Boot.ini File}}</ref> One key (among many) where NT disk signatures appear in a Windows 2000/XP registry is:
+
+ HKEY_LOCAL_MACHINE\SYSTEM\MountedDevices\
+
+If a disk's signature stored in the MBR was <code>A8 E1 B9 D2</code> (in that order) and its first partition corresponded with logical drive C: under Windows, then the <code>REG_BINARY</code> data under the key value '''<code>DosDevices\C:</code>''' would be:
+
+ A8 E1 B9 D2 00 7E 00 00 00 00 00 00
+
+The first four bytes are said disk signature. (''Note:'' In other keys, these bytes may appear in reverse order from that found in the MBR sector.) These are followed by eight more bytes, forming a 64-bit integer, in [[endianness|little endian]] notation, which are used to locate the byte offset of this partition. In this case, <code>00 7E</code> corresponds to the hexadecimal value <code>0x7E00</code> (<code>32,256<sub>dec</sub></code>). Dividing this byte offset by 512 (the size of a hard disk's physical sector in bytes) results in 63, which is the physical sector number (or LBA) containing the first sector of the partition (unlike the ''sector count'' used in the sectors value of CHS tuples, which counts from '''one''', the absolute or LBA sector value starts counting from '''zero''').
+
+If this disk had another partition with the values <code>00 F8 93 71 02</code> following the disk signature (under, e.g., the key value <code>\DosDevices\D:</code>), it would begin at byte offset <code>0x27193f800</code> (<code>10,495,457,280<sub>dec</sub></code>), which is also the first byte of physical sector 20,498,940.
+
+== Programming considerations ==
+Assume that the system being programmed uses the BIOS MBR scheme, as stated above, and the system [[BIOS]] locates a valid MBR on a partitioned drive in its boot sequence. As stated above, conventional MBR code loads and runs the operating-system-dependent [[volume boot record]] (or [[bootloader]]) code that is located at the beginning of the disk's "active" partition. The MBR can simply assume that the one active partition on the current drive is supposed to boot, or alternately, it can be programmed as a [[multi boot]] MBR. A multi boot MBR may interact with the user to determine which partition on which drive should boot, and may transfer control to the MBR of a different drive.
+
+The BIOS will load the first valid MBR that it finds into [[hexadecimal]] [[physical address]] 0x7c00, and will jump to that address. The primary validation for most BIOSes is the 0xAA55 signature on the end, although the BIOS author may choose other checks as well, such as addresses in the partition table referring to sectors beyond the reported capacity of the disk. Part of the end of the 512 byte sector is pre-allocated for the partition table and other information, so the MBR program must be tiny enough to fit within 440 bytes of memory. The MBR program may communicate with the user, examine the partition table, or perform some housekeeping tasks such as enabling the [[A20 line]], or changing to [[unreal mode]] from real mode. Eventually, the MBR will need to perform its main task, and load the program that will perform the next stage of the boot process, usually by making use of [[INT 13]] BIOS calls.
+
+Typical [[boot sector]] code also expects to be loaded at physical address 0x7c00, even though all the memory from physical address 0x501 (address 0x500 is the last one used by the BIOS){{Citation needed|date=December 2007}} to somewhere short of 0x9ffff is typically available in real mode (a total of up to 640 KB minus the first 1281 bytes of memory); very old machines may have less than 640 KB (A0000h or 655,360 bytes) of memory, and newer machines may allocate significant amounts of memory for BIOS uses. The INT 12 [[BIOS interrupt call]] may help in determining how much memory can be allocated safely (it simply reads the base memory size in KB from segment:offset location 0040h:0013h). In theory, only 64255 bytes is guaranteed (beginning at 0x501 and ending at 0x0ffff); in practice it is safe to assume at least 382.74 KB (ending at 0x5ffff) are available on modern hardware. Since 0x7c00 is the location where the MBR is already running, one of the first tasks of an MBR is usually to relocate itself somewhere else in memory &mdash;most often at 0x600 (for Microsoft code). A conventional volume boot record is only one sector long; but it does no harm, and is trivial to allow, the MBR to load significantly more than just one sector. Some bootloaders are longer than one sector, so loading more than one sector can speed up the boot process.
+
+== Editing/replacing MBR contents ==
+Though it is possible to manipulate the [[byte]]s in the MBR sector directly using various [[disk editor]]s, there are tools to write fixed sets of functioning code to the MBR.  Since MS-DOS 5.0, the DOS-mode program [[fdisk]] has included the (undocumented, but widely used) switch <code>/mbr</code>, which will rewrite the MBR code. Under [[Windows 2000]] or later, the [[Recovery Console]] can be used to write new MBR code to a hard disk using its <code>fixmbr</code> command. Under [[Windows Vista]] and [[Windows 7]], the [[Recovery Environment]] can be used to write new MBR code to a hard disk by clicking on [[Command Prompt]] and typing <code>bootrec /FixMbr</code>.
+
+Some third-party utilities may also be used for directly editing the contents of partition tables (without requiring any knowledge of hexadecimal or disk/sector editors).<ref>For example, ''Power Quest's Partition Table Editor'' (PTEDIT32.EXE), which runs under Windows operating systems, is still available here: [ftp://ftp.symantec.com/public/english_us_canada/tools/pq/utilities/PTEDIT32.zip Symantec's FTP site].</ref>
+
+In [[Linux]], ms-sys may be used to install a standard MBR.  The [[GRUB]] and [[LILO]] projects have tools for writing code to the MBR sector, namely <code>grub-install</code> and <code>lilo -mbr</code>. The GRUB Legacy <code>grub</code> interactive console also has commands to write to the MBR, as it has the <code>setup</code> and <code>embed</code> commands, however <code>grub-install</code> in GRUB2 can so far only be run on an already booted *IX system. <code>dd</code> is also a commonly used POSIX command to copy or overwrite any sector, MBR included.
+
+Various programs are able to create a "[[backup]]" of both the primary partition table and the logical partitions in the extended partition.
+
+===Linux sfdisk===
+
+[[Linux]] sfdisk (on a [[SystemRescueCD]]) is able to save a backup of the primary and extended partition table. It creates a file that can be read in a text editor, or this file can be used by sfdisk to restore the primary/extended partition table. An example command to back up the partition table is <code>sfdisk -d /dev/hda > hda.out</code> and to restore is <code>sfdisk /dev/hda < hda.out</code> .<ref>{{cite web|url=http://linux.die.net/man/8/sfdisk |title=sfdisk(8) - Linux man page}}</ref>
+
+== See also ==
+* [[BIOS Boot partition]]
+* [[BIOS interrupt call]]
+* [[Boot loader]]
+* [[Disk cloning]]
+* [[EFI System partition]]
+* [[GNU Parted]]
+* [[GUID Partition Table]] A more modern partitioning scheme, replacing the purpose of the MBR
+* [[Recovery disc]]
+* [[Rigid Disk Block]] The partitioning standard for [[Amiga]] and compatible computers.
+* [[Volume boot record]]
+
+== References ==
+{{Reflist}}
+
+== Further reading ==
+* {{Cite web|url=http://www.yale.edu/pclt/BOOT/PARTITIO.HTM|title=Partitions and Volumes|work=PC Lube & Tune|author=H. Gilbert}}
+* {{Cite web|url=http://www.rayknights.org/pc_boot/pc_boot.htm|title=Ray's Place|work=MBR and Windows Boot Sectors (includes code disassembly and explanations of boot process)|author=Ray Knights}}
+* {{Cite web|url=http://www.ata-atapi.com/hiwmbr.html|title=Master Boot Record|work=How It Works|author=Hale Landis}}
+* {{Cite web|url=http://thestarman.pcministry.com/asm/mbr/index.html|title=MBRs (Master Boot Records)|work=Boot Records Revealed!|author=Daniel B. Sedory}} [http://mirror.href.com/thestarman/asm/mbr/index.html (Mirror site)] [http://thestarman.narod.ru/asm/mbr/index.html (Another mirror site)]
+* {{Cite web|url=http://www.cpqlinux.com/mbr.html|title=Understanding and Working with the MBR|work=www.cpqlinux.com}}
+* {{Cite web|url=http://thestarman.pcministry.com/asm/mbr/GRUB.htm|title=The GRUB MBR|work=A Disk Editor View and Comments on the Code|author=the starman}}
+
+== External links ==
+{{External links|date=October 2009}}
+* [http://wiki.osdev.org/MBR_(x86) Article on Master Boot Record]
+* [http://mirror.href.com/thestarman/asm/mbr/STDMBR.htm Standard MBR code dissasembly]
+* [http://www.mbrwizard.com/ MBRWizard! The MBR Management Utility] - freeware for Linux and Windows
+* [http://www.cgsecurity.org/wiki/TestDisk TestDisk - powerful free MBR and data recovery software] for Dos, Windows, Linux, and Mac OS X
+* [http://www.winvistatips.com/fix-mbr-a116.php Fix MBR errors] - how to repair the MBR in Windows Vista.
+* [http://mh-nexus.de/hxd/ HxD] - A freeware ''Windows'' disk editor which can be used to explore and back up critical sectors, such as the MBR.
+* [http://apps.tempel.org/iBored/ iBored] (previously rohPod) - A simple block oriented disk editor, which can repair MBRs and works even over the network. Works on Linux, Mac OS X and Windows.
+* [http://www.justlinux.com/forum/showthread.php?threadid=143973 Booting 100+ Operating systems] - An example of GRUB usage to boot every type of Operating Systems. Contains a lot of info about booting.
+* [http://mirror.href.com/thestarman/asm/mbr/PartTables.htm MBR/EBR Partition Tables] The Starman's page
+
+{{DEFAULTSORT:Master Boot Record}}
+[[Category:BIOS]]
+[[Category:Booting]]
+
+[[bg:Сектор за начално зареждане]]
+[[cs:Master boot record]]
+[[da:Master boot record]]
+[[de:Master Boot Record]]
+[[es:Master Boot Record]]
+[[eu:MBR]]
+[[fa:رکورد راه انداز اصلی]]
+[[fr:Master boot record]]
+[[ko:마스터 부트 레코드]]
+[[id:Master boot record]]
+[[it:Master boot record]]
+[[he:Master boot record]]
+[[hu:Master Boot Record]]
+[[nl:Master boot record]]
+[[ja:マスターブートレコード]]
+[[no:Master boot record]]
+[[pl:Master boot record]]
+[[pt:Master Boot Record]]
+[[ru:Главная загрузочная запись]]
+[[sv:Master Boot Record]]
+[[uk:Головний завантажувальний запис]]
+[[vi:Boot record]]
+[[zh:主引导记录]]</body> </html>

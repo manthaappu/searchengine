@@ -1,0 +1,117 @@
+<html> <head> <title>Lazy evaluation</title></head><body>{{accuracy|date=January 2011}}
+{{Programming evaluation}}
+In [[programming language theory]], '''lazy evaluation''' or '''call-by-need''' is an [[evaluation strategy]] which delays the evaluation of an expression until its value is actually required and also avoid repeated evaluations.<ref name="WattFindlay2004">{{cite book|author1=David Anthony Watt|author2=William Findlay|title=Programming language design concepts|url=http://books.google.com/books?id=vogP3P2L4tgC&pg=PA367|accessdate=30 December 2010|year=2004|publisher=John Wiley and Sons|isbn=9780470853207|pages=367–368}}</ref><ref name="Reynolds1998">{{cite book|author=John C. Reynolds|title=Theories of programming languages|url=http://books.google.com/books?id=HkI01IHJMcQC&pg=PA307|accessdate=31 December 2010|year=1998|publisher=Cambridge University Press|isbn=9780521594141|page=307}}</ref>
+
+The benefits of lazy evaluation include: performance increases due to avoiding unnecessary calculations, avoiding error conditions in the evaluation of compound expressions, the capability of constructing potentially infinite [[data structure]]s, and the capability of defining [[control structure]]s as abstractions instead of as primitives. Lazy evaluation can lead to reduction in memory footprint, since values are created when needed.<ref name="Smith2009">{{cite book|author=Chris Smith|title=Programming F#|url=http://books.google.com/books?id=gzVdyw2WoXMC&pg=PA79|accessdate=31 December 2010|date=22 October 2009|publisher=O'Reilly Media, Inc.|isbn=9780596153649|page=79}}</ref>
+
+However, with lazy evaluation, it is difficult to combine with imperative features such as [[exception handling]] and [[input/output]], because the order of operations becomes indeterminate. Also, debugging is difficult.<ref>[http://caml.inria.fr/pub/ml-archives/caml-list/1999/10/7b5cd5d7e12a9876637ada0ee3ed3e06.en.html OCaml and lazy evaluation]</ref>
+
+Languages that use lazy actions can be further subdivided into those that use a call-by-name [[evaluation strategy]] and those that use call-by-need. Most realistic lazy languages, such as [[Haskell (programming language)|Haskell]], use call-by-need for performance reasons, but theoretical presentations of lazy evaluation often use call-by-name for simplicity.
+
+The opposite of lazy actions is [[eager evaluation]], sometimes known as ''[[Evaluation strategy#Strict evaluation|strict evaluation]]''. Eager evaluation is the evaluation behavior used in most [[programming languages]].
+
+Lazy evaluation refers to how expressions are evaluated when they are passed as arguments to functions and entails the following three points:<ref>"Conception, Evolution, and Application of Functional Programming Languages", Paul Hudak, ACM Computing Surveys, Vol. 21, No.3, September 1989, pg. 383-385</ref>{{verification failed|date=January 2011}}
+# The expression is only evaluated if the result is required by the calling function, called '''delayed evaluation'''.<ref>David A. Schmidt, "Denotational Semantics", p.181</ref>{{dubious|date=January 2011}}
+# The expression is only evaluated to the extent that is required by the calling function, called '''[[short-circuit evaluation]]'''.{{dubious|date=January 2011}}
+# The expression is never evaluated more than once, called '''applicative-order evaluation'''.<ref>David A. Watt, "Programming Language concepts and Paradigms", p. 100</ref>{{dubious|date=January 2011}}
+
+==Delayed evaluation==<!-- This section is linked from [[Clean (programming language)]] -->
+Delayed evaluation is used particularly in [[functional programming|functional languages]]. When using delayed evaluation, an expression is not evaluated as soon as it gets bound to a variable, but when the evaluator is forced to produce the expression's value. That is, a statement such as <code>x:=expression;</code> (i.e. the assignment of the result of an expression to a variable) clearly calls for the expression to be evaluated and the result placed in <code>x</code>, but what actually is in <code>x</code> is irrelevant until there is a need for its value via a reference to <code>x</code> in some later expression whose evaluation could itself be deferred, though eventually the rapidly-growing tree of dependencies would be pruned in order to produce some symbol rather than another for the outside world to see.<ref name="Wadler2006">{{cite book|author=Philip Wadler|title=Functional and logic programming: 8th international symposium, FLOPS 2006, Fuji-Susono, Japan, April 24-26, 2006 : proceedings|url=http://books.google.com/books?id=gZzLFFZfc1sC&pg=PA149|accessdate=14 January 2011|year=2006|publisher=Springer|isbn=9783540334385|page=149}}</ref>
+
+Some programming languages delay evaluation of expressions by default, and some others provide [[subroutine|functions]] or special [[syntax of programming languages|syntax]] to delay evaluation. In [[Miranda (programming language)|Miranda]] and [[Haskell (programming language)|Haskell]], evaluation of function arguments is delayed by default. In many other languages, evaluation can be delayed by explicitly suspending the computation using special syntax (as with [[Scheme (programming language)|Scheme's]] "<code>delay</code>" and "<code>force</code>" and [[OCaml]]'s "<code>lazy</code>" and "<code>Lazy.force</code>") or, more generally, by wrapping the expression in a [[thunk]]. The object representing such an explicitly delayed evaluation is called a [[Futures and promises|future or promise]]. [[Perl 6]] uses lazy evaluation of lists, so one can assign infinite lists to variables and use them as arguments to functions, but unlike Haskell and Miranda, Perl 6 doesn't use lazy evaluation of arithmetic operators and functions by default.<ref name="Wadler2006"/>
+
+Delayed evaluation has the advantage of being able to create calculable infinite lists without infinite loops or size matters interfering in computation. For example, one could create a function that creates an infinite list (often called a ''[[stream (computing)|stream]]'') of [[Fibonacci number]]s. The calculation of the ''n''-th Fibonacci number would be merely the extraction of that element from the infinite list, forcing the evaluation of only the first n members of the list.<ref name="Métayer2002">{{cite book|author=Daniel Le Métayer|title=Programming languages and systems: 11th European Symposium on Programming, ESOP 2002, held as part of the Joint European Conferences on Theory and Practice of Software, ETAPS 2002, Grenoble, France, April 8-12, 2002 : proceedings|url=http://books.google.com/books?id=dYZyzp-I9hQC&pg=PA129|accessdate=14 January 2011|year=2002|publisher=Springer|isbn=9783540433637|pages=129–132}}</ref><ref name="MachineryLanguages2002">{{cite book|author1=Association for Computing Machinery|author2=ACM Special Interest Group on Programming Languages|title=Proceedings of the 2002 ACM SIGPLAN Haskell Workshop (Haskell '02) : Pittsburgh, Pennsylvania, USA ; October 3, 2002|url=http://books.google.com/books?id=hsBQAAAAMAAJ|accessdate=14 January 2011|date=1 January 2002|publisher=Association for Computing Machinery|isbn=9781581136050|page=40}}</ref>
+
+For example, in Haskell, the list of all Fibonacci numbers can be written as<ref name="MachineryLanguages2002"/>
+
+<source lang="haskell">
+ fibs = 0 : 1 : zipWith (+) fibs (tail fibs)
+</source>
+
+In Haskell syntax, "<code>:</code>" prepends an element to a list, <code>tail</code> returns a list without its first element, and <code>zipWith</code> uses a specified function (in this case addition) to combine corresponding elements of two lists to produce a third.<ref name="Métayer2002"/>
+
+Provided the programmer is careful, only the values that are required to produce a particular result are evaluated. However, certain calculations may result in the program attempting to evaluate an infinite number of elements; for example, requesting the length of the list or trying to sum the elements of the list with a [[fold (higher-order function)|fold operation]] would result in the program either failing to terminate or running out of memory.
+
+===Control structures===
+Even in most eager languages ''if'' statements evaluate in a lazy fashion.
+ if a then b else c
+evaluates (a), then if and only if (a) evaluates to true does it evaluate (b), otherwise it evaluates (c). That is, either (b) or (c) will not be evaluated. Conversely, in an eager language the expected behavior is that
+ define f(x,y) = 2*x
+ set k = f(e,5)
+will still evaluate (e) and (f) when computing (k). However, user-defined control structures depend on exact syntax, so for example
+ define g(a,b,c) = if a then b else c
+ l = g(h,i,j)
+(i) and (j) would both be evaluated in an eager language.  While in
+ l' = if h then i else j
+(i) or (j) would be evaluated, but never both.
+
+Lazy evaluation allows control structures to be defined normally, and not as primitives or compile-time techniques. If (i) or (j) have side effects or introduce run time errors, the subtle differences between (l) and (l') can be complex. As most programming languages are [[Turing_completeness|Turing-complete]], it is of course possible to introduce lazy control structures in eager languages, either as built-ins like [[C (programming language)|C's]] [[ternary operator]] [[?:]] or by other techniques such as clever use of [[anonymous function|lambdas]], or [[macro (computer science)|macros]].
+
+[[Short-circuit evaluation]] of Boolean control structures is sometimes called "lazy"<!-- e.g. X-Klaim language: http://music.dsi.unifi.it/download/xklaim.pdf -->.
+
+==Controlling eagerness in lazy languages==
+In lazy programming languages such as Haskell, although the default is to evaluate expressions only when they are demanded, it is possible in some cases to make code more eager—or conversely, to make it more lazy again after it has been made more eager. This can be done by explicitly coding something which forces evaluation (which may make the code more eager) or avoiding such code (which may make the code more lazy). ''Strict'' evaluation usually implies eagerness, but they are technically different concepts.
+
+However, there is an optimisation implemented in some compilers called [[strictness analysis]], which, in some cases, allows the compiler to infer that a value will always be used. In such cases, this may render the programmer's choice of whether to force that particular value or not, irrelevant, because strictness analysis will force strict evaluation.
+
+In Haskell, marking constructor fields strict means that their values will always be demanded immediately. The <code>seq</code> function can also be used to demand a value immediately and then pass it on, which is useful if a constructor field should generally be lazy. However, neither of these techniques implements ''recursive'' strictness—for that, a function called <code>deepSeq</code> was invented.
+
+Also, pattern matching in Haskell 98 is strict by default, so the <code>~</code> qualifier has to be used to make it lazy. <!-- Please add an example here -->
+
+==Other uses==
+In computer [[windowing system]]s, the painting of information to the screen is driven by "expose events" which drive the display code at the last possible moment. By doing this, they avoid the computation of unnecessary display content.<ref name="Lampson">[http://research.microsoft.com/en-us/um/people/blampson/slides/lazyandspeculative.ppt Lazy and Speculative Execution] [[Butler Lampson]] [[Microsoft Research]] OPODIS, Bordeaux, France 12 December 2006</ref> 
+
+Another example of laziness in modern computer systems is [[copy-on-write]] page allocation or [[demand paging]], where memory is allocated only when a value stored in that memory is changed.<ref name="Lampson"/>
+
+Laziness can be useful for high performance scenarios. An example is the Unix [[mmap]] functionality. mmap provides "demand driven" loading of pages from disk, so that
+only those pages actually touched are loaded into memory, and unnecessary memory is not allocated.
+
+==See also==
+* [[Combinatory logic]]
+* [[Currying]]
+* [[Dataflow]]
+* [[Eager evaluation]]
+* [[Functional programming]]
+* [[Futures and promises]]
+* [[Graph reduction]]
+* [[Incremental computing]] – a related concept whereby computations are only repeated if their inputs change. May be combined with lazy evaluation.
+* [[Lambda calculus]]
+* [[Lazy initialization]]
+* [[Lookahead]]
+* [[Short-circuit evaluation|Short-circuit (minimal) evaluation]]
+* [[Non-strict programming language]]
+* [[Evaluation strategy#Normal order|Normal order evaluation]]
+
+==References==
+{{reflist|2}}
+
+==External links==
+* [http://gnosis.cx/publish/programming/charming_python_b13.html Functional programming in Python becomes lazy]
+* [http://haskell.org/haskellwiki/Haskell/Lazy_evaluation Lazy evaluation in Haskell]
+* [http://www.digitalmars.com/d/lazy-evaluation.html Lazy function argument evaluation] in the [[D (programming language)|D programming language]]
+* [http://nemerle.org/Lazy_evaluation Lazy evaluation macros] in [[Nemerle]]
+* [http://www-128.ibm.com/developerworks/linux/library/l-lazyprog.html Lazy programming and lazy evaluation] in [[Scheme (programming language)|Scheme]]
+* [http://www.iolanguage.com/docs/talks/2005-10-OOPSLA/p003-dekorte.pdf Lazy argument evaluation] in [[Io (programming language)|Io programming language]]
+* [http://groups.google.com/group/comp.lang.c/browse_thread/thread/22211d03c3e0b5c9/f11f83cdbde4eee8 Lazy evaluation list/set processing] in [[C (programming language)|C programming language]]
+* [http://spirit.sourceforge.net/dl_docs/phoenix-2/libs/spirit/phoenix/doc/html/phoenix/introduction.html Lambda calculus in Boost Libraries] in [[C++ (programming language)|C++ programming language]]
+* [http://perldesignpatterns.com/?LazyEvaluation Lazy Evaluation] in [[Perl]]
+* [http://www.genworks.com/downloads/customer-documentation/usage.txt Lazy Evaluation] as implemented in Genworks GDL
+
+[[Category:Programming evaluation]]
+[[Category:Compiler optimizations]]
+[[Category:Articles with example Haskell code]]
+
+[[be:Адкладзеныя вылічэнні]]
+[[ca:Avaluació tardana]]
+[[de:Lazy Evaluation]]
+[[fr:Évaluation paresseuse]]
+[[it:Valutazione pigra]]
+[[ko:느긋한 계산법]]
+[[nl:Luie evaluatie]]
+[[ja:遅延評価]]
+[[pl:Wartościowanie leniwe]]
+[[pt:Avaliação preguiçosa]]
+[[ru:Отложенные вычисления]]
+[[fi:Laiska suoritus]]
+[[tr:Tembel değerlendirme]]
+[[zh:惰性求值]]</body> </html>

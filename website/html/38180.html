@@ -1,0 +1,99 @@
+<html> <head> <title>Treap</title></head><body>{{Probabilistic}}
+In [[computer science]], the '''treap''' and the '''randomized binary search tree''' are two closely-related forms of [[binary search tree]] [[data structure]]s that maintain a dynamic set of ordered keys and allow [[binary search]]es among the keys. After any sequence of insertions and deletions of keys, the shape of the tree is a [[random variable]] with the same probability distribution as a [[random binary tree]]; in particular, with high probability its height is proportional to the [[logarithm]] of the number of keys, so that each search, insertion, or deletion operation takes logarithmic time to perform.
+
+==Treap==
+[[Image:TreapAlphaKey.svg|thumb|left|A treap with alphabetic key and numeric max heap order]]
+The treap was first described by [[Cecilia R. Aragon]] and [[Raimund Seidel]] in 1989;<ref name="paper89">{{Citation | contribution=Randomized Search Trees |
+first1=Cecilia R. | last1=Aragon | first2=Raimund | last2=Seidel |
+url=http://faculty.washington.edu/aragon/pubs/rst89.pdf |
+title=[[Symposium on Foundations of Computer Science|Proc. 30th Symp. Foundations of Computer Science (FOCS 1989)]] | pages=540–545 | year=1989 |
+doi=10.1109/SFCS.1989.63531 | isbn=0-8186-1982-1 | publisher=IEEE Computer Society Press | location=Washington, D.C.}}
+</ref><ref name="paper96">
+{{Citation | title=Randomized Search Trees |
+first1=Raimund | last1=Seidel | first2=Cecilia R. | last2=Aragon |
+journal=Algorithmica | volume=16 | issue=4/5 | pages=464–497 | year=1996 |
+url=http://citeseer.ist.psu.edu/seidel96randomized.html |
+doi=10.1007/s004539900061}}.</ref> its name is a [[portmanteau word|portmanteau]] of [[Tree data structure|tree]] and [[heap (data structure)|heap]].
+It is a [[Cartesian tree]]<ref>{{citation
+ | last = Vuillemin | first = Jean
+ | doi = 10.1145/358841.358852
+ | issue = 4
+ | journal = Commun. ACM
+ | location = New York, NY, USA
+ | pages = 229–239
+ | publisher = ACM
+ | title = A unifying look at data structures
+ | volume = 23
+ | year = 1980}}.</ref> in which each key is given a (randomly chosen) numeric priority. As with any binary search tree, the [[inorder traversal]] order of the nodes is the same as the sorted order of the keys. The structure of the tree is determined by the requirement that it be heap-ordered: that is, the priority number for any non-leaf node must be greater than or equal to the priority of its children. Thus, as with Cartesian trees more generally, the root node is the maximum-priority node, and its left and right subtrees are formed in the same manner from the subsequences of the sorted order to the left and right of that node.
+
+An equivalent way of describing the treap is that it could be formed by inserting the nodes highest-priority-first into a binary search tree without doing any rebalancing. Therefore, if the priorities are independent random numbers (from a distribution over a large enough space of possible priorities to ensure that two nodes are very unlikely to have the same priority) then the shape of a treap has the same probability distribution as the shape of a [[random binary search tree]], a search tree formed by inserting the nodes without rebalancing in a randomly chosen insertion order.  Because random binary search trees are known to have logarithmic height with high probability, the same is true for treaps.
+
+Specifically, the treap supports the following operations:
+*To search for a given key value, apply a standard [[binary search]] algorithm in a binary search tree, ignoring the priorities.
+*To insert a new key ''x'' into the treap, generate a random priority ''y'' for ''x''. Binary search for ''x'' in the tree, and create a new node at the leaf position where the binary search determines a node for ''x'' should exist. Then, as long as ''x'' is not the root of the tree and has a larger priority number than its parent ''z'', perform a [[tree rotation]] that reverses the parent-child relation between ''x'' and ''z''.
+*To delete a node ''x'' from the heap, if ''x'' is a leaf of the tree, simply remove it. If ''x'' has a single child ''z'', remove ''x'' from the tree and make ''z'' be the child of the parent of ''x'' (or make ''z'' the root of the tree if ''x'' had no parent). Finally, if ''x'' has two children, swap its position in the tree with the position of its immediate successor ''z'' in the sorted order, resulting in one of the previous cases. In this final case, the swap may violate the heap-ordering property for ''z'', so additional rotations may need to be performed to restore this property.
+*To split a treap into two smaller treaps, those smaller than key ''x'', and those larger than key ''x'', insert ''x'' into the treap with maximum priority—larger than the priority of any node in the treap. After this insertion, ''x'' will be the root node of the treap, all values less than ''x'' will be found in the left subtreap, and all values greater than ''x'' will be found in the right subtreap. This costs as much as a single insertion into the treap.
+*Merging two treaps (assumed to be the product of a former split), one can safely assume that the greatest value in the first treap is less than the smallest value in the second treap. Insert a value ''x'', such that ''x'' is larger than this max-value in the first treap, and smaller than the min-value in the second treap, and assign it the minimum priority. After insertion it will be a leaf node, and can easily be deleted. The result is one treap merged from the two original treaps. This is effectively "undoing" a split, and costs the same.
+
+Aragon and Seidel also suggest assigning higher priorities to frequently accessed nodes, for instance by a process that, on each access, chooses a random number and replaces the priority of the node with that number if it is higher than the previous priority. This modification would cause the tree to lose its random shape; instead, frequently accessed nodes would be more likely to be near the root of the tree, causing searches for them to be faster.
+
+Blelloch and Reid-Miller<ref>{{citation
+ | last1 = Blelloch | first1 = Guy E., 
+ | last2 = Reid-Miller | first2 = Margaret, 
+ | contribution = Fast set operations using treaps
+ | doi = 10.1145/277651.277660
+ | isbn = 0-89791-989-0
+ | location = New York, NY, USA
+ | pages = 16–26
+ | publisher = ACM
+ | title = [[Symposium on Parallel Algorithms and Architectures|Proc. 10th ACM Symp. Parallel Algorithms and Architectures (SPAA 1998)]]
+ | year = 1998}}.</ref> describe an application of treaps to a problem of maintaining [[set (computer science)|set]]s of items and performing [[set union]], [[set intersection]], and [[set difference]] operations, using a treap to represent each set. Naor and Nissim<ref>{{citation
+ | last1 = Naor | first1 = M. | author1-link = Moni Naor
+ | last2 = Nissim | first2 = K.
+ | date = April 2000
+ | doi = 10.1109/49.839932
+ | issue = 4
+ | journal = IEEE Journal on Selected Areas in Communications
+ | pages = 561–570
+ | title = Certificate revocation and certificate update
+ | url = http://eprints.kfupm.edu.sa/29443/1/29443.pdf
+ | volume = 18}}.</ref> describe another application, for maintaining [[Public key certificate|authorization certificates]] in [[public-key cryptography|public-key cryptosystems]].
+
+==Randomized binary search tree==
+The randomized binary search tree, introduced by Martínez and Roura subsequently to the work of Aragon and Seidel on treaps,<ref>{{Citation | title=Randomized binary search trees | journal=Journal of the ACM | volume=45 | issue=2 | year=1998 | first1=Conrado | last1=Martínez | first2=Salvador | last2=Roura | pages=288–323 | url=http://citeseer.ist.psu.edu/article/martinez97randomized.html | doi=10.1145/274787.274812}}.</ref> stores the same nodes with the same random distribution of tree shape, but maintains different information within the nodes of the tree in order to maintain its randomized structure.
+
+Rather than storing random priorities on each node, the randomized binary search tree stores at each node a small integer, the number of its descendants (counting itself as one); these numbers may be maintained during tree rotation operations at only a constant additional amount of time per rotation. When a key ''x'' is to be inserted into a tree that already has ''n'' nodes, the insertion algorithm chooses with probability 1/(''n'' + 1) to place ''x'' as the new root of the tree, and otherwise it calls the insertion procedure recursively to insert ''x'' within the left or right subtree (depending on whether its key is less than or greater than the root). The numbers of descendants are used by the algorithm to calculate the necessary probabilities for the random choices at each step. Placing ''x'' at the root of a subtree may be performed either as in the treap by inserting it at a leaf and then rotating it upwards, or by an alternative algorithm described by Martínez and Roura that splits the subtree into two pieces to be used as the left and right children of the new node.
+
+The deletion procedure for a randomized binary search tree uses the same information per node as the insertion procedure, and like the insertion procedure it makes a sequence of O(log ''n'') random decisions in order to join the two subtrees descending from the left and right children of the deleted node into a single tree. If the left or right subtree of the node to be deleted is empty, the join operation is trivial; otherwise, the left or right child of the deleted node is selected as the new subtree root with probability proportional to its number of descendants, and the join proceeds recursively.
+
+==Comparison==
+The information stored per node in the randomized binary tree is simpler than in a treap (a small integer rather than a high-precision random number), but it makes a greater number of calls to the random number generator (O(log ''n'') calls per insertion or deletion rather than one call per insertion) and the insertion procedure is slightly more complicated due to the need to update the numbers of descendants per node. A minor technical difference is that, in a treap, there is a small probability of a collision (two keys getting the same priority) while in the randomized binary search tree the random choices require fractional probabilities that are not the [[dyadic rational]] numbers that can be generated on binary computers; however, in both cases the differences between the theoretical model of perfect random choices used to design the algorithm and the capabilities of actual random number generators are vanishingly small.
+
+Although the treap and the randomized binary search tree both have the same random distribution of tree shapes after each update, the history of modifications to the trees performed by these two data structures over a sequence of insertion and deletion operations may be different. For instance, in a treap, if the three numbers 1, 2, and 3 are inserted in the order 1, 3, 2, and then the number 2 is deleted, the remaining two nodes will have the same parent-child relationship that they did prior to the insertion of the middle number. In a randomized binary search tree, the tree after the deletion is equally likely to be either of the two possible trees on its two nodes, independently of what the tree looked like prior to the insertion of the middle number.
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://faculty.washington.edu/aragon/treaps.html Collection of treap references and info] by Cecilia Aragon
+*[http://people.ksp.sk/~kuko/bak/index.html Treap Applet] by Kubo Kovac
+*[http://www.ibr.cs.tu-bs.de/lehre/ss98/audii/applets/BST/Treap-Example.html Animated treap]
+*[http://www.cs.uiuc.edu/class/sp09/cs473/notes/08-treaps.pdf Randomized binary search trees]. Lecture notes from a course by Jeff Erickson at UIUC. Despite the title, this is primarily about treaps and [[skip list]]s; randomized binary search trees are mentioned only briefly.
+*[http://code.google.com/p/treapdb/ A high performance key-value store based on treap] by Junyi Sun
+*[http://www.fernando-rodriguez.com/a-high-performance-alternative-to-dictionary VB6 implementation of treaps]. Visual basic 6 implementation  of treaps as a COM object.
+*[http://code.google.com/p/as3-commons/source/browse/trunk/as3-commons-collections/src/main/actionscript/org/as3commons/collections/Treap.as ActionScript3 implementation of a treap]
+
+
+{{CS-Trees}}
+
+[[Category:Heaps (structure)]]
+[[Category:Binary trees]]
+[[Category:Probabilistic data structures]]
+
+[[de:Treap]]
+[[fa:داده ساختار تیریپ]]
+[[fr:Treap]]
+[[it:Treap]]
+[[ru:Декартово дерево]]
+[[th:ทรีพ]]
+[[zh:Treap]]</body> </html>

@@ -1,0 +1,161 @@
+<html> <head> <title>AMPL</title></head><body>{{Infobox programming language
+| name                   = AMPL
+| logo                   = [[Image:Ampl.jpg]]
+| caption                = 
+| paradigm               = 
+| year                   = 1990
+| designer               = [[Robert Fourer]]<br/> David Gay<br/> [[Brian Kernighan]]<br/>[[Bell Labs]]
+| developer              = 
+| latest_release_version = 20100928
+| latest_release_date    = September 28, 2010
+| latest_test_version    = 
+| latest_test_date       =  
+| turing-complete        = 
+| typing                 = 
+| implementations        = 
+| dialects               = 
+| influenced_by          = [[AWK]], [[C (programming language)|C]]
+| influenced             = 
+| operating_system       = [[Cross-platform|Cross-platform (multi-platform)]]
+| license                = [[Proprietary software|Proprietary]]
+| genre                  = [[Algebraic modeling language|Algebraic Modeling Language (AML)]]
+| website                = [http://www.ampl.com AMPL home page]
+| file_ext               = .mod .dat .run
+}}
+
+'''AMPL''', an acronym for '''"A Mathematical Programming Language"''', is an [[algebraic modeling language]] for describing and solving high-complexity problems for large-scale mathematical computation (i.e. large-scale optimization and scheduling-type problems)
+<ref>
+{{cite book
+| title = AMPL: A Modeling Language for Mathematical Programming
+| last = Fourer
+| first = Robert
+| authorlink = Robert Fourer
+| coauthors = David M. Gay, [[Brian Kernighan|Brian W. Kernighan]]
+| year = 2002
+| publisher = Duxbury Press
+| isbn = 978-0534388096}}
+</ref>.
+It was developed by [[Robert Fourer]], [[David Gay]] and [[Brian Kernighan]] at [[Bell Labs|Bell Laboratories]].
+AMPL does not solve problems directly; instead, it calls appropriate external [[solver]]s (such as [[CPLEX]], [[FortMP]], [[MINOS (solver)|MINOS]], [[IPOPT]], [[SNOPT]], [[KNITRO]], and so on) to obtain solutions. Problems are passed to solvers as [[nl (format)|nl files]].
+
+One particular advantage of AMPL is the similarity of its syntax to the mathematical notation of [[Optimization (mathematics)|optimization]] problems. This allows for a very concise and readable definition of problems in the domain of [[mathematical programming|optimization]]. Many modern solvers available on the NEOS <ref name="neos">http://www-neos.mcs.anl.gov/neos/</ref> server hosted at the [[Argonne National Laboratory]] accept AMPL input. According to the NEOS statistics AMPL is the most popular format for representing mathematical programming problems.
+
+==Availability==
+
+AMPL is available for many popular 32- and 64-bit platforms including [[Linux]], [[Mac OS X]] and [[Windows]].
+It is a proprietary software currently maintained by AMPL Optimization LLC. However there exist several online services <ref name="neos"/><ref>http://www.ampl.com/TRYAMPL/</ref> providing free modeling and solving facilities using AMPL. Also a free student version with limited functionality is available <ref>http://www.ampl.com/DOWNLOADS/index.html</ref>.
+
+==Optimization problems supported==
+
+AMPL handles a wide range of problem types, among them:
+* [[Linear programming]]
+* [[Quadratic programming]]
+* [[Nonlinear programming]]
+* [[Linear_programming#Integer_unknowns|Mixed-integer programming]]
+* Mixed-integer quadratic programming with or without [[Convex function|convex]] quadratic constraints
+* Mixed-integer nonlinear programming
+* [[Global optimization]]
+* [[Semidefinite programming]] problems with [[Bilinear form|bilinear]] matrix inequalities
+* [[Complementarity theory|Complementarity problems]] (MPECs) in discrete or continuous variables
+
+==Timeline==
+
+* 1990 Paper describing the AMPL modeling language was published in [[Management Science: A Journal of the Institute for Operations Research and the Management Sciences|Management Science]]<ref>
+{{Cite journal
+  | authorlink = Robert Fourer
+  | authorlink = David M. Gay
+  | authorlink = Brian W. Kernighan
+  | title = A Modeling Language for Mathematical Programming
+  | journal = Management Science
+  | volume = 36
+  | pages = 519–554–83
+  | year = 1990
+  | url = http://www.ampl.com/REFS/amplmod.pdf}}
+</ref>
+* 1991 AMPL supports [[nonlinear programming]] and [[automatic differentiation]]
+* 1995 Extensions for representing [[piecewise linear function|piecewise-linear]] and network structures
+* 1998 AMPL supports [[complementarity theory|complementarity problems]]
+* 2000 Relational database access
+
+==A sample model==
+
+A transportation problem from [[George Dantzig]] is used to provide a sample AMPL model. This problem finds the least cost shipping schedule that meets requirements at markets and supplies at factories.
+
+Dantzig, G B, Chapter 3.3. In Linear Programming and Extensions. Princeton University Press, Princeton, New Jersey, 1963.
+
+ set Plants;
+ set Markets;
+ 
+ # Capacity of plant p in cases
+ param Capacity{p in Plants};
+ 
+ # Demand at market m in cases
+ param Demand{m in Markets};
+ 
+ # Distance in thousands of miles
+ param Distance{Plants, Markets};
+ 
+ # Freight in dollars per case per thousand miles
+ param Freight;
+ 
+ # Transport cost in thousands of dollars per case
+ param TransportCost{p in Plants, m in Markets} =
+     Freight * Distance[p, m] / 1000; 
+ 
+ # Shipment quantities in cases
+ var shipment{Plants, Markets} >= 0;
+ 
+ # Total transportation costs in thousands of dollars
+ minimize cost:
+     sum{p in Plants, m in Markets} TransportCost[p, m] * shipment[p, m];
+ 
+ # Observe supply limit at plant p
+ s.t. supply{p in Plants}: sum{m in Markets} shipment[p, m] <= Capacity[p];
+ 
+ # Satisfy demand at market m
+ s.t. demand{m in Markets}: sum{p in Plants} shipment[p, m] >= Demand[m];
+ 
+ data;
+ 
+ set Plants := seattle san-diego;
+ set Markets := new-york chicago topeka;
+ 
+ param Capacity :=
+     seattle   350
+     san-diego 600;
+ 
+ param Demand :=
+     new-york 325
+     chicago  300
+     topeka   275;
+ 
+ param Distance : new-york chicago topeka :=
+     seattle        2.5      1.7     1.8
+     san-diego      2.5      1.8     1.4;
+ 
+ param Freight := 90;
+
+==See also==
+* [[APMonitor]]
+* [[General Algebraic Modeling System]] (GAMS)
+* [[MPS (format)]]
+* [[nl (format)]]
+* [[GLPK]] - free open source system based on a subset of AMPL
+
+==References==
+<references/>
+
+==External links==
+* [http://www.ampl.com AMPL home page]
+* [http://www.iems.northwestern.edu/~4er Prof. Fourer's home page] at [[Northwestern University]]
+
+{{DEFAULTSORT:Ampl}}
+[[Category:Computer algebra systems]]
+[[Category:Mathematical optimization software]]
+[[Category:Numerical programming languages]]
+[[Category:Operations research]]
+
+[[de:AMPL]]
+[[it:AMPL]]
+[[ru:AMPL (язык программирования)]]
+[[sv:AMPL]]</body> </html>

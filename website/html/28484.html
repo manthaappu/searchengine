@@ -1,0 +1,45 @@
+<html> <head> <title>Parrot intermediate representation</title></head><body>The '''Parrot intermediate representation''' ('''PIR'''), previously called Intermediate code (IMC), is one of the two [[assembly language]]s for the [[Parrot virtual machine]]. The other is [[Parrot assembly language]] or PASM. Compared to PASM, PIR exists at a slightly higher [[abstraction layer]], and provides temporary registers and named registers, simplifying code generation.
+
+While Parrot is still evolving, it is currently being used in many different capacities, and has undergone several releases.
+
+==Overview==
+PIR provides a set of abstractions that allow the programmer to ignore certain redundancies in the Parrot [[bytecode]] and quickly write code that adheres to the complexities of Parrot, such as the calling conventions.
+
+===Abstractions===
+PIR provides both type abstraction and [[Type polymorphism|polymorphism]] to some degree. For example, the "<code>+</code>" operator can be used with <code>int</code>, <code>num</code> or both:
+
+ .local int a
+ .local num b
+ a = 1
+ b = 1.1
+ .local num c
+ c = a + b
+
+===Calling conventions===
+The calling conventions in Parrot are complex, but all of that complexity can be hidden by using PIR directives:
+
+ .sub foo
+  .param int a
+  .param int b
+  .local int tmp
+  tmp = a + b
+  .return (tmp)
+ .end
+
+Each of the directives prefixed with a "<code>.</code>" expands to the required Parrot bytecode, but does not directly represent any fundamental Parrot operation.
+
+==Example==
+The [[hello world program]] in PIR is
+<code><pre>
+.sub hello :main
+  print "Hello world!\n"
+.end</pre></code>
+
+If the program is saved as ''hello.pir'', it can be [[Compiler|compiled]] and [[Execution (computing)|executed]] with this command: <code>parrot hello.pir</code>
+
+==External links==
+* [http://docs.parrot.org/parrot/latest/html/docs/user/pir/intro.pod.html Writing PIR]
+* [http://www.parrot.org/dev/examples/pir PIR examples at parrot.org]
+
+[[Category:Assembly languages]]
+[[Category:Perl]]</body> </html>

@@ -1,0 +1,149 @@
+<html> <head> <title>SuperCollider</title></head><body>: ''This article is about the programming language.  For other uses, see [[Supercollider]].''
+{{Infobox software
+| screenshot                 = [[File:SuperCollider screenshot3.jpg|250px]]
+| developer                  = James McCartney and others
+| released                   = 1996
+| latest release version     = 3.4
+| latest release date        = {{Start date and age|2010|07|15}}
+| operating system = [[Linux]], [[Mac OS X]], [[Microsoft Windows|Windows]], [[FreeBSD]]<ref>[http://sourceforge.net/project/showfiles.php?group_id=54622 SourceForge.net: Files<!-- Bot generated title -->]</ref>
+
+| type                     = [[Audio programming language]]
+| license                   = [[GNU General Public License]]
+| website                   = http://supercollider.sourceforge.net/
+}}
+
+'''SuperCollider''' is an environment and [[programming language]] originally released in 1996 by James McCartney for [[Real-time operating system|real-time]] [[audio synthesis]] and [[algorithmic composition]].<ref name="sc1996">J. McCartney, [http://www.audiosynth.com/icmc96paper.html SuperCollider: A new real time synthesis language], in Proc. International Computer Music Conference (ICMC’96), 1996, pp. 257–258.</ref><ref name="sc2002">J. McCartney, [http://dx.doi.org/10.1162/014892602320991383 Rethinking the computer music language: SuperCollider], Computer Music Journal, 26 (2002), pp. 61–68.</ref>
+
+Since then it has been evolving into a system used and further developed by both scientists and artists working with sound. It is an efficient and expressive [[dynamic programming language]] which makes it an interesting framework for [[Acoustics|acoustic research]], [[Algorithmic composition|algorithmic music]] and [[interactive programming]].
+
+Released under the terms of the [[GNU General Public License]] in 2002, SuperCollider is [[free software]].
+The latest version (3.4) was released in July 2010.<ref>[http://supercollider.sourceforge.net/2010/supercollider-34/ SuperCollider 3.4 release announcement]</ref>
+
+==Architecture==
+Since version 3 the SuperCollider environment is split into a [[Server (computing)|server]], ''scsynth'', and a [[client (computing)|client]], ''sclang'', that communicate using OSC ([[Open Sound Control]]).
+
+''SC Language'' combines the object oriented structure of [[Smalltalk]] and features from [[functional programming language]]s with a [[C (programming language)|C]] family [[syntax]].
+
+The ''SC Server'' application supports a simple C plugin API making it easy to write efficient sound algorithms ([[unit generator]]s) which can then be combined into graphs of calculations. Because all external control in the server happens via OSC, it is possible to use it with other languages or applications.
+
+=== The SuperCollider synthesis server (''scsynth'') ===
+
+SuperCollider's sound generation is bundled into an optimised command-line executable (named ''scsynth''). In most cases it is controlled from within the SuperCollider programming language, but it can be used independently. The audio server has the following features:
+
+* [[Open Sound Control]] access
+* Simple [[ANSI C]] plugin [[API]]
+* Supports any number of input and output channels, including massively multichannel setups<ref>[http://www.beast.bham.ac.uk/research/mulch.shtml BEASTmulch tools for multichannel audio]</ref>
+* Gives access to an [[Ordered tree data structure|ordered tree]] structure of synthesis nodes which define the order of execution
+* Bus system which allows to dynamically restructure the signal flow
+* Buffers for writing and reading
+* Calculation at different rates depending on the needs: audio rate, control rate, demand rate
+
+=== The SuperCollider programming language (''sclang'') ===
+
+The SuperCollider programming language is related to [[Smalltalk]] and functional languages, with a [[C (programming language)|C]] family syntax. Its architecture strikes a balance between the needs of realtime computation and the flexibility and simplicity of an abstract language. Like many functional languages, it implements [[Function (computer science)|functions]] as [[first class (computing)|first class]] objects, which may be [[function composition|composed]]. Functions and methods may have default argument values, variable length argument lists and may be called with any order keyword arguments. [[Closure (computer science)|Closures]] are lexical, [[scope (programming)|scope]] is both lexical and dynamic. Further features typical of functional languages, like closure creation via partial application (explicit [[currying]]), [[tail call]] optimization, [[List comprehension|list comprehensions]] and [[coroutines]] are supported. Specifics include the implicit expansion of tuples and the stateless pattern system. Its constant time message lookup and real time [[garbage collection (computer science)|garbage collection]] allows large systems to be efficient and to handle signal processing flexibly.
+
+By supporting methods of [[Reflection (computer science)|reflective]], [[interactive programming|conversational]] and [[Literate Programming|literate programming]], SuperCollider makes it relatively easy to find new sound algorithms<ref>J. Rohrhuber, A. de Campo and Renate Wieser. [http://www.wertlos.org/~rohrhuber/articles/AlgorithmsToday.pdf Algorithms Today. Notes on Language Design for Just in Time Programming]. In ''Proceedings of the International Computer Music Conference'', Barcelona, 2005.</ref> and to develop custom software as well as custom frameworks. With regards to domain specific knowledge, it is both general (e.g. it allows to represent properties such as time and pitch in variable degrees of abstraction) and copious of example implementations for specific purposes.
+
+===GUI system===
+[[File:ixiQuarks.jpg|thumb|Screenshot of SuperCollider running the ixiQuarks GUI tools]]
+The SuperCollider language allows users to construct cross-platform graphical user interfaces for applications. The standard [[class library]] with [[user interface]] components may be extended by a number of available frameworks. For interactive programming, the system supports programmatic access to rich text code files. It may be used to generate [[vector graphics]] algorithmically.
+
+==Interfacing and system support==
+===Clients===
+Because the server is controlled using [[Open Sound Control]] (OSC), a variety of applications can be used to control the server. SuperCollider language environments (see below) are typically used, but other OSC-aware systems can be used such as [[Pure Data]].
+
+"Third-party" clients for the SuperCollider server exist, including rsc3, a [[Scheme (programming language)|Scheme]] client, and hsc3, based on [[Haskell (programming language)|Haskell]].<ref name="clients">[http://swiki.hfbk-hamburg.de:8888/MusicTechnology/659 More examples on the SuperCollider wiki]</ref> These are distinct from the development environments mentioned below because they do not provide an interface to SuperCollider's programming language, instead they communicate directly with the audio server and provide their own approaches to facilitating user expression.
+
+===Supported operating systems===
+[[File:SuperCollider screenshot2.jpg|thumb|Screenshot of SuperCollider on Mac OS X with various user-generated GUI elements]]
+SuperCollider runs under [[Mac OS X]], [[Linux]], [[Microsoft Windows|Windows]] and [[FreeBSD]].
+The Windows version, however, tends to lag behind the others since most development is based on Mac and Linux.
+For each of these operating systems there are multiple language-editing environments and clients that can be used with SuperCollider (see below).
+
+SuperCollider is also available on a [[Live CD]] called [[pure:dyne]] (a GNU/Linux distribution based on [[Debian]]).
+
+===Editing environments===
+[[File:Puredyne-supercollider-eee.png|thumb|Screenshot of SuperCollider Vim on [[puredyne]] [[linux]]]]
+The Mac version of SuperCollider is most commonly used from within its own Mac-specific ([[Cocoa (API)|Cocoa]]) interface; and the Windows version comes with a (cross-platform) [[Python (programming language)|Python]]-based development environment (named '''PsyCollider'''). Alternatively, SuperCollider code can be developed and run from a number of common [[Integrated development environment|development environments]] such as:
+
+* [[GNU Emacs]] (Linux, Mac)
+* [[Vim]] (Linux, Mac)
+* [[Eclipse (software)|Eclipse]] (Windows, Linux)
+* [[gedit]] (Linux)
+* [[Kate (text editor)|Kate]] (Linux)
+
+For each of the above environments, a [[plugin]] enables the real-time execution of SuperCollider code and interaction with the audio server.
+
+==Code examples==
+<pre>
+// print "Hello world!"
+"Hello world!".postln;
+</pre>
+<pre>
+// play a mixture of pink noise and an 800 Hz sine tone
+{ SinOsc.ar(800, 0, 0.1) + PinkNoise.ar(0.01) }.play; 
+</pre>
+<pre>
+// modulate a sine frequency and a noise amplitude with another sine
+// whose frequency depends on the horizontal cursor position
+{ 
+	var x = SinOsc.ar(MouseX.kr(1, 100));
+	SinOsc.ar(300 * x + 800, 0, 0.1) 
+	+ 
+	PinkNoise.ar(0.1 * x + 0.1) 
+}.play; 
+</pre>
+<pre>
+// list iteration: create a collection of indices multiplied by their values
+[1, 2, 5, 10, -3].collect { 
+	arg item, i;
+ 	item * i;
+};
+</pre>
+<pre>
+// factorial function
+f = {
+	arg x;
+ 	if(x == 0) { 1 } { f.(x-1) * x }
+};
+</pre>
+
+==Live coding==
+As a versatile [[dynamic programming language]], SuperCollider can be used for [[live coding]], i.e. performances which involve the performer modifying and executing code on-the-fly<ref>
+Collins, N., McLean, A., Rohrhuber, J. & Ward, A. (2003), Live Coding Techniques for Laptop Performance, ''Organised Sound'' 8(3): pp 321-30. {{doi|10.1017/S135577180300030X}}</ref>. A specific kind of [[proxy pattern|proxies]] serve as high level placeholders for synthesis objects which can be swapped in and out or modified at runtime. Environments allow sharing and modification of objects and process declarations over networks<ref>J. Rohrhuber and A. de Campo. [http://akustik.hfbk.net/publications/Uncertainty_and_waiting.pdf Waiting and uncertainty in computer music networks]. In ''Proceedings of the International Computer Music Conference'', Miami, 2004.</ref>. Various extension libraries support different abstraction and access to sound objects, e.g. dewdrop_lib allows for the live creation and modification of pseudo-classes and -objects.
+
+==See also==
+{{Portal|Free software}}
+
+* [[Comparison of audio synthesis environments]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://supercollider.sourceforge.net/ Official SuperCollider home page]
+* [http://swiki.hfbk-hamburg.de:8888/MusicTechnology/6 The SuperCollider Swiki]
+* [http://www.beast.bham.ac.uk/research/sc_mailing_lists.shtml SuperCollider users mailing list]
+* [http://www.music.mcgill.ca/~ich/research/icmpc98/icmpc98.realsynth.html Realtime Software Synthesis for Psychoacoustic Experiments] (1998)
+* [http://www.ariada.uea.ac.uk/ariadatexts/ariada3/collins/ariada3_collins.html Algorithmic Composition Methods for Breakbeat Science] (2003)
+
+{{DEFAULTSORT:Supercollider}}
+[[Category:Dynamically typed programming languages]]
+[[Category:Object-oriented programming languages]]
+[[Category:Audio programming languages]]
+[[Category:Music software plugin architectures]]
+[[Category:Free music software]]
+[[Category:Electronic music]]
+[[Category:Free audio software]]
+[[Category:Software synthesizers]]
+[[Category:Mac OS X software]]
+[[Category:2002 software]]
+[[Category:Array programming languages]]
+
+[[de:SuperCollider]]
+[[es:SuperCollider]]
+[[fr:SuperCollider]]
+[[ja:SuperCollider]]
+[[pt:SuperCollider]]
+[[ru:SuperCollider]]
+[[simple:SuperCollider]]</body> </html>

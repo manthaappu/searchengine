@@ -1,0 +1,100 @@
+<html> <head> <title>HSQLDB</title></head><body>{{Infobox Software
+| name                   = HSQLDB (HyperSQL DataBase)
+| logo                   =
+| screenshot             = [[Image:Hsql.png|260px]]
+| caption                = HSQL Database Manager
+| collapsible            =
+| developer              =
+| status                 = Active
+| released               = 2001
+| latest release version = 2.0.1
+| latest release date    = {{release date|2010|12|10}}
+| latest preview version = 
+| latest preview date    = {{release date|2010|03|19}}
+| size                   = 1100 KB
+| operating system       = [[Cross-platform]]
+| programming language   = [[Java (programming language)|Java]]
+| genre                  = [[Relational database management system|RDBMS]]
+| license                = [[BSD license]]
+| website                = http://hsqldb.org
+}}
+'''HSQLDB''' (Hyper Structured Query Language Database) is a [[relational database management system]] written in [[Java (programming language)|Java]].
+
+HSQLDB is available under a [[BSD license]].
+
+It has a [[JDBC]] driver and supports a large subset of [[SQL-92]] and [[SQL:2008]] standards.<ref>{{cite web | title=HSQLDB SQL Syntax | publisher=hsqldb.org | url=http://hsqldb.org/doc/2.0/guide/sqlgeneral-chapt.html}}</ref> It offers a fast,<ref>{{cite web | title=PolePosition Performance Comparison | publisher=polepos.org | url=http://polepos.sourceforge.net/results/html/index.html}}</ref> small (around 1100 kilobytes in version 2.0) database engine which offers both in-memory and disk-based tables. Embedded and server modes are available.
+
+Additionally, it includes tools such as a minimal [[web server]], command line and GUI management tools (can be run as applets), and a number of demonstration examples. It can run on Java runtimes from version 1.1 upwards, including [[free Java runtimes]] such as [[Kaffe]].
+
+HSQLDB is currently being used as a database and persistence engine in many [[open source]] software projects, such as [[OpenOffice.org Base]] and the Standalone Roller Demo,<ref>{{cite web | title=Standalone Roller Demo | publisher=rollerweblogger.org | url=http://rollerweblogger.org/page/roller/20040707#try_roller_it_s_easy}}</ref> as well as in commercial products, such as [[Mathematica]] or InstallAnywhere (starting with version 8.0).<ref>{{cite web | title=Software using HSQLDB |publisher=hsqldb.org | url=http://hsqldb.org/web/hsqlUsing.html }}</ref>
+
+Over 350 book titles document the use of HSQLDB for application development with frameworks such as [[Spring Framework]] or [[Hibernate (Java)|Hibernate]].<ref>{{cite book | title=Books referring to HSQLDB | publisher=Google Books | url=http://books.google.com/books?q=hsqldb&btnG=Search+Books }}</ref>
+
+== Transaction support ==
+
+HSQLDB version 2.0 has three transaction control modes. It supports read committed and serializable isolation levels with table level locks or with multiversion concurrency control ([[Multiversion concurrency control|MVCC]]), or a combination of locks and MVCC. version 1.8.1 supports [[transaction isolation]] level 0 (read uncommitted) only. <ref>{{cite web | title = HSQLDB Documentation | url = http://hsqldb.org/doc/2.0/guide/sessions-chapt.html#sqlgeneral_trans_cc-sect}}</ref>
+
+== Data storage ==
+
+HSQLDB has two main table types used for durable read-write data storage (i.e. if transaction has been successfully committed, it is guaranteed that the data will survive system failure and will keep its integrity).
+
+The default MEMORY type stores all data changes to the disk in the form of a [[SQL]] script. During engine start up, these commands are executed and data is reconstructed into the memory. While this behavior is not suitable for very large tables, it provides highly regarded performance benefits and is easy to debug.
+
+Another table type is CACHED, which allows one to store gigabytes of data, at the cost of the slower performance. HSQLDB engine loads them only partially and synchronizes the data to the disk on transaction commits. However, the engine always loads all rows affected during an update into the memory. This renders very large updates impossible without splitting the work into smaller parts.<ref>{{cite web | title = HSQLDB Documentation | url = http://hsqldb.org/doc/guide/ch05.html#N10DED}}</ref>
+
+Other table types allow for read-write [[Comma-separated values|CSV]]-file access (these tables can participate, for example, in queries with JOINs and simplify spreadsheet processing) and read-write non-durable in-memory data storage.
+
+== SQL Features ==
+
+HSQLDB 2.0 supports all the core features and 148 optional features of [[SQL:2008]]. Advanced features include user-defined SQL procedures and functions, schemas, datetime intervals, updatable views, arrays, lobs, full and lateral joins and set operations. Many non-standard functions such as TO_CHAR and DECODE are also supported. Extensions to Standard SQL include user-defined aggregate functions.
+
+== History ==
+
+Several versions of HSQLDB have been released since 2001. Early versions were based on the discontinued HypersonicSQL database engine. Version 2.0, released in 2010, is mostly new code, written to conform to Standard [[SQL]] and [[JDBC]] 4 Specification.  <ref>{{cite web | title=The new HSQLDB | publisher=hsqldb.org | url=http://hsqldb.org/web/features200.html}}</ref>
+
+==See also==
+{{Portal|Free software}}
+*[[List of relational database management systems]]
+*[[Comparison of relational database management systems]]
+*[[OpenOffice.org Base]]
+*[[H2 (DBMS)|H2]]
+*[[Apache Derby]]
+*[[Change control]]
+
+==References==
+{{Refimprove|date=February 2008}}
+{{Primary sources|date=February 2008}}
+<!-- How to add a footnote: 
+<nowiki>
+   NOTE: Footnotes in this article use names, not numbers. Please see [[Wikipedia:Footnotes]] for details.
+     1) Assign your footnote a unique name, for example TheSun_Dec9. 
+     2) Add the <ref name="name"></ref> construct to the article body, where you want the footnote to appear
+     3) Put the content of the reference (i.e., what you want to appear in this section) between the <ref name="name">value</ref>
+     4) Multiple footnotes to the same reference: repeat the name with an additional slash <ref name="name"/> at each point. The wikimedia software will do the rest.
+     5) Don't write anything in this section. The wikimedia software fills this in as a result of the following tag.
+</nowiki>
+This article uses the Cite.php citation mechanism. If you would like more information on how to add references to this article, please see http://meta.wikimedia.org/wiki/Cite/Cite.php -->
+{{Reflist}}
+
+==External links==
+*[http://hsqldb.org HSQLDB at SourceForge.net]
+*[http://hsqldb.org/web/hsqlUsing.html Software using HSQLDB]
+*[http://books.google.com/books?q=hsqldb&btnG=Search+Books Books referring to HSQLDB (Google Books)]
+
+{{DEFAULTSORT:Hsqldb}}
+[[Category:Open source database management systems]]
+[[Category:Java platform software]]
+[[Category:SQL]]
+
+[[ca:HSQLDB]]
+[[cs:HSQLDB]]
+[[de:HSQLDB]]
+[[es:HSQLDB]]
+[[fr:HSQLDB]]
+[[it:HSQLDB]]
+[[lt:HSQLDB]]
+[[ja:HSQLDB]]
+[[pl:HSQLDB]]
+[[pt:HSQLDB]]
+[[ru:HSQLDB]]
+[[uk:HSQLDB]]</body> </html>

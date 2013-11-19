@@ -1,0 +1,202 @@
+<html> <head> <title>Daemon (computer software)</title></head><body>In [[Unix]] and other [[computer multitasking]] [[operating system]]s, a '''daemon''' ({{pron-en|ˈdeɪmən}} or {{IPA-en|ˈdiːmən|}})<ref name="jargon">{{Cite web|url=http://catb.org/~esr/jargon/html/D/daemon.html |title=daemon |author=Eric S. Raymond |authorlink=Eric S. Raymond |accessdate=2008-10-22 |work=[[Jargon File|The Jargon File]] }}</ref> is a [[computer program]] that runs in the [[background (computer software)|background]], rather than under the direct control of a user; they are usually initiated as background [[Computer process|process]]es. Typically daemons have names that end with the letter "d": for example, <tt>[[syslogd]]</tt>, the daemon that handles the system log, or <tt>[[Secure Shell|sshd]]</tt>, which handles incoming [[Secure Shell|SSH]] connections.
+
+In a Unix environment, the [[parent process]] of a daemon is often (but not always) the [[init]] process ([[Process identifier|PID]]=1). Processes usually become daemons by [[Fork (operating system)|forking]] a child process and then having their parent process immediately exit, thus causing init to adopt the child process. This is a somewhat simplified view of the process as other operations are generally performed, such as dissociating the daemon process from any controlling [[tty (Unix)|tty]]. Convenience routines such as daemon(3) exist in some UNIX systems for that purpose.
+
+Systems often start (or "launch") daemons at [[booting|boot]] time: they often serve the function of responding to network requests, hardware activity, or other programs by performing some task. Daemons can also configure hardware (like [[udev]]d on some [[GNU/Linux]] systems), run scheduled tasks (like [[cron]]), and perform a variety of other tasks.
+
+==Terminology==
+The term was coined by the programmers of [[Project MAC|MIT's Project MAC]]. They took the name from [[Maxwell's demon]], an imaginary being from a famous thought experiment that constantly works in the background, sorting molecules.<ref>{{Cite web|url=http://www.takeourword.com/TOW146/page4.html|author=[[Fernando J. Corbató]]|title=Take Our Word for It|date=2002-01-23|assccessdate=2006-08-20}}</ref> [[Unix]] systems inherited this terminology. A derivation from the phrase "Disk and Execution Monitor" is a [[backronym]].<ref name="jargon"/> [[Daemon (mythology)|Daemons]] are also characters in Greek mythology, some of whom handled tasks that the gods could not be bothered with. [[Berkeley Software Distribution|BSD]] and some of its derivatives have adopted a daemon as its [[BSD Daemon|mascot]], although this mascot is actually a [[cute]] variation of the [[demon]]s which appear in [[Christian]] artwork.
+
+[[Image:Bsd daemon.jpg|thumb|right|The BSD daemon, also called Beastie, as drawn by [[John Lasseter]]. His widely known and popular take on the BSD mascot first showed up on a book cover in 1988.]]
+The '''BSD daemon''', nicknamed '''Beastie''', is the generic [[mascot]] of [[BSD]] [[operating system]]s.
+
+===Pronunciation===
+The word ''daemon'' is an alternative spelling of ''demon,''<ref>{{Cite web|url=http://www.merriam-webster.com/dictionary/daemon|title=Merriam-Webster definition of daemon|accessdate=2009-08-05| work=Merriam-Webster Online}}</ref> and is {{pron-en|ˈdiːmən}} {{respell|DEE|mən}}. In the context of computer software, the original pronunciation {{IPA-en|ˈdiːmən|}} has drifted to {{IPA-en|ˈdeɪmən|}} {{respell|DAY|mən}} for some speakers.<ref name="jargon"/>
+
+==Types of daemons==
+In a strictly technical sense, a Unix-like system process is a daemon when its parent process terminates and is therefore 'adopted' by the [[init]] process (process number 1) as its parent process and has no controlling terminal. However, more commonly, a daemon may be any background process, whether a child of <tt>init</tt> or not.
+
+The common method for a process to become a daemon involves:
+* Dissociating from the controlling [[tty (Unix)|tty]]
+* Becoming a session leader
+* Becoming a [[process group]] leader
+* Staying in the [[background (computer software)|background]] by [[fork (operating system)|forking]] and [[exit (operating system)|exiting]] (once or twice). This is required sometimes for the process to become a session leader. It also allows the parent process to continue its normal execution. This [[idiom]] is sometimes summarized with the phrase "fork off and die"
+* Setting the [[root directory]] ("/") as the current [[working directory]] so that the process will not keep any directory in use that may be on a mounted file system (allowing it to be unmounted).
+* Changing the [[umask]] to 0 to allow open(), creat(), et al. calls to provide their own permission masks and not to depend on the umask of the caller
+* Closing all inherited open files at the time of execution that are left open by the parent process, including file descriptors 0, 1 and 2 (stdin, stdout, stderr). Required files will be opened later.
+* Using a [[log file|logfile]], the [[system console|console]], or [[/dev/null]] as [[standard streams|stdin, stdout, and stderr]]
+
+{{Cleanup-laundry|date=September 2010}}
+
+=== List of service daemons for Unix and Unix-like systems===
+
+* [[Berkeley Automounter|amd]] - Auto Mount Daemon
+* [[anacron]] - Executed delayed cron tasks at boot time
+* [[apmd]] - Advanced Power Management Daemon
+* [[arpwatch]] - watches for Ethernet IP address pairings that are resolved using the ARP protocol
+* [[atd]] - Runs jobs queued using the at tool
+* [[bincimapd]] - An [[imap]] server daemon
+* [[biod]] - Cooperates with a remote [[nfsd]] to handle client [[Distributed file system|Network file system]] requests
+* [[bootparmd]] - A Internet Bootstrap Protocol server daemon
+* [[chttpd]] - An [[http]] server daemon
+* [[configd]] - A daemon that maintains dynamic configuration information about the computer and its environment (mainly the network)
+* [[crond]] - The task scheduler daemon
+* [[cupsd]] - [[CUPS]] printer daemon
+* [[devfsd]] -
+* [[dhcpd]] - Dynamic Host Configuration Protocol and Internet Bootstrap Protocol Server
+* [[drakfont]] - A font server daemon used in Mandrake Linux
+* [[dpid]] - A plugin handler for the dillo internet web browser
+* [[egpup]] -
+* [[fetchmail]] - daemon to retrieve mail from servers at regular intervals
+* [[fingerd]] -	Provides a finger protocol server
+* [[ftpd]] - FTP Server Daemon
+* [[gated]] - routing daemon that handles multiple routing protocols and replaces routed and egpup
+* [[GPM (software)|gpm]] - General Purpose Mouse Daemon
+* [[httpd]] - [[Web server|Web Server]] Daemon
+* [[identd]] - Provides the identity of a user of a particular TCP connection
+* [[idmapd]] - Translates user and group identities to names, and vice versa (for NFS4)
+* [[inetd]] - Internet Superserver Daemon
+* [[initd]] - Initial process Daemon
+* [[imapd]] - An [[imap]] server daemon
+* [[innd]] - A Usenet News Server Daemon
+* [[ipchains]] - A deprecated packet forwarding / firewall daemon
+* [[isdn]] - ISDN network interfacing server daemon
+* [[kapmd]] - Advanced Power Management Daemon
+* [[kblockd]]
+* [[kerneld]] - Automatically loads and unloads kernel modules
+* [[keventd]]
+* [[keytable]] - Loads the appropriate keyboard map from the /etc/sysconfig/keyboard configuration file
+* [[kheader]] -
+* [[klogd]] -
+* [[ksoftirqd]] -
+* [[kswapd]] - Kernel Swap daemon
+* [[kswapd0]] -
+* [[Kudzu (computer daemon)|kudzu]] - Detects and configures new or changed hardware during boot
+* [[kupdated]] -
+* [[launchd]] - PID 1 on Mac OS X systems
+* [[linuxconf]] - Startup hook for the linuxconf configuration system
+* [[lockd]]
+* [[Line Printer Daemon protocol|lpd]] - Line Printer Daemon
+* [[mathoptd]] - A small single process httpd daemon with CGI support
+* [[mcserv]] - Server for the midnight command networking filesystem
+* [[memcached]] - In-memory distributed object caching daemon
+* [[Music Player Daemon|mpd]] - Music Player Daemon
+* [[micro httpd]] -
+* [[mountd]] - mount daemon
+* [[mysql]] - Database server daemon
+* [[Named (computing)|named]] - A DNS server daemon
+* [[netfs]] - Network Filesystem Mounter
+* [[Computer network|network]] - Activates all network interfaces at boot time
+* [[nfsd]] - Network File Sharing Daemon
+* [[nfslock]] - Used to start and stop nfs file locking services
+* [[nmbd]] - Network Message Block Daemon
+* [[ntpd]] - Network Time Protocol service daemon
+* [[numlock]] - This daemon locks the numlock key during a runlevel change
+* [[pcmcia]] - Provides generic [[pcmcia]] services
+* [[portmap]] -
+* [[postfix (software)|postfix]] - A mail transport agent used as a replacement for sendmail
+* [[postgresql]] - Database server daemon
+* [[/dev/random|random]] - Random number generating daemon
+* [[retchmail]] - A [[mail retrieval agent]]
+* [[rlprd]] - Remote line printer proxy daemon
+* [[routed]] - Manages routing tables
+* [[rpcbind]] - Remote Procedure Call Bind Daemon
+* [[rpciod]] - Remote Procedure Call Daemon
+* [[rquotad]]
+* [[rstatd]] - kernel statistics server daemon
+* [[rusersd]] - Allows users to find one another over the network
+* [[rwalld]] - Allows users to write messages on remote terminals using rwall
+* [[rwhod]] - maintains the database used by the rwho and ruptime tools
+* [[sched]] - Copies process regions to swap space to reclaim physical pages of memory
+* [[sendmail]] - A [[mail transfer agent]] Daemon
+* [[smbd]] - [[Samba (software)|Samba]] (an [[Server Message Block|SMB]] Server) Daemon
+* [[smtpd]] - Simple Mail Transfer Protocol Daemon
+* [[snmpd]] - Simple Network Management Protocol Daemon
+* [[sound]] - A sound server daemon
+* [[Squid (software)|squid]] - A web page caching proxy server daemon
+* [[Secure Shell|sshd]] - Secure Shell Server Daemon
+* [[statd]] -
+* [[swapper]] -	Copies process regions to swap space to reclaim physical pages of memory
+* [[syncd]] - Keeps the file systems synchronized with system memory
+* [[syslogd]] -	System logging daemon
+* [[tcpd]] - Service wrapper restricts access to inetd based services through hosts.allow and hosts.deny
+* [[telnetd]] -	Telnet Server daemon
+* [[usb]] - Manages devices attached to the universal serial bus
+* [[uptimed]] - Uptime logging daemon
+* [[utelnetd]] - A [[telnet]] server daemon
+* [[vhand]] - The "page stealing daemon" releases pages of memory for use by other processes
+* [[vsftpd]] - Very Secure FTP Daemon
+* [[walld]] -
+* [[webmin]] - Web based administration server daemon
+* [[xfsd]] - X font server daemon
+* [[xinetd]] - Enhanced Internet Superserver Daemon
+* [[xntd]] - Network Time Server Daemon
+* [[ypbind]] - A bind server for Network Information Services
+
+==Windows equivalent==
+In the [[DOS|Microsoft DOS]] environment, such programs were written as [[Terminate and Stay Resident]] (TSR) software. On [[Microsoft Windows NT]] systems, programs called ''[[Windows service|services]]'' perform the functions of daemons. They run as processes, usually do not interact with the monitor, keyboard, and mouse, and may be launched by the operating system at boot time. With Windows 2000 and later versions, one can configure and manually start and stop Windows services using the [[Control Panel (Windows)|Control Panel]] → Administrative Tools or typing "Services.msc" in the Run command on [[Start menu]].
+
+However, any Windows application can perform the role of a daemon, not just a service, and some daemons for Windows have the option of running as a normal process,, where it still has no visual output.
+
+==Mac OS equivalent==
+On the original [[Mac OS]], optional features and services were provided by files loaded at startup time that patched the operating system; these were known as [[Extension (Mac OS)|system extensions]] and [[Control panel (Mac OS)|control panels]]. Later versions of classic Mac OS augmented these with fully-fledged [[Extension (Mac OS)#Faceless background applications|faceless background applications]]: regular applications that ran in the background. To the user, these were still described as regular system extensions.
+
+[[Mac OS X]], being a [[Unix]] system, has daemons. There is a category of software called ''[[Services menu#Mac OS X|services]]'' as well, but these are different in concept from Windows' services.
+
+==Etymology==
+In the general sense, daemon is an older form of the word demon, from the Greek δαίμων. In the Unix System Administration Handbook, Evi Nemeth states the following about daemons:<ref>{{Cite web|url=http://www.freebsd.org/copyright/daemon.html |title=The BSD Daemon |publisher=Freebsd.org |date= |accessdate=2008-11-15}}</ref>
+<blockquote>
+Many people equate the word "daemon" with the word "demon", implying some kind of [[satanism|satanic]] connection between UNIX and the [[underworld]]. This is an egregious misunderstanding. "Daemon" is actually a much older form of "demon"; daemons have no particular bias towards good or evil, but rather serve to help define a person's character or personality. The ancient Greeks' concept of a "personal daemon" was similar to the modern concept of a "guardian angel" — ''eudaemonia'' is the state of being helped or protected by a kindly spirit. As a rule, UNIX systems seem to be infested with both daemons and demons. (p.403)
+</blockquote>
+A further characterization of the mythological symbolism is that a daemon is something which is not visible yet is always present and working its will.  [[Plato]]'s [[Socrates]] describes his own personal daemon to be something like the modern concept of a moral conscience:{{cquote|''The favour of the gods has given me a marvelous gift, which has never left me since my childhood. It is a voice which, when it makes itself heard, deters me from what I am about to do and never urges me on.''|30px|30px|Character of Socrates in ''[[Theages]]'', Plato<ref>There is some doubt as to whether ''Theages'' was genuinely authored by Plato but this passage accurately articulates the Greek conception of a daemon.</ref>}}
+
+==See also==
+{{Portal|Computing}}
+* [[List of computer term etymologies]]
+* [[Mailer Daemon]] (bounce message)
+* [[Server (computing)|Server]]
+* [[Service Wrapper]]
+* [[Terminate and Stay Resident]]
+* [[User space]]
+* [[Windows service]]
+* [[Web service|Web Service]]
+{{-}}
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://manpages.ubuntu.com/manpages/lucid/en/man8/start-stop-daemon.8.html start-stop-daemon man page]
+* [http://manpages.ubuntu.com/manpages/lucid/en/man1/daemon.1.html daemon man page]
+* [http://www.webreference.com/perl/tutorial/9/ Tutorial: Unix Daemons in Perl]
+* [http://www-theorie.physik.unizh.ch/~dpotter/howto/daemonize How to daemonize in Linux]
+* [http://www.enderunix.org/docs/eng/daemon.php Unix Daemon Server Programming]
+
+{{DEFAULTSORT:Daemon (Computer Software)}}
+[[Category:Servers]]
+
+[[ar:عفريت (برمجيات)]]
+[[bs:Daemon]]
+[[bg:Демон (информатика)]]
+[[ca:Dimoni (programa)]]
+[[cs:Démon (software)]]
+[[da:Daemon]]
+[[de:Daemon]]
+[[es:Demonio (informática)]]
+[[fr:Daemon (informatique)]]
+[[ko:데몬]]
+[[hr:Daemon]]
+[[id:Jurik]]
+[[it:Demone (informatica)]]
+[[lt:Daemon]]
+[[ml:ഡീമൻ (കമ്പ്യൂട്ടർ സോഫ്റ്റ്‌വെയർ)]]
+[[nl:Daemon (Unix)]]
+[[ja:デーモン (ソフトウェア)]]
+[[pl:Demon (informatyka)]]
+[[pt:Daemon (aplicativo para computadores)]]
+[[ru:Демон (программа)]]
+[[simple:Daemon (computer software)]]
+[[fi:Daemon]]
+[[sv:Daemon]]
+[[uk:Демон (програма)]]
+[[zh:守护进程]]</body> </html>

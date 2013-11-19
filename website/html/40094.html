@@ -1,0 +1,59 @@
+<html> <head> <title>Wi-Fi Protected Setup</title></head><body>{{tone|date=January 2011}}
+{{unreferenced|date=December 2010}}
+'''Wi-Fi Protected Setup''' ('''WPS''') is a standard for easy and secure establishment of a wireless home network, created by the [[Wi-Fi Alliance]] and officially launched on January 8, 2007.
+
+The goal of the WPS protocol is to simplify the process of configuring security on [[wireless networks]], thus it was first named 'Wi-Fi Simple Config'. The [[Protocol (computing)|protocol]] is meant to allow home users who know little of wireless security and may be intimidated by the available security options to configure [[Wi-Fi Protected Access]], which is supported by all Wi-Fi certified devices.
+
+The [[Standardization|standard]] achieves its goal by putting much emphasis into [[usability]] and [[security]], and the concept is implemented through four usage models that enable a user to establish a [[home network]]. Thus adding a new device to the Network provides the user with up to the following four choices:
+# PIN Method, in which a PIN (Personal Identification Number) has to be read from either a sticker on the new [[Station (networking)|wireless client device (STA)]] or a display, if there is one, and entered at the "representant" of the Network, either the [[wireless access point|wireless access point (AP)]] or a Registrar of the Network, cf below the Protocol Architecture.<br>This is the mandatory baseline model; every Wi-Fi Protected Setup certified product must support it.
+# PBC Method, in which the user simply has to push a button, either an actual or virtual one, on both the [[Wireless access point|AP]] (or a Registrar of the Network) and the new wireless client device (STA).<br>Support of this model is mandatory for APs and optional for STAs.
+# NFC Method, in which the user simply has to bring the new STA close to the AP or Registrar of the Network to allow a [[Near Field Communication]] between the devices. NFC Forum compliant [[RFID]] tags can also be used.<br>Support of this model is optional.
+# USB Method, in which the user uses a [[Universal Serial Bus|USB]] [[USB flash drive|stick]] to transfer data between the new STA and the AP or Registrar of the Network.<br>Support of this model is optional.
+
+The last two models are usually referred as [[Out-of-band]] methods as there is a transfer of information by another channel than the Wi-Fi channel itself.
+
+Note that only the first two modes (PIN/PBC) are currently covered by the Wi-Fi Protected Setup Certification.  The USB method has been deprecated and is not part of the certification testing.
+
+This page addresses the common scenario involving an Infrastructure Network. IBSS will be supported with extensions that are being developed for WPS.
+
+==Protocol Architecture==
+
+The WPS protocol defines three types of devices in a network:
+*Registrar: A device with the authority to issue and revoke credentials to a network. A Registrar may be integrated into an [[Wireless access point|AP]], or it may be separate from the [[Wireless access point|AP]].
+*Enrollee: A device seeking to join a [[wireless LAN]] network.
+*AP: An [[Wireless access point|AP]] functioning as a proxy between a Registrar and an Enrollee.
+
+The WPS standard defines three basic scenarios that involve these components:
+
+# AP with internal registrar capabilities configures an Enrollee STA. In this case, the session will run on the wireless medium as a series of [[Extensible Authentication Protocol|EAP]] request/response messages, ending with the [[Wireless access point|AP]] disassociating from the STA and waiting for the STA to reconnect with its new configuration (handed to it by the [[Wireless access point|AP]] just before).
+# Registrar STA configures the AP as an Enrollee. This case is subdivided in two aspects: first the session could occur on both a wired or wireless medium, and second the AP could already be configured by the time the Registrar found it. In the case of a wired connection between the devices, the protocol runs over [[Universal Plug and Play|UPnP]], and both devices will have to support [[Universal Plug and Play|UPnP]] for that purpose. When running over [[Universal Plug and Play|UPnP]], a shortened version of the protocol is run (only 2 messages) as no authentication is required other than that of the joined wired medium. In the case of a wireless medium, the session of the protocol is very similar to the internal registrar scenario, just with opposite roles. As to the configuration state of the AP, the registrar is expected to ask the user whether to reconfigure the AP or keep its current settings, and can decide to reconfigure it even if the AP describes itself as configured. Multiple registrars should have the ability to connect to the AP.
+# Registrar STA configures Enrollee STA. In this case the AP stands in the middle and acts as an Authenticator, meaning it only proxies the relevant messages from side to side.
+
+UPnP is intended to apply only to a wired medium, while actually it applies to any interface to which an IP connection can be set up. Thus having manually set up a wireless connection, the UPnP can be used over it in the same manner as with the wired.
+
+==Protocol Structure==
+
+The WPS protocol itself consists as a series of [[Extensible Authentication Protocol|EAP]] message exchanges that is triggered by a user action and relies on an exchange of descriptive information that should precede that user's action. 
+
+The descriptive information is transferred through a new [[Information Element|IE]] that's added to the Beacon, Probe Response and optionally to the Probe Request and Association Request/Response messages. Other than purely informative [[Type-length-value|TLVs]], those [[Information Element|IEs]] will also hold the possible, and the currently deployed, configuration methods of the device.
+
+After the identification of the device's capabilities on both ends, a human trigger is to initiate the actual session of the protocol.
+The session consists of 8 messages, that are followed in the case of a successful session by a message to indicate the protocol is done. The exact stream of messages may change when configuring different kinds of devices (AP or STA) or using different physical media (wired or wireless).
+
+==See also==
+
+# [http://www.wi-fi.org/ The Wi-Fi Alliance Official Site]
+# [http://www.wi-fi.org/wifi-protected-setup/ Wi-Fi Protected Setup Knowledge Center at the Wi-Fi Alliance]
+# [http://www.upnp.org/ The UPnP Forum Main Page]
+# [http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0-20080424.pdf UPnP Device Architecture]
+
+[[Category:Cryptographic protocols]]
+[[Category:Wi-Fi]]
+
+[[ca:WPS]]
+[[de:Wi-Fi Protected Setup]]
+[[es:Wi-fi protected setup]]
+[[fa:وای-فای پروتکتد ستاپ]]
+[[fr:Wi-Fi Protected Setup]]
+[[it:Wi-Fi Protected Setup]]
+[[ja:Wi-Fi Protected Setup]]</body> </html>

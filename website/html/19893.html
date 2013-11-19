@@ -1,0 +1,77 @@
+<html> <head> <title>JetPAG</title></head><body>{{ infobox software
+| name                   = JetPAG
+| developer              = Tareq H. Sharafy
+| latest release version = 0.6.1
+| latest release date    = {{release date and age|2007|02|07}}
+| latest preview version = 0.6.3
+| latest preview date = 2007
+| programming language   = [[C++]]
+| operating system       = Platform-independent
+| genre                  = [[Parser generator]]
+| license                = [[GNU General Public License]]
+| website                = [http://jetpag.sourceforge.net/ JetPAG Homepage]
+}}
+JetPAG ('''J'''et '''P'''arser '''A'''uto-'''G'''enerator) is an [[open source]] [[LL parser|LL(k)]] [[Parsing|parser]] and [[Lexical analysis|lexical analyzer]] [[Compiler-compiler|generator]], licensed under the [[GNU General Public License]]. It is a personal work of Tareq H. Sharafy, and is currently at final beta stages of development.
+
+==History==
+Tareq started JetPAG as a small program written for practice purposes only. Soon when it started expanding many goals were added rapidly, and it was obvious that JetPAG is worthy being a complete project. Real development of JetPAG started in late 2005, targeting a complete framework for a powerful [[Recursive descent parser|recursive descent]] lexical analyzer and parser generator with emphasis on ease of use, code readability and high performance of generated code. After a long period of in-house development and testing, the first development package of JetPAG was released through [[SourceForge]] in 18 November 2006. Development of JetPAG is current at [[Software release life cycle|beta stage]], current version is 0.6.1. The development was delayed from mid-2007 until early 2009 but resumed after.
+
+==Overview==
+Jetpag incorporates several modules: the front end, the analyzers and the code generators.
+
+The front end accepts the grammar metalanguages as an input.
+
+The analyzers mainy perform two operations through [[tree traversal]]. The first is calculating strong [[lookahead]] sets for the elements in the grammar and the second is constructing lookahead paths from the lookahead sets. Lookahead paths group, factorize and perform many enhancements and [[Optimization (computer science)|optimizations]] to lookahead sets using special analysis. From lookahead paths lookahead sets are transformed to a nested tree form, gaining a great overall efficiency and improvement in [[Best, worst and average case|most cases]].
+
+Code generators generate source code for recognizers compatible with the input grammars based on them along with information collected from the analyzers. Currently JetPAG generates source code in C++ only.
+
+The nature of JetPAG's metalanguage and framework make it easy and simple to integrate generated recognizers into larger applications. JetPAG also includes some facilities in the provided framework to aid developers with small utilities and save development time from many minimal language recognition tasks.
+
+==JetPAG grammars==
+JetPAG's garmmars are written in a [[Metalanguage|meta language]] based on the [[EBNF]] form and [[regular expressions]], with extensive additions and tweaks. Th meta language of JetPAG grammars was designed to be maximally flexible handle both simple grammars and large, complicated ones easily. Parsers and lexical analyzers are simillary defined and generated for simplicity and ease of use. This is a simple example of a grammar for a basic calculator:
+<pre>
+grammar Calc:
+
+parser CalcP:
+
+expression:
+ multiplicative
+ ( '+' multiplicative
+ | '-' multiplicative
+  )*
+ ;
+
+multiplicative:
+ factor
+ ( '*' factor
+ | '/' factor
+  )*
+ ;
+
+factor:
+   INT
+ | '(' expression ')'
+ ;
+
+scanner CalcS:
+
+INT:   '0'-'9'+;
+PLUS:  '+';
+MINUS: '-';
+STAR:  '*';
+SLASH: '/';
+LP:    '(';
+RP:    ')';
+</pre>
+
+==See also==
+* [[LL parser|LL recognizers]]
+* [[ANTLR]]
+* [[JavaCC]]
+* [[Coco/R]]
+
+==External links==
+* [http://jetpag.sourceforge.net/ JetPAG Homepage]
+* [http://sourceforge.net/projects/jetpag/ JetPAG at SourceForge]
+
+[[Category:Parser generators]]</body> </html>

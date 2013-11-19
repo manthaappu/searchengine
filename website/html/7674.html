@@ -1,0 +1,66 @@
+<html> <head> <title>Concurrent ML</title></head><body>'''Concurrent ML''' (CML) is a [[Concurrency (computer science)|concurrent]] extension of the [[Standard ML]] programming language.
+
+==Sample Code==
+Here is sample code to print "[[hello, world]]" to the console.  It spawns a [[thread (computer science)|thread]] which creates a channel for [[string (computer science)|strings]].  This thread then spawns another thread which prints the first string that is received on the channel. The former thread then sends the "hello, world\n" string on the channel. It uses [[Standard ML of New Jersey|SML/NJ]] and CML
+(note that the heap name will be different on non linux-x86 platforms; you may need to change the line with "cml_test.x86-linux" to 
+something different):
+
+'''cml_test.cm''':
+
+    '''Library'''
+        '''structure''' Hello
+    '''is'''
+        $cml/basis.cm
+        $cml/cml.cm
+        cml_test.sml
+
+'''cml_test.sml''':
+
+    '''structure''' Hello =
+    '''struct'''
+        '''open''' CML
+            
+        '''fun''' hello () =
+            '''let''' '''val''' c : string chan = channel ()
+            '''in'''
+                spawn ('''fn''' () => TextIO.print (recv c));
+                send (c, "hello, world\n");
+                exit ()
+            '''end'''
+            
+        '''fun''' main (name, argv) =
+            RunCML.doit (fn () => ignore (spawn hello), NONE)
+    '''end'''
+
+'''Running''':
+
+    $ '''ml-build cml_test.cm Hello.main'''
+    Standard ML of New Jersey v110.60 [built: Mon Nov 27 14:19:21 2006]
+    [scanning cml_test.cm]
+    [library $cml/basis.cm is stable]
+    [library $cml/cml.cm is stable]
+    [parsing (cml_test.cm):cml_test.sml]
+    [creating directory .cm/SKEL]
+    [library $cml/cml-internal.cm is stable]
+    [library $cml/core-cml.cm is stable]
+    [library $SMLNJ-BASIS/basis.cm is stable]
+    [compiling (cml_test.cm):cml_test.sml]
+    [creating directory .cm/GUID]
+    [creating directory .cm/x86-unix]
+    [code: 2170, data: 42, env: 2561 bytes]
+    [scanning 18518-export.cm]
+    [scanning (18518-export.cm):cml_test.cm]
+    [parsing (18518-export.cm):18518-export.sml]
+    [compiling (18518-export.cm):18518-export.sml]
+    [code: 309, data: 37, env: 42 bytes]
+    $ '''heap2exec cml_test.x86-linux cml_test'''
+    $ '''./cml_test'''
+    hello, world
+
+==External links==
+*[http://cml.cs.uchicago.edu/ The language homepage]
+
+[[Category:ML programming language family]]
+[[Category:Programming languages created in the 1990s]]
+
+[[fr:Concurrent ML]]</body> </html>

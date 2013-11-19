@@ -1,0 +1,114 @@
+<html> <head> <title>INT 10H</title></head><body>This corresponds to the [[BIOS interrupt call]] for video services. Such services include setting the video mode, character and string output, and graphics primitives (reading and writing [[pixels]] in graphics mode). To use this call, load AH with the subfunction you want to use, load other parameters in the other registers, and make the call. [[INT (x86 instruction)|INT]] 10h is fairly slow, so many programs bypass this BIOS routine and access the display hardware directly. Setting the video mode, which is done infrequently, can be accomplished by using the [[BIOS]], while drawing graphics on the screen in a game needs to be done quickly, so direct access to video RAM is more appropriate than making a BIOS call for every pixel.
+
+==List of supported functions==
+{{Expand section|date=December 2007}}
+
+{| class = "wikitable"
+!Function
+!Parameters
+!Return
+|-
+| Set video mode
+| AH = 00h
+AL = video mode
+| AL = video mode flag / CRT controller mode byte
+|-
+| Set text-mode cursor shape
+| AH = 01h
+CH = Scan Row Start, CL = Scan Row End
+
+Normally a character cell has 8 scan lines, 0-7. So, CX=0607h is a normal underline cursor, CX=0007h is a full-block cursor. If bit 5 of CH is set, that often means "Hide cursor". So CX=2607h is an invisible cursor.
+
+Some video cards have 16 scan lines, 00h-0Fh.
+
+Some video cards don't use bit 5 of CH. With these, make Start>End (e.g. CX=0706h)
+|
+|-
+| Set cursor position
+| AH = 02h
+BH = Page, DH = Row, DL = Column
+|-
+| Get cursor position and size
+| AH = 03h
+BH = Page
+| AX = 0, CH = Start scan line, CL = End scan line, DH = Row, DL = Column
+|-
+| Read [[light pen]] position (Does not work on [[VGA]] systems)
+| AH = 04h
+| AH = Status (0=not triggered, 1=triggered), BX = Pixel X, CH = Pixel Y, CX = Pixel line number for modes 0Fh-10h, DH = Character Y, DL = Character X
+|-
+| Select active display page
+| AH = 05h, AL = Page Number
+|
+|-
+| Scroll up window
+| AH = 06h
+AL = lines to scroll (0 = clear), BH = Blank lines attribute
+|
+|-
+| Scroll down window
+| AH = 07h
+Other : like above
+|
+|-
+| Read character and attribute at cursor position
+| AH = 08h, BH = Page Number
+| AH = Color, AL = Character
+|-
+| Write character and attribute at cursor position
+| AH = 09h, AL = Character, BH = Page Number, BL = Color, CX = Number of times to print character
+|
+|-
+| Write character only at cursor position
+| AH = 0Ah, AL = Character, BH = Page Number, BL = Color, CX = Number of times to print character
+|
+|-
+| Set background/border color
+| AH = 0Bh
+BH = 00h
+|
+|-
+| Set palette
+| AH = 0Bh
+BH = 01h
+|
+|-
+| Write graphics pixel
+| AH = 0Ch
+AL = Color, BH = Page, CX = x, DX = y
+|
+|-
+| Read graphics pixel
+| AH = 0Dh
+BH = Page, CX = x, DX = y
+| AL = Color
+|-
+| Teletype output
+| AH = 0Eh, AL = Character, BL = Color (only in graphic mode) 
+|
+|-
+| Get current video mode
+| AH = 0Fh
+| AL = Video Mode
+|-
+| Write string (EGA+, meaning [[PC AT]] minimum)
+| AH = 13h
+AL = Write mode, BH = Page, BL = [[BIOS Color Attributes|Color]], CX = String length, DH = Row, DL = Column, ES:BP = Offset of string
+|
+|-
+|}
+
+==References==
+*[http://www.ctyme.com/intr/int-10.htm Int 10h from Ralf Brown Interrupt List, online version]
+
+==See also==
+*[[BIOS interrupt call]]
+*[[INT 13]]
+*[[mode 13h]]
+
+{{DEFAULTSORT:Int 10}}
+[[Category:BIOS]]
+[[Category:Interrupts]]
+
+[[es:Int 10h]]
+[[ko:INT 10]]</body> </html>

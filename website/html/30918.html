@@ -1,0 +1,337 @@
+<html> <head> <title>Quine (computing)</title></head><body>{{examplefarm}}{{Citations missing|date=October 2010}}{{Unreferenced section|date=October 2010}}
+
+A '''quine''' is a [[computer program]] which produces a copy of its own [[source code]] as its only output. The standard terms for these programs in the [[computability theory]] and [[computer science]] literature are '''self-replicating programs''', '''self-reproducing programs''', and '''self-copying programs'''.
+
+A quine is a [[Fixed point (mathematics)|fixed point]] of an execution environment, when the execution environment is viewed as a function. Quines are possible in any programming language that has the ability to output any computable string, as a direct consequence of [[Kleene's recursion theorem]]. For amusement, programmers sometimes attempt to develop the shortest possible quine in any given [[programming language]].
+
+The name "quine" is coined by [[Douglas Hofstadter]] in his popular science book [[Gödel, Escher, Bach: An Eternal Golden Braid]] in the honor of philosopher [[Willard Van Orman Quine]] (1908–2000), who made an extensive study of [[indirect self-reference]], and in particular for the following paradox-producing expression, known as [[Quine's paradox]]:
+
+<blockquote>
+"Yields falsehood when preceded by its quotation" yields falsehood when preceded by its quotation.
+</blockquote>
+
+The name has become popular between amateur enthusiasts and programming hobbyists although it is not adopted by computer scientists.
+
+A quine takes no input. Allowing input would permit the source code to be fed to the program via the keyboard, opening the source file of the program, and similar mechanisms.
+
+In some languages, an empty source file is a fixed point of the language, producing no output. Such an empty program, submitted as "the world's smallest self reproducing program", once won the "worst abuse of the rules" prize in the [[Obfuscated C]] contest.<ref>[http://www0.us.ioccc.org/1994/smr.hint IOCCC 1994 Worst Abuse of the Rules]</ref>
+
+==History==
+
+The idea of self-reproducing programs first appeared in ''[[Paul Bratley|Bratley, Paul]] and Jean Millo. "Computer Recreations; Self-Reproducing Automata", Software -- Practice & Experience, Vol. 2 (1972). pp. 397-400.'' Bratley first became interested in self-reproducing programs after seeing the first known such program written in [[Atlas Autocode]] at Edinburgh in the 1960s by the [[University of Edinburgh]] lecturer and researcher [[Hamish Dewar]]. This program appears below:
+
+ %BEGIN
+ !THIS IS A SELF-REPRODUCING PROGRAM
+ %ROUTINESPEC R
+ R
+ PRINT SYMBOL(39)
+ R
+ PRINT SYMBOL(39)
+ NEWLINE
+ %CAPTION %END~
+ %CAPTION %ENDOFPROGRAM~
+ %ROUTINE R
+ %PRINTTEXT '
+ %BEGIN
+ !THIS IS A SELF-REPRODUCING PROGRAM
+ %ROUTINESPEC R
+ R
+ PRINT SYMBOL(39)
+ R
+ PRINT SYMBOL(39)
+ NEWLINE
+ %CAPTION %END~
+ %CAPTION %ENDOFPROGRAM~
+ %ROUTINE R
+ %PRINTTEXT '
+ %END
+ %ENDOFPROGRAM
+
+==Examples==
+<!-- DO NOT ADD ANY MORE QUINE EXAMPLES! Please read the talk page. -->
+
+In general, the method used to create a quine in any programming language is to have, within the program, two pieces: (a) [[Source code|code]] used to do the actual printing and (b) [[data]] that represents the textual form of the code (e.g., <code>progdata</code> in the first C example below).  The code functions by using the data to print the code (which makes sense since the data represents the textual form of the code), but it also uses the data, processed in a simple way (e.g., <code>quote()</code> below) to print the textual representation of the data itself.  
+
+An example in colloquial English would be:
+
+ "quoted and followed by itself is a quine." quoted and followed by itself is a quine.
+
+The following [[Haskell (programming language)|Haskell]] example neatly illustrates the point:<ref>{{cite web|url=http://spikeypillow.com/nc/item/31|title=12/09: Quines of the World Unite}}</ref>
+ main=putStr(p++show(p))where p="main=putStr(p++show(p))where p="
+
+You read the above source as follows: print out ('''putStr''') the program text ('''p''') accompanied by a quoted ('''show'''n) version of the same, where the program text is the same as has just been said. Depending on programming environment, there could exist many ways the code and the data can be organized together within the program (neither must be contiguous), but a common telltale sign of the data section is that it mirrors some part of the entire program.
+
+Here is a terser variation of the previous [[Haskell (programming language)|Haskell]]:
+
+  main=ap((putStr.).(++))show"main=ap((putStr.).(++))show"
+
+This is actually, if you squint, a particular instance of (one particular) general pattern to produce a quine:
+
+  (\o -> APPLY (UNQUOTE o) (QUOTE o)) (QUOTE (\o -> APPLY (UNQUOTE o) (QUOTE o)))
+
+where CAPITALIZED identifiers are schematic. In passing, note the implicit "APPLY"s that are happening at the level of the programming language.
+
+Armed with this template, we can unravel the second of the two previous Haskell quines. First, we extract the essential part of the quine
+
+  ap(++)show"ap(++)show"
+
+then note that
+
+  ap f g = (\o -> f o (g o))
+
+expanding this in the original gives
+
+  (\o -> (++) o (show o)) "(\\o -> (++) o (show o))"
+
+and matching this against our quine template produces
+
+  APPLY   := (++)
+  UNQUOTE := id
+  QUOTE   := show
+
+So, APPLY is string concatenation, QUOTE is string-escaping, and UNQUOTE is the identity.
+
+We can also perform a similarly mechanical matching of the previous (slightly modified, but in a non-essential way) English quine:
+
+  quoted and preceeded by itself is a quine. "quoted and preceeded by itself is a quine."
+
+Also, notice that by using "is a quine", it references itself in another way as well, and this additional self reference is not essential for it to be a quine. In other words,
+
+  quoted and preceeded by itself. "quoted and preceeded by itself."
+
+is a quine.
+
+===C===
+The idea behind this quine is to store a copy of the program code in a string,
+and use that to print out both the program code and the string.
+
+<source lang="c">
+/* A simple quine (self-printing program), in standard C. */
+
+/* Note: in designing this quine, we have tried to make the code clear
+ * and readable, not concise and obscure as many quines are, so that
+ * the general principle can be made clear at the expense of length.
+ * In a nutshell: use the same data structure (called "progdata"
+ * below) to output the program code (which it represents) and its own
+ * textual representation. */
+
+#include <stdio.h>
+
+void quote(const char *s)
+     /* This function takes a character string s and prints the
+      * textual representation of s as it might appear formatted
+      * in C code. */
+{
+    int i;
+
+    printf("    \"");
+    for (i=0; s[i]; ++i) {
+        /* Certain characters are quoted. */
+        if (s[i] == '\\')
+            printf("\\\\");
+        else if (s[i] == '"')
+            printf("\\\"");
+        else if (s[i] == '\n')
+            printf("\\n");
+        /* Others are just printed as such. */
+        else
+            printf("%c", s[i]);
+        /* Also insert occasional line breaks. */
+        if (i % 48 == 47)
+            printf("\"\n    \"");
+    }
+    printf("\"");
+}
+
+/* What follows is a string representation of the program code,
+ * from beginning to end (formatted as per the quote() function
+ * above), except that the string _itself_ is coded as two
+ * consecutive '@' characters. */
+const char progdata[] =
+    "/* A simple quine (self-printing program), in st"
+    "andard C. */\n\n/* Note: in designing this quine, "
+    "we have tried to make the code clear\n * and read"
+    "able, not concise and obscure as many quines are"
+    ", so that\n * the general principle can be made c"
+    "lear at the expense of length.\n * In a nutshell:"
+    " use the same data structure (called \"progdata\"\n"
+    " * below) to output the program code (which it r"
+    "epresents) and its own\n * textual representation"
+    ". */\n\n#include <stdio.h>\n\nvoid quote(const char "
+    "*s)\n     /* This function takes a character stri"
+    "ng s and prints the\n      * textual representati"
+    "on of s as it might appear formatted\n      * in "
+    "C code. */\n{\n    int i;\n\n    printf(\"    \\\"\");\n "
+    "   for (i=0; s[i]; ++i) {\n        /* Certain cha"
+    "racters are quoted. */\n        if (s[i] == '\\\\')"
+    "\n            printf(\"\\\\\\\\\");\n        else if (s["
+    "i] == '\"')\n            printf(\"\\\\\\\"\");\n        e"
+    "lse if (s[i] == '\\n')\n            printf(\"\\\\n\");"
+    "\n        /* Others are just printed as such. */\n"
+    "        else\n            printf(\"%c\", s[i]);\n   "
+    "     /* Also insert occasional line breaks. */\n "
+    "       if (i % 48 == 47)\n            printf(\"\\\"\\"
+    "n    \\\"\");\n    }\n    printf(\"\\\"\");\n}\n\n/* What fo"
+    "llows is a string representation of the program "
+    "code,\n * from beginning to end (formatted as per"
+    " the quote() function\n * above), except that the"
+    " string _itself_ is coded as two\n * consecutive "
+    "'@' characters. */\nconst char progdata[] =\n@@;\n\n"
+    "int main(void)\n     /* The program itself... */\n"
+    "{\n    int i;\n\n    /* Print the program code, cha"
+    "racter by character. */\n    for (i=0; progdata[i"
+    "]; ++i) {\n        if (progdata[i] == '@' && prog"
+    "data[i+1] == '@')\n            /* We encounter tw"
+    "o '@' signs, so we must print the quoted\n       "
+    "      * form of the program code. */\n        {\n "
+    "           quote(progdata);    /* Quote all. */\n"
+    "            i++;                /* Skip second '"
+    "@'. */\n        } else\n            printf(\"%c\", p"
+    "rogdata[i]);  /* Print character. */\n    }\n    r"
+    "eturn 0;\n}\n";
+
+int main(void)
+     /* The program itself... */
+{
+    int i;
+
+    /* Print the program code, character by character. */
+    for (i=0; progdata[i]; ++i) {
+        if (progdata[i] == '@' && progdata[i+1] == '@')
+            /* We encounter two '@' signs, so we must print the quoted
+             * form of the program code. */
+        {
+            quote(progdata);    /* Quote all. */
+            i++;                /* Skip second '@'. */
+        } else
+            printf("%c", progdata[i]);  /* Print character. */
+    }
+    return 0;
+}
+</source>
+
+An alternative approach in C would be to make use of the C pre-processor. For example:
+
+<source lang="c">
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+/* This macro B will expand to its argument, followed by a printf
+ command that prints the macro invocation as a literal string */
+#define B(x) x; printf("  B(" #x ")\n");
+
+/* This macro A will expand to a printf command that prints the
+ macro invocation, followed by the macro argument itself. */
+#define A(x) printf("  A(" #x ")\n"); x;
+
+/* Now we call B on a command to print the text of the program
+ up to this point. It will execute the command, and then cause
+ itself to be printed. */
+  B(printf("#include <stdio.h>\n\nint main(int argc, char** argv)\n{\n/*
+    This macro B will expand to its argument, followed by a printf\n
+    command that prints the macro invocation as a literal string
+    */\n#define B(x) x; printf(\"  B(\" #x \")\\n\");\n\n/* This macro
+    A will expand to a printf command that prints the\n
+    macro invocation, followed by the macro argument itself. */\n#define A(x)
+    printf(\"  A(\" #x \")\\n\"); x;\n\n/* Now we call B on a command
+    to print the text of the program\n up to this point. It will execute
+    the command, and then cause\n itself to be printed. */\n"))
+  A(printf("/* Lastly, we call A on a command to print the remainder
+    of the program;\n it will cause itself to be printed, and then
+    execute the command. */\n}\n"))
+/* Lastly, we call A on a command to print the remainder of the program;
+ it will cause itself to be printed, and then execute the command. */
+}
+</source>
+
+Note that in the above, the line beginning with <code>B(printf(</code> would be one line; there is exactly one space between the end of each line and the beginning of the next, but it is broken into multiple lines so that it does not overflow the screen. Likewise, the line beginning <code>A(printf(</code> has been broken into multiple lines.
+
+After eliminating comments, the essence of this method is:
+
+<source lang="c">
+#define B(x) x; printf("{ B(" #x ") }\n");
+int main()
+{ B(printf("#define B(x) x; printf(\"{ B(\" #x \") }\\n\");\nint main()\n")) }
+</source>
+
+Here the <code>B</code> macro has been slightly altered, so that it produces a pair of braces around its invocation. This eliminates the need for an <code>A</code> macro.
+
+An even shorter, classic,<ref>[http://www.nyx.net/~gthompso/quine.htm The Quine Page]</ref> approach in C instead exploits the ability of the <code>printf</code> function to use a [[format string]], passing a carefully-constructed string as both the format string and a substitution parameter.  Note: 34 is the ASCII code for a double-quote character, and is used to avoid the need to quote the double-quotes in the string literal.
+
+<source lang='c'>
+main() { char *s="main() { char *s=%c%s%c; printf(s,34,s,34); }"; printf(s,34,s,34); }
+</source>
+
+This program uses the <code>[[printf]]</code> function without including its corresponding header (<code>#include <[[stdio.h]]></code>), which can result in [[undefined behavior]]. Also, the return type declaration for main has been left off to reduce the length of the program.
+<!-- DO NOT ADD ANY MORE QUINE EXAMPLES! Please read the talk page. -->
+
+===Scheme (also valid Common Lisp)===
+This quine works by feeding the program to itself, which then converts the data structure to source code.
+<source lang="scheme">
+((lambda (x) (list x (list 'quote x)))
+ (quote (lambda (x) (list x (list 'quote x)))))
+</source>
+
+The example mentioned above is not absolutely correct, because it does not have [[output]] operators. The correct example is: 
+<source lang="scheme">
+(progn (setf a "(progn (setf a ~S) (format t a a))") (format t a a))
+</source>
+
+<!-- DO NOT ADD ANY MORE QUINE EXAMPLES! Please read the talk page. -->
+
+==See also==
+*[[Computer programming]]
+*[[Diagonal lemma]]
+*[[Fixed point combinator]]
+*[[List of programming languages]]
+*[[Obfuscated code]]
+*[[Self-interpreter]]
+*[[Self-replicating machine]]
+*[[Self-replication]]
+*[[Tupper's self-referential formula]]
+
+==References==
+{{reflist}}
+
+==Further reading==
+*[[Douglas Hofstadter]]: ''[[Gödel, Escher, Bach: An Eternal Golden Braid]]''
+*[[Ken Thompson]]: "[http://cm.bell-labs.com/who/ken/trust.html Reflections on Trusting Trust]" (''[[Communications of the ACM]]'', '''27'''(8):761-3)
+
+==External links==
+*[http://www.nyx.net/~gthompso/quine.htm The Quine Page (by Gary P. Thompson)]
+*[http://www.jeggu.com/2009/08/program-prints-itself-using-java.html The Quine implementation in Java]
+*[http://c2.com/cgi/wiki?QuineProgram QuineProgram at the Portland Pattern Repository Wiki]
+*[http://www.madore.org/~david/computers/quine.html David Madore's Discussion of Quines]
+*[http://web-graphics.com/pages/quine.php JavaScript Quine Contest Entries]
+*[http://research.swtch.com/2010/03/zip-files-all-way-down.html Zip Files All The Way Down]
+*[http://steike.com/code/useless/zip-file-quine A zip file Quine]
+*[http://johannesloetzsch.de/software/quines/ An Introduction to Quines — in particular, quines using more than one language]
+*[http://www.yetanotherdeveloper.com/post/2008/01/20/My-Quine.aspx C# Quine (by Joseph Westcott)]
+*[http://bornagainprogrammer.net/2009/11/07/hello-world-from-the-tm-self/ A Simple Java Program That Prints Its Source Code; As Described In Michael Sipser’s book : Introduction to the Theory of Computation ]
+*[http://www.win.tue.nl/~wstomv/edu/javascript/quine.html Quine Web Page: A standards-conforming HTML+JavaScript web page that shows its own source code]
+* [http://blog.sigfpe.com/2008/02/third-order-quine-in-three-languages.html A Third Order Quine in Three Languages] shows a Haskell program that outputs a Python program that outputs a Ruby program that outputs the original Haskell program.
+
+{{DEFAULTSORT:Quine (Computing)}}
+[[Category:Computer programming]]
+[[Category:Articles with example C code]]
+[[Category:Articles with example Lisp code]]
+[[Category:Articles with example Scheme code]]
+[[Category:Willard Van Orman Quine]]
+
+[[be-x-old:Куін]]
+[[bg:Самоизписваща се програма]]
+[[da:Quine (programmering)]]
+[[de:Quine (Computerprogramm)]]
+[[es:Quine (programa)]]
+[[fr:Quine (informatique)]]
+[[ko:콰인]]
+[[it:Quine]]
+[[ja:クワイン (プログラミング)]]
+[[pl:Quine (program komputerowy)]]
+[[pt:Quine (informática)]]
+[[ru:Куайн (программирование)]]
+[[simple:Quine]]
+[[fi:Quine (tietokoneohjelma)]]
+[[sv:Quine]]
+[[zh:自產生程式]]</body> </html>

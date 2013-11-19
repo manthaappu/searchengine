@@ -1,0 +1,279 @@
+<html> <head> <title>Sequent calculus</title></head><body>In [[proof theory]] and [[mathematical logic]], '''sequent calculus''' is a family of [[formal system]]s sharing a certain style of inference and certain formal properties.  The first sequent calculi, systems '''LK''' and '''LJ''', were introduced by [[Gerhard Gentzen]] in 1934 as a tool for studying [[natural deduction]] in [[first-order logic]] (in [[Classical logic|classical]] and [[Intuitionistic logic|intuitionistic]] versions, respectively).  Gentzen's so-called "Main Theorem" (''Hauptsatz'') about LK and LJ was the [[cut-elimination theorem]], a result with far-reaching [[Metatheory|meta-theoretic]] consequences, including [[consistency]].  Gentzen further demonstrated the power and flexibility of this technique a few years later, applying a cut-elimination argument to give a (transfinite) [[Gentzen's consistency proof|proof of the consistency of Peano arithmetic]], in surprising response to [[Gödel's incompleteness theorems]].  Since this early work, sequent calculi (also called '''Gentzen systems''') and the general concepts relating to them have been widely applied in the fields of proof theory, mathematical logic, and [[automated deduction]].
+
+==Introduction==
+
+One way to classify different styles of deduction systems is to look at the form of ''[[Judgment (mathematical logic)|judgments]]'' in the system, ''i.e.'', which things may appear as the conclusion of a (sub)proof. The simplest judgment form is used in [[Hilbert-style deduction system]]s, where a judgment has the form
+:<math>B\,</math>
+where <math>B</math> is any formula of first-order-logic (or whatever logic the deduction system applies to, ''e.g.'', [[propositional calculus]] or a [[higher-order logic]] or a [[modal logic]]). The theorems are those formulae that appear as the concluding judgment in a valid proof. A Hilbert-style system needs no distinction between formulae and judgments; we make one here solely for comparison with the cases that follow.
+
+The price paid for the simple syntax of a Hilbert-style system is that complete formal proofs tend to get extremely long. Concrete arguments about proofs in such a system almost always appeal to the [[deduction theorem]]. This leads to the idea of including the deduction theorem as a formal rule in the system, which happens in [[natural deduction]]. In natural deduction, judgments have the shape
+:<math>A_1, A_2, \ldots, A_n \vdash B</math>
+where the <math>A_i</math>'s and <math>B</math> are again formulae and <math>n\geq 0</math>. In words, a judgment consists of a list (possibly empty) of formulae on the left-hand side of a [[turnstile (symbol)|turnstile]] symbol "<math>\vdash</math>", with  a single formula on the right-hand side. The theorems are those formulae <math>B</math> such that <math>\vdash B</math> (with an empty left-hand side) is the conclusion of a valid proof.
+(In some presentations of natural deduction, the <math>A_i</math>'s and the turnstile are not written down explicitly; instead a two-dimensional notation from which they can be inferred is used).
+
+The standard semantics of a judgment in natural deduction is that it asserts that whenever<ref>Here, "whenever" is used as an informal abbreviation "for every assignment of values to the free variables in the judgment"</ref> <math>A_1</math>, <math>A_2</math>, etc., are all true, <math>B</math> will also be true. The judgments
+: <math>A_1, \ldots, A_n \vdash B \quad\mbox{and}\quad \vdash (A_1 \land \cdots \land A_n) \rightarrow B</math>
+are equivalent in the strong sense that a proof of either one may be extended to a proof of the other.
+
+Finally, ''sequent calculus'' generalizes the form of a natural deduction judgment to
+: <math>A_1, \ldots, A_n \vdash B_1, \ldots, B_k,</math>
+a syntactic object called a '''[[sequent]]'''. Again, <math>A_i</math> and <math>B_i</math> are formulae, and <math>n</math> and <math>k</math> are nonnegative integers, that is, the left-hand-side or the right-hand-side (or neither or both) may be empty. As in natural deduction, theorems are those <math>B</math> where <math>\vdash B</math> is the conclusion of a valid proof.
+
+The standard semantics of a sequent is an assertion that whenever ''all'' of the <math>A_i</math>'s is true, ''at least one'' of the <math>B_i</math> will also be true. One way to express this is that a comma to the left of the turnstile should be thought of as an "and", and a comma to the right of the turnstile should be thought of as an (inclusive) "or". The sequents
+: <math>A_1, \ldots, A_n \vdash B_1, \ldots, B_k \quad\mbox{and}\quad \vdash (A_1 \land\cdots\land A_n)\rightarrow(B_1 \lor\cdots\lor B_k)</math>
+are equivalent in the strong sense that a proof of either one may be extended to a proof of the other.
+
+At first sight, this extension of the judgment form may appear to be a strange complication — it is not motivated by an obvious shortcoming of natural deduction, and it is initially confusing that the comma seems to mean entirely different things on the two sides of the turnstile. However, in a [[Classical logic|classical context]] the semantics of the sequent can also (by propositional [[tautology (logic)|tautology]]) be expressed either as
+: <math>\neg A_1 \lor \neg A_2 \lor \cdots \lor \neg A_n \lor B_1 \lor B_2 \lor\cdots\lor B_k</math>
+(at least one of the A's is false, or one of the B's is true) or as
+: <math>\neg(A_1 \land A_2 \land \cdots \land A_n \land \neg B_1 \land \neg B_2 \land\cdots\land \neg B_k)</math>
+(it cannot be the case that all of the A's are true and all of the B's are false).  In these formulations, the only difference between formulae on either side of the turnstile is that one side is negated. Thus, swapping left for right in a sequent corresponds to negating all of the constituent formulae. This means that a symmetry such as [[De Morgan's laws]], which manifests itself as logical negation on the semantic level, translates directly into a left-right symmetry of sequents — and indeed, the inference rules in sequent calculus for dealing with conjunction (&and;) are mirror images of those dealing with disjunction (&or;).
+
+Many logicians feel that this symmetric presentation offers a deeper insight in the structure of the logic than other styles of proof system, where the classical duality of negation is not as apparent in the rules.
+
+==The system LK==
+
+This section introduces the rules of the sequent calculus '''LK''' (which is short for “'''l'''ogistischer '''k'''lassischer Kalkül”), as introduced by Gentzen in 1934.
+<ref>{{cite journal | first=Gerhard | last=Gentzen | authorlink=Gerhard Gentzen | title=Untersuchungen über das logische Schließen. I | journal=Mathematische Zeitschrift | volume=39 |  pages=176–210 | year=1934/1935 | doi=10.1007/BF01201353 | page=191 | issue=2}}</ref>
+A (formal) proof in this calculus is a sequence of [[sequent]]s, where each of the sequents is derivable from sequents appearing earlier in the sequence by using one of the [[rule of inference|rules]] below.
+
+===Inference rules===
+
+The following notation will be used:
+* <math>\vdash</math> known as the [[Turnstile (symbol)|turnstile]], separates the ''assumptions'' on the left from the ''propositions'' on the right
+* <math>A</math> and <math>B</math> denote formulae of first-order predicate logic (one may also restrict this to propositional logic), 
+* <math>\Gamma, \Delta, \Sigma</math>, and <math>\Pi</math> are finite (possibly empty) sequences of formulae,  called contexts,
+** when on the ''left'' of the <math>\vdash</math>, the sequence of formulas is considered ''conjunctively'' (all assumed to hold at the same time),
+** while on the ''right'' of the <math>\vdash</math>, the sequence of formulas is considered ''disjunctively'' (at least one of the formulas must hold for any assignment of variables),
+* <math>t</math> denotes an arbitrary term,
+* <math>x</math> and <math>y</math> denote variables,
+* <math>A[t/x]</math> denotes the formula that is obtained by substituting the term <math>t</math> for the variable <math>x</math> in formula <math>A</math>,
+* a variable is said to occur [[Free variables and bound variables|free]] within a formula if it occurs outside the scope of quantifiers <math>\forall</math> or <math>\exist</math>.
+* <math>WL</math> and <math>WR</math> stand for ''Weakening Left/Right'', <math>CL</math> and <math>CR</math> for ''Contraction'', and <math>PL</math> and <math>PR</math> for ''Permutation''.
+
+<table border="0" cellpadding="5">
+<tr><td>Axiom:</td><td>Cut:</td></tr>
+<tr>
+<td style="text-align: center;">
+ <math> \cfrac{\qquad }{ A \vdash A} \quad (I) </math>
+</td>
+<td style="text-align: center;">
+ <math> 
+   \cfrac{\Gamma \vdash \Delta, A \qquad A, \Sigma \vdash \Pi} {\Gamma, \Sigma \vdash \Delta, \Pi} \quad (\mathit{Cut})
+ </math>
+</td>
+</tr>
+<tr><td>Left logical rules:</td><td>Right logical rules:</td></tr>
+<tr>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma, A \vdash \Delta} {\Gamma, A \and B \vdash \Delta} \quad ({\and}L_1)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma \vdash A, \Delta}{\Gamma \vdash A \or B, \Delta} \quad  ({\or}R_1)
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma, B \vdash \Delta}{\Gamma, A \and B \vdash \Delta}  \quad ({\and}L_2)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma \vdash B, \Delta}{\Gamma \vdash A \or B, \Delta} \quad ({\or}R_2)
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma, A \vdash \Delta \qquad \Sigma, B \vdash \Pi}{\Gamma, \Sigma, A \or B \vdash \Delta, \Pi} \quad ({\or}L)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math> \cfrac{\Gamma \vdash A, \Delta \qquad \Sigma \vdash B, \Pi}{\Gamma, \Sigma \vdash A \and B, \Delta, \Pi} \quad ({\and}R)
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash A, \Delta \qquad \Sigma, B \vdash \Pi}{\Gamma, \Sigma, A\rightarrow B \vdash \Delta, \Pi} \quad  ({\rightarrow }L)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+   \cfrac{\Gamma, A \vdash B, \Delta}{\Gamma \vdash A \rightarrow B, \Delta} \quad ({\rightarrow}R)
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash A, \Delta}{\Gamma, \lnot A \vdash \Delta} \quad  ({\lnot}L)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma, A \vdash \Delta}{\Gamma \vdash \lnot A, \Delta} \quad ({\lnot}R)
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma, A[t/x] \vdash \Delta}{\Gamma, \forall x A \vdash \Delta} \quad  ({\forall}L)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash A[y/x], \Delta}{\Gamma \vdash \forall x A, \Delta} \quad  ({\forall}R) 
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma, A[y/x] \vdash \Delta}{\Gamma, \exist x A \vdash \Delta} \quad  ({\exist}L)
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash A[t/x], \Delta}{\Gamma \vdash \exist x A, \Delta} \quad  ({\exist}R)
+ </math>
+</td>
+</tr>
+
+<tr><td>Left structural rules:</td><td>Right structural rules:</td></tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash \Delta}{\Gamma, A \vdash \Delta} \quad (\mathit{WL})
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash \Delta}{\Gamma \vdash A, \Delta} \quad (\mathit{WR})
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma, A, A \vdash \Delta}{\Gamma, A \vdash \Delta} \quad (\mathit{CL})
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash A, A, \Delta}{\Gamma \vdash A, \Delta} \quad (\mathit{CR})
+ </math>
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma_1, A, B, \Gamma_2 \vdash \Delta}{\Gamma_1, B, A, \Gamma_2 \vdash \Delta} \quad (\mathit{PL})
+ </math>
+</td>
+<td style="text-align: center;">
+ <math>
+  \cfrac{\Gamma \vdash \Delta_1, A, B, \Delta_2}{\Gamma \vdash \Delta_1, B, A, \Delta_2} \quad (\mathit{PR})
+ </math>
+</td>
+</tr>
+</table>
+
+''Restrictions: In the rules (&forall;R) and (&exist;L), the variable y must not be free within &Gamma;, A, or &Delta;.''
+
+===An intuitive explanation===
+
+The above rules can be divided into two major groups: ''logical'' and ''structural'' ones. Each of the logical rules introduces a new logical formula either on the left or on the right of the [[Turnstile (symbol)|turnstile]] <math>\vdash</math>. In contrast, the structural rules operate on the structure of the sequents, ignoring the exact shape of the formulae. The two exceptions to this general scheme are the axiom of identity (I) and the rule of (Cut).
+
+Although stated in a formal way, the above rules allow for a very intuitive reading in terms of classical logic. Consider, for example, the rule (&and;L<sub>1</sub>). It says that, whenever one can prove that &Delta; can be concluded from some sequence of formulae that contain A, then one can also conclude &Delta; from the (stronger) assumption, that A&and;B holds. Likewise, the rule (&not;R) states that, if &Gamma; and A suffice to conclude &Delta;, then from &Gamma; alone one can either still conclude &Delta; or A must be false, i.e. &not;A holds. All the rules can be interpreted in this way.
+
+For an intuition about the quantifier rules, consider the rule (&forall;R). Of course concluding that &forall;x A holds just from the fact that A[y/x] is true is not in general possible. If, however, the variable y is not mentioned elsewhere (i.e. it can still be chosen freely, without influencing the other formulae), then one may assume, that A[y/x] holds for any value of y. The other rules should then be pretty straightforward.
+
+Instead of viewing the rules as descriptions for legal derivations in predicate logic, one may also consider them as instructions for the construction of a proof for a given statement. In this case the rules can be read bottom-up; for example, (&and;R) says that, to prove that A&and;B follows from the assumptions &Gamma; and &Sigma;, it suffices to prove that A can be concluded from &Gamma; and B can be concluded from &Sigma;, respectively. Note that, given some antecedent, it is not clear how this is to be split into &Gamma; and &Sigma;. However, there are only finitely many possibilities to be checked since the antecedent by assumption is finite. This also illustrates how proof theory can be viewed as operating on proofs in a combinatorial fashion: given proofs for both A and B, one can construct a proof for A&and;B. 
+
+When looking for some proof, most of the rules offer more or less direct recipes of how to do this. The rule of cut is different: It states that, when a formula A can be concluded and this formula may also serve as a premise for concluding other statements, then the formula A can be "cut out" and the respective derivations are joined. When constructing a proof bottom-up, this creates the problem of guessing A (since it does not appear at all below). The [[cut-elimination theorem]] is thus crucial to the applications of sequent calculus in [[automated deduction]]: it states that all uses of the cut rule can be eliminated from a proof, implying that any provable sequent can be given a ''cut-free'' proof. 
+
+The second rule that is somewhat special is the axiom of identity (I). The intuitive reading of this is obvious: every formula proves itself.  Like the cut rule, the axiom of identity is somewhat redundant: the [[completeness of atomic initial sequents]] states that the rule can be restricted to [[atomic formula]]s without any loss of provability.
+
+Observe that all rules have mirror companions, except the ones for implication. This reflects the fact that the usual language of first-order logic does not include the "is not implied by" connective <math>\not\leftarrow</math> that would be the De Morgan dual of implication. Adding such a connective with its natural rules would make the calculus completely left-right symmetric.
+
+===An example derivation===
+
+As for an example, this is the sequential derivation of <math>\vdash</math>(A &or; &not;A), known as
+the ''[[Law of excluded middle]]'' (''tertium non datur'' in Latin).
+
+[[Image:Excluded middle proof.png|center]]
+
+This derivation also emphasizes the strictly formal structure of the sequent calculus. For example, the right logical rules as defined above always act on the first formula of the right sequent, such that the application of (PR) is formally required. Note, though, that this is in part an artifact of the presentation, in the original style of Gentzen.  A common simplification is the use of [[multiset]]s of formulas, rather than sequences, eliminating the need for an explicit permutation rule.
+
+===Structural rules===
+
+The structural rules deserve some additional discussion.
+
+Weakening (W) allows the addition of arbitrary elements to a sequence.  Intuitively, this is allowed in the antecedent because we can always add assumptions to our proof, and in the succedent because we can always allow for alternative conclusions.
+
+Contraction (C) and Permutation (P) assure that neither the order (P) nor the multiplicity of occurrences (C) of elements of the sequences matters. Thus, one could instead of [[sequence]]s also consider [[Set (mathematics)|sets]].
+
+The extra effort of using sequences, however, is justified since part or all of the structural rules may be omitted. Doing so, one obtains the so-called [[substructural logic]]s.
+
+===Properties of the system LK===
+
+This system of rules can be shown to be both [[soundness|sound]] and [[completeness|complete]] with respect to first-order logic, i.e. a statement A follows [[semantics|semantically]] from a set of premises &Gamma; (<math>\Gamma \vDash A</math>) [[iff]] the sequent <math>\Gamma \vdash A</math> can be derived by the above rules.
+
+In the sequent calculus, the rule of [[cut-elimination|cut is admissible]]. This result is also referred to as Gentzen's ''Hauptsatz'' ("Main Theorem").
+
+==Variants==
+
+The above rules can be modified in various ways:
+
+===Minor structural alternatives===
+
+There is some freedom of choice regarding the technical details of how sequents and structural rules are formalized. As long as every derivation in LK can be effectively transformed to a derivation using the new rules and vice versa, the modified rules may still be called LK.
+
+First of all, as mentioned above, the sequents can be viewed to consist of sets or [[multiset]]s. In this case, the rules for permuting and (when using sets) contracting formulae are obsolete.
+
+The rule of weakening will become admissible, when the axiom (I) is changed, such that any sequent of the form <math>\Gamma , A \vdash A , \Delta</math> can be concluded. This means that <math>A</math> proves <math>A</math> in any context. Any weakening that appears in a derivation can then be performed right at the start. This may be a convenient change when constructing proofs bottom-up.
+
+Independent of these one may also change the way in which contexts are split within the rules: In the cases (&and;R), (&or;L), and (&rarr;L) the left context is somehow split into &Gamma; and &Sigma; when going upwards. Since contraction allows for the duplication of these, one may assume that the full context is used in both branches of the derivation. By doing this, one assures that no important premises are lost in the wrong branch. Using weakening, the irrelevant parts of the context can be eliminated later.
+
+===Substructural logics===
+{{main|Substructural logic}}
+
+Alternatively, one may restrict or forbid the use of some of the structural rules. This yields a variety of [[substructural logic]] systems. They are generally weaker than LK (''i.e.'', they have fewer theorems), and thus not complete with respect to the standard semantics of first-order logic. However, they have other interesting properties that have led to applications in theoretical [[computer science]] and [[artificial intelligence]].
+
+===Intuitionistic sequent calculus: System LJ===
+
+Surprisingly, some small changes in the rules of LK suffice to turn it into a proof system for [[intuitionistic logic]]. To this end, one has to restrict to sequents with exactly one formula on the right-hand side, and modify the rules to maintain this invariant.  For example, (&or;L) is reformulated as follows (where C is an arbitrary formula):
+
+:<math>
+  \cfrac{\Gamma, A \vdash C \qquad \Sigma, B \vdash C }{\Gamma, \Sigma, A \or B \vdash C} \quad ({\or}L)
+</math>
+
+The resulting system is called LJ. It is sound and complete with respect to intuitionistic logic and admits a similar cut-elimination proof.
+
+==See also==
+* [[Resolution (logic)]]
+
+==Notes==
+<references/>
+
+==References==
+* {{cite book | first=Jean-Yves | last=Girard | authorlink=Jean-Yves Girard | coauthors=Paul Taylor, Yves Lafont | title=Proofs and Types | publisher=Cambridge University Press (Cambridge Tracts in Theoretical Computer Science, 7) | year=1990 | origyear=1989 | isbn=0-521-37181-3 | url= http://www.paultaylor.eu/stable/Proofs%2BTypes.html}}
+
+==External links==
+* [http://scienceblogs.com/goodmath/2006/07/a_brief_diversion_sequent_calc.php A Brief Diversion: Sequent Calculus]
+
+[[Category:Proof theory]]
+[[Category:Logical calculi]]
+[[Category:Automated theorem proving]]
+
+[[de:Sequenzenkalkül]]
+[[eo:Sekvaĵa kalkulo]]
+[[fr:Calcul des séquents]]
+[[ja:シークエント計算]]
+[[pl:Sekwenty Gentzena]]
+[[uk:Числення секвенцій]]
+[[zh:相继式演算]]</body> </html>

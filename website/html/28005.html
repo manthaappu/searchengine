@@ -1,0 +1,57 @@
+<html> <head> <title>PC-LISP</title></head><body>'''PC-LISP''' is an implementation of the [[Franz Lisp]] dialect for [[DOS]] by Peter Ashwood-Smith.
+
+Version 2.11 was released on May 15, 1986. It can still be found on old [[abandonware]] and [[shareware]] download sites.
+
+Ashwood-Smith says of his interpreter: "PC-LISP is a small implementation of LISP for ANY MS-DOS machine.  While small, it is capable of running a pretty good subset of Franz LISP."<ref>from the distribution's readme file</ref>
+
+Note that the Franz LISP dialect was the immediate, portable successor to the [[ITS]] version of [[Maclisp]] and is perhaps the closest thing to the  LISP in the [[Steven Levy]] book ''[[Hackers: Heroes of the Computer Revolution|Hackers]]'' as is practical to operate. PC-LISP runs well in DOS emulators and on modern Windows versions. Because PC-LISP implements Franz LISP, it is a dynamically scoped predecessor to modern [[Common Lisp]]. This is therefore an historically important implementation.
+
+==Example==
+[[Image:Pclisp.jpg|thumb|PC-LISP 2.11 (1986) session.]] The session is running the following code which demonstrates [[dynamic scoping]] in Franz LISP. Note that PC-LISP does not implement the <code>let</code> special form that [[Emacs Lisp]] provides for local variables. Instead, all variables are what an [[ALGOL]]-based language would call "global". The first dialect of Lisp to incorporate ALGOL scoping rules (called [[lexical scoping]]) was [[Scheme (programming language)|Scheme]] although the [[Common Lisp]] language also added this feature.
+<pre>
+;; Demonstration of dynamic scoping
+
+;; This is a "global" variable
+(setq myglobal "this is my global variable")
+
+;; Another global variable
+(setq yourglobal "this is my global variable")
+
+;; a function which prints the symbols
+(defun dosomething (mine yours)
+  (princ " * Mine is  - ")
+  (princ mine)
+  (princ "\n")
+  (princ " * Yours is - ")
+  (princ yours)
+  (princ "\n"))
+
+;; override the symbols
+(defun nolocals ()
+  (setq mine "I have set mine to a new value")
+  (setq yours "I have set mine to a new value")
+  (dosomething mine yours))
+
+(defun main ()
+  ;; define two symbols
+  (setq mine myglobal)
+  (setq yours yourglobal)
+  
+  ;; print them
+  (princ "calling dosomething\n")
+  (dosomething mine yours)
+  (princ "calling nolocals\n")
+  (nolocals)
+  (princ "calling dosomething again\n")
+  (dosomething mine yours))
+</pre>
+
+==References==
+
+{{reflist}}
+
+==External links==
+* [http://cd.textfiles.com/swinnund/disk2/EXLIS/EDUCATE/EDU_M_Z.LIP List of files] which includes: "PCLISP.ZIP      62745  02-23-86  a near franz lisp (with documentation)"
+
+[[Category:Lisp programming language family]]
+[[Category:Discontinued development tools]]</body> </html>

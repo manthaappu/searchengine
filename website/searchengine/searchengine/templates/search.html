@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Search here!</h1>
+<form method="post" action="">
+    <input type="text" name="q" id="q">
+    {% csrf_token %}
+    <input type="submit" name="submit" id="submit">
+</form>
+{% if results %}
+<h2>Search Results for "<em>{{ query }}</em>"</h2>
+{% if results = "Not found!" %}
+{{ results }}
+{% else %}
+{% for result in results %}
+<a href="/view/{{ result.link }}">{{ result.title }}</a><br>
+<p>{{ result.content }}</p>
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endblock content%}

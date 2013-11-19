@@ -1,0 +1,77 @@
+<html> <head> <title>Loop device</title></head><body>{{redirect|Lofi|the sound recording technique|Lo-fi}}
+
+In [[Unix-like]] operating systems, a '''loop device''', '''vnd''' (vnode disk), or '''lofi''' (loopback file interface) is a [[device node|pseudo-device]] that makes a [[computer file|file]] accessible as a [[device file system|block device]].
+
+Before use, a loop device must be connected to an existing file in the filesystem. The association provides the user with an [[API]] that allows the file to be used in place of a block special file (cf. [[device file system]]). Thus, if the file contains an entire [[file system]], the file may then be [[mount (computing)|mounted]] as if it were a disk device.
+
+Files of this kind are often used for CD [[ISO image]]s and floppy disc images. Mounting a file containing a filesystem via such a '''loop mount''' makes the files within that filesystem accessible. They appear in the [[mount point]] directory.
+
+A loop device may allow some kind of data elaboration during this redirection. For example, the device may be the unencrypted version of an encrypted file. In such a case, the file associated with a loop device may be another pseudo-device. This is mostly useful when this device contains an encrypted file system. If supported, the loop device is in this case the decrypted version of the original encrypted file and can therefore be mounted as if it were a normal filesystem.
+
+==Uses of loop mounting==
+After mounting a file containing a filesystem, the files within the filesystem can be accessed through the usual filesystem interface of the operating system, without any need for special functionality, such as reading and writing to ISO images, in applications.
+
+Uses include managing and editing filesystem images meant for later normal use (especially CD or DVD images or installation systems) or permanent segregation of data in actual use (for example simulating removable media on a faster and more convenient hard disk or encapsulating encrypted filesystems).
+
+Loop devices have also been utilized in order to provide a way of installing operating systems within files on a hard drive without repartitioning the drive.
+
+==Availability==
+Some confusion exists about the naming of the loop device under various operating systems.
+Various Unix-like operating systems provide the loop device functionality under different names.
+
+In Linux, device names are encoded in the symbol table entries of their corresponding device drivers. The device is called "loop" device and device nodes are usually named <tt>/dev/loop0</tt>, <tt>/dev/loop1</tt>, etc. They can be created by the [[makedev]] script for the static device directory, or dynamically by the facilities of the device filesystem ([[udev]]). The management user interface for the loop device is <tt>losetup</tt> and is part of the [[util-linux]] package.
+
+Sometimes, the loop device is erroneously referred to as 'loopback' device, but this term is reserved for a networking device in the Linux kernel (cf. [[loopback]]). The concept of the 'loop' device is distinct from that of 'loopback', although similar in name. 
+
+In BSD-derived systems, such as [[NetBSD]] and [[OpenBSD]], the loop device is called "virtual node device" or "vnd", and generally located at <tt>/dev/vnd0</tt>, <tt>/dev/rvnd0</tt> or <tt>/dev/svnd0</tt>, etc., in the file system. The <tt>vnconfig</tt> program is used for configuration.
+
+[[FreeBSD]] followed the same conventions as other BSD systems until release version 5, in which the loop device was incorporated into the memory disk driver ("md"). Configuration is now performed using the <tt>mdconfig</tt><ref>[http://www.freebsd.org/cgi/man.cgi?mdconfig mdconfig&mdash;configure and enable memory disks,  FreeBSD manual page]</ref> program.
+
+In [[Solaris (operating system)|Solaris]]/[[OpenSolaris]], the loop device is called "loopback file interface" or lofi,<ref>http://docs.sun.com/app/docs/doc/819-2254/lofi-7d</ref> and located at <tt>/dev/lofi/1</tt>, etc. SunOS has the <tt>lofiadm</tt> configuration program.  The "lofi" driver supports read-only compression and read-write encryption.  There is also a 3rd party "fbk"<ref>ftp://ftp.berlios.de/pub/schily/kernel/fbk/</ref> (File emulates Blockdevice) driver available for SunOS/Solaris since summer 1988.
+
+[[Mac OS X]] implements a native image mounting mechanism as part of its random access disk device abstraction. The devices appear in <tt>/dev</tt> as regular disk devices; reads from and writes to those devices are sent to a user-mode helper process, which reads the data from the file or writes it to the file.  In the user interface it is automatically activated by opening the disk image.  It can handle disk, CD-ROM or DVD images in various formats.
+
+Loop mounting is not natively available on [[Microsoft Windows]] operating systems (until version [[Windows 7]], where this functionality is natively implemented, and available through the [[diskpart]] utility).<ref>See for example: [http://blogs.msdn.com/7/archive/2009/10/08/diskpart-exe-and-managing-virtual-hard-disks-vhds-in-windows-7.aspx DiskPart: vdisk create select attach], [http://www.sevenforums.com/tutorials/2953-virtual-hard-drive-vhd-file-create-start-boot.html install and boot Windows 7 from virtual disk drive] and [http://www.google.com/search?num=100&hl=en&lr=&q=%22Diskpart%22+%22vdisk%22+create+select+attach+detach+site%3Atechnet.microsoft.com+-site%3Asocial.technet.microsoft.com&aq=f&aqi=&aql=&oq=&gs_rfai= other] relative articles on this thematics.</ref> However, the facility is often added using third-party applications such as ''[[Daemon Tools]]'' and ''[[Alcohol 120%]]''. Freely-available tools from [http://www.vmware.com/download/eula/diskmount_ws_v55.html VMware] and [http://www.ltr-data.se/opencode.html#ImDisk LTR Data] ([[ImDisk]]) can also be used to achieve similar functionality.
+
+==Example==
+Mounting a file containing a disk image on a directory requires two steps:
+# association of the file with a loop [[device node]],
+# mounting of the loop device at a mount point directory
+
+These two operations can be performed either using two separate commands, or through special flags to the mount command. The first operation may be performed by programs such as <tt>losetup</tt><ref>[http://www.cl.cam.ac.uk/cgi-bin/manpage?8+losetup losetup manual page]</ref> in [[Linux]], or <tt>lofiadm</tt><ref>[http://docs.sun.com/app/docs/doc/819-2240/lofiadm-1m?a=view lofiadm, Sun System Administration Command manual]</ref> in SunOS. As an example, if <code>example.img</code> is a regular file containing a filesystem and <code>/home/you/dir</code> is a Linux user's directory, the [[superuser]] (root) may mount the file on the directory by executing the following two commands:
+ losetup /dev/loop0 example.img
+ mount /dev/loop0 /home/you/dir
+
+The second command mounts the device on the directory <code>/home/you/dir</code>. The overall effect of executing these two commands is that the content of the file is used as a file system rooted at the mount point.
+
+The mount utility is usually capable of handling the entire procedure:
+ mount -o loop example.img /home/you/dir
+
+The device can then be unmounted with the following command:
+ umount /home/you/dir
+ # or, after finding the associated loop number by e.g. mount | grep "/home/you/dir" 
+ # or losetup -a | grep example.img
+ umount /dev/loop<N> 
+
+At a lower level [[application programming interface]] (API), the association and disassociation of a file with a loop device is performed with the [[ioctl]] [[system call]] on a loop device.
+
+==See also==
+* [[Device file system]]
+* [[Virtual drive]]
+* [[Network block device]] used when the file to associate with the device is on a remote computer
+* [[cloop]] - a special compressed version of a loop device i.e. for live CDs
+* With similar name, but different concept, a [[Loopback#Virtual Internet Protocol Network Interface|loopback interface]], or loopback device is network facility in UNIX-like operating systems
+* [[Disk image]]
+
+==References==
+{{Reflist|2}}
+
+==External links==
+* [http://www.linux.org/docs/ldp/howto/Cryptoloop-HOWTO/loopdevice-setup.html Setting up the loop device] from the [[cryptoloop]] [[HOWTO]].
+* [http://bochs.sourceforge.net/doc/docbook/user/loop-device-usage.html Mounting a disk image using the loop device] from the ''[[Bochs]] User Manual''
+* {{man|8|losetup}}
+[[Category:Unix]]
+[[Category:Linux kernel features]]
+
+[[de:Loop device]]
+[[it:Loop device]]</body> </html>

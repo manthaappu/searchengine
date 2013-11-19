@@ -1,0 +1,90 @@
+<html> <head> <title>Netscape Portable Runtime</title></head><body>{{unreferenced|date=July 2010}}
+{{Infobox software
+| name                   = Netscape Portable Runtime
+| screenshot             =
+| caption                =
+| programming language   = [[C (programming language)|C]]
+| developer              = [[Mozilla Foundation]] / [[Mozilla Corporation]]
+| latest release version = 4.8.2
+| latest release date    = {{release date|2009|10|31}}
+| operating system       = [[Cross-platform]]
+| genre                  = [[Library (computer science)|Software Library]]
+| license                = [[Mozilla Public License|MPL]]/[[GPL]]/[[LGPL]] tri-license
+| website                = http://www.mozilla.org/projects/nspr
+}}
+
+In [[computing]], the '''Netscape Portable Runtime''', or '''NSPR''', a [[platform abstraction library]], makes all [[operating system]]s it supports appear the same to (for example) [[Mozilla]]-style [[web-browser]]s. NSPR provides [[platform independence]] for [[non-GUI]] [[operating system]] facilities. These facilities include:
+
+* [[Thread (computer science)|thread]]s
+* [[thread synchronization]]
+* [[normal file]] and [[network I/O]]
+* [[interval timing]] and [[calendar time]]
+* basic [[memory management]] ([[malloc]] and free)
+* [[Shared library|shared library linking]].
+
+Much of the library, and perhaps the overall thrust of it in the [[Netscape 5|Gromit environment]], provides the underpinnings of the [[Java VM|Java virtual machine]], more or less mapping the [[sys layer]] that [[Sun Microsystems|Sun]] defines for the [[porting]] of the Java VM to various [[Computing platform|platform]]s. NSPR does go beyond that requirement in some areas, as it also functions as the platform-independent layer for most of the servers produced by [[Netscape]].
+Some manufacturers{{Who|date=January 2009}} expect and prefer that programmers restructure and perhaps even rewrite existing code in order to use the NSPR [[Application programming interface|API]]. NSPR does not have as a goal the provision of a platform for the porting into Netscape of externally developed code.{{Citation needed|date=September 2007}}
+
+<!--
+Note to Reader: I am not a lawyer,so this content below available under a Creative Commons license and can be found at
+http://www.mozilla.org/projects/nspr/about-nspr.html
+Wikipedia is under GNU Free Documentation License
+-->
+
+== History ==
+The first generation of NSPR originally aimed just to satisfy the requirements of porting [[Java (programming language)|Java]] to various host environments. NSPR20, an effort started in 1996, built on that original idea, though very little remains of the original code. (The "20" in "NSPR20" does not mean "version 2.0" but rather "second generation".) Many of the concepts show reform, expansion, and maturation. {{As of | 2009 }} NSPR may still function appropriately as the platform-dependent layer under Java, but it primarily{{Citation needed|date=January 2009}} serves in supporting [[Client (computing)|client]]s written entirely in [[C (programming language)|C]] or in [[C++]].
+
+== How it works ==
+
+NSPR has the goal of providing uniform service over a wide range of operating-system environments. It strives to not export the lowest common denominator, but to exploit the best features of each operating system on which it runs, while still providing a uniform service across a wide range of host offerings.
+
+=== Threads ===
+
+[[Thread (computer science)|Thread]]s feature prominently in NSPR. The [[software industry]]'s offering of threads lacks consistency. NSPR, while far from perfect, does provide a single API to which clients may program and expect reasonably consistent behavior. The operating systems provide everything from no concept of threading at all up to and including sophisticated, scalable and efficient implementations. NSPR makes as much use of what the systems offer as it can. NSPR aims to impose as little [[Computational overhead|overhead]] as possible in accessing those appropriate system features.
+
+=== Thread synchronization ===
+
+Thread synchronization loosely depends on [[monitor (synchronization)|monitor]]s as described by [[C. A. R. Hoare]] in "Monitors: An operating system structuring concept", ''[[Communications of the ACM]]'', 17(10), October 1974 and then formalized by [[Xerox]]' [[Mesa programming language]] ("Mesa Language Manual", J.G. Mitchell et al., Xerox PARC, CSL-79-3 (Apr 1979)). This mechanism provides the basic mutual exclusion ([[mutex]]) and thread notification facilities (condition variables) implemented by NSPR. Additionally, NSPR provides synchronization methods more suited for use by Java. The Java-like facilities include monitor reentrancy, implicit and tightly bound notification capabilities with the ability to associate the synchronization objects dynamically.
+
+=== I/O ===
+
+NSPR's [[I/O]] slightly augments the [[Berkeley sockets]] model and allows arbitrary layering. The designers originally intended to export synchronous I/O methods only, relying on threads to provide the concurrency needed for complex applications. That method of operation remains preferred, though one can configure the network I/O channels as non-blocking in the traditional sense.
+
+=== Network addresses ===
+
+Part of NSPR deals with manipulation of network addresses. NSPR defines an [[Internet Protocol|IP]]-centric network address object. While it does not define the object as opaque, the API provides methods that allow and encourage clients to treat the addresses as [[Type polymorphism|polymorphic]] items. In this area NSPR aims to provide a migration path between [[IPv4]] and [[IPv6]]. To that end one can perform translations of [[ASCII]] strings ([[Domain Name System|DNS]] names) into NSPR's network address structures, regardless of whether the addressing technology uses IPv4 or IPv6.
+
+=== Time ===
+
+NSPR makes timing facilities available in two forms: interval timing and calendar functions.
+
+Interval timers are based on a free running, 32-bit, platform-dependent resolution timer. Such timers are normally used to specify timeouts on I/O, waiting on condition variables and other rudimentary thread scheduling. Since these timers have finite namespace and are free running, they can wrap at any time. NSPR does not provide an [[epoch (computing)|epoch]], but expects clients to deal with that issue. The granularity of the timers is guaranteed to be between 10 microseconds and 1 millisecond. This allows a minimal timer period in of approximately 12 hours. But in order to deal with the wrap-around issue, only half that namespace may be utilized. Therefore, the minimal usable interval available from the timers is slightly less than six hours.
+
+Calendar times are 64-bit signed numbers with units of microseconds. The epoch for calendar times is midnight, January 1, 1970, [[Greenwich Mean Time]]. Negative times extend to times before 1970, and positive numbers forward. Use of 64 bits allows a representation of times approximately in the range of -30000 to the year 30000. There exits a structural representation (i.e., exploded view), routines to acquire the current time from the host system, and convert them to and from the 64-bit and structural representation. Additionally there are routines to convert to and from most well-known forms of ASCII into the 64-bit NSPR representation.
+
+=== Memory management ===
+
+NSPR provides API to perform the basic [[malloc]], [[calloc]], [[realloc]] and [[free (programming)|free]] functions. Depending on the platform, the functions may be implemented almost entirely in the NSPR runtime or simply [[shim (computing)|shims]] that call immediately into the host operating system's offerings.
+
+=== Linking ===
+Support for linking (shared library loading and unloading) forms part of NSPR's feature set. In most cases this is simply a smoothing over of the facilities offered by the various platform providers.
+
+== See also ==
+
+{{Portal|Free software}}
+
+* [[Apache Portable Runtime]]
+* [[Adaptive Communication Environment]]
+* [[Cross-Platform Support Middleware]]
+
+==External links==
+* [http://www.mozilla.org/projects/nspr/ Official website]
+* [http://ftp.mozilla.org/pub/mozilla.org/nspr/ NSPR source code]
+
+{{Mozilla projects}}
+
+[[Category:Application programming interfaces]]
+[[Category:Netscape]]
+
+[[cs:Netscape Portable Runtime]]
+[[es:Netscape Portable Runtime]]</body> </html>

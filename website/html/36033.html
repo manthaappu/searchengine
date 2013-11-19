@@ -1,0 +1,69 @@
+<html> <head> <title>Subdivision surface</title></head><body>A '''subdivision surface''', in the field of [[3D computer graphics]], is a method of representing a smooth [[surface]] via the specification of a coarser [[piecewise linear]] [[polygon mesh]].  The smooth surface can be calculated from the coarse mesh as the [[Limit of a sequence|limit]] of a [[Recursion|recursive]] process of subdividing each polygonal [[Face (geometry)|face]] into smaller faces that better approximate the smooth surface.
+
+[[Image:Catmull-Clark_subdivision_of_a_cube.svg|thumbnail|First three steps of [[Catmull–Clark]] subdivision of a cube with subdivision surface below]]
+==Overview==
+
+The subdivision surfaces are defined recursively. The process starts with a given polygonal mesh. A '''refinement scheme''' is then applied to this mesh. This process takes that mesh and subdivides it, creating new vertices and new faces. The positions of the new vertices in the mesh are computed based on the positions of nearby old vertices. In some refinement schemes, the positions of old vertices might also be altered (possibly based on the positions of new vertices).
+
+This process produces a denser mesh than the original one, containing more polygonal faces. This resulting mesh can be passed through the same refinement scheme again and so on.
+
+The limit subdivision surface is the surface produced from this process being iteratively applied infinitely many times. In practical use however, this algorithm is only applied a limited number of times. The limit surface can also be calculated directly for most subdivision surfaces using the technique of Jos Stam <ref name=Stam/>, which eliminates the need for recursive refinement.
+
+==Refinement schemes==
+
+Subdivision surface refinement schemes can be broadly classified into two categories: interpolating and approximating. Interpolating schemes are required to match the original position of vertices in the original mesh. Approximating schemes are not; they can and will adjust these positions as needed. In general, approximating schemes have greater smoothness, but editing applications that allow users to set exact surface constraints require an optimization step. This is analogous to [[Spline (mathematics)|spline]] surfaces and curves, where [[Bézier splines]] are required to interpolate certain control points, while [[B-spline]]s are not.
+
+There is another division in subdivision surface schemes as well, the type of polygon that they operate on. Some function for quadrilaterals (quads), while others operate on triangles.
+
+===Approximating schemes===
+
+Approximating means that the limit surfaces approximate the initial meshes and that after subdivision, the newly generated control points are not in the limit surfaces. Examples of approximating subdivision schemes are:
+* [[Catmull–Clark subdivision surface|Catmull and Clark]] (1978) generalized [[bi-cubic uniform B-spline]] to produce their subdivision scheme. For arbitrary initial meshes, this scheme generates limit surfaces that are [[Parametric continuity|C<sup>2</sup>]] continuous everywhere except at extraordinary vertices where they are [[Parametric continuity|C<sup>1</sup>]] continuous (Peters and Reif 1998).
+* [[Doo–Sabin subdivision surface|Doo–Sabin]] - The second subdivision scheme was developed by Doo and Sabin (1978) who successfully extended Chaikin's corner-cutting method for curves to surfaces. They used the analytical expression of [[bi-quadratic uniform B-spline]] surface to generate their subdivision procedure to produce [[Parametric continuity|C<sup>1</sup>]] limit surfaces with arbitrary topology for arbitrary initial meshes.
+* [[Loop subdivision surface|Loop]], Triangles - Loop (1987) proposed his subdivision scheme based on a quartic [[box-spline]] of six direction vectors to provide a rule to generate [[Parametric continuity|C<sup>2</sup>]] continuous limit surfaces everywhere except at extraordinary vertices where they are [[Parametric continuity|C<sup>1</sup>]] continuous. 
+* [[Mid-Edge subdivision scheme]] - The mid-edge subdivision scheme was proposed independently by Peters-Reif (1997) and Habib-Warren (1999). The former used the mid-point of each edge to build the new mesh. The latter used a four-directional [[box spline]] to build the scheme. This scheme generates [[Parametric continuity|C<sup>1</sup>]] continuous limit surfaces on initial meshes with arbitrary topology.
+* [[√3 subdivision scheme]] - This scheme has been developed by Kobbelt (2000) and offers several interesting features: it handles arbitrary triangular meshes, it is [[Parametric continuity|C<sup>2</sup>]] continuous everywhere except at extraordinary vertices where it is [[Parametric continuity|C<sup>1</sup>]] continuous and it offers a natural adaptive refinement when required. It exhibits at least two specificities: it is a ''Dual'' scheme for triangle meshes and it has a slower refinement rate than primal ones.
+
+===Interpolating schemes===
+After subdivision, the control points of the original mesh and the new generated control points are interpolated on the limit surface. The earliest work was the [[butterfly scheme]] by Dyn, Levin and Gregory (1990), who extended the four-point interpolatory subdivision scheme for curves to a subdivision scheme for surface. Zorin, Schröder and Swelden (1996) noticed that the butterfly scheme cannot generate smooth surfaces for irregular triangle meshes and thus modified this scheme. Kobbelt (1996) further generalized the four-point interpolatory subdivision scheme for curves to the tensor product subdivision scheme for surfaces.
+* [[Butterfly subdivision surfaces|Butterfly]], Triangles - named after the scheme's shape
+* [[Midedge]], Quads
+* [[Kobbelt]], Quads - a variational subdivision method that tries to overcome uniform subdivision drawbacks
+
+==Editing a subdivision surface==
+
+Subdivision surfaces can be naturally edited at different levels of subdivision. Starting with basic shapes you can use binary operators to create the correct topology. Then edit the coarse mesh to create the basic shape, then edit the offsets for the next subdivision step, then repeat this at finer and finer levels. You can always see how your edit effect the limit surface via GPU evaluation of the surface.
+
+A surface designer may also start with a scanned in object or one created from a NURBS surface. The same basic optimization algorithms are used to create a coarse base mesh with the correct topology and then add details at each level so that the object may be edited at different levels. These types of surfaces may be difficult to work with because the base mesh does not have control points in the locations that a human designer would place them. With a scanned object this surface is easier to work with than a raw triangle mesh, but a NURBS object probably had well laid out control points which behave less intuitively after the conversion than before.
+
+==Key developments==
+* 1978: Subdivision surfaces were discovered simultaneously by [[Edwin Catmull]] and [[Jim Clark]] (see [[Catmull–Clark subdivision surface]]). In the same year, Daniel Doo and Malcom Sabin published a paper building on this work (see [[Doo-Sabin subdivision surfaces]].)
+* 1995: [[Ulrich Reif]] solved subdivision surface behaviour near extraordinary vertices <ref name=Reif>Ulrich Reif.  1995.  A unified approach to subdivision algorithms near extraordinary vertices.  ''Computer Aided Geometric Design.'' 12(2) 153–174</ref>.
+* 1998: [[Jos Stam]] contributed a method for exact evaluation for ''Catmull–Clark'' and ''Loop'' subdivision surfaces under arbitrary parameter values <ref name=Stam>
+Jos Stam, ''Exact Evaluation of Catmull–Clark Subdivision Surfaces at Arbitrary Parameter Values'', Proceedings of SIGGRAPH'98. In Computer Graphics Proceedings, ACM SIGGRAPH, 1998,  395–404 ([http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/sig98.pdf pdf], [http://www.dgp.toronto.edu/~stam/reality/Research/SubdivEval/index.html downloadable eigenstructures])</ref>.
+
+== References ==
+<references/>
+* J. Peters and U. Reif: ''The simplest subdivision scheme for smoothing polyhedra'', ACM Transactions on Graphics 16(4) (October 1997) p.420-431, [http://doi.acm.org/10.1145/263834.263851 doi].
+* A. Habib and J. Warren: ''Edge and vertex insertion for a class of [[Parametric continuity|C<sup>1</sup>]] subdivision surfaces'', Computer Aided Geometric Design 16(4) (May 1999) p.223-247, [http://dx.doi.org/10.1016/S0167-8396(98)00045-4 doi].
+* L. Kobbelt: ''√3-subdivision'', 27th annual conference on Computer graphics and interactive techniques, [http://doi.acm.org/10.1145/344779.344835 doi].
+
+== External links ==
+* [http://www.subdivision.org Resources about Subdvisions]
+* [http://www.pixar.com/shorts/gg/theater/index.html Geri's Game] : Oscar winning animation by [[Pixar]] completed in 1997 that introduced subdivision surfaces (along with cloth simulation)
+* [http://www.multires.caltech.edu/pubs/sig99notes.pdf Subdivision for Modeling and Animation] tutorial, [[SIGGRAPH]] 1999 course notes
+* [http://www.mrl.nyu.edu/dzorin/sig00course/ Subdivision for Modeling and Animation] tutorial, [[SIGGRAPH]] 2000 course notes 
+* [http://www.hakenberg.de/subdivision/ultimate_consumer.htm Subdivision of Surface and Volumetric Meshes], software to perform subdivision using the most popular schemes
+* [http://www.cgal.org/Pkg/SurfaceSubdivisionMethods3  Surface Subdivision Methods in  CGAL, the Computational Geometry Algorithms Library]
+
+
+[[Category:3D computer graphics]]
+[[Category:Multivariate interpolation]]
+
+[[de:Subdivision Surface]]
+[[es:Subdivisión de Superficies]]
+[[fr:Surface de subdivision]]
+[[ja:サブディビジョンサーフェス]]
+[[pt:Subdivisão de superfícies]]
+[[th:Subdivision surface]]
+[[zh:细分曲面]]</body> </html>

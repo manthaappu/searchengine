@@ -1,0 +1,215 @@
+<html> <head> <title>Hungarian algorithm</title></head><body>The '''Hungarian method''' is a [[Optimization (mathematics)|combinatorial optimization]] [[algorithm]] which solves the [[assignment problem]] in polynomial time and which anticipated later [[primal-dual method]]s. It was developed and published by [[Harold Kuhn]] in 1955, who gave the name "Hungarian method" because the algorithm was largely based on the earlier works of two [[Hungary|Hungarian]] mathematicians: [[Dénes Kőnig]] and [[Jenő Egerváry]].
+
+[[James Munkres]] reviewed the algorithm in 1957 and observed that it is [[Time complexity#Strongly_and_weakly_polynomial_time|(strongly) polynomial]]. Since then the algorithm has been known also as '''Kuhn-Munkres algorithm''' or '''Munkres assignment algorithm'''. The [[Computational_complexity_theory#Time_and_space_complexity|time complexity]] of the original algorithm was <math>O(n^4)</math>, however [[Jack Edmonds|Edmonds]] and [[Richard Karp|Karp]], and independently Tomizawa noticed that it can be modified to achieve an <math>O(n^3)</math> running time. [[L. R. Ford, Jr.|Ford]] and [[D. R. Fulkerson|Fulkerson]] extended the method to general transportation problems. In 2006, it was discovered that [[Carl Gustav Jacobi]] had
+solved the assignment problem in the 19th century, and published posthumously in 1890 in Latin.<ref>http://www.lix.polytechnique.fr/~ollivier/JACOBI/jacobiEngl.htm</ref>
+
+==Layman’s Explanation==
+Say you have three workers: '''Jim''', '''Steve''' and '''Alan'''.
+You need to have one of them clean the bathroom, another sweep the floors & the third wash the windows.
+What’s the best (minimum-cost) way to assign the jobs?
+First we need a [[Matrix (mathematics)|matrix]] of the costs of the workers doing the jobs.
+{| class="wikitable" border="1"
+|-
+!
+! Clean bathroom
+! Sweep floors
+! Wash windows
+|-
+| Jim
+| $1
+| $2
+| $3
+|-
+| Steve
+| $3
+| $3
+| $3
+|-
+| Alan
+| $3
+| $3
+| $2
+|}
+
+Then the Hungarian algorithm, when applied to the above table would give us the minimum cost it can be done with: Jim cleans the bathroom, Steve sweeps the floors and Alan washes the windows.
+
+==Setting==
+We are given a nonnegative ''n''×''n'' [[Matrix (mathematics)|matrix]], where the element in the ''i''-th row and ''j''-th column represents the cost of assigning the ''j''-th job to the ''i''-th worker. We have to find an assignment of the jobs to the workers that has minimum cost. If the goal is to find the assignment that yields the maximum cost, the problem can be altered to fit the setting by replacing each cost with the maximum cost subtracted by the cost.<ref>[http://www.ams.jhu.edu/~castello/362/Handouts/hungarian.pdf Beryl Castello, The Hungarian Algorithm]</ref>
+
+The algorithm is easier to describe if we formulate the problem using a bipartite graph. We have a [[complete bipartite graph]] ''G=(S, T; E)'' with ''n'' worker vertices (''S'') and ''n'' job vertices (''T''), and each edge has a nonnegative cost ''c(i,j)''. We want to find a [[perfect matching]] with minimum cost.
+
+Let us call a function <math>y: (S \cup T) \mapsto \mathbb{Q}</math> a '''potential''' if <math>y(i)+y(j) \leq c(i, j)</math> for each <math>i \in S, j \in T</math>. The value of potential ''y'' is <math>\sum_{v\in S\cup T} y(v)</math>. It can be seen that the cost of each perfect matching is at least the value of each potential. The Hungarian method finds a perfect matching and a potential with equal cost/value which proves the optimality of both. In fact it finds a perfect matching of '''tight edges''': an edge ''ij'' is called tight for a potential ''y'' if <math>y(i)+y(j) = c(i, j)</math>. Let us denote the [[subgraph]] of tight edges by <math>G_y</math>. The cost of a perfect matching in <math>G_y</math> (if there is one) equals the value of ''y''.
+
+==The algorithm in terms of bipartite graphs==
+During the algorithm we maintain a potential ''y'' and an [[Glossary_of_graph_theory#Direction|orientation]] of <math>G_y</math> (denoted by <math>\overrightarrow{G_y}</math>) which has the property that the edges oriented from ''T'' to ''S'' form a matching ''M''. Initially, ''y'' is 0 everywhere, and all edges are oriented from ''S'' to ''T'' (so ''M'' is empty). In each step, either we modify ''y'' so that its value increases, or modify the orientation to obtain a matching with more edges. We maintain the invariant that all the edges of ''M'' are tight.  We are done if ''M'' is a perfect matching.
+
+In a general step, let <math>R_S \subseteq S</math> and <math>R_T \subseteq T</math> be the vertices not covered by ''M'' (so
+<math>R_S</math> consists of the vertices in ''S'' with no incoming edge and <math>R_T</math> consists of the vertices in ''T'' with no outgoing edge). Let <math>Z</math> be the set of vertices reachable in <math>\overrightarrow{G_y}</math> from <math>R_S</math> by a directed path only following edges that are tight. This can be computed by [[breadth-first search]].
+
+If <math>R_T \cap Z</math> is nonempty, then reverse the orientation of a directed path in <math>\overrightarrow{G_y}</math> from <math>R_S</math> to <math>R_T</math>. Thus the size of the corresponding matching increases by 1.
+
+If <math>R_T \cap Z</math> is empty, then let <math>\Delta := \min \{c(i,j)-y(i)-y(j): i \in Z \cap S, j \in T \setminus Z\}</math>. <math>\Delta</math> is positive because there are no tight edges between <math>Z \cap S</math> and <math>T \setminus Z</math>. Increase ''y'' by <math>\Delta</math> on the vertices of <math>Z \cap S</math> and decrease ''y'' by <math>\Delta</math> on the vertices of <math>Z \cap T</math>. The resulting ''y'' is still a potential. The graph <math>G_y</math> changes, but it still contains ''M''. We orient the new edges from ''S'' to ''T''. By the definition of <math>\Delta</math> the set ''Z'' of vertices reachable from <math>R_S</math> increases (note that the number of tight edges does not necessarily increase).
+
+We repeat these steps until ''M'' is a perfect matching, in which case it gives a minimum cost assignment. The running time of this version of the method is <math>O(n^4)</math>: ''M'' is augmented ''n'' times, and in a phase where ''M'' is unchanged, there are at most ''n'' potential changes (since ''Z'' increases every time). The time needed for a potential change is <math>O(n^2)</math>.
+
+==Matrix interpretation==
+Given <math>n</math> workers and tasks, and an ''n''×''n''  matrix containing the cost of assigning each worker to a task, find the cost minimizing assignment.
+
+First the problem is written in the form of a matrix as given below
+
+:<math>\begin{bmatrix}
+a1 & a2 & a3 & a4\\
+b1 & b2 & b3 & b4\\
+c1 & c2 & c3 & c4\\
+d1 & d2 & d3 & d4\end{bmatrix}</math>
+
+where a, b, c and d are the workers who have to perform tasks 1, 2, 3 and 4. a1, a2, a3, a4 denote the penalties incurred when worker "a" does task 1, 2, 3, 4 respectively. The same holds true for the other symbols as well. The matrix is square, so each worker can perform only one task.
+
+'''Step 1'''
+
+Then we perform row operations on the matrix. To do this, the lowest of all ''a''<sub>''i''</sub> (i belonging to 1-4) is taken and is subtracted from each element in that row. This will lead to at least one zero in that row (We get multiple zeros when there are two equal elements which also happen to be the lowest in that row). This procedure is repeated for all rows. We now have a matrix with at least one zero per row. Now we try to assign tasks to agents such that each agent is doing only one task and  the penalty incurred in each case is zero. This is illustrated below.
+
+{|class="wikitable" style="text-align:center"
+|-
+|0  ||a2'||0' ||a4'
+|-
+|b1'||b2'||b3'||0'
+|-
+|0' ||c2'||c3'||c4'
+|-
+|d1'||0' ||d3'||d4'
+|}
+
+The zeros that are indicated as 0' are the assigned tasks.
+
+'''Step 2'''
+
+Sometimes it may turn out that the matrix at this stage cannot be used for assigning, as is the case in for the matrix below.
+
+{|class="wikitable" style="text-align:center"
+|-
+|0  ||a2'||a3'||a4'
+|-
+|b1'||b2'||b3'||0
+|-
+|0  ||c2'||c3'||c4'
+|-
+|d1'||0  ||d3'||d4'
+|}
+
+In the above case, no assignment can be made. Note that task 1 is done efficiently by both agent a and c. Both can't be assigned the same task. Also note that no one does task 3 efficiently.
+To overcome this, we repeat the above procedure for all columns (i.e. the minimum element in each column is subtracted from all the elements in that column) and then check if an assignment is possible.
+
+'''Step 3'''
+
+In most situations this will give the result, but if it is still not possible to assign then the procedure described below must be followed.
+
+Initially assign as many tasks as possible then do the following (assign tasks in rows 2, 3 and 4)
+
+{|class="wikitable" style="text-align:center"
+|-
+|0  ||a2'||a3'||a4'
+|-
+|b1'||b2'||b3'||0'
+|-
+|0' ||c2'||c3'||c4'
+|-
+|d1'||0' ||d3'||d4'
+|}
+
+Mark all rows having no assignments (row 1). Then mark all columns having zeros in that row(s) (column 1). Then mark all rows having assignments in the given column (row 3). Repeat this till a closed loop is obtained.
+
+<!-- this might need to make the borders go away, if the current appearance is thought to be ugly -->
+{|class="wikitable" style="text-align:center"
+|- style="background: white"
+|&times;  || || || ||
+|-
+|0  ||a2'||a3'||a4'
+|style="background: white"|&times;
+|-
+|b1'||b2'||b3'||0'
+|style="background: white"|
+|-
+|0' ||c2'||c3'||c4'
+|style="background: white"|&times;
+|-
+|d1'||0' ||d3'||d4'
+|style="background: white"|
+|}
+
+Now draw lines through all marked columns and unmarked rows.
+
+{|class="wikitable" style="text-align:center"
+|- style="background: white"
+|&times;  || || || ||
+|-
+|style="background:lightgrey"|0  ||a2'||a3'||a4'
+|style="background: white"|&times;
+|- style="background:lightgrey"
+|b1'||b2'||b3'||0'
+|-
+|style="background:lightgrey"|0' ||c2'||c3'||c4'
+|style="background: white"|&times;
+|- style="background:lightgrey"
+|d1'||0' ||d3'||d4'
+|}
+
+The aforementioned detailed description is just one way to draw the minimum number of lines to cover all the 0's. Other methods work as well.
+
+'''Step 4'''
+
+From the elements that are left, find the lowest value. Subtract this from the marked rows, and add this to the marked columns.
+
+Repeat the procedure (steps 1 -4) till an assignment is possible; this is when the minimum number of lines used to cover all the 0's is equal to the max(number of people, number of assignments), assuming dummy variables (usually the max cost) are used to fill in when the number of people is greater than the number of assignments.
+
+Basically you find the second minimum cost among the two rows. The procedure is repeated until you are able to distinguish among the workers in terms of least cost.
+
+==Bibliography==
+* R.E. Burkard, M. Dell'Amico, S. Martello: ''Assignment Problems''. SIAM, Philadelphia (PA.) 2009. ISBN 978-0-89871-663-4
+* Harold W. Kuhn, "The Hungarian Method for the assignment problem", ''[[Naval Research Logistics Quarterly]]'', '''2''':83&ndash;97, 1955.  Kuhn's original publication.
+* Harold W. Kuhn, "Variants of the Hungarian method for assignment problems", ''Naval Research Logistics Quarterly'', '''3''': 253&ndash;258, 1956.
+* J. Munkres, "Algorithms for the Assignment and Transportation Problems", ''[[Journal of the Society for Industrial and Applied Mathematics]]'', '''5'''(1):32&ndash;38, 1957 March.
+
+* M. Fischetti, "Lezioni di Ricerca Operativa", Edizioni Libreria Progetto Padova, Italia, 1995.
+
+* R. Ahuja, T. Magnanti, J. Orlin, "Network Flows", Prentice Hall, 1993.
+
+==References==
+{{Reflist}}
+
+==External links==
+* Mordecai J. Golin, [http://www.cse.ust.hk/~golin/COMP572/Notes/Matching.pdf Bipartite Matching and the Hungarian Method], Course Notes, [[Hong Kong University of Science and Technology]].
+* [[R. A. Pilgrim]], ''[http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html Munkres' Assignment Algorithm. Modified for Rectangular Matrices]'', Course notes, [[Murray State University]].
+** Or: [http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html Step-by-step description of algorithm]
+* [[Mike Dawes]], ''[http://www.math.uwo.ca/~mdawes/courses/344/kuhn-munkres.pdf The Optimal Assignment Problem]'', Course notes, [[University of Western Ontario]].
+* [http://www.cs.elte.hu/egres/tr/egres-04-14.pdf On Kuhn's Hungarian Method - A tribute from Hungary], [[András Frank]], Egervary Research Group, Pazmany P. setany 1/C, H1117, Budapest, Hungary.
+
+===Implementations===
+(Note that not all of these satisfy the <math>O(n^3)</math> time constraint.)
+* [http://www.enseignement.polytechnique.fr/informatique/INF441/INF441b/code/kuhnMunkres.py Python implementation]
+* [http://github.com/evansenter/gene/blob/f515fd73cb9d6a22b4d4b146d70b6c2ec6a5125b/objects/extensions/hungarian.rb Ruby implementation with unit tests]
+* [http://noldorin.com/blog/2009/09/hungarian-algorithm-in-csharp/ C# implementation]
+* [http://www.ifors.ms.unimelb.edu.au/tutorial/hungarian/welcome_frame.html Online interactive implementation] Please note that this implements a variant of the algorithm as described above.
+* [http://web.axelero.hu/szilardandras/gaps.html Graphical implementation with options] ([[Java applet]])
+* [http://www.netlib.org/utk/lsi/pcwLSI/text/node220.html Serial and parallel implementations.]
+* [http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=6543 Implementation in Matlab and C]
+* [http://search.cpan.org/src/ANAGHAKK/Algorithm-Munkres-0.06/lib/Algorithm/Munkres.pm Perl implementation]
+* [http://www.koders.com/lisp/fid7C3730AF4E356C65F93F20A6410814CBF5F40854.aspx?s=iso+3166 Lisp implementation]
+* [http://saebyn.info/2007/05/22/munkres-code-v2/ C++ implementation]
+* [http://www.topcoder.com/tc?module=Static&d1=tutorials&d2=hungarianAlgorithm Another C++ implementation with unit tests]
+* [http://sites.google.com/site/garybaker/hungarian-algorithm/assignment Java implementation (GPLv3)]
+* [http://timefinder.svn.sourceforge.net/viewvc/timefinder/trunk/timefinder-algo/src/main/java/de/timefinder/algo/roomassignment/ Another Java implementation with JUnit tests (Apache 2.0)]
+* [http://www.mathworks.com/matlabcentral/fileexchange/11609 Matlab implementation]
+*[https://launchpad.net/lib-bipartite-match]
+{{Use dmy dates|date=September 2010}}
+
+{{DEFAULTSORT:Hungarian Algorithm}}
+[[Category:Matching]]
+[[Category:Combinatorial optimization]]
+
+[[de:Ungarische Methode]]
+[[es:Algoritmo Húngaro]]
+[[nl:Hongaars algoritme]]
+[[pl:Metoda węgierska]]
+[[ru:Венгерский алгоритм]]
+[[zh:匈牙利算法]]</body> </html>

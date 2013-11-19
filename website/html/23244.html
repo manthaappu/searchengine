@@ -1,0 +1,129 @@
+<html> <head> <title>Magic User Interface</title></head><body>{{Infobox Software
+| name = Magic User Interface
+| logo = [[Image:Magic-user-interface-logo.png]]
+| screenshot = 
+| caption = 
+| developer = [[Stefan Stuntz]]
+| released = {{release date and age|1993}}
+| latest_release_version = 4.0
+| latest_release_date = {{release date|2010|12|02}}
+| operating_system = [[AmigaOS]], [[MorphOS]]
+| platform = [[Amiga]]
+| genre = [[Widget toolkit]]
+| licence = [[Freeware]]/[[Shareware]]
+| website = http://www.sasg.com/mui/
+}}
+
+The '''Magic User Interface''' is an [[Object-oriented programming|object-oriented]] system by [[Stefan Stuntz]] to generate and maintain [[graphical user interface]]s. With the aid of a preferences program, the user of an application has the ability to customize the outfit according to personal taste.
+
+The Magic User Interface ('''MUI''' in short) was written for [[AmigaOS]] and gained popularity amongst both programmers and users. It has been ported to [[PowerPC]] processors and adopted as the default GUI toolkit of the [[MorphOS]] operating system. The MUI application programmer interface has been cloned by the [[Zune (GUI toolkit)|Zune]] toolkit used in the [[AROS|AROS Research Operating System]].<ref>http://aros.sourceforge.net/documentation/developers/zune-application-development.php</ref>
+
+==History==
+[[Image:AmbientDesktop.png|thumb|300px|A screenshot of the MUI based [[Ambient (desktop environment)|Ambient]] desktop.]] 
+Creating GUI applications on Amiga was difficult for a very long time. Mainly because the programmer got only a minuscule amount of support from the operating system. Beginning with Kickstart 2.0, the gadtools.library was a step in the right direction, however, even using this library to generate complex and flexible interfaces remained difficult and still required a great deal of patience.
+
+The largest problem in existing tools for the creation of user interfaces was the inflexible output. Most of the programs were still using built-in fonts and window sizes, thus making the use of new high resolution graphics hardware adapters nearly unbearable. Even the preference programs on the Workbench were still only using the default fixed width font.
+
+In 1992 Stefan Stuntz started developing new object oriented GUI toolkit for Amiga. Main goals for new GUI toolkit were:
+* ''Font sensitivity'' Possible for the font to be set in every application.
+* ''Changeable window sizes'' Windows have a sizing gadget which allows users to change the window size until it suits their needs
+* ''Flexibility'' Elements can be changed by the user regarding their own personal tastes.
+* ''Controlling by keyboard'' Widgets can be controlled by the keyboard as well as by the mouse.
+* ''System integration'' Every program has a REXX port and can be iconified or uniconified by pushing a gadget or by using the Commodities exchange program.
+* ''Adjusting to its environment'' Every application can be made to open on any screen and adapts itself to its environment.<ref>Stuntzi, S: MUI User Documentation. 1997</ref>
+
+MUI was released as [[shareware]]. Starting from MUI 4.0 it is distributed for free but shareware key is still required to activate all user configuration options in MUI 3.
+
+==Application theory==
+UI development is done in source code level without aid of GUI builders. In MUI application the programmer only defines logical structure of the GUI and the layout is determined on run time depending on user configuration. Unlike on other GUI toolkits developer does not determine exact coordinates for UI objects but only their relative placement to each others using object groups. In traditional [[Intuition (Amiga)|Intuition]] based UI coding programmer had to calculate placement of gadgets relative to font and border sizes. By default all UI elements are resizable and change their size to match window size. It can also automatically switch into smaller font or hide UI elements if there is not enough space on screen to display window with full contents. This makes it very easy to build UI which adapts well to tiny and large displays as well.
+<ref>http://www.sasg.com/mui/concepts.html</ref>
+<ref>http://amigaworld.net/modules/faq/index.php?cat_id=2#15</ref>
+<ref>Stuntzi, S: MUI Programmer Documentation. 1997</ref>
+
+There are over 50 built-in MUI classes today and various 3rd party MUI classes.
+
+====Example====
+<source lang="c">
+// Complete MUI application
+#include <libraries/mui.h>
+#include <proto/muimaster.h>
+
+// Sample application:
+   ApplicationObject,
+      SubWindow, WindowObject,
+         WindowContents, VGroup,
+            Child, TextObject, MUIA_Text_Contents, "Hello World!", End,
+         End,
+      End,
+   End;
+</source>
+
+This example code creates small MUI application with the text "Hello World!" displayed on it. It is also possible embed other [[BOOPSI]] based GUI toolkit objects inside MUI application.
+
+==Applications==
+
+
+Some notable applications that use MUI as a widget toolkit include:
+
+* [[Ambient (desktop environment)|Ambient]] - desktop environment
+* [[Origyn Web Browser]] - web browser
+* [[PageStream]] - desktop publishing
+* [[YAM (Yet Another Mailer)|YAM]] - email client
+
+==Other GUI toolkits==
+Actually there are two main widget toolkits in the Amiga world, and are competing each other. The most widely used is MUI (adopted into [[AROS]], [[MorphOS]] and in most Amiga programs), the other one is [[ReAction GUI|ReAction]] which was adopted in AmigaOS 3.5. There is in development a [[GTK MUI]] wrapper and it will allow the porting of various [[GTK]] based software.<ref>http://sourceforge.net/projects/gtk-mui/</ref> There is also modern interfaces based on XML, [http://www.feelin.fr Feelin].
+
+==Palette extension to Workbench defaults==
+MUI extended [[Workbench (AmigaOS)|Workbench]]'s four-colour [[Palette (computing)|palette]] with four additional colours, allowing smoother [[Image gradient|gradient]]s with less noticeable [[dither]]ing. The MagicWB companion to MUI made use of this extended palette to provide more attractive icons to replace the dated Workbench defaults. MUI 4 added support for [[alpha blending]] and support for user defined widget shapes.
+
+{| class="wikitable" style="margin-left:auto;margin-right:auto;"
+! !! colspan="8" | MUI eight-colour palette
+|-
+! Colour
+| style="background-color:rgb(149,149,149);" | 
+| style="background-color:rgb(000,000,000);" | 
+| style="background-color:rgb(255,255,255);" | 
+| style="background-color:rgb(59,103,162);" |
+| style="background-color:rgb(123,123,123);" | 
+| style="background-color:rgb(175,175,175);" | 
+| style="background-color:rgb(170,144,124);" | 
+| style="background-color:rgb(255,169,151);" | 
+|-
+! Red
+| 149 || 000 || 255 || 59 || 123 || 175 || 170 || 255
+|-
+! Green
+| 149 || 000 || 255 || 103 || 123 || 175 || 144 || 169
+|-
+! Blue
+| 149 || 000 || 255 || 162 || 123 || 175 || 124 || 151
+|}
+
+== See also ==
+* [[ReAction GUI]] (ClassAct)
+* [[Zune (widget toolkit)|Zune]]
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://www.sasg.com/mui/ MUI homepage]
+
+{{AmigaOS}}
+{{MorphOS}}
+{{Widget toolkits}}
+
+[[Category:Widget toolkits]]
+[[Category:Amiga APIs]]
+[[Category:Amiga software]]
+[[Category:AmigaOS]]
+[[Category:AmigaOS 4 software]]
+[[Category:MorphOS]]
+[[Category:MorphOS software]]
+
+
+{{operating-system-stub}}
+
+[[de:Magic User Interface]]
+[[pl:Magic User Interface]]
+[[ru:MUI (интерфейс)]]</body> </html>

@@ -1,0 +1,119 @@
+<html> <head> <title>Type conversion</title></head><body>{{for|type conversion in aviation|type conversion (aviation)}}
+{{No footnotes|date=November 2010}}
+
+In [[computer science]], '''type conversion''', '''typecasting''', and '''coercion''' refers to different ways of, implicitly or explicitly, changing an entity of one [[data type]] into another. This is done to take advantage of certain features of type hierarchies or type representations. One example would be small integers, which can be stored in a compact format and converted to a larger representation when used in arithmetic computations.  In [[object-oriented]] programming, type conversion allows programs to treat objects of one type as one of their ancestor types to simplify interacting with them.
+
+Each [[programming language]] has its own rules on how types can be converted. In general, both objects and fundamental data types can be converted. In most languages, the word '''coercion''' is used to denote an ''implicit'' conversion, either during compilation or during [[run time]]. A typical example would be an expression mixing integer and floating point numbers (like 5 + 0.1), where the integers are normally converted into the latter. Explicit type conversions can either be performed via built-in routines (or a special syntax) or via separately defined conversion routines such as an [[Polymorphism (computer science)|overloaded]] [[Object (computer science)|object]] [[Constructor (computer science)|constructor]].
+
+In most [[Algol (programming language)|Algol-based]] languages with [[nested function]] definitions, such as Pascal, Delphi, Modula 2 and Ada, '''conversion''' and '''casting''' are distinctly different concepts. In these languages, '''conversion''' refers to either implicitly or explicitly changing a value from one data type to another, e.g. a 16-bit integer to a 32-bit integer. The storage requirements may change as a result of the conversion. A loss of precision or truncation may also occur. The word '''cast''', on the other hand, refers to explicitly changing the ''interpretation'' of the ''bit pattern'' representing a value from one type to another. For example 32 contiguous bits may be treated as an array of 32 booleans, a two character Unicode string, an unsigned 32-bit integer or an IEEE single precision floating point value. While the storage requirements are never changed, it still requires knowledge of low level details such as representation format, byte order, and alignment requirements in order to be meaningful.
+
+In the C family of languages, the word '''cast''' typically refers to an ''explicit'' type conversion (as opposed to an implicit conversion), regardless of whether this is a re-interpretation of a bit-pattern or a real conversion.
+
+==Implicit type conversion in C-like languages==
+Implicit type conversion, also known as '''coercion''', is an automatic type conversion by the [[compiler]].  Some [[programming language|language]]s allow, or even require, compilers to provide coercion.
+
+In a mixed-type expression, data of one or more [[Subtype and derived type|subtype]]s can be converted to a [[supertype]] as needed at [[Run time (computing)|runtime]] so that the program will run correctly.  For example, the following is legal [[C (programming language)|C language]] code:
+
+<source lang="c">
+double  d;
+long    l;
+int     i; 
+
+if (d > i)      d = i;
+if (i > l)      l = i;
+if (d == l)     d *= 2;
+</source>
+
+Although ''d'', ''l'' and ''i'' belong to different data types, they will be automatically converted to equal data types each time a comparison or assignment is executed.  This behavior should be used with caution, as [[Side effect (computer science)|unintended consequence]]s can arise. Data can be lost when floating-point representations are converted to integral representations as the fractional components of the floating-point values will be truncated (rounded towards zero). Conversely, converting from an integral representation to a floating-point one can also lose precision, since the floating-point type may be unable to represent the integer exactly (for example, ''float'' might be an [[IEEE 754]] single precision type, which cannot represent the integer 16777217 exactly, while a 32-bit integer type can).  This can lead to unintuitive behavior, as demonstrated by the following code:
+
+<source lang="c">
+#include <stdio.h>
+
+int main() {
+	int i_value   = 16777217;
+	float f_value = 16777217.0;
+	printf("The integer is: %i\n", i_value);
+	printf("The float is:   %f\n", f_value);
+	printf("Their equality: %i\n", i_value == f_value);
+}
+</source>
+
+On compilers that implement floats as IEEE single precision, and ints as at least 32 bits, this code will give the peculiar result of printing out "The integer is: 16777217", followed by "The float is: 16777217.000000", then "Their equality: 0" (where 1 represents equal). This odd behavior is caused by an implicit cast of i_value to float when it is compared with f_value; a cast which loses precision, making both values being compared equal.
+
+Following important points:
+
+# Float to int causes [[truncation]], ie removal of the fractional part.
+# double to float causes rounding of digit
+# long int to int causes dropping of excess higher order bits.
+
+===Type promotion in C-like languages===
+One special case of implicit type conversion is type '''promotion''', where the compiler automatically expands the binary representation of objects of integer or floating-point types. Promotions are commonly used with types smaller than the native type of the target platform's [[Arithmetic logic unit|ALU]] prior to arithmetic and logical operations in order to make such operations possible, or more efficient if the ALU can work with more than one type. C and C++ perform such promotion for objects of boolean, character, wide character, enumeration, and short integer types which are promoted to int, and for objects of type float, which are promoted to double. Unlike some other type conversions, promotions never lose precision or modify the value stored in the object.
+
+==Explicit type conversion in C-like languages==
+Explicit type conversion is a type conversion which is explicitly defined within a program (instead of being done by a compiler for implicit type conversion).
+
+<source lang="cpp">
+double da = 5.5;
+double db = 5.5;
+int result = (int)da + (int)db;
+//Result would be equal to 10 instead of 11.
+</source>
+
+There are several kinds of explicit conversion.
+
+; checked : Before the conversion is performed, a runtime check is done to see if the destination type can hold the source value. If not, an error condition is raised.
+; unchecked : No check is performed.  If the destination type cannot hold the source value, the result is undefined.
+; bit pattern : The raw bit representation of the source is copied verbatim, and it is re-interpreted according to the destination type. This can also be achieved via [[Aliasing (computing)|aliasing]].
+
+In [[object-oriented]] programming languages, objects can also be [[downcasting|downcast]] : a reference of a base class is cast to one of its derived classes.
+
+===Using overloaded object constructor===
+<!-- please add an explanation -->
+<source lang="cpp">
+class Myclass {
+public:
+    double myD;
+    Myclass(double d) : myD(d) {};
+};
+
+int main(int argc, char *argv[])
+{
+    Myclass obj = 5.2; // here is the type conversion
+    return 0;
+}
+</source>
+
+==See also==
+* [[dynamic_cast]]
+* [[Type punning]]
+
+<!-- OMITTED, until article has references
+==References==
+<references/>
+-->
+
+== External links ==
+{{Wikibooks|Transwiki:Type conversion}}
+* [http://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Type_Casting Casting in C++]
+* [http://www.adapower.com/index.php?Command=Class&ClassID=FAQ&CID=354 Casting in Ada]
+* [http://java.sun.com/docs/books/jls/third_edition/html/conversions.html#5.5 Casting in Java]
+* [http://help.sap.com/abapdocu_70/en/ABENCAST_CASTING_GLOSRY.htm Casting in ABAP]
+* [http://docs.hp.com/en/B3901-90007/ch05s05.html Cast Operator in C]
+* [http://cppreference.com/wiki/language/implicit_cast Article on Implicit Type Casting at Cppreference.com]
+* [http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/BitOp/cast.html Static and Reinterpretation castings in C++]
+* [http://en.wikibooks.org/wiki/F_Sharp_Programming/Inheritance#Up-casting_and_Down-casting Upcasting and Downcasting]
+
+{{DEFAULTSORT:Type Conversion}}
+[[Category:Data types]]
+[[Category:Type theory]]
+
+[[da:Konvertering (teknik)]]
+[[de:Typumwandlung]]
+[[es:Conversión de tipos]]
+[[fr:Conversion de type]]
+[[ko:형변환]]
+[[it:Conversione di tipo]]
+[[nl:Typeconversie]]
+[[ja:型変換]]
+[[pl:Konwersja typu]]
+[[ru:Приведение типа]]</body> </html>

@@ -1,0 +1,41 @@
+<html> <head> <title>Comma operator</title></head><body>In the [[C programming language|C]] and [[C++]] programming languages, the '''comma operator''' (represented by the [[token (parser)|token]] <code>,</code>) is a [[binary operator]] that evaluates its first [[operand]] and discards the result, and then evaluates the second operand and returns this value (and type). The comma operator has the lowest [[precedence]] of any C operator, and acts as a [[sequence point]].
+
+The use of the comma token as an '''operator''' is distinct from its use in [[function call]]s and definitions, variable declarations, enum declarations, and similar constructs, where it acts as a '''separator'''.
+
+In this example, the differing behavior between the second and third lines is due to the comma operator having lower precedence than assignment.
+<source lang="C">
+int a=1, b=2, c=3, i;   // comma acts as separator in this line, not as an operator
+i = (a, b);             // stores b into i                                ... a=1, b=2, c=3, i=2
+i = a, b;               // stores a into i. Equivalent to (i = a), b;     ... a=1, b=2, c=3, i=1
+i = (a += 2, a + b);    // increases a by 2, then stores a+b = 3+2 into i ... a=3, b=2, c=3, i=5
+i = a += 2, a + b;      // increases a by 2, then stores a = 5 into i     ... a=5, b=2, c=3, i=5
+i = a, b, c;            // stores a into i                                ... a=5, b=2, c=3, i=5
+i = (a, b, c);          // stores c into i                                ... a=5, b=2, c=3, i=3
+</source>
+
+Because the comma operator discards its first operand, it is generally only useful where the first operand has desirable [[Side effect (computer science)|side effects]], such as in the initialiser or increment statement of a [[for loop]].  For example, the following terse [[linked list]] [[cycle detection]] algorithm (a version of [[Robert W. Floyd|Floyd]]'s [[Cycle_detection#Tortoise_and_hare|"tortoise and hare" algorithm]]):
+
+<source lang="C">
+bool loops(List *list)
+{
+    List *tortoise, *hare; /* advance hare 2 times faster than tortoise */
+    for (tortoise = hare = list;
+                 hare && (hare = hare->next); /* tests for valid pointers + one step of hare */
+                 tortoise = tortoise->next, hare = hare->next) /* comma separates hare and tortoise step */
+        if (tortoise == hare) /* loop found */
+            return true;
+    return false;
+}
+</source>
+
+In the [[OCaml]] and [[Ruby (programming language)|Ruby]] programming languages, the semicolon (";") is used for this purpose.
+
+==See also==
+* [[Sequence point]]
+* [[Operators in C and C++]]
+* [http://www.boost.org/doc/libs/1_44_0/libs/assign/doc/index.html#intro Facility from the Boost library which makes it easy to fill containers using comma-operator]
+
+[[Category:C programming language]]
+
+
+{{compu-lang-stub}}</body> </html>

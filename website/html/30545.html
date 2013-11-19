@@ -1,0 +1,133 @@
+<html> <head> <title>Punchscan</title></head><body>{{ infobox software
+| logo                   = [[Image:Punchscan logo.png|150px]]
+| screenshot             = 
+| caption                = 
+| developer              = [[Richard Carback]], [[David Chaum]], [[Jeremy William Clark|Jeremy Clark]], [[Aleks Essex]], and [[Stefan Popoveniuc]].
+| released               = 
+| frequently_updated     = yes<!-- Release version update? Don't edit this page, just click on the version number! -->
+| programming language   = [[Java (programming language)|Java]]
+| operating system       = [[Cross-platform]]
+| language               = English
+| genre                  = [[vote counting system]]
+| license                = Revised [[BSD license]]
+| website                = http://punchscan.org/
+}}
+
+'''Punchscan''' is an [[Marksense|optical scan]] [[vote counting system]] invented by [[cryptographer]] [[David Chaum]]. Punchscan is designed to offer integrity, privacy, and transparency. The system is voter-verifiable, provides an [[End-to-end auditable voting systems|end-to-end (E2E) audit]] mechanism, and issues a [[End-to-end auditable voting systems|ballot receipt]] to each voter. The system won grand prize at the 2007 [[University Voting Systems Competition]].
+
+The [[computer software]] which Punchscan incorporates is [[open source]]; the [[source code]] was released on 2 November 2006 under a revised [[BSD licence]].<ref>[http://www.itbusinessedge.com/item/?ci=21633 Punchscan School Election System Goes Open Source]. IT Business Edge</ref> However, Punchscan is software independent; it draws its security from [[cryptographic]] functions instead of relying on [[software security]] like [[DRE voting machine]]s. For this reason, Punchscan can be run on [[closed source]] [[operating system]]s, like [[Microsoft Windows]], and still maintain unconditional integrity.
+
+The Punchscan team, with additional contributors, has since developed [[Scantegrity]].
+
+== Voting procedure ==
+[[Image:Marked ballot.jpg|thumb|right|A marked Punchscan ballot. Full ballot (top), separated ballot (bottom).]]
+
+A Punchscan [[ballot]] has two layers of paper. On the top layer, the [[candidates]] are listed with a [[symbol]] or [[Letter (alphabet)|letter]] beside their name. Below the candidate list, there are a series of round holes in the top layer of the ballot. Inside the holes on the bottom layer, the corresponding symbols are printed.
+
+To cast a vote for a candidate, the voter must locate the hole with the symbol corresponding to the symbol beside the candidate's name. This hole is marked with a [[Bingo (US)|Bingo]]-style ink dauber, which is purposely larger than the hole. The voter then separates the ballot, chooses either the top or the bottom layer to keep as a [[End-to-end auditable voting systems|receipt]], and [[Paper shredder|shreds]] the other layer. The receipt is [[Optical reader|scanned]] at the polling station for [[Vote counting system|tabulation]].
+
+The order of the symbols beside the candidate names is generated [[Pseudorandom number generator|pseudo-randomly]] for each ballot, and thus differs from ballot to ballot. Likewise for the order of the symbols in the holes. For this reason, the receipt does not contain enough information to determine which candidate the vote was cast for. If the top layer is kept, the order of the symbols through the holes is unknown. If the bottom layer is kept, the order of the symbols beside the candidates name is unknown. Therefore the voter cannot prove to someone else how they voted, which prevents [[Electoral fraud|vote buying]] or voter intimidation. 
+
+== Tabulation procedure ==
+
+As an example, consider a two candidate election between [[Coca-Cola|Coke]] and [[Pepsi]], as illustrated in the preceding diagram. The order of the letters beside the candidates' names could be A and then B, or B and then A. We will call this ordering <math>P_1</math>, and let <math>P_1</math>=0 for the former ordering and <math>P_1</math>=1 for the latter. Therefore,
+
+<math>P_1</math>: order of symbols beside candidate list,
+:<math>P_1\in\{0,1\}=\{\mbox{AB},\mbox{BA}\}\,</math>.
+
+Likewise we can generalize for other parts of a ballot:
+
+<math>P_2</math>: order of symbols through the holes,
+:<math>P_2\in\{0,1\}=\{\mbox{AB},\mbox{BA}\}\,</math>.
+
+<math>P_3</math>: which hole is marked,
+:<math>P_3\in\{0,1\}=\{\mbox{1st},\mbox{2nd}\}\,</math>.
+
+<math>R</math>: result of the ballot,
+:<math>R\in\{0,1\}=\{\mbox{Coke},\mbox{Pepsi}\}\,</math>.
+
+Note that the order of the candidates' names are fixed across all ballots. The result of a ballot can be calculated directly as,
+
+:<math>R = P_1 + P_2 + P_3\bmod 2\,</math>      ('''Equation 1''')
+
+However when one layer of the ballot is shredded, either <math>P_1</math> or <math>P_2</math> is destroyed. Therefore there is insufficient information to calculate <math>R</math> from the receipt (which is scanned). In order to calculate the election results, an electronic [[database]] is used.
+
+Before the election, the database is created with a series of columns as such. Each row in the database represents a ballot, and the order that the ballots are stored in the database is [[Random permutation|shuffled]] (using a [[cryptographic key]] that each candidate can [[Key-agreement protocol|contribute to]]). The first column, <math>D_1</math>, has the shuffled order of the serial numbers. <math>D_2</math> contains a pseudorandom [[bitstream]] generated from the key, and it will act as a [[stream cipher]]. <math>D_3</math> will store an intermediate result. <math>D_4</math> contains a bit such that:
+
+:<math>D_2 + D_4 = P_1 + P_2 \bmod 2\,</math>
+
+The result of each ballot will be stored in a separate column, <math>R</math>, where the order of the ballots will be reshuffled again. Thus <math>D_5</math> contains the row number in the <math>R</math> column where the result will be placed.
+
+After the election is run and the <math>P_3</math> values have been scanned in, <math>D_3</math> is calculated as:
+
+:<math>D_3 = P_3 + D_2 \bmod 2\,</math>
+
+And the result is calculated as,
+
+:<math>R = D_3 + D_4 \bmod 2\,</math>
+
+This is equivalent to equation 1,
+
+:<math>\begin{align}
+R &= (D_3) + D_4 \bmod 2\\
+&= (P_3 + D_2) + D_4 \bmod 2\\
+&= P_3 + (D_2 + D_4) \bmod 2\\
+&= P_3 + (P_1 + P_2) \bmod 2
+\end{align}</math>
+
+The result column is published and given the ballots have been shuffled (twice), the order of the results column does not indicate which result is from which ballot number. Thus the election authority cannot trace votes to serial numbers.
+
+===Generalized form===
+
+For an election with <math>n</math> candidates, the above procedure is followed using [[Modulo operation|modulo]]-n equations.
+
+== Basic auditing procedures ==
+
+The voter's ballot receipt does not indicate which candidate the voter cast their ballot for, and therefore it is not secret information. After an election, the election authority will post an image of each receipt online. The voter can look up her ballot by typing in the serial number and she can check that information held by the election authority matches her ballot. This way, the voter can be confident that her ballot was ''cast as intended''.
+
+Any voter or interested party can also inspect part of the database to ensure the results were calculated correctly. They cannot inspect the whole database, otherwise they could link votes to ballot serial numbers. However, half of the database can be safely inspected without breaking privacy. A random choice is made between opening <math>\{D_1,D_2,D_3\}</math> or <math>\{D_3,D_4,D_5\}</math> (this choice can be derived from the secret key or from a [[Random number generator|true random]] source, such as [[dice]]<ref>Arel Cordero, David Wagner, and David Dill. [http://www.cs.berkeley.edu/~daw/papers/dice-wote06.pdf The Role of Dice in Election Audits -- Extended Abstract].</ref> or the [[stock market]]<ref>Jeremy Clark, Aleks Essex, Carlisle Adams. [http://www.cs.uwaterloo.ca/~j5clark/papers/StockMarket.pdf Secure and Observable Auditing of Electronic Voting Systems using Stock Indices].</ref>). This procedure allows the voter to be confident that the set of all ballots were ''counted as cast''.
+
+If all ballots are ''counted as cast'' and ''cast as intended'', then all ballots are ''counted as intended''. Therefore the integrity of the election can be proven to a very high probability.
+
+== Additional security ==
+
+To further increase the integrity of a Punchscan election, several further steps can be taken to protect against a completely corrupt election authority.
+
+=== Multiple databases ===
+
+Since <math>D_1</math>, <math>D_2</math>, and <math>D_5</math> in the database are all generated pseudorandomly, multiple databases can be created with different random values for these columns. Each database is independent of the others, allowing the first half of some of the databases to be opened and inspected and the second half of others. Each database must produce the same final tally. Thus if an election authority were to tamper with the database to skew the final tally, they would have to tamper with each of the databases. The probability of the tampering being uncovered in the audit increases exponentially with the number of independent databases. With even a modest number of databases, the integrity of the election is probabilistically certain.
+
+=== Commitments ===
+
+Prior to an election, the election authority prints the ballots and creates the database(s). Part of this creation process involves [[Commitment scheme|committing]] to the unique information contained on each ballot and in the databases. This is accomplished by applying a cryptographic [[one-way function]] to the information. Though the result of this function, the commitment, is made public, the actual information being committed to remains sealed. Because the function is one-way, it is computationally infeasible to determine the information on the sealed ballot given only its publicly posted commitment.
+
+=== Ballot inspection ===
+
+Prior to an election, twice as many ballots are produced than the number intended to use in the election. Half of these ballots are selected randomly (or each candidate could choose a fraction of the ballots) and opened. The rows in the database corresponding to these selected ballots can be checked to ensure the calculations are correct and not tampered with. Since the election authority does not know ''a priori'' which ballots will be selected, passing this audit means the database is well formed with a very high probability. Furthermore, the ballots can be checked against their commitments to ensure with high probability that the ballot commitments are correct.
+
+== See also ==
+
+* [[Stream cipher]]
+* [[Commitment scheme]]
+* [[Zero-knowledge proof]]
+
+== References ==
+
+{{refs|2}}
+
+== External links ==
+
+* [http://www.punchscan.org/ Project home page]
+* [http://punchscan.org/vocomp/PunchscanVocompSubmission.pdf Vocomp Submission] &mdash; a comprehensive 80-page document explaining all aspects of the system
+* [http://punchscan.org/press/punchscan%20-%20digital%20planet.mp3 Electronic Democracy] &mdash; [[BBC World]]'s [[Digital Planet]] audio interview with [[David Chaum]]. 
+* [http://www.spectrum.ieee.org/print/4817 Making Every E-vote Count] &mdash; [[IEEE Spectrum]].
+* Transparent and Open Voting with Punchscan: [http://www.securitycatalyst.com/2006/11/29/security-catalyst-39-voting-security-series-transparent-and-open-voting-with-punchscan/ Part I] and [http://www.securitycatalyst.com/2006/12/31/security-catalyst-december-31-2006-in-depth-with-punch-scan/ Part II]
+* [http://www.publicradio.org/columns/futuretense/2006/11/07.shtml Future Tense] audio interview with [[David Chaum]].
+
+[[Category:Electronic voting methods]]
+[[Category:Applications of cryptography]]
+
+[[Category:Electoral systems]]
+[[Category:Elections]]
+
+[[de:Punchscan]]</body> </html>

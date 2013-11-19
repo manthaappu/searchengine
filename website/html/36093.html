@@ -1,0 +1,111 @@
+<html> <head> <title>Sudo</title></head><body>{{Redirect|SUDO|the non-profit organisation|Sudan Social Development Organization}}
+{{Lowercase|title=sudo}}
+{{Infobox software
+| name                   = sudo
+| developer              = Todd C. Miller
+| screenshot             = [[File:Sudo on Ubuntu.png|200px]]
+| caption                = sudo in a terminal
+| latest_release_version = 1.7.4p6
+| latest_release_date    = {{release date|2011|01|19}}
+| latest_preview_version =
+| latest_preview_date    =
+| operating_system       = [[Unix-like]]
+| genre                  = Privilege authorization
+| license                = [[ISC license|ISC]]-style<ref>[http://www.sudo.ws/sudo/license.html Sudo License]</ref>
+| website                = [http://www.sudo.ws/ www.sudo.ws]
+}}
+The '''sudo'''  command ("[[Su (Unix)|su]] do"<!-- Do NOT bold the individual letters here; see the MoS on abbreviations -->, {{pron-en|ˈsuːduː}},<ref>{{cite web|url=http://sudo.ws/sudo/troubleshooting.html|title=Troubleshooting tips and FAQ for Sudo|author=Miller, Todd C|accessdate=2009-11-20}}</ref> though {{IPA-en|ˈsuːdoʊ|}} is also common, as is {{IPA-en|ˌɛsˌjuːˈduː|}}) is a [[computer program|program]] for some [[Unix]] and [[Unix-like]] computer [[operating system]]s that allows users to run programs with the security privileges of another user (normally the [[superuser]], or root). It is an abbreviation for "[[su (Unix)|'''s'''ubstitute '''u'''ser]] '''do'''" (as in, ''do'' a command with another user's privileges). By default, sudo will prompt for a user password but it may be configured to require the root password, and will require it only once every 15 minutes per [[pseudo terminal]], <!-- that, btw, makes it so insecure --> or no password at all.<ref>{{cite web |url=http://www.gratisoft.us/sudo/man/sudo.html |title=Manpage for sudo |accessdate=2007-11-04}}</ref> Sudo is able to log each command run and in some cases has completely supplanted the superuser login for administrative tasks, most notably in [[Ubuntu (operating system)|Ubuntu]] Linux and Apple's [[Mac OS X]].<ref>[https://help.ubuntu.com/community/RootSudo RootSudo - Community Ubuntu Documentation]</ref><ref>[http://www.macdevcenter.com/pub/a/mac/2002/10/22/macforunix.html MacDevCenter.com - Top Ten Mac OS X Tips for Unix Geeks]</ref>
+
+The program was originally written by Bob Coggeshall and Cliff Spencer "around 1980" at the Department of [[Computer Science]] at [[University at Buffalo, The State University of New York|SUNY/Buffalo]]. The current version is under active development and is maintained by [[OpenBSD]] developer Todd C Miller and distributed under a [[BSD License|BSD-style]] license.<ref>{{cite web|url=http://www.gratisoft.us/sudo/history.html|title=A Brief History of Sudo|author=Miller, Todd C|accessdate=2007-03-05}}</ref>
+
+In November 2009, in response to fears that Microsoft had patented the <code>sudo</code> command,<ref>{{cite web|url=http://www.maximumpc.com/article/news/microsoft_has_patented_sudo_yes_command|title=Microsoft has Patented "sudo." Yes, the Command|author=Lilly, Paul|accessdate=2009-11-13}}</ref>
+Thomas Claburn found the suspicions "overblown".<ref>
+{{cite web
+| url         = http://www.darkreading.com/security/security-management/221800112/index.html 
+| title       = Does New Microsoft Patent Infringe On Unix Program Sudo? Some in the open source community suspicious of Microsoft's intent
+| first       = Claburn
+| last        = Thomas
+| date        = 2009-11-16
+| work        = Dark Reading
+| accessdate  = 2010-11-29
+| quote       = A patent granted to Microsoft (NSDQ: MSFT) has stirred up worry that world's largest software company wants to claim Unix's "sudo" as its own. [...] In short, suspicions about this patent are overblown. 
+}}
+</ref>
+The [[Claim (patent)|claims]] were narrowly framed to a particular [[GUI]] rather than to the sudo concept.{{Citation needed|date=November 2010}}
+
+==Design==
+Before running a command with sudo, users typically supply their [[password]]. Once authenticated, and if the <code>/etc/sudoers</code> configuration file permits the user access, then the command is run. There exist several graphical frontends for use in a [[Graphical user interface|GUI]] environment, notably '''kdesudo''', and '''gksudo'''; [[Mac OS X]] also has Authorization Services.<ref>[http://developer.apple.com/mac/library/documentation/Security/Conceptual/authorization_concepts/01introduction/introduction.html Introduction to Authorization Services Programming Guide]</ref> By default the user's password can be retained through a grace period, allowing the user to execute several successive commands as root without having to provide the password again.
+
+The following is an example where the user is denied access:
+
+ snorri@rimu:~$ sudo emacs /etc/resolv.conf
+ 
+ We assume you have received the usual lecture from the local System
+ Administrator. It usually boils down to these three things:
+ 
+ #1) Respect the privacy of others.
+ #2) Think before you type.
+ #3) With great power comes great responsibility.
+ 
+ Password:
+ snorri is not in the sudoers file. This incident will be reported.
+ snorri@rimu:~$
+
+Below is the log of this failed attempt, then a later successful one, after ''snorri'' has been added to /etc/sudoers:
+
+<pre>
+snorri@rimu:~$ sudo tail /var/log/auth.log
+ Aug 5 06:00:28 localhost sudo: snorri : user NOT in sudoers ; TTY=pts/1 ; PWD =/home/snorri ; USER=root ; 
+      COMMAND=/usr/bin/emacs /etc/resolv.conf
+ Aug 5 06:01:15 localhost su[15573]: (pam_unix) session opened for user root by snorri(uid=1000)
+ Aug 5 06:02:09 localhost sudo: snorri : TTY=pts/1 ; PWD=/home/snorri ; USER=root ; COMMAND=/usr/bin/emacs /etc/resolv.conf
+ Aug 5 06:02:49 localhost sudo: snorri : TTY=pts/1 ; PWD=/home/snorri ; USER=root ; COMMAND=/usr/bin/tail /var/log/auth.log
+</pre>
+
+==Runas, su and sudo==
+{{Unreferenced section|date=September 2010}}
+[[Microsoft Windows|Windows]] has a command called [[runas]]. It has similar functionality, <!-- On a Windows system, "Administrator" has superuser permissions. --> but neither runas nor [[User Account Control|UAC]] is sudo; rather, they fully impersonate another user rather than just adding privileges.
+
+Runas and su:
+* do not allow authorized users to launch processes with elevated privileges using their own passphrase.{{fact|Isn't this exactly what the runas /trustlevel flag does?|date=January 2011}}
+* do not preserve the user's profile and ownership of created objects.
+
+The runas command is (more or less) equivalent to Unix [[Su (Unix)|su]], not sudo. The reason sudo is sometimes considered superior to su is that it allows privilege escalation based on the user’s own identity, and most importantly does not require use of a shared password. Using runas or su to access a privileged account requires distribution of a password to an admin-capable account, a security weakness that sudo does not have.
+
+==See also==
+{{Portal|Free software}}
+* [[Comparison of privilege authorization features]]
+* [[visudo]], a [[vi]]-based program used to edit the <code>/etc/sudoers</code> file
+
+==References==
+{{Reflist}}
+
+==External links==
+* {{Official website|http://www.sudo.ws/}}
+* [http://sourceforge.net/projects/rootsh rootsh] and [http://sourceforge.net/projects/sudosh/ sudosh], sudo wrappers for logging
+
+{{Unix commands}}
+
+[[Category:Unix user management and support-related utilities]]
+[[Category:Computer security software]]
+
+[[ar:سودو]]
+[[bar:Sudo]]
+[[ca:Sudo]]
+[[cs:Sudo]]
+[[da:Sudo]]
+[[de:Sudo]]
+[[es:Sudo]]
+[[fr:Sudo]]
+[[ko:Sudo]]
+[[id:Sudo]]
+[[it:Sudo]]
+[[ja:Sudo]]
+[[pl:Sudo]]
+[[pt:Sudo]]
+[[ro:Sudo]]
+[[ru:Sudo]]
+[[sl:Sudo]]
+[[sv:Sudo]]
+[[uk:Sudo]]
+[[zh:Sudo]]</body> </html>

@@ -1,0 +1,26 @@
+<html> <head> <title>User Interface Privilege Isolation</title></head><body>'''User Interface Privilege Isolation''' (UIPI) is a technology introduced in [[Windows NT 6.0]] to combat input injection exploits. By making use of [[Mandatory Integrity Control]], it prevents processes with a lower "integrity level" (IL) from sending messages to higher IL processes (except for a very specific set of UI messages).<ref name="msdn">{{cite web
+|url=http://msdn2.microsoft.com/en-us/library/aa905330.aspx
+|title=The Windows Vista and Windows Server 2008 Developer Story: Windows Vista Application Development Requirements for User Account Control (UAC)
+|publisher=[[Microsoft]]
+|date=April 2007
+|accessdate=2007-12-07
+}}</ref> Window messages are designed to communicate user action to processes; however they can be used maliciously to trigger flaws in the receiving process to run arbitrary code in its context. If a low IL process can run code in the context of a higher IL process, it accomplishes an unauthorized [[privilege escalation]] resulting in a [[shatter attack]]. By restricting access to some vectors for code execution and data injection, UIPI can help to reduce these kinds of attacks.<ref name="coseinc">{{cite web
+|url=http://www.coseinc.com/Vista_UIPI.ppt.pdf
+|title=Windows Vista UIPI 
+|author=Edgar Barbosa
+|publisher=COSEINC
+|accessdate=2007-12-07
+}} {{Dead link|date=October 2010|bot=H3llBot}}</ref>
+
+UIPI, and Mandatory Integrity Control more generally, is not a security boundary.  It does not aim to protect against all shatter attacks. UI Accessibility Applications can bypass UIPI by setting their "uiAccess" value to TRUE as part of their manifest file. This requires the application to be in the Program Files or Windows directory, as well as to be signed by a valid [[code signing]] [[Certificate authority|authority]], but these requirements will not necessarily stop malware from respecting them. Additionally, some messages are still allowed through, such as <code>WM_KEYDOWN</code>, which allows a lower IL process to drive input to an elevated command prompt. Finally, the function <code>ChangeWindowMessageFilter</code> allows a medium IL process (all non-elevated processes except [[Internet Explorer]] Protected Mode) to change the messages that a high IL process can receive from a lower IL process.<ref>{{cite web|url=http://msdn.microsoft.com/en-us/library/ms632675.aspx|title=ChangeWindowMessageFilter Function|work=MSDN|accessdate=2009-03-01}}</ref> This effectively allows bypassing UIPI, unless running from Internet Explorer or one of its [[child process]]es.
+
+==References==
+{{reflist}}
+
+{{Windows Components}}
+
+[[Category:Windows Vista]]
+[[Category:Microsoft Windows security technology]]
+
+[[fr:User Interface Privilege Isolation]]
+[[ko:사용자 인터페이스 권한 격리]]</body> </html>

@@ -1,0 +1,52 @@
+<html> <head> <title>3D single object recognition</title></head><body>{{FeatureDetectionCompVisNavbox}}
+
+In [[computer vision]], '''3D single [[object recognition]]''' involves recognizing and determining the pose of user-chosen [[Three-dimensional space|3D]] object in a [[photograph]] or [[range scan]].  Typically, an example of the object to be recognized is presented to a vision system in a controlled environment, and then for an arbitrary input such as a [[video stream]], the system locates the previously presented object.  This can be done either [[off-line]], or in [[real-time]].  The [[algorithms]] for solving this problem are specialized for locating a single pre-identified object, and can be contrasted with algorithms which operate on general [[class (computer science)|classes]] of objects, such as [[Facial recognition system|face recognition systems]] or [[3D generic object recognition]].  Due to the low cost and ease of acquiring photographs, a significant amount of research has been devoted to 3D object recognition in photographs.
+
+== 3D single object recognition in photographs ==
+
+The method of recognizing a 3D object depends on the properties of an object.  For simplicity, many existing algorithms have focused on recognizing [[Stiffness|rigid]] objects consisting of a single part, that is, objects whose spatial transformation is a [[Euclidean motion]].  Two general approaches have been taken to the problem: [[pattern recognition]] approaches use low-level image appearance information to locate an object, while feature-based geometric approaches construct a model for the object to be recognized, and match the model against the photograph.  
+
+=== Pattern recognition approaches ===
+
+These methods use appearance information gathered from pre-captured or pre-computed projections of an object to match the object in the potentially cluttered scene.  However, they do not take the 3D geometric constraints of the object into consideration during matching, and typically also do not handle occlusion as well as feature-based approaches.  See [Murase and Nayar 1995] and [Selinger and Nelson 1999].
+
+=== Feature-based geometric approaches ===
+
+[[Image:Feature example.png|right|thumb|322px|An example of a detected feature in an image.  Blue indicates the center of the feature, the red ellipse indicates the characteristic scale identified by the feature detector, and the green parallelogram is constructed from the coordinates of the ellipse as per [Lowe 2004].]]
+
+Feature-based approaches work well for objects which have distinctive [[Feature (Computer vision)|features]].  Thus far, objects which have good [[edge feature]]s or [[Blob detection|blob]] features have been successfully recognized; for example detection algorithms, see [[Harris affine region detector]] and [[Scale-invariant feature transform|SIFT]], respectively.  Due to lack of the appropriate feature detectors, objects without textured, smooth surfaces cannot currently be handled by this approach.
+
+Feature-based object recognizers generally work by pre-capturing a number of fixed views of the object to be recognized, extracting features from these views, and then in the recognition process, matching these features to the scene and enforcing geometric constraints.
+
+As an example of a prototypical system taking this approach, we will present an outline of the method used by [Rothganger et al. 2004], with some detail elided.  The method starts by assuming that objects undergo globally rigid transformations.  Because smooth surfaces are locally planar, [[affine invariant]] features are appropriate for matching: the paper [[feature detector|detects]] ellipse-shaped regions of interest using both edge-like and blob-like features, and as per [Lowe 2004], finds the dominant gradient direction of the ellipse, converts the ellipse into a parallelogram, and takes a [[SIFT]] descriptor on the resulting parallelogram.  Color information is used also to improve discrimination over SIFT features alone.
+
+[[Image:Partial features 3d.png|right|thumb|322px|Partial models of features, projected into 3D, constructed from nearby views of a teddy-bear.  Taken from [Rothganger et al. 2004].]]
+
+Next, given a number of camera views of the object (24 in the paper), the method constructs a 3D model for the object, containing the 3D spatial position and orientation of each feature.  Because the number of views of the object is large, typically each feature is present in several adjacent views.  The center points of such matching features correspond, and detected features are aligned along the dominant gradient direction, so the points at (1, 0) in the local coordinate system of the feature parallelogram also correspond, as do the points (0, 1) in the parallelogram's local coordinates.  Thus for every pair of matching features in nearby views, three point pair correspondences are known.  Given at least two matching features, a multi-view affine [[structure from motion]] algorithm (see [Tomasi and Kanade 1992]) can be used to construct an estimate of points positions (up to an arbitrary affine transformation).  The paper of Rothganger et al. therefore selects two adjacent views, uses a [[RANSAC]]-like method to select two corresponding pairs of features, and adds new features to the partial model built by RANSAC so long as they are under an error term.  Thus for any given pair of adjacent views, the algorithm creates a partial model of all features visible in both views.
+
+[[Image:Features full 3d.png|right|thumb|322px|Final merged model of features for the teddy bear, after Euclidean upgrade.  For recognition, this model is matched against a photograph of the scene using RANSAC.  Taken from [Rothganger et al. 2004].]]
+
+To produce a unified model, the paper takes the largest partial model, and incrementally aligns all smaller partial models to it.  Global minimization is used to reduce the error, then a [[Euclidean upgrade]] is used to change the model's feature positions from 3D coordinates unique up to affine transformation to 3D coordinates that are unique up to [[Euclidean motion]].  At the end of this step, one has a model of the target object, consisting of features projected into a common 3D space.
+
+To recognize an object in an arbitrary input image, the paper detects features, and then uses [[RANSAC]] to find the [[affine projection]] matrix which best fits the unified object model to the 2D scene.  If this RANSAC approach has sufficiently low error, then on success, the algorithm both recognizes the object and gives the object's pose in terms of an affine projection.  Under the assumed conditions, the method typically achieves recognition rates of around 95%.
+
+== References ==
+
+* Murase, H. and S. K. Nayar: 1995, ''Visual Learning and Recognition of 3-D Objects from Appearance''.  International Journal of Computer Vision 14, 5–24. [http://www.cse.unr.edu/~bebis/MathMethods/PCA/case_study_pca2.pdf]
+* Selinger, A. and R. Nelson: 1999, ''A Perceptual Grouping Hierarchy for Appearance-Based 3D Object Recognition.'' Computer Vision and Image Understanding 76(1), 83–92. [http://citeseer.ist.psu.edu/282716.html]
+* Rothganger, F; S. Lazebnik, C. Schmid, and J. Ponce: 2004.  ''3D Object Modeling and Recognition Using Local Affine-Invariant Image Descriptors and Multi-View Spatial Constraints'', ICCV. [http://www-cvr.ai.uiuc.edu/ponce_grp/publication/paper/ijcv04d.pdf]
+* Lowe, D.: 2004, ''Distinctive image features from scale-invariant keypoints.'' International Journal of Computer Vision. In press. [http://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf]
+* Tomasi, C. and T. Kanade: 1992, ''Shape and Motion from Image Streams: a Factorization Method.'' International Journal of Computer Vision 9(2), 137–154. [http://www.cse.huji.ac.il/course/2006/compvis/lectures/tomasiTr92Text.pdf]
+
+== See also ==
+
+* [[Blob detection]]
+* [[Object recognition]]
+* [[Feature descriptor]]
+* [[Feature detection (computer vision)]]
+* [[Harris affine region detector]]
+* [[RANSAC]]
+* [[Scale-invariant feature transform|SIFT]]
+* [[Structure from motion]]
+
+[[Category:Object recognition and categorization]]</body> </html>

@@ -1,0 +1,72 @@
+<html> <head> <title>Loop invariant</title></head><body>In [[computer science]], a '''loop invariant''' is an [[invariant (computer science)|invariant]] used to prove properties of [[Loop (computing)|loop]]s.  Informally, a loop invariant is a statement of the conditions that should be true on entry into a loop and that are guaranteed to remain true on every iteration of the loop.  This means that on exit from the loop both the loop invariant and the loop termination condition can be guaranteed.
+
+Specifically in [[Hoare logic|Floyd-Hoare logic]]<ref>[[Robert Floyd|R. W. Floyd]]. "Assigning meanings to programs." Proceedings of the American Mathematical Society Symposia on Applied Mathematics. Vol. 19, pp. 19–31. 1967. ([http://laser.cs.umass.edu/courses/cs521-621.Spr06/papers/Floyd.pdf]) </ref><ref>[[C. A. R. Hoare]]. "[http://sunnyday.mit.edu/16.355/Hoare-CACM-69.pdf An axiomatic basis for computer programming]". ''[[Communications of the ACM]]'', 12(10):576&ndash;585, October 1969. {{doi|10.1145/363235.363259}}
+</ref>, the [[partial correctness]] of a [[while loop]] is governed by the following rule of inference:
+
+:<math>\frac{\{C\land I\}\;\mathrm{body}\;\{I\}} {\{I\}\;\mathbf{while}\ (C)\ \mathrm{body}\;\{\lnot C\land I\}}</math>
+
+This means:
+* A while loop does not have the side effect of falsifying <math>I</math>—if the loop's body does not change an invariant <math>I</math> from true to false given the condition <math>C</math>, then <math>I</math> will still be true after the loop has run as long as it was true before.
+* <math>while(C) ...</math> runs as long as the condition <math>C</math> is true—after the loop has run, if it terminates, <math>C</math> is false.
+
+The rule above is a deductive step that has as its premise the [[Hoare triple]] <math>\{C\land I\}\;\mathrm{body}\;\{I\}</math>.  This triple is actually a [[relation (mathematics)|relation]] on machine states.  It holds whenever starting from a state in which the boolean expression <math>C\land I</math> is true and successfully executing some program called ''body'', the machine ends up in a state in which <math>I</math> is true.  If this relation can be proven, the rule then allows us to conclude that successful execution of the program <code>while (C) body</code> will lead from a state in which <math>I</math> is true to a state in which <math>\lnot C\land I</math> holds.  The boolean formula ''I'' in this rule is known as the loop invariant.
+
+The following example illustrates how this rule works.  Consider the program
+
+ while (x<10) x:=x+1;
+
+One can then prove the following Hoare triple:
+
+:<math>\{x\leq10\}\; \mathbf{while}\ (x<10)\ x := x+1\;\{x=10\}</math>
+
+The condition ''C'' of the <code>while</code> loop is <math>x<10</math>.  A useful loop invariant ''I'' is <math>x\leq10</math>.  Under these assumptions it is possible to prove the following Hoare triple:
+
+:<math>\{x<10 \land x\leq10\}\; x := x+1 \;\{x\leq10\}</math>
+
+While this triple can be derived formally from the rules of Floyd-Hoare logic governing assignment, it is also intuitively justified: Computation starts in a state where <math>x<10 \land x\leq10</math> is true, which means simply that <math>x<10</math> is true.  The computation adds 1 to x, which means that <math>x\leq10</math> is still true (for integer x).
+
+Under this premise, the rule for <code>while</code> loops permits the following conclusion:
+
+:<math>\{x\leq10\}\; \mathbf{while}\ (x<10)\ x := x+1 \;\{\lnot(x<10) \land x\leq10\}</math>
+
+However, the post-condition <math>\lnot(x<10)\land x\leq10</math> (''x'' is less than or equal to 10, but it is not less than 10) is [[Logical equivalence|logically equivalent]] to <math>x=10</math>, which is what we wanted to show.
+
+The loop invariant plays an important role in the intuitive argument for soundness of the Floyd-Hoare rule for <code>while</code> loops.  The loop invariant has to be true before each iteration of the loop body, and also after each iteration of the loop body.  Since a <code>while</code> loop is precisely the repeated iteration of the loop body, it follows that if the invariant is true before entering the loop, it must also be true after exiting the loop.
+
+Because of the fundamental similarity of loops and [[recursion|recursive]] programs, proving partial correctness of loops with invariants is very similar to proving correctness of recursive programs via [[Mathematical induction|induction]].  In fact, the loop invariant is often the inductive property one has to prove of a recursive program that is equivalent to a given loop.
+
+==Programming language support==
+
+===[[Eiffel (programming language)|Eiffel]]===
+The [[Eiffel (programming language)|Eiffel]] programming language provides native support for loop invariants.<ref>[[Bertrand Meyer|Meyer, Bertrand]], ''Eiffel: The Language,'' [[Prentice Hall]], 1991, pp. 129–131.</ref> A loop invariant is expressed with the same syntax used for a [[class invariant]]. In the sample below, the loop invariant expression <code>x <= 10</code> must be true following the loop initialization, and after each execution of the loop body.
+
+<syntaxhighlight lang="eiffel">    from
+        x := 0
+    invariant
+        x <= 10
+    until
+        x = 10
+    loop
+        x := x + 1
+    end</syntaxhighlight>
+
+== See also ==
+* [[Loop variant]]
+* [[Predicate transformer semantics#While loop| Weakest-preconditions of While loop]]
+
+== References ==
+{{reflist}}
+
+== Further reading ==
+* [[Thomas H. Cormen]], [[Charles E. Leiserson]], [[Ronald L. Rivest]], and [[Clifford Stein]]. ''[[Introduction to Algorithms]]'', Second Edition. MIT Press and McGraw-Hill, 2001. ISBN 0-262-03293-7. Pages 17–19, section 2.1: Insertion sort.
+* [[David Gries]]. "A note on a standard strategy for developing loop invariants and loops." ''Science of Computer Programming'', vol 2, pp.207–214. 1984.
+* Michael D. Ernst, Jake Cockrell, William G. Griswold, David Notkin. "[http://citeseer.ist.psu.edu/292512.html Dynamically Discovering Likely Program Invariants to Support Program Evolution]." ''International Conference on Software Engineering'', pp.213–224. 1999.
+* Robert Paige. "Programming with Invariants." ''IEEE Software'', 3(1):56–69. January 1986.
+* Yanhong A. Liu, Scott D. Stoller, and Tim Teitelbaum. [http://www.cs.sunysb.edu/~stoller/SIEC-SCP.html Strengthening Invariants for Efficient Computation]. ''Science of Computer Programming'', 41(2):139–172. October 2001.
+* Michael Huth, Mark Ryan. "Logic in Computer Science.", Second Edition. 
+
+[[Category:Formal methods terminology]]
+[[Category:Computer programming]]
+
+[[de:Schleifeninvariante]]
+[[pl:Niezmiennik pętli]]</body> </html>

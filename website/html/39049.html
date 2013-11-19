@@ -1,0 +1,268 @@
+<html> <head> <title>User Account Control</title></head><body>[[File:Windows 7 UAC.png|thumb|310px|User Account Control dialog in [[Windows 7]]]]
+'''User Account Control''' ('''UAC''') is a technology and security infrastructure introduced with [[Microsoft]]'s [[Windows Vista]] and [[Windows Server 2008]] [[operating system]]s, with a more relaxed<ref name="winsupersiteuac">[http://www.winsupersite.com/win7/ff_uac.asp Windows 7 Feature Focus: User Account Control], An overview of UAC in Windows 7 by [[Paul Thurott]]</ref> version also present in [[Windows 7]] and [[Windows Server 2008 R2]] . It aims to improve the security of [[Microsoft Windows]] by limiting [[application software]] to standard user privileges until an [[System administrator|administrator]] authorizes an increase or elevation. In this way, only applications trusted by the user may receive administrative privileges, and [[malware]] should be kept from compromising the operating system. In other words, a user account may have administrator privileges assigned to it, but applications that the user runs do not inherit those privileges unless they are approved beforehand or the user explicitly authorizes it.
+
+To reduce the possibility of lower-privilege applications communicating with higher-privilege ones, another new technology, [[User Interface Privilege Isolation]] is used in conjunction with User Account Control to isolate these processes from each other.<ref>{{cite web
+| url=http://msdn2.microsoft.com/en-us/library/aa905330.aspx
+| title=The Windows Vista and Windows Server 2008 Developer Story: Windows Vista Application Development Requirements for User Account Control (UAC)
+| month=April | year=2007
+| accessdate=2007-10-08
+| work=The Windows Vista and Windows Server 2008 Developer Story Series
+| publisher=[[Microsoft]]
+}}</ref> One prominent use of this is [[Internet Explorer 7]]'s "Protected Mode".<ref>{{cite web
+|url=http://msdn2.microsoft.com/en-us/library/bb250462.aspx
+|title=Understanding and Working in Protected Mode Internet Explorer
+|month=January | year=2006
+|accessdate=2007-12-08
+|coauthors=Marc Silbey, Peter Brundrett
+|publisher=[[Microsoft]]
+}}</ref>
+
+==History==
+Differentiation of a [[Superusers|superuser]] and [[Userland (computing)|userland]] has been common in mainframes and servers for decades. This had an obvious security component, but also an administrative component, in that it prevented users from accidentally changing system settings.
+
+Microsoft home operating systems (such as [[MS-DOS]], [[Windows 95]], [[Windows 98]] and [[Windows Me]]) did not have a concept of different user accounts on the same machine, and all actions were performed as [[Superuser|super user]].  [[Windows NT]] introduced multiple user accounts, but in practice most users continued to operate as super user administrator for their normal operations.  Further, many applications tend to assume that the user is super user, and will simply not work if they are not.<ref name="Channel 9">{{cite web
+|url=http://channel9.msdn.com/ShowPost.aspx?PostID=288259
+|title=UAC - What. How. Why.
+|date=March 5, 2007
+|accessdate=2007-12-08
+|format=video
+|first=Charles
+|last=Torre
+}}</ref>  Subsequent versions of Windows and Microsoft applications encouraged the use of non-administrator user logons, but the uptake was slow. 
+
+Introduced in [[Windows Vista]], User Account Control (UAC) is an integrated, more balanced approach to encourage "super-user when necessary".  Linux and Unix users will be familiar with this, as UAC's functionality is very similar to the "[[sudo]]" command.  The key to UAC lies in its ability to elevate privileges without changing the user context (user "Bob" is still user "Bob").  As always, it is difficult to introduce new security features without breaking compatibility with existing applications.
+
+When logging into Vista as a standard user, a logon session is created and a [[Token (Windows NT architecture)|token]] containing only the most basic privileges is assigned. In this way, the new logon session is incapable of making changes that would affect the entire system. When logging in as a user in the Administrators group, two separate tokens are assigned.  The first token contains all privileges typically awarded to an administrator, and the second is a restricted token similar to what a standard user would receive. User applications, including the [[Windows Shell]], are then started with the restricted token, resulting in a reduced privilege environment even under an Administrator account. When an application requests higher privileges or "Run as administrator" is clicked, UAC will prompt for confirmation and, if consent is given, start the process using the unrestricted token.<ref name="kennykerr">{{cite web
+|url=http://weblogs.asp.net/kennykerr/archive/2006/09/29/Windows-Vista-for-Developers-_1320_-Part-4-_1320_-User-Account-Control.aspx
+|title=Windows Vista for Developers – Part 4 – User Account Control
+|date=September 29, 2006
+|accessdate=2007-03-15
+|last=Kerr
+|first=Kenny
+}}</ref>
+
+In [[Windows 7]], Microsoft updated UAC in several ways. By default, UAC does not prompt when certain programs included with Windows make changes requiring elevated permissions. Other programs still trigger a UAC prompt. The strictness of UAC can be changed to either always prompt, or to never do so.
+
+==Tasks that trigger a UAC prompt==
+<!-- Deleted image removed: [[Image:Windows Vista Control Panel (shield).png|thumb|300px|Operating system commands or actions that require administrator rights (and will thus trigger UAC) are marked with the security shield symbol. {{deletable image-caption}}]] -->
+Tasks that require administrator privileges will trigger a UAC prompt (if UAC is enabled);  they are typically marked by a security shield icon with the 4 colors of the Windows logo (in Vista and Windows Server 2008) or with two panels yellow and two blue (Windows 7 and Server 2008 R2).  In the case of executable files, the icon will have a security shield overlay.  Ed Bott's ''Windows Vista Inside Out'' lists the following tasks which require administrator privileges:<ref>{{cite web
+|url=http://www.edbott.com/weblog/?p=1602
+|title=What triggers User Account Control prompts?
+|last=Bott
+|first=Ed
+|date=2007-02-02
+}}</ref>
+*Running an Application as an Administrator
+*Changes to system-wide settings or to files in %SystemRoot% or %ProgramFiles%
+*Installing and uninstalling applications
+*Installing device drivers
+*Installing ActiveX controls
+*Changing settings for Windows Firewall
+*Changing UAC settings
+*Configuring Windows Update
+*Adding or removing user accounts
+*Changing a user’s account type
+*Configuring Parental Controls
+*Running Task Scheduler
+*Restoring backed-up system files
+*Viewing or changing another user’s folders and files
+*Running Disk Defragmenter
+
+Common tasks, such as changing the time zone, do not require administrator privileges<ref>{{cite web
+|url=http://windowsvistablog.com/blogs/windowsvista/archive/2007/01/23/security-features-vs-convenience.aspx
+|title=Security Features vs. Convenience |work=Windows Vista Team Blog
+|publisher=[[Microsoft]]
+|last=Allchin
+|first=Jim
+|authorlink=James Allchin
+|date=2007-01-23
+|accessdate=2007-03-04
+}}</ref> (although changing the system time itself does, since the system time is commonly used in security protocols such as [[Kerberos (protocol)|Kerberos]]).  A number of tasks that required administrator privileges in earlier versions of Windows, such as installing critical Windows updates, no longer do so in Vista.<ref>{{cite web
+|url=http://technet.microsoft.com/en-us/windowsvista/aa906021.aspx
+|title=User Account Control Overview
+|work=Technet
+|publisher=[[Microsoft]]
+}}</ref>  Any program can be run as administrator by right-clicking its icon and clicking "Run as administrator", except MSI or MSU packages as, due to their nature, if administrator rights will be required a prompt will usually be shown. Should this fail the only workaround is to run a Command Prompt as an administrator and launch the MSI or MSP package from there.
+
+==Features==
+User Account Control asks for credentials in a ''Secure Desktop'' mode, where the entire screen is temporarily dimmed, [[Windows Aero]] disabled, and only the authorization window at full brightness, to present only the elevation user interface (UI). This is to prevent spoofing of the UI or the mouse by the application requesting elevation.<ref>{{cite web
+|url=http://blogs.msdn.com/uac/archive/2006/05/03/589561.aspx
+|title=User Account Control Prompts on the Secure Desktop
+|date=2006-05-03
+|accessdate=2007-02-25
+|work=UACBlog
+|publisher=MSDN Blogs
+}}</ref> If an administrative activity comes from a minimized application, the secure desktop request will also be minimized so as to prevent the [[Focus (computing)|focus]] from being lost.  It is possible to disable ''Secure Desktop'', though this is inadvisable from a security perspective.<ref>{{cite web
+|url=http://www.edbott.com/weblog/?p=1600
+|title=Why you need to be discriminating with those Vista tips
+|last=Bott
+|first=Ed
+|date=February 2, 2007
+|accessdate=2007-12-08
+|work=Ed Bott's Windows Expertise
+}}</ref>
+
+Applications written with the assumption that the user will be running with administrator privileges experienced problems in earlier versions of Windows when run from limited user accounts, often because they attempted to write to machine-wide or system directories (such as ''Program Files'') or registry keys (notably [[HKEY LOCAL MACHINE|HKLM]])<ref name="Channel 9"/>. UAC attempts to alleviate this using ''File and Registry Virtualization'', which redirects writes (and subsequent reads) to a per-user location within the user’s profile. For example, if an application attempts to write to “C:\program files\appname\settings.ini” and the user doesn’t have permissions to write to that directory, the write will get redirected to “C:\Users\username\AppData\Local\VirtualStore\Program Files\appname\settings.ini”.
+
+There are a number of configurable UAC settings. It is possible to:<ref>{{cite web
+|url=http://technet.microsoft.com/en-us/bb629436.aspx
+|title=Chapter 2: Defend Against Malware
+|work=Windows Vista Security Guide
+|publisher=[[Microsoft]]
+|date=November 8, 2006
+|accessdate=2007-03-15
+}}</ref>
+*Require administrators to re-enter their password for heightened security;
+*Require the user to press [[Control-Alt-Delete|Ctrl+Alt+Del]] as part of the authentication process for heightened security;
+*Disable ''Admin Approval Mode'' (UAC prompts for administrators) entirely;
+
+[[Command Prompt (Windows)|Command Prompt]] windows that are running elevated will prefix the title of the window with the word "Administrator", so that a user can discern which instances are running with elevated privileges.<ref>{{cite web
+|url=http://blogs.msdn.com/uac/archive/2006/08/01/685645.aspx
+|title=Administrator Marking for Command Prompt
+|accessdate=2006-08-07
+|date=August 1, 2006
+|work=UACBlog
+|publisher=MSDN Blogs
+}}</ref>
+
+A distinction is made between elevation requests from a signed executable and an unsigned executable; and if the former, whether the publisher is 'Windows Vista'.  The color, icon, and wording of the prompts are different in each case; for example, attempting to convey a greater sense of warning if the executable is unsigned than if not.<ref>{{cite web
+|url=http://windowsvistablog.com/blogs/windowsvista/archive/2007/01/25/accessible-uac-prompts.aspx
+|title=Accessible UAC Prompts
+|work=Windows Vista Blog
+|publisher=Microsoft
+}}</ref>
+
+[[Internet Explorer 7]]'s "Protected Mode" feature uses UAC to run with a 'low' [[Mandatory Integrity Control|integrity level]] (a Standard user token has an integrity level of 'medium'; an elevated (Administrator) token has an integrity level of 'high').  As such, it effectively runs in a sandbox, unable to write to most of the system (apart from the Temporary Internet Files folder) without elevating via UAC.<ref name="kennykerr"/><ref name="MRtechnet">{{cite web
+|url=http://www.microsoft.com/technet/technetmag/issues/2007/06/UAC/
+|title=Inside Windows Vista User Account Control
+|first=Mark
+|last=Russinovich
+|work=[[Microsoft TechNet|TechNet Magazine]]
+|publisher=[[Microsoft]]
+|month=June | year=2007
+|accessdate=2007-12-08
+}}</ref>  Since toolbars and ActiveX controls run within the Internet Explorer process, they will run with low privileges as well, and will be severely limited in what damage they can do to the system.<ref>{{cite web |url=http://blogs.msdn.com/ie/archive/2006/02/09/528963.aspx |title=Protected Mode in Vista IE7 |first=Mike |last=Friedman |publisher=IEBlog}}</ref>
+
+==Requesting elevation==
+A program can request elevation in a number of different ways. One way for program developers is to add a requestedPrivileges section to an XML document, known as the [[Manifest (.NET Framework)|manifest]], that is then embedded into the application. A manifest can specify dependencies, visual styles, and now the appropriate security context:
+
+<source lang="xml">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <v3:trustInfo xmlns:v3="urn:schemas-microsoft-com:asm.v3">
+    <v3:security>
+      <v3:requestedPrivileges>
+        <v3:requestedExecutionLevel level="highestAvailable"/>
+      </v3:requestedPrivileges>
+    </v3:security>
+  </v3:trustInfo>
+</assembly>
+</source>
+
+Setting the level attribute for requestedExecutionLevel to "asInvoker" will make the application run with the token that started it, "highestAvailable" will present a UAC prompt for administrators and run with the usual reduced privileges for standard users, and "requireAdministrator" will require elevation.<ref>{{cite web
+|url=http://www.codeproject.com/KB/vista-security/MakingAppsUACAware.aspx
+|title=Making Your Application UAC Aware
+|date=2007-03-10
+|accessdate=2007-03-15
+|author=Mike Carlisle
+|publisher=The Code Project
+}}</ref> In both highestAvailable and requireAdministrator modes, failure to provide confirmation results in the program not being launched.
+
+An executable that is marked as "<code>requireAdministrator</code>" in its manifest cannot be started from a non-elevated process using <code>CreateProcess()</code>. Instead, <code>ERROR_ELEVATION_REQUIRED</code> will be returned. <code>ShellExecute()</code> or <code>ShellExecuteEx()</code> must be used instead. If an <code>HWND</code> is not supplied, then the dialog will show up as a blinking item in the taskbar.
+
+Inspecting an executable's manifest to determine if it requires elevation is not recommended, as elevation may be required for other reasons (setup executables, application compatibility). However, it is possible to programmatically detect if an executable will require elevation by using <code>CreateProcess()</code> and setting the <code>dwCreationFlags</code> parameter to <code>CREATE_SUSPENDED</code>. If elevation is required, then <code>ERROR_ELEVATION_REQUIRED</code> will be returned.<ref>{{cite web
+|url=http://blogs.msdn.com/junfeng/archive/2006/10/18/programmatically-determine-if-an-application-requires-elevation-in-windows-vista.aspx
+|title=Programmatically determine if an application requires elevation in Windows Vista
+|date=2006-10-18
+|accessdate=2008-01-24
+|author=Junfeng Zhang
+|publisher=MSDN Blogs
+}}</ref> If elevation is not required, a success return code will be returned at which point you can use <code>TerminateProcess()</code> on the newly created, suspended process. This will not allow you to detect that an executable requires elevation if you are already executing in an elevated process, however.
+
+A new process with elevated privileges can be spawned from within a .NET application using the "<code>runas</code>" verb. An example using [[C_Sharp_(programming_language)|C#]]:
+<source lang="csharp">
+System.Diagnostics.Process proc = new System.Diagnostics.Process();
+proc.StartInfo.FileName = "C:\\Windows\\system32\\notepad.exe";
+proc.StartInfo.Verb = "runas"; // Elevate the application
+proc.Start();
+</source>
+In a native [[Win32]] application the same "<code>runas</code>" verb can be added to a <code>ShellExecute()</code> or <code>ShellExecuteEx()</code> call.<ref name="kennykerr" />
+<source lang="cpp">
+ShellExecute(hwnd, "runas", "C:\\Windows\\Notepad.exe", 0, 0, SW_SHOWNORMAL);
+</source>
+In the absence of a specific directive stating what privileges the application requests, UAC will apply [[Heuristic algorithm|heuristic]]s, to determine whether or not the application needs administrator privileges. For example, if UAC detects that the application is a setup program, from clues such as the filename, versioning fields, or the presence of certain sequences of bytes within the executable, in the absence of a manifest it will assume that the application needs administrator privileges.<ref>{{cite web
+|url=http://technet2.microsoft.com/WindowsVista/en/library/00d04415-2b2f-422c-b70e-b18ff918c2811033.mspx?mfr=true
+|title=Understanding and Configuring User Account Control in Windows Vista
+|publisher=[[Microsoft]]
+|accessdate=2007-07-05
+}}</ref>
+
+==Criticism==
+There have been complaints that UAC notifications slow down various tasks on the computer such as the initial installation of software onto Windows Vista.<ref>{{cite web
+|url=http://lifehacker.com/software/vista/geek-to-live-windows-vista-upgrade-power-tips-231922.php
+|title=Disabling the UAC feature
+|accessdate=2007-03-10
+|date=2007-03-10
+}}</ref>  It is possible to turn off UAC while installing software, and reenable it at a later time.<ref>{{cite web
+|url=http://www.youtube.com/watch?v=M7Uwx_yaxUM
+|title=Disable UAC in Vista
+}}</ref>  However, this is not recommended since, as File & Registry Virtualization is only active when UAC is turned on, user settings and configuration files may be installed to a different place (a system directory rather than a user-specific directory) if UAC is switched off than they would be otherwise.<ref>{{cite web
+|url=http://www.edbott.com/weblog/?p=1600
+|title=Why you need to be discriminating with those Vista tips
+|last=Bott
+|first=Ed
+|work=Ed Bott's Windows Expertise
+|date=2007-02-02
+|accessdate=2007-07-05
+}}</ref>  Also note that [[Internet Explorer 7]]'s "Protected Mode", whereby the browser runs in a sandbox with lower privileges than the standard user, relies on UAC; and will not function if UAC is disabled.<ref name="MRtechnet"/>
+
+[[Yankee Group]] analyst Andrew Jaquith stated that "while the new security system shows promise, it is far too chatty and annoying."<ref name="pcworlduac">{{cite web
+| url=http://news.zdnet.com/2100-1009_22-6069464.html
+| title=Report: Vista to hit anti-spyware, firewall markets
+| last=Evers
+| first=Joris
+| date=2006-05-07
+| accessdate=2007-01-21
+| work=[[ZDNet]] News
+| publisher=CNet
+|archiveurl = http://web.archive.org/web/20061210153354/http://news.zdnet.com/2100-1009_22-6069464.html <!-- Bot retrieved archive --> |archivedate = 2006-12-10}}</ref> However, this statement was made over six months before Vista was actually released (even before [[Development of Windows Vista#Beta 2|Beta 2]] was released). By the time Windows Vista was released in November 2006, Microsoft had drastically reduced the number of operating system tasks that triggered UAC prompts, and added file and registry virtualization to reduce the number of [[Legacy system|legacy]] applications that trigger UAC prompts.<ref name="Channel 9"/> However, David Cross, a product unit manager at Microsoft, stated during the RSA Conference 2008 that UAC was in fact designed to "annoy users," and force independent software vendors to make their programs more secure so that UAC prompts would not be triggered.<ref>[http://news.zdnet.com/2100-9590_22-6237191.html Microsoft: Vista feature designed to 'annoy users' | Tech News on ZDNet<!-- Bot generated title -->]</ref> In response to these criticisms, Microsoft has altered UAC activity in [[Windows 7]]. For example, by default users are not prompted to confirm actions initiated with the mouse and keyboard alone such as operating Control Panel applets.  New York Times [[Gadgetwise]] writer Stephen Williams says: "One recommended way to wring more speed from Vista is to turn off the overly protective User Account Control whose pop-ups are like having your mother hover over your shoulder while you work."<ref>Gadgetwise, New York Times, May 14, 2008.</ref>. A study by [[Sophos]] using 10 unique samples which had arrived in their labs, showed that UAC , on its default level, could not protect [[Windows 7]] from 8 of the samples. <ref>http://www.sophos.com/blogs/chetw/g/2009/11/03/windows-7-vulnerable-8-10-viruses/</ref>
+
+==See also==
+*[[Comparison of privilege authorization features]]
+*[[Features new to Windows Vista]]
+*[[Least user access]] (LUA)
+*[[runas]]
+*[[Security and safety features of Windows Vista]]
+
+==References==
+{{Reflist|colwidth=35em}}
+
+==External links==
+*[http://technet.microsoft.com/en-us/library/cc731416(WS.10).aspx Documentation about UAC for Windows 7, Windows Server 2008, Windows Server 2008 R2, Windows Vista]
+*[http://technet2.microsoft.com/WindowsVista/en/library/00d04415-2b2f-422c-b70e-b18ff918c2811033.mspx?mfr=true UAC Understanding and Configuring] More Information at Microsoft Technet
+*[http://msdn.microsoft.com/en-us/library/bb530410.aspx Development Requirements for User Account Control Compatibility]  More information at Microsoft Developer Network
+*[http://blogs.msdn.com/uac/ UAC Team Blog]
+
+
+{{Windows Components}}
+
+[[Category:Microsoft Windows security technology]]
+[[Category:Windows Vista]]
+
+[[cs:User Account Control]]
+[[de:Benutzerkontensteuerung]]
+[[et:Kasutajakonto kontroll]]
+[[es:Control de Cuentas de Usuario]]
+[[fr:User Account Control]]
+[[ko:사용자 계정 컨트롤]]
+[[it:User Account Control]]
+[[ms:User Account Control]]
+[[nl:Gebruikersaccountbeheer]]
+[[ja:ユーザーアカウント制御]]
+[[pl:User Account Control]]
+[[pt:User Account Control]]
+[[ru:User Account Control]]
+[[fi:Käyttäjätilien valvonta]]
+[[tl:User Account Control]]
+[[uk:User Account Control]]
+[[zh:使用者帳戶控制]]</body> </html>

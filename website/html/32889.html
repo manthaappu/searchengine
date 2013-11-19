@@ -1,0 +1,83 @@
+<html> <head> <title>SMX (computer language)</title></head><body>{{Notability|date=June 2009}}
+{{Citations missing|date=May 2009}}
+'''SMX''' (from '''Server Macro Expansion''') is a [[Macro (computer science)|macro]] processing language designed to embed macros in web pages. Originally shipped with the popular Internet Factory's Commerce Builder software, it has been ported as an [[Apache HTTP Server|Apache]] module.
+
+==Overview==
+SMX was designed to embed macros in HTML/XML pages. It originally shipped with the Internet Factory's Commerce Builder software, a relatively popular web server in the early days of the Internet, due to the ease with which a developer could produce an [[e-commerce]] website.
+
+Rather than re-implement websites in more popular languages, like [[Perl]] or [[PHP]], a small group of SMX fans decided to re-implement the language itself as an [[Apache HTTP Server|Apache]] module.
+
+A good example of a macro is '''%counter()'''.  This embeds a simple incremental counter on an HTML page.  To include the results of a [[SQL]] query on a page, you can simply type '''%sql(<dsn>,<query>,%col(1)<br />)''' in the middle of an [[XHTML]] page.
+
+Owing to the high-level nature of the language, SMX can greatly reduce the programming effort required to build dynamic or database-driven web sites.
+
+==Syntax==
+Unlike many programming languages, SMX syntax is simple and consistent.  All functions begin with a % sign, followed by the name of the function, followed either a single % sign or a parenthetical list of arguments.
+
+Arguments can be quoted using double-quotes.  Backslashes can be used to escape commas and double-quotes.  A single quote at the beginning of an argument turns off interpretation of code in that argument (similar to [[LISP]]).
+
+Everything that isn't code, is, by default, output.  To change this behavior, use the %nil or %null macros.
+
+===Sample code===
+====Hello World====
+Here is a [[Hello World]] code example:
+
+<pre><nowiki>
+%expand%
+Hello World!
+</nowiki></pre>
+
+Using variables to create output
+
+<pre><nowiki>
+%expand%
+%set(name,World)
+Hello %name%!
+</nowiki></pre>
+====Forms processing====
+
+<pre><nowiki>
+%expand%
+%if(%form(expr)
+    ,<p>Result is: %expr(%form(expr))</p>
+)
+<form action="%client-url%" method=post>
+Simple math expression: <input name=expr>
+</form>
+</nowiki></pre>
+
+====Page counter====
+
+<pre><nowiki>
+%expand%
+%counter(hits) hits
+</nowiki></pre>
+
+====Database guestbook====
+<pre><nowiki>
+%expand%
+%if(%not(%exists(/tmp/gbook.sq3))
+        ,%sql(sqlite:/tmp/gbook.sq3,CREATE TABLE guests (name text, comment text))
+)
+%if(%and(%form(name),%form(comment))
+    ,%sql(sqlite:/tmp/gbook.sq3,"INSERT INTO guests (name, comment) VALUES (%sqlq(%form(name)),%sqlq(%form(comment)))")
+)
+%sql(sqlite:/tmp/gbook.sq3,SELECT * FROM guests
+        ,<p>%html-quote(%col(name)) said %html-quote(%col(comment))<hr>
+         <p>
+         <form action="%client-url%" method=post>
+         <br>Name: <input name=name>
+         <br>Comment: <input name=comment>
+         <br><input type=submit>
+         </form>
+)
+</nowiki></pre>
+
+== External links ==
+* http://www.smxlang.org/ (open source implementation of SMX in C++)
+* http://www.gjt.org/javadoc/org/opensmx/opensmx/ (open source implementation of SMX in Java)
+* http://www.strom.com/pubwork/iwcb.html (review of the original commerce builder)
+
+[[Category:Web development software]]
+[[Category:Scripting languages]]
+[[Category:Macro programming languages]]</body> </html>

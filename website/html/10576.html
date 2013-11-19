@@ -1,0 +1,20 @@
+<html> <head> <title>Direct binding</title></head><body>{{Orphan|date=February 2009}}
+'''Direct binding''' is a feature of the [[Linker (computing)|linker]] and [[dynamic linker]] on [[Solaris Operating System|Solaris]] and [[OpenSolaris]].  It provides a method to allow libraries to directly bind symbols to other libraries, rather than weakly bind to them and leave the dynamic linker to figure out which library contains the symbol.
+
+== Theory ==
+When linking a shared library or dynamic linked executable, the linker normally populates the [[symbol table]] for that library with all symbols used.  Symbols in the current object are added with their offset; while those which are not defined in the object are left unresolved.  Unresolved symbols still have to be known at link time, however; the linker is passed shared libraries to link with and, when it finds a symbol in another library, places a note in the output library indicating that it depends on these other shared libraries.
+
+This kind of weak linking forces the dynamic linker to resolve which library contains which symbol when the executable is run.  The dynamic linker on Linux, for example, will read through the DT_NEEDED section of an [[Executable and Linkable Format|ELF]] object and load the needed libraries; but it won't be told where the symbols it needs are.  For this, it has to iterate through each unresolved symbol in the object; and for each of these, iterate through each loaded library, checking for a matching symbol, until it finds one.  This can be very time consuming.
+
+Direct linking works around this problem by storing an equivalent list of pointers to DT_NEEDED entries in a separate ELF section.  Each pointer corresponds to a symbol in the object; thus, these pointers create a relation between a symbol and a DT_NEEDED entry.  This allows the linker to locate the library specified by a particular DT_NEEDED entry and check only its symbol table for each symbol, rather than iterate through potentially every library for every symbol.
+
+== References ==
+*[http://blogs.sun.com/roller/page/msw/20050614 Library Bindings - let's be a little bit more precise shall we]
+
+== External links ==
+*[http://bugs.gentoo.org/114008 Work on a direct binding implementation for Gentoo Linux]
+
+[[Category:OpenSolaris]]
+
+
+{{unix-stub}}</body> </html>

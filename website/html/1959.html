@@ -1,0 +1,61 @@
+<html> <head> <title>Anonymous internet banking</title></head><body>'''Anonymous Internet Banking''' is the name given to the proposed use of strong [[financial cryptography]] to make electronic [[bank secrecy]] (or more precisely [[pseudonymity|pseudonymous]] banking) possible. The bank issues currency in the form of electronic tokens that can be converted on presentation to the bank to some other currency. This concept has a long history in which [[free banking]] institutions have issued their own paper currency often backed by a physical commodity.
+
+==History==
+Whilst the academic study of trust relationships and systems has long been the forte of [[intelligence services]] such as the [[United States|American]] [[NSA]], the growth of the internet in the [[1990s]] and the contemporary declassification of related knowledge allowed for greater public discussion of the potential for anonymous banking services by groups such as the [[Cryptoanarchy|cryptoanarchists]] and [[cypherpunks]].  
+
+==Implemented systems==
+Examples of anonymous internet banking services and software that have already been implemented include:
+*[[eCache]]: an anonymous bank operating over the [[Tor (anonymity network)|Tor]] network.
+*[[Bitcoin]]: distributed [[P2P]] cryptocurrency.
+*[[Pecunix]]: an (optionally?) anonymous digital gold currency.
+*[[Yodelbank]]: an anonymous bank built on top of various digital gold currencies which ended operations during November 2005.
+*[[Open Transactions]]: Open-source software, including a library, server, and test client, implementing untraceable digital cash and anonymous numbered accounts.
+
+==The underlying mathematics==
+Anonymous internet banking depends on the mathematics of [[public key cryptography]] and [[blind signature]] algorithms.  In this simple example we have [[Alice and Bob]] and a banker.  The banker generates an [[RSA]] public key with modulus <math>n= P Q</math>, where <math>P</math> and <math>Q</math> are large [[Prime number|primes]], making <math>n</math> a [[semiprime]].  As described in [[RSA#Operation|RSA operation]], the bank also generates public key exponent <math>e</math> and private key exponent <math>d</math>.
+
+Bob asks the banker for a $100 [[deposit slip]] in anticipation of Alice wanting to transfer money to him.  To generate a deposit slip the bank selects a large, globally unique [[random number]] <math>R</math> and encrypts it using the bank's public key; this means that it can only be decrypted with the bank's secret key:
+
+<math>R' = R^e\pmod n</math>
+
+This encrypted value <math>R'</math> is sent to Bob with the promise to deposit $100 into his account when Bob sends the value <math>R</math> back to the bank.  The bank is confident that Bob won't be able to break RSA to generate <math>R</math> from <math>R'</math> within the [[heat death of the universe]] without knowledge of <math>d</math>, so it does not worry about handing out the deposit slips without receiving anything from Bob.
+
+When Alice wants to pay Bob $100 she asks for the deposit slip and Bob sends her <math>R'</math>.  Alice selects a large random value <math>w</math> coprime with <math>n</math> (so as to have an inverse modulo <math>n</math>) and uses it to [[Blind_signature|blind]] <math>R''=w^e*R'</math> and sends it to the bank to be [[Blind_signature|blind signed]].  The Bank charges Alice $100 for this operation and returns the blind signed value <math>R'''</math>.  Due to the symmetric properties of RSA, this provides her with <math>R</math>:
+
+<math>
+\begin{align}
+R''' & = (w^e*R')^d \pmod n \\
+     & = (w^e*R^e)^d \pmod n \\
+     & = (w*R)^{ed} \pmod n  \\
+     & = w * R \pmod n\\
+\end{align}
+</math>
+
+Because of the blinding process, the Bank is not able to associate <math>R''</math> with <math>R'</math> or <math>R</math>, so it is unable to determine that Bob and Alice are doing business together, preserving the anonymity of the transaction.  Alice unblinds <math>R'''</math> (by dividing it by <math>w</math>) to generate the original value <math>R</math>, which she sends to Bob.
+Bob verifies that <math>R</math> can be encrypted with the bank's public key by computing <math>R' = R^e \pmod n</math>, which means that Alice has deposited $100 into the bank.  Bob then sends this value to the bank and the bank checks its records to be sure that <math>R</math> has not been already used.  If it has not, it deposits $100 into his account and updates its database that the unique value <math>R</math> has been redeemed.
+
+Different public keys can be used for different denominations of currency so this system doesn't take appreciably longer for large transactions.
+
+Note that if neither Alice nor Bob wishes the bank to know that they performed a transaction with each other, then it is hard for the bank to find out.  However, in order to ensure this is the case many people need to be making transactions at the same time.  Otherwise the bank can figure it out by the timing of the transactions, using [[traffic analysis]].
+
+==See also==
+*[[Bearer bond]]
+*[[Blind signature]]
+*[[Electronic money]]
+*[[Itex]]
+*[[Online banking]]
+*[[Ripple monetary system]]
+*[[RSA]]
+
+==External links==
+*[http://wiki.github.com/FellowTraveler/Open-Transactions/ Open Transactions] - Open-source software, including library, server, and client, providing untraceable digital cash and anonymous numbered accounts.
+*[http://orlingrabbe.com/dmt1.htm The Digital Monetary Trust, Part 1] - Anonymous banking based on cryptography, not bankers & lawyers.
+*[http://orlingrabbe.com/dmt2.htm The Digital Monetary Trust, Part 2] - The mathematical details of the anonymous banking system.
+*[[David Chaum]]'s [http://www.chaum.com/articles/Achieving_Electronic_Privacy.htm Scientific American article on Achieving Electronic Privacy]
+*[http://osaka.law.miami.edu/~froomkin/articles/tcmay.htm Untraceable Digital Cash, Information Markets, and BlackNet] by [[Timothy C. May]]
+
+[[Category:Banking]]
+[[Category:Anonymity networks]]
+[[Category:Financial cryptography]]
+[[Category:Crypto-anarchism]]
+[[Category:Articles with Alice and Bob explanations]]</body> </html>

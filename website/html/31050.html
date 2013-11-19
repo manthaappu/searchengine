@@ -1,0 +1,44 @@
+<html> <head> <title>RSA/Intuative</title></head><body>{{Lead missing|date=March 2010}}
+
+== Intuitive Proof ==
+The algorithm is based on a [[Fermat's little theorem]]
+: <math> a^{(p-1)} \equiv 1 \pmod{p}</math>
+p prime, a & p coprime.
+
+So, if we choose ''d'' such that
+: <math>e d \equiv 1 \pmod{p-1}</math>
+i.e.
+: <math>e d - 1 = k(p-1)</math>
+Then for a message m
+: <math>m^{e^d} \equiv m^{e d} \equiv m^{(e d - 1)} \cdot m^1 \equiv m^{k(p-1)}m \equiv 1^km \equiv m \pmod{p}</math>
+
+So a message that is encrypted by raising ''m'' to ''e'' can be decrypted by raising the result to ''d''.
+
+In order to provide security, RSA actually calculates
+: <math> n = p q</math>
+(''p'', ''q'' prime) and then ''d'' such that
+: <math>e d \equiv 1\pmod{(p-1)(q-1)}</math>
+so
+: <math>e d - 1 = k(p-1)(q-1)</math>
+
+We can then continue to calculate 
+: <math>m^{e^d} \equiv m^{e d} \equiv m^{(e d - 1)}m \equiv m^{k(p-1)(q-1)}m \equiv 1^{k(q-1)}m\equiv m \pmod{p}</math>
+
+And likewise for q
+: <math>m^{e^d} \equiv m^{e d} \equiv m^{(e d - 1)}m \equiv m^{k(p-1)(q-1)}m \equiv 1^{k(p-1)}m\equiv m \pmod{q}</math>
+
+Now if <math>a\equiv b \pmod{p}</math> and <math>a\equiv b \pmod{q}</math> then <math>a\equiv b \pmod{pq}</math>, ''p'', ''q'' coprime.
+
+so
+: <math>m^{e^d} \equiv m \pmod{pq}</math>
+
+An attacker would need to factor ''n'' into ''p'' and ''q'' in order to determine ''d'', and this is a hard problem.
+
+Note that while an attacker could easily calculate ''f'' as
+: <math>e f \equiv 1 \pmod{n-1}</math>
+that 
+: <math>m^{e^f} \equiv m^{k(n-1)}m \neq m \pmod{n}</math>
+
+because ''n'' is not prime.
+
+[[Category:Public-key cryptography]]</body> </html>

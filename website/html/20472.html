@@ -1,0 +1,222 @@
+<html> <head> <title>Kd-tree</title></head><body>{{lowercase|title=kd-tree}}
+[[Image:3dtree.png|thumb|A 3-dimensional ''k''d-tree. The first split (red) cuts the root cell (white) into two subcells, each of which is then split (green) into two subcells. Finally, each of those four is split (blue) into two subcells. Since there is no more splitting, the final eight are called leaf cells.|400px|right]]
+
+In [[computer science]], a '''''k''d-tree''' (short for ''k-dimensional [[tree data structure|tree]]'') is a [[space partitioning|space-partitioning]] [[data structure]] for organizing [[Point (geometry)|point]]s in a ''k''-dimensional [[Euclidean space|space]]. ''k''d-trees are a useful data structure for several applications, such as searches involving a multidimensional search key (e.g. range searches and [[nearest neighbor search]]es). ''k''d-trees are a special case of [[BSP tree]]s.
+
+==Informal description==
+The kd-tree is a [[binary tree]] in which every node is a k-dimensional point. Every non-leaf node can be thought of as implicitly generating a splitting [[hyperplane]] that divides the space into two parts, known as subspaces. Points to the left of this hyperplane represent the left sub-tree of that node and points right of the hyperplane are represented by the right sub-tree. The hyperplane direction is chosen in the following way: every node in the tree is associated with one of the k-dimensions, with the hyperplane perpendicular to that dimension's axis. So, for example, if for a particular split the "x" axis is chosen, all points in the subtree with a smaller "x" value than the node will appear in the left subtree and all points with larger "x" value will be in the right sub tree. In such a case, the hyperplane would be set by the x-value of the point, and its [[Surface normal|normal]] would be the unit x-axis.
+
+==Operations on ''k''d-trees==
+===Construction===
+Since there are many possible ways to choose axis-aligned splitting planes, there are many different ways to construct ''k''d-trees. The canonical method of ''k''d-tree construction has the following constraints:
+* As one moves down the tree, one cycles through the axes used to select the splitting planes. (For example, the root would have an ''x''-aligned plane, the root's children would both have ''y''-aligned planes, the root's grandchildren would all have ''z''-aligned planes, the next level would have an ''x''-aligned plane, and so on.)
+* Points are inserted by selecting the [[median]] of the points being put into the subtree, with respect to their coordinates in the axis being used to create the splitting plane. (Note the assumption that we feed the entire set of points into the algorithm up-front.)
+This method leads to a [[balanced tree|balanced]] ''k''d-tree, in which each leaf node is about the same distance from the root. However, balanced trees are not necessarily optimal for all applications.
+
+Note also that it is not ''required'' to select the median point. In that case, the result is simply that there is no guarantee that the tree will be balanced. A simple heuristic to avoid coding a complex linear-time median-finding algorithm or using an O(''n'' log ''n'') sort is to use sort to find the median of a ''fixed'' number of ''randomly'' selected points to serve as the cut line. Practically this technique often results in nicely balanced trees.
+
+Given a list of ''n'' points, the following [[algorithm]] will construct a balanced ''k''d-tree containing those points.
+
+ '''function''' kdtree (''list of points'' pointList, ''int'' depth)
+ {
+     '''if''' pointList '''is empty'''
+         '''return''' '''nil''';
+     '''else'''
+     {
+         ''// Select axis based on depth so that axis cycles through all valid values''
+         '''var''' ''int'' axis := depth '''mod''' k;
+         
+         ''// Sort point list and choose median as pivot element''
+         '''[[Selection algorithm|select]]''' median '''by''' axis '''from''' pointList;
+         
+         ''// Create node and construct subtrees''
+         '''var''' ''tree_node'' node;
+         node.location := median;
+         node.leftChild := kdtree(points '''in''' pointList '''before''' median, depth+1);
+         node.rightChild := kdtree(points '''in''' pointList '''after''' median, depth+1);
+         '''return''' node;
+     }
+ }
+It is common that points "after" the median include only ones that are greater than or equal to the median. Another approach is to define a "superkey" function that compares the points in other dimensions. Lastly, it may be acceptable to let points equal to the median lie on either side.
+
+This algorithm implemented in the [[Python (programming language)|Python programming language]] is as follows:
+
+ <source lang="python">
+class Node:pass
+
+def kdtree(pointList, depth=0):
+    if not pointList:
+        return
+
+    # Select axis based on depth so that axis cycles through all valid values
+    k = len(pointList[0]) # assumes all points have the same dimension
+    axis = depth % k
+
+    # Sort point list and choose median as pivot element
+    pointList.sort(key=lambda point: point[axis])
+    median = len(pointList) // 2 # choose median
+
+    # Create node and construct subtrees
+    node = Node()
+    node.location = pointList[median]
+    node.leftChild = kdtree(pointList[0:median], depth+1)
+    node.rightChild = kdtree(pointList[median+1:], depth+1)
+    return node
+</source>
+
+[[Image:Kdtree 2d.svg|right|thumb|300px|The resulting ''k''d-tree decomposition.]]
+
+[[Image:Tree 0001.svg|right|thumb|300px|The resulting ''k''d-tree.]]
+
+Example usage would be:
+
+ pointList = [(2,3), (5,4), (9,6), (4,7), (8,1), (7,2)]
+ tree = kdtree(pointList)
+
+The tree generated is shown on the right.
+
+This algorithm creates the [[invariant (computer science)|invariant]] that for any node, all the nodes in the left [[subtree]] are on one side of a splitting [[plane (mathematics)|plane]], and all the nodes in the right subtree are on the other side. Points that lie on the splitting plane may appear on either side. The splitting plane of a node goes through the point associated with that node (referred to in the code as ''node.location'').
+
+===Adding elements ===
+{{Expand section|date=November 2008}}
+One adds a new point to a ''k''d-tree in the same way as one adds an element to any other [[binary search tree|search tree]]. First, traverse the tree, starting from the root and moving to either the left or the right child depending on whether the point to be inserted is on the "left" or "right" side of the splitting plane. Once you get to the node under which the child should be located, add the new point as either the left or right child of the leaf node, again depending on which side of the node's splitting plane contains the new node.
+
+Adding points in this manner can cause the tree to become unbalanced, leading to decreased tree performance. The rate of tree performance degradation is dependent upon the spatial distribution of tree points being added, and the number of points added in relation to the tree size. If a tree becomes too unbalanced, it may need to be re-balanced to restore the performance of queries that rely on the tree balancing, such as nearest neighbour searching.
+
+===Removing elements===
+To remove a point from an existing ''k''d-tree, without breaking the invariant, the easiest way is to form the set of all nodes and leaves from the children of the target node, and recreate that part of the tree.
+
+Another approach is to find a replacement for the point removed.<ref>Chandran, Sharat. [http://www.cs.umd.edu/class/spring2002/cmsc420-0401/pbasic.pdf Introduction to kd-trees]. University of Maryland Department of Computer Science.</ref> First, find the node R that contains the point to be removed. For the base case where R is a leaf node, no replacement is required. For the general case, find a replacement point, say p, from the sub-tree rooted at R. Replace the point stored at R with p. Then, recursively remove p.
+
+For finding a replacement point, if R discriminates on x (say) and R has a right child, find the point with the minimum x value from the sub-tree rooted at the right child. Otherwise, find the point with the maximum x value from the sub-tree rooted at the left child.
+
+===Balancing===
+Balancing a ''k''d-tree requires care. Because ''k''d-trees are sorted in multiple dimensions, the [[tree rotation]] technique cannot be used to balance them &mdash; this may break the invariant.
+
+Several variants of balanced kd-tree exists. They include divided kd-tree, pseudo kd-tree, K-D-B-tree, hB-tree and Bkd-tree. Many of these variants are [[adaptive k-d tree]].
+
+===Nearest neighbor search===
+<!--  Incomplete and wafty description of the KD-NN-algorithm -->
+[[Image:KDTree-animation.gif|thumb|300px|Animation of NN searching with a KD Tree in 2D]]
+The nearest neighbor (NN) algorithm aims to find the point in the tree which is nearest to a given input point. This search can be done efficiently by using the tree properties to quickly eliminate large portions of the search space.
+Searching for a nearest neighbor in a ''k''d-tree proceeds as follows:
+# Starting with the root node, the algorithm moves down the tree recursively, in the same way that it would if the search point were being inserted (i.e. it goes right or left depending on whether the point is greater or less than the current node in the split dimension).
+# Once the algorithm reaches a leaf node, it saves that node point as the "current best"
+# The algorithm unwinds the recursion of the tree, performing the following steps at each node:
+## If the current node is closer than the current best, then it becomes the current best.
+## The algorithm checks whether there could be any points on the other side of the splitting plane that are closer to the search point than the current best. In concept, this is done by intersecting the splitting [[hyperplane]] with a [[hypersphere]] around the search point that has a radius equal to the current nearest distance. Since the hyperplanes are all axis-aligned this is implemented as a simple comparison to see whether the difference between the splitting coordinate of the search point and current node is less than the distance (overall coordinates) from the search point to the current best.
+### If the hypersphere crosses the plane, there could be nearer points on the other side of the plane, so the algorithm must move down the other branch of the tree from the current node looking for closer points, following the same recursive process as the entire search.
+### If the hypersphere doesn't intersect the splitting plane, then the algorithm continues walking up the tree, and the entire branch on the other side of that node is eliminated.
+# When the algorithm finishes this process for the root node, then the search is complete.
+Generally the algorithm uses squared distances for comparison to avoid computing square roots. Additionally, it can save computation by holding the squared current best distance in a variable for comparison.
+
+====Sample Lua - NN Search ====
+<source lang="lua">
+function kdsearchnn( here, point, best )
+
+    if here == nil then
+        return best
+    end
+
+    if best == nil then
+        best = here
+    end
+
+    -- consider the current node --
+    if distance(here,point) < distance(best,point) then
+        best = here
+    end
+
+    -- search the near branch --
+    child = child_near(here,point)
+    best = kdsearchnn( child, point, best )
+
+    -- search the away branch - maybe --
+    if distance_axis(here,point) < distance(best,point) then
+        child = child_away(here,point)
+        best = kdsearchnn( child, point, best )
+    end
+
+    return best
+
+end
+</source>
+
+Finding the nearest point is an O(log N) operation in the case of randomly distributed points. Analyses of binary search trees has found that the worst case search time for an k-dimensional KD tree containing N nodes is given by the following equation.<ref name=Lee1977>{{Cite journal
+ | last1 = Lee | first1 = D. T. | author1-link = Der-Tsai Lee
+ | last2 = Wong | first2 = C. K.
+ | year = 1977
+ | title = Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees
+ | journal = Acta Informatica
+ | volume = 9
+ | issue = 1
+ | pages = 23–29
+ | doi = 10.1007/BF00263763
+}}</ref>
+
+:<math>t_{worst} = O(k \cdot N^{1-\frac{1}{k}})</math>
+
+In very high dimensional spaces, the [[curse of dimensionality]] causes the algorithm to need to visit many more branches than in lower dimensional spaces. In particular, when the number of points is only slightly higher than the number of dimensions, the algorithm is only slightly better than a linear search of all of the points.
+
+The algorithm can be extended in several ways by simple modifications. It can provide the ''k''-Nearest Neighbors to a point by maintaining k current bests instead of just one. Branches are only eliminated when they can't have points closer than any of the k current bests.
+
+It can also be converted to an approximation algorithm to run faster. For example, approximate nearest neighbour searching can be achieved by simply setting an upper bound on the number points to examine in the tree, or by interrupting the search process based upon a real time clock (which may be more appropriate in hardware implementations). Nearest neighbour for points that are in the tree already can be achieved by not updating the refinement for nodes that give zero distance as the result, this has the downside of discarding points that are not unique, but are co-located with the original search point.
+
+Approximate nearest neighbor is useful in real time applications such as robotics due to the significant speed increase gained by not searching for the best point exhaustively. One of its implementations is [[Best Bin First]]...
+
+==High-Dimensional Data==
+''k''d-trees are not suitable for efficiently finding the nearest neighbour in high dimensional spaces. As a general rule, if the dimensionality is ''k'', then number of points in the data, ''N'', should be ''N >> 2<sup>k</sup>''. Otherwise, when ''k''d-trees are used with high-dimensional data, most of the points in the tree will be evaluated and the efficiency is no better than exhaustive search,<ref>{{cite book|author=Jacob E. Goodman, Joseph O'Rourke and Piotr Indyk (Ed.) | title=Handbook of Discrete and Computational Geometry|chapter=Chapter 39 : Nearest neighbors in high-dimensional spaces|publisher=CRC Press |edition=2nd|year=2004}}</ref> and approximate nearest-neighbour methods are used instead.
+
+==Complexity==
+* Building a static ''k''d-tree from ''n'' points takes [[Big O notation|O]](''n'' log <sup>2</sup> ''n'') time if an [[Big O notation|O]](''n'' log ''n'') sort is used to compute the median at each level. The complexity is [[Big O notation|O]](''n'' log ''n'') if a linear [[Selection algorithm|median-finding]] algorithm such as the one described in Cormen ''et al.''<ref>{{Introduction to Algorithms}} Chapter 10.</ref> is used.
+
+* Inserting a new point into a balanced ''k''d-tree takes O(log ''n'') time.
+* Removing a point from a balanced ''k''d-tree takes O(log ''n'') time.
+* Querying an axis-parallel range in a balanced ''k''d-tree takes O(''n''<sup>1-1/k</sup> +''m'') time, where m is the number of the reported points, and k the dimension of the ''k''d-tree.
+
+==Variations==
+===Volumetric objects===
+Instead of points, a ''k''d-tree can also contain [[rectangle]]s or hyperrectangles.<ref>J. L. Bentley. [http://doi.acm.org/10.1145/361002.361007 Multidimensional binary search trees used for associative searching]. Communications of the ACM, 18(9):509-517, 1975.</ref> A 2D rectangle is considered a 4D object (x<sub>low</sub>, x<sub>high</sub>, y<sub>low</sub>, y<sub>high</sub>). Thus range search becomes the problem of returning all rectangles intersecting the search rectangle. The tree is constructed the usual way with all the rectangles at the leaves. In an [[orthogonal range search]], the ''opposite'' coordinate is used when comparing against the median. For example, if the current level is split along x<sub>high</sub>, we check the x<sub>low</sub> coordinate of the search rectangle. If the median is less than the x<sub>low</sub> coordinate of the search rectangle, then no rectangle in the left branch can ever intersect with the search rectangle and so can be pruned. Otherwise both branches should be traversed. See also [[interval tree]], which is a 1-dimensional special case.
+
+===Points only in leaves===
+It is also possible to define a kd-tree with points stored solely in leaves.<ref>de Berg, Mark et al. Computational Geometry: Algorithms and Applications, 3rd Edition, pages 99-101. Springer, 2008.</ref> This form of kd-tree allows a variety of split mechanics other than the standard median split. The midpoint splitting rule<ref name="midpointsplit">S. Maneewongvatana and [[David Mount|D. M. Mount]]. [http://www.cs.umd.edu/~mount/Papers/cgc99-smpack.pdf It's okay to be skinny, if your friends are fat]. 4th Annual CGC Workshop on Computational Geometry, 1999.</ref> selects on the middle of the longest axis of the space being searched, regardless of the distribution of points. This guarantees that the aspect ratio will be at most 2:1, but the depth is dependent on the distribution of points. A variation, called sliding-midpoint, only splits on the middle if there are points on both sides of the split. Otherwise, it splits on point nearest to the middle. Maneewongvatana and Mount show that this offers "good enough" performance on common data sets.
+Using sliding-midpoint, an [[Nearest neighbor search#Approximate_nearest_neighbor|approximate nearest neighbor]] query can be answered in <math>O \left ( \frac{ 1 }{ { \epsilon\ }^d } \log n \right )</math>.
+Approximate range counting can be answered in <math>O \left ( \log n + { \left ( \frac{1}{ \epsilon\ } \right ) }^d \right )</math> with this method.
+
+==See also==
+* [[implicit kd-tree|implicit ''k''d-tree]]
+* [[min/max kd-tree|min/max ''k''d-tree]]
+* [[Quadtree]]
+* [[Octree]]
+* [[Bounding Interval Hierarchy]]
+* [[Nearest neighbor search]]
+* [[Klee's measure problem]]
+
+==References==
+{{reflist}}
+
+== External links ==
+* [http://libkdtree.alioth.debian.org libkdtree++], an open-source STL-like implementation of ''k''d-trees in C++.
+* [http://www.autonlab.org/autonweb/14665/version/2/part/5/data/moore-tutorial.pdf?branch=main&language=en A tutorial on KD Trees]
+* [http://babel.isa.uma.es/mrpt/index.php/The_hierarchical_model_of_metric_maps#Point_maps A C++ implementation of ''k''d-trees for 3D point clouds], part of the [[Mobile Robot Programming Toolkit| Mobile Robot Programming Toolkit (MRPT)]]
+* [http://code.google.com/p/kdtree/ kdtree] A simple C library for working with KD-Trees
+* [http://donar.umiacs.umd.edu/quadtree/points/kdtree.html K-D Tree Demo, Java applet]
+* [http://www.cs.umd.edu/~mount/ANN/ libANN] Approximate Nearest Neighbor Library includes a kd-tree implementation
+* [http://www.vision.caltech.edu/malaa/software/research/image-search/ Caltech Large Scale Image Search Toolbox]: a Matlab toolbox implementing randomized Kd-Trees for fast approximate nearest neighbor search, in addition to [[Locality sensitive hashing|LSH]], Hierarchical K-Means, and [[Inverted file|Inverted File]] search algorithms.
+
+{{CS-Trees}}
+
+{{DEFAULTSORT:Kd-Tree}}
+[[Category:Computer graphics data structures]]
+[[Category:Trees (structure)]]
+[[Category:Geometric algorithms]]
+[[Category:Database index techniques]]
+
+[[de:K-d-Baum]]
+[[es:Árbol kd]]
+[[fa:درخت کی‌دی]]
+[[fr:Arbre kd]]
+[[he:עץ kd]]
+[[ja:Kd木]]
+[[pl:Drzewo kd]]
+[[sl:KD drevo]]</body> </html>

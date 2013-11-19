@@ -1,0 +1,45 @@
+<html> <head> <title>QR algorithm</title></head><body>In [[numerical linear algebra]], the '''QR algorithm''' is an [[eigenvalue algorithm]]: that is, a procedure to calculate the [[eigenvalues and eigenvectors]] of a [[Matrix (mathematics)|matrix]]. The QR transformation was developed in the late 1950s by [[John G.F. Francis]] (England) and by [[Vera N. Kublanovskaya]] (USSR), working independently.<ref>
+J.G.F. Francis, "The QR Transformation, I", ''The Computer Journal'', vol. 4, no. 3, pages 265-271 (1961, received Oct 1959) [http://comjnl.oxfordjournals.org/cgi/content/abstract/4/3/265 online at oxfordjournals.org];<br /> 
+J.G.F. Francis, "The QR Transformation, II" ''The Computer Journal'', vol. 4, no. 4, pages 332-345 (1962) [http://comjnl.oxfordjournals.org/cgi/content/abstract/4/4/332 online at oxfordjournals.org].<br /> 
+Vera N. Kublanovskaya, "On some algorithms for the solution of the complete eigenvalue problem," ''USSR Computational Mathematics and Mathematical Physics'', vol. 1, no. 3, pages 637–657 (1963, received Feb 1961). Also published in: ''Zhurnal Vychislitel'noi Matematiki i Matematicheskoi Fiziki'', vol.1, no. 4, pages 555–570 (1961). </ref>  The basic idea is to perform a [[QR decomposition]], writing the matrix as a product of an [[orthogonal matrix]] and an upper [[triangular matrix]], multiply the factors in the other order, and iterate.
+
+==The practical QR algorithm==
+Formally, let ''A'' be the matrix of which we want to compute the eigenvalues, and let ''A''<sub>0</sub>:=''A''. At the ''k''-th step (starting with ''k'' = 0), we write ''A''<sub>''k''</sub> as the product of an orthogonal matrix ''Q''<sub>''k''</sub> and a upper triangular matrix ''R''<sub>''k''</sub> and we form ''A''<sub>''k''+1</sub> = ''R''<sub>''k''</sub>''Q''<sub>''k''</sub>. Note that
+:<math> A_{k+1} = R_k Q_k = Q_k^T Q_k R_k Q_k = Q_k^T A_k Q_k = Q_k^{-1} A_k Q_k, </math>
+so all the ''A''<sub>''k''</sub> are [[Similar matrix|similar]] and hence they have the same eigenvalues. The algorithm is [[numerical stability|numerically stable]] because it proceeds by ''orthogonal'' similarity transforms.
+
+Under certain conditions,<ref>Golub, G. H. and Van Loan, C. F.: Matrix Computations, 3rd ed., Johns Hopkins University Press, Baltimore, 1996, ISBN 0-8018-5414-8.</ref> the matrices ''A''<sub>''k''</sub> converge to a triangular matrix, the [[Schur form]] of ''A''. The eigenvalues of a triangular matrix are listed on the diagonal, and the eigenvalue problem is solved. In testing for convergence it is impractical to require exact zeros, but the [[Gershgorin circle theorem]] provides a bound on the error.
+
+In this crude form the iterations are relatively expensive. This can be mitigated by first bringing the matrix ''A'' to upper [[Hessenberg form]] (which costs <math>\begin{matrix}\frac{10}{3}\end{matrix} n^3 + O(n^2)</math> arithmetic operations using a technique based on [[Householder transformation|Householder reduction]]), with a finite sequence of orthogonal similarity transforms, somewhat like a two-sided QR decomposition.<ref name=Demmel>[[James W. Demmel]], ''Applied Numerical Linear Algebra'' (SIAM, 1997).</ref><ref name=Trefethen>[[Lloyd Nicholas Trefethen|Lloyd N. Trefethen]] and David Bau, ''Numerical Linear Algebra'' (SIAM, 1997).</ref>  (For QR decomposition, the Householder reflectors are multiplied only on the left, but for the Hessenberg case they are multiplied on both left and right.) Determining the QR decomposition of an upper Hessenberg matrix costs <math>6 n^2 + O(n)</math> arithmetic operations.  Moreover, because the Hessenberg form is already nearly upper-triangular (it has just one nonzero entry below each diagonal), using it as a starting point reduces the number of steps required for convergence of the QR algorithm.
+
+If the original matrix is [[symmetric matrix|symmetric]], then the upper Hessenberg matrix is also symmetric and thus [[tridiagonal matrix|tridiagonal]], and so are all the ''A''<sub>''k''</sub>. This procedure costs <math>\begin{matrix}\frac{4}{3}\end{matrix} n^3 + O(n^2)</math> arithmetic operations using  a technique based on Householder reduction.<ref name=Demmel/><ref name=Trefethen/> Determining the QR decomposition of a symmetric tridiagonal matrix costs <math>O(n)</math> operations.<ref>James M. Ortega and Henry F. Kaiser, "The ''LL<sup>T</sup>'' and ''QR'' methods for symmetric tridiagonal matrices," ''The Computer Journal'' '''6''' (1), 99–101 (1963).</ref>
+
+The rate of convergence depends on the separation between eigenvalues, so a practical algorithm will use shifts, either explicit or implicit, to increase separation and accelerate convergence. A typical symmetric QR algorithm isolates each eigenvalue (then reduces the size of the matrix) with only one or two iterations, making it efficient as well as robust.
+
+== The implicit QR algorithm ==
+In modern computational practice,<ref>Golub and Van Loan, chapter 7</ref> the QR algorithm is performed in an implicit version which makes the use of multiple shifts easier to introduce. The matrix is first brought to upper Hessenberg form <math>A_0=QAQ^T</math> as in the explicit version; then, at each step, the first column of <math>A_k</math> is transformed via a small-size Householder similarity transformation to the first column of <math>p(A_k)</math> (or <math>p(A_k)e_1</math>), where <math>p(A_k)</math>, of degree <math>r</math>, is the polynomial that defines the shifting strategy (often <math>p(x)=(x-\lambda)(x-\bar\lambda)</math>, where <math>\lambda</math> and <math>\bar\lambda</math> are the two eigenvalues of the trailing <math>2 \times 2</math> principal submatrix of <math>A_k</math>, the so-called ''implicit double-shift''). Then successive Householder transformation of size <math>r+1</math> are performed in order to return the working matrix <math>A_k</math> to upper Hessenberg form. This operation is known as ''bulge chasing'', due to the peculiar shape of the non-zero entries of the matrix along the steps of the algorithm. As in the first version,  deflation is performed as soon as one of the sub-diagonal entries of <math>A_k</math> is sufficiently small.
+
+===Renaming proposal===
+Since in the modern implicit version of the procedure no [[QR decomposition]]s are explicitly performed, some authors, for instance Watkins,<ref>Watkins, David S.: The Matrix Eigenvalue Problem: GR and Krylov Subspace Methods, SIAM, Philadelphia, PA, USA, 2007, ISBN 0-89871-641-1, 9780898716412</ref> suggested changing its name to ''Francis algorithm''. [[Gene_H._Golub|Golub]] and [[Charles_F._Van_Loan|Van Loan]] use the term ''Francis QR step''.
+
+== Interpretation and convergence ==
+The QR algorithm can be seen as a more sophisticated variation of the basic "power" [[eigenvalue algorithm]]. Recall that the power algorithm repeatedly multiplies ''A'' times a single vector, normalizing after each iteration. The vector converges to an eigenvector of the largest eigenvalue. Instead, the QR algorithm works with a complete basis of vectors, using QR decomposition to renormalize (and orthogonalize). For a symmetric matrix ''A'', upon convergence, ''AQ'' = ''Q&Lambda;'', where ''&Lambda;'' is the diagonal matrix of eigenvalues to which ''A'' converged, and where ''Q'' is a composite of all the orthogonal similarity transforms required to get there. Thus the columns of ''Q'' are the eigenvectors.
+
+== Other variants==
+One variant of the ''QR algorithm'', ''the Golub-Kahan-Reinsch'' algorithm starts with reducing a general matrix into a bidiagonal one.<ref>Bochkanov Sergey Anatolyevich. ALGLIB User Guide - General Matrix operations - Singular value decomposition . ALGLIB Project. 2010-12-11. URL:http://www.alglib.net/matrixops/general/svd.php. Accessed: 2010-12-11. (Archived by WebCite® at http://www.webcitation.org/5utO4iSnR)</ref>. This variant of the ''QR algorithm'' for the computation of eigenvalues, which was first described by {{harvtxt|Golub|Kahan|1965}}. The [[LAPACK]] subroutine [http://www.netlib.org/lapack/double/dbdsqr.f DBDSQR] implements this iterative method, with some modifications to cover the case where the singular values are very small {{harv|Demmel|Kahan|1990}}. Together with a first step using Householder reflections and, if appropriate, [[QR decomposition]], this forms the [http://www.netlib.org/lapack/double/dgesvd.f  DGESVD] routine for the computation of the [[singular value decomposition]].
+
+== References ==
+<references/>
+
+== External links ==
+* {{planetmath reference|id=1474|title=Eigenvalue problem}}
+* [http://www.math.umn.edu/~olver/aims_/qr.pdf Prof. Peter Olver's notes on orthogonal bases and the workings of the QR algorithm]
+* [http://math.fullerton.edu/mathews/n2003/QRMethodMod.html Module for the QR Method]
+
+{{Numerical linear algebra}}
+
+[[Category:Numerical linear algebra]]
+
+[[de:QR-Algorithmus]]
+[[ja:QR法]]
+[[fi:QR-algoritmi]]</body> </html>

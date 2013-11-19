@@ -1,0 +1,78 @@
+<html> <head> <title>AdaBoost</title></head><body>'''AdaBoost''', short for Adaptive [[Boosting]], is a [[machine learning]] algorithm, formulated by [[Yoav Freund]] and [[Robert Schapire]]<ref>Yoav Freund, Robert E. Schapire. [http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.56.9855 "A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting"], 1995</ref>. It is a [[meta-algorithm]], and can be used in conjunction with many other learning algorithms to improve their performance. AdaBoost is adaptive in the sense that subsequent classifiers built are tweaked in favor of those instances misclassified by previous classifiers. AdaBoost is sensitive to noisy data and [[outlier]]s. However in some problems it can be less susceptible to the [[overfitting (machine learning)|overfitting]] problem than most learning algorithms. 
+
+AdaBoost calls a [[Boosting|weak classifier]] repeatedly in a series of rounds <math> t = 1,\ldots,T</math>. For each call a distribution of weights <math>D_{t}</math> is updated that indicates the importance of examples in the data set for the classification. On each round, the weights of each incorrectly classified example are increased (or alternatively, the weights of each correctly classified example are decreased), so that the new classifier focuses more on those examples. 
+
+== The algorithm for the binary classification task ==
+Given: <math>(x_{1},y_{1}),\ldots,(x_{m},y_{m})</math> where <math>x_{i} \in X,\, y_{i} \in Y = \{-1, +1\}</math>
+
+Initialize <math>D_{1}(i) = \frac{1}{m}, i=1,\ldots,m.</math>
+
+For <math>t = 1,\ldots,T</math>:
+
+* Find the classifier <math>h_{t} : X \to \{-1,+1\}</math> that minimizes the error with respect to the distribution <math>D_{t}</math>:
+: <math>h_{t} = \underset{h_{t} \in \mathcal{H}}{\operatorname{argmin}} \; \epsilon_{t}</math>, where <math> \epsilon_{t} = \sum_{i=1}^{m} D_{t}(i)[y_i \ne h_{t}(x_{i})]</math>
+* if <math>\epsilon_{t} \geq 0.5</math> then stop.
+* Choose <math>\alpha_{t} \in \mathbb{R}</math>, typically <math>\alpha_{t}=\frac{1}{2}\textrm{ln}\frac{1-\epsilon_{t}}{\epsilon_{t}}</math> where <math>\epsilon_{t}</math> is the weighted error rate of classifier <math>h_{t}</math>.
+* Update:
+: <math>D_{t+1}(i) = \frac{ D_t(i) \exp(-\alpha_t y_i h_t(x_i)) }{ Z_t }</math><br>
+where <math>Z_{t}</math> is a normalization factor (chosen so that <math>D_{t+1}</math> will be a [[probability distribution]], i.e. sum one over all x).
+
+Output the final classifier:
+
+: <math>H(x) = \textrm{sign}\left( \sum_{t=1}^{T} \alpha_{t}h_{t}(x)\right)</math>
+
+The equation to update the distribution <math>D_{t}</math> is constructed so that:
+
+: <math>- \alpha_{t} y_{i} h_{t}(x_{i}) \begin{cases} <0, & y(i)=h_{t}(x_{i}) \\ >0, & y(i) \ne h_{t}(x_{i}) \end{cases}</math>
+
+Thus, after selecting an optimal classifier <math>h_{t} \,</math> for the distribution <math>D_{t} \,</math>, the examples <math>x_{i} \,</math> that the classifier <math>h_{t} \,</math> identified correctly are weighted less and those that it identified incorrectly are weighted more.  Therefore, when the algorithm is testing the classifiers on the distribution <math>D_{t+1} \,</math>, it will select a classifier that better identifies those examples that the previous classifer missed.
+
+==Statistical Understanding of Boosting==
+
+Boosting can be seen as minimization of a [[convex loss function]] over a [[convex set]] of functions. <ref>T. Zhang, "Statistical behavior and consistency of classification methods based on convex risk minimization", Annals of Statistics 32 (1), pp. 56-85, 2004.</ref> Specifically, the loss being minimized is the exponential loss
+
+:<math>\sum_i e^{-y_i f(x_i)}</math>
+
+and we are seeking a function
+
+:<math>f = \sum_t \alpha_t h_t</math>
+
+==See also==
+* [[Bootstrap aggregating]]
+* [[LPBoost]]
+* [[GentleBoost]]
+
+==References==
+{{reflist}}
+
+==Implementations==
+*[http://www.inf.fu-berlin.de/inst/ag-ki/adaboost4.pdf AdaBoost and the Super Bowl of Classifiers - A Tutorial on AdaBoost.] 
+*[http://codingplayground.blogspot.com/2009/03/adaboost-improve-your-performance.html Adaboost in C++], an implementation of Adaboost in C++ and boost by Antonio Gulli
+*[http://www.mathworks.com/matlabcentral/fileexchange/27813  Easy readable Matlab Implementation of Classic AdaBoost]
+*[http://code.google.com/p/icsiboost/ icsiboost], an open source implementation of Boostexter
+*[http://jboost.sourceforge.net JBoost], a site offering a classification and visualization package, implementing AdaBoost among other boosting algorithms. 
+*[http://graphics.cs.msu.ru/en/science/research/machinelearning/adaboosttoolbox MATLAB AdaBoost toolbox. Includes Real AdaBoost, Gentle AdaBoost and Modest AdaBoost implementations.] 
+*[http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=21317&objectType=file A Matlab Implementation of AdaBoost]
+*[http://luispedro.org/software/milk milk] for Python implements [http://packages.python.org/milk/adaboost.html AdaBoost].
+*[http://www.esuli.it/mpboost MPBoost++], a C++ implementation of the original AdaBoost.MH algorithm and of an improved variant, the MPBoost algorithm.
+*[http://npatternrecognizer.codeplex.com/ NPatternRecognizer ], a fast machine learning algorithm library written in C#. It contains support vector machine, neural networks, bayes, boost, k-nearest neighbor, decision tree, ..., etc.
+*[http://opencv.willowgarage.com/documentation/boosting.html OpenCV implementation of several boosting variants] 
+
+
+==External links==
+*[http://www.boosting.org Boosting.org], a site on boosting and related ensemble learning methods
+*[http://cmp.felk.cvut.cz/~sochmj1/adaboost_talk.pdf AdaBoost] Presentation summarizing Adaboost (see page 4 for an illustrated example of performance)
+*[http://www.site.uottawa.ca/~stan/csi5387/boost-tut-ppr.pdf A Short Introduction to Boosting] Introduction to Adaboost by Freund and Schapire from 1999
+*[http://citeseer.ist.psu.edu/cache/papers/cs/2215/http:zSzzSzwww.first.gmd.dezSzpersonszSzMueller.Klaus-RobertzSzseminarzSzFreundSc95.pdf/freund95decisiontheoretic.pdf A decision-theoretic generalization of on-line learning and an application to boosting] ''Journal of Computer and System Sciences'', no. 55. 1997  (Original paper of Yoav Freund and Robert E.Schapire where Adaboost is first introduced.)
+*[http://www.cs.ucsd.edu/~yfreund/adaboost/index.html An applet demonstrating AdaBoost]
+*[http://engineering.rowan.edu/~polikar/RESEARCH/PUBLICATIONS/csm06.pdf Ensemble Based Systems in Decision Making], R. Polikar, IEEE Circuits and Systems Magazine, vol.6, no.3, pp. 21-45, 2006. A tutorial article on ensemble systems including pseudocode, block diagrams and implementation issues for AdaBoost and other ensemble learning algorithms.
+*[http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.51.9525 Additive logistic regression: a statistical view of boosting] by Jerome Friedman, Trevor Hastie, Robert Tibshirani. Paper introducing probabilistic theory for AdaBoost, and introducing GentleBoost
+
+[[Category:Classification algorithms]]
+[[Category:Ensemble learning]]
+
+[[fr:AdaBoost]]
+[[ja:AdaBoost]]
+[[pl:AdaBoost]]
+[[pt:AdaBoost]]
+[[ru:AdaBoost]]</body> </html>

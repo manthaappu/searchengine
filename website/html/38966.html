@@ -1,0 +1,213 @@
+<html> <head> <title>Unix security</title></head><body>{{tone|date=January 2008}}
+'''Unix security''' refers to the means of [[Computer security|securing]] a [[Unix]] or [[Unix-like]] [[operating system]].  A secure environment is achieved not only by the design concepts of these operating systems, but also through vigilant [[User (computing)|user]] and [[System administrator|administrative]] practices.
+
+{{Wikibooks|UNIX Computing Security}}
+
+==Design concepts==
+=== Permissions ===
+A core security feature in these systems is the [[File system permissions|permissions]] system. All files in a typical Unix-style filesystem have permissions set enabling different access to a file.
+
+Permissions on a file are commonly set using the [[chmod]] command and seen through the [[ls]] command. For example:
+ -r-xr-xr-x  1 root  wheel  745720 Sep  8  2002 /bin/sh
+
+Unix permissions permit different users access to a file. Different ''user groups'' have different permissions on a file.
+
+More advanced Unix filesystems include the ''Access Control List'' concept which allows permissions to be granted to multiple users or groups.  An ''Access Control List'' may be used to grant permission to additional individual users or groups.  For example:
+ /pvr [u::rwx,g::r-x,o::r-x/u::rwx,u:sue:rwx,g::r-x,m::rwx,o::r-x]
+
+In this example, which is from the [[chacl]] command on the [[Linux]] operating system, the user '''sue''' is granted ''write'' permission to the ''/pvr'' directory.
+
+=== User groups ===
+Users under Unix style operating systems often belong to managed groups with specific access permissions. This enables users to be grouped by the level of access they have to this system.  Many Unix implementations add an additional layer of security by requiring that a user be a member of the ''[[Wheel (Unix term)|wheel]]''  [[Group identifier (Unix)|user privileges group]] in order to access the <tt>su</tt> command.<ref name=levi>{{cite book|title=UNIX Administration: A Comprehensive Sourcebook for Effective Systems and Network Management |first=Bozidar |last=Levi |publisher=CRC Press |year=2002 |pages=207 |isbn=0849313511}}</ref>
+
+=== Issues ===
+Most Unix and Unix-like systems have an account or group which enables a user to exact complete control over the system, often known as a [[Superuser|root]] account. If access to this account is gained by an unwanted user, this results in a complete breach of the system. A root account however is necessary for administrative purposes, and for the above security reasons the root account is ''seldom'' used for day to day purposes (the [[sudo]] program is more commonly used), so usage of the root account can be more closely monitored.
+
+Root access "as it should be" can be visualised by those familiar with the [[Superman]] stories using the following [[analogy]]:
+
+::Using a root account is rather like being Superman; an administrator's regular user is more like Clark Kent. Clark Kent becomes Superman for only as long as necessary, in order to save people. He then reverts to his "disguise". Root access should be used in the same fashion. The Clark Kent disguise doesn't really restrict him though, as he is still able to use his super powers. This is analogous to using the sudo program.
+
+==User and administrative techniques==
+Unix has many tools that can improve security if used properly by users and administrators.
+
+===Passwords===
+Selecting a strong [[password]] and guarding it properly are probably the most important things a user can do to improve Unix security.
+In Unix systems, the essential information about users is stored under the file <tt>[[Passwd (file)|/etc/passwd]]</tt>. This file keeps track of the users registered in the system and their main definitions. Passwords, or more correctly, the hash of the password, can also be stored in the same place.  The entries in <tt>/etc/passwd</tt> occupy exactly one line each, and have the following form: 
+
+ nickname:password_hash:UserID:GroupID:Complete_Name:home_dir:shell_bin
+An example would be: 
+ xfze:$1$zuW2nX3sslp3qJm9MYDdglEApAc36r/:1000:100:José Carlos D. S. Saraiva:/home/xfze:/bin/bash
+
+Since all users must have read access to this file, in order for the system to check the login password, one security issue was raised: anyone could have read the file and retrieve the password hashes of other users. To solve this problem, the  file <tt>[[password shadowing|/etc/shadow]]</tt> was created to store the password hashes, with only [[root]] having read access.  Under password shadowing, the <tt>/etc/passwd</tt> the 2nd field ([[key derivation function|password hash]]) is replaced by an 'x' which tells the system to retrieve the corresponding user's password via the <tt>/etc/shadow</tt> file.
+
+The <tt>/etc/shadow</tt> file usually only contains the first two fields:
+
+ xfze:$1$zuW2nX3sslp3qJm9MYDdglEApAc36r/:::::
+
+The remaining fields in the <tt>/etc/shadow</tt> file include: 
+#The minimum number of days between password changes
+#The maximum number of days until the password must be changed
+#The number of days of warning given before the password must be changed
+#The number of days after the password must be changed when the account becomes unusable
+#The date (expressed as the number of days since [[Unix epoch|January 1st, 1970]]) when the account is expired
+
+These fields may be used to improve Unix security by enforcing a password security policy.
+
+===Users and accounts===
+Administrators should delete old accounts promptly.
+*[[su (Unix)|su]], [[sudo]], [[Secure Shell|ssh]] only, no remote root logins
+
+==Software Maintenance==
+===Patching===
+Operating systems, like all software, may contain bugs in need of fixing or may be enhanced with the addition of new features.  Patching the operating system in a secure manner requires that the software come from a trustworthy source and not have been altered since it was packaged.  Common methods for verifying that operating system patches have not been altered include the use of [[cryptographic hash]], such as an [[MD5]] based checksum, or the use of read-only media.
+
+From a security standpoint, the specific packaging method, such as the [[RPM Package Manager]] format originally from [[Red Hat Linux]] is not as important as the use of features which ensure the integrity of the patch itself.
+
+====Source Distributions====
+Source distributions include the ability to examine the code for suspicious content.  The drawback, absent an accompanying cryptographic hash value, is that the user must be able to perform a security analysis of the code themselves.
+
+====RPM Packages====
+[[Linux]] distributions which use the [[RPM Package Manager]] format for providing base functionality and software updates make use of [[MD5]] and [[GNU Privacy Guard|GPG]] to ensure content integrity.  The hash values are packaged with the RPM file and verified when the package is installed.
+
+====Debian Packages====
+[[Linux]] distributions which use the [[Debian]] [[Deb (file format)|.deb package format]] for providing base functionality and software updates make use of [[GNU Privacy Guard|GPG]] signatures to ensure content integrity.  A signature is computed when the package is constructed and verified later when the package is installed.
+
+====Other vendors and distributions====
+Regardless of the vendor or distribution, all software distributions should provide a mechanism for verifying that the software is legitimate and has not been modified since it was originally packaged.
+
+==Services==
+
+Unnecessary system software should not be installed or configured on a system.  Software which is no longer required should be removed completely, if possible.
+
+*Identify what services are running
+**netstat -na
+**lsof
+**nmap
+**sockstat -4 ([[FreeBSD]])
+
+The commands [[inetd]] and [[xinetd]] act as super-servers for a variety of network protocols such as [[rlogin]], [[telnet]] and [[ftp]].
+
+Turning off unnecessary services
+
+*using ''chkconfig'' on [[Red Hat Linux]]
+*using ''/etc/rc.conf'' and ''/usr/local/etc/rc.d'' on FreeBSD (mention /etc/rc.local)
+*using ''rc-update'' on [[Gentoo Linux]]
+
+This approach is usually called ''proactive security''.  There are some operating systems which are ''secure by default''.  Amongst others, the free BSD flavours ([[FreeBSD]], [[NetBSD]], and [[OpenBSD]]) are proactively secure.  For example, the output of netstat on a NetBSD 3.0 workstation clearly outlines this technique:
+ $ netstat -a
+ Active Internet connections (including servers)
+ Proto Recv-Q Send-Q  Local Address          Foreign Address        State
+ tcp        0      0  localhost.smtp         *.*                    LISTEN
+ tcp        0      0  *.ssh                  *.*                    LISTEN
+ Active Internet6 connections (including servers)
+ Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)
+ tcp6       0      0  localhost.smtp         *.*                    LISTEN
+ tcp6       0      0  *.ssh                  *.*                    LISTEN
+ Active UNIX domain sockets
+ Address  Type   Recv-Q Send-Q    Inode     Conn     Refs  Nextref Addr
+ c0d10d80 dgram       0      0        0 c0cd8680        0 c0cb7000 -> /var/run/log
+ c0cb7000 dgram       0      0        0 c0cd8680        0        0 -> /var/run/log
+ c0cd8680 dgram       0      0 cb9639e8        0 c0d10d80        0 /var/run/log
+
+The following example from a BSD system
+ $ sockstat -4
+ USER     COMMAND    PID   FD PROTO  LOCAL ADDRESS         FOREIGN ADDRESS
+ root     sendmail   569    4 tcp    localhost.smtp        *.*
+ root     sshd       593    4 tcp    *.ssh                 *.*
+
+Shows that on this machine only the [[Secure shell|SSH]] service is listening to the public [[network interface]] of the computer. [[sendmail]] is listening to the [[loopback]] [[Interface (computer science)|interface]] only.  Access to a service may be further restricted by using a [[Unix security#Firewalls|firewall]].
+
+==File Systems==
+===File system security===
+{{main|File system permissions}}
+
+File system security within [[UNIX]] and [[Unix-like]] systems is based on 9 permission bits, set user and group ID bits, and the sticky bit, for a total of 12 bits.  These permissions apply almost equally to all filesystem objects such as files, directories and devices.
+
+The 9 permission bits are divided into three groups of three bits each.  The first group describes the permissions of the file owner, the second group describes the permissions of a group associated with the file owner or the directory containing the file, and the third group describes the permissions associated with any process which does not have the same user ID as the file.  Each group of three bits contains a bit indicating the read, write or execute access is granted.  In the case of directories, execute access is interpreted as the permission to perform a filename lookup within the directory.
+
+The set user ID and set group ID bits, commonly abbreviated ''set-UID'' and ''set-GID'' respectively, are used to change the identity of the process which executes a file having either or both of those bits set.  A file having the ''[[setuid|set-UID]]'' permission bit set will cause a process which executes that file to temporarily switch the effective user ID to that of the file owner.  A file having the ''[[setgid|set-GID]]'' permission bit set will cause a process which executes that file to temporarily switch the effective group ID to that of the file group.  A process may then alternate between the effective user or group ID which it inherited from the file and the real user or group ID which it inherited when the user logged on to the system.  This provides a mechanism by which a process may limit the access rights it possesses to those code regions which require those access rights.  This is a form of a security technique known as [[privilege separation]] and improves program security by limiting the unintended or undesirable actions of a processes.
+
+A directory having the ''set-GID'' permission bit set will cause a newly created file to have an initial file group value equal to the file group of the directory. This provides a mechanism whereby a subsystem, such as the system's mail subsystem, can create files which have a common file group value so that ''set-GID'' processes within that subsystem are then able to read or write the file.
+
+The ''sticky bit'', formally known as the ''save text on swap'' bit, derives its name from its original purpose.  Originally the ''sticky bit'' caused a process's initial memory image to be stored as a contiguous image on the disk drive which was used to store real memory pages when they were not in use.  This improved the performance of commonly executed commands by making the initial memory image readily available.  Modern UNIX systems no longer perform that function when the bit is set, but the name has been preserved nonetheless.  In the case of files, the ''sticky-bit'' may be used by the system to indicate the style of file locking to be performed.  In the case of directories, the ''sticky bit'' prevents any process, other than one which has super-user privileges or one having an effective user ID of the file owner, from deleting a file within that directory.  The ''sticky bit'' is most commonly used on publicly writable directories, such as the various temporary working space directories on the system.
+
+==Viruses and Virus Scanners==
+Unix-like operating systems are immune to most Microsoft Windows viruses because binaries created to run on Windows generally won't run on other platforms.  However, many Unix like installations provide file storage services to Microsoft Windows clients, such as through the use of [[Samba software]], and may unintentionally become a repository for viruses stored by users. It is common for Unix servers to act as [[Mail transfer agent|Mail Transfer Agents]] consequently email virus scanning is often installed. The [[ClamAV]] virus scanner is available in source code form and may be used to scan Unix file systems for viruses which infect other operating systems.
+
+There are viruses and worms that target Unix-like operating systems.  In fact, the first computer worm -- the [[Morris worm]] -- targeted Unix systems.
+
+==Firewalls==<!-- This section is linked from [[Unix security]] -->
+A [[Firewall (networking)|''firewall'']] derives its name from physical construction methods in which [[Firewall (construction)|a reinforced, fire-resistant wall]] is used to protect opposite sides of the wall from a fire occurring on one side of the wall.  In the same way, a [[network firewall]] protects systems and networks from network threats which exist on the opposite side of the firewall.
+
+===iptables===
+[[iptables]] is the current user interface for interacting with [[Linux]] kernel [[netfilter]] functionality.  It replaced [[ipchains]].  Other [[Unix]] like operating systems may provide their own native functionality and other [[open source]] firewall products exist.  More detailed information about iptables is contained elsewhere.  A brief discussion is contained here in order to describe how iptables may be used to configure a Linux firewall.
+
+[[netfilter]] provides a state-full packet filter which can be configured according to [[Network card|network interface]], [[Internet Protocol|protocol]], [[IP address|source and/or destination address]], [[IP port|source and/or destination port]] and the state of the packet.  A network packet traverses several ''chains'' between the time it is received by a network interface and the time it is accepted by the host or forwarded to another host.  The common chains are '''INPUT''', '''OUTPUT''' and '''FORWARD'''.  The '''INPUT''' ''chain'' is traversed for all packets as they are received by a network interface, regardless of whether they are to be accepted by the host or forwarded to another host.  The '''OUTPUT''' ''chain'' is traversed for all packets as they are transmitted by a network interface.  The '''FORWARD''' chain is traversed for those packets are being routed through the host from one network interface to another, such as is the case for a multi-homed system (a system with more than one physical network interface).
+
+Each of the built-in chains has a default ''policy'' which defines what action is taken for a packet which reaches the end of the chain.  Packet traversal ends when a ''rule'' matches the packet and has an action of '''ACCEPT''', '''DROP''', '''REJECT''' or '''RETURN'''.
+
+The simplest [[iptables]] firewall consists of ''rules'' for each desired service, followed by a rule which indicates that any packets which reach this rule are dropped.  A system which only permitted, for example, incoming email traffic would have a rule which accepted connections on the [[Simple Mail Transfer Protocol|SMTP]] port, and then dropped others.  A rule would be required which indicated that all established connections were also permitted so that outgoing connections would receive responses from other systems.
+
+====INPUT chain====
+The following example shows a simple packet filter for the '''INPUT''' chain for the above described example:
+
+ Chain INPUT (policy DROP 0 packets, 0 bytes)
+  pkts bytes target     prot opt in     out     source               destination
+     0     0 ACCEPT     all  --  any    any     anywhere             anywhere            state ESTABLISHED
+     0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere            tcp dpt:smtp
+     0     0 LOG        all  --  any    any     anywhere             anywhere            LOG level warning
+     0     0 DROP       all  --  any    any     anywhere             anywhere
+
+The addition of an explicit '''DROP''' action ensures that the packets are discarded should the default policy of the '''INPUT''' chain accidentally be changed to '''ACCEPT'''.
+
+====OUTPUT chain====
+There is less need for an '''OUTPUT''' chain and the default ''policy'' of the '''OUTPUT''' chain can safely be set to '''ACCEPT'''.  In some instances it may be desirable for a firewall to limit certain outgoing connections to a certain set of approved systems.  This is known as [[egress filtering]] and may be used to prevent viruses within the firewall from escaping to other systems.  For example, it may be the policy of a network to limit outgoing email connections to a single authorized email servers as a way of combating [[e-mail spam]].  This could be achieved by the following example:
+
+ Chain OUTPUT (policy ACCEPT)
+  pkts bytes target     prot opt in     out     source               destination
+     0     0 DROP       tcp  --  any    any    !server               anywhere            tcp dpt:smtp
+
+There is no need to include any other rules in this example as the default policy for the '''OUTPUT''' chain is '''ACCEPT'''.  Note also that this rule assumes that the host which is acting as the firewall will not be sending email itself, such as to the email server.  This is a good assumption as typically a firewall system contains the minimal amount of system code needed to act as a firewall.
+
+A more restrictive '''OUTPUT''' chain would contain permissive ('''ACCEPT''') entries for those services which may be accessed outside the firewall and then a restrictive ('''DROP''') policy for the chain itself.
+
+==General==
+Secure network communication:
+*Layer 7: [[GNU Privacy Guard|GPG]]/[[Pretty Good Privacy|PGP]]
+*Layers 4,5: [[Transport Layer Security|SSL/TLS]]/[[Stunnel]]/[[S/MIME]]
+*Layer 3: [[Virtual private network|VPN]], [[IPsec]] 
+*Layer 2: [[Point-to-point tunneling protocol|PPTP]]
+
+Packet sniffing:
+*[[tcpdump]], [[Wireshark]]
+
+Attacks:
+*[[Man in the middle attack]]
+*land [[ping of death]] xmas [[Denial-of-service attack]] et al.
+
+==Advanced==
+*[[rootkit]]s, kernel modules, chkrootkit 
+*exploit details, [[buffer overflow]]s, local vs remote
+* [[Security-Enhanced Linux]]
+
+==Service details==
+*banners
+*[[Simple Mail Transfer Protocol|SMTP]] - [[e-mail spam|spam]]
+*[[Sendmail]] - banners help header version etc.
+*[[Domain Name System]] - reverse mapping dnssec
+
+==External links==
+* [http://www.dsm.fordham.edu/~moniot/Classes/InternetWebF00/unix-security/unix-security.html ''The Unix Security Model for web server administration''] Robert K. Moniot 2000
+* [http://www.alw.nih.gov/Security/Docs/network-security.html ''An Architectural Overview of UNIX Network Security''] Robert B. Reinhardt 1993
+* [http://blog.anantshri.info/2007/08/27/how-to-change-root-password-in-debian/ a simple guide to change password in debian] - a must read for new administrators if they wish to avoid crackers.
+* [http://andercheran.aiind.upv.es/toni/unix/index_en.html Unix security papers]
+
+==References==
+{{reflist}}
+''Practical UNIX and Internet Security,'' Simson Garfinkel and Gene Spafford, O'Reilly & Associates, 2003. 
+
+[[Category:Operating system security]]
+[[Category:System administration]]
+[[Category:Unix]]
+
+[[sk:Bezpečnosť v Unixe]]</body> </html>

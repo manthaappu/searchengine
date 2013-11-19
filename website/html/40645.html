@@ -1,0 +1,208 @@
+<html> <head> <title>XDR DRAM</title></head><body>{{Newsrelease|date=March 2009}}
+{{Unreferenced|date=December 2006}}
+
+[[Image:XDRAM.jpg|thumb|XDR DRAM.]]
+'''XDR DRAM''' or '''extreme data rate [[dynamic random access memory]]''' is a high-performance [[Random access memory|RAM]] interface and successor to the [[Rambus]] [[RDRAM]] it is based on, competing with the rival [[DDR2 SDRAM]] and [[GDDR4]] technology. XDR was designed to be effective in small, high-bandwidth consumer systems, high-performance memory applications, and high-end [[Graphics processing unit|GPUs]]. It eliminates the unusually high latency problems that plagued early forms of RDRAM. Also, the XDR DRAM have heavy emphasis on per pin bandwidth, which can benefit further cost control on PCB production. This is because fewer lanes are needed for the same amount of bandwidth. Rambus owns the rights to the technology.   XDR is used by [[Sony]] in the [[PlayStation 3]] console.<ref>[http://www.anandtech.com/cpuchipsets/showdoc.aspx?i=2341 AnandTech: Rambus in Cell Processors and Intel's Dual Core Announcements<!-- Bot generated title -->]</ref>
+
+== Parameters ==
+=== Performance ===
+* Initial clock rate at 400 MHz. 600 MHz, 800 MHz and 1066 MHz planned for the future.
+* Octal Data Rate (ODR):  Eight bits per clock cycle per lane.
+* Each chip provides 8, 16, or 32 programmable lanes, providing up to 204.8 [[gigabit|Gbit]]/s (25.6 [[gigabyte|GB]]/s) <ref>[http://vr-zone.com/articles/elpida-produces-world-s-fastest-7.2ghz-xdr-dram/6471.html?doc=6471 Elpida Produces World's Fastest 7.2GHz XDR DRAM]</ref>
+
+=== Features ===
+* Bi-directional [[Differential signaling|differential]] Rambus Signalling Levels (DRSL) 
+** This uses differential [[open collector|open-collector]] driver, voltage swing 0.2V. It is not the same as [[Low voltage differential signaling|LVDS]].[http://www.rambus.com/products/xdr/innovations/drsl.aspx]
+* Programmable on-chip termination 
+* Adaptive impedance matching 
+* Eight bank memory architecture 
+* Up to four bank-interleaved transactions at full bandwidth 
+* Point-to-point data interconnect 
+* [[Chip scale package]] packaging 
+* Dynamic request scheduling 
+* Early-read-after-write support for maximum efficiency 
+* Zero overhead refresh
+
+=== Power requirements ===
+* 1.8 V [[Vdd]]
+* Programmable ultra-low-voltage DRSL 200 mV swing 
+* Low-power [[Phase-locked loop|PLL]]/[[Delay-locked loop|DLL]] design 
+* Power-down self-refresh support 
+* Dynamic data width support with dynamic clock gating 
+* Per-pin I/O power-down 
+* Sub-page activation support
+
+=== Ease of system design ===
+* Per-bit [http://www.rambus.com/us/technology/innovations/detail/flexphase_timing.html FlexPhase] circuits compensate to a 2.5 ps resolution 
+* XDR Interconnect uses minimum pin count
+
+=== Latency ===
+* 1.25/2.0/2.5/3.33 ns request packets
+
+== Protocol ==
+An XDR RAM chip's high-speed signals are a differential clock input (clock from master, CFM/CFMN), a 12-bit [[Single-ended signalling|single-ended]] request/command bus (RQ11..0), and a bidirectional differential data bus up to 16 bits wide (DQ15..0/DQN15..0).  The request bus may be connected to several memory chips in parallel, but the data bus is point to point; only one RAM chip may be connected to it.  To support different amounts of memory with a fixed-width memory controller, the chips have a programmable interface width.  A 32-bit-wide DRAM controller may support 2 16-bit chips, or be connected to 4 memory chips each of which supplies 8 bits of data, or up to 16 chips configured with 2-bit interfaces.
+
+In addition, each chip has a low-speed serial bus used to determine its capabilities and configure its interface.  This consists of three shared inputs: a reset line (RST), a serial command input (CMD) and a serial clock (SCK), and serial data in/out lines (SDI and SDO) that are daisy-chained together and eventually connect to a single pin on the memory controller.
+
+All single-ended lines are [[active-low]]; an asserted signal or logical 1 is represented by a low voltage.
+
+The request bus operates at [[double data rate]] relative to the clock input.  Two consecutive 12-bit transfers (beginning with the falling edge of CFM) make a 24-bit command packet.
+
+The data bus operates at 8x the speed of the clock; a 400 MHz clock generates 3200 MT/s.  All data reads and writes operate in 16-transfer bursts lasting 2 clock cycles.
+
+Request packet formats are as follows:
+
+{|class=wikitable style="text-align:center;"
+|+XDR DRAM request packet formats<ref>[http://www.rambus.com/assets/documents/products/dl_0161_v0_8.pdf XDR™ Architecture] (Rambus)</ref>
+!rowspan=2| Clock<br/>edge ||rowspan=2| Bit
+|rowspan=26|
+! NOP
+|rowspan=26|
+!colspan=2| Column read/write
+|rowspan=26|
+!colspan=2| Calibrate/power-down
+|rowspan=26|
+!colspan=2| Precharge/refresh
+|rowspan=26|
+!colspan=2| Row Activate
+|rowspan=26|
+!colspan=2| Masked write
+|-
+! Bit || Bit || Description || Bit || Description || Bit || Description || Bit || Description || Bit || Description
+|-
+| ↓ || RQ11 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 0 ||rowspan=4| COL opcode ||bgcolor=palegreen| 0 ||rowspan=4| COLX opcode ||bgcolor=palegreen| 0 ||rowspan=4| ROWP opcode ||bgcolor=palegreen| 0 ||rowspan=2| ROWA opcode ||bgcolor=palegreen| 1 || COLM opcode
+|-
+| ↓ || RQ10 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 1 || M3 ||rowspan=4| Write mask<br/>low bits
+|-
+| ↓ || RQ9  ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 1 ||bgcolor=palegreen| 1 || R9 ||rowspan=3| Row address<br/>high bits || M2
+|-
+| ↓ || RQ8  ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 1 ||bgcolor=palegreen| 0 ||bgcolor=palegreen| 1 || R10 || M1
+|-
+| ↓ || RQ7  ||bgcolor=lightgrey| x ||bgcolor=palegreen| WRX || Write/Read bit ||bgcolor=lightgrey| x ||rowspan=4 bgcolor=lightgrey| ''reserved'' || POP1 ||rowspan=2| Precharge delay<br/>(0..3) || R11 || M0
+|-
+| ↓ || RQ6  ||bgcolor=lightgrey| x || C8 ||rowspan=2| Column address<br/>high bits ||bgcolor=lightgrey| x || POP0 ||bgcolor=lightgrey| R12 ||rowspan=4 bgcolor=lightgrey| ''reserved'' || C8 ||rowspan=2| Column address<br/>high bits
+|-
+| ↓ || RQ5  ||bgcolor=lightgrey| x || C9 ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||rowspan=3 bgcolor=lightgrey| ''reserved'' ||bgcolor=lightgrey| R13 || C9
+|-
+| ↓ || RQ4  ||bgcolor=lightgrey| x ||bgcolor=lightgrey| C10 ||rowspan=2 bgcolor=lightgrey| ''reserved'' ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||bgcolor=lightgrey| R14 ||bgcolor=lightgrey| C10 ||rowspan=2 bgcolor=lightgrey| ''reserved''
+|-
+| ↓ || RQ3  ||bgcolor=lightgrey| x ||bgcolor=lightgrey| C11 ||bgcolor=palegreen| XOP3 ||rowspan=4| Subopcode ||bgcolor=lightgrey| x ||bgcolor=lightgrey| R15 ||bgcolor=lightgrey| C11
+|-
+| ↓ || RQ2  ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BC2 ||rowspan=3| Bank address ||bgcolor=palegreen| XOP2 ||bgcolor=PaleTurquoise| BP2 ||rowspan=3| Precharge bank ||bgcolor=PaleTurquoise| BA2 ||rowspan=3| Bank address ||bgcolor=PaleTurquoise| BC2 ||rowspan=3| Bank address
+|-
+| ↓ || RQ1  ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BC1 ||bgcolor=palegreen| XOP1 ||bgcolor=PaleTurquoise| BP1 ||bgcolor=PaleTurquoise| BA1 ||bgcolor=PaleTurquoise| BC1
+|-
+| ↓ || RQ0  ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BC0 ||bgcolor=palegreen| XOP0 ||bgcolor=PaleTurquoise| BP0 ||bgcolor=PaleTurquoise| BA0 ||bgcolor=PaleTurquoise| BC0
+|-
+| ↑ || RQ11 ||bgcolor=lightgrey| x || DELC || Command delay (0..1) ||bgcolor=lightgrey| x ||rowspan=12 bgcolor=lightgrey| ''reserved'' || POP2 || Precharge enable || DELA || Command delay (0..1) || M7 ||rowspan=4| Write mask<br/>high bits
+|-
+| ↑ || RQ10 ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||rowspan=3 bgcolor=lightgrey| ''reserved'' ||bgcolor=lightgrey| x ||bgcolor=palegreen| ROP2 ||rowspan=3| Refresh command || R8 ||rowspan=9| Row address<br/>low bits || M6
+|-
+| ↑ || RQ9  ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||bgcolor=palegreen| ROP1 || R7 || M5
+|-
+| ↑ || RQ8  ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||bgcolor=palegreen| ROP0 || R6 || M4
+|-
+| ↑ || RQ7  ||bgcolor=lightgrey| x || C7 ||rowspan=4| Column address<br/>low bits ||bgcolor=lightgrey| x || DELR1 ||rowspan=2| Refresh delay<br/>(0..3) || R5 || C7 ||rowspan=4| Column address<br/>low bits
+|-
+| ↑ || RQ6  ||bgcolor=lightgrey| x || C6 ||bgcolor=lightgrey| x || DELR0 || R4 || C6
+|-
+| ↑ || RQ5  ||bgcolor=lightgrey| x || C5 ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x ||rowspan=3 bgcolor=lightgrey| ''reserved'' || R3 || C5
+|-
+| ↑ || RQ4  ||bgcolor=lightgrey| x || C4 ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x || R2 || C4
+|-
+| ↑ || RQ3  ||bgcolor=lightgrey| x || SC3 ||rowspan=4| Sub-column address ||bgcolor=lightgrey| x ||bgcolor=lightgrey| x || R1 || SC3 ||rowspan=4| Sub-column address
+|-
+| ↑ || RQ2  ||bgcolor=lightgrey| x || SC2 ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BR2 ||rowspan=3| Refresh bank || R0 || SC2
+|-
+| ↑ || RQ1  ||bgcolor=lightgrey| x || SC1 ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BR1 || SR1 ||rowspan=2| Sub-row address || SC1
+|-
+| ↑ || RQ0  ||bgcolor=lightgrey| x || SC0 ||bgcolor=lightgrey| x ||bgcolor=PaleTurquoise| BR0 || SR0 || SC0
+|}
+
+There are a large number of timing constraints giving minimum times that must elapse between various commands (see [[Dynamic random access memory#Memory_timing|Dynamic random access memory: Memory timing]]); the DRAM controller sending them must ensure they are all met.
+
+Some commands contain delay fields.  These delay the effect of the command by the given number of clock cycles.  This permits multiple commands (to different banks) to take effect on the same clock cycle.
+
+===Row activate command===
+This operates equivalently to standard SDRAM's activate command, specifying a row address to be loaded into the bank's sense amplifier array.  To save power, a chip may be configured to only activate a portion of the sense amplifier array.  In this case, the SR1..0 bits specify the half or quarter of the row to activate, and following read/write commands' column addresses are required to be limited to that portion.  (Refresh operations always use the full row.)
+
+===Read/write commands===
+These operate analogously to a standard SDRAM's read or write commands, specifying a column address.  Data is provided to the chip a few cycles after a write command (typically 3), and is output by the chip several cycles after a read command (typically 6).  Just as with other forms of SDRAM, the DRAM controller is responsible for ensuring that the data bus is not scheduled for use in both directions at the same time.  Data is always transferred in 16-transfer bursts, lasting 2 clock cycles.  Thus, for a ×16 device, 256 bits (32 bytes) are transferred per burst.
+
+If the chip is using a data bus less than 16 bits wide, one or more of the sub-column address bits are used to select the portion of the column to be presented on the data bus.  If the data bus is 8 bits wide, SC3 is used to identify which half of the read data to access; if the data bus is 4 bits wide, SC3 and SC2 are used, etc.
+
+Unlike conventional SDRAM, there is no provision for choosing the order in which the data is supplied within a burst.  Thus, it is not possible to perform critical-word-first reads.
+
+==== Masked write command ====
+The masked write command is similar to a normal write, but no command delay is permitted and a mask byte is supplied, which permits controlling which 8-bit field .  This is ''not'' a bitmap indicating which bytes are to be written; it would not be large enough for the 32 bytes in a write burst.  Rather, it is a bit pattern which the DRAM controller fills unwritten bytes with.  The DRAM controller is responsible for finding a pattern which does not appear in the other bytes that are to be written.  Because there are 256 possible patterns and only 32 bytes in the burst, it is straightforward to find one.  Even when multiple devices are connected in parallel, a mask byte can always be found when the bus is at most 128 bits wide.  (This would produce 256 bytes per burst, but a masked write command is only used if at least one of them is not to be written.)
+
+Each byte is the 8 consecutive bits transferred across one data line during a particular clock cycle.  M0 is matched to the first data bit transferred during a clock cycle, and M7 is matched to the last bit.
+
+This convention also interferes with performing critical-word-first reads; and word must include bits from at least the first 8 bits transferred.
+
+=== Precharge/refresh command ===
+This command is similar to a combination of a conventional SDRAM's precharge and refresh commands.  The POP''x'' and BP''x'' bits specify a precharge operation, while the ROP''x'', DELR''x'', and BR''x'' bits specify a refresh operation.  Each may be separately enabled.  If enabled, each may have a different command delay and must be addressed to a different bank.
+
+Precharge commands may only be sent to one bank at a time; unlike a conventional SDRAM, there is no "precharge all banks" command.
+
+Refresh commands are also different from a conventional SDRAM.  There is no "refresh all banks" command, and the refresh operation is divided into separate activate and precharge operations so the timing is determined by the memory controller.  The refresh counter is also programmable by the controller.  Operations are:
+* '''000: NOPR''' Perform no refresh operation
+* '''001: REFP''' Refresh precharge; end the refresh operation on the selected bank.
+* '''010: REFA''' Refresh activate; activate the row selected by the REFH/M/L register and selected bank for refresh.
+* '''011: REFI''' Refresh & increment; as for REFA, but also increment the REFH/M/L register.
+* '''100: LRR0''' Load refresh register low; copy RQ7–0 to the low 8 bits of the refresh counter REFL.  No command delay.
+* '''101: LRR1''' Load refresh register middle; copy RQ7–0 to the middle 8 bits of the refresh counter REFM.  No command delay.
+* '''110: LRR2''' Load refresh register high; copy RQ7–0 to the high 8 bits of the refresh counter REFH (if implemented).  No command delay.
+* '''111''' ''reserved''
+
+=== Calibrate/powerdown command ===
+This command performs a number of miscellaneous functions, as determined by the XOP''x'' field.  Although there are 16 possibilities, only 4 are actually used.  Three subcommands start and stop output driver calibration (which must be performed periodically, every 100 ms).
+
+The fourth subcommand places the chip in power-down mode.  In this mode, it performs internal refresh and ignores the high-speed data lines.  It must be woken up using the low-speed serial bus.
+
+== Low-speed serial bus ==
+XDR DRAMs are probed and configured using a low-speed serial bus.  The RST, SCK, and CMD signals are driven by the controller to every chip in parallel.  The SDI and SDO lines are daisy-chained together, with the last SDO output connected to the controller, and the first SDI input tied high (logic 0).
+
+On reset, each chip drives its SDO pin low (1).  When reset is released, a series of SCK pulses are sent to the chips.  Each chip drives its SDO output high (0) one cycle after seeing its SDI input high (0).  Further, it counts the number of cycles that elapse between releasing reset and seeing its SDI input high, and copies that count to an internal chip ID register.  Commands sent by the controller over the CMD line include an address which must match the chip ID field.
+
+=== General structure of commands ===
+Each command either reads or writes a single 8-bit register, using an 8-bit address.  This allows up to 256 registers, but only the range 1–31 is currently assigned.
+
+Normally, the CMD line is left high (logic 0) and SCK pulses have no effect.  To send a command, a sequence of 32 bits is clocked out over the CMD lines:
+
+* 4 bits of <code>1100</code>, a command start signal.
+* A read/write bit.  If 0, this is a read, if 1 this is a write.
+* A single/broadcast bit.  If 0, only the device with the matching ID is selected.  If 1, all devices execute the command.
+* 6 bits of serial device ID.  Device IDs are automatically assigned, starting with 0, on device reset.
+* 8 bits of register address
+* A single bit of "0".  This provides time to process read requests, and enable the SDO output in case of a read,
+* 8 bits of data.  If this is a read command, the bits provided must be 0, and the register's value is produced on the SDO pin of the selected chip.  All non-selected chips connect their SDI inputs to their SDO outputs, so the controller will see the value.
+* A single bit of "0".  This ends the command and provides time to disable the SDO output.
+
+== See also ==
+* [[RDRAM]]
+* [[XDR2 DRAM]]
+* [[List of device bandwidths]]
+
+==References==
+{{reflist}}
+
+== External links ==
+*[http://www.rambus.com/us/products/xdr_xdr2/index.html Rambus XDR Product Page]
+*[http://www.rambus.com/us/products/flex_io/index.html Rambus FlexIO CPU Interface provides XDR Interface]
+*[http://www.qimonda.com/graphics-ram/XDR/index.html Qimonda XDR(TM) DRAM product]
+
+
+{{DRAM}}
+
+[[Category:Computer memory]]
+[[Category:SDRAM]]
+
+[[de:XDR-DRAM]]
+[[es:XDR DRAM]]
+[[fr:XDR DRAM]]
+[[ko:XDR DRAM]]
+[[ja:XDR DRAM]]
+[[pl:XDR DRAM]]
+[[fi:XDR DRAM]]
+[[sv:XDR DRAM]]</body> </html>

@@ -1,0 +1,59 @@
+<html> <head> <title>Fibre Channel over Ethernet</title></head><body>'''Fibre Channel over Ethernet''' ('''FCoE''') is an encapsulation of [[Fibre Channel]] frames over [[Ethernet]] networks. This allows Fibre Channel to use [[10 Gigabit Ethernet]] networks (or higher speeds) while preserving the Fibre Channel protocol. The specification, supported by a large number of network and storage vendors, is part of the [[INCITS]] T11 FC-BB-5 standard. The latest draft of the standard can be found [http://www.t11.org/ftp/t11/pub/fc/bb-5/09-056v5.pdf here].  
+
+== Functionality ==
+FCoE maps Fibre Channel natively over [[Ethernet]] while being independent of the Ethernet forwarding scheme. The 
+FCoE protocol specification replaces the FC0 and FC1 layers of the Fibre Channel stack with Ethernet. By retaining the native Fibre Channel constructs, FCoE allows a seamless integration with existing Fibre Channel networks and management software.  
+
+Many data centers use Ethernet for TCP/IP networks and Fibre Channel for storage area networks (SANs). With FCoE, Fibre Channel becomes another network protocol running on Ethernet, alongside traditional Internet Protocol (IP) traffic.  FCoE operates directly above Ethernet in the network protocol stack, in contrast to [[iSCSI]] which runs on top of TCP and IP.  As a consequence, FCoE is not routable at the IP layer, and will not work across routed IP networks.
+
+Since classical Ethernet has no [[Ethernet flow control|flow control]], unlike Fibre Channel, FCoE requires enhancements to the Ethernet standard to support a flow control mechanism (this prevents frame loss).  The IEEE standards body is working on this in the [[Data Center Bridging]] Task Group.
+
+Fibre Channel required three primary extensions to deliver the capabilities of Fibre Channel over Ethernet networks: 
+* Encapsulation of native Fibre Channel frames into Ethernet Frames.
+* Extensions to the Ethernet protocol itself to enable an Ethernet fabric in which frames are not routinely lost during periods of congestion.
+* Mapping between Fibre Channel N_port IDs (aka FCIDs) and Ethernet MAC addresses.
+
+Computers connect to FCoE with Converged Network Adapters (CNAs), which contain both Fibre Channel [[Host Bus Adapter]] (HBA) and Ethernet [[Network_interface_controller|Network Interface Card]] (NIC) functionality on the same adapter card. CNAs have one or more physical Ethernet ports.  FCoE encapsulation can be done in software with a conventional Ethernet network interface card, however FCoE CNAs offload (from the CPU) the low level frame processing and SCSI protocol functions traditionally performed by Fibre Channel host bus adapters.
+
+== Application ==
+The main application of FCoE is in data center storage area networks (SANs).  FCoE has particular application in data centers due to the cabling reduction it makes possible, as well as in server virtualization applications, which often require many physical I/O connections per server. 
+
+With FCoE, network (IP) and storage (SAN) data traffic can be consolidated using a single network. This consolidation can:
+* reduce the number of network interface cards required to connect to disparate storage and IP networks 
+* reduce the number of cables and switches
+* reduce power and cooling costs
+
+== Frame Format ==
+[[Image:Ff.jpg|thumb|right|FCoE Frame Format]]
+
+FCoE is encapsulated over Ethernet with the use of a dedicated [[Ethertype]], 0x8906. A single 4-bit field (version) satisfies the IEEE sub-type requirements. The SOF (start of frame) and EOF (end of frame) are encoded as specified in RFC 3643. Reserved bits are present to guarantee that the FCoE frame meets the minimum length requirement of Ethernet. Inside the encapsulated Fibre Channel frame, the frame header is retained so as to allow connecting to a storage network by passing on the Fibre Channel frame directly after de-encapsulation. 
+
+The FIP (FCoE Initialization Protocol) is an integral part of FCoE. Its main goal is to discover and initialize FCoE capable entities connected to an Ethernet cloud. FIP uses a dedicated [[Ethertype]], 0x8914.
+
+== Timeline ==
+
+The FCoE standardization activity started in April 2007 is now successfully completed. The FCoE technology is defined in the INCITS T11 FC-BB-5 standard, that has been completed and forwarded to ANSI for publication in June 2009. The latest draft of the standard is at: [http://www.t11.org/ftp/t11/pub/fc/bb-5/09-056v5.pdf]
+The FC-BB-5 standard has been published in May 2010 as ANSI/INCITS 462-2010. The official standard may be purchased at: [http://www.techstreet.com/standards/INCITS/462_2010?product_id=1724386]
+
+== See also ==
+* [[iSCSI]]
+* [[ATA over Ethernet]] (AoE)
+* [[HyperSCSI]]
+
+== External links ==
+* [http://www.t11.org/ftp/t11/pub/fc/bb-5/09-056v5.pdf FC-BB-5 Draft Standard]
+* [http://www.t11.org/fcoe Project's homepage]
+* [http://www.open-fcoe.org/ Implementation for the Linux operating system]
+* [http://www.starwindsoftware.com/fcoe-fibrechannel-over-ethernet-initiator Free Windows FCoE implementation]
+* [http://www.fcoe.com/ A site that tracks FCoE development]
+* [http://www.youtube.com/watch?v=EZWaOda8mVY Intro to FCoE video]
+* [http://www.redbooks.ibm.com/redpapers/pdfs/redp4493.pdf IBM's Redpaper on FCoE]
+
+[[Category:Fibre Channel]]
+[[Category:Network protocols]]
+[[Category:Ethernet]]
+[[Category:Computer storage buses]]
+
+[[de:Fibre Channel over Ethernet]]
+[[fr:Fibre Channel over Ethernet]]
+[[it:Fibre Channel over Ethernet]]</body> </html>

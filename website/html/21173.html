@@ -1,0 +1,25 @@
+<html> <head> <title>Large segment offload</title></head><body>[[Image:Offload_tcp_segment_dialogue.png|thumb|right|Dialogue box showing offload TCP segmentation settings for an Intel Pro 1000 NIC]]
+In [[computer network]]ing, '''large segment offload (LSO)''' is a technique for increasing outbound [[throughput]] of high-[[Bandwidth (computing)|bandwidth]] network connections by reducing [[central processing unit|CPU]] overhead. It works by queuing up large [[buffer (computer science)|buffer]]s and letting the [[network interface card|NIC]] split them into separate packets. The technique is also called '''TCP segmentation offload (TSO)''' when applied to [[Transmission Control Protocol|TCP]], or '''generic segmentation offload (GSO)'''.
+
+When large chunks of data are to be sent over a computer network, they need to be first broken down to smaller segments that can pass through all the network elements like routers and switches between the source and destination computers.   This process is referred to as ''segmentation''.  Segmentation is often done by the [[Transmission Control Protocol|TCP]] protocol in the host computer.  Offloading this work to the [[network card]] is called ''TCP segmentation offload'' (TSO).
+
+For example, a unit of 64KB (65,536 bytes) of data is usually segmented to 46 segments of 1448 bytes each before it is sent over the network through the network interface controller ([[network card|NIC]]).  With some intelligence in the NIC, the host CPU can hand over the 64 KB of data to the NIC in a single transmit request, the NIC can break that data down into smaller segments of 1448 bytes, add the TCP, [[Internet Protocol|IP]], and data link layer protocol headers -- according to a template provided by the host's TCP/IP stack -- to each segment, and send the resulting frames over the network. This significantly reduces the work done by the CPU.  Many new NICs on the market today support TSO.
+
+Some network cards implement TSO generically enough that it can be used for offloading fragmentation of other [[transport layer]] protocols, or by doing [[IP fragmentation]] for protocols that don't support fragmentation by themselves, such as [[User Datagram Protocol|UDP]]. This is not as useful, though, as other protocols aren't commonly used for transmitting large amounts of data.
+
+== See also ==
+* [[Large receive offload]] (LRO)
+* [[TCP Offload Engine]] (TOE)
+
+==External links==
+* [http://www.microsoft.com/whdc/device/network/taskoffload.mspx Windows Network Task Offload]
+* [http://www.linux-foundation.org/en/Net:GSO GSO in Linux]
+* [http://kb.pert.geant2.net/PERTKB/LargeSendOffloadLSO Brief Description on LSO in Linux]
+* [http://kb.pert.geant2.net/PERTKB/PerformanceCaseStudies Case Studies of Performance issues with LSO and Traffic Shaping (Linux)]
+* [http://www.onlamp.com/pub/a/bsd/2008/02/26/whats-new-in-freebsd-70.html?page=1 FreeBSD 7.0 new features, brief discussion on TSO support]
+
+[[Category:Networking hardware]]
+[[Category:Network acceleration]]
+[[Category:TCP/IP]]
+
+[[de:TCP segmentation offload]]</body> </html>

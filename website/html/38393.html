@@ -1,0 +1,179 @@
+<html> <head> <title>TurboDOS</title></head><body>{{Infobox OS
+|name = TurboDOS
+|screenshot = 
+|caption = 
+|developer = Software 2000 Inc
+|family = 
+|kernel_type = [[Monolithic kernel]]
+|supported_platforms = [[Zilog Z80]], [[Intel 8086]] 
+|working_state = Historic
+|latest_release_version = 1.43
+|latest_release_date = [[1983]]
+|marketing_target = 
+|prog_language = [[Assembly language|Assembler]], [[DataFlex]], [[BASIC]], etc.
+|ui = [[Command line interface]]
+|license = [[Proprietary software|proprietary]]
+|website =
+}}
+TurboDOS is a multi user CP/M like operating system for the Z80 and 8086 CPU's developed by Software 2000 Inc. 
+
+It was released around 1982 for S100 bus based systems such as the [[NorthStar Horizon]]. 
+
+The multiprocessor nature of TurboDOS is its most unusual feature. Unlike other 
+operating systems of its time where networking of processors was either an afterthought, or which only support a file transfer protocol, TurboDOS was designed from the ground up as a multiprocessor operating system.  
+
+It is modular in construction, with the operating system generation based on 
+a  relocating, linking, loader  program. This makes the incorporation of 
+different  hardware driver modules quite easy, particularly  for  bus-oriented 
+machines, such as the IEEE-696 (S-100) bus which was commonly-used for TurboDOS systems.
+
+==Architecture==
+TurboDOS is highly modular, consisting of more than forty separate functional modules distributed in relocatable form. These modules are "building blocks" that you can combine in various ways to produce a family of compatible operating systems. This section describes the modules in detail, and describes how to combine them in various configurations.
+Possible TurboDOS configurations include:
+
+* single-user without spooling
+* single-user with spooling
+* network server
+* simple network user (no local disks)
+* complex network user (with local disks)
+
+Numerous subtle variations are possible in each of these categories.
+
+==Module Hierarchy==
+
+The architecture of TurboDOS can be viewed as a three-level hierarchy. The highest level of the hierarchy is the process level. TurboDOS can support many concurrent processes at this level. The intermediate level of the hierarchy is the kernel level. The kernel supports the 93 C-functions and T-functions, and controls the sharing of computer resources such as processor time, memory, peripheral devices, and disk files. Processes make requests of the kernel through the entrypoint module OSNTRY, which decodes each C-function and T-function by number and invokes the appropriate kernel module.
+
+The C functions include the CP/M BDOS functions and selected MP/M functions.
+
+The lowest level of the hierarchy is the driver level, and contains all the device-dependent drivers necessary to interface TurboDOS to the particular hardware being used. Drivers must be provided for all peripherals, including console, printers, disks, communications channels, and network interface. 
+
+Drivers are also required for the real-time clock (or other periodic interrupt source), and for bank-switched memory (if applicable).
+
+TurboDOS is designed to interface with almost any kind of peripheral hardware. It operates most efficiently with interrupt-driven, DMA-type interfaces, but can also work fine using polled and programmed-I/O devices.
+
+==TurboDOS Loader==
+The TurboDOS loader OSLOAD.COM is a program containing an abbreviated version of the kernel and drivers. Its purpose is to load the full TurboDOS operating system from a disk file (OSSERVER.SYS) into memory at each system cold-start.
+
+==System Generation==
+
+The functional modules are distributed in relocatable format (.REL) and the GEN command is a specialised linker which builds an executable version of the system.
+
+==Commands==
+
+TurboDOS has no "resident" commands. All commands are executable files. The standard commands are:-
+{| 
+|'''AUTOLOAD'''
+|Set up a series of commands to be executed automatically at each cold-start or warm-start.
+|-
+|'''BACKUP'''
+|Performs a fast copy of an entire disk onto another disk of the same type and format.
+|-
+|'''BANK'''
+|In a banked memory Z80 system, allows changing between bank-switched and non-bank-switched operation.
+|-
+|'''BATCH'''
+|Enters commands into a FIFO file for processing by a dedicated batch processor in a networked system.
+|-
+|'''BOOT'''
+|Copies data to and from reserved (boot) tracks on a disk.
+|-
+|'''BUFFERS'''
+|Interrogates or changes the number and/or size of the disk buffers maintained by TurboDOS
+|-
+|'''CHANGE'''
+|Checks disk is not in use and flushes cache prior to removing a disk.
+|-
+|'''COPY'''
+|File copy.
+|-
+|'''DATE'''
+|Display or set system date and time.
+|-
+|'''DELETE'''
+|File delete.
+|-
+|'''DIR'''
+|Display or print disk directory.
+|-
+|'''DO'''
+|Execute a batch file.
+|-
+|'''DRIVE'''
+|Display disk format information.
+|-
+|'''DUMP'''
+|Display or print hexadecimal and ASCII file dump.
+|-
+|'''ERASEDIR'''
+|Erase entire disk directory
+|-
+|'''FIFO'''
+|Create a FIFO file.
+|-
+|'''FIXDIR'''
+|Directory clean-up utility, also used to convert between linear and hashed directory structure, (and vice-versa).
+|-
+|'''FIXMAP'''
+|Regenerate disk allocation map.
+|-
+|'''FORMAT'''
+|Disk format.
+|-
+|'''LABEL'''
+|Set or interrogate disk label.
+|-
+|'''LOGOFF'''
+|Terminate console session.
+|-
+|'''LOGON'''
+|Start console session.
+|-
+|'''MASTER'''
+|Attach console to the "master" processor (server) in network system.
+|-
+|'''PRINT'''
+|Control routing of print output.
+|-
+|'''PRINTER'''
+|Control despooling on any selected printer.
+|-
+|'''QUEUE'''
+|Manually queue for de-pooled printing.
+|-
+|'''RECEIVE'''
+|Read and display one record from FIFO file.
+|-
+|'''RENAME'''
+|Rename files.
+|-
+|'''SEND'''
+|Write message to FIFO file.
+|-
+|'''SET'''
+|Set or clear file attributes.
+|-
+|'''SHOW'''
+|Display file attributes.
+|-
+|'''TYPE'''
+|Display file contents to console or printer.
+|-
+|'''VERIFY'''
+|Scan disk for bad blocks and (optionally) mark them to prevent their usage.
+|}
+
+==External links==
+
+* [http://www.cpm8680.com/turbodos/index.htm The TurboDOS Museum]
+
+* [http://www.bitsavers.org/pdf/ims/turboDos/ TUG Newsletters]
+
+* [http://www.bitsavers.org/pdf/ims/turboDos/turboDos1.4_Z80impl_Jun84.pdf] Z80 Implementors Guide (pdf)
+
+{{Operating System}}
+
+[[Category:CP/M]]
+[[Category:Microcomputer software]]
+[[Category:Disk operating systems]]
+
+[[ru:Turbo-DOS]]</body> </html>

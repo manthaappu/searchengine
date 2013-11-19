@@ -1,0 +1,156 @@
+<html> <head> <title>Netfilter</title></head><body>'''Netfilter''' is a [[Software framework|framework]] that provides [[Hooking|hook]] handling within the [[Linux kernel]] for intercepting and manipulating [[Packet-switched network|network packets]]. Put more concretely, Netfilter is invoked, for example, by the packet reception and send routines from/to [[Network interface controller|network interfaces]]. As the master Netfilter function is called with a packet, Netfilter runs through the list of registered hooks and calls the extensions in succession, which then handle packets as they desire. The term '''Netfilter''' is also used to refer to the [[free software|Free Software]] project<ref>http://www.netfilter.org</ref> that aims to provide firewalling tools for [[GNU/Linux]].
+
+[[Image:Netfilter-components.svg|300px|thumb|Relation of (some of) the different Netfilter components]]
+
+== History ==
+
+The ''netfilter/iptables project'' was started in 1998 by [[Rusty Russell]], also author of the project's predecessor, [[ipchains]].  As the project grew, he founded the ''Netfilter Core Team'' (or simply ''coreteam'') in 1999. The software they produce (called ''netfilter'' hereafter) is licensed under the [[GNU General Public License]] (GPL), and was merged into Linux 2.3 in March 2000. In August 2003, [[Harald Welte]] was made chairman of the coreteam, and in April 2004, following a crack-down by the project on those distributing the project's software [[embedded system|embedded]] in [[router]]s without complying with the GPL, Welte was granted an historic [[injunction]] by a [[Germany|German]] court against Sitecom Germany, who refused to follow the GPL's terms (see [[GNU General Public License#The GPL in court|GPL-related disputes]]). In September 2007, Patrick McHardy, who led development for past years, was elected the new chairman of the coreteam.
+
+Prior to iptables, the predominant software packages for creating Linux firewalls were [[ipchains]] in Linux 2.2 and [[ipfwadm]] in Linux 2.0, which in turn was based on [[Berkeley Software Distribution|BSD]]'s [[ipfirewall|ipfw]]. Both ipchains and ipfwadm alter the networking code so they could manipulate packets, as there was no general packet-control framework until Netfilter.
+
+Whereas ipchains and ipfwadm combine packet filtering and NAT (particularly three specific kinds of [[Network address translation|NAT]], called ''masquerading'', ''port forwarding'' and ''redirection''), Netfilter separates packet operations into multiple parts, described below. Each connects to the Netfilter hooks at different points to access packets. The connection tracking and NAT subsystems are more general and more powerful than the stunted versions within ipchains and ipfwadm.
+
+== iptables ==
+
+{{Main|iptables}}
+
+The kernel modules named ''ip_tables'', ''ip6_tables'', ''arp_tables'' (underscores part of the name) and ''ebtables'' are one of the significant users of the Netfilter hook system. They provide a table-based system for defining firewall rules that can filter or transform packets. The tables can be administered through the user-space tools '''iptables''', '''ip6tables''', '''arptables''' and '''ebtables''', respectively.
+
+Each table is actually its own hook, and each table was introduced to serve a specific purpose. As far as Netfilter is concerned, usually to run said table in a specific order with respect to other tables. Other than that however, all tables will call the same table processing function to further iterate over, and execute rules.
+
+Chains in this regard equate to ''where from'' the Netfilter stack was invoked, such as packet reception (PREROUTING), locally delivered (INPUT), forwarded (FORWARD), locally output (OUTPUT) and packet send (POSTROUTING). Netfilter modules that do not provide tables (see below) may also check for the origin to select their mode of operation.
+
+* the ''iptable_raw'' module will, when loaded, register a hook that will be called before any other Netfilter hook. It provides a table called ''raw'' that can be used to filter packets before they reach more memory-demanding operations such as Connection Tracking.
+* the ''iptable_mangle'' module registers a hook and ''mangle'' table to run after Connection Tracking (but still before any other table), so that modifications can be made to the packet that may influence further rules such as NAT or filtering.
+* the ''iptable_nat'' module registers two hooks: DNAT-based transformations are applied before the filter hook, SNAT-based transformations are applied afterwards. The ''nat'' table that is made available to iptables is merely a “configuration database” for [[Network address translation|NAT]] mappings only, and not intended for filtering of any kind.
+* the ''iptable_filter'' module registers the ''filter'' table, used for general-purpose filtering (firewalling).
+
+== nftables ==
+
+{{Main|nftables}}
+
+Patrick McHardy intends to replace iptables with nftables in the future. The project is currently in the alpha stage of development.
+
+The four modules of iptables ([[IPv4]], [[IPv6]], [[Address Resolution Protocol|ARP]], and Ethernet [[bridging (networking)|bridging]]) are replaced with a single unified implementation, implemented on the top of a [[virtual machine]].
+
+== Packet Defragmentation ==
+
+{{See also|IP fragmentation}}
+
+The ''nf_defrag_ipv4'' module will defragment IPv4 packets before Connection Tracking (''nf_conntrack_ipv4'' module) sees them. This is necessary for the in-kernel Connection Tracking and NAT helper modules (which are a form of “mini-[[Application-level gateway|ALGs]]”) that only work reliably on entire packets, not necessarily fragments.
+
+The IPv6 defragmenter is not a module in its own right, but is integrated into the ''nf_conntrack_ipv6'' module.
+
+== Connection Tracking ==
+
+{{See also|Stateful Packet Inspection}}
+
+One of the important features built on top of the Netfilter framework is connection tracking.<ref>Netfilter's Connection Tracking System, by Pablo Neira Ayuso, June 14, 2006: http://people.netfilter.org/pablo/docs/login.pdf</ref> Connection tracking allows the kernel to keep track of all logical network connections or [[Session (computer science)|sessions]], and thereby relate all of the packets which may make up that connection. NAT relies on this information to translate all related packets in the same way, and iptables can use this information to act as a stateful firewall.
+
+The connection state however is completely independent of any upper-level state, such as TCP's or SCTP's state. Part of the reason for this is that when merely forwarding packets, i.e. no local delivery, the TCP engine may not necessarily be invoked at all. Even [[connectionless-mode transmission]]s such as [[User Datagram Protocol|UDP]], [[IPsec]] (AH/ESP), [[Generic Routing Encapsulation|GRE]] and other [[tunneling protocol]]s have a, at least pseudo, connection state. The heuristic for such protocols is often based upon a preset timeout value for inactivity, after whose expiration a Netfilter connection is dropped.
+
+Each Netfilter connection is uniquely identified by a (layer-3 protocol, source address, destination address, layer-4 protocol, layer-4 key) tuple. The layer-4 key depends on the transport protocol; for TCP/UDP it is the port numbers, for tunnels it can be their tunnel ID, but otherwise is just zero, as if it were not part of the tuple. To be able to inspect the TCP port in all cases, packets will be mandatorily defragmented.
+
+Netfilter connections can be manipulated with the user-space tool ''conntrack''.
+
+Iptables can make use of checking the connection's information such as states, statuses and more to make packet filtering rules more powerful and easier to manage. The most common states are:
+
+* “NEW”: trying to create a new connection
+* “ESTABLISHED”: part of an already-existing connection
+* “RELATED”: assigned to a packet that is initiating a new connection and which has been “expected”. The aforementioned mini-ALGs set up these expectations, for example, when the ''nf_conntrack_ftp'' module sees an [[File transfer protocol|FTP]] “PASV” command.
+* “INVALID”: the packet was found to be [[invalid packet|invalid]], e.g. it would not adhere to the [[Transmission_Control_Protocol#Protocol_operation|TCP state]] diagram.
+* “UNTRACKED” is a special state that can be assigned by the administrator to bypass connection tracking for a particular packet (see raw table, above)
+
+A normal example would be that the first packet the conntrack subsystem sees will be classified “new”, the reply would be classified “established” and an [[Internet Control Message Protocol|ICMP]] error would be “related”. An ICMP error packet which did not match any known connection would be “invalid”.
+
+=== Connection tracking helpers ===
+
+Through the use of plugin modules, connection tracking can be given knowledge of application-layer protocols and thus understand that two or more distinct connections are “related”. For example, consider the [[File Transfer Protocol|FTP]] protocol. A control connection is established, but whenever data is transferred, a separate connection is established to transfer it. When the ''nf_conntrack_ftp'' module is loaded, the first packet of an FTP data connection will be classified as “related” instead of “new”, as it is logically part of an existing connection.
+
+The helpers only inspect one packet at a time, so if vital information for connection tracking is split across two packets, either due to [[IP fragmentation]] or TCP segmentation, the helper will not necessarily recognize patterns and therefore not perform its operation. IP fragmentation is dealt with the connection tracking subsystem requiring defragmentation, though [[TCP segment]]ation is not handled. In case of FTP, segmentation is deemed not to happen “near” a command like PASV with standard segment sizes, so is not dealt with in Netfilter either.
+
+== Network Address Translation ==
+
+Each connection has a set of ''original addresses'' and ''reply addresses'', which initially start out the same. NAT in Netfilter is implemented by simply changing the reply address, and where desired, port. When packets are received, their connection tuple will also be compared against the reply address pair (and ports). Being fragment-free is also a requirement for NAT. (If need be, IPv4 packets may be refragmented by the normal, non-Netfilter, IPv4 stack.)
+
+=== NAT helpers ===
+
+Similar to connection tracking helpers, NAT helpers will do a packet inspection and substitute original addresses by reply addresses in the payload.
+
+== Further Netfilter projects ==
+
+Though not being kernel modules that make use of Netfilter code directly, the Netfilter project hosts a few more noteworthy software.
+
+=== ulogd ===
+
+Ulogd is a user-space daemon to receive and log packets and event notifications from the Netfilter subsystems. ip_tables can deliver packets via the userspace queuing mechanism to it, and connection tracking can interact with ulogd to exchange further information about packets or events (such as connection teardown, NAT setup).
+
+=== conntrack-tools ===
+
+''Conntrack-Tools'' is a set of user-space tools for Linux that allow system administrators to interact with the Connection Tracking entries and tables. The package includes the ''conntrackd'' daemon and the command line interface ''conntrack''. The userspace daemon ''conntrackd'' can be used to enable high availability cluster-based stateful firewalls and collect statistics of the stateful firewall use. The command line interface ''conntrack'' provides a more flexible interface to the connection tracking system than the obsolete <tt>/proc/net/nf_conntrack</tt>.
+
+=== ipset ===
+
+Unlike other extensions such as Connection Tracking, ipset<ref>http://ipset.netfilter.org/</ref> is more related to iptables than it is to the core Netfilter code. ipset does not make use of Netfilter hooks for instance, but actually provides an iptables module to match and do minimal modifications (set/clear) to IP sets.
+
+The user-space tool called '''ipset''' is used to set up, maintain and inspect so called “IP sets” in the Linux kernel. An IP set usually contains a set of [[IP address]]es, but can also contain sets of other network numbers, depending on its “type”. These sets are much more lookup-efficient than bare iptables rules, but of course may come with a greater memory footprint. Different storage algorithms (for the data structures in memory) are provided in ipset for the user to select an optimum solution.
+
+Any entry in one set can be bound to another set, allowing for sophisticated matching operations.
+A set can only be removed (destroyed) if there are no iptables rules or other sets referring to it.
+
+=== User-space libraries ===
+
+The Netfilter projects also provides a set of libraries whose prefix name is ''libnetfilter'' that can be used to perform different task from user-space. These libraries are released under the GNU GPL version 2. Specifically, they are:
+
+* '''libnetfilter_queue''', that allows to perform user-space packet queuing in conjunction with iptables.
+* '''libnetfilter_conntrack''', that allows to manipulate Connection Tracking entries from user-space.
+* '''libnetfilter_log''', that allows to collect log messages that are generated by iptables.
+* '''libiptc''', that allows changing the iptables firewall ruleset.
+
+==Netfilter workshops==
+The Netfilter project organize an annual meeting for developers which is used to discuss on-going research and development efforts. The last Netfilter Workshop took place in Paris, France, at the end of September 2008.
+
+==See also==
+{{Portal box|Free software|Computer security}}
+*[[ipchains]], the predecessor to iptables
+*[[ipfirewall|ipfw]]
+*[[PF (firewall)]]
+*[[Netlink]], an API used by Netfilter extensions
+
+==References==
+{{Reflist}}
+
+==External links==
+Homepages:
+* [http://netfilter.org/ Netfilter/iptables project homepage]
+* [http://netfilter.org/projects/conntrack-tools/ conntrack-tools homepage]
+* [http://ipset.netfilter.org/ ipset homepage]
+* [http://netfilter.org/projects/ulogd/ ulogd homepage]
+The Workshop:
+* [http://workshop.netfilter.org/ Home of the Netfilter Workshop websites]
+* [http://nfws.inl.fr/en Workshop résumé/blog]
+Documentation:
+* [http://jengelh.medozas.de/documents/Netfilter_Modules.pdf “Writing Netfilter Modules” e-book] (2009)
+* [http://techupdate.zdnet.com/techupdate/stories/main/0,14179,2817396,00_print.html Netfilter and Iptables -- Stateful Firewalling for Linux] (October 11, 2001)
+
+{{Firewall software}}
+
+[[Category:Free network-related software]]
+[[Category:Firewall software]]
+[[Category:Free security software]]
+
+[[ar:نت فيلتر]]
+[[ca:Iptables]]
+[[de:Netfilter]]
+[[es:Netfilter]]
+[[fr:Netfilter]]
+[[it:Netfilter]]
+[[lv:Netfilter/iptables]]
+[[mk:Iptables]]
+[[ja:Iptables]]
+[[no:Netfilter]]
+[[pl:Netfilter]]
+[[pt:Netfilter]]
+[[ru:Netfilter]]
+[[fi:Iptables]]
+[[zh:Iptables]]</body> </html>

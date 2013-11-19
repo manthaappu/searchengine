@@ -1,0 +1,142 @@
+<html> <head> <title>BLISS</title></head><body>{{Infobox programming language
+| name = BLISS
+| logo =
+| paradigm = [[structured programming|structured]], [[Imperative programming|imperative]] ([[procedural programming|procedural]])
+| year = 1970
+| designer = [[W. A. Wulf]], [[D. B. Russell]], [[A. N. Habermann]]
+| developer = [[Carnegie Mellon University]]
+| latest_release_version = BLISS-64 <!--({{release date|mf=yes|YYYY|MM|DD}})-->
+| latest release date =
+| typing = typeless
+| implementations =
+| dialects = Common BLISS
+| influenced_by = [[ALGOL]]
+| influenced =
+| operating_system = [[Cross-platform]]: [[PDP-10]], [[PDP-11]], [[DEC Alpha]], [[DEC PRISM]], [[IA-32|Intel IA-32]], [[IA-64|Intel IA-64]], [[VAX]]
+| license =
+| website =
+| file_ext =
+}}
+'''BLISS''' is a [[system programming language]] developed at [[Carnegie Mellon University]] by [[W. A. Wulf]], [[D. B. Russell]], and [[A. N. Habermann]] around 1970. It was perhaps the best known systems programming language right up until [[C (programming language)|C]] made its debut a few years later. Since then, C took off and BLISS faded into obscurity. When C was in its infancy, a few projects within [[Bell Labs]] were debating the merits of BLISS vs. C.
+
+BLISS is a typeless block-structured language based on expressions rather than statements, and includes constructs for [[exception handling]], [[coroutine]]s, and [[Macro (computer science)|macros]]. It does not include a [[GOTO|goto]] statement.
+
+The name is variously said to be short for "Basic Language for Implementation of System Software" or "System Software Implementation Language, Backwards". It was sometimes called "Bill's Language for Implementing System Software", after Bill Wulf. 
+
+The original Carnegie Mellon [[compiler]] was notable for its extensive use of [[compiler optimization|optimization]]s, and formed the basis of the classic book ''[[The Design of an Optimizing Compiler]]''.
+
+[[Digital Equipment Corporation|DEC]] developed and maintained BLISS compilers for the [[PDP-10]], [[PDP-11]], [[DEC Alpha]], [[DEC PRISM]], [[IA-32|Intel IA-32]], [[IA-64|Intel IA-64]], and [[VAX]], and used it heavily in-house into the 1980s; most of the utility programs for the [[Virtual Memory System|VMS]] [[operating system]] were written in BLISS-32.
+
+== Language description ==
+{{Cquote2|BLISS has many of the features of other modern high-level languages. It has block structure, an automatic stack, and mechanisms for defining and calling recursive routines.. provides a variety of predefined data structures and .. facilities for testing and iteration...
+
+On the other hand, BLISS omits certain features of other high-level languages. It does not have built-in facilities for input/output, because a system-software project usually develops its own input/output or builds on basic monitor I/O or screen management services... it permits access to machine-specific features, because system software often requires this. BLISS has characteristics that are unusual among high-level languages. A name... is uniformly interpreted as the address of that segment rather than the value of the segment... Also, BLISS is an ‘‘expression language’’ rather than a ‘‘statement language’’.
+This means that every construct of the language that is not a declaration is an expression. Expressions produce a value as well as possibly causing an action such as modification of storage, transfer of control, or execution of a program loop. For example, the counterpart of an assignment ‘‘statement’’ in BLISS is, strictly speaking, an expression that itself has a value. The value of an expression can be either used or discarded in BLISS... Finally, BLISS includes a macro facility that provides a level of capability usually found only in macro-assemblers.|[http://63.249.85.132/langs/bliss/bliss.pdf Bliss Language Manual]|[[Digital Equipment Corporation]] (1987)}}
+
+The BLISS language has the following characteristics:
+
+* All '''constants''' are full word for the machine being used, e.g. on a 16-bit machine such as the [[PDP-11]], a constant is 16 bits; on a [[VAX]] computer, constants are 32 bits, and on a [[PDP-10]], a constant is 36 bits.
+
+* A '''reference to a variable''' is always to the address of that variable.  For example, the instruction <code>Z+8</code> refers to adding 8 to the ''address'' of Z, not to its ''value''.  If one needs to add 8 to the ''value'' of Z, one must prefix the variable with a period; so one would type <code>.Z+8</code> to perform this function, which adds 8 to the ''contents'' of Z.
+
+* '''Assignment''' is done with the standard <code>=</code> symbol, e.g. <code>Z=8</code> &ndash; which says to create a full-word constant containing 8, and store it in the location whose address corresponds to that of Z.  So, you can do something like <code>Z+12=14</code> (or, alternatively <code>12+Z=14</code>) which places the constant 14 into the address which is 12 words more than the address of Z.  (This is considered bad practice.)  
+
+* '''Block statements''' are similar to those of [[ALGOL]]: a block is started with a <code>BEGIN</code> statement and terminated with <code>END</code>.  As with ALGOL, statements are terminated with the semicolon (";"). When a value is computed, it is saved until the next statement terminator &ndash; which means that a value can be computed, assigned to a variable, and carried forward to the next statement, if desired.  Alternatively, an open parenthesis may be used to begin a block, with the close parenthesis used to close the block.  When parentheses are included in an expression, the standard [[precedence]] rules are used, in which parenthesized expressions are computed first, 
+
+* '''Conditional execution''' uses the <code>IF</code> expression, which tests a true-false condition, performs alternative actions, and returns a result.
+
+* '''Comparison''' uses keywords such as <code>EQL</code> for equality (as opposed to [[operator overloading|overloading]] the = symbol for the same purpose), <code>GTR</code> for Greater Than, and <code>NEQ</code> for not equal. For example, the following code will assign the absolute value of Z to the address indicated by Q:
+
+::<code>Q = (IF .Z GTR 0 THEN .Z ELSE -.Z);</code>
+
+* '''Identifiers''' (variables and constants) must be declared before use, typically using the <code>OWN</code> keyword. Declaring a variable normally causes the compiler to allocate space for it; when necessary, a variable may be assigned a fixed machine address via the <code>BIND</code> declaration. This feature is primarily used for accessing either machine registers or certain special addresses.
+
+* '''Subroutines''' in the language are called ''routines'', and are declared with the keyword <code>ROUTINE</code>.
+
+* '''Macros''', which allow for text substitution, are declared with the keyword <code>MACRO</code>.
+
+* The language supports '''arrays''', which are referred to as ''structures'', and declared with the keyword <code>VECTOR</code>.
+
+* The language supports some '''high-level programming constructs''' such as  
+**'''Alternative execution paths''' via the <code>CASE</code> expression
+**'''Looping''' through use of the <code>INCR</code> expression, which is similar to ALGOL's FOR statement
+**Built-in '''string functions'''
+**Certain automatic '''data conversions''' (number to string, etc.)
+
+==Source example==
+The following example is taken verbatim from the ''Bliss Language Manual'' cited above:
+
+<code><pre>
+MODULE E1 (MAIN = CTRL) =
+BEGIN
+FORWARD ROUTINE
+    CTRL,
+    STEP;
+ROUTINE CTRL =
+!+
+! This routine inputs a value, operates on it, and
+! then outputs the result.
+!-
+    BEGIN
+    EXTERNAL ROUTINE
+        GETNUM,     ! Input a number from terminal
+        PUTNUM;     ! Output a number to terminal
+    LOCAL
+        X,          ! Storage for input value
+        Y;          ! Storage for output value
+    GETNUM(X);
+    Y = STEP(.X);
+    PUTNUM(.Y)
+    END;
+ROUTINE STEP(A) =
+!+
+! This routine adds 1 to the given value.
+!-
+    (.A+1);
+END
+ELUDOM
+</pre></code>
+
+== Versions ==
+
+* BLISS-10
+* BLISS-11 - a [[cross compiler]] for the PDP-11
+* BLISS-16
+* BLISS-16C - DEC version of BLISS-11
+* BLISS-32
+* BLISS-36
+* BLISS-64 
+* Common BLISS - portable subset
+
+== References ==
+
+* Wulf, W. A.; Russell, D. B.; Habermann, A. N. (1971). ''BLISS: A Language for Systems Programming''. [[Communications of the ACM|CACM]] 14(12):780-790, Dec 1971
+* Wulf, W. A.; Johnson, R. K.; Weinstock, C. B.; Hobbs, S. O.; Geschke, C. M. (1975). ''The Design of an Optimizing Compiler''. New York: Elsevier, ISBN 0444001581.
+
+== External links ==
+
+* [http://decus.decus.de:8080/htbin/webbook/PUBLIC$ROOT%3a%5bUTIL.BLISS%5d4358pro.p7.#1 BLISS Manual at DECUS]
+* [http://63.249.85.132/langs Site with PDFs of manuals]
+* [http://compilers.iecc.com/comparch/article/87-07-029 Alan Lehotsky posting about BLISS at DEC]
+* [http://63.249.85.132/langs/bliss/bliss.pdf Language Reference Manual]
+* [http://vms.process.com/scripts/fileserv/fileserv.com?BLISS-ARTICLE "BLISS: A Language for Systems Programming" by W.A. Wulf, D.B. Russell, and A.N. Habermann. (PostScript)]
+* [http://vms.process.com/scripts/fileserv/fileserv.com?BLISS-INTRO Session notes for "Introduction to BLISS" by Matthew D. Madison. (PostScript)]
+
+=== Downloads ===
+* [http://pdp-10.trailing-edge.com/bb-m836d-bm/ BLISS-10]
+* [ftp://iecc.com/pub/file/bliss.tar.gz Older BLISS-11]
+* [http://pdp-10.trailing-edge.com/bls36v42/ BLISS-36]
+* [http://h71000.www7.hp.com/freeware/freeware70/bliss/ BLISS-11, BLISS-32 and BLISS-64]
+* [ftp://freevms.nvg.org/pub/vms/freevms/ FreeVMS Portable BLISS for GCC]
+
+{{Carnegie Mellon}}
+[[Category:Systems programming languages]]
+[[Category:OpenVMS software]]
+[[Category:Carnegie Mellon University]]
+
+[[fr:BLISS (langage de programmation)]]
+[[ms:BLISS]]
+[[ja:BLISS]]
+[[no:BLISS]]
+[[pt:BLISS (linguagem de programação)]]
+[[fi:BLISS (ohjelmointikieli)]]</body> </html>

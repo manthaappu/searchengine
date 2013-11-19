@@ -1,0 +1,83 @@
+<html> <head> <title>Stone duality</title></head><body>In [[mathematics]], there is an ample supply of [[duality of categories|categorical dualities]] between certain [[category theory|categories]] of [[topological space]]s and categories of [[partially ordered set]]s. Today, these dualities are usually collected under the label '''Stone duality''', since they form a natural generalization of [[Stone's representation theorem for Boolean algebras]]. These concepts are named in honor of [[Marshall Stone]]. Stone-type dualities also provide the foundation for [[pointless topology]] and are exploited in [[theoretical computer science]] for the study of [[formal semantics]].
+
+This article gives pointers to special cases of Stone duality and explains a very general instance thereof in detail.
+
+==Overview of Stone-type dualities==
+Probably the most general duality which is classically referred to as "Stone duality" is the duality between the category '''Sob''' of [[sober space]]s with [[continuous function]]s and the category '''SFrm''' of spatial [[complete Heyting algebra|frames]] with appropriate frame homomorphisms. The [[dual (category theory)|dual category]] of '''SFrm''' is the category of [[complete Heyting algebra|locales]] denoted by '''SLoc'''. The [[equivalence of categories|categorical equivalence]] of '''Sob''' and '''SLoc''' is the basis for the mathematical area of [[pointless topology]], that is devoted to the study of '''Loc''' - the category of all locales of which '''SLoc''' is a full subcategory. The involved constructions are characteristic for this kind of duality, and are detailed below.
+
+Now one can easily obtain a number of other dualities by restricting to certain special classes of sober spaces:
+
+* The category '''CohSp''' of [[coherent space|coherent]] sober spaces (and coherent maps) is equivalent to the category '''CohLoc''' of [[coherent locale|coherent (or spectral) locales]] (and coherent maps), on the assumption of the [[Boolean prime ideal theorem]] (in fact, this statement is equivalent to that assumption). The significance of this result stems from the fact that '''CohLoc''' in turn is dual to the category '''DLat''' of [[distributivity (order theory)|distributive]] [[lattice (order)|lattices]]. Hence, '''DLat''' is dual to '''CohSp''' - one obtains '''[[Stone's representation theorem for distributive lattices]]'''.
+
+* When restricting further to coherent sober spaces which are [[Hausdorff space|Hausdorff]], one obtains the category '''Stone''' of so-called [[Stone space]]s. On the side of '''DLat''', the restriction yields the subcategory '''Bool''' of [[Boolean algebra (structure)|Boolean algebras]]. Thus one obtains [[Stone's representation theorem for Boolean algebras]].
+
+* Stone's representation for distributive lattices can be extended via an equivalence of coherent spaces and [[Priestley space]]s (ordered topological spaces, that are [[compact space|compact]] and totally order-disconnected). One obtains a representation of distributive lattices via ordered topologies: [[Priestley's representation theorem for distributive lattice]]s.
+
+Many other Stone-type dualities could be added to these basic dualities.
+
+== Duality of sober spaces and spatial locales ==
+This section motivates and explains one of the most basic constructions of Stone duality: the duality between topological spaces which are ''sober'' and frames (i.e. [[complete Heyting algebra]]s) which are ''spatial''. This classical piece of mathematics requires a substantial amount of abstraction that usually tends to puzzle beginners. It should therefore be considered as graduate level mathematics. Some prior exposure to the basics of [[category theory]] is recommended, although a deep understanding of the concepts of adjunction and duality may well arise from examples such as the result below. Furthermore, concepts of [[topology]] and [[order theory]] are naturally involved as well, where the later is probably more important for a thorough understanding.
+
+=== The lattice of open sets ===
+The starting point for the theory is the fact that every topological space is characterized by a set of points ''X'' and a system &Omega;(''X'') of [[open set]]s of elements from ''X'', i.e. a subset of the [[powerset]] of ''X''. It is known that &Omega;(''X'') has certain special properties: it is a [[complete lattice]] within which [[supremum|suprema]] and [[infimum|infima]] of finite sets are given by set unions and finite set intersections, respectively. Furthermore, it contains both ''X'' and the [[empty set]]. Since the [[order embedding|embedding]] of &Omega;(''X'') into the powerset lattice of ''X'' [[limit preserving (order theory)|preserves]] finite infima and arbitrary suprema, &Omega;(''X'') inherits the following distributivity law:
+
+:<math>x \wedge \bigvee S = \bigvee \{\, x \wedge s : s \in S \,\}, </math>
+
+for every element (open set) ''x'' and every subset ''S'' of &Omega;(''X''). Hence &Omega;(''X'') is not an arbitrary complete lattice but a ''complete Heyting algebra'' (also called ''frame'' or ''locale'' - the various names are primarily used to distinguish several categories that have the same class of objects but different morphisms: frame morphisms, locale morphisms and homomorphisms of complete Heyting algebras). Now an obvious question is: To what extent is a topological space characterized by its locale of open sets?
+
+As already hinted at above, one can go even further. The category '''Top''' of topological spaces has as morphisms the continuous functions, where a function ''f'' is continuous if the [[inverse image]] ''f''<sup> &minus;1</sup>(''O'') of any open set in the [[codomain]] of ''f'' is open in the [[domain of a function|domain]] of ''f''. Thus any continuous function ''f'' from a space ''X'' to a space ''Y'' defines an inverse mapping ''f''<sup> &minus;1</sup> from &Omega;(''Y'') to &Omega;(''X''). Furthermore, it is easy to check that ''f''<sup> &minus;1</sup> (like any inverse image map) preserves finite intersections and arbitrary unions and therefore is a ''morphism of frames''. If we define &Omega;(''f'') = ''f''<sup> &minus;1</sup> then &Omega; becomes a [[contravariant functor]] from the category '''Top''' to the category '''Frm''' of frames and frame morphisms. Using the tools of category theory, the task of finding a characterization of topological spaces in terms of their open set lattices is equivalent to finding a functor from '''Frm''' to '''Top''' which is [[adjoint functors|adjoint]] to &Omega;.
+
+=== Points of a locale ===
+The goal of this section is to define a functor pt from '''Frm''' to '''Top''' that in a certain sense "inverts" the operation of &Omega; by assigning to each locale ''L'' a set of points pt(''L'') (hence the notation pt) with a suitable topology. But how can we recover the set of points just from the locale, though it is not given as a lattice of sets? It is certain that one cannot expect in general that pt can reproduce all of the original elements of a topological space just from its lattice of open sets - for example all sets with the [[indiscrete topology]] yield (up to isomorphism) the same locale, such that the information on the specific set is no longer present. However, there is still a reasonable technique for obtaining "points" from a locale, which indeed gives an example of a central construction for Stone-type duality theorems.
+
+Let us first look at the points of a topological space ''X''. One is usually tempted to consider a point of ''X'' as an element ''x'' of the set ''X'', but there is in fact a more useful description for our current investigation. Any point ''x'' gives rise to a continuous function ''p''<sub>''x''</sub> from the one element topological space 1 (all subsets of which are open) to the space ''X'' by defining ''p''<sub>''x''</sub>(1) = ''x''. Conversely, any function from 1 to ''X'' clearly determines one point: the element that it "points" to. Therefore the set of points of a topological space is equivalently characterized as the set of functions from 1 to ''X''.
+
+When using the functor &Omega; to pass from '''Top''' to '''Frm''', all set-theoretic elements of a space are lost, but - using a fundamental idea of category theory - one can as well work on the [[function space]]s. Indeed, any "point" ''p''<sub>''x''</sub>: 1 &rarr; ''X'' in '''Top''' is mapped to a morphism &Omega;(''p''<sub>''x''</sub>): &Omega;(''X'') &rarr; &Omega;(1). The open set lattice of the one-element topological space &Omega;(1) is just (isomorphic to) the two-element locale 2 = { 0, 1 } with 0 < 1. After these observations it appears reasonable to define the set of points of a locale ''L'' to be the set of frame morphisms from ''L'' to 2. Yet, there is no guarantee that every point of the locale &Omega;(''X'') is in one-to-one correspondence to a point of the topological space ''X'' (consider again the indiscrete topology, for which the open set lattice has only one "point").
+
+Before defining the required topology on pt(''X''), it is worthwhile to clarify the concept of a point of a locale further. The perspective motivated above suggests to consider a point of a locale ''L'' as a frame morphism ''p'' from ''L'' to 2. But these morphisms are characterized equivalently by the inverse images of the two elements of 2. From the properties of frame morphisms, one can derive that ''p''<sup> &minus;1</sup>(0) is a lower set (since ''p'' is [[monotone]]), which contains a greatest element ''a''<sub>''p''</sub> = V ''p''<sup> &minus;1</sup>(0) (since ''p'' preserves arbitrary suprema). In addition, the [[ideal (order theory)|principal ideal]] ''p''<sup> &minus;1</sup>(0) is a [[ideal (order theory)|prime ideal]] since ''p'' preserves finite infima and thus the principal ''a''<sub>''p''</sub> is a [[prime (order theroy)|meet-prime element]]. Now the set-inverse of ''p''<sup> &minus;1</sup>(0) given by ''p''<sup> &minus;1</sup>(1) is a [[filter (mathematics)|completely prime filter]] because ''p''<sup> &minus;1</sup>(0) is a principal prime ideal. It turns out that all of these descriptions uniquely determine the initial frame morphism. We sum up:
+
+A point of a locale ''L'' is equivalently described as:
+* a frame morphism from ''L'' to 2
+* a principal prime ideal of ''L''
+* a meet-prime element of ''L''
+* a completely prime filter of ''L''.
+
+All of these descriptions have their place within the theory and it is convenient to switch between them as needed.
+
+=== The functor pt ===
+Now that a set of points is available for any locale, it remains to equip this set with an appropriate topology in order to define the object part of the functor pt. This is done by defining the open sets of pt(''L'') as 
+
+:&phi;(''a'') = { ''p'' in pt(''L'') | ''p''(''a'') = 1 },
+
+for every element ''a'' of ''L''. Here we viewed the points of ''L'' as morphisms, but one can of course state a similar definition for all of the other equivalent characterizations. It can be shown that setting &Omega;(pt(''L'')) = {&phi;(''a'') | ''a'' in ''L''} does really yield a topological space (pt(''L''), &Omega;(pt(''L''))). It is common to abbreviate this space as pt(''L'').
+
+Finally pt can be defined on morphisms of '''Frm''' rather canonically by defining, for a frame morphism ''g'' from ''L'' to ''M'', pt(''g''): pt(''M'') &rarr; pt(''L'') as pt(''g'')(''p'') = ''p'' o ''g''. In words, we obtain a morphism from ''L'' to 2 (a point of ''L'') by applying the morphism ''g'' to get from ''L'' to ''M'' before applying the morphism ''p'' that maps from ''M'' to 2. Again, this can be formalized using the other descriptions of points of a locale as well - for example just calculate (''p'' o ''g'')<sup> &minus;1</sup>(0).
+
+=== The adjunction of Top and Loc===
+As noted several times before, pt and &Omega; usually are not inverses. In general neither is ''X'' [[homeomorphism|homeomorphic]] to pt(&Omega;(''X'')) nor is ''L'' [[order isomorphism|order-isomorphic]] to &Omega;(pt(''L'')). However, when introducing the topology of pt(''L'') above, a mapping &phi; from ''L'' to &Omega;(pt(''L'')) was applied. This mapping is indeed a frame morphism. Conversely, we can define a continuous function &psi; from ''X'' to pt(&Omega;(''X'')) by setting &psi;(''x'') = &Omega;(''p''<sub>''x''</sub>), where ''p''<sub>''x''</sub> is just the characteristic function for the point ''x'' from 1 to ''X'' as described above. Another convenient description is given by viewing points of a locale as meet-prime elements. In this case we have &psi;(''x'') = ''X'' \ Cl{''x''}, where Cl{''x''} denotes the topological closure of the set {''x''} and \ is just set-difference.
+
+At this point we already have more than enough data to obtain the desired result: the functors &Omega; and pt define an adjunction between the categories '''Top''' and '''Loc''' = '''Frm'''<sup>op</sup>, where pt is right adjoint to &Omega; and the [[natural transformation]]s &psi; and &phi;<sup>op</sup> provide the required unit and counit, respectively.
+
+=== The duality theorem ===
+The above adjunction is not an equivalence of the categories '''Top''' and '''Loc''' (or, equivalently, a duality of '''Top''' and '''Frm'''). For this it is necessary that both &psi; and &phi; are isomorphisms in their respective categories.
+
+For a space ''X'', &psi;: ''X'' &rarr; pt(&Omega;(''X'')) is a homeomorphism [[if and only if]] it is [[bijective]]. Using the characterization via meet-prime elements of the open set lattice, one sees that this is the case if and only if every meet-prime open set is of the form ''X'' \ Cl{''x''} for a unique ''x''. Alternatively, every join-prime closed set is the closure of a unique point, where "join-prime" can be replaced by [[irreducible (order theory)|(join-) irreducible]] since we are in a distributive lattice. Spaces with this property are called '''sober'''.
+
+Conversely, for a locale ''L'', &phi;: ''L'' &rarr; &Omega;(pt(''L'')) is always surjective. It is additionally injective if and only if any two elements ''a'' and ''b'' of ''L'' for which ''a'' is not less-or-equal to ''b'' can be separated by points of the locale, formally:
+
+: if not ''a'' &le; ''b'', then there is a point ''p'' in pt(''L'') such that p(''a'') = 1 and p(''b'') = 0.
+
+If this condition is satisfied for all elements of the locale, then the locale is '''spatial''', or said to have enough points.
+
+Finally, one can verify that for every space ''X'', &Omega;(''X'') is spatial and for every locale ''L'', pt(''L'') is sober. Hence, it follows that the above adjunction of '''Top''' and '''Loc''' restricts to an equivalence of the full subcategories '''Sob''' of sober spaces and '''SLoc''' of spatial locales. This main result is completed by the observation that for the functor pt o &Omega;, sending each space to the points of its open set lattice is right adjoint to the [[inclusion functor]] from '''Sob''' to '''Top'''. For a space ''X'', pt(&Omega;(''X'')) is called its '''soberification'''. The case of the functor &Omega; o pt is symmetric but a special name for this operation is not commonly used.
+
+==References==
+A monograph available free online:
+* Burris, Stanley N., and H.P. Sankappanavar, H. P., 1981. ''[http://www.thoralf.uwaterloo.ca/htdocs/ualg.html A Course in Universal Algebra.]''  [[Springer-Verlag]]. ISBN 3-540-90578-2.
+* P. T. Johnstone, ''Stone Spaces'', Cambridge Studies in Advanced Mathematics 3, [[Cambridge University Press]], Cambridge, 1982. ISBN 0-521-23893-5.
+* Steven Vickers, ''Topology via logic'', Cambridge University Press, 1989. ISBN 0-521-36062-5. 
+
+[[Category:Topology]]
+[[Category:Order theory]]
+[[Category:Mathematical theorems]]
+[[Category:Duality theories]]</body> </html>

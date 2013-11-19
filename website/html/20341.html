@@ -1,0 +1,55 @@
+<html> <head> <title>KERNAL</title></head><body>{{unreferenced|date=February 2009}}
+:''This article is about Commodore's 8-bit OS software. ''Kernal'' is also a common misspelling of [[kernel]]''.
+
+The '''KERNAL''' is [[Commodore International|Commodore]]'s name for the [[read-only memory|ROM]]-resident [[operating system]] core in its [[8-bit]] [[home computer]]s; from the original [[Commodore PET|PET]] of 1977, followed by the extended but strongly related versions used in its successors; the [[Commodore VIC-20|VIC-20]], [[Commodore 64]], [[Plus/4]], [[Commodore 16|C16]], and [[Commodore 128|C128]]. The Commodore 8-bit machines' KERNAL consisted of the low-level, close-to-the-hardware OS routines roughly equivalent to the [[BIOS]] in [[IBM PC compatibles]] (in contrast to the [[Commodore BASIC|BASIC interpreter]] routines, also located in ROM), and was user callable via a [[jump table]] whose central (oldest) part, for reasons of backwards compatibility, remained largely identical throughout the whole 8-bit series. The KERNAL ROM occupies the last 8 [[Kilobyte|KB]] of the 8-bit CPU's 64 KB address space ($E000-$FFFF).
+
+The KERNAL was initially written for the Commodore PET by [[John Feagans]], who introduced the idea of separating the BASIC routines from the operating system. It was further developed by several people, notably [[Robert Russell (engineer)|Robert Russell]] added many of the features for the VIC-20 and the C64.
+
+==Example of use==
+
+A simple, yet characteristic, example of applying the KERNAL is given by the following [[MOS Technology 6502|6502]] [[assembly language]] subroutine (written in [[ca65]] assembler format/syntax):
+
+    CHROUT  = $ffd2          ; CHROUT sends a character to the current output device
+    CR      = $0d            ; [[PETSCII]] code for Carriage Return 
+    ;
+    hello:
+            ldx #0           ; start with character 0
+    next:
+            lda message,x    ; read character X from message
+            beq done         ; we're done when we read a zero byte
+            jsr CHROUT       ; call CHROUT to output char to current output device (defaults to screen)
+            inx              ; next character
+            bne next         ; loop back while index is not zero (max string length 255 bytes)
+    done:
+            rts              ; return from subroutine
+    ;
+    message:
+            .byte "[[Hello world program#Accumulator .2B index register machine: MOS Technology 6502.2C CBM KERNAL.2C ca65 assembler|Hello, world!]]"
+            .byte CR, 0      ; Carriage Return and zero marking end of string
+
+
+This code stub employs the <code>CHROUT</code> routine, which address is found at address <code>[[hexadecimal|$]]FFD2</code> (65490), to send a text string to the default output device (e.g., the display screen).
+
+==About the misspelling==
+
+The KERNAL was known as ''kernel''{{ref|kernel-def}} inside of Commodore since the PET days, but in 1980 Robert Russell misspelled the word in his notebooks forming the word ''kernal''. When Commodore technical writers Neil Harris and Andy Finkel collected Russell's notes and used them as the basis for the VIC-20 programmer's manual, the misspelling followed them along and stuck.{{ref|kernal-origin}}
+
+According to early Commodore myth, and reported by writer/programmer [[Jim Butterfield]] among others, the word KERNAL is an acronym (or maybe more likely, a [[backronym]]) standing for '''''K'''eyboard '''E'''ntry '''R'''ead, '''N'''etwork, '''A'''nd '''L'''ink'', which in fact makes good sense considering its role. [[Berkeley Softworks]] later used it when naming the core routines of its GUI OS for 8-bit home computers: the [[GEOS (8-bit operating system)|GEOS]] KERNAL.
+
+The (completely different) OS core in the 16/32-bit Commodore [[Amiga]] series was called the ''[[AmigaOS#Kickstart|Amiga ROM Kernel]]'', using the correct spelling of ''kernel''.
+
+==Notes==
+
+# {{note|kernal-origin}} See ''On The Edge: The Spectacular Rise and Fall of Commodore'', page 202.
+# {{note|kernel-def}} The [[kernel (computer science)|kernel]] is the most fundamental part of a program, typically an operating system, that resides in memory at all times and provides the basic services. It is the part of the operating system that is closest to the machine and may activate the hardware directly or interface to another software layer that drives the hardware
+# {{note|kernel-feature}}The kernal jump table, used to access all the subroutines in the kernal, was an array of JMP (jump) instructions leading to the actual subroutines. This feature ensured compatibility with user-written software in the event that code within the kernal ROM needed to be relocated in a later revision.
+# {{note|kernel-feature}}Many of the kernal subroutines (e.g., OPEN and CLOSE) were vectored through page three in RAM, allowing a programmer to intercept the associated kernal calls and add to or replace the original functions.
+
+[[Category:Operating system kernels]]
+[[Category:Commodore 64]]
+[[Category:Commodore 128]]
+
+[[de:Kernal]]
+[[it:KERNAL]]
+[[nl:Kernal]]
+[[fi:KERNAL]]</body> </html>

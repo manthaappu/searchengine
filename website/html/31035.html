@@ -1,0 +1,92 @@
+<html> <head> <title>ROLAP</title></head><body>{{Merge from|MOLAP|discuss=Talk:ROLAP#Merge discussion|date=September 2010}}
+<!--Note to editors:
+Please review the discussion page before making changes to the advantages or disadvantages. Thank you. -->
+'''ROLAP''' stands for '''R'''elational '''O'''n'''l'''ine '''A'''nalytical '''P'''rocessing.
+
+ROLAP is an alternative to the [[MOLAP]] (Multidimensional [[OLAP]]) technology. While both ROLAP and MOLAP analytic tools are designed to allow analysis of data through the use of a [[multidimensional data model]], ROLAP differs significantly in that it does not require the [[pre-computation]] and storage of information. Instead, ROLAP tools access the data in a [[relational database]] and generate [[SQL]] queries to calculate information at the appropriate level when an end user requests it. With ROLAP, it is possible to create additional database tables (''summary tables'' or ''aggregations'') which summarize the data at any desired combination of dimensions.  
+
+While ROLAP uses a relational database source, generally the database must be carefully designed for ROLAP use.  A database which was designed for [[OLTP]] will not function well as a ROLAP database.  Therefore, ROLAP still involves creating an additional copy of the data.  However, since it is a database, a variety of technologies can be used to populate the database.
+
+== ROLAP vs. MOLAP<ref name="ieee_cite">{{cite journal
+  | last1 = Bach Pedersen | first1 = Torben
+  | last2 = S. Jensen 
+  | title = Multidimensional Database Technology
+  | journal = Distributed Systems Online
+  | volume = 
+  | issue = 
+  | issn = 0018-9162
+  | pages = 40–46
+  | publisher = [[IEEE]]
+  | location = 
+  | date = December 2001
+  | year = 2001
+  | url = http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=00970558
+  | doi = 
+  | id = 
+  | accessdate = | first2 = Christian }}
+</ref> ==
+
+The discussion of the advantages and disadvantages of ROLAP below, focus on those things that are true of the most widely used ROLAP and MOLAP tools available today.  In some cases there will be tools which are exceptions to any generalization made.
+
+=== Advantages of ROLAP ===
+<!--Note to editors:
+Please review the discussion page before making changes to the advantages or disadvantages. Thank you.
+-->
+
+* ROLAP is considered to be more scalable in handling large data volumes, especially models with [[Dimension (data warehouse)|dimensions]] with very high [[cardinality]] (i.e. millions of members).
+
+* With a variety of data loading tools available, and the ability to fine tune the [[Extract, transform, load|ETL]] code to the particular data model, load times are generally much shorter than with the automated [[MOLAP]] loads.
+
+* The data is stored in a standard [[relational database]] and can be accessed by any [[SQL]] reporting tool (the tool does not have to be an [[OLAP]] tool).
+
+* ROLAP tools are better at handling ''non-aggregatable facts'' (e.g. textual descriptions).  MOLAP tools tend to suffer from slow performance when querying these elements.
+
+* By [[decoupling]] the data storage from the multi-dimensional model, it is possible to successfully model data that would not otherwise fit into a strict dimensional model.
+
+* The ROLAP approach can leverage [[database]] authorization controls such as row-level security, whereby the query results are filtered depending on preset criteria applied, for example, to a given user or group of users ([[SQL]] WHERE clause).
+
+=== Disadvantages of ROLAP ===
+<!--Note to editors:
+Please review the discussion page before making changes to the advantages or disadvantages. Thank you.
+-->
+
+* There is a consensus in the industry that ROLAP tools have slower performance than MOLAP tools. However, see the discussion below about ROLAP performance.
+
+* The loading of ''aggregate tables'' must be managed by custom [[Extract, transform, load|ETL]] code.  The ROLAP tools do not help with this task.  This means additional development time and more code to support.
+
+* When the step of creating aggregate tables is skipped, the query performance then suffers because the larger detailed tables must be queried. This can be partially remedied by adding additional aggregate tables, however it is still not practical to create aggregate tables for all combinations of dimensions/attributes.
+
+* ROLAP relies on the general purpose database for querying and caching, and therefore several special techniques employed by [[MOLAP]] tools are not available (such as special hierarchical indexing).  However, modern ROLAP tools take advantage of latest improvements in [[SQL]] language such as CUBE and ROLLUP operators, DB2 Cube Views, as well as other SQL OLAP extensions.  These SQL improvements can mitigate the benefits of the [[MOLAP]] tools.
+
+* Since ROLAP tools rely on [[SQL]] for all of the computations, they are not suitable when the model is heavy on calculations which don't translate well into [[SQL]]. Examples of such models include budgeting, allocations, financial reporting and other scenarios.
+
+=== Performance of ROLAP ===
+==== OLAP Survey ====
+In the OLAP industry ROLAP is usually perceived as being able to scale for large data volumes, but suffering from slower query performance as opposed to MOLAP. The [http://www.olapreport.com/survey.htm OLAP Survey], the largest independent survey across all major OLAP products, being conducted for 6 years (2001 to 2006) have consistently found that companies using ROLAP report slower performance than those using MOLAP even when the data volume were taken into consideration.
+
+However, as with any survey there are a number of subtle issues that must be taken into account when interpreting the results.
+* The survey shows that ROLAP tools have 7 times more users than MOLAP tools within each company.  Systems with more users will tend to suffer more performance problems at peak usage times.
+* There is also a question about complexity of the model, measured both in number of dimensions and richness of calculations. The survey does not offer a good way to control for these variations in the data being analyzed.
+
+==== Downside of flexibility ====
+
+Some companies select ROLAP because they intend to re-use existing relational database tables -- these tables will frequently not be optimally designed for OLAP use.  The superior flexibility of ROLAP tools allows this less than optimal design to work, but performance suffers.  MOLAP tools in contrast would force the data to be re-loaded into an optimal OLAP design.
+
+== Trends ==
+
+The undesirable trade-off between additional [[ETL]] cost and slow query performance has ensured that most commercial [[OLAP]] tools now use a "Hybrid OLAP" ([[HOLAP]]) approach, which allows the model designer to decide which portion of the data will be stored in [[MOLAP]] and which portion in ROLAP.
+
+== Products ==
+
+Examples of commercial products using ROLAP include [[Microsoft Analysis Services]], [[MicroStrategy]], [[Oracle Corporation|Oracle]] BI (the former Siebel Analytics) and Tableau Software. There is also an open source ROLAP server, [[Mondrian OLAP server|Mondrian]].
+
+== References ==
+{{reflist}}
+
+{{Data warehouse}}
+
+[[Category:Online analytical processing]]
+
+[[es:ROLAP]]
+[[fr:R-OLAP]]
+[[pt:ROLAP]]</body> </html>

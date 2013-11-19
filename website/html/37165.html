@@ -1,0 +1,119 @@
+<html> <head> <title>TextMate</title></head><body>{{primarysources|date=November 2010}}
+{{Infobox software
+| name                   = TextMate
+| logo                   = [[Image:TextmateIcon.png|64px|TextMate icon]]
+| screenshot             = [[Image:TextMate screenshot.png|220px|TextMate screenshot]]
+| caption                =
+| developer              = Allan Odgaard ([[MacroMates]]), Ciarán Walsh
+| latest_release_version = 1.5.10 (1616)
+| latest_release_date    = November 12, 2010
+| operating_system       = [[Mac OS X]]
+| genre                  = [[text editor]]
+| license                = [[Proprietary software|Proprietary]]
+| website                = http://www.macromates.com/
+}}
+'''TextMate''' is a general-purpose [[Graphical user interface|GUI]] [[text editor]] for [[Mac OS X]] created by [[Allan Odgaard]]. Popular with programmers,<ref>See [http://macromates.com/wiki/Polls/WhichLanguageDoYouUse this poll] at the TextMate wiki for most commonly used languages.</ref> some notable features include [[declarative programming|declarative]] customizations, [[Tab (GUI)|tabs for open documents]], recordable [[Macro (computer science)#Application macros|macros]], [[Folding editor|folding sections]] and [[Snippet management|snippets]], [[shell (computing)|shell]] integration, and an extensible bundle system.
+
+==History==
+In 2004, Allan Odgaard began the development of TextMate. TextMate 1.0 came out on 5 October 2004, after 5 months of development, followed by version 1.0.1 on 21 October 2004.<ref>David Hansson. “[http://macromates.com/blog/archives/2004/10/05/hello-world/ TextMate 1.0 is finally here!]”, ''TextMate Blog'', 5 October 2004.</ref><ref>Allan Odgaard. “[http://macromates.com/wiki/Profiles/AllanOdgaard Profiles/Allan Odgaard]” on the TextMate wiki, 20 November 2005.</ref><ref>David Hansson. “[http://macromates.com/blog/archives/2004/10/21/textmate-101-emerges-after-nine-betas/ TextMate 1.0.1 emerges after nine betas]”, ''TextMate Blog'', 21 October 2005.</ref> The release focused on implementing a small feature set well, and did not have a preference window or a toolbar, didn’t integrate [[File Transfer Protocol|FTP]], and had no options for printing.<ref>Matt Willmore. “[http://maczealots.com/reviews/textmate/ TextMate 1.0.1 Review: A Checkmate for TextMate?]”, ''Maczealots.com'', 8 October 2004.</ref><ref>Michael “drunkenbatman” Bell. “[http://www.drunkenblog.com/drunkenblog-archives/000347.html TextMate: The Missing Editor for OS X]”, ''Drunkenblog'', 4 November 2004.</ref> At the beginning only a small number of programming languages were supported, as only a few “language bundles” had been created. Despite all that, some developers found this early and incomplete version of TextMate a welcome change to a market that was considered stagnated by the decade-long dominance of [[BBEdit]].<ref>Kimbro Staken. “[http://www.xmldatabases.org/WK/blog/2129_A_cool_new_text_editor_-_TextMate_-_Mac_OS_X.item A cool new text editor - TextMate - Mac OS X]”, ''Inspirational Technology'', 6 October 2004.</ref>
+
+TextMate 1.0.2 came out on 10 December 2004. In the series of TextMate 1.1 [[development stage#Beta|betas]], TextMate gained features: a preferences window with a GUI for creating and editing themes; a status bar with a symbol list; menus for choosing language and tab settings, and a “bundle editor” for editing language-specific customizations. On 6 January 2006, Odgaard released TextMate 1.5, the first “stable release” since 1.0.2.<ref> Allan Odgaard. “[http://macromates.com/blog/archives/2006/01/06/textmate-15/ TextMate 1.5]”, ''TextMate Blog'', 6 January 2006.</ref> Reviews were positive, and many reviewers who had previously criticised the program now endorsed it.<ref>Rui Carmo. “[http://the.taoofmac.com/space/blog/2006-01-08 Third Time’s The Charm]”, ''Tao of Mac'', 8 January 2006.</ref><!-- need some more references -->
+
+TextMate continued to develop through mid-2006.  On 8 August 2006, TextMate was awarded the Apple Design Award for Best Developer Tool, at Apple’s [[Worldwide Developers Conference]] in [[San Francisco]], [[California]], to “raucous applause.”<ref>John Gruber.  “[http://daringfireball.net/linked/2006/august#tue-08-textmate ADA: TextMate 1.5.2]”, ''Daring Fireball Linked List'', 8 August 2006.</ref> In February 2006, the TextMate blog expressed intentions for future directions, including improved project management, with a plug-in system to support remote file systems such as FTP, and [[revision control]] systems such as [[Subversion (software)|Subversion]].<ref>Allan Odgaard. “[http://macromates.com/blog/archives/2006/02/15/future-directions/ Future Directions]”, ''TextMate Blog'', 15 February 2006.</ref>  Those changes, however, have been slow to materialize.  Throughout 2007, the core application changed only minimally, though its “language bundles” continued to advance.
+
+In June 2009, TextMate 2 was announced to be in development and about 90 percent complete, but which features it will include wasn't disclosed.<ref>TextMate Blog: [http://blog.macromates.com/2009/working-on-it/ Working on It], 14 June 2009</ref> As of January, 2011 it has yet to be released.
+
+==Features==
+=== Nested scopes ===
+TextMate allows users to create their own arbitrarily complex [[syntax highlighting]] modes by using a modified version of the Apple ASCII [[property list]] format to define language grammars. These grammars allow nesting rules to be defined using the [[Oniguruma]] [[regular expression]] library, and then assigned specific “scopes”: compound labels which identify them for coloration.
+
+Therefore, each point of a document is assigned one or more scopes, which define where in the document the point is, how it should be colored, and what the behavior of TextMate should be at that point. For instance, the title of one of the links in the “External links” section has the scope:
+
+<pre>
+text.html.mediawiki
+    markup.list.mediawiki
+        meta.link.inline.external.mediawiki
+            string.other.link.title.external.mediawiki
+</pre>
+
+This scope tells us that we are looking at a link title within a link within a list within a MediaWiki document.
+
+TextMate themes can mark up any scope, at varying levels of precision. For instance, one theme may decide to color every constant (<code>constant.*</code>) identically, while another may decide that numerical constants (<code>constant.numeric.*</code>) should be colored differently than escaped characters (<code>constant.character.escape.*</code>). The nested scope syntax allows language authors and theme authors various levels of coverage, so that each one can choose to opt for simplicity or comprehensiveness, as desired.
+
+===Snippets===
+At their simplest, TextMate “[[snippet (programming)|snippets]]” are pieces of text which can be inserted into the document at the current location. More complicated behaviors are possible, based on a few useful generalizations of this idea. First, snippets can include one or more “tab stops”, which can be cycled through using the “tab” key. Second, the results of these tab stops can be dynamically changed in another portion of the snippet, as the user fills in the stop. Third, the snippets have access to TextMate environment variables such as current scope, current line number, or author name, and also have the ability to run inline shell scripts.
+
+===Bundles===
+TextMate language grammars, snippets, macros, commands, and templates can be grouped into “bundles” of functionality. Any snippet, macro, or command can be executed by pressing a keyboard shortcut, by typing a particular word and then pressing the “tab” key (so-called “tab triggers”), or by selecting the command from a menu. Tab triggers are particularly useful; the combination of tab triggers and snippets greatly eases coding in verbose languages, or languages with commonly-typed patterns.
+
+Snippets, macros, and commands can be limited to a particular scope, so that for instance the “close html tag” command does not work in a python script, freeing up that keyboard shortcut to be used for something else. This allows individual languages, and even individual scopes, to override built-in commands such as “Reformat Paragraph” with more specialized versions. Even common key such as the return key and spacebar can be overridden to make coding seamless.
+
+36 bundles ship with TextMate, but a Subversion repository contains 121 bundles, for everything from [[Markdown]] to [[blog]]ging to [[MIPS architecture|MIPS]] assembly language.<ref>For information on getting more bundles, see the [http://macromates.com/textmate/manual/bundles#getting_more_bundles relevant section in the TextMate manual].</ref>
+
+===Project Management===
+Several documents or folders can be opened at once in a TextMate project window, which provides a drawer along its side listing file and folder names, and a series of [[tab (GUI)|tab]]s across the top. Search and replace can be undertaken across an entire project, and commands can interact with the selected files or folders in the drawer. Bundles for [[Concurrent Versions System|CVS]], Subversion<!-- this is linked in the previous paragraph. please don't link it again! -->, [[darcs]], and other [[revision control]] systems allow TextMate to manage versioned code.
+
+===Other features===
+TextMate has several other notable features:
+
+* [[folding editor|Folding code sections]] can be used to hide areas of a document not currently being edited, for a more compact view of code structure or to avoid distraction. The sections to be folded can be selected by hand, or the structure of the document itself can be used to determine foldings.
+* Regular-expression–based search and replace speeds complicated text manipulations. TextMate uses the [[Oniguruma]] regular expression library developed by K. Kosako.<ref>{{cite web |accessdate=2009-04-28 |url=http://manual.macromates.com/en/regular_expressions |title=20 Regular Expressions |publisher=TextMate }}</ref>
+* A function pop-up provides a list of sections or functions in the current document.
+* [[Clipboard (software)|Clipboard]] history allows users to cut many sections of text at once, and then paste them.
+* A column editing mode trivializes adding the same text to several rows of text, and is very useful for manipulating tabular data.
+* A WebKit-based HTML view window shows live updates as an HTML document is edited.
+
+===Limitations===
+TextMate does have a few limitations:
+
+* There is no support for variable-width or wide fonts, meaning that languages such as Chinese, Japanese, Korean, and others are not really supported, as their characters are wider than Latin characters.
+* There is no support for right-to-left languages such as Hebrew and Arabic.
+* TextMate has no built-in support for (S)FTP. <!-- this should probably link to that 'future directions' post already referenced earlier --> There are some workarounds mentioned at the TextMate Wiki.<ref>[http://wiki.macromates.com/Main/FAQ#projects How to edit files from my FTP Server as a TextMate project]. ''TextMate Wiki - FAQ: Projects''</ref>
+* Because TextMate is not tightly coupled to a scripting language, as [[Emacs]] is to [[Emacs Lisp|elisp]], it is impossible for users to have complete control over the behavior of some built-in commands such as those which indent sections of text or those which move columns around;  however, many useful actions can be accomplished with TextMate’s macros and commands.  Allan Odgaard explained his thoughts on the subject in an email to the TextMate mailing list.<ref>Allan Odgaard. “[http://comox.textdrive.com/pipermail/textmate/2007-February/017457.html Re: Changing cursor position from command]”.  ''TextMate mailing list''. 14 February 2007.</ref>
+* No built-in HTML validator — because TextMate uses the [[W3C Markup Validation Service|W3C validator]] for HTML validation, users must be online to validate HTML.
+* Despite its substantial support for macros and snippets, TextMate has no built-in support for code-hinting or guided code-completion, so text editors that support these features may prove to be a better choice when learning the syntax of a new language.
+* TextMate is explicitly text only, and does not guarantee that arbitrary binary data in a file will be preserved through a load/save cycle, regardless of whether that data is edited.
+* TextMate's editing window is inaccessible with Max OS X [[VoiceOver]] and MonoMouse.
+
+==Community==
+TextMate has a large and active community of users, dozens of whom contribute to the open-source bundle<ref>[http://manual.macromates.com/en/bundles Manual.macromates.com]</ref> subversion repository.  The TextMate [[wiki]] has many hints and tips, feature suggestions, and links to external resources.  The mailing list has medium traffic, but with a relatively high signal-to-noise ratio.  A ticket system exists for filing bug reports and feature requests, and an [[Internet Relay Chat|IRC]] channel ([irc://irc.freenode.net/#textmate #textmate]) is usually active.
+
+TextMate users write code in many dozens of programming languages, and bundles have been written to support these. Most bundles are supported by primary users - for instance the [[Ruby (programming language)|Ruby]] and [[Ruby on Rails]] bundles are supported by  core developers for these languages libraries such as [[David Heinemeier Hansson]], Rails’ creator.
+
+==Awards==
+TextMate 1.5 won the [[Apple Design Awards|Apple Design Award]] for best developer tool in [[2006]].
+
+==Notes==
+<!-- Deleted image removed: [[Image:TextMate-original-icon.png|thumb|right|Original TextMate icon.]] -->
+<!-- To add a reference simply enclose the text you want to appear here inside a<ref></ref> pair in the correct place in the body of the article.-->
+{{reflist|2}}
+
+==Further reading==
+* {{cite book
+  | last = Gray
+  | first = James Edward II
+  | title = Textmate: Power Editing for the Mac
+  | publisher = Pragmatic Bookshelf
+  | year = 2007
+  | month = January
+  | isbn = 097873923X
+  | url = http://www.pragmaticprogrammer.com/titles/textmate/
+  }}
+
+==See also==
+* [[E Text Editor]] - a clone of TextMate for [[Microsoft Windows]] and [[Linux]].
+
+==External links==
+* {{official|http://www.macromates.com/}}
+* [http://textmate.org/ TextMate Community]
+
+[[Category:Mac OS X-only software]]
+[[Category:Mac OS X text editors]]
+[[Category:Apple Design Award winners]]
+[[Category:Proprietary software]]
+
+[[de:TextMate]]
+[[es:TextMate]]
+[[fr:TextMate]]
+[[pl:TextMate]]
+[[zh:TextMate]]</body> </html>

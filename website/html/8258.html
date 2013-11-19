@@ -1,0 +1,158 @@
+<html> <head> <title>CouchDB</title></head><body>{{Inappropriate tone|date=July 2010}}
+{{Infobox Software
+| name                   = Apache CouchDB
+| logo                   = [[Image:Couchdb-logo.png|logo]]
+| screenshot             = [[File:Couchdb screenshot.png|300px]]
+| caption                = CouchDB's Futon Administration Interface, User database
+| collapsible            =
+| author                 = [[Damien Katz]], [[Jan Lehnardt]], [[Noah Slater]], [[Christopher Lenz]], [[J. Chris Anderson]]
+| developer              = [[Apache Software Foundation]]
+| status                 = Active
+| released               = 2005
+| frequently updated     = yes<!-- Release version update? Don't edit this page, just click on the version number! -->
+| programming language   = [[Erlang (programming language)|Erlang]]
+| operating system       = [[Cross-platform]]
+| latest preview version = 1.0.1
+| latest preview date    = {{release date|2010|08|11}}
+| language               = English
+| genre                  = [[Document-oriented database]]
+| license                = [[Apache License]] 2.0
+| website                = http://couchdb.apache.org/
+}}
+
+'''Apache CouchDB''', commonly referred to as '''CouchDB''',  is a [[free software|free]] [[open source software|open source]] [[document-oriented database]] written in the [[Erlang (programming language)|Erlang]] programming language. It is a [[NoSQL]] product designed for local replication and to scale vertically along a wide range of devices. CouchDB is supported by commercial enterprises [[CouchOne]] and [[Cloudant]].
+
+==History==
+In April 2005, [[Damien Katz]] (former [[Lotus Notes]] developer at [[IBM]]; now founder, CEO of CouchOne) posted on his blog about a new database engine he was working on. Details were sparse at this early stage, but what he did share was that it would be a "storage system for a large scale object database" and that it would be called CouchDB (''Couch'' is an acronym for ''cluster of unreliable commodity hardware'').<ref>{{cite web | last = Lennon| first = Joe  | title =  Exploring CouchDB | work = IBM | publisher = IBM | date = 2009-03-31 | url = http://www.ibm.com/developerworks/opensource/library/os-couchdb/index.html | accessdate = 2009-03-31 }}</ref> His objectives for the database were for it to become the database of the Internet and that it would be designed from the ground up to serve web applications. CouchDB was originally written in [[C++]], but the project moved to the [[Erlang (programming language)|Erlang]] OTP platform for its emphasis on [[fault tolerance]]. He self-funded the project for almost two years and released it as an open source project under the [[GNU General Public License]].
+
+In February 2008, it became an [[Apache Incubator]] project and the license was changed to the [[Apache License]] rather than the [[GPL]].<ref>[http://mail-archives.apache.org/mod_mbox/incubator-general/200802.mbox/%3c3d4032300802121136p361b52ceyfc0f3b0ad81a1793@mail.gmail.com%3e Apache mailing list announcement] on mail-archives.apache.org</ref> On November 2008, it graduated to a top-level project alongside the likes of the [[Apache HTTP Server]], [[Apache Tomcat|Tomcat]] and [[Apache Ant|Ant]].<ref>[http://mail-archives.apache.org/mod_mbox/incubator-couchdb-dev/200811.mbox/%3c3F352A54-5FC8-4CB0-8A6B-7D3446F07462@jaguNET.com%3e Re: Proposed Resolution: Establish CouchDB TLP] on mail-archives.apache.org</ref>
+
+Currently, CouchDB is maintained at the Apache Software Foundation with backing from IBM. Katz works on it full-time as the lead developer.
+
+==Design==
+CouchDB is most similar to other document stores like [[MongoDB]] and [[Lotus Notes]]. It is not a [[relational database management system]]. Instead of storing data in rows and columns, the database manages a collection of [[JSON]] documents. The documents in a collection need not share a [[database schema|schema]], but retain query abilities via [[View (database)|view]]s. Views are defined with [[aggregate function]]s and [[filter (software)|filter]]s are computed in parallel, much like [[MapReduce]].
+
+Views are generally stored in the database and their [[Index (database)|index]]es updated continuously, although queries may introduce temporary views. CouchDB supports a view system using external socket servers and a [[JSON]]-based protocol.<ref name="Apache, View Server" >[http://wiki.apache.org/couchdb/ViewServer View Server Documentation] on wiki.apache.org</ref> As a consequence, view servers have been developed in a variety of languages.
+
+CouchDB exposes a [[RESTful]] HTTP API and a large number of pre-written clients are available. Additionally, a [[plugin]] architecture allows  for using different computer languages as the view server such as [[JavaScript]] (default), [[PHP]], [[Ruby (programming language)|Ruby]], [[Python (programming language)|Python]] and [[Erlang (programming language)|Erlang]]. Support for other languages can be easily added. CouchDB design and philosophy borrows heavily from Web architecture and the concepts of resources, methods and representations and can be simplified as the following.
+
+{{cquote|[[Django (web framework)|Django]] may be built for the Web, but CouchDB is built of the Web. I’ve never seen software that so completely embraces the philosophies behind HTTP. CouchDB makes Django look old-school in the same way that Django makes [[Active Server Pages|ASP]] look outdated.|15px||Jacob Kaplan-Moss, Django Developer <ref>[http://books.couchdb.org/relax/intro/why-couchdb#A%20Different%20Way%20to%20Model%20Your%20Data A Different Way to Model Your Data]</ref>
+}}
+It is in use in many software projects and web sites<ref>[http://wiki.apache.org/couchdb/CouchDB_in_the_wild CouchDB in the wild] A list of software projects and websites using CouchDB</ref>, including [[Ubuntu (operating system)|Ubuntu]], where it is used to synchronize address and bookmark data.<ref>[http://mail-archives.apache.org/mod_mbox/couchdb-dev/200910.mbox/%3C4AD53996.3090104@canonical.com%3E Email from Elliot Murphy (Canonical)] to the CouchDB-Devel list</ref> Since Version 0.11 CouchDB supports [[CommonJS]]' Module specification<ref>http://wiki.apache.org/couchdb/CommonJS_Modules</ref>.
+
+===Features===
+; Document Storage
+: CouchDB stores documents in their entirety. You can think of a document as one or more field/value pairs expressed as JSON. Field values can be simple things like strings, numbers, or dates. But you can also use [[Array data structure|ordered lists]] and [[Associative array|associative maps]]. Every document in a CouchDB database has a unique id and there is no required document schema.
+; ACID Semantics
+: Like many relational database engines, CouchDB provides [[atomicity, consistency, isolation, durability|ACID]] semantics<ref name="ACID">[http://couchdb.apache.org/docs/overview.html], see section on ACID Properties.</ref>. It does this by implementing a form of [[Multi-Version Concurrency Control]] (MVCC) not unlike [[InnoDB]] or Oracle. That means CouchDB can handle a high volume of concurrent readers and writers without conflict.
+; Map/Reduce Views and Indexes
+: To provide some structure to the data stored in CouchDB, you can develop views that are similar to their relational database counterparts. In CouchDB, each view is constructed by a [[JavaScript]] function (server-side JavaScript by using [[CommonJS]] and [[SpiderMonkey (JavaScript engine)|SpiderMonkey]]) that acts as the Map half of a [[MapReduce]] operation. The function takes a document and transforms it into a single value which it returns. The logic in your JavaScript functions can be arbitrarily complex. Since computing a view over a large database can be an expensive operation, CouchDB can index views and keep those indexes updated as documents are added, removed, or updated. This provides a very powerful indexing mechanism that you get unprecedented control over compared to most databases.
+; Distributed Architecture with Replication
+: CouchDB was designed with bi-direction replication (or synchronization) and off-line operation in mind. That means multiple replicas can have their own copies of the same data, modify it, and then sync those changes at a later time. The biggest [[Gotcha (programming)|gotcha]] typically associated with this level of flexibility is conflicts.
+; REST API
+: CouchDB treats all stored items (there are others besides documents) as a resource. All items have a unique [[URI]] that gets exposed via HTTP. [[REST]] uses the [[Hypertext Transfer Protocol#Request methods|HTTP methods]] POST, GET, PUT and DELETE for the four basic [[Create, read, update and delete|CRUD]] (Create, Read, Update, Delete) operations on all resources. HTTP is widely understood, interoperable, scalable and proven technology. A lot of tools, software and hardware, are available to do all sorts of things with HTTP like caching, proxying and load balancing.
+
+==Examples==
+CouchDB provides a set of RESTful [[Hypertext Transfer Protocol#Request methods|HTTP methods]] (e.g., POST, GET, PUT or DELETE) by using the [[cURL]] lightweight command-line tool to interact with CouchDB server:
+ curl http://127.0.0.1:5984/
+The CouchDB server processes the HTTP request, it returns a response in [[JSON]] as the following:
+ {"couchdb":"Welcome","version":"1.0.1"}
+This is not terribly useful, but it illustrates nicely the way of interacting with CouchDB. Creating a database is simple—just issue the following command:
+ curl -X PUT http://127.0.0.1:5984/wiki
+CouchDB will reply with the following message, if the database does not exist:
+ {"ok":true}
+or, with a different response message, if the database already exists:
+ {"error":"file_exists","reason":"The database could not be created, the file already exists."}
+The command below retrieves information about the database:
+ curl -X GET http://127.0.0.1:5984/wiki
+The server replies with the following JSON message:
+ {"db_name":"wiki","doc_count":0,"doc_del_count":0,"update_seq":0,
+  "purge_seq":0,"compact_running":false,"disk_size":79,
+  "instance_start_time":"1272453873691070","disk_format_version":5}
+The following command will remove the database and its contents:
+ curl -X DELETE http://127.0.0.1:5984/wiki
+CouchDB will reply with the following message:
+ {"ok":true}
+
+==Open source components==
+Here a list of the existing open source projects that are used in CouchDB.
+{| class="wikitable" width = "100%"
+! Component
+! Description
+! License
+|-
+| [[SpiderMonkey (JavaScript engine)|SpiderMonkey]]
+| SpiderMonkey is a code name for the first ever [[JavaScript engine]], written by [[Brendan Eich]] at [[Netscape Communications Corporation|Netscape Communications]], later released as open source and now maintained by the [[Mozilla Foundation]].
+| [[Mozilla Public License|MPL]]/[[GNU General Public License|GPL]]/[[GNU Lesser General Public License|LGPL]] tri-license
+|-
+| [[jQuery]]
+| jQuery is a lightweight [[cross-browser]] [[JavaScript library]] that emphasizes interaction between [[JavaScript]] and [[HTML]].
+| [[Dual license]]: [[GNU General Public License|GPL]] and [[MIT License|MIT]]
+|-
+| [[International Components for Unicode|ICU]]
+| International Components for Unicode (ICU) is an [[open source]] project of mature [[C (programming language)|C]]/[[C++]] and [[Java (programming language)|Java]] libraries for [[Unicode]] support, software [[internationalization]] and software globalization. ICU is widely portable to many operating systems and environments.
+| [[MIT License]]
+|-
+| [[OpenSSL]]
+| OpenSSL is an [[open source]] implementation of the [[Transport Layer Security|SSL and TLS]] protocols.  The core [[library (computer science)|library]] (written in the [[C (programming language)|C programming language]]) implements the basic [[cryptography|cryptographic]] functions and provides various utility functions.
+| [[Apache License|Apache]]-like unique
+|-
+| [[Erlang (programming language)|Erlang]]
+| Erlang is a general-purpose [[concurrent computing|concurrent]] [[programming language]] and [[Run time system|runtime]] system. The sequential subset of Erlang is a [[functional language]], with [[strict evaluation]], [[single assignment]], and [[dynamic typing]].
+|  Modified [[Mozilla Public License|MPL]]
+|}
+
+==See also==
+{{Portal|Free software}}
+* [[Document-oriented database]]
+* [[Lotus Notes]]
+* [[MongoDB]]
+* [[OrientDB]]
+* [[Couchio]]
+* [[CouchApp]]
+* [[Cassandra (database)|Cassandra]]
+* [[XML database]]
+* [[Mnesia]]
+
+==References==
+{{Reflist}}
+
+==Bibliography==
+{{Refbegin}}
+* {{ citation
+| first1 = J. Chris | last1 = Anderson | first2 = Noah | last2 = Slater | first3 = Jan | last3 = Lehnardt | date = November 15, 2009 | title = CouchDB: The Definitive Guide | edition = 1st | publisher = [[O'Reilly Media]] | pages = 300 | isbn = 0596158165 | url = http://guide.couchdb.org/editions/1/en/index.html }}
+* {{ citation | first1 = Joe | last1 = Lennon | date = December 15, 2009 | title = Beginning CouchDB | edition = 1st | publisher = [[Apress]] | pages = 300 | isbn = 1430272376 | url = http://www.apress.com/book/view/9781430272373 }}
+{{Refend}}
+
+==External links==
+* {{official|http://couchdb.apache.org/}}
+* [http://books.couchdb.org/relax/ CouchDB: The Definitive Guide]
+* [http://www.nosqldatabases.com/main/tag/couchdb CouchDB articles on NoSQLDatabases.com]
+* [http://manning.com/free/green_chandler.html CouchDB green paper]
+* [http://nosql.mypopescu.com/tagged/couchdb CouchDB news and articles on myNoSQL]
+* [http://nosql.mypopescu.com/post/683838234/scaling-couchdb Scaling CouchDB]
+* [http://wiki.apache.org/couchdb/Complete_HTTP_API_Reference Complete HTTP API Reference]
+
+== Video links ==
+
+* '''Erlang eXchange 2008:'''
+
+:* [http://video.google.com/videoplay?docid=-3714560380544574985&hl=en# Erlang eXchange 2008: Couch DB at 10,000 feet Jan Lehnardt]
+* [http://www.erlang-factory.com/conference/London2009/speakers/janlehnardt Jan Lehnardt is Giving the Following Talks, CouchDB for Erlang Developers]
+* [http://www.infoq.com/presentations/katz-couchdb-and-me CouchDB and Me] on Jan 31, 2009 by Damien Katz
+
+{{Apache}}
+
+{{DEFAULTSORT:Couchdb}}
+[[Category:Erlang programming language]]
+[[Category:Open source database management systems]]
+[[Category:Document-oriented databases]]
+[[Category:Distributed computing architecture]]
+[[Category:Structured storage]]
+[[Category:NoSQL]]
+
+[[de:CouchDB]]
+[[fr:CouchDB]]
+[[pl:CouchDB]]
+[[pt:CouchDB]]
+[[ru:CouchDB]]</body> </html>

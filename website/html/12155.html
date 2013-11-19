@@ -1,0 +1,138 @@
+<html> <head> <title>Engel expansion</title></head><body>The '''Engel expansion''' of a positive [[real number]] ''x'' is the unique non-decreasing sequence of [[natural number|positive integer]]s <math>\{a_1,a_2,a_3,\dots\}</math> such that
+
+:<math>x=\frac{1}{a_1}+\frac{1}{a_1a_2}+\frac{1}{a_1a_2a_3}+\cdots.\;</math>
+
+[[Rational number]]s have a finite Engel expansion, while [[irrational number]]s have an infinite Engel expansion. If ''x'' is rational, its Engel expansion provides a representation of ''x'' as an [[Egyptian fraction]]. Engel expansions are named after [[Friedrich Engel (mathematician)|Friedrich Engel]], who studied them in 1913.
+
+An expansion analogous to an '''Engel expansion''', in which alternating terms are negative, is called a [[Pierce expansion]].
+
+== Engel expansions, continued fractions, and Fibonacci ==
+
+Kraaikamp and Wu (2004) observe that an Engel expansion can also be written as an ascending variant of a [[continued fraction]]:
+
+:<math>x = \frac{\displaystyle 1+\frac{\displaystyle 1+\frac{\displaystyle 1+\cdots}{\displaystyle a_3}}{\displaystyle a_2}}{\displaystyle a_1}.</math>
+
+They claim that ascending continued fractions such as this have been studied as early as [[Fibonacci]]'s [[Liber Abaci]] (1202). This claim appears to refer to Fibonacci's compound fraction notation in which a sequence of numerators and denominators sharing the same fraction bar represents an ascending continued fraction:
+
+:<math>\frac{a\ b\ c\ d}{e\ f\ g\ h} = \dfrac{d+\dfrac{c+\dfrac{b+\dfrac{a}{e}}{f}}{g}}{h}.</math>
+
+If such a notation has all numerators 0 or 1, as occurs in several instances in [[Liber Abaci]], the result is an Engel expansion. However, Engel expansion as a general technique does not seem to be described by Fibonacci.
+
+==Algorithm for computing Engel expansions==
+To find the Engel expansion of ''x'', let
+
+:<math>u_1=x,</math>
+
+:<math>a_k=\left \lceil \frac{1}{u_k} \right \rceil,</math>
+
+and
+
+:<math> u_{k+1}=u_ka_k-1</math>
+
+where <math>\left \lceil r \right \rceil</math> is the [[floor function#The ceiling function|ceiling function]] (the smallest integer not less than ''r''). 
+
+If <math>u_i=0</math> for any ''i'', halt the algorithm.
+
+== Example ==
+To find the Engel expansion of 1.175, we perform the following steps.
+
+:<math>u_1 = 1.175, a_1=\left \lceil \frac{1}{1.175} \right\rceil = 1; \, </math>
+
+:<math>u_2 = u_1a_1-1=1.175\cdot1-1=0.175, a_2=\left\lceil\frac{1}{0.175}\right\rceil=6 \, </math>
+
+:<math>u_3 = u_2a_2-1=0.175\cdot6-1=0.05, a_3=\left\lceil\frac{1}{0.05}\right\rceil=20 \, </math>
+
+:<math>u_4 = u_3a_3-1=0.05\cdot20-1=0 \, </math>
+
+The series ends here. Thus,
+
+:<math>1.175=\frac{1}{1}+\frac{1}{1\cdot6}+\frac{1}{1\cdot6\cdot20}</math>
+
+and the Engel expansion of 1.175 is {1, 6, 20}.
+
+==Engel expansions of rational numbers==
+
+Every positive rational number has a unique finite Engel expansion. In the algorithm for Engel expansion, if ''u<sub>i</sub>'' is a rational number ''x''/''y'', then ''u''<sub>''i''+1</sub> = (&minus;''y'' mod ''x'')/''y''. Therefore, at each step, the numerator in the remaining fraction ''u<sub>i</sub>'' decreases and the process of constructing the Engel expansion must terminate in a finite number of steps. Every rational number also has a unique infinite Engel expansion: using the identity
+
+:<math>\frac{1}{n}=\sum_{r=1}^{\infty}\frac{1}{(n+1)^r}.</math>
+
+the final digit ''n'' in a finite Engel expansion can be replaced by an infinite sequence of (''n'' + 1)s without changing its value. For example
+
+:<math>1.175=\{1,6,20\}=\{1,6,21,21,21,\dots\}.\;\;</math>
+
+This is analogous to the fact that any rational number with a finite decimal representation also has an infinite decimal representation (see [[0.999...]]).
+
+[[Paul Erdős|Erdős]], [[Alfréd Rényi|Rényi]], and Szüsz asked for nontrivial bounds on the length of the finite Engel expansion of a rational number ''x''/''y''; this question was answered by Erdős and [[Jeffrey Shallit|Shallit]], who proved that the number of terms in the expansion is O(''y''<sup>1/3 + &epsilon;</sup>) for any &epsilon; > 0.<ref>{{harvtxt|Erdős|Rényi|Szüsz|1958}}; {{harvtxt|Erdős|Shallit|1991}}.</ref>
+
+==Engel expansions for some well-known constants==
+:<math>\pi=\{1, 1, 1, 8, 8, 17, 19, 300, 1991, 2492, \dots\}\;</math> {{OEIS|id=A006784}}
+
+:<math>e=\{1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, \dots\}\;</math> {{OEIS|id=A000027}}
+
+And in general,
+
+:<math>e^{1/r}-1=\{1r, 2r, 3r, 4r, 5r, 6r, \dots\}\;</math>
+
+:<math>\sqrt{2}=\{1,3,5,5,16,18,78,102,120,144, \dots\}\;</math> {{OEIS|id=A028254}}
+
+:<math>1=\{2,2,2,2,2, \dots\}.\;</math>
+
+In general, an Engel expansion with constant terms is a [[geometric series]].
+More Engel expansions for constants can be found [http://www.research.att.com/~njas/sequences/Sindx_El.html#Engel here].
+
+==Notes==
+{{reflist}}
+
+==References==
+
+*{{citation
+  | last = Engel | first = F.
+  | contribution = Entwicklung der Zahlen nach Stammbruechen
+  | title = Verhandlungen der 52. Versammlung deutscher Philologen und Schulmaenner in Marburg
+  | pages = 190–191
+  | year = 1913}}.
+
+*{{citation
+ | authorlink1 = Paul Erdős| last1 = Erdős | first1 = Paul
+ | authorlink2 = Alfréd Rényi | last2 = Rényi | first2 = Alfréd
+ | last3 = Szüsz | first3 = Peter
+ | title = On Engel's and Sylvester's series
+ | journal = Ann. Univ. Sci. Budapest Eötvös Sect. Math.
+ | volume = 1
+ | year = 1958
+ | pages = 7–32}}.
+
+*{{citation
+ | authorlink1 = Paul Erdős| last1 = Erdős | first1 = Paul
+ | authorlink2 = Jeffrey Shallit | last2 = Shallit | first2 = Jeffrey
+ | title = New bounds on the length of finite Pierce and Engel series
+ | journal = Journal de théorie des nombres de Bordeaux
+ | volume = 3 | issue = 1 |year = 1991 | pages = 43–53
+ | url = http://jtnb.cedram.org/item?id=JTNB_1991__3_1_43_0
+ | id = {{MathSciNet | id = 1116100}}}}.
+
+*{{citation
+  | last1 = Kraaikamp | first1 = Cor | last2 = Wu | first2 = Jun
+  | title = On a new continued fraction expansion with non-decreasing partial quotients
+  | journal = Monatshefte für Mathematik
+  | year = 2004
+  | volume = 143
+  | pages = 285–298
+  | doi = 10.1007/s00605-004-0246-3}}.
+
+==External links==
+* {{cite web 
+  | author = Weisstein, Eric W
+  | authorlink = Eric W. Weisstein
+  | title = Engel Expansion
+  | publisher = MathWorld–A Wolfram Web Resource
+  | url = http://mathworld.wolfram.com/EngelExpansion.html}}
+
+[[Category:Mathematical analysis]]
+[[Category:Continued fractions]]
+[[Category:Egyptian fractions]]
+
+[[fr:Développement en série de Engel]]
+[[it:Espansione di Engel]]
+[[sl:Englov razvoj]]
+[[zh:恩格尔展开式]]</body> </html>

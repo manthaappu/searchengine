@@ -1,0 +1,66 @@
+<html> <head> <title>Pulse-Doppler radar</title></head><body>{{no footnotes|date=July 2009}}
+
+'''Pulse-Doppler''' is a [[radar]] system capable of not only detecting target location (bearing, range, and altitude), but also measuring its radial velocity (range-rate). It uses the [[Doppler effect]]  to determine the relative velocity of objects; pulses of RF energy returning from the target are processed to measure the frequency shift between carrier cycles in each pulse and the original transmitted frequency.  To achieve this, the transmitter frequency source must have very good phase stability and the system is said to be coherent.
+
+The nature of pulsed radar, and the relationship between the carrier frequency and the [[pulse repetition frequency]] (PRF) means that the [[Radar Signal Characteristics#The radar signal in the frequency domain|frequency spectrum]] can be very complex, leading to the possibility of errors and tradeoffs.  In general, it is necessary to utilise a very high PRF to avoid [[aliasing]], which can cause side effects such as [[Radar Signal Characteristics#Unambiguous range|range ambiguity]].  To avoid this, multiple PRFs are often used.
+
+== Underlying principle ==
+Pulse-Doppler radar is based on the fact that targets moving with a nonzero radial velocity will introduce a frequency shift between the transmitter master [[oscillator]] and the carrier component in the returned echoes. This is because the signal is subject to Doppler shift, so echoes from closing targets (moving toward the transmitter) will show an apparent increase in frequency and echoes from opening targets (moving away) will show an apparent decrease in frequency. Target velocity can be estimated by determining the average frequency shift of carrier cycles within a pulse packet. This is typically done by means of a 1D [[fast Fourier transform]] or using the [[autocorrelation technique]]. The transform is performed independently for each sample volume, using data received at the same range from all pulses within a packet or group of pulses.  In older systems, a bank of [[Analogue electronics|analogue]] [[Electronic filter|filters]] were used.
+
+Velocity measurements are of course limited to measuring the component of the target velocity that is parallel to the beam (radial), since tangential movement will not affect the received signals. A target is either closing or opening, or it will fall into the clutter notch (a velocity range reserved for non-displayed clutter). Velocity information from a single radar will therefore result in underestimates of target velocity. Complete velocity profiles can only be derived by combining measurements from several radars, situated at different locations.
+
+The radial velocity of the target can easily be calculated based on knowledge of the radar frequency, speed of light, pulse repetition frequency and average phase (frequency) shift.
+
+:<math> v(\Delta\Theta) = \frac{\Delta\Theta\,c\,PRF}{4\pi\,f} \,\,\,\,\,\,\,\, \Delta\Theta \in [-\pi, \pi)</math>
+
+=== Signal demodulation ===
+The resulting receiver video is processed in doppler velocity filters or digital signal processing circuits which are used to determine velocity. Most modern Pulse-Doppler radars demodulate the incoming radio frequency signal down to a center frequency of zero prior to digital sampling. This is done to reduce computational burden, since the demodulated signal can be downsampled heavily to reduce the amount of data needed for storage. The resulting signal is usually referred to as ''complex demodulated'', or ''IQ-data'', where IQ stands for ''in-phase'' and ''quadrature-phase'', reflecting the fact that the signal is [[complex number|complex]], with a [[real number|real]] and [[imaginary number|imaginary]] part. 
+
+For instance, a modulated signal could be <math>S(t)=\cos(\omega_0t+\phi(t))</math>, it can then be demodulated using:
+
+:<math>IH(t)=S(t)\cos(\omega_0t)</math> and <math>QH(t)=S(t)\sin(\omega_0t)</math>
+
+Using a low pass filter on both IH(t) and QH(t) allows the following:
+
+:<math>I(t)=\cos(\phi(t)+\Phi)</math> and <math>Q(t)=\sin(\phi(t)+\Phi)</math>
+
+Note that I(t) would not be enough because the sign is lost.  Having I(t) and Q(t) then enables the radar to properly map closing (approaching) and opening (leaving) doppler velocities.
+
+==Errors and Tradeoffs==
+===Coherency===
+In order for Pulse-Doppler radar to work at all, it is essential that the received echoes are [[coherence (physics)|coherent]] with the carrier signal, at least during the time it takes for all echoes to return and be processed.  To achieve this, a number of techniques are employed, the most common being that the transmitter signal is derived from a highly stable oscillator (the COHO) and the received signal is demodulated using an equally stable local oscillator (the STALO), which is phase locked to it.  Doppler shift may then be accurately resolved by comparing the frequency components of the returned echo with the frequency components of the transmitted signal.  [[Image:Radar-Dilemne Doppler.png|thumb|400px|Maximum range from reflectivity (red) and unambiguous Doppler velocity range (blue) with a fix pulse repetition rate.]]
+
+===Ambiguities===
+A fundamental problem associated with Pulse-Doppler radar is [[Radar Signal Characteristics#Unambiguous velocity|velocity ambiguity]], since Doppler Shifts crossing the next line in the frequency spectrum will be [[aliasing|aliased]]. This problem can, however, be alleviated by increasing the PRF, which increases the spacing between adjacent lines in the transmitted spectrum allowing greater shifts before aliasing occurs.  For military radars intended to detect high speed closing targets, it is common for PRFs of several hundred kilohertz to be employed.
+
+Even so, there is a limit to the amount that the PRF may be increased before [[Radar Signal Characteristics#Unambiguous range|range ambiguity]] occurs.  However, high PRFs can be utilised by the transmission of multiple pulse-packets with different PRF-values to resolve this ambiguity, since only the correct velocity stays fixed, while all "ghost velocities" introduced by aliasing change when the PRF is altered.
+
+==Application considerations==
+===Type of Radar===
+The maximum velocity that can be unambiguously measured is inherently limited by the PRF, as discussed above. The PRF-value must therefore be chosen carefully, based on a tradeoff between maximum velocity resolution and the reduction of velocity aliasing and range ambiguity problems. This tradeoff is highly application dependent, as e.g. [[weather radar]]s measure velocities at a totally different scale as compared to radars designed to detect [[supersonic]] [[missile]]s and [[aircraft]].
+
+===Moving targets===
+Stationary targets such as earth ground clutter (land, buildings, etc.) will be dominant in the low doppler frequencies, while moving targets will produce much higher doppler shifts. The radar processor can be designed to mask out clutter by the use of doppler filters (digital or analogue) around the main spectral line (called the clutter-notch), which will result in the display of moving targets only (in relation to the radar). If the radar itself is moving, such as on a fighter aircraft, or a surveillance aircraft, then much more processing will be required, as the clutter in the filters will be based on platform speed, terrain under the radar, antenna depression angle, and antenna rotation/steered angle.
+
+==See also==
+* [[Radar signal characteristics]] (fundamentals of the radar signal)
+* [[Doppler radar]] (non pulsed; used for navigation systems)
+* [[Weather radar]] (pulsed with Doppler processing)
+* [[Continuous-wave radar]] (non-pulsed, pure Doppler processing)
+* [[Fm-cw radar]] (non-pulsed, swept frequency, range and Doppler processing)
+* [[Aliasing]] - the reason for ambiguous velocity estimates
+* [[Medical ultrasound#Doppler sonography|Doppler sonography]] - velocity measurements in medical ultrasound. Based on the same principle
+
+==External links==
+* [http://www.atmos.uiuc.edu/courses/atmos410-fa04/Doppler%20radar.ppt Doppler radar] presentation, which highlights the advantages of using the [[autocorrelation technique]]
+* [http://www.engineering.uiowa.edu/~ece195/2006/docs/Doppler.pdf Pulse-Doppler radar] handouts from ''Introduction to Principles and Applications of Radar'' course at University of Iowa
+* Modern Radar Systems by Hamish Meikle (ISBN 1-58053-294-2)
+* Advanced Radar Techniques and Systems edited by Gaspare Galati (ISBN 0-86341-172-X)
+
+{{DEFAULTSORT:Pulse-Doppler Radar}}
+[[Category:Radar]]
+[[Category:Radar signal processing]]
+
+[[es:Radar de impulsos Doppler]]
+[[fa:رادار دوپلر پالس]]
+[[fr:Radar Doppler pulsé]]</body> </html>

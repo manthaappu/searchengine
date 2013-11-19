@@ -1,0 +1,123 @@
+<html> <head> <title>XPath 2.0</title></head><body>{{Unreferenced|date=August 2010}}
+'''XPath 2.0''' is the current version of the [[XPath]] language defined by the [[World Wide Web Consortium]], W3C. It became a recommendation on 23 January 2007.
+
+XPath is used primarily for selecting parts of an [[XML]] document. For this purpose the XML document is modelled as a tree of nodes. XPath allows nodes to be selected by means of a hierarchic navigation path through the document tree.
+
+The language is significantly larger than its predecessor, [[XPath 1.0]], and some of the basic concepts such as the data model and type system have changed. The two language versions are therefore described in separate articles.
+
+XPath 2.0 is used as a sublanguage of [[XSLT 2.0]], and it is also a subset of [[XQuery]] 1.0. All three languages share the same data model, type system, and function library, and were developed together and published on the same day.
+
+== Data model ==
+
+Every value in XPath 2.0 is a ''sequence'' of ''items''. The items may be ''nodes'' or ''atomic values''. An individual node or atomic value is considered to be a sequence of length one. Sequences may not be nested.
+
+Nodes are of seven kinds, corresponding to different constructs in the syntax of [[XML]]: elements, attributes, text nodes, comments, processing instructions, namespace nodes, and document nodes. (The document node replaces the ''root node'' of [[XPath 1.0]], because the XPath 2.0 model allows trees to be rooted at other kinds of node, notably elements.)
+
+Nodes may be typed or untyped. A node acquires a type as a result of validation against an [[XML Schema (W3C)|XML Schema]]. If an element or attribute is successfully validated against a particular complex type or simple type defined in a schema, the name of that type is attached as an annotation to the node, and determines the outcome of operations applied to that node: for example, when sorting, nodes that are annotated as integers will be sorted as integers.
+
+Atomic values may belong to any of the 19 primitive types defined in the [[XML Schema (W3C)|XML Schema]] specification (for example, string, boolean, double, float, decimal, dateTime, QName, and so on). They may also belong to a type derived from one of these primitive types: either a built-in derived type such as integer or Name, or a user-defined derived type defined in a user-written schema.
+
+== Type system ==
+
+The type system of XPath 2.0 is noteworthy for the fact that it mixes [[strong typing]] and [[weak typing]] within a single language.
+
+Operations such as arithmetic and boolean comparison require atomic values as their operands. If an operand returns a node (for example, <code>@price * 1.2</code>), then the node is automatically ''atomized'' to extract the atomic value. If the input document has been validated against a schema, then the node will typically have a type annotation, and this determines the type of the resulting atomic value (in this example, the <code>price</code> attribute might have the type <code>decimal</code>). If no schema is in use, the node will be untyped, and the type of the resulting atomic value will be <code>untypedAtomic</code>. Typed atomic values are checked to ensure that they have an appropriate type for the context where they are used: for example, it is not possible to multiply a date by a number. Untyped atomic values, by contrast, follow a weak typing discipline: they are automatically converted to a type appropriate to the operation where they are used: for example with an arithmetic operation an untyped atomic value is converted to the type <code>double</code>.
+
+== Path expressions ==
+
+The ''location paths'' of [[XPath 1.0]] are referred to in XPath 2.0 as ''path expressions''. Informally, a path expression is a sequence of steps separated by the "<code>/</code>" operator, for example <code>a/b/c</code> (which is short for <code>child::a/child::b/child::c</code>). More formally, however, "<code>/</code>" is simply a binary operator that applies the expression on its right-hand side to each item in turn selected by the expression on the left hand side. So in this example, the expression <code>a</code> selects all the element children of the context node that are named <code><a></code>; the expression <code>child::b</code> is then applied to each of these nodes, selecting all the <code><b></code> children of the <code><a></code> elements; and the expression <code>child::c</code> is then applied to each node in this sequence, which selects all the <code><c></code> children of these <code><b></code> elements.
+
+The "<code>/</code>" operator is generalized in XPath 2.0 to allow any kind of expression to be used as an operand: in XPath 1.0, the right-hand side was always an axis step. For example, a function call can be used on the right-hand side. The typing rules for the operator require that the result of the first operand is a sequence of nodes. The right hand operand can return either nodes or atomic values (but not a mixture). If the result consists of nodes, then duplicates are eliminated and the nodes are returned in ''document order'', and ordering defined in terms of the relative positions of the nodes in the original XML tree.
+
+In many cases the operands of "<code>/</code>" will be axis steps: these are largely unchanged from XPath 1.0, and are described in the article on [[XPath 1.0]].
+
+== Other operators ==
+
+Other operators available in XPath 2.0 include the following:
+
+{|class="wikitable"
+!Operators !! Effect
+|-
+| +, -, *, div, mod, idiv||Arithmetic on numbers, dates, and durations
+|-
+| =, !=, <, >, <=, >=||General comparison: compare arbitrary sequences. The result is true if any pair of items, one from each sequence, satisfies the comparison
+|-
+| eq, ne, lt, gt, le, ge||Value comparison: compare single items
+|-
+| is ||Compare node identity: true if both operands are the same node
+|-
+| <<, >>||Compare node position, based on document order
+|-
+| union, intersect, except||Compare sequences of nodes, treating them as sets, returning the set union, intersection, or difference
+|-
+| and, or|| boolean conjunction and disjunction. Negation is achieved using the <code>not()</code> function.
+|-
+| to || defines an integer range, for example <code>1 to 10</code>
+|-
+| instance of || determines whether a value is an instance of a given type
+|-
+| cast as || converts a value to a given type
+|-
+| castable as || tests whether a value is convertible to a given type
+|}
+
+Conditional expressions may be written using the syntax <code>if (A) then B else C</code>.
+
+XPath 2.0 also offers a <code>for</code> expression, which is a small subset of the [[FLWOR]] expression from [[XQuery]]. The expression <code>for $x in X return Y</code> evaluates the expression <code>Y</code> for each value in the result of expression <code>X</code> in turn, referring to that value using the variable reference <code>$x</code>.
+
+== Function library ==
+
+The function library in XPath 2.0 is greatly extended from the function library in XPath 1.0.  ('''Bold''' items are available in XPath 1.0)
+
+The functions available include the following:
+
+{|class="wikitable"
+!Purpose !! Example Functions
+|-
+| General string handling||lower-case, upper-case, '''substring''', '''substring-before''', '''substring-after''', '''translate''', starts-with, ends-with, '''contains''', '''string-length''', '''concat''', '''normalize-space''', normalize-unicode
+|-
+| Regular expressions||matches, replace, tokenize
+|-
+| Arithmetic||count, '''sum''', avg, min, max, '''round''', '''floor''', '''ceiling''', abs
+|-
+| Dates and times ||adjust-dateTime-to-timezone, current-dateTime, day-from-dateTime, month-from-dateTime, days-from-duration, months-from-duration, etc.
+|-
+| Properties of nodes||'''name''', node-name, '''local-name''', '''namespace-uri''', base-uri, nilled
+|-
+| Document handling||doc, doc-available, document-uri, collection, id, idref
+|-
+| URIs|| encode-for-uri, escape-html-uri, iri-to-uri, resolve-uri
+|-
+| QNames|| QName, namespace-uri-from-QName, prefix-from-QName, resolve-QName
+|-
+| Sequences || insert-before, remove, subsequence, index-of, distinct-values, reverse, unordered, empty, exists
+|-
+| Type checking || one-or-more, exactly-one, zero-or-one
+|}
+
+== Backwards compatibility ==
+
+Because of the changes in the data model and type system, not all expressions in XPath 2.0 have exactly the same effect as in 1.0. The main difference is that XPath 1.0 was more relaxed about type conversion, for example comparing two strings (<code>"4" > "4.0"</code>) was quite possible but would do a numeric comparison; in XPath 2.0 this is defined to compare the two values as strings using a context-defined collating sequence.
+
+To ease transition, XPath 2.0 defines a mode of execution in which the semantics are modified to be as close as possible to XPath 1.0 behavior. When using [[XSLT 2.0]], this mode is activated by setting <code>version="1.0"</code> as an attribute on the <code>xsl:stylesheet</code> element. This still doesn't offer 100% compatibility, but any remaining differences are only likely to be encountered in unusual cases.
+
+==Support==
+{{Expand section|date=December 2009}}
+Support for XPath 2.0 is still limited.
+* For browser support, see [[Comparison of layout engines (XML)#Query_technologies|Comparison of layout engines (XML)]].
+
+==References==
+<references/>
+
+==External links==
+*[http://www.w3.org/TR/xpath20/ XPath 2.0 specification]
+*[http://www.xml.com/pub/a/2002/03/20/xpath2.html What's New in XPath 2.0]
+
+{{XSL}}
+{{W3C Standards}}
+
+{{Use dmy dates|date=January 2011}}
+
+{{DEFAULTSORT:Xpath 2.0}}
+[[Category:XML]]
+[[Category:XML data access]]</body> </html>

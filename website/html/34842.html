@@ -1,0 +1,106 @@
+<html> <head> <title>Socialist millionaire</title></head><body>The '''Socialist Millionaire Problem'''<ref name=socialist-millionaire-problem>{{cite conference
+  | author = [[M. Jakobsson]], [[M. Yung]]
+  | title = Proving without knowing: On oblivious, agnostic and blindfolded provers. 
+  | booktitle = Advances in Cryptology - CRYPTO '96, volume 1109 of Lecture Notes in Computer Science
+  | pages = 186–200
+  | date = 1996
+  | location = Berlin
+}}</ref> is one in which two millionaires want to determine if their wealth is equal, without disclosing any information about their riches to each other. It is a variant of the [[Millionaire's Problem]]<ref name=millionaires-problem>{{cite conference 
+| author = [[A. Yao]]
+| title = Protocols for secure communications
+| booktitle = Proc. 23rd IEEE Symposium on Foundations of Computer Science (FOCS '82)
+| pages = 160–164
+| date = 1982
+}}</ref><ref name=how-to-generate-secrets>{{cite conference
+| author [[A. Yao]]
+| title = How to generate and exchange secrets
+| booktitle = Proc. 27th IEEE Symposium on Foundations of Computer Science (FOCS '86)
+| pages = 162–167
+| date = 1986
+}}</ref> whereby two millionaires wish to compare their riches to determine who has the most wealth, without disclosing any information about their riches to each other. 
+
+It is often used as a [[cryptographic protocol]] that allows two parties to verify the identity of the remote party through the use of a shared secret, avoiding a man-in-the-middle attack without the inconvenience of manually comparing public key fingerprints through an outside channel. In effect a relatively weak password/passphrase in natural language can be used.
+
+== Motivation ==
+
+Alice and Bob have secret values <math>x</math>, and <math>y</math> respectively. Alice and Bob wish to learn if <math>x = y</math> without allowing either party to learn anything else about the other's secret value. A passive attacker, simply spying on the messages Alice and Bob exchange learns nothing about <math>x</math> and <math>y</math>, nor even if <math>x = y</math>. Even if one of the parties is dishonest, and deviates from the protocol, he or she cannot learn anything more than if <math>x = y</math>. An active attacker, capable of arbitrarily interfering with Alice and Bob's communication (a [[man-in-the-middle attack|man-in-the-middle]]) cannot learn more than a passive attacker, and cannot affect the outcome of the protocol other than to make it fail. Therefore, the protocol can be used to authenticate whether two parties have the same secret information. Popular instant message cryptography package [[Off-the-Record Messaging]] uses the Socialist Millionaire protocol for authentication, in which the secrets <math>x</math> and <math>y</math> contain information about both parties' long-term authentication public keys, as well as information entered by the users themselves.
+
+== Procedure ==
+
+All operations are performed modulo a prime <math>p</math>, or in other words, in the [[multiplicative group]] <math>\mathbb{Z}/p\mathbb{Z}</math>. Let <math>g_1</math> be a [[generator]] of the group (any element other than 1, noting that 0 is not an element of multiplicative groups). The values <math>p</math> and <math>g_1</math> are agreed on before the protocol, and in practice are generally fixed in a given implementation. For example, in Off-the-Record Messaging <math>p</math> is a specific fixed 1536-bit prime. All sent values include zero-knowledge proofs that they were generated according to this protocol, as indicated in the detailed description below.
+
+<!-- I apologize for the unoptimized LaTeX in the following section (e.g., "{g_{3b}}^{a_{3}}"), I generated it semi-automatically with a Python script. ~~~~ -->
+Assuming that Alice begins the exchange:
+
+* Alice:
+*# Picks random exponents <math>a_2</math> and <math>a_3</math>
+*# Sends Bob <math>g_{2a} = {g_1}^{a_2}</math> and <math>g_{3a} = {g_1}^{a_3}</math>
+* Bob:
+*# Picks random exponents <math>b_2</math> and <math>b_3</math>
+*# Computes <math>g_{2b} = {g_{1}}^{b_{2}}</math> and <math>g_{3b} = {g_{1}}^{b_{3}}</math>
+*# Computes <math>g_{2} = {g_{2a}}^{b_{2}}</math> and <math>g_{3} = {g_{3a}}^{b_{3}}</math>
+*# Picks a random exponent <math>r</math>
+*# Computes <math>P_{b} = {g_{3}}^{r}</math> and <math>Q_{b} = {g_{1}}^{r} \, {g_{2}}^{y}</math>
+*# Sends Alice <math>g_{2b}</math>, <math>g_{3b}</math>, <math>P_{b}</math> and <math>Q_{b}</math>
+* Alice:
+*# Computes <math>g_{2} = {g_{2b}}^{a_{2}}</math> and <math>g_{3} = {g_{3b}}^{a_{3}}</math>
+*#: (<math>g_{2}</math> and <math>g_{3}</math> have effectively been negotiated via the [[Diffie-Hellman key exchange]].)
+*# Picks a random exponent <math>s</math>
+*# Computes <math>P_{a} = {g_{3}}^{s}</math> and <math>Q_{a} = {g_{1}}^{s} \, {g_{2}}^{x}</math>
+*# Computes <math>R_{a} = {Q_{a}}^{a_{3}} \, {Q_{b}}^{-a_{3}}</math>
+*# Sends Bob <math>P_{a}</math>, <math>Q_{a}</math> and <math>R_{a}</math>
+* Bob:
+*# Computes <math>R_{b} = {Q_{a}}^{b_{3}} \, {Q_{b}}^{-b_{3}}</math>
+*# Computes <math>R_{ab} = {R_{a}}^{b_{3}}</math>
+*# Checks whether <math>R_{ab} = P_{a} \, {P_{b}}^{-1}</math>
+*# Sends Alice <math>R_{b}</math>
+* Alice:
+*# Computes <math>R_{ab} = {R_{b}}^{a_{3}}</math>
+*# Checks whether <math>R_{ab} = P_{a} \, {P_{b}}^{-1}</math>
+
+The correctness of this algorithm (but not its security) can be shown by simply representing all values in terms of the inputs <math>x</math>, <math>y</math>, and <math>g_1</math>, and the randomly generated values <math>a_2</math>, <math>a_3</math>, <math>b_2</math>, <math>b_3</math>, <math>r</math>, and <math>s</math>:
+
+:<math>\begin{alignat}{3}
+ R_a &= {Q_{a}}^{a_{3}} \, {Q_{b}}^{-a_{3}} \\
+ & = ({g_{1}}^{s} \, {g_{2}}^{x})^{a_{3}} \, ({g_{1}}^{r} \, {g_{2}}^{y})^{-a_{3}} \\
+ & = {g_{1}}^{(s - r) \, a_{3}} \, {g_{2}}^{(x - y) \, a_{3}}
+\end{alignat}
+</math>
+
+Assuming <math>x = y</math>, then <math>{g_{2}}^{(x - y) \, a_{3}} = 1</math>, and therefore <math>R_a = {g_{1}}^{(s - r) \, a_{3}}</math>. The same logic holds to show <math>R_b = {g_{1}}^{(s - r) \, b_{3}}</math>. Therefore,
+
+:<math>\begin{alignat}{3}
+ R_{ab} &= {R_a}^{b_3} \\
+ &= ({g_{1}}^{(s - r) \, a_{3}} \, {g_{2}}^{(x - y) \, a_{3}})^{b_3} \\
+ &= {g_{1}}^{(s - r) \, a_{3} \, b_{3}} \, {g_{2}}^{(x - y) \, a_{3} \, b_{3}}
+\end{alignat}
+</math>
+
+Similarly expanding <math>{R_b}^{a_3}</math> reveals that the values of <math>R_{ab}</math> that Alice and Bob generate are identical. Finally, examining the equation being tested by Alice and Bob shows that the algorithm works:
+
+:<math>\begin{alignat}{5}
+ R_{ab} &= P_{a} \, {P_{b}}^{-1} \\
+ {g_{1}}^{(s - r) \, a_{3} \, b_{3}} \, {g_{2}}^{(x - y) \, a_{3} \, b_{3}} &= {g_{3}}^{s - r} \\
+ &= ({g_{1}}^{a_{3} \, b_{3}})^{s - r} \\
+ &= g_{1}^{(s - r) \, a_{3} \, b_{3}} \\
+ {g_{2}}^{(x - y) \, a_{3} \, b_{3}} &= 1
+\end{alignat}
+</math>
+
+As the last equation given above holds only if <math>x = y</math>, and as it is equivalent to the first equation, the tests Alice and Bob perform of <math> R_{ab} = P_{a} \, {P_{b}}^{-1}</math> are therefore equivalent to testing <math>x = y</math>, completing a proof of correctness.
+
+However, as written above the protocol is vulnerable to poisoning whereby either Alice or Bob chooses (<math>a_{2}</math>, <math>a_{3}</math>) or (<math>b_{2}</math>, <math>b_{3}</math>) to be zero to be able to predict the result [http://weizenspr.eu/2009/der-strippende-sozialistische-millionar/]. To solve this problem, check that the pairs (<math>g_{2a}</math>, <math>g_{3a}</math>) and (<math>g_{2b}</math>, <math>g_{3b}</math>) are not equal to one.
+
+==See also==
+*[[Zero-knowledge proof]]
+*[[Off-the-Record Messaging]]
+
+==References==
+<references/>
+
+==External links==
+* [http://www.cypherpunks.ca/otr/Protocol-v2-3.1.0.html Description of the OTR-Messaging Protocol version 2]
+
+
+
+[[Category:Cryptographic protocols]]</body> </html>

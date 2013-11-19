@@ -1,0 +1,403 @@
+<html> <head> <title>IPv6 packet</title></head><body>An '''IPv6 packet''' is the smallest message entity exchanged via the Internet Protocol across an [[Internet Protocol version 6]] (IPv6) network.
+
+[[Packet (information technology)|Packet]]s consist of control information for addressing and routing, and a [[payload (software)|payload]] consisting of user data. The control information in IPv6 packets is subdivided into a mandatory fixed header and optional extension headers. The payload of an IPv6 packet is typically a [[datagram]] or segment of the higher-level [[Transport Layer]] protocol, but may be data for an [[Internet Layer]] (e.g., [[ICMPv6]]) or [[Link Layer]] (e.g., [[OSPF]]) instead.
+
+IPv6 packets are typically transmitted over a [[Link Layer]] protocol, such as [[Ethernet]] which encapsulates each packet in a [[frame (networking)|frame]], but this may also be a higher layer [[tunneling protocol]], such as [[IPv4]] when using [[6to4]] or [[Teredo tunneling|Teredo]] transition technologies.
+
+[[Router]]s do not fragment IPv6 packets, as they do for IPv4. [[Host (network)|Hosts]] are "strongly recommended"<ref name=rfc2460>[[Steve Deering|Deering, S.]];  Hinden, R. (December 1998). [http://tools.ietf.org/html/rfc2460 Internet Protocol, version 6 (IPv6) Specification]. [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}2460.</ref> to implement [[path MTU discovery]] to take advantage of [[Maximum transmission unit|MTU]]s greater than the smallest MTU of 1280 [[octet (computing)|octets]]. Hosts may use [[IP fragmentation|fragmentation]] to send packets larger than the observed path MTU.
+
+==Fixed header==
+The fixed header of an IPv6 packet consists of its first 40 [[octet (computing)|octets]] (320 bits).<ref name=rfc2460 />  It has the following format:
+:{| class="wikitable" style="text-align: center"
+|+Fixed header format
+|-
+! style="border-bottom:none; border-right:none;"| ''Offsets''
+! style="border-left:none;"| [[Octet (computing)|Octet]]
+! colspan="8" | 0
+! colspan="8" | 1
+! colspan="8" | 2
+! colspan="8" | 3
+|-
+! style="border-top: none" | [[Octet (computing)|Octet]]
+! [[Bit]]
+! style="width:2.6%;"| 0
+! style="width:2.6%;"| 1
+! style="width:2.6%;"| 2
+! style="width:2.6%;"| 3
+! style="width:2.6%;"| 4
+! style="width:2.6%;"| 5
+! style="width:2.6%;"| 6
+! style="width:2.6%;"| 7
+! style="width:2.6%;"| 8
+! style="width:2.6%;"| 9
+! style="width:2.6%;"| 10
+! style="width:2.6%;"| 11
+! style="width:2.6%;"| 12
+! style="width:2.6%;"| 13
+! style="width:2.6%;"| 14
+! style="width:2.6%;"| 15
+! style="width:2.6%;"| 16
+! style="width:2.6%;"| 17
+! style="width:2.6%;"| 18
+! style="width:2.6%;"| 19
+! style="width:2.6%;"| 20
+! style="width:2.6%;"| 21
+! style="width:2.6%;"| 22
+! style="width:2.6%;"| 23
+! style="width:2.6%;"| 24
+! style="width:2.6%;"| 25
+! style="width:2.6%;"| 26
+! style="width:2.6%;"| 27
+! style="width:2.6%;"| 28
+! style="width:2.6%;"| 29
+! style="width:2.6%;"| 30
+! style="width:2.6%;"| 31
+|-
+! 0
+! 0
+| colspan="4"|''Version''
+| colspan="8"|''Traffic Class''
+| colspan="20"|''Flow Label''
+|-
+! 4
+! 32
+| colspan="16"|''Payload Length''
+| colspan="8"|''Next Header''
+| colspan="8"|''Hop Limit''
+|-
+! 8
+! 64
+| colspan="32" rowspan="4"|''Source Address''
+|-
+! 12
+! 96
+|-
+! 16
+! 128
+|-
+! 20
+! 160
+|-
+! 24
+! 192
+| colspan="32" rowspan="4"|''Destination Address''
+|-
+! 28
+! 224
+|-
+! 32
+! 256
+|-
+! 36
+! 288
+|}
+
+; ''Version'' (4 bits) : The constant 6 (bit sequence <tt>0110</tt>).
+; ''Traffic Class'' (8 bits) : The bits of this field hold two values. The 6 most-significant bits are used for [[DiffServ Code Point|DSCP]], which is used to classify packets.<ref name=rfc2474>Nickols, K.; Blake, S.; Baker, F.; Black, D. (December 1998) ''[http://tools.ietf.org/html/rfc2474.html Definition of the Differentiated Service Field (DS Field) in the IPv4 and IPv6 Headers]'', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}2474.</ref><ref name=rfc3260>Grossman, D. (April 2002) ''[http://tools.ietf.org/html/rfc3260.html New Terminology and Clarifications for DiffServ]'', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}3260.</ref> The remaining two bits are used for [[Explicit Congestion Notification|ECN]];<ref name=rfc3168>Ramakrishnan, K.; Floyd, S.; Black, D. (September 2001) ''[http://tools.ietf.org/html/rfc3168.html The Addition of Explicit Congestion Notification (ECN) to IP]'', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}3168.</ref>  priority values subdivide into ranges: traffic where the source provides congestion control and non-congestion control traffic.
+; ''Flow Label'' (20 bits) : Originally created for giving [[real-time|real-time applications]] special service.<ref name=rfc2460 /> Flow Label specifications and minimum requirements are described,<ref name=rfc3595>Wijnen, B. (September 2003) ''[http://tools.ietf.org/html/rfc3595 Textual Conventions for IPv6 Flow Label]'', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}3595.</ref><ref name=rfc3697>Rajahalme, J.; Conta, A.; Carpenter, B.; [[Steve Deering|Deering, S.]] (March 2004) ''[http://tools.ietf.org/html/rfc3697 IPv6 Flow Label Specification]'', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}3697.</ref> and first uses of this field are emerging.<ref>[http://tools.ietf.org/html/draft-blake-ipv6-flow-label-nonce-02 draft-blake-ipv6-flow-label-nonce-02]</ref>
+; ''Payload Length'' (16 bits) : The size of the payload in octets, including any extension headers.  The length is set to zero when a ''Hop-by-Hop'' extension header carries a [[#Jumbogram|Jumbo Payload]] option.<ref name=rfc2675>Borman, D.; [[Steve Deering|Deering, S.]]; Hinden, R. (August 1999). ''[http://tools.ietf.org/html/rfc2675 IPv6 Jumbograms]''. [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}2675.</ref>
+; ''Next Header'' (8 bits) : Specifies the type of the next header.  This field usually specifies the [[transport layer]] protocol used by a packet's payload. When extension headers are present in the packet this field indicates which extension header follows.  The values are [[List of IP protocol numbers|shared]] with those used for the IPv4 protocol field, as both fields have the same function (see [[List of IP protocol numbers]]).
+; ''Hop Limit'' (8 bits) : Replaces the [[time to live]] field of IPv4.  This value is decremented by one at each intermediate node the packet visits. When the counter reaches 0 the packet is discarded.
+; ''Source Address'' (128 bits) : The [[IPv6 address]] of the sending node.
+; ''Destination Address'' (128 bits) : The IPv6 address of the destination node(s).
+
+The header has no [[checksum]] to protect it in order to increase [[routing]] speeds, and since current [[link layer]] technology is assumed to provide sufficient error detection.<ref name=rfc2460/><ref name=rfc1726>Partridge C., Kastenholz F. (Dec. 1994). ''[http://tools.ietf.org/html/rfc1726 Technical Criteria for Choosing IP The Next Generation (IPng)]''. [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}1726.</ref> Higher-level protocols are responsible to discard mis-addressed packets.<ref name=rfc1726/>
+
+==Extension headers==
+Extension headers carry optional [[Internet Layer]] information, and are placed between the fixed header and the upper-layer protocol header.<ref name=rfc2460 /> The headers form a chain, using the ''Next Header'' fields.  The ''Next Header'' field in the fixed header indicates the type of the first extension header; the ''Next Header'' field of the last extension header indicates the type of the upper-layer protocol header in the payload of the packet.
+
+All extension headers are a multiple of 8 octets in size; some extension headers require internal padding to meet this requirement.
+
+There are several extension headers defined,<ref name=rfc2460 /> and new extension headers may be defined in the future. Extension headers are to be examined and processed at the packet's destination only, except for ''Hop-by-Hop Options'', which need to be processed at every intermediate node on the packet's path, including sending and receiving node. The defined extension headers below are listed in the preferred order, should there be more than one extension header following the fixed header. Note that all extension headers are optional and should only appear at most once, except for the ''Destination Options'' header, which may appear twice.
+
+If a node does not recognize a specific extension header, it should discard the packet and send an ''Parameter Problem'' message ([[ICMPv6]] type 4, code 1).<ref name=rfc2460 /> When a Next Header value <tt>0</tt> appears in a header other than the fixed header a node should do the same.
+:{| class="wikitable" <!-- Listed in order as recommended by RFC2460 -->
+|-
+! Extension Header
+! [[List of IP protocol numbers|Type]]
+! Description
+|-
+| ''Hop-by-Hop Options''
+| | 0 || Options that need to be examined by all devices on the path.
+|-
+| ''Destination Options'' (before routing header) <!-- May appear twice in the chain of headers. -->
+| | 60 || Options that need to be examined only by the destination of the packet.
+|-
+| ''Routing''
+| | 43 || Methods to specify the route for a datagram (used with [[Mobile IPv6]]).
+|-
+| ''Fragment''
+| | 44 || Contains parameters for fragmentation of datagrams.
+|-
+| ''Authentication Header (AH)''
+| | 51 || Contains information used to verify the authenticity of most parts of the packet.
+|-
+| ''Encapsulating Security Payload (ESP)''
+| | 50 || Carries encrypted data for secure communication.
+|-
+| ''Destination Options'' (before upper-layer header) <!-- May appear twice in the chain of headers. -->
+| | 60 || Options that need to be examined only by the destination of the packet.
+|}
+
+Value 59 (No Next Header) in the Next Header field indicates that there is no next header ''whatsoever'' following this one, not even a header of an upper-layer protocol.  It means that, from the header's point of view, the IPv6 packet ends right after it: the payload should be empty.<ref name=rfc2460/>
+There could, however, still be data in the payload if the payload length in the first header of the packet is greater than the length of all extension headers in the packet. This data should be ignored by hosts, but passed unaltered by routers.
+
+===Hop-by-hop options and destination options===
+The ''Hop-by-Hop Options'' extension header needs to be examined by all nodes on the packet's path, including sending and receiving nodes. The ''Destination Options'' extension header need to be examined by the destination node(s) only. The extension headers are both at least 8 octets in size; if more options are present than will fit in that space, blocks of 8 octets are added to the header repeatedly—containing options and padding—until all options are represented.
+:{| class="wikitable" style="text-align: center"
+|+''Hop-by-Hop Options'' and ''Destination Options'' extension header format
+|-
+! style="border-bottom:none; border-right:none;"| ''Offsets''
+! style="border-left:none;"| Octet
+! colspan="8" | 0
+! colspan="8" | 1
+! colspan="8" | 2
+! colspan="8" | 3
+|-
+! style="border-top: none" | Octet
+! Bit
+! style="width:2.6%;"| 0
+! style="width:2.6%;"| 1
+! style="width:2.6%;"| 2
+! style="width:2.6%;"| 3
+! style="width:2.6%;"| 4
+! style="width:2.6%;"| 5
+! style="width:2.6%;"| 6
+! style="width:2.6%;"| 7
+! style="width:2.6%;"| 8
+! style="width:2.6%;"| 9
+! style="width:2.6%;"| 10
+! style="width:2.6%;"| 11
+! style="width:2.6%;"| 12
+! style="width:2.6%;"| 13
+! style="width:2.6%;"| 14
+! style="width:2.6%;"| 15
+! style="width:2.6%;"| 16
+! style="width:2.6%;"| 17
+! style="width:2.6%;"| 18
+! style="width:2.6%;"| 19
+! style="width:2.6%;"| 20
+! style="width:2.6%;"| 21
+! style="width:2.6%;"| 22
+! style="width:2.6%;"| 23
+! style="width:2.6%;"| 24
+! style="width:2.6%;"| 25
+! style="width:2.6%;"| 26
+! style="width:2.6%;"| 27
+! style="width:2.6%;"| 28
+! style="width:2.6%;"| 29
+! style="width:2.6%;"| 30
+! style="width:2.6%;"| 31
+|-
+! 0
+! 0
+| colspan="8"|''Next Header
+| colspan="8"|''Hdr Ext Len
+| colspan="16"|''Options and Padding''
+|-
+! 4
+! 32
+| colspan="32"|''Options and Padding''
+|-
+! 8
+! 64
+| colspan="32" rowspan=2|Optional: more ''Options and Padding'' ...
+|-
+! 12
+! 96
+|}
+; ''Next Header'' (8 bits) : Specifies the [[List of IP protocol numbers|type]] of the next header.
+; ''Hdr Ext Len'' (8 bits) : Length of this header in 8-octet units, not including the first 8 octets.
+; ''Options'' (variable) : Contains one or more options, and optional padding fields to align options and to make the total header length a multiple of 8 octets. Options are [[Type-length-value|TLV]]-coded.
+
+===Routing===
+The ''Routing'' extension header is used to direct a packet to one or more intermediate nodes before being sent to its destination. The header is at least 8 octets in size; if more ''Type-specific Data'' is needed than will fit in 4 octets, blocks of 8 octets are added to the header repeatedly, until all ''Type-specific Data'' is placed.<ref name=rfc2460/>
+:{| class="wikitable" style="text-align: center"
+|+''Routing'' extension header format
+|-
+! style="border-bottom:none; border-right:none;"| ''Offsets''
+! style="border-left:none;"| Octet
+! colspan="8" | 0
+! colspan="8" | 1
+! colspan="8" | 2
+! colspan="8" | 3
+|-
+! style="border-top: none" | Octet
+! Bit
+! style="width:2.6%;"| 0
+! style="width:2.6%;"| 1
+! style="width:2.6%;"| 2
+! style="width:2.6%;"| 3
+! style="width:2.6%;"| 4
+! style="width:2.6%;"| 5
+! style="width:2.6%;"| 6
+! style="width:2.6%;"| 7
+! style="width:2.6%;"| 8
+! style="width:2.6%;"| 9
+! style="width:2.6%;"| 10
+! style="width:2.6%;"| 11
+! style="width:2.6%;"| 12
+! style="width:2.6%;"| 13
+! style="width:2.6%;"| 14
+! style="width:2.6%;"| 15
+! style="width:2.6%;"| 16
+! style="width:2.6%;"| 17
+! style="width:2.6%;"| 18
+! style="width:2.6%;"| 19
+! style="width:2.6%;"| 20
+! style="width:2.6%;"| 21
+! style="width:2.6%;"| 22
+! style="width:2.6%;"| 23
+! style="width:2.6%;"| 24
+! style="width:2.6%;"| 25
+! style="width:2.6%;"| 26
+! style="width:2.6%;"| 27
+! style="width:2.6%;"| 28
+! style="width:2.6%;"| 29
+! style="width:2.6%;"| 30
+! style="width:2.6%;"| 31
+|-
+! 0
+! 0
+| colspan="8"|''Next Header''
+| colspan="8"|''Hdr Ext Len''
+| colspan="8"|''Routing Type''
+| colspan="8"|''Segments Left''
+|-
+! 4
+! 32
+| colspan="32"|''Type-specific Data''
+|-
+! 8
+! 64
+| colspan="32" rowspan="2"|Optional: more ''Type-specific Data'' ...
+|-
+! 12
+! 96
+|}
+; ''Next Header'' (8 bits) : Indicates the type of the next header.
+; ''Hdr Ext Len'' (8 bits) : The length of this header, in multiples of 8 octets, not including the first 8 octets.
+; ''Routing Type'' (8 bits) : <tt>0</tt>, <tt>1</tt>, or <tt>2</tt>.
+; ''Segments Left'' (8 bits) : Number of nodes this packet still has to visit before reaching its final destination.
+; ''Type-specific Data'' (variable) : Data that belongs to this type of routing header.
+====Routing types====
+Due to the fact that with Routing Header type 0 a simple but effective<ref>{{cite web |url=http://www.secdev.org/conf/IPv6_RH_security-csw07.pdf |title=IPv6 Routing Header Security |author=Philippe Biondi, Arnoud Ebalard |month=April |year=2007 |publisher=[[EADS]] |format=pdf |quote=Type 0: the evil mechanism... |accessdate=3 December 2010}}</ref> [[denial-of-service attack]] could be launched, this header is deprecated<ref name=rfc5095>Abley, J.; Savola, P.; Neville-Neil, G. (December 2007). ''[http://tools.ietf.org/html/rfc5095 Deprecation of Type 0 Routing Headers in IPv6]''. [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}5095.</ref> and host and routers are required to ignore these headers.
+
+Routing Header type 1 is used for the Nimrod<ref name=rfc1992>Castineyra, I.; Chiappa, N.; Steenstrup, M. (Augustus 1996) ''[http://tools.ietf.org/html/rfc1992 The Nimrod Routing Architecture]', [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}1992.</ref> project funded by [[DARPA]].
+
+Routing Header type 2 is a limited version of type 0 and is used for [[Mobile IPv6]], where it can hold the Home Address of the Mobile Node.
+
+===Fragment===
+In order to send a packet that is larger than the path [[Maximum transmission unit|MTU]], the sending node splits the packet into fragments. The ''Fragment'' extension header carries the information necessary to reassemble the original (unfragmented) packet.<ref name=rfc2460/>
+:{| class="wikitable" style="text-align: center"
+|+''Fragment'' extension header format
+|-
+! style="border-bottom:none; border-right:none;"| ''Offsets''
+! style="border-left:none;"| Octet
+! colspan="8" | 0
+! colspan="8" | 1
+! colspan="8" | 2
+! colspan="8" | 3
+|-
+! style="border-top: none" | Octet
+! Bit
+! style="width:2.6%;"| 0
+! style="width:2.6%;"| 1
+! style="width:2.6%;"| 2
+! style="width:2.6%;"| 3
+! style="width:2.6%;"| 4
+! style="width:2.6%;"| 5
+! style="width:2.6%;"| 6
+! style="width:2.6%;"| 7
+! style="width:2.6%;"| 8
+! style="width:2.6%;"| 9
+! style="width:2.6%;"| 10
+! style="width:2.6%;"| 11
+! style="width:2.6%;"| 12
+! style="width:2.6%;"| 13
+! style="width:2.6%;"| 14
+! style="width:2.6%;"| 15
+! style="width:2.6%;"| 16
+! style="width:2.6%;"| 17
+! style="width:2.6%;"| 18
+! style="width:2.6%;"| 19
+! style="width:2.6%;"| 20
+! style="width:2.6%;"| 21
+! style="width:2.6%;"| 22
+! style="width:2.6%;"| 23
+! style="width:2.6%;"| 24
+! style="width:2.6%;"| 25
+! style="width:2.6%;"| 26
+! style="width:2.6%;"| 27
+! style="width:2.6%;"| 28
+! style="width:2.6%;"| 29
+! style="width:2.6%;"| 30
+! style="width:2.6%;"| 31
+|-
+! 0
+! 0
+| colspan="8"|''Next Header''
+| colspan="8"|''Reserved''
+| colspan="13"|''Fragment Offset''
+| colspan="2"|''Res''
+| colspan="1"|''M''
+|-
+! 4
+! 32
+| colspan="32"|''Identification''
+|}
+; ''Next Header'' (8 bits) : Identifies the type of the next header.
+; ''Reserved'' (8 bits) : Initialized to all zeroes.
+; ''Fragment Offset'' (13 bits) : Offset, in 8-octet units, relative to the start of the fragmentable part of the original packet.
+; ''Res'' (2 bits) : Reserved; initialized to zeroes.
+; ''M Flag'' (1 bit) : 1 means more fragments follow; 0 means last fragment.
+; ''Identification'' (32 bits) : Packet identification value, generated by the source node. Needed for reassembly of the original packet.
+
+===Authentication Header (AH) and Encapsulating Security Payload (ESP)===
+The ''[[IPsec#Authentication Header|Authentication Header]]'' and the ''[[IPsec#Encapsulating Security Payload|Encapsulating Security Payload]]'' are part of [[IPsec]] and are used identically in IPv6 and in IPv4.<ref name=rfc4302>Kent, S. (December 2005) ''[http://tools.ietf.org/html/rfc4302.html IP Authentication Header]'' [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}4202.</ref><ref name=rfc4303>Kent, S. (December 2005) ''[http://tools.ietf.org/html/rfc4303.html IP Encapsulating Security Payload]'' [[Internet Engineering Task Force|IETF]]. RFC{{nbsp}}4203.</ref>
+
+==Payload==
+The fixed and optional IPv6 headers are followed with the ''upper-layer payload'', the data provided by the transport layer, for example a [[Transmission Control Protocol|TCP]] segment or a [[User Datagram Protocol|UDP]] datagram. The ''Next Header'' field of the last IPv6 header indicates what type of payload is contained in this packet.
+
+===Standard payload length===
+The [[#Fixed header|payload length field of IPv6]] (and [[IPv4#Header|IPv4]]) has a size of 16 bits, capable of specifying a maximum size of [[65535 (number)|{{gaps|65|535}}]] octets for the payload. Most [[Link Layer]] protocols cannot process packets larger than {{gaps|65|535}} octets.{{Citation needed|date=July 2010}}
+
+===Jumbogram===
+An optional feature of IPv6, the ''jumbo payload'' option in a ''Hop-By-Hop Options'' extension header<ref name=rfc2675/>, allows the exchange of packets with payloads of up to one byte less than 4{{nbsp}}[[Gibibyte|GiB]] (2<sup>32</sup>{{nbsp}}−{{nbsp}}1{{nbsp}}= {{gaps|4|294|967|295}} bytes), by making use of a 32-bit length field. Packets with such payloads are called [[jumbogram]]s.
+
+Since both [[Transmission Control Protocol|TCP]] and [[User Datagram Protocol|UDP]] include fields limited to 16 bits (length, urgent data pointer), support for IPv6 jumbograms requires modifications to the [[Transport Layer]] protocol implementation.<ref name=rfc2675 /> Jumbograms are only relevant for links that have a [[Maximum transmission unit|MTU]] larger than {{gaps|65|583}} octets <!-- The RFC mentions 65575 octets (payload + fixed header) but ignores the fact that you need a Hop-by-Hop extension header to enable payloads over 65535 octets. -->(more than {{gaps|65|535}} octets for the payload, plus 40 octets for the fixed header, plus 8 octets for the ''Hop-by-Hop'' extension header).
+
+==Fragmentation==
+Unlike in IPv4, IPv6 [[router]]s never fragment IPv6 packets. Packets exceeding the size of the maximum transmission unit of the destination link are dropped and this condition is signaled by a ''Packet too Big'' [[ICMPv6]] type 2 message to the originating node, similarly to the IPv4 method when the ''Don't Fragment'' bit set.<ref name=rfc2460 />
+
+End nodes in IPv6 are expected to perform path MTU discovery to determine the maximum size of packets to send, and the upper-layer protocol is expected to limit the payload size.  However, if the upper-layer protocol is unable to do so, the sending host may use the ''Fragment'' extension header in order to perform end-to-end fragmentation of IPv6 packets.
+
+===Fragmenting===
+A packet containing a fragment of an original (larger) packet consists of two parts: the unfragmentable part of the original packet (which is the same for all fragments), and a piece of the fragmentable part of the original packet, identified by a fragment offset.
+
+The unfragmentable part of a packet consists of the fixed header and some of the extension headers of the original packet (if present): all extension headers up to and including the ''Routing'' extension header, or else the ''Hop-by-Hop'' extension header. If neither extension headers are present, the unfragmentable part is just the fixed header.
+
+The ''Next Header'' value of the last (extension) header of the unfragmentable part is set to <tt>44</tt> to indicate that a ''Fragment'' extension header follows. After the ''Fragment'' extension header a fragment of the rest of the original packet follows.
+
+The first fragment(s) hold the rest of the extension headers (if present). After that the rest of the payload follows. Each fragment is a multiple of 8 octets in length, except the last fragment.
+
+Each ''Fragment'' extension header has its ''M'' flag set to <tt>1</tt> (indicating more fragments follow), except the last, whose flag is set to <tt>0</tt>.
+
+===Reassembly===
+The original packet is reassembled by the receiving node by collecting all fragments and placing each fragment at the right offset and discarding the ''Fragment'' extension headers of the packets that carried them. Packets containing fragments need not arrive in sequence; they will be rearranged by the receiving node.
+
+If not all fragments are received within 60 seconds after receiving the first packet with a fragment, reassembly of the original packet is abandoned and all fragments are discarded.
+If the ''first'' fragment was received (which contains the fixed header), a ''Time Exceeded'' message ([[ICMPv6]] type 3, code 1) is returned to the node originating the fragmented packet, if the packet was discarded for this reason.
+
+==References==
+{{Reflist|colwidth=30em}}
+
+==See also==
+
+{{IPv6}}
+
+[[Category:Packets (information technology)]]
+[[Category:IPv6]]
+[[Category:Internet Protocol]]
+[[Category:Internet Layer protocols]]
+[[Category:Network layer protocols]]</body> </html>

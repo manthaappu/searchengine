@@ -1,0 +1,103 @@
+<html> <head> <title>Lenstra elliptic curve factorization</title></head><body>The '''Lenstra elliptic curve factorization''' or the '''elliptic curve factorization method''' ('''ECM''') is a fast, sub-[[exponential running time]] algorithm for [[integer factorization]] which employs [[elliptic curve]]s.  For [[general purpose computer|general purpose]] factoring, ECM is the third-fastest known factoring method.  The second fastest is the [[quadratic sieve|multiple polynomial quadratic sieve]] and the fastest is the [[general number field sieve]]. It is named after [[Hendrik Lenstra]].
+
+Practically speaking, ECM is considered a special purpose factoring algorithm as it is most suitable for finding small factors. {{As of|2006|alt=Currently}}, it is still the best algorithm for [[divisor]]s not greatly exceeding 20 to 25 [[decimal|digits]] (64 to 83 [[binary digit|bit]]s or so), as its running time is dominated by the size of the smallest factor ''p'' rather than by the size of the number ''n'' to be factored. Frequently, ECM is used to remove small factors from a very large integer with many factors; if the remaining integer is still composite, then it has only large factors and is factored using general purpose techniques. The largest factor found using ECM so far has 73 digits and was discovered on 6 March 2010 by [[Joppe Bos]], [[Thorsten Kleinjung]], [[Arjen Lenstra]] and [[Peter Montgomery]].<ref>[http://www.loria.fr/~zimmerma/records/top50.html 50 largest factors found by ECM]</ref> Increasing the number of curves tested improves the chances of finding a factor, but they are not [[linear]] with the increase in the number of digits.
+
+==Lenstra's elliptic curve factorization==
+The Lenstra elliptic curve factorization method to find a factor of the given number ''n'' works as follows:
+
+<ol>
+<li> Pick a random [[elliptic curve]] over <math>\mathbf{Z}/n\mathbf{Z}</math>, given by an equation of the form ''y''<sup>2</sup> = ''x''<sup>3</sup> + ''ax'' + ''b'' (mod ''n''), and a non-trivial [[Point (geometry)|point]] ''P'' on it. Say, pick first a point ''P''=(''x'',''y'') with random non-zero coordinates ''x'',''y'' (mod ''n''), then pick a random non-zero ''a'' (mod ''n''), then take  ''b'' = ''y''<sup>2</sup> - ''x''<sup>3</sup> - ''ax'' (mod ''n'').
+
+<li> We will compute certain multiples <math>kP=P\boxplus\dots\boxplus P</math> (''k'' times) of the point ''P'' using the standard addition rule <math>\boxplus</math> on our elliptic curve: given two points ''P,Q'' on the curve, their sum <math>P\boxplus Q</math> can be computed using the formulas given in the [[elliptic curve#The group law|group law section]] of the article on elliptic curves. These formulas contain the "slope" of the line connecting ''P'' and ''Q'', hence involve divisions between residue classes modulo ''n'', which can be performed using the [[extended Euclidean algorithm]]. In particular, division by some ''v'' (mod ''n'') includes the calculation of the [[greatest common divisor]] gcd(''v'',''n'').
+<br>
+: If the slope is of the form ''u''/''v'' with gcd(''u'',''n'')=1, then ''v''=0 (mod ''n'') means that the result of the <math>\boxplus</math>-addition will be <math>\infty</math>, the point at infinity on the curve. However, if gcd(''v'',''n'') is neither 1 nor ''n'', then the <math>\boxplus</math>-addition will not produce a meaningful point on the curve, which shows that our elliptic curve is not a group (mod ''n''), but, more importantly for now, gcd(''v'',''n'') is a non-trivial factor of ''n''.
+
+<li> Compute ''eP'' on the elliptic curve (mod ''n''), where ''e'' is product of many small numbers: say, a product of small primes raised to small powers, as in the [[Pollard's p &minus; 1 algorithm|''p'' &minus; 1 algorithm]], or the [[factorial]] ''B''! for some not too large ''B''. This can be done efficiently, one small factor at a time. Say, to get ''B''!''P'', first compute 2''P'', then 3(2''P''), then 4(3!''P''), and so on. Of course, ''B'' should be small enough so that ''B''-wise <math>\boxplus</math>-addition can be performed in reasonable time.
+
+<li> 
+*If we were able to finish all the calculations above without encountering non-invertible elements (mod ''n''), then we need to try again with some other curve and starting point.
+*If we found <math>kP=\infty</math> at some stage (the point at infinity on the elliptic curve), then again we should start over with a new curve and starting point, since <math>\infty</math> is the zero element for <math>\boxplus</math>, so after this point we would be just repeating <math>\infty\boxplus\dots\boxplus\infty=\infty</math>.
+*If we encountered a gcd(''v'',''n'') at some stage that was neither 1 nor ''n'', then we are done: it is a non-trivial factor of ''n''. 
+
+</ol>
+
+The time complexity depends on the size of the factor and can be represented by [[big O notation|O]]([[e (mathematical constant)|e]]<sup>(√2 + o(1)) &radic;([[natural logarithm|ln]] ''p'' ln ln ''p'')</sup>), where ''p'' is the smallest factor of ''n''.
+
+==Why does the algorithm work?==
+
+If ''p'' and ''q'' are two prime divisors of ''n'', then ''y''<sup>2</sup> = ''x''<sup>3</sup> + ''ax'' + ''b'' (mod ''n'') implies the same equation also (mod ''p'') and (mod ''q''). These two smaller elliptic curves with the <math>\boxplus</math>-addition are now genuine [[group (mathematics)|groups]]. If these groups have ''N<sub>p</sub>'' and ''N<sub>q</sub>'' elements, respectively, then for any point ''P'' on the original curve, by [[Lagrange's theorem (group theory)|Lagrange's theorem]], <math>kP=\infty</math> on the curve (mod ''p'') implies that ''k'' divides ''N<sub>p</sub>''; moreover, <math>N_p P=\infty</math>. The analogous statement holds for ''q''. When the elliptic curve is chosen randomly, then ''N<sub>p</sub>'' and ''N<sub>q</sub>'' are random numbers close to ''p''+1 and ''q''+1, respectively (see below). Hence it is unlikely that most of the prime factors of ''N<sub>p</sub>'' and ''N<sub>q</sub>'' are the same, and it is quite likely that while computing ''eP'', we will encounter some ''kP'' that is <math>\infty</math> (mod ''p'') but not (mod ''q''), or vice versa. When this is the case, ''kP'' does not exist on the original curve, and in the computations we found some ''v'' with either gcd(''v'',''p'')=''p'' or gcd(''v'',''q'')=''q'', but not both. That is, gcd(''v'',''n'') gave a non-trivial factor of ''n''.
+
+ECM is at its core an improvement of the older [[Pollard's p &minus; 1 algorithm|''p'' &minus; 1 algorithm]]. The ''p'' &minus; 1 algorithm finds prime factors ''p'' such that ''p'' &minus; 1 is [[smooth number|b-powersmooth]] for small values of ''b''. For any ''e'', a multiple of ''p'' &minus; 1, and any ''a'' [[relatively prime]] to ''p'', by [[Fermat's little theorem]] we have ''a''<sup>''e''</sup> &equiv; ''1'' ([[modular arithmetic|mod]] ''p''). Then [[greatest common divisor|gcd]](''a''<sup>''e''</sup> &minus; 1, ''n'') is likely to produce a factor of ''n''. However, the algorithm fails when ''p''-1 has large prime factors, as is the case for numbers containing [[strong prime]]s, for example.
+
+ECM gets around this obstacle by considering the [[group (mathematics)|group]] of a random [[elliptic curve]] over the [[finite field]] '''Z'''<sub>''p''</sub>, rather than considering the [[multiplicative group]] of '''Z'''<sub>''p''</sub> which always has order ''p'' &minus; 1.
+
+The order of the group of an elliptic curve over '''Z'''<sub>''p''</sub> varies (quite randomly) between ''p'' + 1 &minus; 2&radic;''p'' and ''p'' + 1 + 2&radic;''p'' by [[Hasse's theorem on elliptic curves|Hasse's theorem]], and is likely to be smooth for some elliptic curves.  Although there is no proof that a smooth group order will be found in the Hasse-interval, by using [[heuristic]] probabilistic methods, the [[Canfield-Erdős-Pomerance theorem]] with suitably optimized parameter choices, and the [[L-notation]], we can expect to try [[L-notation|'''L''']]<nowiki>[</nowiki>&radic;2 / 2, &radic;2<nowiki>]</nowiki> curves before getting a smooth group order. This heuristic estimate is very reliable in practice.
+
+==An example==
+
+The following example is from {{harvtxt|Trappe|Washington|2006}}, with some details added. This book contains a nice introduction into the cryptographic uses of elliptic curves.
+
+We want to factor ''n''=455839. Let's choose the elliptic curve ''y''<sup>2</sup> = ''x''<sup>3</sup> + 5''x'' - 5, with the point ''P''=(1,1) on it, and let's try to compute (10!)''P''. 
+
+First we compute 2''P''. The slope of the tangent line at ''P'' is ''s''=(3''x''<sup>2</sup>+5)/(2''y'')=4, and then the coordinates of 2''P''=(''x′'',''y′'') are ''x′''=''s''<sup>2</sup>-2''x''=14 and ''y′''=''s''(''x''-''x′'')-''y''=4(1-14)-1=-53, all numbers understood (mod ''n''). Just to check that this 2''P'' is indeed on the curve: (-53)<sup>2</sup>=2809=14<sup>3</sup>+5·14-5. 
+
+Then we compute 3(2P). The slope of the tangent line at 2''P'' is ''s''=(3·14<sup>2</sup>+5)/(2(-53))=-593/106 (mod ''n''). Using the [[Euclidean algorithm]]: 455839=4300·106+39, then 106=2·39+28, then 39=28+11, then 28=2·11+6, then 11=6+5, then 6=5+1. Hence gcd(455839,106)=1, and working backwards (a version of the [[extended Euclidean algorithm]]): 1=6-5=2·6-11=2·28-5·11=7·28-5·39=7·106-19·39=81707·106-19·455839. Hence 106<sup>-1</sup>=81707 (mod 455839), and -593/106=133317  (mod 455839). Given this ''s'', we can compute the coordinates of 2(2''P''), just as we did above: 4''P''=(259851,116255). Just to check that this is indeed a point on the curve: ''y''<sup>2</sup>=54514=''x''<sup>3</sup>+5''x''-5 (mod 455839). After this, we can compute <math>3(2 P)=4 P \boxplus 2 P</math>.
+
+We can similarly compute 4!''P'', and so on, but 8!''P'' requires inverting 599 (mod 455839). The Euclidean algorithm gives that 455839 is divisible by 599, and we have found a factorization 455839=599·761.
+
+The reason that this worked is that the curve (mod 599) has 640=2<sup>7</sup>·5 points, while (mod 761) it has 777=3·7·37 points. Moreover, 640 and 777 are the smallest positive integers ''k'' such that <math>kP=\infty</math> on the curve (mod 599) and (mod 761), respectively. Since 8! is a multiple of 640 but not a multiple of 777, we have <math>8!P=\infty</math> on the curve (mod 599), but not on the curve (mod 761), hence the repeated addition broke down here, yielding the factorization.
+
+==See also==
+*[[UBASIC]] for practical program (ECMX).
+
+==References==
+{{reflist}}
+* Brent, Richard P. "Factorization of the tenth Fermat number." ''Mathematics of Computation'' 68 (1999), 429-451. 
+* Cohen, Henri.  ''A Course in Computational Algebraic Number Theory.''  Springer-Verlag, New York, Berlin, Heidelberg, 1996.  ISBN 0-387-55640-0.
+* [[Arjen Lenstra|Lenstra, A. K.]] and Lenstra Jr., H. W. (editors), ''The development of the number field sieve.'' Lecture Notes in Mathematics 1554, Springer-Verlag, Berlin, 1993. MR 96m:11116. 
+* Lenstra Jr., H. W. "Factoring integers with elliptic curves." ''Annals of Mathematics'' (2) 126 (1987), 649-673. MR 89g:11125. 
+* {{cite book
+    | last = Pomerance
+    | first = Carl
+    | authorlink = Carl Pomerance
+    | coauthors = Richard Crandall
+    | year = 2001 
+    | title = Prime Numbers: A Computational Perspective 
+    | publisher = Springer 
+    | edition = 1st 
+    | chapter = Section 7.4: Elliptic curve method
+    | pages = 301&ndash;313
+    | isbn = 0-387-94777-9}}
+* Pomerance, Carl. "The quadratic sieve factoring algorithm." ''Advances in Cryptology, Proc. Eurocrypt '84'', Lecture Notes in Computer Science, Vol. 209, Springer-Verlag, Berlin, 1985, 169-182. MR 87d:11098. 
+* {{cite journal
+  |last=Pomerance
+  |first=Carl
+  |title=A Tale of Two Sieves
+  |journal=[[Notices of the American Mathematical Society]]
+  |pages=1473–1485
+  |volume=43
+  |date=1996
+  |issue=12
+  |url=http://www.ams.org/notices/199612/pomerance.pdf
+  |format = [[PDF]]
+}}
+* Silverman, Robert D. "The Multiple Polynomial Quadratic Sieve." ''Mathematics of Computation'' 48 (1987), 329-339.
+* {{cite book | last1=Trappe | first1= W. | last2=Washington| first2=L. C. | title=Introduction to Cryptography with Coding Theory |edition=Second | publisher=Pearson Prentice Hall | year=2006| isbn=0-13-186239-1}}
+* Watras, Marcin.  ''Cryptography, Number Analysis, and Very Large Numbers.''  Wojciechowski-Steinhagen, Bydgoszcz, 2008.  PL:5324564.
+
+==External links==
+* [http://alpertron.com.ar/ECM.htm Factoring applet that uses ECM]
+* [http://ecm.gforge.inria.fr/ GMP-ECM], an efficient implementation of ECM.
+* [http://www.loria.fr/~zimmerma/records/ecmnet.html ECMNet], an easy client-server implementation that works with several factorization projects.
+* [http://www.sourceforge.net/projects/pyecm pyecm], a python implementation of ECM.  Much faster with psyco and/or gmpy.
+* [http://www.rechenkraft.net/yoyo/ Distributed computing project yoyo@Home] Subproject ECM is a program for Elliptic Curve Factorization which is used by a couple of projects to find factors for different kind of numbers.
+
+
+{{number theoretic algorithms}}
+
+[[Category:Integer factorization algorithms]]
+[[Category:Finite fields]]
+
+[[fr:Factorisation en courbe elliptique de Lenstra]]
+[[nl:Algoritme van Lenstra]]
+[[ru:Факторизация с помощью эллиптических кривых]]</body> </html>

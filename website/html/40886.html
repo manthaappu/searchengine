@@ -1,0 +1,64 @@
+<html> <head> <title>Year 10,000 problem</title></head><body>The '''Year 10,000 problem''' (also known as the '''Y10K problem''' or the '''deca-millennium bug'''<ref>{{cite web|url=http://www.longnow.org/about/|title=About - The Long Now|author=The Long Now Foundation|accessdate=28 February 2010}}</ref>) is the class of all potential [[software bug]]s that would emerge when the need to express years with five digits arises. The problem can have discernible effects today, but is also sometimes mentioned for humorous effect.
+
+==Practical relevance==
+Historical and technological trends suggest that in the actual year 10,000 it is extremely unlikely that any of the data processing technology or software in use today will still be active, or that the present [[Gregorian calendar]] system will even still be in use. However, five-digit years are already a problem today for some forward-looking analysis programs, such as software that examines proposals for the long-term handling of nuclear waste.
+
+==Problems with date-handling programs==
+Many date-handling programs or routines created prior to the recognition of the [[Y2K problem]] only used the last two digits of a year for storage and calculation, such as "60" for 1960. The routines would then either add the constant 1900 to the result, or even just insert the text string "19" in front of the result when displaying it, causing the year 2000 to be displayed or interpreted as 1800, 1900, 19100, or 100. Although this was often done to preserve what was at the time precious storage and memory space — reasons now unlikely to be relevant — it was also done as a mirror of cultural practice (saying "the '60s" instead of "the 1960s", for example) or to convey information in a limited display space.
+
+Barring dramatic breakthroughs in [[life extension]] research, neither anyone alive today nor their closely-related descendants will ever experience anything but a four-digit Gregorian year. For this reason there is a strongly-ingrained cultural inclination to format years in a way that only considers their last four digits. This is likely to cause years greater than 9999 to be presented or stored incorrectly.
+
+==Examples==
+This problem can be seen in the spreadsheet program [[Microsoft Excel]] through at least the Office Excel 2007 release, which stores dates as the number of days since 31 December 1899 (day 1 is 1900-01-01), and the database program [[Microsoft Access]], which stores dates as the number of days since 30 December 1899 (day 1 is 1899-12-31). In either application, a date value of 2958465 will be correctly formatted as "31 December 9999" but adding 1 to that to step over to the expected date of "1 January 10000" will cause a formatting error; in Excel 2000, for example, it will be displayed in the cell as a series of ''#'' characters. Excel also cannot automatically convert date-formatted strings such as "12/12/2007" to dates if the year exceeds 9999; "12/12/9999" is automatically converted to a date when entered into a cell, but "12/12/10000" is not.
+
+The  [[Long Now Foundation]]  ran into this limitation of Excel  during the design of the 10,000 year clock.<ref>{{cite news|title=Lessons from the Long Now|url=http://media.longnow.org/djlongnow_media/press/pdf/0200001-Smith-LessonsfromtheLongNow.org.pdf|work=Software Development Magazine|author=Roger Smith}}</ref>
+
+The [[open source]] [[OpenOffice.org]] [[OpenOffice.org Calc|Calc]] program is able to display dates beyond the year 9999 correctly with 5 digit years, but at least through version 2.4 falls victim to the [[Year 32,768 problem]]: "31 December 32,767" is the highest available date it can properly display. 32767, or 2<sup>15</sup>-1, is the highest positive number that can be represented using a 16-bit signed integer, adding one to this value causes it to [[arithmetic overflow|overflow]], and Calc interprets the year as a large negative number, "1 January -32768".
+
+The [[GNU]] [[Fortran]] [[compiler]], [[GNU Compiler Collection|g77]], makes reference in [[Run-time system|run-time]] environment limits to year 10000 (Y10K) problems when using [[intrinsic function]]s with this compiler suite. The problem is simply stated as, "Most intrinsics returning, or computing values based on, date information are prone to Year-10000 (Y10K) problems, due to supporting only 4 digits for the year." The failure mode suggested in all of the intrinsic functions is that, "Programs making use of this intrinsic might not be Year 10000 (Y10K) compliant. For example, the date might appear, to such programs, to wrap around (change from a larger value to a smaller one) as of the Year 10000."<ref>{{cite web|url=http://gcc.gnu.org/onlinedocs/gcc-3.4.6/g77/Year-10000-_0028Y10K_0029-Problems.html#Year-10000-_0028Y10K_0029-Problems|title=Year 10000 (Y10K) Problems}}</ref>
+
+==Problems with data representation==
+Unlike the Y2K problem, where significant digits were omitted from the stored values of years, fixing the Year 10,000 problem does not require updating old records (assuming they are already Y2K compliant), since all four significant digits are present. It only requires that record storage in decimal be able to store five digits.
+
+There is, however, a potential problem with record sets that make use of lexical sorting. For example, representations of dates in the range 10,000-19,999 could appear adjacent to dates in the range 1000-1999 rather than after the year 9999.
+
+===Mitigation===
+The [[Long Now Foundation]] is attempting to foster the custom of writing years with five digits, so that the year 2000 would be written as "02000". This would preempt the Year 10,000 problem, but would in turn be susceptible to a "Year 100,000 problem". 
+
+The Internet [[Kermit (protocol)|Kermit]] Service [[Daemon (computer software)|Daemon]] (IKSD) uses a 5-digit field for the year in the Database Record Format: "Date-time fields are right-adjusted within a field of 18 with the leading blank reserved for Y10K".<ref>{{cite web|url=http://www.columbia.edu/kermit/ftp/c-kermit/iksd.txt|title=IKSD - The Internet Kermit Service Daemon|publisher=Columbia University|date=12 December 2001}}</ref>
+
+[[ISO 8601]] specifies that years be written with four digits, but allows for extension to five or more digits, with prior agreement between the parties exchanging the information.
+
+==See also==
+* [[Holocene calendar]]
+* [[Long Now Foundation]]
+* [[Perpetual calendar]]
+* [[System time]]
+
+==References==
+<!-- ----------------------------------------------------------
+ See http://en.wikipedia.org/wiki/Wikipedia:Footnotes for a
+ discussion of different citation methods and how to generate
+ footnotes using the <ref>, </ref> and <reference /> tags
+----------------------------------------------------------- -->
+{{reflist}}
+
+==Further reading==
+* {{cite web|title=The Y10K Problem, Pascal's Wager, and Petersberg|url=http://www.mathpages.com/home/kmath200.htm|work=MathPages: Probability and Statistics}} &mdash; MathPages notes a similarity between the Y10K problem and both [[Pascal's wager]] and the [[St. Petersburg paradox]], stating that the cost of fixing the various Y10K, Y100K, and successive problems is increased in direct proportion to the remoteness of the date, and that therefore each problem should in fact be given equal weight.
+* {{cite web|url=http://www.templetons.com/brad/y10k.html|title=Computer systems worry over pending "year 10,000" problem|author=[[Brad Templeton]]}} &mdash; Templeton hypothesizes the impact of the Year 10000 problem.
+* {{cite web|url=http://www.stsc.hill.af.mil/crosstalk/1996/11/xt96d11k.asp|title=The Year 10,000 Problem: It's Not Too Late to Start|author=Lorin May}}
+* {{cite news|title=Beyond Year 2000 Compliance: Year 10,000 Compliance|url=http://www.recapinc.com/aprecap_S97_year10000.htm|work=A/P Recap|author=}}
+
+{{Year-related problems}}
+
+[[Category:Time formatting and storage bugs|10000 problem]]
+[[Category:Calendars]]
+[[Category:Future problems]]
+[[Category:Programming bugs]]
+
+[[ko:10000년 문제]]
+[[ja:西暦10000年問題]]
+[[ru:Проблема 10000 года]]
+[[simple:Y10K]]
+[[fi:Y10K]]
+[[zh:10000年问题]]</body> </html>

@@ -1,0 +1,225 @@
+<html> <head> <title>Mythryl</title></head><body>{{notability|products|date=June 2010}}
+{{Unreferenced|date=August 2009}}
+{{Infobox programming language
+|name = Mythryl
+|logo =
+|paradigm = [[multi-paradigm programming language|multi-paradigm]]: [[functional programming language|functional]], [[imperative programming|imperative]]
+|year = 2009
+|designer = [[Cynbe ru Taren]]
+|typing = [[strong typing|strong]], [[static typing|static]], [[type inference|inferred]]
+|dialects =
+|implementations =  Mythryl
+|influenced_by = [[ML (programming language)|ML]] (esp. [[SML/NJ]])
+|influenced =
+|website = http://mythryl.org
+|license = [[BSD-like license]]<ref>http://github.com/mythryl/mythryl/blob/master/src/lib/LICENSE</ref>
+}}
+
+'''Mythryl'''  is a general-purpose, [[Module (programming)|modular]], [[functional programming language]] with [[compile-time type checking]] and [[type inference]]
+supporting both scripting and application development.  Mythryl is self-hosting, that is to say the Mythryl compiler is written in Mythryl.
+
+Mythryl is derived from [[SML/NJ]], a compiler and programming environment for [[Standard ML]].  It differs in that SML/NJ is a platform-neutral research testbed with an idiosyncratic syntax derived from [[Robin Milner]]'s
+work with the logic framework [[LF (logical framework)|LF]],
+whereas Mythryl is a [[Linux]]-centric production-oriented software development platform with a [[C (programming language)|C]]-like syntax.
+
+==Language==
+Mythryl syntax is easily learned by mainstream programmers.  For example the script
+
+    #!/usr/bin/mythryl
+  
+    for (i = 0; i < 10; ++i) {
+        printf "%d\n" i;
+    };
+
+does just what a C++ or Java programmer would expect.
+
+Mythryl provides [[Perl]]-like scripting convenience in a typed, compiled language.  For example the script
+
+    #!/usr/bin/mythryl
+ 
+    foreach (dir_tree::files ".") .{ if (#file =~ ./\\.[ch]$/)  printf "%s\n" #file;  fi; };
+
+finds and prints all C files under the current directory.  This example illustrates Mythryl's support for Perl-compatible [[regular expression]]s via the
+standard library <code>=~</code> operator, the compact Mythryl <code>.{ ... #arg ...}</code>
+syntax for [[anonymous function]]s, and also the standard library routines <code>dir_tree::files</code>
+and <code>foreach</code>.
+
+Unlike (say) Perl, Mythryl does not hardwire into the compiler functionality like
+<code>foreach</code> and <code>=~</code>.  Mythryl can avoid doing so because
+it dynamically compiles scripts into optimized native code, eliminating
+the scripting efficiency penalty.  This in turn frees users to implement and
+use their own variant implementations of regular expressions and such should
+they choose.
+
+Mythryl supports a variety of modern constructs such as list comprehensions. For example the expression
+
+    [ (i,j,k) for i in 1..20 for j in i..20 for k in j..20 where i*i + j*j == k*k ];
+
+evaluates to the list of Pythagorean triples
+
+    [ (3, 4, 5), (5, 12, 13), (6, 8, 10), (8, 15, 17), (9, 12, 15), (12, 16, 20) ]
+
+Mythryl provides extensive support for plain and higher order [[function (programming)|function]]s. For example, the [[factorial]] function may be expressed as
+
+    '''fun''' factorial( n ) = {
+        '''if''' (n == 0)  1;
+        '''else'''         n*factorial( n-1 );
+        '''fi''';
+    };
+
+or equivalently but more concisely as
+
+    '''fun''' factorial( n ) = {
+        (n == 0)  ??  1  ::  n*factorial( n-1 );
+    };
+
+where Mythryl's '''cond ?? exp1 :: exp2''' syntax corresponds to
+C's '''cond ? exp1 : exp2''' syntax.
+
+The Mythryl compiler infers the static type <tt>Int -> Int</tt> of these functions without user-supplied type annotations. That is, it deduces that ''n'' is only used with integer expressions, and must therefore itself be an integer, and that all value-producing expressions within the function return integers.
+
+The same function can be expressed with [[clausal function definitions]] where the ''if''-''then''-''else'' conditional is replaced by a sequence of templates of the factorial function evaluated for specific values which are tried one by one in the order written until a match is found:
+
+    '''fun''' factorial 0 =>  1;
+        factorial n =>  n*factorial( n - 1 );
+    '''end''';
+
+Since Mythryl (unlike SML) supports postfix operators, the mathematically more traditional definition
+
+    '''fun''' 0! =>  1;
+        n! =>  n*(n - 1)! ;
+    '''end''';
+
+may also be used.
+
+===Packages and generics===
+
+Mythryl has an advanced [[Module (programming)|module]] system, allowing programs to be decomposed into hierarchically organized ''packages'' of logically related type and value declarations.  Mythryl packages provide not only [[Namespace (computer science)|namespace]] control but also abstraction, in the sense that they allow programmers to define [[abstract data type]]s.
+
+Three main syntactic constructs comprise the Mythryl package system: API definitions, package definitions and generics.  A ''package'' is a module; it consists of a collection of types, exceptions, values and packages (called ''subpackages'') packaged together into a logical unit.  An ''API'' is an [[Interface (computer science)|interface]], usually thought of as a type for a package: it specifies the names of all the entities provided by the package as well as the [[arity|arities]] of type components, the types of value components, and APIs for substructures.  The definitions of type components may or may not be exported; type components whose definitions are hidden are ''abstract types''.  Finally, a ''generic'' is a compile-time function from packages to packages; that is, a generic accepts one or more arguments, which are packages of a given API, and produces a package as its result.  Generics are used to implement [[generic programming|generic]] data structures and algorithms.
+
+For example, the API for a [[Queue (data structure)|queue]] data structure might be:
+
+ '''api''' Queue {
+  
+     Queue(X);                            # Instances of Queue hold values of any type X (fixed per-queue).
+  
+     '''exception''' QUEUE;                     # We may be raising exceptions named QUEUE, with no associated values.
+  
+     empty:    Queue(X);                  # We export an instance of the empty queue to clients.
+     insert:  (Queue(X), X) -> Queue(X);  # We export a function for inserting X values into an X queue.
+     is_empty: Queue(X) -> Bool;          # We export a function for testing whether a queue is empty.
+     peek:     Queue(X) -> X;             # We export a function for peeking at the next item to be read from queue.
+     remove:   Queue(X) -> (Queue(X), X); # Do a pure-functional read, returning value read and new queue. 
+ };
+
+This API describes a package that provides a parameterized type <code>Queue</code> of queues, an exception called <code>QUEUE</code> to be raised on attempts to read from an empty queue, an instance of the empty queue for initializing client queue instances, and four functions providing the basic operations on queues.  One can now implement the queue interface definition by writing a package with this API:
+
+ '''package''' queue: Queue {
+  
+     Queue(X) = (List(X), List(X));       # We will implement a queue of Xs using two lists of Xs. 
+  
+     '''exception''' QUEUE;
+  
+     empty = ([], []);
+  
+     '''fun''' insert ((ins, outs), a)
+         =
+         (a . ins, outs);
+ 
+     '''fun''' is_empty ([], []) = TRUE;
+         is_empty _ = FALSE;
+     '''end''';
+ 
+     '''fun''' peek ([],  [])       =>  '''raise''' QUEUE;   # Cannot peek into an empty queue.
+         peek (ins, [])       =>  head (reverse ins);
+         peek (ins, a . outs) =>  a;
+     '''end''';
+ 
+ 
+     '''fun''' remove ([], [])
+             =>
+             '''raise''' Queue;  # Cannot read from an empty queue.
+ 
+         remove (ins, [])
+             =>
+             {   new_outs = reverse ins;
+                (([], taill new_outs), head new_outs);
+             };
+ 
+         remove (ins, a . outs)
+             =>
+             ((ins,outs), a);
+     end;
+ };
+This definition declares that <code>queue</code> is an implementation of the <code>Queue</code> API. 
+The body of the package provides all of the components listed in the API declaration.
+
+To use a package, one can access its members using C++ style "package::member" notation.
+For example, a queue of strings would have type <code>queue::Queue(String)</code>, the empty queue is <code>queue::empty</code>, and to remove the first element from a queue called <code>q</code> one could write <code>queue::remove(q)</code>.
+
+==Code examples==
+
+Snippets of Mythryl code are easily studied by entering them into a top-level [[read-eval-print loop]]. This is an interactive session that prints the values of entered expressions:
+
+   Linux% my
+   Mythryl 110.58.1 built Fri Feb 29 21:26:24 2009
+   Do   help()   for help
+ 
+   eval: 1 + 2 * 3;
+   7
+
+===Hello world===
+
+The script
+
+   #!/usr/bin/mythryl
+   print "Hello world!\n";
+
+can be executed on Linux like any other script if set executable (<code>chmod +x hello</code>):
+
+   $ ./hello
+   Hello world!
+   $
+
+===Numerical derivative (higher-order functions)===
+
+It is easy to create and pass around functions in Mythryl programs. This capability has an enormous number of uses. Calculating the numerical derivative of a function is one such application. The following Mythryl function "d" computes the numerical derivative of a given function "f" at a given point "x":
+
+   fun d delta f x
+       =
+       (f (x + delta) - f (x - delta)) / (2.0 * delta);
+
+This function requires a small value "delta". A good choice for delta when using this algorithm is the cube root of the [[machine epsilon]].{{Citation needed|date=August 2008}}
+
+The function "d" maps a "Float" onto another function with the type "(Float -> Float) -> Float -> Float".
+This allows us to partially apply arguments. This functional style is known as [[currying]].
+In this case, it is useful to partially apply the first argument "delta" to "d", to obtain a more specialised function:
+
+   d = d 1E~8;
+
+We can compute a numerical approximation to the derivative of x^3-x-1 at x=3 with:
+
+   eval:  d (fn x = x*x*x - x - 1.0) 3.0;
+   25.9999996644
+
+The correct answer is f'(x) = 3x^2-1 => f'(3) = 27-1 = 26.
+
+The function "d" is called a [[higher-order function]] because it accepts another function ("f") as an argument.
+
+[[Currying|Curried]] and higher-order functions can be used to eliminate redundant code. For example, a library may require functions of type <code>A -> B</code>, but it is more convenient to write functions of type <code>(A, C) -> B</code> where there is a fixed relationship between the objects of type <code>A</code> and <code>C</code>. A higher order function of type ((A, C) -> B) -> (A -> B) can factor out this commonality. This is an example of the [[adapter pattern]].
+
+==External links==
+* [http://mythryl.org Mythryl home page]
+
+==References==
+<!--See http://en.wikipedia.org/wiki/Wikipedia:Footnotes for an explanation of how to generate footnotes using the <ref> and </ref> tags, and the template below-->
+{{reflist}}
+
+[[Category:Procedural programming languages]]
+[[Category:ML programming language family]]
+[[Category:Functional languages]]
+[[Category:Programming languages created in 2009]]
+[[Category:Free compilers and interpreters]]
+[[Category:Unix shells]]
+[[Category:Free development toolkits and libraries]]</body> </html>

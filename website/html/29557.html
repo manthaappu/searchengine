@@ -1,0 +1,57 @@
+<html> <head> <title>Polygon triangulation</title></head><body>In [[computational geometry]], '''polygon triangulation''' is the decomposition of a [[polygonal area]] ([[simple polygon]]) '''P''' into a set of [[triangles]],<ref name= bkos>{{Citation|author = [[Mark de Berg]], [[Marc van Kreveld]], [[Mark Overmars]], and [[Otfried Schwarzkopf]] | year = 2000 | title = Computational Geometry | publisher = [[Springer-Verlag]] | edition = 2nd revised | isbn = 3-540-65620-0}} Chapter 3: Polygon Triangulation: pp.45–61.</ref> i.e., finding the set of triangles with pairwise non-intersecting interiors whose union is '''P'''. 
+
+In the strict sense, these triangles may have vertices only at the vertices of '''P'''. In a less strict sense, points can be added anywhere on or inside the polygon to serve as vertices of triangles. In addition, the cases of triangulation of a simple polygon and of a polygonal area with polygonal holes are treated separately. 
+
+Triangulations may be viewed as special cases of [[planar straight-line graph]]s. When there are no holes or added points, triangulations form [[outerplanar graph|maximal outerplanar graphs]].
+
+==Polygon triangulation without extra vertices==
+
+Over time a number of algorithms have been proposed to triangulate a polygon.
+
+===Special cases===
+A [[convex polygon]] is trivial to triangulate in [[linear time]], by adding edges from one vertex to all other vertices.
+
+A [[monotone polygon]] can easily be triangulated in linear time with either the algorithm of  [[Alain Fournier|A. Fournier]] and D.Y. Montuno,<ref>{{Citation |last1=Fournier |first1=A. |author1-link=Alain Fournier |last2=Montuno |first2=D. Y. |author2-link= |title=Triangulating simple polygons and equivalent problems |journal=[[ACM Transactions on Graphics]] |volume=3 |issue=2 | year=1984 <!--|month=April--> |pages=153–174 |issn=0730-0301 |doi=10.1145/357337.357341}}</ref> or the algorithm of [[Godfried Toussaint]]<ref>Toussaint, Godfried T. (1984), "A new linear algorithm for triangulating monotone polygons," ''Pattern Recognition Letters'', '''2''' (March):155-158.</ref>.
+
+===Ear clipping method===
+[[Image:Polygon-ear.png|thumb|A polygon ear]]
+One way to triangulate a simple polygon is based on the fact that any simple polygon with at least 4 vertices without holes has at least two so called '[[Ear (mathematics)|ear]]s', which are triangles with two sides being the edges of the polygon and the third one completely inside it (and with an extra property unimportant for triangulation).<ref>Meisters, G. H., "Polygons have ears." American Mathematical Monthly 82 (1975). 648-651</ref> The algorithm then consists of finding such an ear, removing it from the polygon (which results in a new polygon that still meets the conditions) and repeating until there is only one triangle left.
+
+This algorithm is easy to implement, but suboptimal, and it only works on polygons without holes. An implementation that keeps separate lists of convex and concave vertices will run in ''O''(''n''<sup>2</sup>) time. This method is known as ''ear clipping'' and sometimes ''ear trimming''. An efficient algorithm for cutting off ears was discovered by Hossam ElGindy, Hazel Everett, and [[Godfried Toussaint]].<ref>ElGindy, H., Everett, H., and Toussaint, G. T., (1993) "Slicing an ear using prune-and-search," ''Pattern Recognition Letters'', '''14''', (9):719-722.</ref>
+
+===Using monotone polygons===
+[[Image:Polygon-to-monotone.png|thumb|Breaking a polygon into monotone polygons]]
+A simple polygon may be decomposed into [[monotone polygon]]s as follows.<ref name= bkos/>
+
+For each point, check if the neighboring points are both on the same side of the '[[sweep line]]', a horizontal or vertical line. If they are, check the next sweep line on the other side.  Break the polygon on the line between the original point and one of the points on this one.
+
+Note that if you are moving downwards, the points where both of the vertices are below the sweep line are 'split points'. They mark a split in the polygon. From there you have to consider both sides separately.
+
+Using this algorithm to triangulate a simple polygon takes ''O''(''n'' log ''n'') time.
+
+===Computational complexity===
+For a long time there was an open problem in computational geometry whether a [[simple polygon]] can be triangulated faster than ''O''(''n'' log ''n'') time.<ref name= bkos/> In  1990 [[David G. Kirkpatrick]], Maria M. Klawe, [[Robert Tarjan|Robert E. Tarjan]] discovered an ''O''(''n'' log log ''n'') algorithm for triangulation. Simple randomised methods such as Seidel's <ref>{{Citation |last=Seidel|first=Raimund |author-link= Raimund Seidel| title=A Simple and Fast Incremental Randomized Algorithm for Computing Trapezoidal Decompositions and for Triangulating Polygons |journal=Computational Geometry: Theory and Applications |volume=1 |year=1991 |pages=51–64}}</ref> or Clarkson et al's, have [[Big_O_notation#Orders_of_common_functions|''O''(''n'' log<sup>*</sup> ''n'')]] behaviour which, in practice, are indistinguishable from ''O''(''n'').
+
+[[Bernard Chazelle]] showed in 1991 that any simple polygon can be triangulated in linear time, though the proposed algorithm is very complex.<ref>{{Citation |last=Chazelle |first=Bernard |author-link=Bernard Chazelle | title=Triangulating a Simple Polygon in Linear Time |journal=Discrete & Computational Geometry |volume=6 |year=1991|pages=485–524 |issn=0179-5376 |doi=10.1007/BF02574703}}</ref>
+
+The [[time complexity]] of triangulation of a polygon with holes has an Ω(''n'' log ''n'') [[lower bound]].<ref name= bkos/>
+
+==See also==
+*[[Catalan number]]
+*[[Point set triangulation]]
+*[[Delaunay triangulation]]
+*[[Minimum-weight triangulation]], for a point set and for a simple polygon
+
+==References==
+{{reflist}}
+* {{Citation |last1=Amato |first1=Nancy M. |last2=Goodrich |first2=Michael T. |author2-link=Michael T. Goodrich|last3=Ramos |first3=Edgar A. |title=A Randomized Algorithm for Triangulating a Simple Polygon in Linear Time |journal=Discrete & Computational Geometry |volume=26 |year=2001 <!--|month=May--> |pages=245–265 |issn=0179-5376 |doi=10.1007/s00454-001-0027-x |url=http://parasol.tamu.edu/publications/abstract.php?pub_id=185 |issue=2}}
+
+==External links==
+* [http://computacion.cs.cinvestav.mx/~anzures/geom/triangulation.php Demo as Flash swf],  A Sweep Line algorithm.
+
+{{DEFAULTSORT:Polygon Triangulation}}
+[[Category:Geometric algorithms]]
+
+[[ar:تثليث مضلع]]
+[[fa:مثلث‌بندی چندضلعی‌ها]]
+[[fr:Triangulation d'un polygone]]</body> </html>

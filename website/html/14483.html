@@ -1,0 +1,30 @@
+<html> <head> <title>GBDE</title></head><body>{{Use ymd dates|date=September 2010}}
+
+'''GBDE''', standing for '''GEOM Based Disk Encryption''', is a [[block device]]-layer [[disk encryption]] system written for [[FreeBSD]], initially introduced in version 5.0. It is based on the [[GEOM]] disk framework. GBDE was designed and implemented by [[Poul-Henning Kamp]] and Network Associates Inc. (now known as [[McAfee]]).<ref>{{cite web |title=gbde(4) man page in FreeBSD 5.0 |work=GBDE manual page |url=http://www.freebsd.org/cgi/man.cgi?query=gbde&apropos=0&sektion=4&manpath=FreeBSD+5.0-RELEASE&format=html |accessdate=2007-01-01 }}</ref>
+
+== Design decisions ==
+Unlike most disk encryption software, GBDE does not attempt to defeat [[watermarking attack]]s through the use of disk encryption-specific modes of operation (see [[disk encryption theory]]), but instead generates a random [[key (cryptography)|key]] each time a [[disk sector|sector]] is written.<ref>{{cite paper |author=[[Poul-Henning Kamp]] |title=GBDE - GEOM Based Disk Encryption |work=GBDE design document |url=http://phk.freebsd.dk/pubs/bsdcon-03.gbde.paper.pdf |format=PDF |accessdate=2007-01-01 }}</ref> Unlike some alternatives, such as CBC with sector-specific [[initialization vector]]s, this approach does not reveal any information to the attacker even if they have access to snapshots of the disk image from different points in time, since encryption keys are never re-used.
+
+The one time sector key is encrypted using a pseudorandom key. This pseudorandom key is derived from the sector number and a static 2048-bit master key with 128 bits of [[salt (cryptography)|salt]]. The [[pseudorandom number generator]] used for this purpose is called the Cherry Picker. This is not a well established PRNG, but rather one invented for GBDE. This generator may not meet the security levels of standard algorithms, and could be distinguishable from random numbers.<ref name=elric-initial-analysis>{{cite paper |author=Roland C. Dowdeswell |date=2005-03-26 |title=Initial Analysis of GBDE |url=http://www.imrryr.org/~elric/cgd/gbde-analysis2.pdf |accessdate=2007-01-26}}</ref>
+
+== Limitations ==
+Due to this unique approach, GBDE only supports 128-bit [[Advanced Encryption Standard|AES]]. Using a different key for each write also introduces a significant CPU overhead, as most [[block cipher]]s use key-specific precomputations, and makes disk updates non-[[atomicity|atomic]] since the keys are written separately from the data. As a result, data loss can occur on unexpected power drops, even when used with [[journaling file system]]s. GBDE also has a disk space [[computational overhead|overhead]] of about 3% to store the per-sector keys.
+
+To address these shortcomings, a more typical disk encryption solution for FreeBSD, [[Geli (software)|GELI]], was written later by Pawel Jakub Dawidek.
+
+== See also ==
+{{Portal|Free software}}
+
+* [[Geli (software)|GELI]]
+* [[Disk encryption]]
+* [[Disk encryption software]]
+* [[Comparison of disk encryption software]]
+
+==References==
+<references/>
+
+{{DEFAULTSORT:Gbde}}
+[[Category:Disk encryption]]
+
+
+{{crypto-stub}}</body> </html>

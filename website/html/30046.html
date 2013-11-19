@@ -1,0 +1,89 @@
+<html> <head> <title>Probabilistic method</title></head><body>:''This article is '''not''' about [[interactive proof system]]s which use probability to convince a verifier that a proof is correct, '''nor''' about [[probabilistic algorithm]]s, which give the right answer with high probability but not with certainty, '''nor''' about [[Monte Carlo method]]s, which are simulations relying on [[pseudo-randomness]].''
+
+The '''probabilistic method''' is a [[nonconstructive proof|nonconstructive]] method, primarily used in [[combinatorics]] and pioneered by [[Paul Erd&#337;s]], for proving the existence of a prescribed kind of mathematical object. It works by showing that if one randomly chooses objects from a specified class, the [[probability]] that the result is of the prescribed kind is more than zero.  Although the proof uses probability, the final conclusion is determined for ''certain'', without any possible error.
+
+This method has now been applied to other areas of [[mathematics]] such as [[number theory]], [[linear algebra]], and [[real analysis]], 
+as well as in [[computer science]] (e.g. [[randomized rounding]]).
+
+==Introduction==
+
+If every object in a collection of objects fails to have a certain property, then the probability that a random object chosen from the collection has that property is zero. Turning this around, if the probability that the random object has the property is greater than zero, then this proves the existence of at least one object in the collection that has the property. It doesn't matter if the probability is vanishingly small; any positive probability will do.
+
+Similarly, showing that the probability is (strictly) less than 1 can be used to prove the existence of an object that does ''not'' satisfy the prescribed properties.
+
+Another way to use the probabilistic method is by calculating the [[expected value]] of some [[random variable]]. If it can be shown that the random variable can take on a value less than the expected value, this proves that the random variable can also take on some value greater than the expected value.
+
+Common tools used in the probabilistic method include [[Markov's inequality]], the [[Chernoff bound]], and the [[Lovász local lemma]].
+
+==Two examples due to Erd&#337;s==
+
+Although others before him proved theorems via the probabilistic method (for example, Szele's 1943 result that there exist [[tournament (graph theory)|tournaments]] containing a large number of [[Hamiltonian cycle]]s), many of the most well known proofs using this method are due to Erdős. The first example below describes one such result from 1947 that gives a proof of a lower bound for the [[Ramsey's theorem|Ramsey number]] ''R''(''r'', ''r'').  
+
+===First example===
+Suppose we have a [[complete graph]] on ''n'' vertices.  We wish to show (for small enough values of ''n'') that it is possible to color the edges of the graph in two colors (say red and blue) so that there is no complete subgraph on ''r'' vertices which is monochromatic (every edge colored the same color).
+
+To do so, we color the graph randomly.  Color each edge independently with probability 1/2 of being red and 1/2 of being blue.  We calculate the expected number of monochromatic subgraphs on ''r'' vertices as follows:
+
+For any set ''S'' of ''r'' vertices from our graph, define the variable ''X''(''S'') to be 1 if every edge amongst the ''r'' vertices is the same color, and 0 otherwise.  Note that the number of monochromatic ''r''-subgraphs is the sum of ''X''(S) over all possible subsets.  For any ''S'', the [[expected value]] of ''X''(''S'') is simply the probability that all of the <math>{r \choose 2}</math> edges in ''S'' are the same color, 
+
+:<math>2 \cdot 2^{-{r \choose 2}}</math>
+
+(the factor of 2 comes because there are two possible colors).  
+
+This holds true for any of the C(''n'',''r'') possible subsets we could have chosen, so we have that the sum of E[''X''(''S'')] over all ''S'' is 
+
+:<math>{n \choose r}2^{1-{r \choose 2}}.</math>
+
+The sum of an expectation is the expectation of the sum (''regardless'' of whether the variables are [[statistical independence|independent]]), so the expectation of the sum (the expected number of monochromatic ''r''-subgraphs) is 
+
+:<math>{n \choose r}2^{1-{r \choose 2}}.</math>
+
+Consider what happens if this value is less than 1.  The number of monochromatic ''r''-subgraphs in our random coloring will always be an integer, so at least one coloring must have less than the expected value. But the only integer which satisfies this criterion is 0.  Thus if 
+
+:<math>{n \choose r} < 2^{{r \choose 2} - 1},</math>
+
+some coloring fits our desired criterion, so by definition R(''r'', ''r'') must be bigger than ''n''.  In particular, R(''r'', ''r'') must [[exponential growth|grow at least exponentially]] with ''r''.
+
+A peculiarity of this argument is that it is entirely [[nonconstructive proof|nonconstructive]].  Even though it proves (for example) that almost every coloring of the complete graph on ''(1.1)<sup>r</sup>'' vertices contains no monochromatic ''r''-subgraph, it gives no explicit example of such a coloring.  The problem of finding such a coloring has been open for more than 50 years.
+
+===Second example===
+
+A 1959 paper of Erdős (see reference cited below) addressed the following problem in [[graph theory]]:  given positive integers ''g'' and ''k'', does there exist a graph ''G'' containing  only [[cycle (graph theory)|cycles]] of length at least ''g'', such that the [[chromatic number]] of ''G'' is at least ''k''?
+
+It can be shown that such a graph exists for any ''g'' and ''k'', and the proof is reasonably simple.  Let ''n'' be very large and consider a random graph ''G'' on ''n'' vertices, where every edge in ''G'' exists with probability "p"=''n''<sup>1/''g''-1</sup>.  It can be shown that with positive probability, the following two properties hold:
+*''G'' contains at most ''n''/2 cycles of length less than ''g''.
+'''Proof.''' Let "X" be the number cycles of length less than "g". Number of cycles of length "i" in the complete graph on "n" vertices is <math>n!/(2\cdot i \cdot (n-i)!)\le n^i/2</math> and each of them is present in "G" with probability <math>p^i</math>. Hence by Markov's inequality we have 
+
+:<math>\Pr(X>n/2)\le \frac{2}{n} E[X] \le \frac{1}{n} \sum_{i=3}^{g-1}p^i n^i\le  gn^{-1/g}=o(1)</math> .
+
+*''G'' contains no [[Independent set (graph theory)|independent set]] of size <math>\lceil n/2k \rceil</math>.
+'''Proof.''' Let "Y" be the size of the largest independent set in "G". Clearly, we have 
+
+:<math>\Pr(Y\ge y)\le {n \choose y}(1-p)^{y(y-1)/2} \le  n^y e^{-py(y-1)/2}  =e^{-y/2\cdot (py -2\ln n - p)}=o(1)</math>
+
+when <math>y=\lceil n/2k \rceil</math>.
+
+Here comes the trick:  since ''G'' has these two properties, we can remove at most ''n''/2 vertices from ''G'' to obtain a new graph ''G''' on ''n<nowiki>'</nowiki>'' vertices that contains only cycles of length at least ''g''.  We can see that this new graph has no independent set of size <math>\lceil n'/k \rceil</math>. Hence ''G<nowiki>'</nowiki>'' has chromatic number at least ''k'', as chromatic number is lower bounded by 'number of vertices/size of largest independent set'.
+
+This result gives a hint as to why the computation of the [[Graph coloring|chromatic number]] of a graph is so difficult: even when there are no local reasons (such as small cycles) for a graph to require many colors the chromatic number can still be arbitrarily large.
+
+== See also == 
+*[[Random graph]]
+*[[Probabilistic proofs of non-probabilistic theorems]]
+*[[Method of conditional probabilities]]
+*[[Interactive proof system]]
+
+== References ==
+
+* Alon, Noga; Spencer, Joel H. (2000).  ''The probabilistic method'' (2ed).  New York: Wiley-Interscience.  ISBN 0-471-37046-0.
+* {{cite journal |author=Erdős, P. |year=1959 |title=Graph theory and probability |journal=Canad. J. Math. |volume=11 |pages=34–38 |id={{MR|0102081}} |url=http://www.math-inst.hu/~p_erdos/1959-06.pdf}}
+* {{cite journal |author=Erdős, P. |year=1961 |title=Graph theory and probability, II |journal=Canad. J. Math. |volume=13 |pages=346–352 |id={{MR|0120168}} |url=http://www.math-inst.hu/~p_erdos/1961-06.pdf}}
+* [[Jiří Matoušek (mathematician)|J. Matoušek]], J. Vondrak. [http://kam.mff.cuni.cz/~matousek/prob-ln-2pp.ps.gz The Probabilistic Method]. Lecture notes.
+* Alon, N and Krivelevich, M (2006). [http://www.math.tau.ac.il/~nogaa/PDFS/epc7.pdf Extremal and Probabilistic Combinatorics]
+
+[[Category:Combinatorics]]
+[[Category:Proofs]]
+[[Category:Probabilistic arguments]]
+
+[[fr:Méthode probabiliste]]
+[[uk:Імовірнісний метод]]</body> </html>

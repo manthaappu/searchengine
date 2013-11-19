@@ -1,0 +1,26 @@
+<html> <head> <title>IEC 61334</title></head><body>'''IEC 61334''' is a standard for low-speed reliable [[power line communication]]s by [[electricity meter]]s, [[water meter]]s and [[SCADA]].
+<ref>IEC 61334-5-1, preface.</ref>
+It is also known as [[S-FSK]], for "[[spread frequency shift keying]]" and was formerly known as '''[[IEC 1334]]''' before IEC's most recent renumbering.  It is actually a series of standards describing the researched physical environment of power lines, a well-adapted physical layer, a workable low-power media access layer, and a management interface.  Related standards use the robust physical layer (e.g. [[Internet Protocol|IP]] over S-FSK), but not the higher layers.
+<ref>ADD GRUP, Russia</ref>
+
+The physical layer synchronizes a small packet of tones to the zero-crossing of the power line's voltage.  The tones are chosen by utilities, not specified in the standard.  Tones are usually between 20[[KHz]] and 100 kHz, and should be separated by at least 10 kHz to prevent cross talk.  One tone is chosen for mark (i.e. a [[Binary numeral system|binary]] 1), and the other for space (i.e. 0).  The standard permits each zero-crossing to convey 1, 2, 4 or 8 bits, with decreased sensitivity to timing as the number of bits increases.  In multiphase power lines, a separate signal might be sent on each phase to speed up the transmission.
+
+The standard's low speed is caused by the limited number of bits per power line cycle.  The high reliability comes from its reliable timing system (i.e. zero crossing), high signal to noise ratio (frequencies are chosen to avoid common power line noise), lack of intermodulation distortion, and adaptive signal detection.
+
+The most significant bits are sent first, unlike a conventional [[RS-232|serial port]].  The data from zero crossings should be collected into 8-bit bytes.  Each byte is collected into 42-byte packets.  The first four bytes of each packet are a preamble to measure the channel's current condition.  This is followed by 38 bytes of data, and 3 byte-times of silence.
+
+The physical layer is adaptive.  The silence and the preamble allow the receiver's signal processing to measure the channel's noise ratios.  Depending on the signal to noise ratios, the bits can be recovered from the difference between the power of the mark and space tones, the power of the mark tones only, or the space tones only.  The system should be able to adjust the receiving method on each 42-byte packet.
+
+The bytes from the low-layer packets are reformed into bytes for the higher layers.  The higher link-layer strongly resembles [[HDLC]], except with a novel feature that allows selected stations to retransmit messages.<ref>IEC 61334-4-1</ref>  The management interface layer provides remote control of a station's protocol layers, including diagnostics and configuration.  For example, it lets a central controller read a unit's signal to noise ratios, and set the bit that enables a station to retransmit weak stations.<ref>IEC 61334-4-1154</ref><ref>IEC 61334-1155</ref>
+
+The protocol layers are designed to integrate with any application layer, but the presence of a management interface suggests a design targeted to [[IEC 62056|DLMS/COSEM]], a widely-used [[EU]] standard for the application layer of meters and SCADA.  DLMS/COSEM requires a management interface.
+
+==See also==
+*[[Power line communication]] for a survey of the topic.
+*[[Universal powerline bus]] is the more common shorter-ranged competitor.
+
+==References==
+<references/>
+
+[[Category:Wide area networks| ]]
+[[Category:Networking standards]]</body> </html>

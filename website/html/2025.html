@@ -1,0 +1,63 @@
+<html> <head> <title>Antithetic variates</title></head><body>The '''antithetic variates''' method is a [[variance reduction]] technique used in [[Monte Carlo methods]]. Considering that the error reduction in the simulated signal (using [[Monte Carlo methods]]) has a [[square root]] [[limit of a sequence|convergence]] ([[standard deviation]] of the solution), a very large number of [[sample]] paths is required to obtain an accurate result. 
+
+==Underlying principle==
+
+The antithetic variates technique consists, for every [[sample]] path obtained, in taking its antithetic path &mdash; that is given a path <math>\{\varepsilon_1,\dots,\varepsilon_M\}</math> to also take <math>\{-\varepsilon_1,\dots,-\varepsilon_M\}</math>. The advantage of this technique is twofold: it reduces the number of [[normal]] samples to be taken to generate ''N'' paths, and it reduces the [[variance]] of the sample paths, improving the accuracy. 
+
+Suppose that we would like to estimate 
+:<math>\theta = \mathrm{E}( h(X) ) = \mathrm{E}( Y ) \, </math>
+
+For that we have generated two samples 
+
+:<math>Y_1\text{ and }Y_2 \, </math>
+
+An unbiased estimate of <math>{\theta}</math> is given by 
+
+:<math>\hat \theta = \frac{Y_1 + Y_2}{2}. </math>
+
+And 
+:<math>\text{Var}(\hat \theta) = \frac{\text{Var}(Y_1) + \text{Var}(Y_2) + 2\text{Cov}(Y_1,Y_2)}{4} </math>
+
+In the case where ''Y''<sub>1</sub>  and ''Y''<sub>2</sub> are [[iid]], [[covariance]] self-cancels and <math>\text{Var}(Y_1) = \text{Var}(Y_2) </math>, therefore
+
+: <math>\text{Var}(\hat \theta) = \frac{\text{Var}(Y_1) }{2} = \frac{\text{Var}(Y_2) }{2}. </math>
+
+The antithetic variates technique consists in this case of choosing the second sample in such a way that <math>Y_1</math>  and  <math>Y_2</math> are not [[iid]] anymore and <math> Cov(Y_1,Y_2)</math> is negative. As a result, <math>\text{Var}(\hat \theta)</math> is reduced and is smaller than the previous normal [[variance]] <math>\frac{\text{Var}(Y_1) }{2} = \frac{\text{Var}(Y_2) }{2} </math>.
+
+==Example 1==
+
+If the law of the variable ''X'' follows a [[uniform distribution (continuous)|uniform distribution]] along [0, 1], the first sample will be   <math>u_1, \ldots, u_n</math>,  where, for any given ''i'', <math>u_i</math> is obtained from ''U''(0, 1). The second sample is built from   <math>u'_1, \ldots, u'_n</math>,  where, for any given ''i'': <math>u'_i = 1-u_i</math>.   If the set <math>u_1</math> is uniform along [0, 1], so are <math>u'_i</math>.  Furthermore, covariance is negative, allowing for initial variance reduction.
+
+==Example 2: integral calculation==
+
+We would like to estimate
+:<math>I = \int_0^1 \frac{1}{1+x} \, \mathrm{d}x.</math>
+
+The exact result is   <math>I=\ln 2 \approx 0.69314718</math>.  This integral can be seen as the expected value of  <math>f(U)</math>,  where
+
+:<math>f(x) = \frac{1}{1+x}</math>
+
+And ''U'' follows a [[uniform distribution (continuous)|uniform distribution]] [0, 1].
+
+The following table compares the classical Monte Carlo estimate (sample size: 2''n'', where ''n'' = 1500) to  the antithetic variates estimate (sample size: ''n'', completed with the transformed sample 1 &minus; ''u''<sub>''i''): 
+
+{| cellspacing="1" border="1"
+|
+| align="right" | '''Estimate'''
+| align="right" | '''Variance'''
+|-
+| ''Classical Estimate''
+| align="right" | 0,69365
+| align="right" | 0,02005
+|-
+| ''Antithetic Variates ''
+| align="right" | 0,69399
+| align="right" | 0,00063
+|}
+
+The use of the antithetic variates method to estimate the result shows an important variance reduction.
+
+[[Category:Computational statistics]]
+[[Category:Monte Carlo methods]]
+
+{{unreferenced|date=November 2010}}</body> </html>

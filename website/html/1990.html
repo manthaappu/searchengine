@@ -1,0 +1,96 @@
+<html> <head> <title>Anti-aliasing filter</title></head><body>An '''anti-aliasing filter''' is a filter used before a signal sampler, to restrict the bandwidth of a signal to approximately satisfy the [[sampling theorem]].
+Since the theorem states that unambiguous interpretation of the signal from its samples is possible when the power of frequencies above the [[Nyquist frequency]] is zero, a real anti-aliasing filter can generally not completely satisfy the theorem.
+A realizable anti-aliasing filter will typically permit some [[aliasing]] to occur; the amount of aliasing that does occur depends on how good the filter is and what the frequency content of the input signal is.
+
+Anti-aliasing filters are commonly used at the input of [[digital signal processing]] systems, for example in sound digitization systems; similar filters are used as [[reconstruction filter]]s at the output of such systems, for example in music players.  In the later case, the filter is to prevent aliasing in the conversion of samples back to a continuous signal, where again perfect stop-band rejection would be required to guarantee zero aliasing.
+
+The theoretical impossibility of realizing perfect filters is not much an impediment in practice, though practical considerations do lead to system design choices such as oversampling to make it easier to realize "good enough" anti-aliasing filters.
+
+== Optical anti-aliasing filter==
+
+[[Image:anti-aliasing filter.jpg|thumb|250px|Anti-aliasing and IR-reject filter from an older digital video camera]]
+
+In the case of optical image sampling, as by [[image sensor]]s in [[digital camera]]s, the anti-aliasing filter is also known as an ''optical lowpass filter'' or ''blur filter'' or ''AA filter''.  The mathematics of sampling in two spatial dimensions is similar to the mathematics of time-domain sampling, but the filter implementation technologies are different.  The typical implementation in [[digital camera]]s is two layers of [[birefringent]] material such as [[lithium niobate]], which spreads each optical point into a cluster of four points.<ref>{{cite book
+| author = Adrian Davies and Phil Fennessy
+| title = Digital imaging for photographers
+| edition = Fourth edition
+| publisher = Focal Press
+| date = 2001
+| url = http://books.google.com/books?vid=ISBN0240515900&id=wsxk03-gceUC&pg=PA30&lpg=PA30&ots=BlxgR6ZXmz&dq=anti-aliasing+lithium-niobate&sig=YUsQZMtxjtq70oOYWmU1K2yfoNY#PPA30,M1
+| isbn = 0240515900}}</ref>
+
+The choice of spot separation for such a filter involves a tradeoff among sharpness, aliasing, and fill factor.  In a [[monochrome]] or [[three-CCD]] or [[Foveon X3 sensor|Foveon X3]] camera, the [[fill factor]] alone, if near 100% effective with microlenses, can provide a significant anti-aliasing effect,<ref>{{cite book
+ | chapter = Tradeoffs between aliasing and MTF
+ | title = Proceedings of the Electro-Optical Systems Design Conference – 1974 West International Laser Exposition – San Francisco, Calif., November 5-7, 1974
+ | author = S. B. Campana and D. F. Barbe
+ | publisher = Chicago: Industrial and Scientific Conference Management, Inc
+ | year = 1974
+ | page = 1–9
+ | url = http://adsabs.harvard.edu/abs/1974eosd.conf....1C
+ }}</ref>
+while in color filter array (CFA, e.g. [[Bayer filter]]) cameras, an additional filter is generally needed to reduce aliasing to an acceptable level.<ref>
+{{cite book
+ | author = Brian W. Keelan
+ | title = Handbook of Image Quality: Characterization and Prediction
+ | publisher = Marcel–Dekker
+ | year = 2004
+ | url = http://books.google.com/books?vid=ISBN0824707702&id=E45MTZn17gEC&pg=RA1-PA388&lpg=RA1-PA388&ots=noDzLfu2ju&dq=spot+separation+in+optical+anti-aliasing+filters&sig=IWnjfbrjX-oMXNkeW2ZBxH_RBmg
+ | isbn = 0824707702
+ }}</ref><ref>
+{{cite book
+ | title = Scientific photography and applied imaging
+ | author = Sidney F. Ray
+ | publisher = Focal Press
+ | year = 1999
+ | isbn = 9780240513232
+ | page = 61
+ | url = http://books.google.com/books?id=AEFPNfghI3QC&pg=PA61&dq=aliasing+fill-factor&lr=&as_brr=3&ei=RBptStasLJCckgSY1NFW
+ }}</ref><ref>
+{{cite book
+ | title = New Acquisition Techniques for Real Objects and Light Sources in Computer Graphics
+ | author = Michael Goesele
+ | publisher = Books on Demand
+ | year = 2004
+ | isbn = 9783833414893
+ | page = 34
+ | url = http://books.google.com/books?id=ZTJJ8QzNv1wC&pg=PA34&dq=aliasing+fill-factor+100%25+bayer&lr=&as_brr=3&ei=xDltStqhOYLckAS-4NRU
+ }}</ref>
+
+== Applicability of oversampling ==
+
+A technique known as [[oversampling]] is commonly used in audio conversion, especially audio output.  The idea is to use a higher intermediate digital sample rate, so that a nearly-ideal digital filter can sharply cut off aliasing near the original low [[Nyquist frequency]], while a much simpler analog filter can stop frequencies above the new higher Nyquist frequency.
+
+The purpose of oversampling is to relax the requirements on the anti-aliasing filter, or to further reduce the aliasing.
+Since the initial anti-aliasing filter is [[analog circuit|analog]], oversampling allows for the filter to be cheaper because the requirements are not as stringent, and also allows the anti-aliasing filter to have a smoother frequency response, and thus a less complex phase response.
+
+On input, an initial analog anti-aliasing filter is relaxed, the signal is sampled at a high rate, and then downsampled using a nearly ideal digital anti-aliasing filter.
+
+== Bandpass signals ==
+{{main|Undersampling}}
+Often, an anti-aliasing filter is a [[low-pass filter]]; however, this is not a requirement.  Generalizations of the [[Nyquist–Shannon sampling theorem]] allow sampling of other band-limited [[passband]] signals instead of [[baseband]] signals – see [[undersampling]].
+
+For signals that are bandwidth limited, but not centered at zero, a [[band-pass filter]] can be used as an anti-aliasing filter.  For example, this could be done with a [[Single-sideband modulation|single-sideband modulated]] or [[frequency modulated]] signal.  If one desired to sample an [[FM radio]] broadcast centered at 87.9 MHz and bandlimited to a 200 kHz band, then an appropriate anti-alias filter would be centered on 87.9 [[megahertz|MHz]] with 200 kHz bandwidth (or [[pass-band]] of 87.8 MHz to 88.0 MHz), and the sampling rate would be no less than 400 kHz, but should also satisfy other constraints to prevent [[aliasing]].
+
+== Signal overload ==
+{{main|Clipping (audio)}}
+
+It is very important to avoid input signal overload when using an anti-aliasing filter. If the signal is strong enough, it can cause clipping at the [[analog-to-digital converter]], even after filtering. When distortion due to clipping occurs after the anti-aliasing filter, it can create components outside the passband of the anti-aliasing filter; these components can then alias, causing the reproduction of other non-harmonically-related frequencies. In [[digital audio]], the resulting aliased distorted signal of "digital [[clipping (audio)|clipping]]" has a characteristic sound that can be easily recognized.
+
+== See also ==
+*[[Anti-aliasing]]
+*[[Sample (signal)]]
+*[[Sampling frequency]]
+
+==References==
+<references/>
+
+{{DSP}}
+
+[[Category:Digital signal processing]]
+[[Category:Linear filters]]
+[[Category:Electronic filter applications]]
+
+[[ca:Filtre Antialiàsing]]
+[[fr:Filtre anticrénelage]]
+[[it:Filtro anti-alias]]
+[[ro:Filtru antidedublare]]</body> </html>

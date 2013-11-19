@@ -1,0 +1,136 @@
+<html> <head> <title>Bernstein polynomial</title></head><body>{{for|the Bernstein polynomial in [[D-module]] theory|Bernstein&ndash;Sato polynomial}}
+[[Image:Bernstein Approximation.gif|thumb|right|Bernstein polynomials approximating a curve]]
+In the [[mathematics|mathematical]] field of [[numerical analysis]], a '''Bernstein polynomial''', named after [[Sergei Natanovich Bernstein]], is a [[polynomial]] in the '''Bernstein form''', that is a [[linear combination]] of '''Bernstein basis polynomials'''.
+
+A [[numerical stability|numerically stable]] way to evaluate polynomials in Bernstein form is [[de Casteljau's algorithm]].
+
+Polynomials in Bernstein form were first used by Bernstein in a constructive proof for the [[Stone–Weierstrass theorem|Stone–Weierstrass approximation theorem]]. With the advent of computer graphics, Bernstein polynomials, restricted to the interval ''x'' ∈ [0, 1], became important in the form of [[Bézier curve]]s.
+
+==Definition==
+
+The ''n'' + 1 '''Bernstein basis polynomials''' of degree ''n'' are defined as
+
+: <math>b_{\nu,n}(x) = {n \choose \nu} x^{\nu} \left( 1 - x \right)^{n - \nu}, \quad \nu = 0, \ldots, n.</math>
+
+where <math>{n \choose \nu}</math> is a [[binomial coefficient]].
+
+The Bernstein basis polynomials of degree ''n'' form a [[basis (linear algebra)|basis]] for the [[vector space]] &Pi;<sub>''n''</sub> of polynomials of degree ''n''. 
+
+A linear combination of Bernstein basis polynomials 
+
+:<math>B(x) = \sum_{\nu=0}^{n} \beta_{\nu} b_{\nu,n}(x)</math>
+
+is called a '''Bernstein polynomial''' or '''polynomial in Bernstein form''' of degree ''n''. The coefficients <math>\beta_\nu</math> are called '''Bernstein coefficients''' or '''Bézier coefficients'''.
+
+==Example==
+The first few Bernstein basis polynomials are:
+
+: <math>
+\begin{align}
+b_{0,0}(x) & = 1, \\
+b_{0,1}(x) & = 1 - x, & b_{1,1}(x) & = x \\
+b_{0,2}(x) & = (1 - x)^2, & b_{1,2}(x) & = 2x(1 - x), & b_{2,2}(x) & = x^2 \\
+b_{0,3}(x) & = (1 - x)^3, & b_{1,3}(x) & = 3x(1 - x)^2, & b_{2,3}(x) & = 3x^2(1 - x), & b_{3,3}(x) & = x^3  \\
+b_{0,4}(x) & = (1 - x)^4, & b_{1,4}(x) & = 4x(1 - x)^3, & b_{2,4}(x) & = 6x^2(1 - x)^2, & b_{3,4}(x) & = 4x^3(1 - x), & b_{4,4}(x) & = x^4
+\end{align}
+</math>
+
+==Properties==
+The Bernstein basis polynomials have the following properties:
+* <math>b_{\nu, n}(x) = 0</math>, if <math>\nu < 0</math> or <math>\nu > n</math>.
+* <math>b_{\nu, n}(0) = \delta_{\nu, 0}</math> and <math>b_{\nu, n}(1) = \delta_{\nu, n}</math> where <math>\delta</math> is the [[Kronecker delta]] function.
+* <math>b_{\nu, n}(x)</math> has a root with multiplicity <math>\nu</math> at point <math>x = 0</math> (note: if <math>\nu = 0</math>, there is no root at 0).
+* <math>b_{\nu, n}(x)</math> has a root with multiplicity <math>\left( n - \nu \right)</math> at point <math>x = 1</math> (note: if <math>\nu = n</math>, there is no root at 1).
+* <math>b_{\nu, n}(x) \ge 0</math> for <math>x \in [0,\ 1]</math>.
+* <math>b_{\nu, n}\left( 1 - x \right) = b_{n - \nu, n}(x)</math>.
+
+* The [[derivative]] can be written as a combination of two polynomials of lower degree:
+*: <math>b'_{\nu, n}(x) = n \left( b_{\nu - 1, n - 1}(x) - b_{\nu, n - 1}(x) \right).</math>
+
+* If <math>n \ne 0</math>, then <math>b_{\nu, n}(x)</math> has a unique local maximum on the interval <math>[0,\ 1]</math> at <math>x = \frac{\nu}{n}</math>. This maximum takes the value:
+*: <math>\nu^\nu n^{-n} \left( n - \nu \right)^{n - \nu} {n \choose \nu}.</math>
+
+* The Bernstein basis polynomials of degree <math>n</math> form a [[partition of unity]]:
+*: <math>\sum_{\nu = 0}^n b_{\nu, n}(x) = \sum_{\nu = 0}^n {n \choose \nu} x^\nu \left( 1 - x \right)^{n - \nu} = \left(x + \left( 1 - x \right) \right)^n = 1.</math>
+
+* A Bernstein polynomial can always be written as a linear combination of polynomials of higher degree:
+*: <math>b_{\nu, n - 1}(x) = \frac{n - \nu}{n} b_{\nu, n}(x) + \frac{\nu + 1}{n} b_{\nu + 1, n}(x).</math>
+
+==Approximating continuous functions==
+Let ''&fnof;'' be a [[continuous function]] on the interval [0, 1]. Consider the Bernstein polynomial
+
+: <math>B_n(f)(x) = \sum_{\nu = 0}^n f\left( \frac{\nu}{n} \right) b_{\nu,n}(x).</math>
+
+It can be shown that 
+
+: <math>\lim_{n \to \infty}{ B_n(f)(x) } = f(x) \,</math>
+
+[[uniform convergence|uniformly]] on the interval [0, 1].  This is a stronger statement than the proposition that the limit holds for each value of ''x'' separately; that would be [[pointwise convergence]] rather than [[uniform convergence]]. Specifically, the word ''uniformly'' signifies that
+
+: <math>\lim_{n \to \infty} \sup \left\{\, \left| f(x) - B_n(f)(x) \right| \,:\, 0 \leq x \leq 1 \,\right\} = 0.</math>
+
+Bernstein polynomials thus afford one way to prove the [[Stone&ndash;Weierstrass theorem#Weierstrass_approximation_theorem|Weierstrass approximation theorem]] that every real-valued continuous function on a real interval [''a'', ''b''] can be uniformly approximated by polynomial functions over '''R'''.
+
+A more general statement for a function with continuous k-th derivative is
+
+: <math>{\left\| B_n(f)^{(k)} \right\|}_\infty \le \frac{ (n)_k }{ n^k } \left\| f^{(k)} \right\|_\infty \text{ and } \left\| f^{(k)}- B_n(f)^{(k)} \right\|_\infty \to 0</math>
+
+where additionally
+
+: <math>\frac{ (n)_k }{ n^k } = \left( 1 - \frac{0}{n} \right) \left( 1 - \frac{1}{n} \right) \cdots \left( 1 - \frac{k - 1}{n} \right)</math>
+
+is an [[eigenvalue]] of ''B''<sub>''n''</sub>; the corresponding eigenfunction is a polynomial of degree ''k''.
+
+===Proof===
+
+Suppose ''K'' is a [[random variable]] distributed as the number of successes in ''n'' independent [[Bernoulli trial]]s with probability ''x'' of success on each trial; in other words, ''K'' has a [[binomial distribution]] with parameters ''n'' and ''x''.  Then we have the [[expected value]] E(''K''/''n'') = ''x''.
+
+By the [[law of large numbers|weak law of large numbers]] of [[probability theory]],
+: <math>\lim_{n \to \infty}{ P\left( \left| \frac{K}{n} - x \right|>\delta \right) } = 0</math>
+for every ''&delta;'' > 0. Moreover, this relation holds uniformly in ''x'', which can be seen from its proof via [[Chebyshev's inequality]], taking into account that the variance of ''K''/''n'', equal to ''x''(1-''x'')/''n'', is bounded from above by 1/(4''n'') irrespective of ''x''.
+
+Because ''&fnof;'', being continuous on a closed bounded interval, must be [[uniform continuity|uniformly continuous]] on that interval, one infers a statement of the form
+: <math>\lim_{n \to \infty}{ P\left( \left| f\left( \frac{K}{n} \right) - f\left( x \right) \right| > \varepsilon \right) } = 0</math>
+uniformly in ''x''. Taking into account that ''ƒ'' is bounded (on the given interval) one gets for the expectation
+: <math>\lim_{n \to \infty}{ E\left( \left| f\left( \frac{K}{n} \right) - f\left( x \right) \right| \right) } = 0</math>
+uniformly in ''x''. To this end one splits the sum for the expectation in two parts. On one part the difference does not exceed ε; this part cannot contribute more than ε.
+On the other part the difference exceeds ε, but does not exceed 2''M'', where ''M'' is an upper bound for |''ƒ''(x)|; this part cannot contribute more than 2''M'' times the small probability that the difference exceeds ε.
+
+Finally, one observes that the absolute value of the difference between expectations never exceeds the expectation of the absolute value of the difference, and that E(''&fnof;''(''K''/''n'')) is just the Bernstein polynomial ''B''<sub>''n''</sub>(''ƒ'', ''x'').
+
+See for instance <ref>L. Koralov and Y. Sinai, "Theory of probability and random processes" (second edition), Springer 2007; see page 29, Section "Probabilistic proof of the Weierstrass theorem".</ref>.
+
+==See also==
+*[[Bézier curve]]
+*[[Polynomial interpolation]]
+*[[Newton polynomial|Newton form]]
+*[[Lagrange polynomial|Lagrange form]]
+
+==Notes==
+<references />
+
+==References==
+* {{mathworld|urlname=BernsteinPolynomial|title=Bernstein Polynomial}}
+* {{springer|title=Bernstein polynomials|id=B/b015730|last=Korovkin|first=P.P.}}
+* H. Caglar and A.N. Akansu, [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=224242&userType=inst "A Generalized Parametric PR-QMF Design Technique Based on Bernstein Polynomial Approximation,"] IEEE Transactions on Signal Processing, vol. 41, no. 7, pp. 2314–2321, July 1993.
+* {{planetmath|id=9775|title=properties of Bernstein polynomial}}
+*[http://www.ams.org/featurecolumn/archive/bezier.html From Bézier to Bernstein]
+*[http://www.idav.ucdavis.edu/education/CAGDNotes/Bernstein-Polynomials.pdf BERNSTEIN POLYNOMIALS by Kenneth I. Joy ]
+
+{{DEFAULTSORT:Bernstein Polynomial}}
+[[Category:Numerical analysis]]
+[[Category:Polynomials]]
+[[Category:Articles containing proofs]]
+
+[[cs:Bernsteinův polynom]]
+[[de:Bernsteinpolynom]]
+[[es:Polinomio de Bernstein]]
+[[fr:Polynôme de Bernstein]]
+[[it:Polinomio di Bernstein]]
+[[ja:バーンスタイン多項式]]
+[[pl:Wielomiany Bernsteina]]
+[[pt:Polinómios de Bernstein]]
+[[ru:Многочлен Бернштейна]]
+[[sv:Bernsteinpolynom]]
+[[uk:Поліноми Бернштейна]]
+[[vi:Đa thức Bernstein]]</body> </html>

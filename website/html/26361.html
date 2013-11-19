@@ -1,0 +1,60 @@
+<html> <head> <title>Next-bit test</title></head><body>In [[cryptography]] and the [[theory of computation]], the next-bit test<ref name="yao82">[[Andrew Chi-Chih Yao]]. [http://www.busim.ee.boun.edu.tr/~mihcak/teaching/ee684-spring07/proposed-project-papers/one-way-functions/Yao-XOR-Lemma-and-Hard-Core-Predicates/Yao-XOR-original.pdf Theory and applications of trapdoor functions]. In Proceedings of the 23rd IEEE Symposium on Foundations of Computer Science, 1982.</ref> is a test against [[Pseudo-random | pseudo-random number generators]]. We say that a sequence of bits passes the next bit test for at any position <math>i</math> in the sequence, if an attacker knows the <math>i</math> first bits, he cannot predict the <math>(i+1)</math>st with reasonnable computational power.
+
+== Precise statement(s) ==
+Let <math>P</math> be a polynomial, and <math>S=\{S_k\}</math> be a collection of sets such that <math>S_k</math> contains <math>P(k)</math>-bit long sequences. Moreover, let <math>\mu_k</math> be the [[probability distribution]] of the strings in <math>S_k</math>.
+
+We now define the next-bit test in two different ways.
+===Boolean circuit formulation===
+A predicting collection<ref>[[Manuel Blum]] and [[Silvio Micali]], How to generate cryptographically strong sequences of pseudo-random bits, in SIAM J. COMPUT., Vol. 13, No. 4, November 1984</ref> <math>C=\{C_k^i\}</math> is a collection of [[boolean circuits]], such that each circuit <math>C_k^i</math> has less than <math>P_C(k)</math> gates and exactly <math>i</math> inputs. Let <math>p_{k,i}^C</math> be the probability that, on input the <math>i</math> first bits of <math>s</math>, a string randomly selected in <math>S_k</math> with probability <math>\mu_k(s)</math>, the circuit correctly predicts <math>s_{i+1}</math>, i.e. : 
+<center>
+<math>
+p_{k,i}^C={\mathcal P} \left[ C_k(s_1\ldots s_i)=s_{i+1} \right | s\in S_k\text{ with probability }\mu_k(s)]
+</math>
+</center>
+Now, we say that <math>\{S_k\}_k</math> passes the next-bit test if for any predicting collection <math>C</math>, any polynomial <math>Q</math> :
+<center>
+<math>p_{k,i}^C<\frac{1}{2}+\frac{1}{Q(k)}</math>
+</center>
+
+
+===Probabilistic Turing machines===
+
+We can also define the next-bit test in terms of probabilistic Turing machines, although this definition is somewhat stronger (see [[P/poly#Adleman's theorem|Adleman's theorem]]). Let <math>\mathcal M</math> be a probabilistic Turing machine, working in polynomial time. Let <math>p_{k,i}^{\mathcal M}</math> be the probability that <math>\mathcal M</math> predicts the <math>(i+1)</math>st bit correctly, i.e.
+<center>
+<math>p_{k,i}^{\mathcal M}={\mathcal P}[M(s_1\ldots s_i)=s_{i+1} | s\in S_k\text{ with probability }\mu_k(s)]</math>
+</center>
+We say that collection <math>S=\{S_k\}</math> passes the next-bit test if for all polynomial <math>Q</math>, for all but finitely many <math>k</math>, for all <math>0<i<k</math>: 
+<center>
+<math>
+p_{k,i}^{\mathcal M}<\frac{1}{2}+\frac{1}{Q(k)}
+</math>
+</center>
+
+== Completeness for Yao's test ==
+
+The next-bit test is a particular case of [[Yao's test]] for random sequences, and passing it is therefore a [[necessary condition]] for passing [[Yao's test]]. However, it has also been shown a [[sufficient condition]] by [[Andrew Chi-Chih Yao | Yao]]<ref name="yao82"/>.
+
+We prove it now in the case of probabilistic Turing machine, since [[Leonard Adleman | Adleman]] has already done the work of replacing randomization with non-uniformity in [[Adleman's theorem | his theorem]]. The case of boolean circuits cannot be derived from this case (since it involves deciding potentially undecidable problems), but the proof of Adleman's theorem can be easily adapted to the case of non-uniform boolean circuits families.
+
+Let <math>\mathcal M</math> a distringuer for the probabilistic version of Yao's test, i.e. a probabilistic Turing machine, running in polynomial time, such that there is a polynomial <math>Q</math> such that for infinitely many <math>k</math>
+<center><math>|p_{k,S}^{\mathcal M}-p_{k,U}^{\mathcal M}|\geq\frac{1}{Q(k)}</math></center>
+
+Let <math>R_{k,i}=\{s_1\ldots s_iu_{i+1}\ldots u_{P(k)}| s\in S_k, u\in\{0,1\}^{P(k)}\}</math>. We have : <math>R_{k,0}=\{0,1\}^{P(k)}</math> and <math>R_{k,P(k)}=S_k</math>. 
+Then, we notice that <math>\sum_{i=0}^{P(k)}|p_{k,R_{k,i+1}}^{\mathcal M}-p_{k,R_{k,i}}^{\mathcal M}|\geq |p^{\mathcal M}_{k,R_{k,P(k)}}-p^{\mathcal M}_{k,R_{k,0}}|=|p_{k,S}^{\mathcal M}-p_{k,U}^{\mathcal M}|\geq\frac{1}{Q(k)}</math>. Therefore, at least one of the <math>|p_{k,R_{k,i+1}}^{\mathcal M}-p_{k,R_{k,i}}^{\mathcal M}|</math> should be no smaller than <math>\frac{1}{Q(k)P(k)}</math>.
+
+Next, we consider probability distributions <math>\mu_{k,i}</math> and <math>\overline{\mu_{k,i}}</math> on <math>R_{k,i}</math>. Distribution <math>\mu_{k,i}</math> is the probability distribution of choosing the <math>i</math> first bits in <math>S_k</math> with probability given by <math>\mu_k</math>, and the <math>P(k)-i</math> remaining bits uniformly at random. We have thus :
+<center>
+<math>\mu_{k,i}(w_1\ldots w_{P(k)})=\left(\sum_{s\in S_k, s_1\ldots s_i=w_1\ldots w_i}\mu_k(s)\right)\left(\frac{1}{2}\right)^{P(k)-i}</math>
+</center><center>
+<math>\overline{\mu_{k,i}}(w_1\ldots w_{P(k)})=\left(\sum_{s\in S_k, s_1\ldots s_{i-1}(1-s_i)=w_1\ldots w_i}\mu_k(s)\right)\left(\frac{1}{2}\right)^{P(k)-i}</math>
+</center>
+
+We thus have <math>\mu_{k,i}=\frac{1}{2}(\mu_{k,i+1}+\overline{\mu_{k,i+1}})</math> (a simple calculus trick shows this), thus distributions <math>\mu_{k,i+1}</math> and <math>\overline{\mu_{k,i+1}}</math> can be distinguished by <math>\mathcal M</math>. Without loss of generality, we can assume that <math>p^{\mathcal M}_{\mu_{k,i+1}}-p^{\mathcal M}_{\overline{\mu_{k,i+1}}}\geq\frac{1}{2}+\frac{1}{R(k)}</math>, with <math>R</math> a polynomial.
+
+
+This gives us a possible construction of a Turing machine solving the next-bit test : upon receiving the <math>i</math> first bits of a sequence, <math>\mathcal N</math> pads this input with a guess of bit <math>l</math> and then <math>P(k)-i-1</math> random bits, chosen with uniform probability. Then it runs <math>\mathcal M</math>, and outputs <math>l</math> if the result is <math>1</math>, and <math>1-l</math> else.
+
+== References ==
+<references/>
+
+[[Category:Pseudorandom number generators]]</body> </html>

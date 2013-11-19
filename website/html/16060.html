@@ -1,0 +1,78 @@
+<html> <head> <title>HPGL</title></head><body>'''HPGL''', sometimes hyphenated as ''HP-GL'', was the primary [[printer control language]] used by [[Hewlett-Packard]] [[plotter]]s. The name is an [[initialism]] for '''''H'''ewlett-'''P'''ackard '''G'''raphics '''L'''anguage''. It later became a standard for almost all plotters. Hewlett-Packard's [[Computer printer|printers]] also usually support HPGL in addition to [[Printer Command Language|PCL]].
+
+The language is formed from a series of two letter codes, followed by optional parameters. For instance an [[Arc (geometry)|arc]] can be drawn on a page by sending the string:
+
+<code>AA100,100,50;</code>
+
+This means ''Arc Absolute'', and the parameters place the center of the arc at absolute [[Cartesian coordinate system|coordinates]] 100,100 on the page, with a starting angle of 50 [[Degree (angle)|degrees]] measured counter-clockwise. A fourth optional parameter (not used here) specifies how far the arc continues, and defaults to 5 degrees.
+
+Typical HPGL files start with a few setup commands, followed by a long string of graphics commands. The file was in [[ASCII]] ([[text file]]) [[File format|format]], for instance:
+
+:{| class="wikitable"
+|+ An example HPGL file
+|-----
+! Command
+! Meaning
+|-----
+| IN; || initialize, start a plotting job
+|-----
+| IP;
+| set the initial point (origin), in this case the default 0,0
+|-----
+| SC0,40,0,40;
+| allows scaling in millimeters since 1 mm = 40 plotter units. Each user-unit is 1 millimeter, in both X and Y directions
+|-----
+| SP1; || select pen 1
+|-----
+| PU0,0;
+| lift Pen Up and move to starting point for next action
+|-----
+| PD100,0,100,100,0,100,0,0;
+| put Pen Down and move to the following locations (draw a box around the page)
+|-----
+| PU50,50; || Pen Up and move to X,Y coordinates 50,50 (in this case mm, after the SC command)
+|-----
+| CI25; || draw a circle with radius 25 (mm)
+|-----
+| SS; || select the standard font
+|-----
+| DT*,1;
+| set the text delimiter to the asterisk, and do not print them (the 1, meaning "true")
+|-----
+| PU20,80; || lift the pen and move to 20,80
+|-----
+| LBHello World*; || draw a label
+|-----
+| LTlinetype,length || set line type and its repetition length
+|-----
+| CSxx || set character set (e.g. 33 is German)
+|-----
+| DIx,y || set direction of text given as the catheti
+|-----
+| SIww,hh || set character width and height
+|}
+
+The coordinate system was based on the smallest units one of the HP plotters could support, and was set to 25 µm (i.e. 40 units per millimeter, 1016 per inch).
+The coordinate space was positive or negative [[floating point]] numbers, specifically ± 2<sup>30</sup>.
+
+== HP-GL/2 ==
+The original HP/GL-Language did not support definition of line width, as this parameter was determined by the pens loaded into the plotter. With the advent of the first inkjet plotters, line width for the "pens" specified within the HP/GL-files had to be set at the printer so it would know what line width to print for each pen, a cumbersome and error-prone process. With HP/GL-2, definition of line width was introduced into the language and allowed for elimination of this step. Also, among other improvements a [[binary file]] format was defined that allowed for smaller files and shorter file transfer times, and the minimal resolution was reduced.
+
+==External links==
+*[http://www.sxlist.com/techref/language/hpgl/commands.htm Hewlett Packard Graphics Language Commands]
+*[http://cstep.luberth.com/hpgl.htm HPGL Overview]
+*[http://chiplotle.org Chiplotle, a Python-based HPGL plotter control library for using vintage pen plotters with contemporary operating systems]
+
+[[Category:Hewlett-Packard]]
+[[Category:Vector graphics]]
+[[Category:Page description languages]]
+
+[[de:Hewlett Packard Graphic Language]]
+[[es:HPGL]]
+[[fr:Hewlett Packard Graphic Language]]
+[[it:HPGL]]
+[[nl:HP-GL/2]]
+[[ja:HP-GL]]
+[[pl:HPGL]]
+[[ru:HPGL]]
+[[tr:HPGL]]</body> </html>

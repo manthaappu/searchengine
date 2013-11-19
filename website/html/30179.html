@@ -1,0 +1,67 @@
+<html> <head> <title>Prognostics</title></head><body>'''Prognostics''' is an engineering discipline focused on predicting the time at which a component will no longer perform a particular function.  Lack of performance is most often component failure. The predicted time becomes then the '''remaining useful life''' (RUL). The science of prognostics is based on the analysis of failure modes, detection of early signs of wear and aging, and fault conditions. These signs are then correlated with a damage propagation model.  Potential uses for prognostics is in [[condition-based maintenance]].  The discipline that links studies of failure mechanisms to system lifecycle management is often referred to as '''prognostics and health management''' ('''PHM'''), sometimes also '''system health management''' (SHM) or - in transportation applications - '''vehicle health management''' (VHM).  Technical approaches to building models in prognostics can be categorized broadly into data-driven approaches, model-based approaches, and hybrid approaches. 
+
+== Data-driven prognostics ==
+
+As the name implies, data-driven techniques utilize monitored operational data related to system health. Data-driven approaches are appropriate when the understanding of first principles of system operation is not comprehensive or when the system is sufficiently complex that developing an accurate model is prohibitively expensive. Therefore, principal advantages to data driven approaches is that they can often be deployed quicker and cheaper compared to other approaches, and that they can provide system-wide coverage (cf. physics-based models, which can be quite narrow in scope). The principal disadvantage is that data driven approaches may have wider confidence intervals than other approaches and that they require a substantial amount of data for training. Data-driven approaches can be further subcategorized into fleet-based statistics and sensor-based conditioning. In addition, data-driven techniques also subsume cycle-counting techniques that may include domain knowledge. 
+
+The two basic data-driven strategies involve (1) modeling cumulative damage (or, equivalently, health) and then extrapolating out to a damage (or health) threshold, or (2) learning directly from data the remaining useful life.
+
+As mentioned, a principal bottleneck is the difficulty in obtaining run-to-failure data, in particular for new systems, since running systems to failure can be a lengthy and rather costly process. Even where data exist, the efficacy of data-driven approaches is not only dependent on the quantity but also on the quality of system operational data. These data sources may include temperature, pressure, oil debris, currents, voltages, power, vibration and acoustic signal, spectrometric data as well as calibration and calorimetric data. Features must be extracted from (more often than not) noisy, high-dimensional data.
+
+== Model-based prognostics ==
+ 
+Model-based prognostics attempts to incorporate physical understanding (physical models) of the system into the estimation of remaining useful life (RUL). Modeling physics can be accomplished at different levels, for example, micro and macro levels. At the micro level (also called material level), physical models are embodied by series of dynamic equations that define relationships, at a given time or load cycle, between damage (or degradation) of a system/component and environmental and operational conditions under which the system/component are operated. The micro-level models are often referred as damage propagation model. For example, Yu and Harris’s fatigue life model for ball bearings, which relates the fatigue life of a bearing to the induced stress,<ref>{{ cite journal | title=A new stress-based fatigue life model for ball bearings | journal=Tribology Transactions | date=2001 | last=Yu | coauthors=Harris | volume=44 | pages=11–18 | doi=10.1080/10402000108982420 | first1=Wei Kufi }}</ref> Paris and Erdogan's crack growth model,<ref>{{ cite journal | title=A Critical Analysis of Crack Propagation Laws | journal=ASME Journal of Basic Engineering | date=1963 | first=P.C. | last=Paris | coauthors=F. Erdogan | volume=85 | pages=528–534 }}</ref> and stochastic defect-propagation model{{Fact|date=June 2008}} are other examples of micro-level models. Since measurements of critical damage properties (such as stress or strain of a mechanical component) are rarely available, sensed system parameters have to be used to infer the stress/strain values. Micro-level models need to account in the uncertainty management the assumptions and simplifications, which may pose significant limitations of that approach.
+
+Macro-level models are the mathematical model at system level, which defines the relationship among system input variables, system state variables, and system measures variables/outputs where the model is often a somewhat simplified representation of the system, for example a lumped parameter model. The trade-off is increased coverage with possibly reducing accuracy of a particular degradation mode. Where this trade-off is permissible, faster prototyping may be the result. However, where systems are complex (e.g., a gas turbine engine), even a macro-level model may be a rather time-consuming and labor intensive process. As a result, macro-level models may not be available in detail for all subsystems. The resulting simplifications need to be accounted for by the uncertainty management.
+
+== Hybrid approaches ==
+
+Hybrid approaches attempt to leverage the strength from both data-driven approaches as well as model-based approaches. In reality, it is rare that the fielded approaches are completely either purely data-driven or purely model-based. More often than not, model-based approaches include some aspects of data-driven approaches and data-driven approaches glean available information from models. An example for the former would be where model parameters are tuned using field data. An example for the latter is when the set-point, bias, or normalization factor for a data-driven approach is given by models. Hybrid approaches can be categorized broadly into two categories, 1) Pre-estimate fusion and 2.) Post-estimate fusion.
+
+=== Pre-estimate fusion of models and data ===
+
+The motivation for pre-estimate aggregation may be that no ground truth data are available. This may occur in situations where diagnostics does a good job in detecting faults that are resolved (through maintenance) before system failure occurs. Therefore, there are hardly any run-to-failure data. However, there is incentive to know better when a system would fail to better leverage the remaining useful life while at the same time avoiding unscheduled maintenance (unscheduled maintenance is typically more costly than scheduled maintenance and results in system downtime). Garga et al. [REF] describe conceptually a pre-estimate aggregation hybrid approach where domain knowledge is used to change the structure of a neural network, thus resulting in a more parsimonius representation of the network. Another way to accomplish the pre-estimate aggregation is by a combined off-line process and on-line process: In the off-line mode, one can use a physics-based simulation model to understand the relationships of sensor response to fault state; In the on-line mode, one can use data to identify current damage state, then track the data to characterize damage propagation, and finally apply an individualized data-driven propagation model for remaining life prediction. 
+
+=== Post-estimate fusion of model-based approaches with data-driven approaches ===
+
+Motivation for post-estimate fusion is often consideration of uncertainty management. That is, the post-estimate fusion helps to narrow the uncertainty intervals of data-driven or model-based approaches. At the same time, the accuracy improves. The underlying notion is that multiple information sources can help to improve performance of an estimator. This principle has been successfully applied within the context of classifier fusion where the output of multiple classifiers is used to arrive at a better result than any classifier alone. Within the context of prognostics, fusion can be accomplished by employing quality assessments that are assigned to the individual estimators based on a variety of inputs, for example heuristics, a priori known performance, prediction horizon, or robustness of the prediction.
+
+== Prognostic Performance Evaluation ==
+
+Prognostic performance evaluation is of key importance for a successful PHM system deployment. The early lack of standardized methods for performance evaluation and benchmark data-sets resulted in reliance on conventional performance metrics borrowed from statistics. Those metrics were primarily accuracy and precision based where performance is evaluated against actual End of Life (EoL) typically known a priori in an offline setting. More recently, efforts towards maturing prognostics technology has put a significant focus on standardizing prognostic methods, including those of performance assessment. A key aspect, missing from the conventional metrics, is the capability to track performance with time. This is important because prognostics is a dynamic process where predictions get updated with an appropriate frequency as more observation data become available from an operational system. Similarly, the performance of prediction changes with time that must be tracked and quantified. Another aspect that makes this process different in a PHM context is the time value of a RUL prediction. As a system approaches failure, the time window to take a corrective action gets shorter and consequentially the accuracy of predictions becomes more critical for decision making. Finally, randomness and noise in the process, measurements, and prediction models are unavoidable and hence prognostics inevitably involves uncertainty in its estimates. A robust prognostics performance evaluation must incorporate the effects of this uncertainty.
+
+Several [https://www.phmsociety.org/ijphm/2010/metrics-for-offline-evaluation-of-prognostic-performance  prognostics performance metrics] have evolved with consideration of these issues:
+*Prognostic Horizon (PH) quantifies how much in advance an algorithm can predict with a desired accuracy before a failure occurs. A longer PH is preferred as more time is then available for a corrective action. 
+*''α-λ'' accuracy further tightens the desired accuracy levels using a shrinking cone of desired accuracy as EoL approaches. In order to comply with desired ''α-λ'' specifications at all times an algorithm must improve with time to stay within the cone. 
+*Relative Accuracy (RA) quantifies the accuracy relative to the actual time remaining before failure. 
+*Convergence quantifies how fast the performance converges for an algorithm as EoL approaches. 
+A visual representation of these metrics can be used to depict prognostic performance over a long time horizon.
+
+== See also ==
+
+* [[Preventive maintenance]]
+
+== References ==
+
+
+=== Notes ===
+<references/>
+
+== External links ==
+*[http://www.phmsociety.org The Prognostics and Health Management Society (PHM Society)] is a non-profit professional organization dedicated to the advancement of PHM as an engineering discipline.
+*[http://www.phmconference.org The Annual Conference of the PHM Society] is an annual international conference focusing exclusively on PHM.
+*The [[Joint Strike Fighter]] Program made substantial investments in PHM and related technologies [http://www.dtic.mil/ndia/2001systems/hess.pdf].
+*[http://www.prognostics.umd.edu The Center for Advanced Life Cycle Engineering (CALCE)] at the [[University of Maryland, College Park]] has a group dedicated to providing a research and knowledge base to support the advancement of health management with a focus on electronics.
+*[http://www.aeroconf.org IEEE Aerospace Conference] features one of the oldest tracks on prognostics and health management.
+*[http://www.mfpt.org The Society for Machinery Failure Prevention Technology] has an annual meeting focusing on latest development in practical applications in the field of PHM.
+*[http://prognostics.nasa.gov The Prognostics Center of Excellence (PCoE)] at the [[NASA Ames Research Center]] provides an umbrella for prognostic technology development applied to aerospace applications.
+*[http://www.femto-st.fr/en/Research-departments/AS2M/Research-groups/COSMI/SyMI/index.php The PHM Research Group] of the French [http://www.femto-st.fr/en/The-institute/Presentation/ FEMTO-ST Institute] develops methods and experiments for the prognostics of industrial systems. 
+*[http://www.imscenter.net NSF Industrial University Collaborative Research Center for Intelligent Maintenance Systems (IMS)] at the [[University of Cincinnati]] is a leading research institute in PHM area and has won [http://www.phmsociety.org PHM Society]Data Challenge in 2008 and 2009.
+
+
+[[Category:Prediction]]
+[[Category:Maintenance]]
+[[Category:Survival analysis]]
+
+[[fr:Pronostic de défaillance]]
+[[sk:Prognostika]]</body> </html>

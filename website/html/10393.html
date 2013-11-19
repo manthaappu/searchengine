@@ -1,0 +1,111 @@
+<html> <head> <title>Digital Signature Algorithm</title></head><body>The '''Digital Signature Algorithm (DSA)'''  is a [[Federal government of the United States|United States Federal Government]] [[Federal Information Processing Standard|standard]] or [[Federal Information Processing Standard|FIPS]] for [[digital signature]]s. It was proposed by the [[National Institute of Standards and Technology]] (NIST) in August 1991 for use in their '''Digital Signature Standard (DSS)''', specified in [[Federal Information Processing Standard|FIPS]] 186,<ref>[http://www.itl.nist.gov/fipspubs/fip186.htm FIPS-186], the first version of the official DSA specification.</ref> adopted in 1993. A minor revision was issued in 1996 as FIPS 186-1.<ref>[http://www.mozilla.org/projects/security/pki/nss/fips1861.pdf FIPS-186-1], the first revision to the official DSA specification.</ref> The standard was expanded further in 2000 as FIPS 186-2 and again in 2009 as FIPS 186-3.<ref name=FIPS186-3>[http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf FIPS-186-3], the third and current revision to the official DSA specification.</ref>
+
+DSA is covered by {{US patent|5231668}}, filed July 26, 1991, and attributed to David W. Kravitz,<ref>[http://www.motorola.com/mot/doc/6/6221_MotDoc.htm Dr. David W. Kravitz]</ref> a former [[National Security Agency|NSA]] employee. This patent was given to "The United States of America as represented by the Secretary of Commerce, Washington, D.C." and the NIST has made this patent available worldwide [[royalties|royalty]]-free.<ref>Werner Koch. [http://lists.gnupg.org/pipermail/gnupg-devel/1997-December/014123.html DSA and patents]</ref> [[Claus P. Schnorr|Dr. Claus P. Schnorr]] claims that his {{US patent|4995082}} covers DSA; this claim is disputed.<ref>[http://csrc.nist.gov/groups/SMA/ispab/documents/94-rpt.txt Minutes of the Sept. 94 meeting of the Computer System Security and Privacy Advisory Board]</ref>
+
+==Key generation==
+Key generation has two phases. The first phase is a choice of ''algorithm parameters'' which may be shared between different users of the system:
+* Choose an approved [[cryptographic hash function]] ''H''. In the original DSS, ''H'' was always SHA-1, but the stronger SHA-2 hash functions are approved for use in the current DSS. The hash output may be truncated to the size of a key pair.
+* Decide on a key length ''L'' and ''N''. This is the primary measure of the [[cryptographic strength]] of the key.  The original DSS constrained ''L'' to be a multiple of 64 between 512 and 1024 (inclusive). NIST 800-57<ref>[http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part1.pdf NIST 800-57]</ref> recommends lengths of 2048 (or 3072) for keys with security lifetimes extending beyond 2010 (or 2030), using correspondingly longer ''N''.<ref name=FIPS186-3/> specifies ''L'' and ''N'' length pairs of (1024,160), (2048,224), (2048,256), and (3072,256).
+* Choose an ''N''-bit prime ''q''. ''N'' must be less than or equal to the hash output length.
+* Choose an ''L''-bit prime modulus ''p'' such that ''p''–1 is a multiple of ''q''.
+* Choose ''g'', a number whose multiplicative order modulo ''p'' is ''q''. This may be done by setting ''g'' = ''h''<sup>(''p''–1)/''q''</sup> mod ''p'' for some arbitrary ''h'' (1 < h < p-1), and trying again with a different ''h'' if the result comes out as 1. Most choices of ''h'' will lead to a usable ''g''; commonly ''h''=2 is used.
+The algorithm parameters (''p'', ''q'', ''g'') may be shared between different users of the system.
+The second phase computes private and public keys for a single user:
+* Choose ''x'' by some random method, where 0 < ''x'' < ''q''.
+* Calculate ''y'' = ''g<sup>x</sup>'' mod ''p''.
+* Public key is (''p'', ''q'', ''g'', ''y''). Private key is ''x''.
+
+There exist efficient algorithms for computing the [[modular exponentiation]]s  ''h<sup>a</sup>'' mod ''p'' and ''g<sup>x</sup>'' mod ''p'', such as [[exponentiation by squaring]].
+
+==Signing==
+
+Let ''H'' be the hashing function and ''m'' the message:
+* Generate a random per-message value ''k'' where 0 < ''k'' < ''q''
+* Calculate ''r'' = (''g''<sup>''k''</sup> mod ''p'') mod ''q''
+* Calculate ''s'' = (''k''<sup>&minus;1</sup>(''H''(''m'') + ''x''*''r'')) mod ''q''
+* Recalculate the signature in the unlikely case that ''r'' = 0 or ''s'' = 0
+* The signature is (''r'', ''s'')
+
+The [[extended Euclidean algorithm]] can be used to compute the modular inverse ''k''<sup>&minus;1</sup> mod ''q''.
+
+==Verifying==
+* Reject the signature if either 0 < ''r'' <q or 0 < ''s'' < ''q'' is not satisfied.
+* Calculate ''w'' = (''s'')<sup>&minus;1</sup> mod ''q''
+* Calculate ''u''1 = (''H''(''m'')*''w'') mod ''q''
+* Calculate ''u''2 = (''r''*''w'') mod ''q''
+* Calculate ''v'' = ((''g''<sup>''u''1</sup>*''y''<sup>''u''2</sup>) mod ''p'') mod ''q''
+* The signature is valid if ''v'' = ''r''
+
+DSA is similar to the [[ElGamal signature scheme]].
+
+==Correctness of the algorithm==
+The signature scheme is correct in the sense that the verifier will always accept genuine signatures. This can be shown as follows:
+
+First, if ''g'' = ''h<sup>(''p'' &minus; 1)/''q''</sup>'' mod ''p'' it follows that
+''g<sup>q</sup>'' ≡ ''h''<sup>''p'' &minus; 1</sup> ≡ 1 (mod ''p'') by
+[[Fermat's little theorem]]. Since ''g'' > 1 and ''q'' is prime, ''g'' must have order ''q''.
+
+The signer computes
+
+:<math>s=k^{-1}(H(m)+xr) \mod{q}. \, </math>
+
+Thus 
+
+:<math>
+\begin{align}
+k & \equiv H(m)s^{-1}+xrs^{-1}\\
+  & \equiv H(m)w + xrw \pmod{q}.
+\end{align}
+</math>  
+
+Since ''g'' has order ''q'' (mod p) we have
+
+:<math>
+\begin{align}
+g^k & \equiv g^{H(m)w}g^{xrw}\\
+    & \equiv g^{H(m)w}y^{rw}\\
+    & \equiv g^{u1}y^{u2} \pmod{p}.
+\end{align}
+</math>
+
+Finally, the correctness of DSA follows from
+
+:<math>r=(g^k \mod p) \mod q = (g^{u1}y^{u2} \mod p) \mod q = v.\,</math>
+
+==Sensitivity==
+With DSA, the entropy, secrecy and uniqueness of the random signature value k is critical.  It is so critical that violating any one of those three requirements can reveal your entire private key to an attacker.<ref>[http://rdist.root.org/2009/05/17/the-debian-pgp-disaster-that-almost-was/ The Debian PGP disaster that almost was.]</ref>  Using the same value twice (even while keeping k secret), using a predictable value, or leaking even a few bits of k in each of several signatures, is enough to break DSA.<ref>[http://rdist.root.org/2010/11/19/dsa-requirements-for-random-k-value/ DSA k-value Requirements]</ref>
+
+==See also==
+* [[Elliptic Curve DSA]]
+* [[Modular arithmetic]]
+
+==References==
+{{reflist|2}}
+
+==External links==
+* [http://www.itl.nist.gov/fipspubs/fip186.htm  FIPS-186], the first version of the official DSA specification.
+* [http://www.itl.nist.gov/fipspubs/186chg-1.htm FIPS-186, change notice No.1], the first change notice to the first version of the specification.
+* [http://www.mozilla.org/projects/security/pki/nss/fips1861.pdf FIPS-186-1], the first revision to the official DSA specification.
+* [http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf FIPS-186-3], the third and current revision to the official DSA specification.
+* [http://csrc.nist.gov/publications/fips/fips186-3/frn-fips_186-3.pdf FIPS-186-3 Approval], Approval announcement of the third revision to the official DSA specification.
+* [http://csrc.nist.gov/publications/nistpubs/800-57/SP800-57-Part1.pdf Recommendation for Key Management -- Part 1: general], NIST Special Publication 800-57, p. 62&ndash;63
+
+{{Crypto navbox | public-key}}
+
+[[Category:Public-key cryptography]]
+[[Category:Asymmetric-key cryptosystems]]
+
+[[cs:Digital Signature Algorithm]]
+[[de:Digital Signature Algorithm]]
+[[es:DSA]]
+[[fa:الگوریتم امضای رقومی]]
+[[fr:Digital Signature Algorithm]]
+[[it:Digital Signature Algorithm]]
+[[he:Digital Signature Algorithm]]
+[[lt:DSA]]
+[[pl:Digital Signature Algorithm]]
+[[pt:DSS]]
+[[ro:Algoritm pentru Semnături Digitale]]
+[[ru:DSA]]
+[[fi:DSA]]
+[[vi:Giải thuật ký số]]</body> </html>

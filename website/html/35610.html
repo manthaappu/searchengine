@@ -1,0 +1,187 @@
+<html> <head> <title>State machine replication</title></head><body>{{Cleanup|date=July 2009}}
+{{Context|date=July 2009}}
+
+:''Introduction from Schneider's 1990 survey:''
+:"Distributed software is often structured in terms of clients and services. Each service comprises one or more servers and exports operations that clients invoke by making requests. Although using a single, centralized, server is the simplest way to implement a service, the resulting service can only be as fault tolerant as the processor executing that server. If this level of fault tolerance is unacceptable, then multiple servers that fail independently must be used. Usually, replicas of a single server are executed on separate processors of a distributed system, and protocols are used to coordinate client interactions with these replicas. The physical and electrical isolation of processors in a distributed system ensures that server failures are independent, as required."
+
+:"The '''state machine approach''' is a general method for implementing a fault-tolerant service by replicating servers and coordinating client interactions with server replicas.  The approach also provides a framework for understanding and designing replication management protocols.  Many protocols that involve replication of data or software - be it for masking failures or simply to facilitate cooperation without centralized control - can be derived using the state machine approach. Although few of these protocols actually were obtained in this manner, viewing them in terms of state machines helps in understanding how and why they work." <ref name=schneider>{{cite journal|curly=yes|last=Schneider|first= Fred|year=1990| title=Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial|journal=ACM Computing Surveys|volume=22|url=http://ecommons.library.cornell.edu/bitstream/1813/6640/2/86-800.ps|format=PS| doi=10.1145/98163.98167| pages=299}}</ref>
+
+==Preliminaries==
+===State Machine Definition===
+
+For the subsequent discussion a '''State Machine''' will be defined as the following tuple of values <ref name=reliable>{{cite journal|curly=yes|last=Lamport|first=Leslie|year=1978|title=The Implementation of Reliable Distributed Multiprocess Systems|journal=Computer Networks|volume=2|pages=95–114|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#implementation|accessdate=2008-03-13}}</ref> (See also [[Mealy machine]] and [[Moore Machine]]):
+
+* A set of '''States'''
+* A set of '''Inputs'''
+* A set of '''Outputs'''
+* A transition function (Input x State -> State)
+* An output function (Input x State -> Output)
+* A distinguished State called Start.
+
+A State Machine begins at the State labeled Start.  Each Input received is passed through the transition and output function to produce a new State and an Output.  The State is held stable until a new Input is received, while the Output is communicated to the appropriate receiver.
+
+It should be clear that any algorithm can be implemented using this model if driven by an appropriate Input stream.  In particular, this discussion requires a State Machine to have the following property:
+
+:'''Deterministic:'''
+:Multiple copies of the same State Machine begun in the Start state, and receiving the same Inputs in the same order will arrive at the same State having generated the same Outputs.
+
+===Fault Tolerance Explained===
+
+Determinism is an ideal characteristic for providing fault-tolerance.  Intuitively, if multiple copies of a system exist, a fault in one would be noticeable as a difference in the State or Output from the others.
+
+A little deduction shows the minimum number of copies needed for fault-tolerance is three; one which has a fault, and two others to whom we compare State and Output.  Two copies is not enough; there is no way to tell which copy is the faulty one.
+
+Further deduction shows a three-copy system can support at most one failure (after which it must repair or replace the faulty copy).  If more than one of the copies were to fail, all three States and Outputs might differ, and there would be no way to choose which is the correct one.
+
+Research has shown <ref name=lowerbounds>{{cite web|curly=yes|last=Lamport|first=Leslie|year=2004|title=Lower Bounds for Asynchronous Consensus|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#lower-bound}}</ref> that in general a system which supports F failures must have 2F+1 copies (also called replicas).  The extra copies are used as evidence to decide which of the copies are correct and which are faulty.  Special cases can improve these bounds <ref name=cheap>{{cite journal|curly=yes|last=Lamport|first=Leslie|coauthors=Mike Massa|year=2004|title=Cheap Paxos|journal=Proceedings of the International Conference on Dependable Systems and Networks (DSN 2004)|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#web-dsn-submission}}</ref>.
+
+All of this deduction pre-supposes that replicas are experiencing only random independent faults such as memory errors or hard-drive crash.   Failures caused by replicas which attempt to lie, deceive, or collude can also be handled by the State Machine Approach, with isolated changes.
+
+It should be noted that failed replicas are not required to stop; they may continue operating, including generating spurious or incorrect Outputs.
+
+====Special Case: Fail-Stop====
+Theoretically, if a failed replica is guaranteed to stop without generating outputs, only F+1 replicas are required, and clients may accept the first output generated by the system.  No existing systems achieve this limit, but it is often used when analyzing systems built on top of a fault-tolerant layer (Since the fault-tolerant layer provides fail-stop semantics to all layers above it).
+
+====Special Case: Byzantine Failure====
+Faults where a replica sends different values in different directions (for instance, the correct Output to some of its fellow replicas and incorrect Outputs to others) are called Byzantine Failures <ref name=byzantine>{{cite journal|curly=yes|last=Lamport|first=Leslie|coauthors=Robert Shostak, Marshall Pease|year=1982|month=July|title=The Byzantine Generals Problem|journal=ACM Transactions on Programming Languages and Systems|volume=4|issue=3|pages=382–401|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#byz|accessdate=2007-02-02|doi=10.1145/357172.357176}}</ref>.  Byzantine failures may be random, spurious faults, or malicious, intelligent attacks.  2F+1 replicas, with non-cryptographic hashes suffices to survive all non-malicious Byzantine failures (with high probability).  Malicious attacks require cryptographic primitives to achieve 2F+1 (using message signatures), or non-cryptographic techniques can be applied but the number of replicas must be increased to 3F+1.
+
+==The State Machine Approach==
+
+The preceding intuitive discussion implies a simple technique for implementing a fault-tolerant service in terms of a State Machine:
+
+# Place copies of the State Machine on multiple, independent servers.
+# Receive client requests, interpreted as Inputs to the State Machine.
+# Choose an ordering for the Inputs.
+# Execute Inputs in the chosen order on each server.
+# Respond to clients with the Output from the State Machine.
+# Monitor replicas for differences in State or Output.
+
+The remainder of this article develops the details of this technique.
+
+* Step 1 and 2 are outside the scope of this article.
+* Step 3 is the critical operation, see [[#Ordering Inputs|Ordering Inputs]].
+* Step 4 is covered by the [[#State Machine Definition|State Machine Definition]].
+* Step 5, see [[#Sending Outputs|Ordering Outputs]].
+* Step 6, see [[#Auditing and Failure Detection|Auditing and Failure Detection]].
+
+The appendix contains discussion on typical extensions used in real-world systems such as [[#Logging|Logging]], [[#Checkpoints|Checkpoints]], [[#Reconfiguration|Reconfiguration]], and [[#State Transfer|State Transfer]].
+
+===Ordering Inputs===
+
+The critical step in building a distributed system of State Machines is choosing an order for the Inputs to be processed.  Since all non-faulty replicas will arrive at the same State and Output if given the same Inputs, it is imperative that the Inputs are submitted in an equivalent order at each replica.  Many solutions have been proposed in the literature <ref name=reliable/><ref name=time>{{cite journal|curly=yes|last=Lamport|first=Leslie|year=1984|title=Using Time Instead of Timeout for Fault-Tolerant Distributed Systems|journal=ACM Transactions on Programming Languages and Systems|volume=6|issue=2|pages=254–280|url= http://research.microsoft.com/users/lamport/pubs/pubs.html#using-time|accessdate=2008-03-13|doi=10.1145/2993.2994}}</ref><ref name=paxos/><ref name=virtualsync>{{cite journal|curly=yes|last=Birman|first=Kenneth|coauthors=Thomas Joseph|year=1987|title=Exploiting virtual synchrony in distributed systems|journal= Proceedings of the 11th ACM Symposium on Operating systems principles (SOSP)|url=http://portal.acm.org/citation.cfm?id=37515&dl=ACM&coll=GUIDE|accessdate=2008-03-13|doi=10.1145/37499.37515|volume=21|pages=123}}</ref><ref name=lampson>{{cite web|curly=yes|last=Lampson|first=Butler|year=1996|title=How to Build a Highly Available System Using Consensus|url=http://research.microsoft.com/lampson/58-Consensus/Abstract.html|accessdate=2008-03-13}}</ref>.
+
+A '''Visible Channel''' is a communication path between two entities actively participating in the system (such as clients and servers).
+	Example: client to server, server to server
+
+A '''Hidden Channel''' is a communication path which is not revealed to the system.
+Example: client to client channels are usually hidden; such as users communicating over a telephone, or a process writing files to disk which are read by another process.
+
+When all communication paths are visible channels and no hidden channels exist, a partial global order ('''Causal Order''') may be inferred from the pattern of communications <ref name=virtualsync/><ref name=clocks>{{cite journal|curly=yes|last=Lamport|first=Leslie|year=1978|month=July|title=Time, Clocks and the Ordering of Events in a Distributed System|journal=Communications of the ACM|volume=21|issue=7|pages=558–565|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#time-clocks|accessdate=2007-02-02|doi=10.1145/359545.359563}}</ref>.  Causal Order may be derived independently by each server.  Inputs to the State Machine may be executed in Causal Order, guaranteeing consistent State and Output for all non-faulty replicas.
+
+In open systems, hidden channels are common and a weaker form of ordering must be used.  An order of Inputs may be defined using a voting protocol whose results depend only on the visible channels.
+
+The problem of voting for a ''single'' value by a group of independent entities is called [[Consensus (computer science)|'''Consensus''']].  By extension, a ''series'' of values may be chosen by a series of consensus instances.  This problem becomes difficult when the participants or their communication medium may experience failures <ref name="lowerbounds"/>.
+
+Inputs may be ordered by their position in the series of consensus instances ('''Consensus Order''')<ref name=paxos/>.  Consensus Order may be derived independently by each server.  Inputs to the State Machine may be executed in Consensus Order, guaranteeing consistent State and Output for all non-faulty replicas.
+
+:'''Optimizing Causal & Consensus Ordering'''
+:In some cases additional information is available (such as real-time clocks).  In these cases, it is possible to achieve more efficient causal or consensus ordering for the Inputs, with a reduced number of messages, fewer message rounds, or smaller message sizes.  See references for details <ref name=schneider/><ref name=cheap/><ref name=time/><ref name=fast>{{cite web|curly=yes|last=Lamport|first=Leslie|year=2005|title=Fast Paxos|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#fast-paxos}}</ref>
+
+:Further optimizations are available when the semantics of State Machine operations are accounted for (such as Read vs Write operations).  See references [[Paxos_algorithm#Generalized Paxos|Generalized Paxos]]<ref name=reliable/><ref name=general>{{cite journal|curly=yes|last=Lamport|first=Leslie|year=2005|title=Generalized Consensus and Paxos|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#generalized}}</ref>.
+
+===Sending Outputs===
+
+Client requests are interpreted as Inputs to the State Machine, and processed into Outputs in the appropriate order.  Each replica will generate an Output independently.  Non-faulty replicas will always produce the same Output.  Before the client response can be sent, faulty Outputs must be filtered out.  Typically, a majority of the Replicas will return the same Output, and this Output is sent as the response to the client.
+
+===System Failure===
+:If there is no majority of replicas with the same Output, or if less than a majority of replicas returns an Output, a system failure has occurred.  The client response must be the unique Output: FAIL.
+
+===Auditing and Failure Detection===
+
+The permanent, unplanned compromise of a replica is called a '''Failure'''.  Proof of failure is difficult to obtain, as the replica may simply be slow to respond <ref name=FLP>{{cite journal|curly=yes|last=Fischer|first=Michael|year=1985|title=Impossibility of Distributed Consensus with One Faulty Process|journal=Journal of the Association for Computing Machinery|volume=32|issue=2|pages=347–382|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#using-time|accessdate=2008-03-13}}</ref>, or even lie about its status <ref name=byzantine/>.
+
+Non-faulty replicas will always contain the same State and produce the same Outputs.  This invariant enables failure detection by comparing States and Outputs of all replicas.  Typically, a replica with State or Output which differs from the majority of replicas is declared faulty.
+
+A common implementation is to pass checksums of the current replica State and recent Outputs among servers.  An Audit process at each server restarts the local replica if a deviation is detected <ref name=live>{{cite journal|curly=yes|last=Chandra|first=Tushar|coauthors=Robert Griesemer, Joshua Redstone|year=2007|title=Paxos Made Live – An Engineering Perspective|journal=PODC '07: 26th ACM Symposium on Principles of Distributed Computing|url=http://labs.google.com/papers/paxos_made_live.html}}</ref>.  Cryptographic security is not required for checksums.
+
+It is possible that the local server is compromised, or that the Audit process is faulty, and the replica continues to operate incorrectly.  This case is handled safely by the Output filter described previously (see [[#Sending Outputs|Sending Outputs]]).
+
+==Appendix: Extensions==
+===Input Log===
+
+In a system with no failures, the Inputs may be discarded after being processed by the State Machine.  Realistic deployments must compensate for transient non-failure behaviors of the system such as message loss, network partitions, and slow processors <ref name=live/>.
+
+One technique is to store the series of Inputs in a log.  During times of transient behavior, replicas may request copies of a log entry from another replica in order to fill in missing Inputs <ref name=paxos/>.
+
+In general the log is not required to be persistent (it may be held in memory).  A persistent log may compensate for extended transient periods, or support additional system features such as [[#Checkpoints|Checkpoints]], and [[#Reconfiguration|Reconfiguration]].
+
+===Checkpoints===
+
+If left unchecked a log will grow until it exhausts all available storage resources.  For continued operation, it is necessary to forget log entries.  In general a log entry may be forgotten when its contents are no longer relevant (for instance if all replicas have processed an Input, the knowledge of the Input is no longer needed).
+
+A common technique to control log size is store a duplicate State (called a '''Checkpoint'''), then discard any log entries which contributed to the checkpoint.  This saves space when the duplicated State is smaller than the size of the log.
+
+Checkpoints may be added to any State Machine by supporting an additional Input called '''CHECKPOINT'''.  Each replica maintains a checkpoint in addition to the current State value.  When the log grows large, a replica submits the CHECKPOINT command just like a client request.  The system will ensure non-faulty replicas process this command in the same order, after which all log entries before the checkpoint may be discarded.
+
+In a system with checkpoints, requests for log entries occurring before the checkpoint are ignored.  Replicas which cannot locate copies of a needed log entry are faulty and must re-join the system (see [[#Reconfiguration|Reconfiguration]]).
+
+===Reconfiguration===
+
+Reconfiguration allows replicas to be added and removed from a system while client requests continue to be processed.  Planned maintenance and replica failure are common examples of reconfiguration.  Reconfiguration involves [[#Quitting|Quitting]] and [[#Joining|Joining]].
+
+===Quitting===
+
+When a server detects its State or Output is faulty (see [[#Auditing and Failure Detection|Auditing and Failure Detection]]), it may selectively exit the system.  Likewise, an administrator may manually execute a command to remove a replica for maintenance.
+
+A new Input is added to the State Machine called '''QUIT'''<ref name=reliable/><ref name=time/>.  A replica submits this command to the system just like a client request.  All non-faulty replicas remove the quitting replica from the system upon processing this Input.  During this time, the replica may ignore all protocol messages.  If a majority of non-faulty replicas remain, the quit is successful.  If not, there is a [[#System Failure|System Failure]].
+
+===Joining===
+
+After quitting, a failed server may selectively restart or re-join the system.  Likewise, an administrator may add a new replica to the group for additional capacity.
+
+A new Input is added to the State Machine called '''JOIN'''.  A replica submits this command to the system just like a client request.  All non-faulty replicas add the joining node to the system upon processing this Input.  A new replica must be up-to-date on the system's State before joining (see [[#State Transfer|State Transfer]]).
+
+===State Transfer===
+
+When a new replica is made available or an old replica is restarted, it must be brought up to the current State before processing Inputs (see [[#Joining|Joining]]).  Logically, this requires applying every Input from the dawn of the system in the appropriate order.
+
+Typical deployments short-circuit the logical flow by performing a State Transfer of the most recent Checkpoint (see [[#Checkpoints|Checkpoints]]).  This involves directly copying the State of one replica to another using an out-of-band protocol.
+
+A checkpoint may be large, requiring an extended transfer period.  During this time, new Inputs may be added to the log.  If this occurs, the new replica must also receive the new Inputs and apply them after the checkpoint is received.  Typical deployments add the new replica as an observer to the ordering protocol before beginning the state transfer, allowing the new replica to collect Inputs during this period.
+
+:'''Optimizing State Transfer'''
+:Common deployments reduce state transfer times by sending only State components which differ.  This requires knowledge of the State Machine internals.  Since state transfer is usually an out-of-band protocol, this assumption is not difficult to achieve.
+
+:Compression is another feature commonly added to state transfer protocols, reducing the size of the total transfer.
+
+===Leader Election (for Paxos)===
+
+[[Paxos algorithm|'''Paxos''']]<ref name=paxos>{{cite journal|curly=yes|last=Lamport|first=Leslie|year=1998|month=May|title=The Part-Time Parliament|journal=ACM Transactions on Computer Systems|volume=16|issue=2|pages=133–169|url=http://research.microsoft.com/users/lamport/pubs/pubs.html#lamport-paxos|accessdate=2007-02-02|doi=10.1145/279227.279229}}</ref> is a protocol for solving consensus, and may be used as the protocol for implementing [[#Consensus Order|Consensus Order]].
+
+Paxos requires a single leader to ensure liveness <ref name=paxos/>.  That is, one of the replicas must remain leader long enough to achieve consensus on the next operation of the state machine.  System behavior is unaffected if the leader changes after every instance, or if the leader changes multiple times per instance.  The only requirement is that one replica remain leader long enough to move the system forward.
+
+:'''Conflict Resolution'''
+:In general, a leader is necessary only when there is disagreement about which operation to perform <ref name=fast/>, and if those operations conflict in some way (for instance, if they do not commute) <ref name=general/>.
+
+:When conflicting operations are proposed, the leader acts as the single authority to set the record straight, defining an order for the operations, allowing the system to make progress.
+
+With Paxos, multiple replicas may believe they are leaders at the same time.  This property makes Leader Election for Paxos very simple, and any algorithm which guarantees an 'eventual leader' will work.
+
+== Historical background ==
+
+[[Leslie Lamport]] was the first to propose the state machine approach, in his seminal 1984 paper on [http://portal.acm.org/citation.cfm?id=2994&dl=ACM&coll=GUIDE "Using Time Instead of Timeout In Distributed Systems"].  Fred Schneider later elaborated the approach in his paper [http://portal.acm.org/citation.cfm?id=98167 "Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial"].
+
+[[Ken Birman]] developed the [[virtual synchrony]] model in a series of papers published between 1985 and 1987.  The primary reference to this work is [http://portal.acm.org/citation.cfm?id=37515&dl=ACM&coll=GUIDE "Exploiting Virtual Synchrony in Distributed Systems"], which describes the Isis Toolkit, a system that  was used to build the New York and Swiss Stock Exchanges, French Air Traffic Control System, US Navy AEGIS Warship, and other applications.
+
+Recent work by Miguel Castro and [[Barbara Liskov]] used the state machine approach in what they call a [http://www.pmg.lcs.mit.edu/~castro/osdi99_html/osdi99.html "Practical Byzantine fault tolerance"] architecture that replicates especially sensitive services using a version of Lamport's original state machine approach, but with optimizations that substantially improve performance.
+
+A hard real-time variant of this approach has been developed by Prof. [[Hermann Kopetz]] at TU Vienna, Austria, in the [http://citeseer.ist.psu.edu/kopetz88timetriggered.html "Time-Triggered Architecture"] ([[TTA]]) based on the [[Time-Triggered Protocol]] ([[TTP]]) during the 1990s. It has been commercialized in the 2000s by [[TTTech|TTTech Computertechnik AG]] and deployed in various [[Products with TTP|aerospace projects]].
+
+==References==
+
+{{reflist}}
+
+{{DEFAULTSORT:State Machine Replication}}
+[[Category:Distributed computing problems]]
+[[Category:Data synchronization]]
+[[Category:Fault-tolerant computer systems]]</body> </html>

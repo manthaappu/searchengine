@@ -1,0 +1,101 @@
+<html> <head> <title>Interlock protocol</title></head><body>The '''interlock protocol''', as described by [[Ron Rivest]] and [[Adi Shamir]], was designed to frustrate eavesdropper attack against two parties that use an anonymous key exchange protocol to secure their conversation. A further paper proposed using it as an authentication protocol, which was subsequently broken.
+
+==Brief history==
+Most cryptographic protocols rely on the prior establishment of secret or public keys or passwords.  However, the [[Diffie-Hellman key exchange]] protocol introduced the concept of two parties establishing a secure channel (that is, with at least some desirable security properties) without any such prior agreement.  Unauthenticated Diffie-Hellman, as an anonymous [[key agreement]] protocol, has long been known to be subject to [[man in the middle attack]]. However, the dream of a "zipless"{{clarify|date=May 2010}} mutually authenticated secure channel remained.
+
+The Interlock Protocol was described<ref>R. Rivest and A. Shamir. How to Expose an Eavesdropper. CACM, Vol. 27, April 1984, pp. 393-395. [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.159.1673&rep=rep1&type=pdf]</ref> as a method to expose a middle-man who might try to compromise two parties that use anonymous key agreement to secure their conversation.
+
+==How it works==
+The Interlock protocol works roughly as follows: Alice encrypts her message with Bob's key, then sends half her encrypted message to Bob. Bob encrypts his message with Alice's key and sends half of his encrypted message to Alice. Alice then sends the other half of her message to Bob, who sends the other half of his. The strength of the protocol lies in the fact that half of an encrypted message cannot be decrypted. Thus, if Mallory begins his attack and intercepts Bob and Alice's keys, Mallory will be unable to decrypt Alice's half-message (encrypted using his key) and re-encrypt it using Bob's key. He must wait until both halves of the message have been received to read it, and can only succeed in duping one of the parties if he composes a completely new message.
+
+==The Bellovin/Merritt Attack==
+Davies and Price proposed the use of the Interlock Protocol for authentication in a book titled <u>Security for Computer Networks.</u><ref>D. W. Davies and W. L. Price. Security for Computer Networks. John Wiley & Sons, second ed., 1989.</ref> But an attack on this was described by [[Steven M. Bellovin]] & Michael Merritt.<ref name=bellovin>S. M. Bellovin and M. Merritt. [http://www.cs.columbia.edu/~smb/papers/interlock.pdf An Attack on the Interlock Protocol When Used for Authentication] (PDF). I.E.E.E. Transactions on Information Theory , v. 40, n. 1, January 1994, pp. 273-275.</ref> A subsequent refinement was proposed by Ellison.<ref>C. Ellison. Establishing Identity Without Certification Authorities. Proceedings of the Sixth Annual USENIX Security Symposium, San Jose, July 1996, pp. 67-76.</ref>
+
+The Bellovin/Merritt attack entails composing a fake message to send to the first party. Passwords may be sent using the Interlock Protocol between A and B as follows:
+
+<pre>
+ A               B
+Ea,b(Pa)<1>------->
+<-------Ea,b(Pb)<1>
+Ea,b(Pa)<2>------->
+<-------Ea,b(Pb)<2>
+</pre>
+
+where Ea,b(M) is message M encrypted with the key derived from the Diffie-Hellman exchange between A and B, <1>/<2> denote first and second halves, and Pa/Pb are the passwords of A and B.
+
+An attacker, Z, could send half of a bogus message—P?--to elicit Pa from A:
+
+<pre>
+A                Z                B
+Ea,z(Pa)<1>------>
+<------Ea,z(P?)<1>
+Ea,z(Pa)<2>------>
+                 Ez,b(Pa)<1>------>
+                 <------Ez,b(Pb)<1>
+                 Ez,b(Pa)<2>------>
+                 <------Ez,b(Pb)<2>
+</pre>
+
+At this point, Z has compromised both Pa and Pb. The attack can be defeated by verifying the passwords in parts, so that when Ea,z(P?)<1> is sent, it is known to be invalid and Ea,z(Pa)<2> is never sent (suggested by Davies). However, this does not work when the passwords are hashed, since half of a hash is useless, according to Bellovin.<ref name=bellovin/> There are also several other methods proposed in,<ref>R. H. Morris and K. Thompson, "Unix password security," ''Communications of the ACM'', vol. 22, p. 594, November 1979</ref><ref>F. T. Grampp and R. H Morris, "Unix operating system security," ''AT&T Bell Laboratories Technical Journal'', vol. 63 pp. 1649-1672, October 1984
+</ref><ref>D. V. Klein, "Foiling the cracker": A survey of, and improvements to, password security," in ''Proceedings of the USENIX UNIX Security Workshop'', (Portland), pp. 5-14, August 1990</ref><ref>P. Leong and C. Tham, "Unix password encryption considered insecure" in ''Proc. Winter USENIX Conference'', (Dallas), 1991</ref> including using a shared secret in addition to the password. The forced-latency enhancement can also prevent certain attacks.
+
+==Forced-Latency Interlock Protocol==
+{{Refimprovesect|date=May 2010}}
+A modified Interlock Protocol can require B (the server) to delay all responses for a known duration:
+
+<pre>
+A              B
+Ka------------->
+<-------------Kb
+Ea,b(Ma)<1>---->
+<----Ea,b(Mb)<1> (B delays response a fixed time, T)
+Ea,b(Ma)<2>---->
+<----Ea,b(Mb)<2> (delay again)
+<----------data)
+</pre>
+
+Where "data" is the encrypted data that immediately follows the Interlock Protocol exchange (it could be anything), encoded using an [[all-or-nothing transform]] to prevent in-transit modification of the message.
+
+MITM can be attempted using the attack described in the Bellovin paper (Z being the man-in-the-middle):
+
+<pre>
+A              Z              B
+Ka------------->Kz------------->
+<--------------<Kz'-----------Kb
+Ea,z(Ma)<1>---->
+<--------------Ea,z(Mz)<1>       (delayed response)
+Ea,z(Ma)<2>---->
+<--------------Ea,z(Mz)<2>       (delayed response)
+              Ez',b(Ma)<1>---->
+              <----Ez',b(Mb)<2> (delayed response)
+              Ez',b(Ma)<2>---->
+              <----Ez',b(Mb)<2> (delayed response)
+              <-------------data
+<---------data
+</pre>
+
+In this case, A receives the data approximately after 2*T, since Z has to perform the interlocking exchange with B. Hence, the attempted MITM attack can be detected and the session aborted.
+
+Of course, Z could choose to not perform the Interlock Protocol with B (opting to instead send his own Mb) but then the session would be between A and Z, not A, Z, and B: Z wouldn't be in the middle. For this reason, the interlock protocol cannot be effectively used to provide [[authentication]], although it can ensure that no third party can modify the messages in transit without detection.
+
+==See also==
+* [[Computer security]]
+* [[Cryptanalysis]]
+* [[Secure channel]]
+* [[Key management]]
+* [[Cryptographic protocol]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://www.quadibloc.com/crypto/mi060709.htm Interlock protocol for authentication]
+* [http://lists.virus.org/cryptography-0310/msg00083.html Full-Duplex-Chess Grandmaster (was: anonymous DH & MITM)]
+* [http://zooko.com/defense_against_middleperson_attacks.html  Defense Against Middleperson Attacks (Zooko's Forced-Latency Protocol)]
+
+{{DEFAULTSORT:Interlock Protocol}}
+[[Category:Cryptographic attacks]]
+[[Category:Cryptographic protocols]]
+
+[[it:Man in the middle]]
+[[pl:Atak man in the middle]]</body> </html>

@@ -1,0 +1,105 @@
+<html> <head> <title>Conversion between quaternions and Euler angles</title></head><body>Spatial rotations in three dimensions can be [[Coordinate system|parametrized]] using both [[Euler angles]] and [[Quaternions and spatial rotation|unit quaternions]]. This article explains how to convert between the two representations.  Actually this simple use of "quaternions" was first presented by [[Leonhard Euler|Euler]] some seventy years earlier than [[William Rowan Hamilton|Hamilton]] to solve the problem of [[magic square]]s.  For this reason the dynamics community commonly refers to quaternions in this application as "Euler parameters".
+
+==Definition==
+A unit [[quaternion]] can be described as:
+:<math>\mathbf{q} = \begin{bmatrix} q_0 & q_1 & q_2 & q_3 \end{bmatrix}^T</math>
+:<math>|\mathbf{q}|^2 = q_0^2 + q_1^2 + q_2^2 + q_3^2 = 1</math>
+
+We can associate a [[quaternion]] with a rotation around an axis by the following expression
+
+:<math>\mathbf{q}_0 = \cos(\alpha/2)</math>
+:<math>\mathbf{q}_1 = \sin(\alpha/2)\cos(\beta_x)</math>
+:<math>\mathbf{q}_2 = \sin(\alpha/2)\cos(\beta_y)</math>
+:<math>\mathbf{q}_3 = \sin(\alpha/2)\cos(\beta_z)</math>
+where α is a simple rotation angle (the value in radians of the [[angle of rotation]]) and cos(β<sub>''x''</sub>), cos(β<sub>''y''</sub>) and cos(β<sub>''z''</sub>) are the  "[[Unit vector|direction cosines]]" locating the axis of rotation (Euler's Theorem).
+
+== Rotation matrices ==
+[[Image:Eulerangles.svg|right|thumb|300px|Euler angles - The xyz (fixed) system is shown in blue, the XYZ (rotated) system is shown in red. The line of nodes, labelled N, is shown in green.]]
+The [[orthogonal matrix]] (post-multiplying a column vector) corresponding to a clockwise/[[Right-hand_rule|left-handed]] rotation by the unit [[quaternion]] <math>q=q_0+iq_1+jq_2+kq_3</math> is given by the inhomogeneous expression
+
+:<math>\begin{bmatrix}
+ 1- 2(q_2^2 + q_3^2) &  2(q_1 q_2 - q_0 q_3) &  2(q_0 q_2 + q_1 q_3) \\
+2(q_1 q_2 + q_0 q_3) & 1 - 2(q_1^2 + q_3^2)  &  2(q_2 q_3 - q_0 q_1) \\
+2(q_1 q_3 - q_0 q_2) & 2( q_0 q_1 + q_2 q_3) &  1 - 2(q_1^2 + q_2^2)
+\end{bmatrix}</math>
+
+or equivalently, by the [[Homogeneous_coordinates|homogeneous]] expression
+
+:<math>\begin{bmatrix}
+q_0^2 + q_1^2 - q_2^2 - q_3^2 &  2(q_1 q_2 - q_0 q_3) &  2(q_0 q_2 + q_1 q_3) \\
+2(q_1 q_2 + q_0 q_3) & q_0^2 - q_1^2 + q_2^2 - q_3^2 &  2(q_2 q_3 - q_0 q_1) \\
+2(q_1 q_3 - q_0 q_2) & 2( q_0 q_1 + q_2 q_3) & q_0^2 - q_1^2 - q_2^2 + q_3^2 
+\end{bmatrix}</math>
+
+If <math>q_0+iq_1+jq_2+kq_3</math> is not a unit quaternion then the homogeneous form is still a scalar multiple of a rotation matrix, while the inhomogeneous form is in general no longer an orthogonal matrix. This is why in numerical work the homogeneous form is to be preferred if distortion is to be avoided.
+
+The [[orthogonal matrix]] (post-multiplying a column vector) corresponding to a clockwise/[[Right-hand_rule|left-handed]] rotation with [[Euler angles]] <math>\phi, \theta, \psi</math>, with '''x-y-z''' convention, is given by:
+
+:<math>\begin{bmatrix}
+\cos\theta \cos\psi & -\cos\phi \sin\psi + \sin\phi \sin\theta \cos\psi &   \sin\phi \sin\psi + \cos\phi \sin\theta \cos\psi \\
+\cos\theta \sin\psi &  \cos\phi \cos\psi + \sin\phi \sin\theta \sin\psi & -\sin\phi \cos\psi + \cos\phi \sin\theta \sin\psi \\
+-\sin\theta             &  \sin\phi \cos\theta                                          &   \cos\phi \cos\theta \\
+\end{bmatrix}</math>
+
+==== Conversion ====
+By combining the quaternion representations of the Euler rotations we get
+
+:<math>\mathbf{q} = R_z(\psi)R_y(\theta)R_x(\phi) = [\cos (\psi /2) + \mathbf{k}\sin (\psi /2)][\cos (\theta /2) + \mathbf{j}\sin (\theta /2)][\cos (\phi /2) + \mathbf{i}\sin (\phi /2)]
+</math>
+
+:<math> \mathbf{q} = \begin{bmatrix}
+\cos (\phi /2) \cos (\theta /2) \cos (\psi /2) +  \sin (\phi /2) \sin (\theta /2) \sin (\psi /2) \\
+\sin (\phi /2) \cos (\theta /2) \cos (\psi /2) -  \cos (\phi /2) \sin (\theta /2) \sin (\psi /2) \\
+\cos (\phi /2) \sin (\theta /2) \cos (\psi /2) +  \sin (\phi /2) \cos (\theta /2) \sin (\psi /2) \\
+\cos (\phi /2) \cos (\theta /2) \sin (\psi /2) -  \sin (\phi /2) \sin (\theta /2) \cos (\psi /2) \\
+\end{bmatrix}</math>
+
+For Euler angles we get:
+
+:<math>\begin{bmatrix}
+\phi \\ \theta \\ \psi
+\end{bmatrix} =
+\begin{bmatrix}
+\mbox{arctan} \frac {2(q_0 q_1 + q_2 q_3)} {1 - 2(q_1^2 + q_2^2)} \\
+\mbox{arcsin} (2(q_0 q_2 - q_3 q_1)) \\
+\mbox{arctan} \frac {2(q_0 q_3 + q_1 q_2)} {1 - 2(q_2^2 + q_3^2)}
+\end{bmatrix} </math>
+
+arctan and arcsin have a result between -Pi/2 and Pi/2. With three rotation between -Pi/2 and Pi/2 you can't have all possible orientations. You need to replace the arctan by atan2 to generate all the orientation.
+
+:<math>\begin{bmatrix}
+\phi \\ \theta \\ \psi
+\end{bmatrix} =
+\begin{bmatrix}
+\mbox{atan2}  (2(q_0 q_1 + q_2 q_3),1 - 2(q_1^2 + q_2^2)) \\
+\mbox{arcsin} (2(q_0 q_2 - q_3 q_1)) \\
+\mbox{atan2}  (2(q_0 q_3 + q_1 q_2),1 - 2(q_2^2 + q_3^2))
+\end{bmatrix} </math>
+
+==Relationship with Tait-Bryan angles==
+[[Image:plane.svg|thumb|right|200px|thumb|Tait-Bryan angles for an aircraft]]
+
+Similarly for Euler angles, we use the [[Tait-Bryan angles]] (in terms of [[flight dynamics]]):
+* Roll - <math>\phi</math>: rotation about the X-axis
+* Pitch - <math>\theta</math>: rotation about the Y-axis
+* Yaw - <math>\psi</math>: rotation about the Z-axis
+where the X-axis points forward, Y-axis to the right and Z-axis downward and in the example to follow the rotation occurs in the order yaw, pitch, roll (about body-fixed axes).
+
+== Singularities ==
+One must be aware of singularities in the Euler angle parametrization when the pitch approaches <math>\pm</math> 90° (north/south pole). These cases must be handled specially. The common name for this situation is [[gimbal lock]].
+
+Code to handle the singularities is derived on this site: [http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/ www.euclideanspace.com]
+
+==See also==
+
+*[[Rotation operator (vector space)]]
+*[[Quaternions and spatial rotation]]
+*[[Euler Angles]]
+*[[Rotation matrix]]
+
+[[Category:Rotational symmetry]]
+[[Category:Euclidean symmetries]]
+[[Category:3D computer graphics]]
+
+== External links ==
+* [http://www.j3d.org/matrix_faq/matrfaq_latest.html#Q60 Q60. How do I convert Euler rotation angles to a quaternion?] and related questions at The Matrix and Quaternions FAQ</body> </html>

@@ -1,0 +1,95 @@
+<html> <head> <title>Cell software development</title></head><body>'''Software development''' for the [[cell microprocessor]] involve a mixture of conventional development practices for the [[IBM POWER|POWER architecture]]-compatible PPU core, and novel software development challenges with regards to the functionally reduced SPU coprocessors.
+
+==Cell SDK==
+{{Cell microprocessor segments}}
+
+===Full system simulator===
+hacked ps3
+
+===GNU compiler toolchain===
+===IBM XL C/C++===
+===IBM Octopiler===
+====References====
+<!-- Correction: This article misstated the nature of the processor core in IBM's Cell. The processor core uses the same instruction set as the PowerPC 970, therefore letting it run the same software. The core is a fellow member of IBM's PowerPC AS family, but is not a PowerPC 970. -->
+* International Symposium on Code Generation and Optimization (CGO'06)
+
+==Linux on cell==
+An open source software-based strategy was adopted to accelerate the development of a Cell BE ecosystem and to provide an environment to develop Cell applications, including a GCC-based Cell compiler, binutils and a port of the Linux operating system.<ref name="research.ibm.com">{{cite web|url=http://www.research.ibm.com/people/m/mikeg/papers/2007_ieeecomputer.pdf|format=PDF|title=An Open Source Environment for Cell Broadband Engine System Software|date=June 2007}}</ref>
+
+==Software portability==
+===Adapting VMX for SPU===
+====Differences between VMX and SPU====
+The [[VMX]] technology is conceptually similar to the [[vector model]] provided by the [[SPU processors]], but there are many significant differences.
+
+{| class="wikitable" style="margin: 1em auto 1em auto" 
+|+ '''VMX to SPU Comparison'''{{ref|vmxrefman}}<!-- 333 pages --><br>''unfinished'' 
+! feature || VMX || SPU
+|- 
+! [[word (computer science)|word]] size 
+| 32 bits || 32 bits 
+|- 
+! number of [[register (computer science)|registers]]
+| 32 <!-- p.28/333 --> || 128 
+<!-- p.34/333 also shows 32 GP and 32 FP regs, are these part of VMX? --> 
+|-
+! register width 
+| 128 bit quadword <!-- p.28/333 --> || 128 bit quadword
+|-
+! [[integer]] formats 
+| 8, 16, 32 <!-- p.26/333 --> || 8, 16, 32, 64 <!-- checked: there is no doubleword add or mul instr. -->
+|-
+! saturation support 
+| yes <!-- p.26/333 --> || no <!-- check this --> 
+|- 
+! byte ordering 
+| big (default), little <!--p.44/333 --> || big endian 
+|-
+! [[floating point (computer science)|floating point]] modes 
+| Java, non-Java || single precision, IEEE double
+|-
+! [[memory (computer science)|memory]] alignment 
+| quadword only || quadword only 
+|}
+
+The VMX ''[[Java (programming language)|Java]] mode'' conforms to the [[Java Language Specification]] 1 subset of the default [[IEEE Standard]], extended to include IEEE and C9X compliance where the Java standard falls silent. In a typical implementation, non-java mode converts [[denormal]] values to zero but java mode traps into an emulator when the [[processor (computer science)|processor]] encounters such a value. ''Non-Java mode'' might or might not be faster, might or might not be non-compliant.
+
+Quadword (ie Four times a 32 bit word or 128 bits) alignment is on 16 Byte (128 bit) boundaries (ie the low four address bits are zero).
+
+The IBM ''PPE Vector/SIMD manual'' does not define operations for double precision floating point, though IBM has published material implying certain double precision performance numbers associated with the Cell PPE VMX technology.
+
+====Intrinsics====
+This feature is used to have SPU's assembly language instructions in C/C++. Instructions that differ only on the type of operand (such as a, ai, ah, ahi, fa, and dfa for addition) are represented by a single C/C++ intrinsic which selects the proper instruction based on the type of the operand.
+
+====Porting VMX code for SPU====
+There is a great body of code which has been developed for other IBM [[Power processors]] that could potentially be adapted and recompiled to run on the SPU. This code base includes VMX code that runs under the [[PowerPC]] version of [[Apple Computer|Apple's]] [[Mac OS X]], where it is better known as [[Altivec]]. Depending on how many VMX specific features are involved, the adaptation involved can range anywhere from straightforward, to onerous, to completely impractical. The most important workloads for the SPU generally map quite well.
+
+In some cases it is possible to port existing VMX code directly. If the VMX code is highly generic (makes few assumptions about the execution environment) the translation can be relatively straightforward. The two processors specify a different [[binary format|binary code format]], so recompilation is required at a minimum. Even where [[Instruction (computer science)|instructions]] exist with the same behaviours, they do not have the same instruction names, so this must be mapped as well. IBM provides compiler intrinsics which take care of this mapping transparently as part of the development toolkit.
+
+In many cases, however, a directly equivalent instruction does not exist. The workaround might be obvious or it might not. For example, if saturation behaviour is required on the SPU, it can be coded by adding additional SPU instructions to accomplish this (with some loss of efficiency). At the other extreme, if Java floating point semantics are required, this is almost impossible to achieve on the SPU processor. To achieve the same [[computation]] on the SPU might require an entirely different [[algorithm]] which needs to be written from scratch.
+
+The most important conceptual similarity between VMX and the SPU architecture is supporting the same [[vectorization model]]. For this reason, most algorithms successfully adapted to Altivec will usually adapt successfully to the SPU architecture as well.
+
+==Local store exploitation==
+Local stores can be exploited using a variety of strategies.
+
+Applications with high locality, such as dense matrix computations represent an ideal workload class for the local stores in Cell BE.
+<ref>{{cite web|url=http://www.research.ibm.com/people/m/mikeg/papers/2006_ieeemicro.pdf|format=PDF|title=Synergistic Processing in Cell's Multicore Architecture|date=March 2006}}</ref> 
+
+Streaming computations can be efficiently accommodated using software-pipelining of memory block transfers using a multi-buffering strategy.<ref name="research.ibm.com"/>
+
+The software cache offers a solution for random accesses.<ref>{{cite web|url=http://www.research.ibm.com/journal/sj/451/eichenberger.pdf|format=PDF|title=Using advanced compiler technology to exploit the performance of the Cell Broadband Engine architecture|date=January 2006}}</ref>
+
+More sophisticated applications can use multiple strategies for different data types.<ref>{{cite web|url=http://www.research.ibm.com/cell/papers/2008_vee_cellgc.pdf|format=PDF|title=Cell GC: Using the Cell Synergistic Processor as a Garbage Collection Coprocessor |date=March 2008}}</ref>
+
+==Compiler-mediated parallelism==
+===References===
+* [http://www.research.ibm.com/cell/ The Cell Project at IBM Research]
+* [http://cag.csail.mit.edu/crg/papers/eichenberger05cell.pdf Optimizing Compiler for a CELL Processor]
+* [http://www.research.ibm.com/journal/sj/451/eichenberger.html Using advanced compiler technology to exploit the performance of the Cell Broadband Engine architecture] <!-- repackaging of Eichberger ''et al.'' above -->
+* [http://domino.research.ibm.com/comm/research_projects.nsf/pages/cellcompiler.index.html Compiler Technology for Scalable Architectures]
+
+==References==
+<references/>
+
+{{DEFAULTSORT:Cell Software Development}}
+[[Category:Cell BE architecture]]</body> </html>

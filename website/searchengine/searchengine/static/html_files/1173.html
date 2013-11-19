@@ -1,0 +1,31 @@
+<html> <head> <title>Affinity mask</title></head><body>{{Context|date=October 2009}}
+
+An '''affinity mask''' is a [[mask (computing)|bit mask]] indicating what [[Central processing unit|processor(s)]] a [[thread (computer science)|thread]] or [[process (computing)|process]] should be run on by the [[Scheduling (computing)|scheduler]] of an [[operating system]]. Setting the affinity mask for certain processes running under Windows can be useful as there are several system processes (especially on domain controllers) that are restricted to the first CPU / Core. So, excluding the first CPU might lead to better application performance.
+
+== Windows API ==
+Thread affinity in [[Microsoft Windows]] can be specified with the ''SetThreadAffinityMask'' function. Forcing of each [[OpenMP]] thread to distinctive cores in Windows can be accomplished by means of the following [[C (programming language)|C]] code:
+<source lang="c">
+ #include <windows.h>
+ #include <omp.h>
+ // Set OpenMP thread affinity
+ void set_thread_affinity () {
+     #pragma omp parallel default(shared)
+     {
+     DWORD_PTR mask = (1 << omp_get_thread_num());
+     SetThreadAffinityMask( GetCurrentThread(), mask );
+     }
+ }
+</source>
+
+== See also ==
+* [[Processor affinity]]
+
+== External links ==
+*[http://msdn.microsoft.com/en-us/library/ms686247(VS.85).aspx MSDN article on SetThreadAffinityMask function]
+*[http://www.linuxcommand.org/man_pages/taskset1.html Taskset, a tool to set the affinity mask on Linux]
+*[http://cpubalancer.brels.net/ CPU Balancer, a free, open-source utility that distributes Windows XP processes uniformly over logical processors using the affinity mask]
+
+[[Category:Scheduling (computing)]]
+
+
+{{Comp-sci-stub}}</body> </html>

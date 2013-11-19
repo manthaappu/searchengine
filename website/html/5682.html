@@ -1,0 +1,71 @@
+<html> <head> <title>Cel-shaded animation</title></head><body>{{Refimprove|date=March 2009}}[[Image:Toon-shader.jpg|thumb|312px|A representation of a space suit from [[The Adventures of Tintin|Tintin]]'s [[Explorers on the Moon]] with a basic cel-shader (also known as a ''toon shader'') and border detection.]]
+'''Cel-shaded animation''' (also known as '''Cel shading''' or '''Toon shading''') is a type of [[non-photorealistic rendering]] designed to make [[computer graphics]] appear to be hand-drawn. Cel-[[Shader|shading]] is often used to mimic the style of a [[comic book]] or [[cartoon]]. It is a somewhat recent addition to computer graphics, most commonly turning up in [[video game]]s. However, the end result of cel-shading has a very simplistic feel like that of [[traditional animation|hand-drawn animation]]. The name comes from the clear sheets of acetate, called [[cel]]s, which are painted on for use in traditional 2D animation, such as [[Walt Disney's The Classics|Disney classics]].<ref>[http://www.celshader.com/FAQ.html Celshader.com FAQ] Retrieved August 2, 2005.</ref>
+
+== Process ==
+The cel-shading process starts with a typical [[3D computer graphics#Modeling|3D model]]. Where cel-shading differs from conventional rendering is in its use of non-photorealistic lighting. Conventional (smooth) lighting values are calculated for each pixel and then mapped to a small number of discrete shades to create the characteristic flat look – where the shadows and highlights appear more like blocks of color rather than mixed in a smooth way.
+
+Black "ink" outlines and contour lines can be created using a variety of methods. One popular method is to first render a black outline, slightly larger than the object itself. [[Hidden surface determination|Backface culling]] is inverted and the back-facing triangles are drawn in black. To dilate the silhouette, these back faces may be drawn in [[Wire frame model|wireframe]] multiple times with slight changes in translation. Alternately, back-faces may be rendered solid-filled, with their vertices translated along their vertex normals in a [[vertex shader]]. After drawing the outline, back-face culling is set back to normal to draw the shading and optional textures of the object. Finally, the image is composited via [[Z-buffering]], as the back-faces always lie deeper in the scene than the front-faces. The result is that the object is drawn with a black outline and interior contour lines. Popularly, this "ink" outline applied to animation and games is what’s called cel shading, while originally the term referred to the shading technique, regardless of whether outline is being applied or not.
+
+The [[Utah teapot]] rendered using cel-shading:
+
+[[Image:Celshading teapot large.png|700px|The Utah Teapot rendered using cel-shading.]]
+
+# The back faces are drawn with thick lines
+# The object is drawn with a basic texture
+# Shading
+
+Steps 2 and 3 can be combined using multi-texturing (see [[texture mapping]]).
+
+Another outlining technique is to use 2D image-processing. First, the scene is rendered (with cel-shading) to a screen-sized color texture:
+
+[[Image:Cel shading no outlines.png|250px]]
+
+Then, the scene's depth and world-space surface normal information are rendered to screen-sized textures:
+
+[[Image:Cel shading depth.png|250px]]
+
+[[Image:Cel shading normals.png|250px]]
+
+A [[Sobel filter]] or similar edge-detection filter is applied to the normal/depth textures to generate an edge texture. Texels on detected edges are black, while all other texels are white:
+
+[[Image:Cel shading edge detection.png|250px]]
+
+Finally, the edge texture and the color texture are composited to produce the final rendered image:
+
+[[Image:Cel shading composite final image.png|800px]]
+
+==References==
+{{Reflist}}
+
+==See also==
+*[[List of cel-shaded video games]]
+
+==External links==
+* [http://www.celshading.com/ CelShading.com]. More information on 3D cel-shading including an image gallery.
+* [http://shirowproject.com/ Shirowproject.com]. filmic quality cel shaded project inspired by Ghost in the Shell
+* [http://dreamcast.ign.com/articles/163/163512p1.html IGN: ''Jet Set Radio'' review]. Retrieved August 4, 2005.
+* [http://www.gamedev.net/reference/articles/article1438.asp GameDev.net - Cel-Shading]. Retrieved August 5, 2005.
+
+{{Animation}}
+
+{{DEFAULTSORT:Cel-Shaded Animation}}
+[[Category:Animation techniques]]
+[[Category:Cel-shaded animation| ]]
+[[Category:Computer animation]]
+[[Category:Shading]]
+[[Category:Video game graphics]]
+
+[[ca:Cel shading]]
+[[de:Cel Shading]]
+[[es:Cel shading]]
+[[fr:Ombrage de celluloïd]]
+[[it:Animazione cel-shaded]]
+[[nl:Cel Shading]]
+[[ja:トゥーンレンダリング]]
+[[no:Cel-shaded animation]]
+[[pl:Cel-shading]]
+[[pt:Cel shading]]
+[[ru:Сэл-шейдинг]]
+[[fi:Cel-shading]]
+[[sv:Cel-shading]]
+[[th:เซล (คอมพิวเตอร์กราฟิกส์)]]</body> </html>

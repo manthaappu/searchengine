@@ -1,0 +1,92 @@
+<html> <head> <title>Bramble-Hilbert lemma</title></head><body>In [[mathematics]], particularly [[numerical analysis]], the '''Bramble-Hilbert [[lemma (mathematics)|lemma]]''', named after [[James H. Bramble]] and [[Stephen R. Hilbert]], bounds the [[approximation error|error]] of an [[approximation]] of a [[function (mathematics)|function]] <math>\textstyle u</math> by a [[polynomial]] of order at most <math>\textstyle m-1</math> in terms of [[derivative (mathematics)|derivatives]] of <math>\textstyle u</math> of order <math>\textstyle m</math>. Both the error of the approximation and the derivatives of <math>\textstyle u</math> are measured by [[Lp space|<math>\textstyle L^{p}</math> norms]] on a [[bounded]] [[domain]] in <math>\textstyle \mathbb{R}^{n}</math>. This is similar to classical numerical analysis, where, for example, the error of [[linear interpolation]] <math>\textstyle u</math> can be bounded using the second derivative of <math>\textstyle u</math>. However, the Bramble-Hilbert lemma applies in any number of dimensions, not just one dimension, and the approximation error and the derivatives of <math>\textstyle u</math> are measured by more general norms involving averages, not just the [[maximum norm]].
+
+Additional assumptions on the domain are needed for the Bramble-Hilbert lemma to hold. Essentially, the [[Boundary (topology)|boundary]] of the domain must be "reasonable". For example, domains that have a spike or a slit with zero angle at the tip are excluded. [[Lipschitz domain]]s are reasonable enough, which includes [[Convex set|convex]] domains and domains with [[continuously differentiable]] boundary. 
+
+The main use of the Bramble-Hilbert lemma is to prove bounds on the error of interpolation of function <math>\textstyle u</math> by an operator that preserves polynomials of order up to <math>\textstyle m-1</math>, in terms of the derivatives of <math>\textstyle u</math> of order <math>\textstyle m</math>. This is an essential step in error estimates for the [[finite element method]]. The Bramble-Hilbert lemma is applied there on the domain consisting of one element.
+
+==The one dimensional case==
+
+Before stating the lemma in full generality, it is useful to look at some simple special cases. In one dimension and for a function <math>\textstyle u</math> that has <math>\textstyle m</math> derivatives on interval <math>\textstyle \left(  a,b\right)  </math>, the lemma reduces to
+
+:<math> \inf_{v\in P_{m-1}}\bigl\Vert u^{\left(  k\right)  }-v^{\left(  k\right) }\bigr\Vert_{L^{p}\left(  a,b\right)  }\leq C\left(  m\right)  \left( b-a\right)  ^{m-k}\bigl\Vert u^{\left(  m\right)  }\bigr\Vert_{L^{p}\left( a,b\right)  }, </math>
+
+where <math>\textstyle P_{m-1}</math> is the space of all polynomials of order at most <math>\textstyle m-1</math>.
+
+In the case when <math>\textstyle p=\infty</math>, <math>\textstyle m=2</math>, <math>\textstyle k=0</math>, and <math>\textstyle u</math> is twice differentiable, this means that there exists a polynomial <math>\textstyle v</math> of degree one such that for all <math>\textstyle x\in\left(  a,b\right)  </math>,
+
+:<math> \left\vert u\left(  x\right)  -v\left(  x\right)  \right\vert \leq C\left( b-a\right)  ^{2}\sup_{\left(  a,b\right)  }\left\vert u^{\prime\prime }\right\vert. </math>
+
+This inequality also follows from the well-known error estimate for linear interpolation by choosing <math>\textstyle v</math> as the linear interpolant of <math>\textstyle u</math>.
+
+==Statement of the lemma==
+
+Suppose <math>\textstyle \Omega</math> is a bounded domain in <math>\textstyle \mathbb{R}^{n}</math>, <math>\textstyle n\geq1</math>, with boundary <math>\textstyle \partial\Omega</math> and [[diameter]] <math>\textstyle d</math>. <math>\textstyle W_{p}^{k}(\Omega)</math> is the [[Sobolev space]] of all function <math>\textstyle u</math> on <math>\textstyle \Omega</math> with [[weak derivative]]s <math>\textstyle D^{\alpha}u</math> of order <math>\textstyle \left\vert \alpha\right\vert </math> up to <math>\textstyle k</math> in <math>\textstyle L^{p}(\Omega)</math>. Here, <math>\textstyle \alpha=\left(  \alpha_{1},\alpha_{2},\ldots,\alpha_{n}\right)  </math> is a [[multiindex]], <math>\textstyle \left\vert \alpha\right\vert =</math> <math>\textstyle \alpha_{1}+\alpha_{2}+\cdots+\alpha_{n}</math> and <math>\textstyle D^{\alpha }</math> denotes the derivative <math>\textstyle \alpha_{1}</math> times with respect to <math>\textstyle x_{1}</math>, <math>\textstyle \alpha_{2}</math> times with respect to <math>\textstyle \alpha_{2}</math>, and so on. The Sobolev seminorm on <math>\textstyle W_{p}^{m}(\Omega)</math> consists of the <math>\textstyle L^{p}</math> norms of the highest order derivatives,
+
+:<math> \left\vert u\right\vert _{W_{p}^{m}(\Omega)}=\left(  \sum_{\left\vert \alpha\right\vert =m}\left\Vert D^{\alpha}u\right\Vert _{L^{p}(\Omega)}^{p}\right)  ^{1/p}\text{ if }1\leq p<\infty </math>
+
+and
+
+:<math> \left\vert u\right\vert _{W_{\infty}^{m}(\Omega)}=\max_{\left\vert \alpha\right\vert =m}\left\Vert D^{\alpha}u\right\Vert _{L^{\infty}(\Omega)}</math>
+
+<math>\textstyle P_{k}</math> is the space of all polynomials of order up to <math>\textstyle k</math> on <math>\textstyle \mathbb{R}^{n}</math>. Note that <math>\textstyle D^{\alpha}v=0</math> for all <math>\textstyle v\in P_{m-1}</math>. and <math>\textstyle \left\vert \alpha\right\vert =m</math>, so <math>\textstyle \left\vert u+v\right\vert _{W_{p}^{m}(\Omega)}</math> has the same value for any <math>\textstyle v\in P_{k-1}</math>.
+
+'''Lemma''' (Bramble and Hilbert) Under additional assumptions on the domain <math>\textstyle \Omega</math>, specified below, there exists a constant <math>\textstyle C=C\left( m,\Omega\right)  </math> independent of <math>\textstyle p</math> and <math>\textstyle u</math> such that for any <math>\textstyle u\in W_{p}^{k}(\Omega)</math> there exists a polynomial <math>\textstyle v\in P_{m-1}</math> such that for all <math>\textstyle k=0,\ldots,m</math>,
+
+:<math> \left\vert u-v\right\vert _{W_{p}^{k}(\Omega)}\leq Cd^{m-k}\left\vert u\right\vert _{W_{p}^{m}(\Omega)}. </math>
+
+==The original result==
+
+The lemma was proved by Bramble and Hilbert <ref name="Bramble-1970-ELF"> J. H. Bramble and S. R. Hilbert. Estimation of linear functionals on Sobolev spaces with application to Fourier transforms and spline interpolation. ''SIAM J. Numer. Anal.'', 7:112--124, 1970.
+
+</ref> under the assumption that <math>\textstyle \Omega</math> satisfies the [[strong cone property]]; that is, there exists a finite open covering <math>\textstyle \left\{  O_{i}\right\}  </math> of <math>\textstyle \partial\Omega</math> and corresponding cones <math>\textstyle \{C_{i}\}</math> with vertices at the origin such that <math>\textstyle x+C_{i}</math> is contained in <math>\textstyle \Omega</math> for any <math>\textstyle x</math> <math>\textstyle \in\Omega\cap O_{i}</math>.
+
+The statement of the lemma here is a simple rewriting of the right-hand inequality stated in Theorem 1 in <ref name="Bramble-1970-ELF"/>. The actual statement in <ref name="Bramble-1970-ELF"/> is that the norm of the factorspace <math>\textstyle W_{p}^{m}(\Omega)/P_{m-1}</math> is equivalent to the <math>\textstyle W_{p}^{m}(\Omega)</math> seminorm. The <math>\textstyle W_{p}^{m}(\Omega)</math> norm is not the usual one but the terms are scaled with <math>\textstyle d</math> so that the right-hand inequality in the equivalence of the seminorms comes out exactly as in the statement here.
+
+In the original result, the choice of the polynomial is not specified, and the value of constant and its dependence on the domain <math>\textstyle \Omega</math> cannot be determined from the proof.
+
+==A constructive form==
+
+An alternative result was given by Dupont and Scott <ref name="Dupont-1980-PAF"> Todd Dupont and Ridgway Scott. Polynomial approximation of functions in Sobolev spaces. ''Math. Comp.'', 34(150):441--463, 1980.</ref> under the assumption that the domain <math>\textstyle \Omega</math> is [[star-shaped]]; that is, there exists a ball <math>\textstyle B</math> such that for any <math>\textstyle x\in\Omega</math>, the closed [[convex hull]] of <math>\textstyle \left\{  x\right\}  \cup B</math> is a subset of <math>\textstyle \Omega</math>. Suppose that <math>\textstyle \rho _{\max}</math> is the supremum of the diameters of such balls. The ratio <math>\textstyle \gamma=d/\rho_{\max}</math> is called the chunkiness of <math>\textstyle \Omega</math>.
+
+Then the lemma holds with the constant <math>\textstyle C=C\left(  m,n,\gamma\right)  </math>, that is, the constant depends on the domain <math>\textstyle \Omega</math> only through its chunkiness <math>\textstyle \gamma</math> and the dimension of the space <math>\textstyle n</math>. In addition, <math>v</math> can be chosen as <math>v=Q^{m}u</math>, where <math>\textstyle Q^{m}u</math> is the averaged [[Taylor polynomial]], defined as
+
+:<math> Q^{m}u=\int\limits_{B}T_{y}^{m}u\left(  x\right)  \psi\left(  y\right)  dx, </math>
+
+where
+
+:<math> T_{y}^{m}u\left(  x\right)  =\sum\limits_{k=0}^{m-1}\sum\limits_{\left\vert \alpha\right\vert =k}\frac{1}{\alpha!}D^{\alpha}u\left(  y\right)  \left( x-y\right)  ^{\alpha}</math>
+
+is the Taylor polynomial of degree at most <math>\textstyle m-1</math> of <math>\textstyle u</math> centered at <math>\textstyle y</math> evaluated at <math>\textstyle x</math>, and <math>\textstyle \psi\geq0</math> is a function that has derivatives of all orders, equals to zero outside of <math>\textstyle B</math>, and such that
+
+:<math> \int\limits_{B}\psi dx=1. </math>
+
+Such function <math>\textstyle \psi</math> always exists.
+
+For more details and a tutorial treatment, see the monograph by Brenner and Scott <ref name="Brenner-2002-MTF"> Susanne C. Brenner and L. Ridgway Scott. ''The mathematical theory of finite element methods'', volume 15 of ''Texts in Applied Mathematics''. Springer-Verlag, New York, second edition, 2002. ISBN 0-387-95451-1
+
+</ref>. The result can be extended to the case when the domain <math>\textstyle \Omega</math> is the union of a finite number of star-shaped domains, which is slightly more general than the strong cone property, and other polynomial spaces than the space of all polynomials up to a given degree.<ref name="Dupont-1980-PAF"/>
+
+==Bound on linear functionals==
+
+This result follows immediately from the above lemma, and it is also called sometimes the Bramble-Hilbert lemma, for example by [[Philippe G. Ciarlet|Ciarlet]] <ref name="Ciarlet-2002-FEM"> [[Philippe G. Ciarlet]]. ''The finite element method for elliptic problems'', volume 40 of ''Classics in Applied Mathematics''. Society for Industrial and Applied Mathematics (SIAM), Philadelphia, PA, 2002. Reprint of the 1978 original [North-Holland, Amsterdam]. ISBN 0-89871-514-8
+
+</ref>. It is essentially Theorem 2 from <ref name="Bramble-1970-ELF"/>.
+
+'''Lemma''' Suppose that <math>\textstyle \ell</math> is a [[continuous linear functional]] on <math>\textstyle W_{p}^{m}(\Omega)</math> and <math>\textstyle \left\Vert \ell\right\Vert _{W_{p}^{m}(\Omega )^{^{\prime}}}</math> its [[dual norm]]. Suppose that <math>\textstyle \ell\left(  v\right)  =0</math> for all <math>\textstyle v\in P_{m-1}</math>. Then there exists a constant <math>\textstyle C=C\left(  \Omega\right)  </math> such that
+
+:<math> \left\vert \ell\left(  u\right)  \right\vert \leq C\left\Vert \ell\right\Vert _{W_{p}^{m}(\Omega)^{^{\prime}}}\left\vert u\right\vert _{W_{p}^{m}(\Omega)}. </math>
+
+==References==
+<!-- this 'empty' section displays references defined elsewhere -->
+{{reflist}}
+
+==External links==
+* {{Springer|id=B/b130220|author=Raytcho D. Lazarov|title=Bramble–Hilbert lemma}}
+* http://aps.arxiv.org/abs/0710.5148 - Jan Mandel: The Bramble-Hilbert Lemma
+
+{{DEFAULTSORT:Bramble-Hilbert Lemma}}
+[[Category:Lemmas]]
+[[Category:Approximation theory]]
+[[Category:Finite element method]]
+
+[[de:Bramble-Hilbert-Lemma‎]]</body> </html>

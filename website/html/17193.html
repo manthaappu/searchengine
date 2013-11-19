@@ -1,0 +1,38 @@
+<html> <head> <title>Hyperprior</title></head><body>In [[Bayesian statistics]], a '''hyperprior''' is a [[prior distribution]] on a [[hyperparameter]], that is, on a parameter of a [[prior distribution]].
+
+As with the term ''hyperparameter,'' the use of ''hyper'' is to distinguish it from a prior distribution of a parameter of the model for the underlying system. They arise particularly in the use of [[conjugate prior]]s.
+
+For example, if one is using a [[beta distribution]] to model the distribution of the parameter ''p'' of a [[Bernoulli distribution]], then:
+
+* The Bernoulli distribution (with parameter ''p'') is the ''model'' of the underlying system;
+* ''p'' is a ''parameter'' of the underlying system (Bernoulli distribution);
+* The beta distribution (with parameters ''α'' and ''β'') is the ''prior'' distribution of ''p'';
+* ''α'' and ''β'' are parameters of the prior distribution (beta distribution), hence ''hyperparameters;''
+* A prior distribution of ''α'' and ''β'' is thus a ''hyperprior.''
+
+In principle, one can iterate the above: if the hyperprior itself has parameters, these may be called hyperhyperparameters, and so forth.
+
+One can analogously call the posterior distribution on the hyperparameter the hyperposterior, and, if these are in the same family, call them conjugate hyperdistributions or a conjugate hyperprior. However, this rapidly becomes very abstract and removed from the original problem.
+
+== Purpose ==
+Hyperpriors, like conjugate priors, are a computational convenience – they do not change the process of Bayesian inference, but simply allow one to more easily describe and compute with the prior.
+
+=== Uncertainty ===
+Firstly, use of a hyperprior allows one to express uncertainty in a hyperparameter: taking a fixed prior is an assumption, varying a hyperparameter of the prior allows one to do sensitivity analysis on this assumption, and taking a distribution on this hyperparameter allows one to express uncertainty in this assumption: "assume that the prior is of this form (this parametric family), but that we are uncertain as to precisely what the values of the parameters should be".
+
+=== Mixture distribution ===
+More abstractly, if one uses a hyperprior, then the prior distribution (on the parameter of the underlying model) itself is a [[mixture density]]: it is the weighted average of the various prior distributions (over different hyperparameters), with the hyperprior being the weighting. This adds additional possible distributions (beyond the parametric family one is using), because parametric families of distributions are generally not [[convex set]]s – as a mixture density is a [[convex combination]] of distributions, it will in general lie ''outside'' the family.
+For instance, the mixture of two normal distributions is not a normal distribution: if one takes different means (sufficiently distant) and mix 50% of each, one obtains a bimodal distribution, which is thus not normal. In fact, the convex hull of normal distributions is dense in all distributions, so in some cases, you can arbitrarily closely approximate a given prior by using a family with a suitable hyperprior.
+
+What makes this approach particularly useful is if one uses conjugate priors: individual conjugate priors have easily computed posteriors, and thus a mixture of conjugate priors is the same mixture of posteriors: one only needs to know how each conjugate prior changes.
+Using a single conjugate prior may be too restrictive, but using a mixture of conjugate priors may give one the desired distribution in a form that is easy to compute with.
+This is similar to decomposing a function in terms of eigenfunctions – see [[Conjugate prior#Analogy with eigenfunctions|Conjugate prior: Analogy with eigenfunctions]].
+
+=== Dynamical system ===
+A hyperprior is a distribution on the space of possible hyperparameters. If one is using conjugate priors, then this space is preserved by moving to posteriors – thus as data arrives, the distribution changes, but remains on this space: as data arrives, the distribution evolves as a [[dynamical system]] (each point of hyperparameter space evolving to the updated hyperparameters), over time converging, just as the prior itself converges.
+
+== References ==
+* Bernardo, J.M., Smith, A.F.M. (2000) Bayesian Theory. Wiley. ISBN 0-471-49464-X
+
+[[Category:Bayesian statistics]]
+[[Category:Statistical terminology]]</body> </html>

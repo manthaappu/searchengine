@@ -1,0 +1,113 @@
+<html> <head> <title>Word wrap</title></head><body>{{Selfref|For word wrap handling on Wikipedia, see [[Wikipedia:Line break handling]].}}
+
+In text display, '''line wrap''' is the feature of continuing on a new line when a line is full, such that each line fits in the viewable window, allowing text to be read from top to bottom without any horizontal [[scrolling]].
+
+'''Word wrap''' is the additional feature  of most [[text editor]]s, [[word processors]], and [[web browser]]s, of breaking lines between and not within words, except when a single word is longer than a line.
+
+It is usually done [[on the fly]] when viewing or printing a document, so no line break code is manually entered, or stored.{{Citation needed|date=October 2009}} If the user changes the margins, the editor will either automatically reposition the line breaks to ensure that all the text will "flow" within the margins and remain visible, or provide the typist some convenient way to reposition the line breaks.
+
+A [[soft return]] is the break resulting from line wrap or word wrap, whereas a [[hard return]] is an intentional break, creating a new [[paragraph]].
+
+==Word boundaries, hyphenation, and hard spaces==
+The soft returns are usually placed after the ends of complete words, or after the punctuation that follows complete words. However, word wrap may also occur following a [[hyphen]].
+
+Word wrap following hyphens is sometimes not desired, and can be avoided by using a so-called non-breaking hyphen instead of a regular hyphen. On the other hand, when using word processors, invisible hyphens, called soft hyphens, can also be inserted inside words so that word wrap can occur following the soft hyphens.
+
+Sometimes, word wrap is not desirable between words. In such cases, word wrap can usually be avoided by using a [[hard space]] or [[non-breaking space]] between the words, instead of regular spaces.
+
+==Word wrapping in text containing Chinese, Japanese, and Korean==
+In [[Chinese language|Chinese]], [[Japanese language|Japanese]], and [[Korean language|Korean]], each [[Han character]] is normally considered a word, and therefore word wrapping can usually occur before and after any Han character.
+
+Under certain circumstances, however, word wrapping is not desired. For instance,
+* word wrapping might not be desired within personal names, and
+* word wrapping might not be desired within any compound words (when the text is flush left but only in some styles).
+
+Most existing word processors and [[typesetting]] software cannot handle either of the above scenarios.
+
+[[CJK]] punctuation may or may not follow rules similar to the above-mentioned special circumstances. It is up to [[Line breaking rules in East Asian language|line breaking rules in CJK]].
+
+A special case of line breaking rules in CJK, however, always applies: line wrap must never occur inside the CJK dash and ellipsis. Even though each of these punctuation marks must be represented by two characters due to a limitation of all existing [[character encoding]]s, each of these are intrinsically a single punctuation mark that is two [[em (typography)|em]]s wide, not two one-em-wide punctuation marks.
+
+==Algorithm==
+Word wrapping is an optimization problem. Depending on what needs to be optimized for, different algorithms are used.
+
+=== Minimum length ===
+A simple way to do word wrapping is to use a [[greedy algorithm]] that puts as many words on a line as possible, then moving on to the next line to do the same until there are no more words left to place. This method is used by many modern word processors, such as [[Open Office]] and [[Microsoft Word]]. This algorithm is optimal in that it always puts the text on the minimum number of lines. The following pseudocode implements this algorithm:
+
+ SpaceLeft := LineWidth
+ for each Word in Text
+     if Width(Word) > SpaceLeft
+         insert line break before Word in Text
+         SpaceLeft := LineWidth - Width(Word)
+     else
+         SpaceLeft := SpaceLeft - (Width(Word) + SpaceWidth)
+
+Where <code>LineWidth</code> is the width of a line, <code>SpaceLeft</code> is the remaining width of space on the line to fill, <code>SpaceWidth</code> is the width of a single space character, <code>Text</code> is the input text to iterate over and <code>Word</code> is a word in this text.
+
+=== Minimum raggedness ===
+
+A different algorithm, used in [[TeX]], minimizes the square of the space at the end of lines to produce a more aesthetically pleasing result. The algorithm above is not optimal with respect to this, as the following example demonstrates:
+
+ aaa bb cc ddddd 
+
+If the cost function of a line is defined by the remaining space squared, the greedy algorithm would yield a sub-optimal solution for the problem (for simplicity, consider a [[fixed-width]] font and line width 6):
+
+ ------    Line width: 6
+ aaa bb    Remaining space: 0 (cost = 0 squared = 0)
+ cc        Remaining space: 4 (cost = 4 squared = 16)
+ ddddd     Remaining space: 1 (cost = 1 squared = 1)
+
+Summing to a total cost of 17, while an optimal solution would look like this:
+
+ ------    Line width: 6
+ aaa       Remaining space: 3 (cost = 3 squared = 9)
+ bb cc     Remaining space: 1 (cost = 1 squared = 1)
+ ddddd     Remaining space: 1 (cost = 1 squared = 1)
+
+The difference here is that the first line is broken before <code>bb</code> instead of after it, yielding a better right margin and a lower cost 11.
+
+To solve the problem we need to define a cost function <math>c(i, j)</math> that computes the cost of a line consisting of the words <math>\text{Word}[i]</math> to <math>\text{Word}[j]</math> from the text:
+
+:<math>c(i, j) = \left(\text{LineWidth}-(j-i)\cdot\text{OneSpaceWidth}-\sum_{k=i}^j \text{WidthOf}(\text{Word}[k])\right)^P.</math>
+
+Where <math>P</math> typically is <math>2</math> or <math>3</math>. There are some special cases to consider: If the result is negative (that is, the sequence of words cannot fit on a line), the cost needs to reflect the cost of [[Tracking (typography)|tracking]] or condensing the text to fit; if that is not possible, it needs to return <math>\infty</math>. 
+
+The cost of the optimal solution can be defined as a [[recurrence]]:
+
+:<math>f(j) = \begin{cases} 
+  c(1, j) & \text{if } c(1, j) < \infty, \\ 
+  \displaystyle \min_{1 \leq k < j} \big(f(k) + c(k + 1, j)\big) & \text{if } c(1, j) = \infty.
+\end{cases}</math>
+
+This can be efficiently implemented using [[dynamic programming]], for a time and space complexity of <math>O(j^2)</math>.
+
+== See also ==
+
+* [[Word divider]]
+* [[Non-breaking space]]
+* [[Zero-width space]]
+
+== External links ==
+=== Knuth's algorithm ===
+* [http://defoe.sourceforge.net/folio/knuth-plass.html "Knuth & Plass line-breaking Revisited"]
+* [http://oedipus.sourceforge.net/texlib/ "tex_wrap": "Implements TeX's algorithm for breaking paragraphs into lines."] Reference: "Breaking Paragraphs into Lines", D.E. Knuth and M.F. Plass, chapter 3 of _Digital Typography_, CSLI Lecture Notes #78.
+* [http://search.cpan.org/perldoc?Text::Reflow Text::Reflow - Perl module for reflowing text files using Knuth's paragraphing algorithm.] "The reflow algorithm tries to keep the lines the same length but also tries to break at punctuation, and avoid breaking within a proper name or after certain connectives ("a", "the", etc.). The result is a file with a more "ragged" right margin than is produced by fmt or Text::Wrap but it is easier to read since fewer phrases are broken across line breaks."
+* [http://www.nabble.com/Initial-soft-hyphen-support-t2970713.html adjusting the Knuth algorithm] to recognize the [[Hyphen#Hyphens_in_computing|"soft hyphen"]].
+* [http://wiki.apache.org/xmlgraphics-fop/KnuthsModel Knuth's breaking algorithm.] "The detailed description of the model and the algorithm can be found on the paper "Breaking Paragraphs into Lines" by Donald E. Knuth, published in the book "Digital Typography" (Stanford, California: Center for the Study of Language and Information, 1999), (CSLI Lecture Notes, no. 78.)" ; part of [http://wiki.apache.org/xmlgraphics-fop/GoogleSummerOfCode2006/FloatsImplementationProgress Google Summer Of Code 2006]
+* [http://citeseer.ist.psu.edu/23630.html "Bridging the Algorithm Gap: A Linear-time Functional Program for Paragraph Formatting"] by Oege de Moor, Jeremy Gibbons, 1999
+
+=== Other word-wrap links ===
+* [http://www.codecomments.com/message230162.html the reverse problem -- picking columns just wide enough to fit (wrapped) text]
+* [http://api.kde.org/4.x-api/kdelibs-apidocs/kdeui/html/classKWordWrap.html KWordWrap Class Reference] used in the KDE GUI
+* [http://www.leverkruid.eu/GKPLinebreaking/elements.html "Knuth linebreaking elements for Formatting Objects"] by Simon Pepping 2006. Extends the Knuth model to handle a few enhancements.
+* [http://wiki.apache.org/xmlgraphics-fop/PageLayout/ "Page breaking strategies"] Extends the Knuth model to handle a few enhancements.
+* [http://www.techwr-l.com/archives/0504/techwhirl-0504-00203.html "a Knuth-Plass-like linebreaking algorithm] ... The *really* interesting thing is how Adobe's algorithm differs from the Knuth-Plass algorithm. It must differ, since Adobe has managed to patent its algorithm (6,510,441)."[http://www.techwr-l.com/archives/0504/techwhirl-0504-00206.html ]
+* [http://blogs.msdn.com/murrays/archive/2006/11/15/lineservices.aspx "Murray Sargent: Math in Office"]
+
+[[Category:Text editor features]]
+[[Category:Typography]]
+[[Category:Dynamic programming]]
+
+[[da:Tekstombrydning]]
+[[ko:자동 줄 바꿈]]
+[[zh:自动换行]]</body> </html>

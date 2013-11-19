@@ -1,0 +1,55 @@
+<html> <head> <title>XCAST</title></head><body>{{Orphan|date=December 2009}}
+{{Unreferenced|date=August 2010}}
+The '''explicit multi-unicast (Xcast)''' is a variation of [[multicast]] that supports a great number of little multicast sessions.{{Citation needed|date=August 2010}}<!--What does 'little' mean--> It is done by adding<!--define adding, summing?--> all the [[IP address]]es in the destination field of the IP header, instead of using a multicast address. The traditional multicast schemes over [[Internet Protocol|IP]] are scalable for big multicast groups, but they have got scalability problems for a great number of groups.
+The multicast schemes can be used to minimize the [[bandwidth (computing)|bandwidth]] consumption. Xcast can be used to minimize the bandwidth consumption for little groups, but the great advantage is that it eliminates the signalization and the state information for every session of a traditional multicast scheme. Thanks to this it is capable to support a great number of little sessions.
+
+==How it works==
+In Xcast, the source node keep all destinations of the [[multicast]] channel through which packets will be sent. The source codifies the destinations list in the Xcast header and send the packet to the [[router]]. Each [[router]] looks up a [[routing table]] to determine the following jumps of each packet, analyzes its header, parses the destination field basing on the following jump of every destination and copies the packets as many different paths as they have to follow. After that, the [[router]] pulls the copy packets with its correct Xcast header to every following jump. When the last jump, there is no need of making a new copy, there is just one address in the destination field. Then the packet is just like a [[unicast]] packet, and the [[Computer network|network]] will treat it as it is. That is called [[X2U]] (Xcast to Unicast).
+
+[[File:Xcast.png]]
+
+==Xcast vs. Multicast==
+Traditional [[Internet Protocol|IP]] [[multicast]] schemes were designed to treat with huge multicast groups. It works well when doing a distribution similar to [[broadcast]]ing, but it has scalability problems when there is a great number of groups. The multicast protocols keep [[routing tables]] that relate multicast group addresses with the nodes. This tables might become huge, and that is why some alternative schemes try to reduce the quantity of information to keep. There are also protocols to announce a source or to route between domain routers. Implementing all these protocols has a big cost that does not worth when the groups are reduced.
+
+Xcast keeps on of the bases that have worked so well on [[Internet]] and have allowed it to grow so much: keep the center of the network simple and do the complicated operations in the sides.
+
+===Advantages===
+*The [[router]]s do not need to keep information for every session or channel. This makes Xcast very scalable about the number of sessions it can support.
+*There is no need to make a direction assignment.
+*They don't need protocols for [[multicast]] routing. They are routed correctly thanks to the common [[unicast]] protocols.
+*There is no critic node. Xcast minimizes the [[Computer network|network]] [[latencies]] and maximizes efficiency.
+*Symmetric paths are not required.
+*With traditional [[Internet Protocol|IP]] multicast routing protocols it is necessary to establish a communication between unicast and multicast routing protocols. That means a slow error recovery. Xcast reacts immediately to unicast routing changes.
+*Easier [[security]] and [[register]]{{dn}}. With Xcast all sources know the channel members and all routers are able to know the number of times each packet has been duplicated in its domain.
+*The receptors can be heterogeneous since Xcast allows that every receptor is able to have its own requirements of service in a single multicast channel.
+*Simplicity when implementing reliable protocols over Xcast.
+*Flexibility: unicast, multicast and Xcast represent costs of bandwidth, signalization and processing respectively. Depending on how the network is built or how it is in a certain moment, it may be better to use a system or another. Xcast is just another alternative.
+*Easy transition between different mechanisms.
+
+===Disadvantages===
+*They have got big headers. Each packet contains all the remaining destinations.
+*It requires a more complex header processing. Every direction needs a look up to the [[routing table]], so it is needed the same number of consults as it was [[unicast]], furthermore, a new header must be generated after every jump. But on the other hand:
+**Xcast is designed for sessions with few users, so in many [[router]]s the headers will only have just one address.
+**The header building can become a very easy operation, overwrite a bit map.
+**When the packet reaches a region where the bandwidth is not limited, the packet can become a premature X2U.
+*Limits the session to just a few users.
+
+==Applications==
+Xcast is an important compliment to the existing [[multicast]] schemes since it supports a great number of little sessions. Allows efficient applications such as VoIP, videoconferencing, collaborative meetings... Maybe these applications could be done using just [[unicast]], but in some cases, where the bandwidth is limited it becomes really useful. In general it supposes more efficiency.
+On the other hand, as Xcast is not affordable for great groups, it has no chance of substituting the traditional multicast models.
+
+==See also==
+*[[Unicast]]
+*[[Multicast]]
+*[[Broadcast]]
+
+==External links==
+* RFC 5058
+* [http://www.xcast.jp XCAST]: A commercial MediaWiki-powered website based in Japan (English-language), devoted to Explicit Multicast technology.
+
+{{DEFAULTSORT:Xcast}}
+[[Category:Internet architecture]]
+[[Category:Network protocols]]
+
+[[ca:XCAST]]
+[[es:XCAST]]</body> </html>

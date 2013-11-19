@@ -1,0 +1,56 @@
+<html> <head> <title>StarOffice Basic</title></head><body>'''StarOffice Basic''' (also known as '''StarBasic''' and '''OOoBasic''') is a dialect of [[BASIC]] that is included with the [[OpenOffice.org]] and [[StarOffice]] [[office suite]]s.
+
+Although StarBasic itself is similar to other dialects of Basic, such as [[Microsoft]]'s [[Visual Basic for Applications|VBA]], the [[application programming interface]] (API) is very different, as the example below of a [[Macro (computer science)|macro]] illustrates.
+
+<source lang="QBasic">
+ Sub ParaCount
+ '
+ ' Count number of paragraphs in a text document
+ '
+   Dim Doc As Object, Enum As Object, Count As Long
+   Doc = ThisComponent
+ ' Is this a text document?
+   If Not Doc.SupportsService("com.sun.star.text.TextDocument") Then
+     MsgBox "This macro must be run from a text document", 64, "Error"
+     Exit Sub
+   End If
+   Count = 0
+ ' Examine each component - paragraph or table?
+   Enum = Doc.Text.CreateEnumeration
+   While Enum.HasMoreElements
+     TextEl = Enum.NextElement
+ ' Is the component a paragraph?
+     If TextEl.SupportsService("com.sun.star.text.Paragraph") Then 
+     Count = Count + 1
+     End If
+   Wend
+ 'Display result
+   MsgBox Count, 0, "Paragraph Count"
+ End Sub
+</source>
+
+==See also==
+* [[Comparison of office suites]]
+
+== External links ==
+=== BASIC Macros ===
+*[http://docs.sun.com/app/docs/coll/so7en StarOffice 7 Basic programmer's guide]
+*[http://docs.sun.com/app/docs/doc/819-0439?a=load StarOffice 8 Programming Guide for BASIC]
+*[http://wiki.services.openoffice.org/wiki/VBA OpenOffice.org VBA emulation model project] (still in heavy development)
+*[http://www.pitonyak.org/oo.php Andrew Pitonyak's macro information]
+
+=== StarOffice/OpenOffice.org API ===
+*[http://api.openoffice.org/ OpenOffice.org/StarOffice API Project Page]
+**[http://api.openoffice.org/SDK/index.html OpenOffice.org SDK]
+**[http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/OpenOffice.org_Developers_Guide OpenOffice.org 2.0 Developer's Guide]<br>[http://docs.sun.com/app/docs/doc/819-1304 StarOffice 8 Developer's Guide]
+**[http://api.openoffice.org/docs/common/ref/com/sun/star/module-ix.html API reference manual]
+
+{{programming-software-stub}}
+{{BASIC}}
+
+[[Category:Articles with example BASIC code]]
+[[Category:BASIC programming language family]]
+[[Category:OpenOffice.org]]
+
+[[de:StarOffice Basic]]
+[[fr:StarOffice Basic]]</body> </html>

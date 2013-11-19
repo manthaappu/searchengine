@@ -1,0 +1,100 @@
+<html> <head> <title>Smoothed-particle hydrodynamics</title></head><body>'''Smoothed-particle hydrodynamics (SPH)''' is a computational method used for simulating [[fluid]] flows. It has been used in many fields of research, including [[astrophysics]], [[ballistics]], [[volcanology]], and [[oceanography]]. It is a mesh-free [[Lagrangian Mechanics|Lagrangian method]] (where the co-ordinates move with the fluid), and the resolution of the method can easily be adjusted with respect to variables such as the [[density]].
+
+==Method==
+
+The smoothed-particle hydrodynamics (SPH) method works by dividing the fluid into a set of discrete elements, referred to as particles. These particles have a spatial distance (known as the "smoothing length", typically represented in equations by <math> h </math>), over which their properties are "smoothed" by a ''[[Kernel (mathematics)|kernel function]]''. This means that the physical quantity of any particle can be obtained by summing the relevant properties of all the particles which lie within the range of the kernel. For example, using Monaghan's popular cubic spline kernel the [[temperature]] at position <math> \mathbf{r} </math> depends on the temperatures of all the particles within a radial distance <math>2h</math> of <math> \mathbf{r}</math>.
+
+The contributions of each particle to a property are weighted according to their distance from the particle of interest, and their density. Mathematically, this is governed by the kernel function (symbol <math> W </math>). Kernel functions commonly used include the [[Gaussian function]] and the [[cubic spline]]. The latter function is exactly zero for particles further away than two smoothing lengths (unlike the Gaussian, where there is a small contribution at any finite distance away). This has the advantage of saving computational effort by not including the relatively minor contributions from distant particles.
+
+The equation for any quantity <math>A</math> at any point <math>\mathbf{r}</math> is given by the equation
+
+:<math>
+A(\mathbf{r}) = \sum_j m_j \frac{A_j}{\rho_j} W(| \mathbf{r}-\mathbf{r}_{j} |,h),
+</math>
+
+where <math> m_j </math> is the [[mass]] of particle <math> j </math>, <math> A_j </math> is the value of the quantity <math> A </math> for particle <math> j </math>, <math> \rho_j </math> is the [[density]] associated with particle <math> j </math>, <math>\mathbf{r}</math> denotes position and <math> W </math> is the kernel function mentioned above. For example, the density of particle <math> i </math> (<math> \rho_i </math>) can be expressed as:
+
+:<math>
+\rho_i = \rho(\mathbf{r}_i) = \sum_j m_j \frac{\rho_j}{\rho_j} W(| \mathbf{r}_i-\mathbf{r}_j |,h) = \sum_j m_j W(\mathbf{r}_i-\mathbf{r}_j,h),
+</math>
+
+where the summation over <math> j </math> includes all particles in the simulation. 
+
+Similarly, the spatial derivative of a quantity can be obtained by using [[integration by parts]] to shift the [[del]] (<math> \nabla </math>) operator from the physical quantity to the kernel function,
+
+:<math>
+\nabla A(\mathbf{r}) = \sum_j m_j \frac{A_j}{\rho_j} \nabla W(| \mathbf{r}-\mathbf{r}_j |,h).
+</math>
+
+Although the size of the smoothing length can be fixed in both [[space]] and [[time]], this does not take advantage of the full power of SPH. By assigning each particle its own smoothing length and allowing it to vary with time, the resolution of a simulation can be made to automatically adapt itself depending on local conditions. For example, in a very dense region where many particles are close together the smoothing length can be made relatively short, yielding high spatial resolution. Conversely, in low-density regions where individual particles are far apart and the resolution is low, the smoothing length can be increased, optimising the computation for the regions of interest. Combined with an [[equation of state]] and an [[integrator]], SPH can simulate hydrodynamic flows efficiently. However, the traditional artificial viscosity formulation used in SPH tends to smear out [[shock wave|shocks]] and [[contact discontinuity|contact discontinuities]] to a much greater extent than state-of-the-art grid-based schemes.
+
+The Lagrangian-based adaptivity of SPH is analogous to the adaptivity present in grid-based [[adaptive mesh refinement]] codes, though in the latter case one can refine the mesh spacing according to any criterion selected by the user. Because it is Lagrangian in nature, SPH is limited to refining based on density alone.
+
+Often in astrophysics, one wishes to model self-gravity in addition to pure hydrodynamics. The particle-based nature of SPH makes it ideal to combine with a particle-based gravity solver, for instance [[tree gravity]]<ref>
+[http://hpcc.astro.washington.edu/faculty/marios/papers/perform/node2.html "The Parallel k-D Tree Gravity Code"];
+[http://www-hpcc.astro.washington.edu/faculty/trq/brandon/pkdgrav.html "PKDGRAV (Parallel K-D tree GRAVity code"]
+use a [[kd-tree]] gravity simulation.
+</ref>, [[Particle Mesh|particle mesh]], or [[P3M|particle-particle particle-mesh]].
+
+==Uses in astrophysics==
+
+The adaptive resolution of smoothed-particle hydrodynamics, combined with its ability to simulate phenomena covering many [[order of magnitude|orders of magnitude]], make it ideal for computations in [[theoretical astrophysics]]. 
+
+Simulations of [[galaxy formation]], [[star formation]], stellar collisions, [[supernovae]] and [[meteor]] impacts are some of the wide variety of astrophysical and cosmological uses of this method.
+
+Generally speaking, SPH is used to model hydrodynamic flows, including possible effects of [[gravity]]. Incorporating other astrophysical processes which may be important, such as [[radiative transfer]] and [[Magnetohydrodynamics|magnetic fields]] is an active area of research in the astronomical community, and has had some limited success.{{Citation needed|date=October 2010}}
+
+==Uses in fluid simulation==
+[[Image:fluids sim.jpg|thumb|200px|right|Fig. SPH simulation of ocean waves using FLUIDS v.1]]
+
+Smoothed-particle hydrodynamics is being increasingly used to model fluid motion as well. This is due to several benefits over traditional grid-based techniques. First, SPH guarantees conservation of mass without extra computation since the particles themselves represent mass. Second, SPH computes pressure from weighted contributions of neighboring particles rather than by solving linear systems of equations. Finally, unlike grid-base technique which must track fluid boundaries, SPH creates a free surface for two-phase interacting fluids directly since the particles represent the denser fluid (usually water) and empty space represents the lighter fluid (usually air). For these reasons it is possible to simulate fluid motion using SPH in real time. However, both grid-based and SPH techniques still require the generation of renderable free surface geometry using a polygonization technique such as [[metaballs]] and [[marching cubes]], [[point splatting]], or "carpet" visualization. For gas dynamics it is more appropriate to use the kernel function itself to produce a rendering of gas column density (e.g. as done in the SPLASH visualisation package).
+
+One drawback over grid-based techniques is the need for large numbers of particles to produce simulations of equivalent resolution. In the typical implementation of both uniform grids and SPH particle techniques, many voxels or particles will be used to fill water volumes which are never rendered. However, accuracy can be significantly higher with sophisticated grid-based techniques, especially those coupled with particle methods (such as particle level sets). SPH for fluid simulation is being used increasingly in real-time animation and games where accuracy is not as critical as interactivity.
+
+==Uses in solid mechanics==
+William G. Hoover has used SPH to study impact fracture in solids. Hoover and others use the acronym SPAM (smooth-particle applied mechanics) to refer to the numerical method. The application of smoothed-particle methods to solid mechanics remains a relatively unexplored field.
+
+== References ==
+{{Reflist}}
+*[1] J.J. Monaghan,  "An introduction to SPH," Computer Physics Communications, vol. 48, pp. 88–96, 1988.
+*[2] Hoover, W. G. (2006). Smooth Particle Applied Mechanics: The State of the Art, World Scientific.
+*[3] [http://adsabs.harvard.edu/abs/1994MmSAI..65.1117S Impact Modelling with SPH] Stellingwerf, R. F., Wingate, C. A., Memorie della Societa Astronomia Italiana, Vol. 65, p. 1117 (1994).
+*[4] Amada, T., Imura, M., Yasumuro, Y., Manabe, Y. and Chihara, K. (2004) Particle-based fluid simulation on GPU, in proceedings of ACM Workshop on General-purpose Computing on Graphics Processors (August, 2004, Los Angeles, California).
+*[5] Desbrun, M. and Cani, M-P. (1996). Smoothed Particles: a new paradigm for animating highly deformable bodies.  In Proceedings of Eurographics Workshop on Computer Animation and Simulation (August 1996, Poitiers, France).
+*[6] Harada, T., Koshizuka, S. and Kawaguchi, Y.  Smoothed Particle Hydrodynamics on GPUs.  In Proceedings of Computer Graphics International (June 2007, Petropolis Brazil).
+*[7] Hegeman, K., Carr, N.A. and Miller, G.S.P.  Particle-based fluid simulation on the GPU.  In Proceedings of International Conference on Computational Science (Reading, UK, May 2006).  Proceedings published as Lecture Notes in Computer Science v. 3994/2006 (Springer-Verlag).
+*[8] M. Kelager. (2006) Lagrangian Fluid Dynamics Using Smoothed Particle Hydrodynamics, M. Kelagar (MS Thesis, Univ. Copenhagen).
+*[9] Kolb, A. and Cuntz, N. (2005) ] Dynamic particle coupling for GPU-based fluid simulation, A. Kolb and N. Cuntz.  In Proceedings of the 18th Symposium on Simulation Techniques (2005) pp. 722–727.
+*[10] Liu, G.R. and Liu, M.B. Smoothed Particle Hydrodynamics: a meshfree particle method.  Singapore: World Scientific (2003).
+*[11] Monaghan, J.J. (1992). Smoothed Particle Hydrodynamics.  Ann. Rev. Astron. Astrophys (1992). 30 : 543-74.
+*[12] Muller, M., Charypar, D. and Gross, M.  ] Particle-based Fluid Simulation for Interactive Applications, In Proceedings of Eurographics/SIGGRAPH Symposium on Computer Animation (2003), eds. D. Breen and M. Lin.
+*[13] Vesterlund, M. Simulation and Rendering of a Viscous Fluid Using Smoothed Particle Hydrodynamics, (MS Thesis, Umea University, Sweden).
+
+==External links==
+*[http://www.ukaff.ac.uk/starcluster First large simulation of star formation using SPH]
+*[http://wiki.manchester.ac.uk/spheric SPHERIC (SPH European Research Interest Community)]
+*[http://ia2.oats.inaf.it/index.php?option=com_content&view=section&id=12&Itemid=71 ITVO] is the web-site of The Italian Theoretical Virtual Observatory created to query a database of numerical simulation archive.
+*[http://www.stellingwerf.com/rfs-bin/index.cgi?action=PageView&id=33 SPHC Image Gallery] depicts a wide variety of test cases, experimental validations, and commercial applications of the SPH code SPHC.
+
+==Software==
+*[http://www.rchoetzlein.com/eng/ FLUIDS v.1] is a simple, open source (Zlib), real-time 3D SPH implementation in C++ for liquids for CPU and GPU.
+*[[GADGET]] [http://www.mpa-garching.mpg.de/galform/gadget/ ] is a freely available code for cosmological N-body/SPH simulations
+*[http://isph.sourceforge.net/ ISPH] parallel C++/OpenCL open source truly incompressible SPH implementation
+*[http://www.simpartik.com SimPARTIK] is a commercial simulation package for SPH and DEM simulations from Fraunhofer IWM
+*[http://www.astro.ex.ac.uk/people/dprice/splash SPLASH] is a freely available visualisation tool for SPH simulations
+*[http://www.sphysics.org SPHysics] is an open source SPH implementation in Fortran
+*[http://www.dual.sphysics.org DualSPHysics] is a package of executables based on SPHysics and using GPU computing
+*[http://pal.sourceforge.net/ Physics Abstraction Layer] is an open source abstraction system that supports real time physics engines with SPH support
+*[http://www.itm.uni-stuttgart.de/research/pasimodo/pasimodo_en.php Pasimodo] is a program package for particle-based simulation methods, e.g. SPH
+*[http://sourceforge.net/projects/punto/ Punto] is a freely available visualisation tool for particle simulations
+
+{{DEFAULTSORT:Smoothed-Particle Hydrodynamics}}
+[[Category:Fluid dynamics]]
+[[Category:Numerical differential equations]]
+[[Category:Computational fluid dynamics]]
+
+[[de:Smoothed Particle Hydrodynamics]]
+[[fa:هیدرودینامیک ذرات هموار]]
+[[fr:Smoothed particle hydrodynamics]]
+[[pl:SPH]]
+[[ru:Гидродинамика сглаженных частиц]]</body> </html>

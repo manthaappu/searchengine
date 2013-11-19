@@ -1,0 +1,369 @@
+<html> <head> <title>Rootkit</title></head><body>A  '''rootkit''' is software that enables continued privileged access to a computer while actively hiding its presence from administrators by subverting standard operating system functionality or other applications.  The term ''rootkit'' is a [[concatenation]] of [[Superuser|"root"]] (the traditional name of the privileged account on [[Unix]] operating systems) and the word "kit" (which refers to the software components that implement the tool). The term "rootkit" has negative connotations through its association with malware.<ref name="McAfee1"/>
+
+Typically, an [[Hacker (computer security)|attacker]] installs a rootkit on a computer after first obtaining root-level access, either by exploiting a known vulnerability or by obtaining a password (either by [[Password cracking|cracking]] the encryption, or through [[social engineering (security)|social engineering]]). Once a rootkit is installed, it allows an attacker to mask the ongoing intrusion and  maintain privileged access to the computer by circumventing normal [[authentication]] and [[authorization]] mechanisms. Although rootkits can serve a variety of ends, they have gained notoriety primarily as [[malware]], hiding applications that appropriate computing resources or steal passwords without the knowledge of administrators and users of affected systems.  Rootkits can target [[firmware]], a [[hypervisor]], the [[kernel (computing)|kernel]], or—most commonly—user-mode applications.
+
+Rootkit detection is difficult because a rootkit may be able to subvert the software that is intended to find it.  Detection methods include using an alternate, trusted operating system; behavioral-based methods; signature scanning; difference scanning; and memory dump analysis.  Removal can be complicated or practically impossible, especially in cases where the rootkit resides in the kernel; reinstallation of the operating system may be the only alternative.
+
+==History==
+[[File:RootkitRevealer.png|thumb|right|Screenshot of RootkitRevealer, showing the files hidden by the [[Extended Copy Protection]] rootkit]]
+The first documented [[computer virus]] to target the [[Personal computer|PC]] platform, discovered in 1986, used cloaking techniques to hide itself: the [[Brain (computer virus)|Brain virus]] intercepted attempts to read the [[boot sector]], and redirected these to elsewhere on the disk, where a copy of the original boot sector was kept.<ref name="McAfee1">{{cite web|url=http://www.mcafee.com/us/local_content/white_papers/threat_center/wp_akapoor_rootkits1_en.pdf|title=Rootkits, Part 1 of 3: The Growing Threat|publisher=[[McAfee]]|date=2006-04-17|accessdate=2010-08-16|format=PDF}}{{broken link|date=December 2010}}</ref>
+Over time, [[DOS]]-virus cloaking methods became more sophisticated, with advanced techniques including the [[hooking]] of [[INT 13|interrupt 13]] [[application programming interface|application-programming interface]] (API) calls to hide unauthorized modifications to files.<ref name="McAfee1"/>
+
+The term ''rootkit'' or ''root kit'' originally referred to a maliciously-modified set of administrative tools for a [[Unix-like]] [[operating system]] that granted "[[superuser|root]]" access.<ref name="Symantec">{{Cite paper|url=http://www.symantec.com/avcenter/reference/windows.rootkit.overview.pdf|title=Windows Rootkit Overview| publisher=[[Symantec]] |date=2006-03-26|accessdate=2010-08-17 | format=PDF }}</ref> If an intruder could replace the standard administrative tools on a system with a rootkit, the intruder could obtain root access over the system whilst simultaneously concealing these activities from the legitimate [[system administrator]].  These first generation rootkits were trivial to detect by using tools such as [[Open Source Tripwire|Tripwire]] that had not been compromised to access the same information.<ref name="Sparks-Bar">{{cite journal|journal=[[Phrack]]|volume=0xb|issue=0x3d|first=Sherri|last=Sparks|first2=Jamie|last2=Butler|date=2005-08-01|accessdate=2010-11-22|title=Raising The Bar For Windows Rootkit Detection}}</ref><ref name="Harris"/> Lane Davis and Steven Dake wrote the earliest known rootkit in 1990 for [[Sun Microsystems]]' [[SunOS]] UNIX operating system.<ref>{{cite book|url=http://books.google.com/books?id=h37q2q3wvcUC&pg=PA276|title=OSSEC Host-Based Intrusion Detection Guide|page=276|publisher=Syngress|year=2008|isbn=159749240X|author=Andrew Hay, Daniel Cid, Rory Bray}}</ref>  [[Ken Thompson]] of [[Bell Labs]], one of the creators of Unix, subverted the [[C compiler]] in a Unix distribution and discussed the exploit in the lecture he gave upon receiving the [[Turing award]] in 1983.  The modified compiler would detect attempts to compile the Unix "login" command and generate altered code that would accept not only the user's correct password, but an additional password known to the attacker.  Additionally, the compiler would detect attempts to compile a new version of the compiler, and would insert the same exploits into the new compiler.  A review of the source code for the "login" command or the updated compiler would not reveal any malicious code.<ref name="Turing Award Lecture">{{cite journal|journal=Communications of the ACM|title=Reflections on Trusting Trust|volume=27|issue=8|pages=761|month=August|year=1984|url=http://www.ece.cmu.edu/~ganger/712.fall02/papers/p761-thompson.pdf
+|format=pdf|last=Thompson |first=Ken |doi=10.1145/358198.358210}}</ref>
+This exploit was equivalent to a rootkit.
+
+The first malicious rootkit for the [[Windows NT]] operating system appeared in 1999: a trojan called ''NTRootkit'' created by [[Greg Hoglund]].<ref name="Hoglund"/> It was followed by ''HackerDefender'' in 2003.<ref name="McAfee1"/>  The first rootkit targeting [[Mac OS X]] appeared in 2009,<ref>{{cite conference
+|url=http://www.blackhat.com/presentations/bh-usa-09/DAIZOVI/BHUSA09-Daizovi-AdvOSXRootkits-SLIDES.pdf|format=PDF|title=Advanced Mac OS X Rootkits|first=Dino|last=Dai Zovi|publisher=Endgame Systems|conference=[[Black Hat Briefings|Blackhat]]|accessdate=2010-11-23|date=2009-07-26}}</ref> while the [[Stuxnet]] worm was the first to target [[programmable logic controller]]s (PLC).<ref>{{cite web|url=http://www.symantec.com/connect/blogs/stuxnet-introduces-first-known-rootkit-scada-devices|title=Stuxnet Introduces the First Known Rootkit for Industrial Control Systems|date=2010-08-06|accessdate=2010-12-04|publisher=[[Symantec]]}}</ref>
+
+=== Sony BMG copy protection rootkit scandal ===
+{{main|Sony BMG copy protection rootkit scandal}}
+
+In 2005, [[Sony BMG]] published [[compact disc|CDs]] with [[copy protection]] and [[digital rights management]] software called [[Extended Copy Protection]], created by software company [[First 4 Internet]]. The software included a music player but silently installed a rootkit which limited the user's ability to access the CD.<ref name="CA-XCP">{{cite web
+|url=http://www.ca.com/us/securityadvisor/pest/pest.aspx?id=453096362
+|publisher=[[Computer Associates]]
+|date=2005-11-05
+|title=Spyware Detail: XCP.Sony.Rootkit
+|accessdate=2010-08-19
+}}</ref>
+
+Software engineer [[Mark Russinovich]], who created the rootkit detection tool [[RootkitRevealer]], discovered the rootkit on one of his computers.<ref name="McAfee1"/> The ensuing scandal raised the public's awareness of rootkits.<ref name="markrussinovich">{{cite web
+|url=http://blogs.technet.com/b/markrussinovich/archive/2005/10/31/sony-rootkits-and-digital-rights-management-gone-too-far.aspx
+|title=Sony, Rootkits and Digital Rights Management Gone Too Far
+|last=Russinovich
+|first=Mark
+|authorlink=Mark Russinovich
+|publisher=[[Microsoft]]
+|work=[[Microsoft Technet#Blogs|TechNet Blogs]] 
+|date=2005-10-31
+|accessdate=2010-08-16
+}}</ref>
+
+To cloak itself, the rootkit hid from the user any file starting with "$sys$". Soon after Russinovich's report, malware appeared which took advantage of that vulnerability of affected systems.<ref name="McAfee1"/>
+
+One [[BBC]] analyst called it a "public relations nightmare."<ref>{{
+cite news
+|url=http://news.bbc.co.uk/2/hi/technology/4456970.stm
+|title=Sony's long-term rootkit CD woes
+|date= 2005-11-21
+|accessdate=2008-09-15
+|publisher=BBC News
+}}</ref> Sony BMG released [[patch (computing)|patches]] to [[uninstaller|uninstall]] the rootkit, but it exposed users to an even more serious vulnerability.<ref name=felton>{{cite web
+|url=http://www.freedom-to-tinker.com/?p=927
+|title=Sony's Web-Based Uninstaller Opens a Big Security Hole; Sony to Recall Discs
+|date=2005-11-15
+|first=Ed
+|last=Felton
+}}</ref> The company eventually recalled the CDs. In the United States, a [[class action|class-action lawsuit]] was brought against Sony BMG.<ref>{{cite journal
+	| url = http://www.newscientist.com/article/dn8307
+	| title = Sony BMG sued over cloaking software on music CD
+	| last = Knight
+	| first = Will
+	| date = 2005-11-11
+	| journal = New Scientist
+	| publisher = Reed Business Information
+	| location = Sutton, UK
+	| accessdate = 2010-11-21
+}}</ref>
+
+==Uses==
+Modern rootkits do not elevate access,<ref name="Symantec"/> but rather are used to make another software payload undetectable by adding stealth capabilities.<ref name="Hoglund">{{cite book|url=http://books.google.com/books?id=fDxg1W3eT2gC|title=Rootkits: Subverting the Windows kernel|author=Greg Hoglund, James Butler|publisher=Addison-Wesley|year=2006|page=4|isbn=0321294319}}</ref>  Most rootkits are classified as [[malware]], because the payloads they are bundled with are malicious. For example, a payload might covertly steal user [[password]]s, [[credit card]] information, computing resources, or conduct other unauthorized activities. A small number of rootkits may be considered utility applications by their users: for example, a rootkit might cloak a [[CD-ROM]]-emulation driver, allowing [[video game]] users to defeat [[anti-piracy]] measures that require insertion of the original installation media into a physical optical drive to verify that the software was legitimately purchased.
+
+Rootkits and their payloads have many uses:
+*Provide an attacker with full access via a [[Backdoor (computing)|backdoor]], permitting unauthorized access to, for example, steal or falsify documents.  One of the ways to carry this out is to subvert the login mechanism, such as the /bin/login program on [[Unix-like]] systems or [[Graphical identification and authentication|GINA]] on Windows. The replacement appears to function normally, but also accepts a secret login combination that allows an attacker direct access to the system with administrative privileges, bypassing standard [[authentication]] and [[authorization]] mechanisms.
+*Conceal other [[malware]], notably password-stealing [[Keystroke logging|key loggers]] and [[computer virus]]es.<ref>{{cite journal
+|last=Russinovich
+|first=Mark
+|authorlink=Mark Russinovich
+|title=Unearthing Root Kits
+|magazine=''[[Windows IT Pro]]''
+|month=June
+|year=2005
+|url=http://www.windowsitpro.com/Article/ArticleID/46266/46266.html
+|accessdate=2010-12-16
+}}</ref> 
+*Appropriate the compromised machine as a [[zombie computer]] for attacks on other computers. (The attack originates from the compromised system or network, instead of the attacker's system.) "Zombie" computers are typically members of large [[botnet]]s that can launch [[denial-of-service attack]]s and distribute [[e-mail]] [[spam (electronic)|spam]].
+*Enforcement of [[digital rights management]] (DRM).
+
+In some instances, rootkits provide beneficial functionality, and may be installed intentionally by the computer owner:
+*Conceal [[cheating in online games]] from software like [[Warden (software)|Warden]].<ref>{{cite news|url=http://www.theregister.co.uk/2005/11/04/secfocus_wow_bot/|title=World of Warcraft Hackers Using Sony BMG Rootkit
+|date=2005-11-04|accessdate=2010-08-23|publisher=[[The Register]]}}</ref>
+*Detect attacks, for example, in a [[Honeypot (computing)|honeypot]].<ref>{{Cite journal|url=http://www.vividmachines.com/download/icsicceid.pdf|title=Using Rootkit Technology for Honeypot-Based Malware Detection|author=Steve Hanna|publisher=CCEID Meeting|month=September|year=2007|format=PDF}}</ref>
+*Enhance emulation software and security software.<ref>{{
+cite web |url=http://www.sysinternals.com/blog/2006/02/using-rootkits-to-defeat-digital.html 
+|title=Using Rootkits to Defeat Digital Rights Management |accessdate=2006-08-13 |last=Russinovich |first=Mark |authorlink=Mark Russinovich |date=6 February 2006 |work=Winternals |publisher=SysInternals |archiveurl=http://blogs.technet.com/markrussinovich/archive/2006/02/06/using-rootkits-to-defeat-digital-rights-management.aspx |archivedate=31 August 2006 }}</ref> [[Alcohol 120%]] and [[Daemon Tools]] are commercial examples of non-hostile rootkits used to defeat copy-protection mechanisms such as [[SafeDisc]] and [[SecuROM]]. [[Kaspersky]] antivirus software also uses techniques resembling rootkits to protect itself from malicious actions. It loads its own drivers to intercept system activity, and then prevents other processes from doing harm to itself. Its processes are not hidden, but cannot be terminated by standard methods.
+*Anti-theft protection: Laptops may have BIOS-based rootkit software that will periodically report to a central authority, allowing the laptop to be monitored, disabled or wiped of information in the event that it is stolen.<ref name="Ortega">{{cite conference
+	| url = http://www.blackhat.com/presentations/bh-usa-09/ORTEGA/BHUSA09-Ortega-DeactivateRootkit-PAPER.pdf
+	| title = Deactivate the Rootkit: Attacks on BIOS anti-theft technologies
+	| last = Ortega
+	| first = Alfredo
+	| last2 = Sacco
+	| first2= Anibal
+	| date = 2009-07-24
+	| conference = Black Hat USA 2009
+	| conferenceurl = http://www.blackhat.com/html/bh-usa-09/bh-usa-09-archives.html
+	| publisher = Core Security Technologies
+	| accessdate = 2010-11-21
+	| type = PDF
+	| location = Boston, Mass.
+}}</ref>
+*Bypassing [[Windows Product Activation]]<ref>{{cite paper|url=http://www.stoned-vienna.com/downloads/The%20Rise%20of%20MBR%20Rootkits%20&%20Bootkits%20in%20the%20Wild.pdf|format=PDF||date=2009-09-02|accessdate=2010-11-23|title=Stoned Bootkit: The Rise of MBR Rootkits & Bootkits inthe Wild|last=Kleissner|first=Peter| }}</ref>
+
+==Types==
+There are at least five types of rootkit, ranging from those at the lowest level in firmware (with the highest privileges), through to the least privileged user-based variants that operate in [[kernel (computer science)|Ring 3]].  Hybrid combinations of these may occur spanning, for example, user mode and kernel mode.<ref name="anson-forensics"/>
+
+===User-mode===
+[[File:CPU ring scheme.svg|thumb|right|Computer security rings (Note that [[hypervisor|Ring &#x2011;1]] is not shown)]]
+User-mode rootkits run in [[Ring (computer security)|Ring 3]], along with other applications as user, rather than low-level system processes.<ref name="McAfee2"/> They have a number of possible installation vectors to intercept and modify the standard behavior of application programming interfaces (APIs).  Some inject a [[dynamic linker|dynamically-linked]] library (such as a [[dynamic-link library|.DLL]] file on Windows, or a .dylib file on [[Mac OS X]]) into other processes, and are thereby able to execute inside any target process to spoof it; others with sufficient privileges simply overwrite the memory of a target application.  Injection mechanisms include:<ref name="McAfee2"/>
+*Use of vendor-supplied application extensions.  For example, [[Windows Explorer]] has public interfaces that allow third parties to extend its functionality.
+*Interception of [[Message passing|messages]].
+*[[Debugger]]s.
+*Exploitation of [[Vulnerability (computing)|security vulnerabilities]].
+*Function [[hooking]] or [[patching]] of commonly used APIs, for example, to mask a running process or file that resides on a filesystem.<ref>{{cite journal|journal=[[Phrack]]|url=http://www.phrack.org/issues.html?issue=62&id=12#article|volume=62|issue=12|title= NTIllusion: A portable Win32 userland rootkit|author=Kdm}}</ref>
+{{quote|text=...since user mode applications all run in their own memory space, the rootkit needs to perform this patching in the memory space of every running application. In addition, the rootkit needs to monitor the system for any new applications that execute and patch those programs' memory space before they fully execute.|sign=Windows Rootkit Overview|source=Symantec<ref name="Symantec"/>}}
+
+===Kernel-mode===
+Kernel-mode rootkits run with the highest operating system privileges ([[Ring (computer security)|Ring 0]]) by adding code or replacing portions of the core operating system, including both the [[kernel (computer science)|kernel]] and associated [[device driver]]s.  Most operating systems support kernel-mode device drivers, which execute with the same privileges as the operating system itself.  As such, many kernel-mode rootkits are developed as device drivers or loadable modules, such as [[Module (Linux)|loadable kernel modules]] in [[Linux]] or [[device driver]]s in [[Microsoft Windows]]. This class of rootkit has unrestricted security access, but is more difficult to write.<ref name="UAMT"/>  The complexity makes bugs common, and any bugs in code operating at the kernel level may seriously impact system stability, leading to discovery of the rootkit.<ref name="UAMT"/>  One of the first widely-known kernel rootkits was developed for [[Windows NT 4.0]] and released in [[Phrack]] magazine in 1999 by [[Greg Hoglund]].<ref>{{cite journal|journal=[[Phrack]]|title=A *REAL* NT Rootkit, Patching the NT Kernel|first=Greg  |last = Hoglund|url=http://phrack.org/issues.html?issue=55&id=5| date=1999-09-09|issue=55|volume=9| accessdate=2010-11-21}}</ref><ref>{{cite web|url=http://www.net-security.org/article.php?id=1173&p=1|title=Rootkit Evolution|first=Alisa |last=Shevchenko|work=Help Net Security |publisher = Help Net Security|date=2008-09-01|page=2}}</ref><ref>{{cite report|url=http://www.megasecurity.org/papers/Rootkits.pdf|title=An Overview of Unix Rootkits|authorlink=Anton Chuvakin|last=Chuvakin | first = Anton |date=2003-02-02|accessdate=2010-11-21 | publisher = iDEFENSE | location = Chantilly, Virginia | format=PDF }}</ref>
+
+Kernel rootkits can be especially difficult to detect and remove because they operate at the same [[Ring (computer security)|security level]] as the operating system itself, and are thus able to intercept or subvert the most trusted operating system operations.  Any software, such as [[antivirus software]], running on the compromised system is equally vulnerable.<ref>{{cite web|url=http://www.symantec.com/connect/articles/windows-rootkits-2005-part-two|title=Windows Rootkits of 2005, Part Two|last=Butler|first=James | last2= Sparks | first2 = Sherri | work = Symantec Connect |publisher=Symantec |date=2005-11-16|accessdate=2010-11-13}}</ref>  In this situation, no part of the system can be trusted.
+
+A rootkit can modify data structures in the Windows kernel using a method known as ''direct kernel object modification'' (DKOM).<ref>{{cite web|url=http://www.symantec.com/connect/articles/windows-rootkits-2005-part-one|title=Windows Rootkits of 2005, Part One|publisher=Symantec|last=Butler|first=James | last2= Sparks | first2 = Sherri | work = Symantec Connect |date=2005-11-03|accessdate=2010-11-12}}</ref>  This method can hook kernel functions in the System Service Descriptor Table (SSDT), or modify the gates between user mode and kernel mode, in order to cloak itself.<ref name="Symantec"/>  Similarly for the [[Linux]] operating system, a rootkit can modify the ''system call table'' to subvert kernel functionality.<ref>{{cite web|url=http://www.symantec.com/connect/articles/detecting-rootkits-and-kernel-level-compromises-linux|publisher=[[Symantec]]|accessdate=2010-11-23|title=Detecting Rootkits And Kernel-level Compromises In Linux|date=2004-11-17|first=Mariusz|last=Burdach}}</ref>
+
+Operating systems are evolving to counter the threat of kernel-mode rootkits. For example, 64-bit editions of Microsoft Windows now implement mandatory signing of all kernel-level drivers in order to make it more difficult for untrusted code to execute with the highest privileges in a system.<ref>{{cite web|url=http://www.microsoft.com/whdc/winlogo/drvsign/drvsign.mspx|title=Driver Signing Requirements for Windows|publisher=[[Microsoft]]|accessdate=2008-07-06}}</ref>
+
+===={{anchor|bootkit}}Bootkits====
+A kernel-mode rootkit variant called a '''bootkit''' is used predominantly to attack [[full disk encryption]] systems, for example as in the "Evil Maid Attack", in which a bootkit replaces the legitimate [[booting|boot loader]] with one controlled by an attacker; typically the malware loader persists through the transition to [[protected mode]] when the kernel has loaded.<ref>{{cite web|url=http://www.eeye.com/Resources/Security-Center/Research/Tools/BootRoot|title=Bootroot|publisher=[[eEye Digital Security]]|date=2007-05-09|accessdate=2010-11-23|last=Soeder|first=Derek|last2=Permeh|first2=Ryan}}</ref><ref>{{cite web| url=http://www.schneier.com/blog/archives/2009/10/evil_maid_attac.html |authorlink=Bruce Schneier|last=Schneier | first = Bruce |title='Evil Maid' Attacks on Encrypted Hard Drives|date=2009-10-23|accessdate=2009-11-07 }}</ref><ref name="kumar-vbootkit">{{cite conference
+	| url = https://www.blackhat.com/presentations/bh-europe-07/Kumar/Whitepaper/bh-eu-07-Kumar-WP-apr19.pdf
+	| title = Vbootkit: Compromising Windows Vista Security
+	| last = Kumar
+	| first = Nitin
+	| last2 = Kumar
+	| first2 = Vipin
+	| year = 2007
+	| conference = Black Hat Europe 2007
+	| conferenceurl = http://www.blackhat.com/html/bh-media-archives/bh-archives-2007.html#eu_07
+	| format = PDF
+}}</ref><ref>{{cite web |url=http://www.nvlabs.in/archives/5-BOOT-KIT-Custom-boot-sector-based-Windows-2000XP2003-Subversion.html |title=BOOT KIT: Custom boot sector based Windows 2000/XP/2003 Subversion |date=2007-02-04 |accessdate=2010-11-21 | work=NVlabs}}</ref>  For example, the "Stoned Bootkit" subverts the system by using a compromised [[Booting|boot loader]] to intercept encryption keys and passwords.<ref>{{cite web|url=http://www.stoned-vienna.com/|accessdate=2009-11-07|date=2009-10-19 |title=Stoned Bootkit |publisher=Peter Kleissner|last=Kleissner| first=Peter }}{{Self-published inline|date=November 2010}}</ref>  More recently, the Alureon rootkit has successfully subverted the requirement for 64-bit kernel-mode driver signing in [[Windows 7]] by modifying the [[master boot record]].<ref>{{cite news|url=http://www.theregister.co.uk/2010/11/16/tdl_rootkit_does_64_bit_windows/|title=World's Most Advanced Rootkit Penetrates 64-bit Windows
+|publisher=[[The Register]]|date=2011-11-16|accessdate=2010-11-22|last=Goodin|first=Dan}}</ref>
+
+The only known defenses against bootkit attacks are the prevention of unauthorized physical access to the system—a problem for portable computers—or the use of a [[Trusted Platform Module]] configured to protect the boot path.<ref>{{cite book|url=http://books.google.com.au/books?id=-bkRryv377QC&pg=PA371&lpg=PA371&dq=TPM+rootkit+boot+sector&source=bl&ots=3MQqvJ-O3B|title=Hacking Exposed Windows: Windows Security Secrets & Solutions|first=Joel|last=Scambray|first2=Stuart|last2=McClure|publisher=McGraw-Hill Professional|year=2007|isbn=007149426X|pages=pp. 371–372}}</ref>
+
+===Hypervisor level===
+Rootkits have been created as Type II [[Hypervisor]]s in academia as proofs of concept.  By exploiting hardware virtualization features such as [[x86 virtualization#Intel Virtualization Technology for x86 (Intel VT-x)|Intel VT]] or [[x86 virtualization#AMD virtualization (AMD-V)|AMD-V]], this type of rootkit runs in Ring -1 and hosts the target operating system as a [[virtual machine]], thereby enabling the rootkit to intercept hardware calls made by the original operating system.<ref name="Harris">{{Cite document|url=http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.90.8832&rep=rep1&type=pdf|accessdate=2010-11-21| doi = 10.1.1.90.8832 |title=An Introduction to Hardware-Assisted Virtual Machine (HVM) Rootkits |last = Myers | first = Michael | last2 = Youndt | first2= Stephen |publisher=Crucial Security | date = 2007-08-07 | format=PDF|postscript=<!-- Bot inserted parameter. Either remove it; or change its value to "." for the cite to end in a ".", as necessary. -->{{inconsistent citations}} }}</ref>  Unlike normal hypervisors, they do not have to load before the operating system, but can load into an operating system before promoting it into a virtual machine.<ref name="Harris"/>  A hypervisor rootkit does not have to make any modifications to the kernel of the target to subvert it; however, that does not mean that it cannot be detected by the guest operating system. For example, timing differences may be detectable in [[Central processing unit|CPU]] instructions.<ref name="Harris"/>  The "SubVirt" laboratory rootkit, developed jointly by [[Microsoft]] and [[University of Michigan]] researchers, is an academic example of a virtual machine–based rootkit (VMBR),<ref>{{cite conference
+	|url=http://www.eecs.umich.edu/virtual/papers/king06.pdf
+	|accessdate=2008-09-15
+	|title=SubVirt: Implementing malware with virtual machines
+	|date=2006-04-03
+	|conference = 2006 IEEE Symposium on Security and Privacy 
+	|conferenceurl=http://www.computer.org/portal/web/csdl/proceedings/s#4
+	| doi = 10.1109/SP.2006.38 
+	| isbn = 0-7695-2574-1
+	| publisher = [[Institute of Electrical and Electronics Engineers]]
+	| editor = [[IBM|International Business Machines]] (ed.)
+	| last = King
+	| first = Samuel T.
+	| last2 = Chen
+	| first2 = Peter M.
+	| last3 = Wang
+	| first3 = Yi-Min
+	| last4 = Verbowski
+	| first4 = Chad
+	| last5 = Wang
+	| first5 = Helen J.
+	| last6 = Lorch
+	| first6 = Jacob R.
+}}</ref> 
+while [[Blue Pill (malware)|Blue Pill]] is another.
+
+In 2009, researchers from Microsoft and [[North Carolina State University]] demonstrated a hypervisor-layer anti-rootkit called Hooksafe, which provides generic protection against kernel-mode rootkits.<ref>{{Cite conference 
+	| url = http://research.microsoft.com/en-us/um/people/wdcui/papers/hooksafe-ccs09.pdf
+	|title=Countering Kernel Rootkits with Lightweight Hook Protection 
+	| conference = CCS 2009: 16th ACM Conference on Computer and Communications Security
+	| conferenceurl = http://www.sigsac.org/ccs/CCS2009/
+	| booktitle = Proceedings of the 16th ACM Conference on Computer and Communications Security
+	| isbn = 978-1-60558-894-0
+	| editor = Al-Shaer, Ehab (General Chair)
+	| others = Jha, Somesh; Keromytis, Angelos D. (Program Chairs)
+	| doi = 10.1145/1653662.1653728
+	| format=pdf
+	| date=2009-08-11
+	| accessdate=2009-11-11
+	| publisher=ACM New York
+	| location = New York
+	| last = Wang
+	| first = Zhi
+	| last2 = Jiang
+	| first2 = Xuxian
+	| last3 = Cui
+	| first3 = Weidong
+	| last4 = Ning
+	| first4 = Peng
+}}</ref>
+
+===Hardware/Firmware===
+A [[firmware]] rootkit uses device or platform firmware to create a persistent malware image in hardware, such as a [[Network interface controller|network card]],<ref>{{cite conference|conference=hack.lu|url=http://esec-lab.sogeti.com/dotclear/public/publications/10-hack.lu-nicreverse_slides.pdf|title=Reversing the Broacom NetExtreme's Firmware|date=2010-11-21|accessdate=2010-11-25|first=Guillaume|last=Delugré|format=PDF|publisher=Sogeti}}</ref> [[Hard disk drive|hard drive]], or the system [[BIOS]].<ref name="McAfee2"/> The rootkit hides in firmware, because firmware is not usually inspected for code integrity. John Heasman demonstrated the viability of firmware rootkits in both [[ACPI]] firmware routines<ref>{{cite conference
+	| url = http://www.blackhat.com/presentations/bh-europe-06/bh-eu-06-Heasman.pdf
+        | format=PDF
+	| title = Implementing and Detecting an ACPI BIOS Rootkit
+	| first = John
+	| last = Heasman
+	| conference = Black Hat Federal 2006
+	| conferenceurl = http://www.blackhat.com/html/bh-federal-06/bh-fed-06-index.html
+	| date = 2006-01-25
+	| accessdate = 2010-11-21
+	| publisher = NGS Consulting
+}}</ref> and in a [[Conventional PCI|PCI]] expansion card [[Read-only memory|ROM]].<ref>{{cite journal| url=http://www.ngsconsulting.com/research/papers/Implementing_And_Detecting_A_PCI_Rootkit.pdf |title=Implementing and Detecting a PCI Rootkit|first=John |last= Heasman| date=2006-11-15| accessdate=2010-11-13|publisher=Next Generation Security Software | doi = 10.1.1.89.7305 }}</ref>
+
+In October 2008, criminals tampered with European credit-card-reading machines before they were installed. The devices intercepted and transmitted credit card details via a mobile phone network.<ref>{{cite web
+|url=http://www.theregister.co.uk/2008/10/10/organized_crime_doctors_chip_and_pin_machines/|title=Organized crime tampers with European card swipe devices: Customer data beamed overseas|first=Austin |last=Modine|date=2008-10-10|accessdate=2008-10-13|work=The Register|publisher=Situation Publishing}}</ref>  In March 2009, researchers Alfredo Ortega and Anibal Sacco published details of a BIOS-level Windows rootkit that was able to survive disk replacement and operating system re-installation.<ref>{{
+Cite conference
+| last1 = Sacco | first1 = Anibal | first2= Alfredo |last2=Ortéga
+| title = Persistent BIOS infection
+| conference = CanSecWest 2009
+| conferenceurl = http://cansecwest.com/csw09archive.html
+| publisher = Core Security Technologies
+| accessdate = 2010-11-21
+| year = 2009
+| url = http://cansecwest.com/csw09/csw09-sacco-ortega.pdf
+| format=PDF
+}}</ref><ref>{{
+cite web|url=http://www.theregister.co.uk/2009/03/24/persistent_bios_rootkits/|title=Newfangled rootkits survive hard disk wiping|first=Dan |last=Goodin|date=2009-03-24|accessdate=2009-03-25|work=The Register|publisher = Situation Publishing}}</ref><ref>{{cite journal|journal=[[Phrack]] |url=http://phrack.org/issues.html?issue=66&id=7|volume= 66|issue=7|date=2009-06-01|accessdate=2010-11-13|title=Persistent BIOS Infection: The Early Bird Catches the Worm| last1 = Sacco | first1 = Anibal | first2= Alfredo |last2=Ortéga}}</ref>  A few months later they found that some laptops are sold with a legitimate rootkit, known as CompuTrace or [[LoJack#LoJack for Laptops|LoJack for Laptops]], preinstalled in the BIOS. This is an anti&ndash;theft technology system that researchers showed can be turned to malicious purposes.<ref name="sacco">{{cite conference| last1 = Sacco| first1 = Anibal | first2=Alfredo |last2=Ortéga
+| title = Deactivate the Rootkit: Attacks on BIOS anti-theft technologies
+| publisher = Core Security Technologies
+| date = 2009-07-24
+| url = http://www.blackhat.com/presentations/bh-usa-09/ORTEGA/BHUSA09-Ortega-DeactivateRootkit-PAPER.pdf
+| format = PDF
+| conference = Black Hat USA 2009
+| conferenceurl = http://www.blackhat.com/html/bh-usa-09/bh-usa-09-archives.html
+}}</ref>
+
+==Installation and cloaking==
+Rootkits employ a variety of techniques to gain control of a system; the type of rootkit influences the choice of attack vector. The most common technique leverages [[vulnerability (computing)|security vulnerabilities]].  Another approach is to use a [[Trojan horse (computing)|Trojan horse]], deceiving a computer user into trusting the rootkit's installation program as benign&mdash;in this case, [[social engineering (security)|social engineering]] convinces a user that the rootkit is beneficial.<ref name="UAMT"/> The installation task is made easier if the [[principle of least privilege]] is not applied, since the rootkit then does not have to explicitly request elevated (administrator-level) privileges.  Other classes of rootkits can be installed only by someone with physical access to the target system.
+
+The installation of rootkits is commercially driven, with a [[compensation methods#PPI|Pay-Per-Install]] (PPI) compensation method for distributors.<ref>{{cite web|url=http://www.eset.com/resources/white-papers/TDL3-Analysis.pdf|title=TDL3: The Rootkit of All Evil?|date=2010-06-25|accessdate=2010-08-17|publisher=[[ESET]]|first=Aleksandr |last=Matrosov|first2= Eugene|last2= Rodionov|format=PDF}}</ref>{{dubious|GA Review|date=December 2010|reason=Unsupported by source and contradicts other statements in this article}}
+
+Once installed, a rootkit takes active measures to obscure its presence within the host system through subversion or evasion of standard operating system [[computer security|security]] tools and [[Application programming interface|APIs]] used for diagnosis, scanning, and monitoring.  Rootkits achieve this by modifying the behavior of [[Ring (computer security)|core parts of an operating system]] through loading code into other processes, the installation or modification of [[Device driver|drivers]], or [[Loadable kernel module|kernel modules]].  Obfuscation techniques include concealing running processes from system-monitoring mechanisms and hiding system files and other configuration data.<ref>{{
+cite web | url=http://www.usenix.org/publications/login/1999-9/features/rootkits.html | title=Invisible Intruders: rootkits in practice | date=1999-11-16 | last=Brumley |first= David | work = USENIX| publisher=[[USENIX]]}}</ref> It is not uncommon for a rootkit to disable the [[event log]]ging capacity of an operating system, in an attempt to hide evidence of an attack. Rootkits can, in theory, subvert ''any'' operating system activities.<ref name="MIT"/>  The "perfect rootkit" can be thought of as similar to a "[[perfect crime]]": one that nobody realizes has taken place.
+
+Rootkits also take a number of measures to ensure their survival against detection and cleaning by antivirus software in addition to commonly installing into Ring 0 (kernel-mode), where they have complete access to a system.  These include [[polymorphic code|polymorphism]], stealth techniques, regeneration, and disabling anti-malware software.<ref name="trlokom">{{Cite journal|url=http://www.trlokom.com/pdf/TrlokomRootkitDefenseWhitePaper.pdf|title=Defeating Rootkits and Keyloggers|date=2006-07-05|accessdate=2010-08-17|author=Trlokom| publisher=Trlokom}}</ref>
+
+==Detection==
+The fundamental problem with rootkit detection is that if the operating system has been subverted, particularly by a kernel-level rootkit, it cannot be trusted to find unauthorized modifications to itself or its components.<ref name="MIT">{{cite book|chapterurl=http://www.mhprofessional.com/downloads/products/0071591184/0071591184_chap10.pdf|title=Hacking Exposed Malware & Rootkits: Malware & rootkits security secrets & solutions|chapter=Chapter 10: Rootkit Detection|publisher=McGraw Hill Professional|date=2009-09-03|accessdate=2010-08-14|isbn=9780071591188|last=Davis|first=Michael A.|last2=Bodmer|first2=Sean|last3=LeMasters|first3=Aaron|location=New York|format=PDF}}</ref> Actions such as requesting a list of running processes, or a list of files in a directory, cannot be trusted to behave as expected. In other words, rootkit detectors that work while running on infected systems are only effective against rootkits that have some defect in their camouflage, or that run with lower user-mode privileges than the detection software in the kernel.<ref name="UAMT">{{cite web|url=http://download.microsoft.com/download/a/b/e/abefdf1c-96bd-40d6-a138-e320b6b25bd3/understandingantimalwaretechnologies.pdf|title=Understanding Anti-Malware Technologies|2007-02-21|accessdate=2010-08-17|publisher=[[Microsoft]]|format=PDF}}</ref> As with [[computer virus]]es, the detection and elimination of rootkits is an ongoing struggle between both sides of this conflict.<ref name="MIT"/>
+
+Detection can take a number of different approaches, including signatures (e.g. antivirus software), integrity checking (e.g. [[digital signature]]s), difference-based detection (comparison of expected vs. actual results), and behavioral detection (e.g. monitoring CPU usage or network traffic).
+
+Unix rootkit detection offerings include Zeppoo, [[chkrootkit]], [[rkhunter]] and [[OSSEC]]. For Windows, free detection tools include Microsoft Sysinternals Rootkit Revealer,<ref>{{cite web|url=http://technet.microsoft.com/en-us/sysinternals/bb897445.aspx|publisher=[[Microsoft]]|title=RootkitRevealer v1.71|first=Bryce |last=Cogswell |first2=Mark |last2=Russinovich|date=2006-11-01|accessdate=2010-11-13}}</ref> [[Avast!|Avast! Antivirus]], Sophos Anti-Rootkit, [[F-Secure]] Blacklight, and Radix.<ref>{{cite web|url=http://www.usec.at/rootkit.html|title=RADIX Package|accessdate=2010-11-13|publisher=usec.at}}</ref>  Any rootkit detectors that prove effective ultimately contribute to their own ineffectiveness, as malware authors adapt and test their code to escape detection by well-used tools.<ref group="Notes">The process name of Sysinternals Rootkit Revealer was targeted by malware; in an attempt to counter this countermeasure, the tool now uses a randomly-generated process name.</ref>
+
+===Alternative trusted medium===
+The best and most reliable method for operating-system-level rootkit detection is to shut down the computer suspected of infection, and then to check its [[computer data storage|storage]] by [[booting]] from an alternative trusted medium (e.g. a rescue [[CD-ROM]] or [[USB flash drive]]).<ref>{{Cite journal|url=http://www.symantec.com/avcenter/reference/testing_methodology_for_rootkit_removal.pdf|title=A Testing Methodology for Rootkit Removal Effectiveness|first=Josh|last= Harriman|publisher=Symantec Security Response|location=Dublin, Ireland|date=2007-10-19|accessdate=2010-08-17}}</ref> The technique is effective because a rootkit cannot actively hide its presence if it is not running.
+
+===Behavioral-based===
+The behavioral-based approach to detecting rootkits attempts to infer the presence of a rootkit by looking for rootkit-like behavior.  For example, by profiling a system, differences in the timing and frequency of API calls or in overall CPU utilization can be attributed to a rootkit.  The method is complex and is hampered by a high incidence of [[Type I and type II errors|false positives]].  Defective rootkits can sometimes introduce very obvious changes to a system: the [[Alureon]] rootkit crashed Windows systems after a security update exposed a design flaw in its code.<ref>{{cite web|url=http://www.symantec.com/connect/blogs/tidserv-and-ms10-015|title=Tidserv and MS10-015|publisher=[[Symantec]]|date=2010-02-12|accessdate=2010-08-19|first=Mircea |last=Cuibotariu}}</ref><ref>{{cite web|url=http://blogs.technet.com/b/msrc/archive/2010/02/11/restart-issues-after-installing-ms10-015.aspx|title=Restart Issues After Installing MS10-015|date=2010-02-11|accessdate=2010-10-05|publisher=[[Microsoft]]}}</ref>
+
+Logs from a [[packet analyzer]], [[Firewall (computing)|firewall]] or [[intrusion prevention system]] may present evidence of rootkit behaviour in a networked environment.<ref name="anson-forensics"/>
+
+===Signature-based===
+Antivirus products rarely catch all viruses in public tests, even though security software vendors incorporate rootkit detection into their products.  Should a rootkit attempt to hide during an antivirus scan, a stealth detector may notice; if the rootkit attempts to temporarily unload itself from the system, signature detection (or "fingerprinting") can still find it.  This combined approach forces attackers to implement counterattack mechanisms, or "retro" routines, that attempt to terminate antivirus programs.  Signature-based detection methods can be effective against well-published rootkits, but less so against specially-crafted, custom-root rootkits.<ref name="MIT"/>
+
+===Difference-based===
+Another method that can detect rootkits compares "trusted" raw data with "tainted" content returned by an API.  For example, binaries present on disk can be compared with their copies within operating memory (as the in-memory image should be identical to the on-disk image), or the results returned from [[file system]] or [[Windows Registry]] APIs can be checked against raw structures on the underlying physical disks<ref name="MIT"/><ref>{{cite web|url=http://research.microsoft.com/en-us/um/redmond/projects/strider/rootkit/|publisher=Microsoft Research|title=Strider GhostBuster Rootkit Detection |date-2010-01-28|accessdate=2010-08-14}}</ref>—however, in the case of the former, some valid differences can be introduced by operating system mechanisms like memory relocation or [[Shim (computing)|shimming]].  Difference-based detection was used by Russinovich's ''RootkitRevealer'' tool to find the Sony DRM rootkit.<ref name="McAfee1"/>
+
+===Integrity checking===
+[[File:Rkhunter on Mac OS X.png|thumb|right|The [[Rkhunter]] utility uses [[sha-1]] hashes to verify the integrity of system files]]
+A [[cryptographic hash function]] can be used to compute a "fingerprint", or [[digital signature]], that can help detect subsequent unauthorized changes to on-disk code libraries.<ref>{{
+cite web|url=http://msdn.microsoft.com/en-us/library/ms537364(VS.85).aspx|title=Signing and Checking Code with Authenticode|publisher=[[Microsoft]]|accessdate=2008-09-15}}</ref> However, unsophisticated schemes check only whether the code has been modified since release by the "publisher"; subversion prior to that time is not detectable. The fingerprint must be re-established each time changes are made to the system: for example, after installing security updates or a [[service pack]]. The hash function creates a ''message digest'', a relatively short code calculated from each bit in the file using an algorithm that creates large changes in the message digest with even small changes to the original file.  By recalculating and comparing the message digest of the installed files at regular intervals against a trusted list of fingerprints, changes in the system can be detected and monitored—as long as the original baseline fingerprint was created before the malware was added.  More-sophisticated rootkits are able to subvert the verification process by presenting an unmodified copy of the file for inspection, or by making modifications only in memory, rather than on disk.  The technique may therefore be effective only against unsophisticated rootkits—for example, those that replace Unix binaries like "[[ls]]" to mask the presence of a file.
+
+Similarly, detection in [[firmware]] can be achieved by computing a cryptographic hash of the firmware and comparing it to a [[whitelist]] of expected values, or by extending the hash value into [[Trusted Platform Module]] (TPM) configuration registers, which are later compared to a whitelist of expected values.<ref>{{
+cite web |url=http://www.trustedcomputinggroup.org/files/resource_files/C2426F48-1D09-3519-AD02D13C71B888A6/Whitepaper_Rootkit_Strom_v3.pdf |title=Stopping Rootkits at the Network Edge|year=2007|month=January|publisher=[[Trusted Computing Group]]|accessdate=2008-07-11|location=Beaverton, Oregon|format=PDF}}</ref> The code that performs hash, compare, or extend operations must also be protected—in this context, the notion of an ''immutable root-of-trust'' holds that the very first code to measure security properties of a system must itself be trusted to ensure that a rootkit or bootkit does not compromise the system at its most fundamental level.<ref>{{cite web|url=http://www.trustedcomputinggroup.org/files/resource_files/87B92DAF-1D09-3519-AD80984BBE62D62D/TCG_PCSpecificSpecification_v1_1.pdf|date=2003-08-18|accessdate=2010-11-22|publisher=[[Trusted Computing Group]]|title=TCG PC Specific Implementation Specification, Version 1.1|format=PDF}}</ref>
+
+===Memory dumps===
+Forcing a complete dump of [[virtual memory]] will capture an active rootkit (or a [[core dump|kernel dump]] in the case of a kernel-mode rootkit), allowing offline analysis to be performed with a [[debugger]] against the resulting dump file, without the rootkit being able to take any measures to cloak itself.  This technique is highly specialized, and may require access to non-public [[source code]] or [[Debug symbol|debugging symbols]].  Memory dumps initiated by the operating system cannot be used to detect a hypervisor-based rootkit, which is able to intercept and subvert the lowest-level attempts to read memory<ref name="Harris"/>—a hardware device, such as one that implements a [[non-maskable interrupt]], is required to dump memory in this scenario.<ref>{{cite web|url=http://support.microsoft.com/kb/927069|publisher=[[Microsoft]]|title=How to generate a complete crash dump file or a kernel crash dump file by using an NMI on a Windows-based system|accessdate=2010-11-13}}</ref><ref>{{cite journal|title=Pioneer: Verifying Code Integrity and Enforcing Untampered Code Execution on Legacy Systems|author=Seshadri, Arvind ''et al''|url=http://sparrow.ece.cmu.edu/~adrian/projects/pioneer.pdf|publisher=[[Carnegie Mellon University]]|year=2005|accessdate=2010-11-22}}</ref>
+
+==Removal==
+Manual removal of a rootkit is often too difficult for a typical computer user,<ref name="McAfee2">{{cite web|url=http://www.mcafee.com/us/local_content/white_papers/wp_rootkits_0407.pdf|title=Rootkits Part 2: A Technical Primer|publisher=[[McAfee]]|date=2007-04-03|accessdate=2010-08-17|format=PDF}}{{broken link|date=December 2010}}</ref> but a number of security-software vendors offer tools to automatically detect and remove rootkits, typically as part of an [[antivirus software|antivirus suite]].  {{As of|2005}}, Microsoft's monthly Malicious Software Removal Tool is able to detect and remove some classes of rootkits.<ref>{{cite web|url=http://searchenterprisedesktop.techtarget.com/news/column/0,294698,sid192_gci1112754,00.html|title=Rootkit battle: Rootkit Revealer vs. Hacker Defender|first=Kurt |last=Dillard|date=2005-08-03}}</ref><ref>{{cite web|url=http://support.microsoft.com/?kbid=890830|title=The Microsoft Windows Malicious Software Removal Tool helps remove specific, prevalent malicious software from computers that are running Windows 7, Windows Vista, Windows Server 2003, Windows Server 2008, or Windows XP
+|publisher=[[Microsoft]]|date=2010-09-14}}</ref>  Some antivirus scanners can bypass [[file system]] APIs, which are vulnerable to manipulation by a rootkit.  Instead, they access raw filesystem structures directly, and use this information to validate the results from the system APIs to identify any differences that may be caused by a rootkit.<ref group="Notes">In theory, a sufficiently sophisticated kernel-level rootkit could subvert read operations against raw filesystem data structures as well, so that they match the results returned by APIs.</ref><ref>{{cite journal
+|url=http://www.infoworld.com/d/security-central/rootkits-next-big-enterprise-threat-781 |title=Rootkits: The next big enterprise threat? 
+| last = Hultquist
+| first = Steve
+| date = 2007-04-30
+| accessdate = 2010-11-21
+| journal = InfoWorld
+| publisher = IDG
+}}</ref><ref>{{cite web|url=http://reviews.cnet.com/4520-3513_7-6686763-1.html |title=Security Watch: Rootkits for fun and profit|publisher=CNET Reviews |date=2007-01-19 |accessdate=2009-04-07}}</ref><ref>{{cite web|url=http://www.pcworld.com/businesscenter/article/137821/six_ways_to_fight_back_against_botnets.html |title=Six ways to fight back against botnets |work=''[[PC World (magazine)|PCWorld]]'' |date=2007-09-29 | last = Bort | first = Julie | publisher = PCWorld Communications | loation = San Francisco |accessdate=2009-04-07}}</ref><ref>{{
+cite web|first = Mimi | last = Hoang|url=http://www.symantec.com/connect/blogs/handling-todays-tough-security-threats-rootkits|title=Handling Today's Tough Security Threats: Rootkits |publisher=[[Symantec]] | work = Symantec Connect |date=2006-11-02 |accessdate=2010-11-21}}</ref>
+
+There are experts{{who|date=December 2010}} who believe that the only reliable way to remove them is to re-install the operating system from trusted media.<ref name="ms-obscure-hacker">{{cite web|url=http://technet.microsoft.com/en-us/library/cc512642.aspx|title=Rootkits: The Obscure Hacker Attack 
+|date=2005-10-06|publisher=Microsoft|first=Mike |last=Danseglio |first2=Tony |last2=Bailey}}</ref><ref>{{cite news|url=http://www.networkworld.com/news/2006/082806-rootkits.html|title=Experts Divided Over Rootkit Detection and Removal|first=Ellen  |last=Messmer|work=NetworkWorld.com|date=2006-08-26|accessdate=2010-08-15|publisher=IDG|location=Framingham, Mass.}}</ref>  This is because antivirus and malware removal tools running on an untrusted system may be ineffective against well-written kernel-mode rootkits.  Booting an alternate operating system from trusted media can allow an infected system volume to be mounted and potentially safely cleaned and critical data to be copied off—or, alternatively, a forensic examination performed.<ref name="anson-forensics">{{cite book|url=http://books.google.com/books?id=BhdP2PZy6SoC|title=Mastering Windows Network Forensics and Investigation|first=Steve|last= Anson|first2= Steve |last2=Bunting|isbn=0470097620|publisher=John Wiley and Sons|year=2007|pages=73–74}}</ref>  Lightweight operating systems such as [[Windows PE]], [[Recovery Console|Windows Recovery Console]], [[Windows Recovery Environment]], [[BartPE]], or [[Live CD|Live Distros]] can be used for this purpose, allowing the system to be cleaned.
+
+Even if the type and nature of a rootkit is known, manual repair may be impractical, while re-installing the operating system and applications is safer, simpler and quicker.<ref name="ms-obscure-hacker"/>
+
+==Public availability==
+Like much malware used by attackers, many rootkit implementations are shared and are easily available on the Internet. It is not uncommon to see a compromised system in which a sophisticated, publicly-available rootkit hides the presence of unsophisticated [[computer worm|worms]] or attack tools that appear to have been written by inexperienced programmers.<ref name="anson-forensics"/>
+
+Most of the rootkits available on the Internet are constructed as an exploit or  academic "[[proof of concept]]" to demonstrate varying methods of hiding things within a computer system and taking unauthorized control of it.<ref>{{cite book|url=http://books.google.com/books?id=MTcep7V6heUC|page=175|title=Rootkits for Dummies|publisher=John Wiley and Sons Ltd|year=2007|isbn=0471917109|first=Larry |last=Stevenson|first2= Nancy |last2=Altholz}}</ref>{{dubious|GA Review|date=December 2010|reason=Not in source}} Since these are often not fully optimized for stealth, they sometimes leave unintended evidence of their presence. Even so, when such rootkits are used in an attack, they are often effective.
+
+==Defences==
+System [[hardening (computing)|hardening]] represents one of the first layers of defence against a rootkit, to prevent it from being able to install.<ref>{{cite book|url=http://books.google.com/books?id=JHgX8_pVPpEC|page=335|title=Malware: Fighting Malicious Code|first=Ed|last=Skoudis|first2=Lenny|last2=Zeltser|publisher=Prentice Hall PTR|year=2004|isbn=0131014056}}</ref>  Applying security patches, implementing the [[principle of least privilege]], reducing the [[attack surface]] and installing antivirus software are some standard security best practices that are effective against all classes of malware.  Once these measures are in place, routine monitoring is required.<ref>{{cite web|url=http://www.sans.org/reading_room/whitepapers/linux/linux-rootkits-beginners-prevention-removal_901|title=Linux RootKits For Beginners - From Prevention to Removal|publisher=[[SANS Institute]]|date=2003-01-23|accessdate=2010-11-22|format=PDF|first=Jeromey|last=Hannel}}</ref>
+
+==See also==
+*[[Man-in-the-middle attack]]
+*[[Hacker con]]
+*[[Host-based intrusion detection system]]
+*[[SANS Institute|The SANS Institute]]
+*[[The Rootkit Arsenal: Escape and Evasion in the Dark Corners of the System]]
+
+==Notes==
+{{Reflist|group="Notes"}}
+
+== References ==
+{{Reflist|2}}
+
+==Further reading==
+* {{cite book|first= Bill|last= Blunden|title=The Rootkit Arsenal: Escape and Evasion in the Dark Corners of the System|publisher=Wordware|year=2009|isbn=978-1598220612}}
+* {{cite journal|last=Grampp|first=F. T. |last2 = Morris |first2= Robert H., Sr. |title=The UNIX System: UNIX Operating System Security|publisher=AT&T|volume= 62| issue =  8|year=1984|journal=AT&T Bell Laboratories Technical Journal|month=October|pages=1649–1672}}
+* {{cite book|title=Designing BSD Rootkits|first=Joseph |last=Kong|publisher=No Starch Press|year=2007|isbn=1593271425}}
+* {{cite book|first=Ric|last= Veiler|title=Professional Rootkits|publisher=Wrox|year=2007|isbn=978-0-470-10154-4}}
+
+== External links ==
+* [http://www.rootkitanalytics.com Rootkit Analysis: Research and Analysis of Rootkits]
+* [http://www.informit.com/articles/article.aspx?p=23463 Even Nastier: Traditional RootKits]
+* [http://podcasts.sophos.com/en/sophos-podcasts-004.mp3 Sophos Podcast about rootkit removal]
+* [http://research.microsoft.com/Rootkit/ Rootkit research in Microsoft]
+* [http://www.anti-malware-test.com/?q=taxonomy/term/7 Testing of antivirus/anti-rootkit software for the detection and removal of rootkits], Anti-Malware Test Lab, January 2008
+* [http://www.informationweek.com/news/showArticle.jhtml?articleID=196901062 Testing of anti-rootkit software], InformationWeek, January 2007
+
+[[Category:Malware]]
+[[Category:Rootkits| ]]
+[[Category:Computer security]]
+[[Category:Authentication methods]]
+[[Category:Privilege escalation exploits]]
+[[Category:Cryptographic attacks]]
+
+[[bg:Руткит]]
+[[cs:Rootkit]]
+[[de:Rootkit]]
+[[el:Rootkit]]
+[[es:Rootkit]]
+[[eo:Ĉefuzula ilaro]]
+[[fa:روت‌کیت]]
+[[fr:Rootkit]]
+[[ga:Trealamh fréamhrochtana]]
+[[gl:Rootkit]]
+[[ko:루트킷]]
+[[id:Rootkit]]
+[[it:Rootkit]]
+[[he:Rootkit]]
+[[kn:ರೂಟ್‌ಕಿಟ್]]
+[[hu:Rootkit]]
+[[nl:Rootkit]]
+[[ja:ルートキット]]
+[[no:Rootkit]]
+[[pl:Rootkit]]
+[[pt:Rootkit]]
+[[ru:Руткит]]
+[[fi:Rootkit]]
+[[sv:Rootkit]]
+[[te:రూట్‌కిట్]]
+[[th:รูตคิต]]
+[[vi:Rootkit]]
+[[zh:Rootkit]]</body> </html>

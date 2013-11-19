@@ -1,0 +1,79 @@
+<html> <head> <title>Synth Look and Feel</title></head><body>{{dablink|This article is about the Java Look and Feel. For other uses see [[Synth (disambiguation)]].}}
+
+'''synth''' is a [[skinnable]] [[Java (programming language)|Java]] [[Look and feel#Look and Feel in Widget Toolkits|look and feel]], which is configured with an [[XML]] property file.
+
+According to Sun, goals for synth were:
+* Enable to create custom look without writing any code.
+* Allow appearance to be configured from images.
+* Provide the ability to customize the look of a component based on its named properties.
+* Provide a centralized point for overriding the look of all components.
+* Enable custom rendering based on images, or user-defined {{Javadoc:SE|javax/swing/plaf/synth|SynthPainter}}s. 
+
+== History==
+synth is available beginning with version '''J2SE 5.0''' of Java (see [[Java version history]]).
+
+[[Java version history#Java SE 6 Update 10|Java SE 6 Update 10]] release and newer contain ''Nimbus'', a cross-platform Look and Feel implemented with Synth.  However, for backwards compatibility, Metal is still the default Swing look and feel.<ref>{{cite web
+| url=http://java.sun.com/docs/books/tutorial/uiswing/lookandfeel/nimbus.html
+| title=Nimbus Look and Feel (The Java&trade; Tutorials > Creating a GUI With JFC/Swing > Modifying the Look and Feel)
+| publisher=Sun Microsystems
+| accessdate=2010-07-01}}</ref>
+
+==Architecture==
+Synth is a skinnable look and feel in which all painting is delegated to the components, without having to write any code (see {{Javadoc:SE|package=Synth Look and Feel|javax/swing/plaf/synth}}). 
+
+However synth does not provide a default look, and components that are not defined in the synth [[XML]] file will not be painted. It is however possible to assign a default style to all other widgets, and customize styles for some specific widgets only.
+
+==Example==
+The following XML declaration defines a style named textfield and binds it to all text fields. The ''defaultStyle'' allows to set a default font, foreground and background colors to all other widgets. 
+ <source lang="xml">
+ <synth>
+  <style id="defaultStyle">
+    <font name="Verdana" size="16"/>
+    <state>
+      <color value="WHITE" type="BACKGROUND"/>
+      <color value="BLACK" type="FOREGROUND"/>
+    </state>
+  </style>
+  <bind style="defaultStyle" type="region" key=".*"/>
+  <style id="textfield">
+    <state>
+      <color value="yellow" type="BACKGROUND"/>
+    </state>
+    <imagePainter method="textFieldBorder" path="textfieldborder.png"
+                  sourceInsets="5 6 6 7" paintCenter="false"/>
+    <insets top="5" left="6" bottom="6" right="7"/>
+  </style>
+  <bind style="textfield" type="region" key="TextField"/>
+ </synth>
+ </source>
+
+Supposing that the XML declaration is defined in a file named ''synthExample.xml'', the following code loads the XML definition file and sets the current look and feel to synth (loading a synth Look and Feel is done using the ''load'' method of the {{Javadoc:SE|javax/swing/plaf/synth|SynthLookAndFeel}} class):
+ <source lang="java">
+ SynthLookAndFeel laf = new SynthLookAndFeel();
+ laf.load(new File("synthExample.xml").toURL());
+ UIManager.setLookAndFeel(laf);
+ </source>
+
+==See also==
+* [[Swing (Java)|Swing]], the standard cross-platform [[widget toolkit]] for Java
+* [[Pluggable look and feel]]
+* [[Look and feel#In widget toolkits|Look and Feel in Widget Toolkits]]
+
+==References==
+{{reflist|2}}
+
+==External links==
+* {{Javadoc:SE|package=Synth Look and Feel|javax/swing/plaf/synth}} API documentation
+* [http://java.sun.com/j2se/1.5.0/docs/api/javax/swing/plaf/synth/doc-files/synthFileFormat.html synth file format]
+* [http://javadesktop.org/articles/synth/ synth tutorial]
+* [http://www.ibm.com/developerworks/java/library/j-synth/ another synth tutorial]
+* [https://nimbus.dev.java.net/ nimbus home page]
+* [http://www.javasoft.de/jsf/public/products/synthetica Synthetica - commercial Synth Look and Feel with many different themes]
+* [http://www.easynth.com/products/EaSynthLookAndFeelDesigner.html EaSynth Look And Feel Designer - commercial IDE for Synth based look and feel]
+
+[[Category:Java platform]]
+[[Category:Java programming language]]
+[[Category:Java libraries]]
+[[Category:Java APIs]]
+[[Category:Widget toolkits]]
+{{compu-library-stub}}</body> </html>

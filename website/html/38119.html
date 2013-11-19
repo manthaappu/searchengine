@@ -1,0 +1,63 @@
+<html> <head> <title>Transitive reduction</title></head><body>In [[mathematics]], a '''transitive reduction''' of a [[binary relation]] ''R'' on a [[Set (mathematics)|set]] ''X'' is a [[Maximal element|minimal]] [[Relation (mathematics)|relation]] <math>R'</math> on ''X'' such that the [[transitive closure]] of <math>R'</math> is the same as the transitive closure of ''R''.  If the transitive closure of ''R'' is [[antisymmetric relation|antisymmetric]] and [[finite set|finite]], then <math>R'</math> is unique. However, neither existence nor uniqueness of transitive reductions is guaranteed in general.
+
+==Example==
+
+In [[graph theory]], any [[binary relation]] ''R'' on a set ''X'' may be thought of as a [[directed graph]] (''V'', ''A''), where ''V'' = ''X'' is the vertex set and ''A'' = ''R'' is the set of arcs of the graph.  The transitive reduction of a graph is sometimes referred to as its ''minimal representation''.  The following image displays drawings of graphs corresponding to a non-transitive binary relation (on the left) and its transitive reduction (on the right).
+
+<div class="center">
+{|
+| [[Image:tred-G.png|124px]]
+| [[Image:tred-Gprime.png|80px]]
+|}
+</div>
+
+The transitive reduction of a finite [[acyclic graph]] is unique. For a graph with nontrivial [[strongly connected component]]s, each such component will become a cycle in any transitive reduction of that graph. More formally, suppose we have a graph G and we form an acyclic graph G' by [[edge contraction|contracting]] each strongly connected component to a vertex. If we take the unique transitive reduction of G', then expand each vertex back out to a cycle containing the vertices contracted to form it, attaching incident edges at any vertex in the cycle, the result will be a minimal transitive reduction regardless of how this expansion is performed.
+
+==Graph algorithms for transitive reduction==
+
+The transitive reduction <math>R^-</math> of an acyclic relation <math>R</math> can be computed using its transitive closure <math>R^+</math>:
+:<math>R^- = R - (R \circ R^+)</math>
+Here, <math>\circ</math> denotes [[relation composition]].
+
+{{harv|Aho|Garey|Ullman|1972}}, which introduced the term in this meaning, also proves a connection between [[transitive closure]] and reduction:
+* they extend the computation of transitive reduction from transitive closure to deal with cycles;
+* they give a construction to compute a graph's transitive closure from its transitive reduction;
+* thus, transitive closure and transitive reduction have the same [[time complexity]].
+
+The ''tred'' tool in the [[Graphviz]]<ref>http://www.research.att.com/sw/tools/graphviz/</ref> toolset transitively reduces a graph, using a [[depth-first search]]-based implementation.
+
+==Incremental data structures==
+
+One of the most well-studied problems in computational graph theory is that of incrementally keeping track of the transitive closure of a graph while performing a sequence of insertions and deletions of vertices and edges. In 1987,  J.A. La Poutré and J. van Leeuwen described in their well-cited ''Maintenance Of Transitive Closures And Transitive Reductions Of Graphs'' an algorithm for simultaneously keeping track of both the transitive closure and transitive reduction of a graph in this incremental fashion.<ref>http://citeseer.ist.psu.edu/poutre87maintenance.html</ref>
+
+The algorithm uses 
+
+:O(|E<sub>new</sub>||V|) 
+
+time for a sequence of consecutive edge insertions and 
+
+:O(|E<sub>old</sub>||V|+|E<sub>old</sub>|<sup>2</sup>) 
+
+time for a sequence of consecutive edge deletions, where E<sub>old</sub> is the edge set prior to the insertions or deletions and E<sub>new</sub> is the edge set afterwards. For acyclic graphs, the deletion algorithm requires only 
+
+:O(|E<sub>old</sub>||V|) 
+
+time. These times are still best-known, as more recent research has preferred to focus on transitive closure.
+
+==See also==
+* [[Transitive relation]]
+* [[Hasse diagram]]
+
+==References==
+{{reflist}}
+*{{cite journal | ref={{harvid|Aho|Garey|Ullman|1972}} | author=A. Aho, M. Garey, J. Ullman | title=The Transitive Reduction of a Directed Graph | journal=SIAM Journal on Computing | month=June | year=1972 | volume=1 | issue=2 | pages=131&ndash;137 | doi=10.1137/0201008 }}</ref>
+
+==External links==
+* [http://mathworld.wolfram.com/TransitiveReduction.html Mathworld: Transitive reduction]
+
+{{DEFAULTSORT:Transitive Reduction}}
+[[Category:Set theory]]
+[[Category:Graph theory]]
+[[Category:Graph algorithms]]
+
+[[uk:Транзитивне скорочення]]</body> </html>

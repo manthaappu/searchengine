@@ -1,0 +1,542 @@
+<html> <head> <title>Comparison of open source configuration management software</title></head><body>This is a comparison of [[Free software|free (libre)]] and [[Open-source software|open source]] [[configuration management]] software.
+
+== Basic properties ==
+
+{| class="wikitable sortable" style="text-align: center; width: 95%"
+|-style="background: #ececec;"
+! style="width:12em" |
+! Language
+! Licensed
+! [[Mutual authentication|Mutual auth]]
+! [[Encryption|Encrypts]]
+! First release
+! Latest stable release
+|-
+! {{rh}} | [[Arusha Project]] (ARK)
+| [[Python (programming language)|Python]]
+| [[BSD licenses|BSD]] [http://ark.sourceforge.net/license.html]
+| {{yes}} <ref name="Key Pair">Key Pair: Uses public/private key pairs and key fingerprints for mutual authentication, like SSH.</ref>
+| {{yes}} <ref name="Secure Shell">Secure Shell: Uses the Secure Shell protocol for encryption.</ref>
+| align="left" |[http://sourceforge.net/project/showfiles.php?group_id=2057&package_id=20771 2001-07-21]
+| align="left" | 2005-04-19 20050419
+|-
+! {{rh}} | [[Bcfg2]]
+| [[Python (programming language)|Python]]
+| [[BSD licenses|BSD]] [http://trac.mcs.anl.gov/projects/bcfg2/browser/trunk/bcfg2/COPYRIGHT]
+| {{yes}} <ref name="Certificate and Passwords">Certificate and Passwords: Uses SSL X.509 certificate and fingerprint for clients to authenticate server, and passwords for server to authenticate clients; clients should only share the same password if they are allowed access to each other's configuration data.</ref>
+| {{yes}} <ref name="SSL">SSL: Uses the Secure Sockets Layer / Transport Layer Security (TLS) for encryption.</ref>
+| align="left" |[http://trac.mcs.anl.gov/projects/bcfg2/wiki/Download 2004-08-11]
+| align="left" |2010-11-15 1.1.1 [http://trac.mcs.anl.gov/projects/bcfg2/wiki/Download]
+|-
+! {{rh}} | [[Cfengine]]
+| [[C (programming language)|C]]
+| [[GPL]] [http://www.cfengine.org/pages/faq], COSL [http://cfengine.com/pages/faq]
+| {{yes}} <ref name="Key Pair"/>
+| {{yes}} <ref name="Custom">Custom: Uses code specific to the software for this function.</ref>
+| align="left" | 1993
+| align="left" | 2010-07-05 3.0.5p1 [http://www.cfengine.org/pages/source_code]
+|-
+! {{rh}} | [[Chef (software)|Chef]] [http://wiki.opscode.com/display/chef/Home]
+| [[Ruby (programming language)|Ruby]]
+| [[Apache License|Apache]]
+| {{yes}} <ref name="RSA Shared Keys">Per request signed headers and pre-shared keys.</ref>
+| {{yes}} <ref name="SSL">Payload encryption via SSL if HTTPS proxy is configured.</ref>
+| align="left" |2009-01-15 0.5.0
+| align="left" |2010-08-05 0.9.8
+|-
+! {{rh}} | [http://www.cs.umb.edu/~rouilj/DACS DACS] [http://www.cs.umb.edu/~rouilj/DACS/dacsmanual.html]
+| [[Perl]] [[Bourne Shell]]
+| [[GPL]] plus some others
+| {{yes}} <ref name="ReferenceA">DACS uses ssh as the underlying transport mechanism by default.</ref>
+| {{yes}} <ref name="ReferenceA"/>
+| align="left" |1994-11 as the Config system
+| align="left" |2009-01-10 2.0 [http://www.cs.umb.edu/~rouilj/DACS/]
+|-
+! {{rh}} | [http://etch.sourceforge.net/ Etch] 
+| [[Ruby (programming language)|Ruby]]
+| [[MIT License|MIT]]
+| {{yes}} <ref name="SSL and RSA">Uses SSL X.509 certificate for clients to authenticate server, and RSA public/private keys for server to authenticate clients.</ref>
+| {{yes}} <ref name="SSL"/>
+| align="left" | [http://sourceforge.net/projects/etch/files/etch/3.0/ 2008-11-08]
+| align="left" |  2010-08-12 [http://sourceforge.net/projects/etch/files/etch/3.16.0/ 3.16.0]
+|-
+! {{rh}} | [[FusionInventory]] with [[GLPI]]
+| [[Perl (programming language)|Perl]], [[PHP]]
+| [[GPL]]
+| {{yes}}
+| {{yes}} <ref name="SSL"/>
+| align="left" |2010
+| align="left" |2010-08
+|-
+! {{rh}} | [[ISconf]]
+| [[Python (programming language)|Python]]
+| [[GPL]] [http://trac.t7a.org/isconf/browser/trunk/LICENSE]
+| {{yes}} <ref name="HMAC">HMAC: Uses [[HMAC]] signatures on all network traffic.</ref>
+| {{no}} <ref>Improved security which would include an encrypted, mutually authenticated, peer-to-peer message bus is tracked [http://trac.t7a.org/isconf/ticket/39 here].</ref>
+| align="left" |1998
+| align="left" |2006-08-13 4.2.8.233
+|-
+! {{rh}} | [[LCFG]]
+| [[Perl (programming language)|Perl]]
+| [[GPL]]
+| {{partial}} <ref>LCFG does not provide its own transport mechanism; it relies on an external program, most often Apache. Using Apache it should be possible to do mutual authentication in several ways; however the documentation at [http://www.lcfg.org/doc/guide.pdf The Complete Guide to LCFG], Section 9.4: Authorization and Security, shows access control based on IP address ranges, implying that the client does not authenticate itself to the server via an SSL certificate; it also does not mention if the LCFG client checks the validity of the server's SSL certificate (such as via a per-site fingerprint distributed with the client, or a chain of trust to an accredited CA). It mentions that there can be a per-client password in the profile, but also states that ''"The contents of the LCFG profile should be considered public"''.</ref>
+| {{partial}} <ref>LCFG supports encrypted communications channels (SSL via Apache); however the documentation at [http://www.lcfg.org/doc/guide.pdf The Complete Guide to LCFG], Section 9.4: Authorization and Security, states that ''"The contents of the LCFG profile should be considered public"''.</ref>
+| align="left" |1994
+| align="left" |Weekly [http://www.lcfg.org/download/ Releases]
+|-
+! {{rh}} | [[OCS Inventory| OCS Inventory NG]] with [[GLPI]]
+| [[Perl (programming language)|Perl]], [[PHP]], [[C++]]
+| [[GPL]]
+| {{no}} <ref>Server authenticates to client, but client does not authenticate to server. See [http://prdownloads.sourceforge.net/ocsinventory/OCS_Inventory_NG-Installation_and_Administration_Guide_1.9_EN.pdf.zip?download OCS Inventory NG Installation and Administration guide], page 114.</ref>
+| {{yes}} <ref name="SSL"/>
+| align="left" |2003
+| align="left" |2009
+|-
+! {{rh}} | [http://opensymbolic.org/ OpenSymbolic]
+| [[Java (programming language)|Java]]
+| [[GPL]]
+| {{yes}} 
+| {{yes}}
+| align="left" |[http://opensymbolic.org/ 2008-05-08]
+| align="left" |2009-11-16 1.5.0-1
+|-
+! {{rh}} | [[opsi (open pc server integration)]]
+| [[Python (programming language)|Python]], [[CodeGear Delphi|Delphi]]
+| [[GPL]]
+| {{no}}
+| {{yes}} <ref name="SSL"/>
+| align="left" |2004
+| align="left" |2009-09-01 3.4
+|-
+! {{rh}} | [http://pacha.cafepais.com Pacha]
+| [[Python (programming language)|Python]]
+| [[MIT License|MIT]]
+| {{yes}} <ref name="SSH">SSH: Uses SSH for mutual authentication and underlying transport mechanism.</ref>
+| {{yes}} <ref name="SSH"/>
+| align="left" |[http://pacha.googlecode.com/files/pacha-0.0.1.tar.gz 2010-02-02]
+| align="left" |[http://pypi.python.org/pypi/pacha/0.2.3 0.2.3]
+|-
+! {{rh}} | [[Pallet (software)|Pallet]]
+| [[Clojure]]
+| [[Eclipse Public License|EPL]]
+| {{yes}} <ref name="SSH Key Pair">Key Pair: Uses SSH private/public key authentication.</ref>
+| {{yes}} <ref name="Secure Shell">Secure Shell: Uses the Secure Shell protocol for encryption.</ref>
+| align="left" | 2010-06-21
+| align="left" |[https://github.com/pallet/pallet/archives/pallet-0.3.0 2001-11-14]
+|-
+! {{rh}} | [http://info.enstb.org/projets/pcfengine/en/index.html PCfengine]
+| [[Python (programming language)|Python]]
+| [[GPL]] [http://svn.enstb.org/pcfengine/trunk/COPYING]
+| {{no}} <ref name="PCfengine Security">It is not clear if [http://mirror.opensysadmin.com/pcfengine/svn/trunk/src/pcfengine/lib/net/ PCfengine's networking code] was ever completed. The [http://mirror.opensysadmin.com/pcfengine/svn/trunk/README README] states that [http://libdnet.sourceforge.net libdnet] is used, which doesn't look like it supports any kind of strong network security.</ref>
+| {{no}} <ref name="PCfengine Security"/>
+|
+| align="left" |0.0.2
+|-
+! {{rh}} | [[PIKT]]
+| [[C (programming language)|C]]
+| [[GPL]] [http://pikt.org/pikt/licensing.html]
+| {{yes}} <ref>PIKT uses shared secret keys for mutual authentication. ''"As an option, you can use secret key authentication to prove the master's identity to the slave. [...] If one managed to crack any system in the PIKT domain, one would have access to all common secrets.  To solve this problem, you may use per-slave uid, gid, and private_key settings."'' - from [http://pikt.org/pikt/ref/ref.6.security_considerations.html Security Considerations].</ref>
+| {{yes}}<ref>''"For file installs, file fetches (to diff against the central configuration), and command executions, you can optionally encrypt all such data traffic between master and slave."'' - from [http://pikt.org/pikt/ref/ref.6.security_considerations.html Security Considerations].</ref>
+| align="left" |[http://pikt.org/pikt/dist/?C=M;O=A 1998]
+| align="left" |2007-09-10 1.19.0
+|-
+! {{rh}} | [[Puppet (software)|Puppet]]
+| [[Ruby (programming language)|Ruby]]
+| [[GPL]]
+| {{yes}} <ref name="Certificates">Certificates: Uses SSL X.509 Certificates for mutual authentication. Can use any SSL Certificate Authority to manage the Public Key Infrastructure.</ref>
+| {{yes}} <ref name="SSL"/>
+| align="left" |[http://puppetlabs.com/downloads/puppet/?C=M;O=A 2005-08-30]
+| align="left" |2010-11-15 2.6.3
+|-
+! {{rh}} | [[Quattor]]
+| [[Perl (programming language)|Perl]]
+| [http://www.opensource.org/licenses/eudatagrid.php EDG][http://eu-datagrid.web.cern.ch/eu-datagrid/license.html]
+| {{yes}} <ref>"Client to server authentication and vice versa: on one hand, this allows to enforce access policies
+to sensitive data according to the client "name", on the other hand, clients are guaranteed to talk to
+the original server." - from [http://isscvs.cern.ch:8180/cgi-bin/cvsweb.cgi/%7Echeckout%7E/elfms/quattor/documentation/installation-guide/pdf/quattor-install-guide_1_1.pdf?rev=HEAD&content-type=application/pdf&cvsroot=elfms Quattor Installation and User Guide: Version 1.1.x], page 70</ref>
+| {{yes}} <ref>"[...] secure information transfer, since data are encrypted: this prevents eavesdroppers from obtaining information in transit over the network." - from [http://isscvs.cern.ch:8180/cgi-bin/cvsweb.cgi/%7Echeckout%7E/elfms/quattor/documentation/installation-guide/pdf/quattor-install-guide_1_1.pdf?rev=HEAD&content-type=application/pdf&cvsroot=elfms Quattor Installation and User Guide: Version 1.1.x], page 70</ref>
+| align="left" |[http://quattorsw.web.cern.ch/quattorsw/software/quattor/release/ 2005-04-01]
+| align="left" |2007-12-12 1.3-2
+|-
+! {{rh}} | [[Radmind]]
+| [[C (programming language)|C]]
+| [[BSD licenses|BSD]] [http://rsug.itd.umich.edu/software/copyright.html]
+| {{yes}} <ref>''"SSL certificates can also be used to authenticate both the Radmind server and the managed clients, regardless of DNS or IP-address variation."'' - from [http://www.usenix.org/events/lisa03/tech/full_papers/craig/craig_html/index.html Radmind: The Integration of Filesystem Integrity Checking with Filesystem Management]</ref>
+| {{yes}} <ref>''"For network security, Radmind supports SSL-encrypted links. This allows nodes on insecure networks to be updated securely.''" - from [http://www.usenix.org/events/lisa03/tech/full_papers/craig/craig_html/index.html Radmind: The Integration of Filesystem Integrity Checking with Filesystem Management]</ref>
+| align="left" |[http://sourceforge.net/project/showfiles.php?group_id=141444&package_id=155276&release_id=392624 2002-03-26]
+| align="left" |[http://sourceforge.net/project/showfiles.php?group_id=141444 2008-10-8] 1.13.0
+|-
+! {{rh}} | [[SmartFrog]]
+| [[Java (programming language)|Java]]
+| [[LGPL]]
+| {{yes}} <ref name="Smartfrog Security">See [http://www.hpl.hp.com/research/smartfrog/papers/sfSecurityTutorial.pdf Using the new SmartFrog Security]</ref>
+| {{yes}} <ref name="Smartfrog Security"/>
+| align="left" |2004-02-11
+| align="left" |[http://sourceforge.net/project/shownotes.php?release_id=656342 2009-01-26] 3.16.004 <ref name="Smartfrog Releases">The release the Smartfrog pushes from its [http://wiki.smartfrog.org/wiki/display/sf/Download own site] is 3.17.014 of 2009-09-04</ref>
+|-
+! {{rh}} | [[Spacewalk (software)|Spacewalk]]
+| [[Java (programming language)|Java]] ([[Perl (programming language)|Perl]], [[Python (programming language)|Python]] & [[PL/SQL]])
+| [[GPL]] (v2)
+|
+| {{yes}}
+| align="left" | 2008-06<ref name="Spacewalk inception date">[https://fedorahosted.org/spacewalk/wiki/SpacewalkFaq#HowlonghasSpacewalkbeenaround Spacewalk inception date; June 2008]</ref>
+| align="left" | 2010-04-29<ref name="Spacewalk Releases">[https://fedorahosted.org/spacewalk/wiki/ReleaseNotes1.0 Heya Spacewalkers, Spacewalk 1.0 has been released!]</ref>
+|-
+! {{rh}} | [[STAF]]
+| [[C++]]
+| [[Common Public License|CPL]] [http://staf.sourceforge.net/license.php]
+| {{no}} <ref name="Network Trust">Network Trust: Trusts the network, like rsh.</ref><ref name="User-only Auth">User-only Auth: User authenticates to server via password, but uses Network Trust to authenticate user to server, like telnet.</ref>
+| {{partial}} <ref>There is a [http://sourceforge.net/tracker/index.php?func=detail&aid=940264&group_id=33142&atid=407384 feature request for a Secure TCP/IP Connection Provider], and one of the [http://sourceforge.net/mailarchive/message.php?msg_name=OF7C30AE4D.50AE13E2-ON862572B4.004D3583-862572B4.004E54FC%40us.ibm.com developers stated] on 2007-04-05 that ''"You will need to download the source code for OpenSSL and point the build files at it. Other than that, it should just work."'', so it looks like there may be working encryption if you build from scratch instead of using the prebuilt binaries. It is unclear what if any authentication building against OpenSSL would give STAF.</ref>
+| align="left" |[http://staf.sourceforge.net/history.php 1998-02-16]
+| align="left" |2009-12-18 3.4.0
+|-
+! {{rh}} | [http://www.heiho.net/synctool/ Synctool]
+| [[Python (programming language)|Python]]
+| [[General Public License|GPL]] [http://www.heiho.net/synctool/LICENSE.txt]
+| {{yes}} 
+| {{yes}}
+| align="left" |[http://www.heiho.net/synctool/ 2003]
+| align="left" |[http://www.heiho.net/synctool/Changelog.txt 2010-02-23] 4.5
+|-
+|}
+
+== Platform support ==
+Note: This means platforms on which a recent version of the tool has actually been used successfully, not platforms where it should theoretically work since it's written in good portable C/C++ or an interpreted language. It should also be listed as a supported platform on the project's web site.
+
+{| class="wikitable sortable" style="text-align: center; width: 95%"
+! style="width:12em" |
+! [[IBM AIX (operating system)|AIX]]
+! [[Berkeley Software Distribution|*BSD]]
+! [[HP-UX]]
+! [[Linux]]
+! [[Mac OS X]]
+! [[Solaris (operating system)|Solaris]]
+! [[Microsoft Windows|Windows]]
+! Others
+|-
+! {{rh}} | [[Arusha Project]] (ARK)
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[Bcfg2]]
+| {{partial}} <ref>Encap, RPM, and POSIX File Support Only</ref>
+| {{yes}} <ref name="FreeBSD">FreeBSD</ref>
+| {{no}}
+| {{yes}} <ref>Debian, Ubuntu; Gentoo; RPM-based distributions (CentOS, Mandrake, Red Hat, RHEL, SLES, SuSE)</ref>
+| {{partial}} <ref>POSIX File,Launchd, and MacPorts Support Only</ref>
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[Cfengine]]
+| {{yes}}
+| {{yes}} <ref name="FreeBSD"/><ref name="NetBSD">NetBSD</ref><ref name="OpenBSD">OpenBSD</ref>
+| {{yes}}
+| {{yes}}
+| {{yes}} <ref>Support for Darwin, Mac OS X's *BSD base, via [http://cfengine.darwinports.com/ Darwin Ports]</ref>
+| {{yes}}
+| {{yes}}
+| {{yes}}
+|-
+! {{rh}} | [[Chef (software)|Chef]]
+| {{partial}} <ref name="AIX">Chef is known to run on AIX, but does not have any platform-specific providers.</ref>
+| {{yes}} <ref name="FreeBSD"/>
+| {{partial}} <ref name="HP-UX">Chef will run on HP-UX, but does not have any platform-specific providers.</ref>
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{partial}} <ref name="Windows">Windows support is a work in progress.</ref>
+| {{no}}
+|-
+! {{rh}} | [http://www.cs.umb.edu/~rouilj/DACS DACS] [http://www.cs.umb.edu/~rouilj/DACS]
+|
+| {{yes}}
+|
+| {{yes}}
+|
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [http://etch.sourceforge.net/ Etch]
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} |  [[FusionInventory]] with [http://www.glpi-project.org GLPI]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+|-
+! {{rh}} | [[ISconf]]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[LCFG]]
+| {{no}}
+| {{no}}
+| {{no}}
+| {{partial}} <ref>''"Recent versions run on Fedora Core (3, 5, 6). Various people have ported some of the LCFG core to other Linux distributions, such as Debian, but these ports have not been incorporated"''</ref>
+| {{partial}} <ref>''"There has been an experimental port to Mac OS X, which does work and includes some Mac-specific components. However, this is not production quality and the lack of uniform packaging system under OS X means that automatic management of installed software is likely to be difficult."''</ref>
+| {{partial}} <ref>''"LCFG core has been ported back to Solaris and we are using this in production, although the software has not been packaged for distribution, and is not so well supported"''</ref>
+| {{no}}
+| {{no}}
+|-
+! {{rh}} |  [[OCS Inventory NG]] with [http://www.glpi-project.org GLPI]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+|-
+! {{rh}} | [http://opensymbolic.org/ OpenSymbolic]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+|-
+! {{rh}} | [[opsi (open pc server integration)]]
+| {{no}}
+| {{no}}
+| {{no}}
+| {{no}}
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{no}}
+|-
+! {{rh}} | [http://code.google.com/p/pacha Pacha]
+| {{no}}
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[Pallet (software)|Pallet]]
+| {{no}}
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [http://info.enstb.org/projets/pcfengine/en/index.html PCfengine]
+| {{yes}}
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[PIKT]]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{yes}} <ref>Digital Unix; IRIX</ref>
+|-
+! {{rh}} | [[Puppet (software)|Puppet]]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{partial}} <ref name="Puppet_Windows">Windows support is preliminary (see 2.6 release notes)</ref>
+| {{yes}}
+|-
+! {{rh}} | [[Quattor]]
+| {{no}}
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[Radmind]]
+| {{yes}}
+| {{yes}} <ref name="FreeBSD"/><ref name="NetBSD"/><ref name="OpenBSD"/>
+| {{no}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+|-
+! {{rh}} | [http://code.google.com/p/rollout/ Rollout]
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+! {{rh}} | [[SmartFrog]]
+| {{no}} <ref name="JavaUntested">Written in Java, so should in theory work on this platform if there is the appropriate JVM version available for it; however it has not been tested on the platform, which should be considered unsupported.</ref>
+| {{no}} <ref name="JavaUntested"/>
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}} <ref name="JavaUntested"/>
+|-
+! {{rh}} | [[Spacewalk (software)|Spacewalk]]
+| {{no}} <ref>[https://fedorahosted.org/spacewalk/wiki/BrainBox Support for NIMOL feature request]</ref>
+| {{no}}
+| {{no}}
+| {{yes}}
+| {{no}}
+| {{yes}} <ref>[https://fedorahosted.org/spacewalk/wiki/ManagingSolarisSystems Managing Solaris Systems]</ref>
+| {{no}}
+| {{yes}} <ref>[https://fedorahosted.org/spacewalk/wiki/WikiStart#Introduction "Spacewalk works with RHEL, Fedora, and other RHEL derivative distributions like CentOS, Scientific Linux, etc"]</ref>
+|-
+! {{rh}} | [[STAF]]
+| {{yes}} <ref>4.3.3+ (Power 32); 5.1+ (Power 32/64)</ref>
+| {{yes}} <ref>FreeBSD 4.10 (x86-32); FreeBSD 6.1+ (x86-32)</ref>
+| {{yes}} <ref>11.00+ (PA-RISC 32, IA-64)</ref>
+| {{yes}} <ref>(x86-32, x86-64, IA-64, PPC 64, zSeries 32/64)</ref>
+| {{yes}} <ref>[http://sourceforge.net/tracker/index.php?func=detail&aid=1458480&group_id=33142&atid=407383][http://sourceforge.net/tracker/index.php?func=detail&aid=1338199&group_id=33142&atid=407383 10.2+ (?)]</ref>
+| {{yes}} <ref>2.6+ (Sparc 32); 10+ (x86-32, x86-64)</ref>
+| {{yes}} <ref>95, 98, Me, NT4, 2000, XP, 2003, Vista (x86-32); 2003, Vista (x86-64); 2004 (IA-64)</ref>
+| {{yes}} <ref>OS/400 5.2+ (iSeries 32); z/OS Unix 1.4+</ref>
+|-
+! {{rh}} | [http://www.heiho.net/synctool/ Synctool]
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{yes}}
+| {{no}}
+| {{no}}
+|-
+|}
+
+== Short descriptions ==
+
+Not all tools have the same goal and the same feature set. To help distinguish between all of these software packages, here is a short description of each one.
+
+;[[Arusha Project]] (ARK)
+:Manage package and configuration specification of hosts via a custom XML description language. Can be used as a front end for [[Cfengine]] or [http://pikt.org/ PIKT]. Provides some collaboration features between administration 'teams'. The last commit dates from [http://sourceforge.net/mailarchive/forum.php?forum_name=ark-commits April 2007].
+
+;[[Bcfg2]]
+:Software to manage the configuration of a large number of computers using a central configuration model and the [[client–server model|client–server paradigm]]. The system enables reconciliation between clients' state and the central configuration specification. Detailed reports provide a way to identify unmanaged configuration on hosts. Generators enable code or template based generation of configuration files from a central data repository.
+
+;[[Cfengine]]
+:Lightweight agent system. Manages configuration of a large number of computers using the client–server paradigm or stand-alone. Any client state which is different from the policy description is reverted to the desired state. Configuration state is specified via a declarative language. Cfengine's paradigm is convergent [http://www.usenix.org/event/lisa98/full_papers/burgess/burgess.pdf "computer immunology"]
+
+;[[Chef (software)|Chef]]
+:Chef is a configuration management tool written in Ruby, and uses a pure Ruby DSL for writing configuration "recipes". Chef can be used as a client–server tool, or used in "solo" mode.
+
+;[http://www.cs.umb.edu/~rouilj/DACS/ DACS]
+:It is similar to other CCM (computer configuration management) tools such as bcfg2, lcfg, puppet and the well known cfengine. However, it has some unique features that makes it more than just a program which pushes files to other hosts. It integrates: a host database; a version control system; an optional file generation system; a file distribution and remote command execution mechanism.
+
+;[http://etch.sourceforge.net/ Etch]
+:Etch uses a client-server or client-only model.  Configuration is defined in XML, Ruby, and embedded Ruby (ERB) templates.  A copy of the original file is provided to the user's configuration scripts, allowing easy idempotent edits to stock files.  In client-server mode clients can submit requests to the server for special configuration, allowing clients to have limited control of their configuration while still ensuring centralized management.
+
+;[http://www.fusioninventory.org/ FusionInventory] with [http://www.glpi-project.org GLPI]
+:FusionInventory is a solution for hardware & software inventory with agent or agentless using SNMP (like for computer inventory or switch inventory), Wake On Lan (WOL), Software deployment using OCS Inventory NG protocol and peer to peer download, Network connected devices (using Netbios, nmap and SNMP). It can be used with GLPI directly and other Asset solution (with lib server php intergation).
+
+;[[ISconf]]
+:Tool to execute commands and replicate files on all nodes. The nodes do not need to be up; the commands will be executed when they boot. The system has no central server so commands can be launched from any node and they will replicate to all nodes. It implements many of the ideas in "[http://www.infrastructures.org/papers/turing/turing.html Why Order Matters: Turing Equivalence in Automated Systems Administration]".
+
+;[[LCFG]]
+:LCFG manages the configuration with a central description language in XML, specifying resources, aspects and profiles. Configuration is deployed using the client–server paradigm. Appropriate scripts on clients (called "components") transcribe the resources into configuration files and restart services as needed.
+
+;[http://www.ocsinventory-ng.org/index.php?page=French OCS Inventory NG] with [http://www.glpi-project.org GLPI]
+:OCS Inventory NG, when integrated with GLPI, provides inventory and asset management scans/database, package deployment, distributed script execution, and via plugins permissions management and other configuration management functions. Here is a [http://ocsinventory.sourceforge.net/uploads/images/poster-eng.png good diagram] of its architecture.
+
+;[http://opensymbolic.org/ OpenSymbolic]
+:OpenSymbolic is an OpenSource Enterprise Platform designed to build, configure and manage your huge and global distributed data centers. Based on the best open source frameworks for these purposes, represents the state-of-the-art solution for a centralized datacenter management platforms.
+
+;[[opsi (open pc server integration)]]
+:opsi (open pc server integration) is a [[desktop management]] software for [[Microsoft Windows|Windows]] clients based on [[Linux]] servers. It provides automatic [[software deployment]] (distribution), [[unattended installation|unattended OS-Installation]], [[patch]] management, hard- and software inventory, License Management / [[Software Asset Management]] as well as administrative tasks for the [[configuration management]]<ref>http://www.opsi.org/features/</ref>.
+
+;[http://code.google.com/p/pacha Pacha]
+:Pacha was designed to be a simple way to backup and manage software configuration files from single or multiple server instances across the network.Written in [[Python (programming language)|Python]], the initial approach is to easily deploy an instance and capture any changes via a version control ([[mercurial]]), giving the System Administrator the ability to rollback and safe guard valid, working configurations.
+
+;[[Pallet (software)|Pallet]]
+:Pallet is a provisioning, configuration and management tool written in [[Clojure]]. It uses configuration "crates", that can be functionally composed to configure machines. It requires neither a server, nor an agent on the managed machine.
+
+;[http://info.enstb.org/projets/pcfengine/en/index.html PCfengine]
+:This tool aim to be a better [[Cfengine]] written in [[Python (programming language)|Python]]. It uses Python directly as a language to describe configuration files. In contrast to Cfengine, it determines automatically the order in which actions are applied in the client. You can read about its [http://enstb.org/~cguychard/pcfengine/pdf/concepts.pdf concepts] and [http://enstb.org/~cguychard/pcfengine/pdf/api.pdf api].
+
+;[[PIKT]]
+:PIKT is foremost a monitoring system that also does configuration management. "''PIKT consists of a sophisticated, [[feature-rich]] file preprocessor; an innovative scripting language with unique labor-saving features; a flexible, centrally directed process scheduler; a customizing file installer; a collection of powerful command-line extensions; and other useful tools.''" [http://pikt.org/]
+
+;[[Puppet (software)|Puppet]]
+:Puppet consists of a custom declarative language to describe system configuration, distributed using the client–server paradigm (using [[XML-RPC]] protocol in older versions, with a recent switch to [[Representational State Transfer|REST]]), and a library to realize the configuration. The resource abstraction layer enables administrators to describe the configuration in high-level terms, such as users, services and packages. There is support in Puppet for using a pure Ruby DSL as an alternative configuration language in version 2.6.0 and later.
+
+;[[Quattor]]
+:"''The quattor information model is based on the distinction between the desired state and the actual state. The desired state is registered in a fabric-wide Configuration Database (CDB), using a specially designed configuration language for expressing and validating configurations, composed out of reusable hierarchical building blocks called templates. Configurations are propagated to and cached on the managed nodes.''" [http://quattor.web.cern.ch/quattor/]
+
+;[[Radmind]]
+:Radmind manages hosts configuration at the file system level. In a similar way to [[Tripwire (software)|Tripwire]] (and other configuration management tools), it can detect external changes to managed configuration, and can optionally reverse the changes. Radmind does not have higher-level configuration element (services, packages) abstraction. A graphical interface is available (only) for [[Mac OS X]].
+
+;[[SmartFrog]]
+:Java-based tool to deploy and configure applications distributed across multiple machines. There is no central server; you can deploy a .SF configuration file to any node and have it distributed to peer nodes according to the distribution information contained inside the deployment descriptor itself.
+
+;[[Spacewalk (software)|Spacewalk]]
+:Spacewalk is an open source Linux and Solaris systems management solution and is the upstream project for the source of Red Hat Network Satellite. Spacewalk works with RHEL, Fedora, and other RHEL derivative distributions like CentOS, Scientific Linux, etc. We are working on getting it packaged for inclusion in Fedora. It allows you to inventory your systems (hardware and software information, install and update software on your systems, collect and distribute your custom software packages into manageable groups, provision your systems (from bare metal via KOAN and cobbler), manage and deploy configuration files to your systems, monitor your systems, provision virtual guests, start/stop/configure virtual guests and delegate all of these actions to organisations with fine grain local or LDAP user controls and system entitlements.
+
+;[http://staf.sourceforge.net STAF]
+:"''The Software Testing Automation Framework (STAF) is an open source, multi-platform, multi-language framework designed around the idea of reusable components, called services (such as process invocation, resource management, logging, and monitoring).''" [http://staf.sourceforge.net] There are STAF plugins to perform a variety of common configuration management functions, such as distributed scheduling, execution, and file copying.
+
+;[http://www.heiho.net/synctool/ Synctool]
+:Python based command line tool that uses SSH with host-based authentication and rsync to copy an overlay tree to a machine or group of machines. Synctool is designed to be easy to learn and easy to use. Default behaviour is to show a preview of what files would be updated on which machine; then the admin can either view the changes in more detail or deploy them. Synctool was created by [[Stichting Academisch Rekencentrum Amsterdam|SARA]] system expert Walter de Jong.
+
+== See also ==
+{{Portal|Free software}}
+[[Webmin]] - Should also be added to the software covered above.
+
+==References==
+<references/>
+
+{{DEFAULTSORT:Comparison Of Open Source Configuration Management Software}}
+[[Category:Configuration management| ]]
+[[Category:Software comparisons|Open source configuration management software]]
+[[Category:Free software lists and comparisons|Configuration management software]]</body> </html>

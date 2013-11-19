@@ -1,0 +1,98 @@
+<html> <head> <title>Session poisoning</title></head><body>'''Session poisoning''' (also referred to as "Session data pollution" and "Session modification") is to [[Exploit (computer security)|exploit]] insufficient input validation in server applications which copies user input into [[Session (computer science)|session]] variables. 
+
+The underlying vulnerability is a state management problem: shared state, [[Race hazard|race condition]], ambiguity in use or plain unprotected modifications of state values.
+
+Session poisoning have been demonstrated in server environments where different non-malicious applications (scripts) share the same session states but where usage differ, causing ambiguity and race conditions. 
+
+Session poisoning have been demonstrated in scenarios where attacker is able to introduce malicious scripts into the server environment, which is possible if attacker and victim share a web host.
+
+==Origins==
+Session poisoning was first discussed as a (potentially new) vulnerability class in [[Full disclosure |Full disclosure mailinglist]]. [http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0414.html Alla Bezroutchko] inquired if "Session data pollution vulnerabilities in web applications" was a new problem in January 2006. This was however an old vulnerability previously noted by other; "this is a classic state management issue" - [http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0459.html Yvan Boily]; "This is not new" - [http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0423.html /someone].
+
+
+Earlier examples of these vulnerabilities can be found in major security resources/archives such as [[Bugtraq]], e.g.
+*July 2001 [http://seclists.org/lists/bugtraq/2001/Jul/0569.html Serious security hole in Mambo Site Server version 3.0.X] by Ismael Peinado Palomo of reverseonline.com 
+*September 2005 [http://seclists.org/lists/bugtraq/2005/Sep/0193.html PHP Session modification] by unknow (from uw-team) and adam_i 
+
+
+It is however hard to find early references. This is mainly due to that no generally accepted vulnerability class name or search term for these issues existed previously; nor was it taught/discussed in popular secure web programming guidelines / FAQ's such as the [http://phpsec.org/projects/guide/ PHPSEC.ORG PHP Security Guide] (accessed January 2006). 
+
+Later, session pollution has become covered in some articles, such as [http://segfaultlabs.com/pdf/php-session-security.pdf PHP Session Security, Przemek Sobstel, 2007] (accessed September 22, 2007).
+
+==Attack examples==
+===Trivial attack scenario===
+A example code vulnerable to this problem is:
+
+<pre>
+Session("Login") = Request("login")
+Session("Username") = Request("username")
+</pre>
+
+Which is subject to trivial attacks such as
+<pre>vulnerable.asp?login=YES&username=Mary</pre>
+
+This problem could exist in software where
+*User submits username / password to <code>logon.asp</code>
+*If password for <code>Mary</code> checks outs, <code>logon.asp</code> forwards to <code>vulnerable.asp?login=YES&username=Mary</code>
+
+The problem is that <code>vulnerable.asp</code> is designed on the assumption that the page is only accessed in a non-malicious way. Anyone who realizes how the script is designed, is able to craft an HTTP request which sets the logon user arbitrarily.
+
+===Exploiting ambiguous or dual use of same session variable===
+[http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0414.html Alla Bezroutchko] discusses a scenario where <code>$_SESSION['login']</code> is used for two different purposes. 
+*In the login scripts, the session variable stores "This user is logged on".
+*In the password reset scripts, the session variable stores "this user wants his password reset".
+
+A race condition was demonstrated, in which the reset scripts could be exploited to change the logged on user arbitrarily.
+
+===Exploiting scripts allowing writes to arbitrary session variables===
+[http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0423.html /someone] discusses examples observed in development forums, which allows writing to arbitrary session variables.
+
+The first example is
+<pre>
+$var = $_GET["something"]; 
+$_SESSION["$var"] = $var2; 
+</pre>
+(in which $_GET["something"] is probably from a selection box or similar).
+
+Attack becomes
+<pre>vulnerable.php?something=SESSION_VAR_TO_POISON</pre>
+
+====Session poisoning attacks enabled by php.ini: register_globals = on====
+<code>php.ini: register_globals = on</code> is known to enable security vulnerabilities in several applications. [[PHP]] server administrators are recommended to disable this feature.
+
+''Note: Real-world examples of session poisoning in enabled by register_globals = on was publicly demonstrated in back in July 2001 article [http://seclists.org/lists/bugtraq/2001/Jul/0569.html Serious security hole in Mambo Site Server version 3.0.X].''
+
+Second example by [http://archives.neohapsis.com/archives/fulldisclosure/2006-01/0423.html /someone] is
+<pre>
+if ($condition1) { 
+$var = 'SOMETHING'; 
+}; 
+if ($condition2) { 
+$var = 'OTHER'; 
+}; 
+$_SESSION["$var"] = $var2; 
+</pre>
+which is vulnerable if:
+*It is possible for attacker to cause both conditions to be false.
+*php.ini is misconfigured (register_globals = on), which allows $var default value to be controlled by GPC (GET, POST, or COOKIE) input. 
+
+Attack becomes
+<pre>vulnerable.php?var=SESSION_VAR_TO_POISON</pre>
+
+===Exploit utilizing a shared PHP server (e.g. shared web hosting)===
+[http://seclists.org/lists/bugtraq/2005/Sep/0193.html unknow of uw-team.org] discusses a scenario where attacker and victim shares the same PHP server.
+
+Attack is fairly easy:
+*The attacker first visits the victim's page, and e.g. log on.
+*Attacker then uploads a PHP script to his account, and has it display context of $_SESSION (set by victim script).
+*Attacker determines which variable needs to be changed, uploads a script which sets this variable, executes it.
+*Attacker visits victim pages to see if anticipated exploit worked.
+
+This attack only requires that victim and attacker share the same PHP server. The attack is not dependent on victim and attacker having the same virtual hostname, as it is trivial for attacker to move the session identifier cookie from one cookie domain to another.
+
+==See also==
+*[[Session fixation]]
+
+[[Category:Web security exploits]]
+
+[[de:Session Poisoning]]</body> </html>

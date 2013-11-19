@@ -1,0 +1,205 @@
+<html> <head> <title>Measuring network throughput</title></head><body>{{Essay-like|date=January 2010}}
+People are often concerned about '''measuring the maximum data [[throughput]]''' rate of a communications link or network access.  A typical method of performing a measurement is to transfer a 'large' file and measure the time taken to do so.  The throughput is then calculated by dividing the file size by the time to get the throughput in [[megabit]]s, [[kilobit]]s, or [[bit]]s per second.
+
+Unfortunately, the results of such an exercise will result in the [[goodput]] which is less than the maximum throughput, leading to people believing that their communications link is not operating correctly. In fact, there are many overheads accounted for in goodput in addition to transmission overheads, including [[Latency (engineering)|latency]], [[Receive_Window#Window_size|TCP Receive Window size]] and machine limitations, which means the calculated goodput does not reflect the maximum achievable throughput.
+
+The Maximum bandwidth can be calculated as follows:
+ <math> \mathrm{Throughput} \le \frac {\mathrm{RWIN}} {\mathrm{RTT}} \,\!</math> <!-- The \,\! is to keep the formula rendered as PNG instead of HTML. Please don't remove it. It matches the next formula. -->
+where RWIN is the TCP Receive Window and RTT is the [[Round-trip delay time|round-trip time]] for the path.
+The Max TCP Window size in the absence of [[TCP window scale option]] is 65,535 [[byte]]s.
+
+Example: Max Bandwidth = 65535 bytes / 0.220 s = 297886.36 bytes/s * 8 = 2.376 [[megabit|Mbit]]/s.
+
+We multiply the Byte per second times 8 to get the Bit per second rate.  Over a single TCP connection between those endpoints, the tested Bandwidth will be restricted to 2.376 Mbit/s even if the contracted Bandwidth is greater.
+
+==Bandwidth test software==
+Bandwidth test software is used to determine the maximum bandwidth of a [[computer network|network]] or [[internet]] connection. It is typically undertaken by attempting to download or upload the maximum amount of data in a certain period of time, or a certain amount of data in the minimum amount of time. For this reason, Bandwidth tests can delay internet transmissions through the internet connection as they are undertaken, and can cause inflated data charges.
+
+A more accurate method is to use dedicated software such as Netcps, [[IxChariot]], [[Iperf]], [[Ttcp]], [[netperf]] or [[bwping]] for measuring the maximum throughput of a network access.
+
+==Nomenclature==
+{{bitrates}}
+The throughput of communications links is measured in bits per second (bit/s), kilobits per second (kbit/s), megabits per second (Mbit/s) and gigabits per second (Gbit/s).  In this application, kilo, mega and giga are the standard [[SI|S.I.]] prefixes indicating multiplication by 1,000 ([[Kilo-|kilo]]), 1,000,000 ([[Mega-|mega]]), and 1,000,000,000 ([[giga]]). 
+
+File sizes are typically measured in [[byte]]s &mdash; [[kilobyte]]s, [[megabyte]]s, and [[gigabyte]]s being usual, where a byte is eight bits.  In modern textbooks one kilobyte is defined as 1,000 byte, one megabyte as 1,000,000 byte, etc., in accordance with the 1998 [[International Electrotechnical Commission]] (IEC) standard. However, when Windows systems measure file size, the old computer science definition is still used, where 1 kilobyte is defined as 1,024 (or 2<sup>10</sup>) bytes, which should be denoted 1 [[kibibyte]] according to IEC terminology.  Similarly, a file size of 1 megabyte is 1,024 × 1,024 byte (should be called 1 [[mebibyte]]), and 1 gigabyte 1,024 × 1,024 × 1,024 byte (should be called one [[gibibyte]]).  The result of all this is that a file that according to the operational system consists of 64 kilobyte data contains 64 × 1024 bytes, or 64 × 1024 × 8 bits.
+
+===Kibi, mebi, gibi, tebi, and pebi prefixes===
+
+{{main|binary prefix}}
+ 
+Kibi, mebi, gibi, tebi, pebi, and exbi are binary prefix multipliers that, in 1998, were approved as a standard by the [[International Electrotechnical Commission]] (IEC) in an effort to eliminate the confusion that sometimes occurs between decimal (power-of-10) and binary (power-of-2) numeration terms. 
+
+At present, the prefix multipliers kilo- (k or K), mega- (M), giga- (G), tera- (T), peta- (P), and exa- (E) are ambiguous. In most of the physical sciences, and when describing quantities of objects generally, these multipliers refer to powers of 10. However, when used to define data quantity in terms of bytes, they refer to powers of 2. The following table denotes the most often-used prefixes and their meanings. 
+
+{| class="wikitable"
+|-
+!Prefix
+!Symbol(s)
+!Power of 10
+!Power of 2
+|-
+|kilo-
+|k or K <sup>Note 1</sup>
+|10<sup>3</sup>
+|2<sup>10</sup>
+|-
+|mega-
+|M
+|10<sup>6</sup>
+|2<sup>20</sup>
+|-
+|giga-
+|G
+|10<sup>9</sup>
+|2<sup>30</sup>
+|-
+|tera-
+|T
+|10<sup>12</sup>
+|2<sup>40</sup>
+|-
+|peta-
+|P
+|10<sup>15</sup>
+|2<sup>50</sup>
+|-
+|exa- <sup>Note 2</sup>
+|E
+|10<sup>18</sup>
+|2<sup>60</sup>
+|-
+|zetta- <sup>Note 2</sup>
+|Z
+|10<sup>21</sup> 
+|2<sup>70</sup>
+|-
+|yotta- <sup>Note 2</sup>
+|Y
+|10<sup>24</sup>
+|2<sup>80</sup>
+|}
+
+(1) k = 10<sup>3</sup> and K = 2<sup>10</sup>
+
+(2) Not generally used to express data throughput
+
+The power-of-10 multipliers and the power-of-2 multipliers for a given word prefix are almost, but not quite, the same. For example, the power-of-10 definition of kilo- (k) refers to 1,000, while the power-of-2 definition (K) refers to 1,024. As if this is not confusing enough, when referring to a data throughput of one kilobit per second (1 kbit/s), analysts generally mean 1,000 bits per second (10<sup>3</sup> bit/s), but when talking about one kilobyte (1 KB) of data storage, they usually mean 1,024 bytes (2<sup>10</sup> Bytes). This prevailing confusion could be eliminated (some computer scientists believe) by adopting special prefixes referring to the binary quantities. The proposed scheme is as follows. 
+
+{| class="wikitable"
+|-
+!Full technical name
+!Proposed Prefix
+!Proposed Symbol
+!Numeric Multiplier
+|-
+|kilobinary
+|kibi-
+|Ki
+|2<sup>10</sup>
+|-
+|megabinary
+|mebi-
+|Mi
+|2<sup>20</sup>
+|-
+|gigabinary
+|gibi-
+|Gi
+|2<sup>30</sup>
+|-
+|terabinary
+|tebi-
+|Ti
+|2<sup>40</sup>
+|-
+|petabinary
+|pebi-
+|Pi
+|2<sup>50</sup>
+|-
+|exabinary
+|exbi-
+|Ei
+|2<sup>60</sup>
+|}
+
+In scenarios such as the one mentioned above, if the new binary prefixes are used, it should be easy to know whether an engineer is talking or writing about the decimal or binary multiplier. We will know that one kilobit per second (1 kbit/s) means 1,000 bit/s, and one kibibyte (1 KiB) means 1,024 bytes, for example. 
+As of January 2008, the binary prefix multipliers have not yet come into general use. 
+Pronunciation: Based on a suggestion from [[NIST]], "the first syllable of the name of the binary-multiple prefix should be pronounced in the same way as the first syllable of the name of the corresponding International Standard (SI) prefix, and the second syllable should be pronounced as 'bee.'" Thus, "kibi" would be pronounced "KIH-bee"; "mebi" would be "MEH-bee", and so forth
+
+==Confusing and inconsistent use of prefixes==
+
+It is usual for people to abbreviate commonly used expressions.  For file sizes, it is usual for someone to say that they have a '64 k' file (meaning 64 kilobytes), or a '100 meg' file (meaning 100 megabytes).  When talking about circuit [[bit rate]]s, people will interchangeably use the terms [[throughput]], [[Bandwidth (computing)|bandwidth]] and speed, and refer to a circuit as being a '64 k' circuit, or a '2 meg' circuit &mdash; meaning 64 kbit/s or 2 Mbit/s (see also the [[List of device bandwidths|List of connection bandwidths]]). A '64 k' circuit will, therefore, not transmit a '64 k' file in one second.  This may not be obvious to those unfamiliar with telecommunications and computing, so misunderstandings sometimes arise.  In actuality, a 64 kilobyte file is 64 × 1,024 × 8 bits in size and the 64 k circuit will transmit bits at a rate of 64 × 1,000 bit/s, so the amount of time taken to transmit a 64 kilobyte file over the 64 k circuit will be at least (64 × 1,024 × 8)/(64 × 1,000) seconds, which works out to be 8.192 seconds.
+
+==Compression==
+
+Some equipment can improve matters by compressing the data as it is sent.  This is a feature of most analogue [[modem]]s and of several popular [[operating system]]s.  If the 64 k file can be shrunk by [[Data compression|compression]], the time taken to transmit can be reduced.  This can be done invisibly to the user, so a highly compressible file may be transmitted considerably faster than expected.  As this 'invisible' compression cannot easily be disabled, it therefore follows that when measuring throughputs by using files and timing the time to transmit, one should use files that cannot be compressed.  Typically, this would mean using an already compressed file, such as a 'zip' file.
+
+Assuming your data cannot be compressed, the 8.192 seconds to transmit a 64 kilobyte file over a 64 kilobit/s communications link is a theoretical minimum time which will not be achieved in practice.  This is due to the effect of overheads which are used to format the data in an agreed manner so that both ends of a connection have a consistent view of the data.
+
+==Overheads and data formats==
+
+A common communications link used by many people is the [[asynchronous start-stop]], or just "asynchronous", serial link.  If you have an external modem attached to your home or office computer, the chances are that the connection is over an asynchronous serial connection.  Its advantage is that it is simple &mdash; it can be implemented using only three wires: Send, Receive and Signal Ground (or Signal Common). In an [[RS232]] interface, an idle connection has a continuous negative voltage applied. A 'zero' bit is represented as a positive voltage difference with respect to the Signal Ground and a 'one' bit is a negative voltage with respect to signal ground, thus indistinguishable from the idle state.  This means you need to know when a 'one' bit starts to distinguish it from idle.  This is done by agreeing in advance how fast data will be transmitted over a link, then using a start bit to signal the start of a byte &mdash; this start bit will be a 'zero' bit.  Stop bits are 'one' bits i.e. negative voltage.
+
+Actually, more things will have been agreed in advance &mdash; the speed of bit transmission, the number of bits per character, the [[parity bit|parity]] and the number of stop bits (signifying the end of a character).  So a designation of 9600-8-E-2 would be 9,600 bits per second, with eight bits per character, even parity and two stop bits.
+
+A common set-up of an asynchronous serial connection would be 9600-8-N-1 (9,600 bit/s, 8 bits per character, no parity and 1 stop bit) - this add up to 10 bits transmitted to send one 8 bit character (one start bit, the 8 bits making up the byte transmitted, no parity bit, and one stop bit).  This is an overhead of 25%, so a 9,600 bit/s asynchronous serial link will not transmit data at 9600/8 bytes per second (1200 byte/s) but actually, in this case 9600/10 bytes per second (960 byte/s), which is considerably slower than expected.
+
+It can get worse.  If parity is specified and we use 2 stop bits, the overhead for carrying one 8 bit character is 4 bits (one start bit, one parity bit and two stop bits) - or 50%!  In this case a 9600 bit/s connection will carry 9600/12 byte/s (800 byte/s).  [[Asynchronous serial communication|Asynchronous serial interfaces]] commonly will support bit transmission speeds of up to 230.4 kbit/s.  If it is set up to have no parity and one stop bit, this means the byte transmission rate is 23.04 kbyte/s.
+
+The advantage of the asynchronous serial connection is its simplicity.  One disadvantage is its low efficiency in carrying data.  This can be overcome by using a [[Synchronization (computer science)|synchronous]] interface.  In this type of interface, a clock signal is added on a separate wire, and the bits are transmitted in synchrony with the clock &mdash; the interface no longer has to look for the start and stop bits of each individual character &mdash; however, it is necessary to have a mechanism to ensure the sending and receiving clocks are kept in synchrony, so data is divided up into frames of multiple characters separated by known delimiters.  There are three common coding schemes for framed communications &mdash; [[HDLC]], [[Point-to-Point Protocol|PPP]], and [[Ethernet]]
+
+===HDLC===
+
+When using [[HDLC]], rather than each byte having a start, optional parity, and one or two stop bits, the bytes are gathered together into a [[data frame|frame]].  The start and end of the frame are signalled by the 'flag', and error detection is carried out by the frame check sequence.  If the frame has a maximum sized address of 32 bits, a maximum sized control part of 16 bits and a maximum sized frame check sequence of 16 bits, the overhead per frame could be as high as 64 bits. If each frame carried but a single byte, the data throughput efficiency would be extremely low.  However, the bytes are normally gathered together, so that even with a maximal overhead of 64 bits, frames carrying more than 24 bytes are more efficient than asynchronous serial connections.  As frames can vary in size because they can have different numbers of bytes being carried as data, this means the overhead of an HDLC connection is not fixed.
+
+===PPP===
+
+The "[[point-to-point protocol]]" (PPP) is defined by the Internet Request For Comment documents RFC 1570, RFC 1661 and RFC 1662. With respect to the framing of packets, PPP is quite similar to HDLC, but supports both bit-oriented as well as byte-oriented ("octet-stuffed") methods of delimiting frames while maintaining data transparency.
+
+===Ethernet===
+
+[[Ethernet]] is a "[[local area network]]" (LAN) technology, which is also framed. The way the frame is electrically defined on a connection between two systems is different from the typically wide-area networking technology that uses HDLC or PPP implemented, but these details are not important for throughput calculations.  Ethernet is a shared medium, so that it is not guaranteed that only the two systems that are transferring a file between themselves will have exclusive access to the connection.  If several systems are attempting to communicate simultaneously, the throughput between any pair can be substantially lower than the nominal bandwidth available.
+
+===Other low-level protocols===
+
+Dedicated point-to-point links are not the only option for many connections between systems.  [[Frame Relay]], [[Asynchronous Transfer Mode|ATM]], and [[MPLS]] based services can also be used.  When calculating or estimating data throughputs, the details of the frame/cell/packet format and the technology's detailed implementation need to be understood.
+
+====Frame Relay====
+
+[[Frame Relay]] uses a modified HDLC format to define the frame format that carries data.
+
+====ATM====
+
+The "[[asynchronous transfer mode]]" (ATM) uses a radically different method of carrying data.  Rather than using variable length frames or packets, data is carried in fixed size cells.  Each cell is 53 bytes long, with the first 5 bytes defined as the header, and the following 48 bytes as payload.  [[Computer networking|Data networking]] commonly requires packets of data that are larger than 48 bytes, so there is a defined adaptation process that specifies how larger packets of data should be divided up in a standard manner to be carried by the smaller cells.  This process varies according to the data carried, so in ATM nomenclature, there are different [[ATM Adaptation Layers]].  The process defined for most data is named ATM Adaptation Layer No. 5 or [[AAL5]].
+
+Understanding throughput on ATM links requires a knowledge of which ATM adaptation layer has been used for the data being carried.
+
+====MPLS====
+
+[[Multiprotocol Label Switching]] (MPLS) adds a standard tag or header known as a 'label' to existing packets of data.  In certain situations it is possible  to use MPLS in a 'stacked' manner, so that labels are added to packets that have already been labelled.  Connections between MPLS systems can also be 'native', with no underlying transport protocol, or MPLS labelled packets can be carried inside frame relay or HDLC packets as payloads.  Correct thoughput calculations need to take such configurations into account.  For example, a data packet could have two MPLS labels attached via 'label-stacking', then be placed as payload inside an HDLC frame.  This generates more overhead that has to be taken into account that a single MPLS label attached to a packet which is then sent 'natively', with no underlying protocol to a receiving system.
+
+==Higher-level protocols==
+
+Few systems transfer files and data by simply copying the contents of the file into the 'Data' field of HDLC or PPP frames &mdash; another protocol layer is used to format the data inside the 'Data' field of the HDLC or PPP frame. The most commonly used such protocol is [[Internet Protocol]] (IP), defined by RFC 791. This imposes its own overheads.
+
+Again, few systems simply copy the contents of files into IP packets, but use yet another protocol that manages the connection between two systems &mdash; TCP ([[Transmission Control Protocol]]), defined by RFC 1812.  This adds its own overhead.
+
+Finally, a final protocol layer manages the actual data transfer process.  A commonly used protocol for this is the "[[file transfer protocol]]" (FTP), defined by RFC 959.
+
+==See also==
+*[[Bandwidth (computing)|Bandwidth]]
+*[[Bit rate]]
+*[[Goodput]]
+*[[Network traffic measurement]]
+*[[Packet generation model]]
+*[[Throughput]]
+
+==References==
+*[http://www.caida.org/workshops/isma/0312/abstracts/guojun.pdf Lawrence Berkeley National Laboratory] paper on measuring available bandwidth
+
+== External links ==
+* {{dmoz|Computers/Data_Communications/Testing_and_Tools/Bandwidth_Tests/|Bandwidth Tests}}
+
+[[Category:Computer network analysis]]
+[[Category:Network performance]]</body> </html>

@@ -1,0 +1,120 @@
+<html> <head> <title>Domain/key normal form</title></head><body>'''Domain/key normal form''' ('''DKNF''') is a [[Database normalization#Normal forms|normal form]] used in [[database normalization]]  which requires that the database contains no constraints other than [[Data_domain|domain constraints]] and key constraints.
+
+A domain constraint specifies the permissible values for a given attribute, while a key constraint specifies the attributes that uniquely identify a row in a given table .
+
+The domain/key normal form is achieved when every constraint on the relation is a [[logical consequence]] of the definition of keys and domains, and enforcing key and domain restraints and conditions causes all constraints to be met.  Thus, it avoids all non-temporal anomalies. 
+
+The reason to use domain/key normal form is to avoid having general constraints in the database that are not clear domain or key constraints. Most databases can easily test domain and key constraints on attributes. General constraints however would normally require special database programming in the form of stored procedures that are expensive to maintain and expensive for the database to execute. Therefore general constraints are split into domain and key constraints.
+
+It's much easier to build a database in domain/key normal form than it is to convert lesser databases which may contain numerous anomalies.  However, successfully building a domain/key normal form database remains a difficult task, even for experienced database programmers.  Thus, while the domain/key normal form eliminates the problems found in most databases, it tends to be the most costly normal form to achieve.  However, failing to achieve the domain/key normal form may carry long-term, hidden costs due to anomalies which appear in databases adhering only to lower normal forms over time.
+
+The [[Third normal form]], [[Boyce-Codd normal form]], [[Fourth normal form]] and [[Fifth normal form]] are special cases of the domain/key normal form. All have either functional, multi-valued or join dependencies that can be converted into (super)keys. The domains on those normal forms were unconstrained so all domain constraints are satisfied. However, transforming a higher normal form into domain/key normal form is not always a dependency-preserving transformation and therefore not always possible.
+
+== Example ==
+
+A violation of DKNF occurs in the following table:
+
+{| class="wikitable"
+ |+ Wealthy Person
+ |-
+ ! <u>Wealthy Person</u>
+ ! Wealthy Person Type
+ ! Net Worth in Dollars
+ |-
+ | Steve
+ | Eccentric Millionaire
+ | 124,543,621
+ |-
+ | Roderick
+ | Evil Billionaire
+ | 6,553,228,893
+ |-
+ | Katrina
+ | Eccentric Billionaire
+ | 8,829,462,998
+ |-
+ | Gary
+ | Evil Millionaire
+ | 495,565,211
+|}
+
+(Assume that the domain for Wealthy Person consists of the names of all wealthy people in a pre-defined sample of wealthy people; the domain for Wealthy Person Type consists of the values 'Eccentric Millionaire', 'Eccentric Billionaire', 'Evil Millionaire', and 'Evil Billionaire'; and the domain for Net Worth in Dollars consists of all integers greater than or equal to 1,000,000.)
+
+There is a constraint linking Wealthy Person Type to Net Worth in Dollars, even though we cannot deduce one from the other.  The constraint dictates that an Eccentric Millionaire or Evil Millionaire will have a net worth of 1,000,000 to 999,999,999 inclusive, while an Eccentric Billionaire or Evil Billionaire will have a net worth of 1,000,000,000 or higher.  This constraint is neither a domain constraint nor a key constraint; therefore we cannot rely on domain constraints and key constraints to guarantee that an inconsistent Wealthy Person Type / Net Worth in Dollars combination does not make its way into the database.
+
+The DKNF violation could be eliminated by altering the Wealthy Person Type domain to make it consist of just two values, 'Evil' and 'Eccentric' (the wealthy person's status as a millionaire or billionaire is implicit in their Net Worth in Dollars, so no useful information is lost).
+
+{| class="wikitable"
+ |+ Wealthy Person
+ |-
+ ! <u>Wealthy Person</u>
+ ! Wealthy Person Type
+ ! Net Worth in Dollars
+ |-
+ | Steve
+ | Eccentric
+ | 124,543,621
+ |-
+ | Roderick
+ | Evil
+ | 6,553,228,893
+ |-
+ | Katrina
+ | Eccentric
+ | 8,829,462,998
+ |-
+ | Gary
+ | Evil
+ | 495,565,211
+|}
+
+{| class="wikitable"
+ |+ Wealthiness Status
+ |-
+ ! <u>Status</u>
+ ! Minimum
+ ! Maximum
+ |-
+ | Millionaire
+ | 1,000,000
+ | 999,999,999
+ |-
+ | Billionaire
+ | 1,000,000,000
+ | 999,999,999,999
+|}
+
+DKNF is frequently difficult to achieve in practice.
+
+==See also==
+
+* [[Referential integrity]]
+* [[Database normalization]]
+
+==References==
+* {{Cite journal
+|last=Fagin
+|first=Ronald
+|author-link=Ronald Fagin
+|year=1981
+|url=http://www.almaden.ibm.com/cs/people/fagin/tods81.pdf
+|title=A Normal Form for Relational Databases That Is Based on Domains and Keys
+|journal=ACM Transactions on Database Systems
+|volume=6
+|pages=387–415
+|doi=10.1145/319587.319592}} 
+<references/>
+
+==External links==
+* [http://databases.about.com/od/specificproducts/a/normalization.htm Database Normalization Basics] by Mike Chapple (About.com)
+* [http://dev.mysql.com/tech-resources/articles/intro-to-normalization.html An Introduction to Database Normalization] by Mike Hillyer.
+* [http://www.utexas.edu/its-archive/windows/database/datamodeling/rm/rm7.html Normalization] by ITS, University of Texas.
+* [http://phlonx.com/resources/nf3/ A tutorial on the first 3 normal forms] by Fred Coulson
+* [http://support.microsoft.com/kb/283878 Description of the database normalization basics] by Microsoft
+
+{{Database normalization}}
+
+[[Category:Database normalization|DKNF]]
+
+[[es:Forma normal de dominio/clave]]
+[[ru:Доменно-ключевая нормальная форма]]</body> </html>

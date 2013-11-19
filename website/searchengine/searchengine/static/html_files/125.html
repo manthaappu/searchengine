@@ -1,0 +1,64 @@
+<html> <head> <title>3D Pose Estimation</title></head><body>{{merge|Pose (computer vision)#Pose Estimation|discuss=Talk:3D Pose Estimation#Merger proposal|date=March 2010}}
+'''3D pose estimation''' is the problem of determining the transformation of an object in a 2D image which gives the 3D object.  The need for 3D pose estimation arises from the limitations of feature based pose estimation.  There exist environments  where it is difficult to extract corners or edges from an image.  To circumvent these issues, the object is dealt with as a whole  through the use of free-form contours.<ref>{{cite web | author = Bodo Rosenhahn | url = http://www.ks.informatik.uni-kiel.de/modules.php/name+Publikationen | title = Pose Estimation of 3D Free-form Contours in Conformal Geometry | publisher = Institut fur Informatik und Praktische Mathematik, Christian-Albrechts-Universitat zu Kiel  | language = English / German | accessdate = 2008-06-09 }}</ref>
+
+==3D Pose Estimation from an Uncalibrated 2D Camera==
+It is possible to estimate the 3D rotation and translation of a 3D object from a single 2D photo, if an approximate 3D model of the object is known and the corresponding points in the 2D image are known. A common technique for solving this has recently{{When}} been "POSIT", where the 3D pose is estimated directly from the 3D model points and the 2D image points, and corrects the errors iteratively until a good estimate is found from a single image.<ref>{{cite web | author = Dementhon and Davis, 1995 | url = http://portal.acm.org/citation.cfm?id=204015 | title = Model-based object pose in 25 lines of code | publisher = Kluwer Academic Publishers | accessdate = 2010-05-29 }}</ref> Most implementations of POSIT only work on non-coplanar points (in other words, it wont work with flat objects or planes).<ref>{{cite web | author = Javier Barandiaran | url = http://opencv.willowgarage.com/wiki/Posit | title = POSIT tutorial with OpenCV and OpenGL | accessdate = 2010-05-29 }}</ref>
+
+==3D Pose Estimation from a Calibrated 2D Camera==
+Given a 2D image of an object, and a the camera that is calibrated with respect to a world coordinate system, it is also possible to find the pose which gives the 3D object in its object coordinate system.<ref name="Bodo Rosenhahn">{{cite web | author = Bodo Rosenhahn | url = http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/ROSENHAHN1/CVOnlinePose.html | title = Foundations about 2D-3D Pose Estimation | publisher = CV Online  | accessdate = 2008-06-09 }}</ref> This works as follows.
+
+<gallery>
+<!-- Image with unknown copyright status removed: Image:PoseScene.gif|The goal is to find the pose (Rotation R and Translation t) which gives the 3D object in its object coordinate system  -->
+</gallery>
+
+=== Extracting 3D from 2D ===
+Starting with a 2D image, image points are extracted which correspond to corners in an image.  The projection rays from the image points are reconstructed from the 2D points so that the 3D points, which must be incident with the reconstructed rays, can be determined.
+
+===Pseudocode===
+The algorithm for determining pose estimation is based on the [[Iterative Closest Point]] algorithm. The main idea is to determine the correspondences between 2D image features and points on the 3D model curve.  
+<code>
+   (a)Reconstruct projection rays from the image points<br />
+   (b)Estimate the nearest point of each projection ray to a point on the 3D contour<br />
+   (c)Estimate the pose of the contour with the use of this correspondence set<br />
+   (d)goto (b)<br />
+</code>
+
+The above algorithm does not account for images containing an object that is partially occluded.  The following algorithm assumes that all contours are rigidly coupled, meaning the pose of one contour defines the pose of another contour.
+
+<code>
+   (a)Reconstruct projection rays from the image points<br />
+   (b)For each projection ray R:<br />
+        (c)For each 3D contour:<br />
+             (c1)Estimate the nearest point P1 of ray R to a point on the contour<br />
+             (c2)if (n==1) chose P1 as actual P for the point-line correspondence<br />
+             (c3)else compare P1 with P:<br />
+                      if dist(P1, R) is smaller than dist(P, R)<br />
+                           then choose P1 as new P<br />
+   (d)Use (P, R) as correspondence set.<br />
+   (e)Estimate pose with this correspondence set<br />
+   (f)Transform contours, goto (b)<br />
+</code>
+
+In practice, using a 2 GHz Intel [[Pentium]] processor, average speeds of 29fps have been reached using the above algorithm.<ref name="Bodo Rosenhahn"/>
+
+== Estimating Pose Through Comparison ==
+Systems exist which use a database of an object at different rotations and translations to compare an input image against to estimate pose.  These systems accuracy is limited to situations which are represented in their database of images, however the goal is to recognize a pose, rather than determine it.<ref>{{cite web | author = Vassilis Athitsos | url =  | title = Estimating 3D Hand Pose from a Cluttered Image | publisher = Boston University Computer Science Tech. | accessdate = 2008-06-09 }}</ref>
+
+== Notes ==
+{{reflist|2}}
+
+==See also==
+*[[homography]]
+*[[camera calibration]]
+
+== References ==
+*Rosenhahn, B. "Foundations about 2D-3D Pose Estimation."
+*Rosenhahn, B. "Pose Estimation of 3D Free-form Contours in Conformal Geometry."
+*Athitsos, V. "Estimating 3D Hand Pose from a Cluttered Image."
+
+==External links==
+*[http://www.ks.informatik.uni-kiel.de/modules.php?name=Projekte&func=hp&prid=6] Further readings on various Computer Vision topics as well as more information on 3D pose estimation
+
+[[Category:Computer vision]]
+[[Category:Geometry in computer vision]]
+[[Category:Robotics]]</body> </html>

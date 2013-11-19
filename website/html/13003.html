@@ -1,0 +1,62 @@
+<html> <head> <title>F00f</title></head><body>{{refimprove|date=May 2010}}
+{{lowercase|title=f00f}}
+<code>'''f00f'''</code> ({{pronEng|ˈfuːf}}), an [[abbreviation]] of <code>f0 0f c7 c8</code>, is the [[hexadecimal]] encoding of an [[instruction (computer science)|instruction]] that exhibits a [[design flaw]] in the majority of [[Intel]] [[Pentium (brand)|Pentium]], [[Pentium MMX]], and [[Pentium OverDrive]] [[processors]] (all in the [[P5 (microarchitecture)|P5 microarchitecture]]).
+
+Intel calls this issue the "invalid operand with locked CMPXCHG8B instruction."<ref name="pentium-update-cmpxchg8b">
+{{cite book
+| title = Pentium Processor Specification Update
+| publisher = [[Intel Corporation]]
+| date = 1999-01
+| pages = 51&ndash;52
+| url = http://www.biblio.deis.unibo.it/Testi_Liberi/Pentium/24248041.PDF
+| format = [[PDF]]
+| accessdate = 2006-11-02
+| id = order number 242480-041
+}}</ref> <!-- Intel's official web site has a broken link: http://www.intel.com/design/pentium/specupdt/ -->
+
+==Description==
+The instruction represents:
+
+<code>lock cmpxchg8b eax</code>
+
+The [[Operand#Computer_science|operand]] could be a register other than eax. The ''cmpxchg8b'' instruction is used to compare the value in the ''edx'' and ''eax'' [[processor register|registers]] with an 8-[[byte]] value at some memory location. In this example a 4-byte register is used as the destination operand, which is not big enough to store the 8-byte result.
+
+Under normal circumstances, this instruction would simply result in an [[exception handling|exception]]; however, when used with the ''lock'' prefix (normally used to prevent two processors from interfering with the same memory location), the exception handler is never called, the processor stops servicing [[interrupt]]s and the CPU must be reset to recover.
+
+The instruction does not require any [[Ring 0|special privileges]] and, due to the proliferation of Intel microprocessors, was considered a serious issue at the time. [[Operating system]] vendors responded by implementing [[workaround]]s that detected the condition and prevented the crash.
+
+Although technically not an example of either, the f00f instruction is often considered an [[Halt and Catch Fire|HCF]] instruction or a [[killer poke]]. Since the f00f bug has become common knowledge, the term is sometimes used to describe similar hardware design flaws such as the [[Cyrix coma bug]].
+
+No permanent hardware damage would result from executing the f00f instruction on a vulnerable system.  Depending on the [[file system]], [[operating system]], and other circumstances, it is possible for [[data loss]] to occur if the [[page cache|disk buffers]] have not been flushed, if drives were interrupted during a write operation, or if some other non-[[atomic operation]] was interrupted.
+
+No Intel processors since the introduction of the [[Pentium Pro]] have been affected by the bug. The myB2 [[Stepping_level|stepping]] fixed this issue.<ref name="pentium-update-cmpxchg8b" />
+
+Information about this bug first appeared on the Internet on or about 7 November 1997.<ref> {{cite web
+ | url = http://groups.google.com/group/nl.comp.hardware/msg/8e8aa53186685ed5
+ | title = Nieuwe Intel Pentium BUG
+ | accessdate = 2008-07-07
+}}  </ref>
+
+==See also==
+*[[Halt and Catch Fire]]
+*[[Hacker jargon]]
+*[[Pentium FDIV bug]]
+*[[Hexspeak]]
+
+==External links==
+*[http://support.intel.com/support/processors/pentium/ppiie/index.htm Intel Pentium erratum]
+*[http://support.microsoft.com/kb/q163852/ Microsoft Knowledge Base article]
+*[http://news.com.com/2100-1033-205157.html?legacy=cnet CNET Article]
+*[http://www.ddj.com/architect/184410555 The Pentium F00F Bug: Workarounds for a nasty problem] provides a detailed description of the bug and possible workarounds.
+
+==References==
+{{reflist}}
+
+[[Category:x86 architecture]]
+[[Category:Hardware bugs]]
+[[Category:Computer folklore]]
+
+[[de:Pentium-F00F-Bug]]
+[[ja:Pentium F00F バグ]]
+[[ru:F0 0F C7 C8]]
+[[sv:0xF00FC7C8]]</body> </html>

@@ -1,0 +1,108 @@
+<html> <head> <title>Structural type system</title></head><body>{{type systems}}
+A '''structural type system''' (or property-based type system) is a major class of [[type system]], in which type compatibility and equivalence are determined by the type's structure, and not by other characteristics such as its name or place of declaration. Structural systems are used to determine if types are equivalent and whether a type is a subtype of another. It contrasts with [[nominative type system|nominative systems]], where comparisons are based on explicit declarations or the names of the types, and [[duck typing]], in which only the part of the structure accessed at runtime is checked for compatibility.
+
+In '''structural typing''', an object or term is considered to be compatible with another type if for each feature within the second type, there must be a corresponding and identical feature in the first type.  Some languages may differ on the details (such as whether the ''features'' must match in name). This definition is not symmetric, and includes subtype compatibility. Two such types are considered to be identical if each is compatible with the other.
+
+[[ML programming language|ML]], [[Objective Caml]], and [[Go (programming language)|Go]] are examples of structurally-typed languages. [[C++ programming language#Templates|C++ template functions]] exhibit structural typing on type arguments. [[HaXe]] uses structural typing, although classes are not structurally subtyped.
+
+In languages which support [[subtypes|subtype polymorphism]], a similar dichotomy can be formed based on how the subtype relationship is defined.  One type is a subtype of another if and only if it contains all the ''features'' of the base type (or subtypes thereof); the subtype may contain additional features (such as members not present in the base type, or stronger invariants).
+
+Structural subtyping is arguably more flexible than [[Nominative type system|nominative subtyping]], as it permits the creation of ''ad hoc'' types and [[interface (computer science)|interface]]s; in particular, it permits creation of a type which is a supertype of an existing type '''T''', without modifying the definition of '''T'''.  However this may not be desirable where the programmer wishes to create closed abstractions.
+
+A pitfall of structural typing versus nominative typing is that two separately defined types intended for different purposes, each consisting of a pair of numbers, could be considered the same type by the type system, simply because they happen to have identical structure. One way this can be avoided is by creating one [[algebraic data type]] for one use of the pair and another algebraic data type for the other use.
+
+== Example ==
+Objects in OCaml are structurally typed by the names and types of their methods.
+
+Objects can be created directly ("immediate objects") without going through a nominative class. Classes only serve as functions for creating objects.
+<source lang="ocaml">
+ # let x =
+     object
+       val mutable x = 5
+       method get_x = x
+       method set_x y = x <- y
+     end;;
+ val x : < get_x : int; set_x : int -> unit > = <obj>
+</source>
+Here the OCaml interactive runtime prints out the inferred type of the object for convenience. You can see that its type (<code>< get_x : int; set_x : int -> unit ></code>) is purely defined by its methods.{{clarify|reason=this example requires knowledge of various intricate details of ocaml syntax; this needs to be explained in full, or pruned from superfluous code, because the point is to demonstrate the structural type system, not random ocaml stuff|date=November 2010}}
+
+Let's define another object, which has the same methods and types of methods:
+<source lang="ocaml">
+ # let y =
+     object
+       method get_x = 2
+       method set_x y = Printf.printf "%d\n" y
+     end;;
+ val y : < get_x : int; set_x : int -> unit > = <obj>
+</source>
+You can see that OCaml considers them the same type. For example, the equality operator is typed to only take two values of the same type:
+<source lang="ocaml">
+ # x = y;;
+ - : bool = false
+</source>
+So they must be the same type, or else this wouldn't even type-check. This shows that equivalence of types is structural.
+
+I can define a function that invokes a method:
+<source lang="ocaml">
+ # let set_to_10 a = a#set_x 10;;
+ val set_to_10 : < set_x : int -> 'a; .. > -> 'a = <fun>
+</source>
+The inferred type for the first argument (<code>< set_x : int -> 'a; .. ></code>) is interesting. The <code>..</code> means that the first argument can be any object which has a "set_x" method, which takes an int as argument.
+
+So we can use it on object <code>x</code>:
+<source lang="ocaml">
+ # set_to_10 x;;
+ - : unit = ()
+</source>
+
+We can make another object that happens to have that method and method type; the other methods are irrelevant:
+<source lang="ocaml">
+ # let z =
+     object
+       method blahblah = 2.5
+       method set_x y = Printf.printf "%d\n" y
+     end;;
+ val z : < blahblah : float; set_x : int -> unit > = <obj>
+</source>
+
+The "set_to_10" function also works on it:
+<source lang="ocaml">
+ # set_to_10 z;;
+ 10
+ - : unit = ()
+</source>
+This shows that compatibility for things like method invocation is determined by structure.
+
+Let us define a type synonym for objects with only a "get_x" method and no other methods:
+<source lang="ocaml">
+ # type simpler_obj = < get_x : int >;;
+ type simpler_obj = < get_x : int >
+</source>
+
+Our object <code>x</code> is not of this type; but structurally, <code>x</code> is of a subtype of this type, since <code>x</code> contains a superset of its methods. So we can coerce <code>x</code> to this type:
+<source lang="ocaml">
+ # (x :> simpler_obj);;
+ - : simpler_obj = <obj>
+ # (x :> simpler_obj)#get_x;;
+ - : int = 10
+</source>
+But not object <code>z</code>, because it is not a structural subtype:
+<source lang="ocaml">
+ # (z :> simpler_obj);;
+ This expression cannot be coerced to type simpler_obj = < get_x : int >;
+ it has type < blahblah : float; set_x : int -> unit > but is here used with type
+   < get_x : int; .. >
+ The first object type has no method get_x
+</source>
+This shows that compatibility for widening coercions are structural.
+
+== References ==
+*{{Cite book|last=Pierce|first=Benjamin C.|title=[[Types and Programming Languages]]|year=2002|publisher=MIT Press|isbn=0-262-16209-1|chapter=19.3}}
+
+== External links ==
+* [[wiki:NominativeAndStructuralTyping|NominativeAndStructuralTyping]] at [[WikiWikiWeb]]
+
+{{DEFAULTSORT:Structural Type System}}
+[[Category:Type theory]]
+
+[[fr:Système structural de types]]</body> </html>

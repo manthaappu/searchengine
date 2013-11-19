@@ -1,0 +1,262 @@
+<html> <head> <title>XML-RPC</title></head><body>'''XML-RPC''' is a [[remote procedure call]] (RPC) protocol which uses [[XML]] to encode its calls and [[HTTP]] as a transport mechanism.<ref name="book1">Simon St. Laurent, Joe Johnston, Edd Dumbill. (June 2001) ''Programming Web Services with XML-RPC.'' O'Reilly. First Edition.</ref>  "XML-RPC" also refers generically to the use of XML for remote procedure call, independently of the specific protocol. This article is about the protocol named "XML-RPC".
+
+==History==
+
+XML-RPC, the protocol, was created in 1998 by [[Dave Winer]] of [[UserLand Software]] and [[Microsoft]]<ref>{{cite web
+  | last = Box
+  | first = Don
+  | title = A Brief History of SOAP
+  | publisher = [[O'Reilly]]
+  | date = 1 April 2001
+  | url = http://www.xml.com/pub/a/ws/2001/04/04/soap.html
+  | accessdate = 27 October 2010 }}</ref>. As new functionality was introduced, the standard evolved into what is now [[SOAP (protocol)|SOAP]].
+
+The generic use of XML for [[remote procedure call]] (RPC) was patented by [[Phillip Merrick]], Stewart Allen, and Joseph Lapp in April 2006, claiming benefit to a provisional application filed in March 1998.  The patent is assigned to [[webMethods]], located in [[Fairfax, VA]].<ref name= "merrick01">{{cite web |url=http://www.google.com/patents?id=WFV4AAAAEBAJ |title=US Patent 7,028,312 |accessdate=18 September 2008 |author=Merrick et al. |date=11 April 2006}}</ref>
+
+==Usage==
+XML-RPC works by sending a HTTP request to a server implementing the protocol. The client in that case is typically software wanting to call a single method of a remote system. Multiple input parameters can be passed to the remote method, one return value is returned. The parameter types allow nesting of parameters into maps and lists, thus larger structures can be transported. Therefore XML-RPC can be used to transport objects or structures both as input and as output parameters.
+
+''Identification'' of clients for authorization purposes can be achieved using popular HTTP security methods. [[Basic access authentication]] is used for identification, [[HTTPS]] is used when identification (via certificates) and encrypted messages are needed. Both methods can be combined.
+
+In comparison to [[REST]], where ''resources'' are transported, XML-RPC is designed to ''call methods''.
+
+XML-RPC is simpler to use and understand than [[SOAP (protocol)|SOAP]] because it
+* allows only one method of method serialization, whereas SOAP defines multiple different encodings 
+* has a simpler security model 
+* does not require (nor support) the creation of [[Web Services Description Language|WSDL]] service descriptions, although [http://code.google.com/p/xrdl/ XRDL] provides a simple subset of the functionality provided by WSDL
+
+[[JSON-RPC]] is similar to XML-RPC.
+
+==Data types==
+
+Common [[datatype]]s are converted into their XML equivalents with example values shown below:
+{| class="wikitable"
+!Name
+!Tag Example
+!Description
+|-
+|array
+|
+<source lang="xml">
+<array>
+  <data>
+    <value><i4>1404</i4></value>
+    <value><string>Something here</string></value>
+    <value><i4>1</i4></value>
+  </data>
+</array>
+</source>
+|[[Array data structure|Array]] of values, storing no keys
+|-
+|base64
+|
+<source lang="xml">
+<base64>eW91IGNhbid0IHJlYWQgdGhpcyE=</base64>
+</source>
+|[[Base64]]-encoded binary data
+|-
+|boolean
+|
+<source lang="xml">
+<boolean>1</boolean>
+</source>
+|[[Boolean datatype|Boolean]] logical value (0 or 1)
+|-
+|date/time
+|
+<source lang="xml">
+<dateTime.iso8601>19980717T14:08:55</dateTime.iso8601>
+</source>
+|Date and time in [[ISO 8601]] format
+|-
+|double
+|
+<source lang="xml">
+<double>-12.53</double>
+</source>
+|[[Double precision]] floating point number
+|-
+|integer
+|
+<source lang="xml">
+<i4>42</i4>
+</source>
+or
+<source lang="xml">
+<int>42</int>
+</source>
+|Whole number, [[integer]]
+|-
+|string
+|
+<source lang="xml">
+<string>Hello world!</string>
+</source>
+|String of characters. Must follow [[XML#Characters_and_escaping|XML encoding]].
+|-
+|struct
+|
+<source lang="xml">
+<struct>
+  <member>
+    <name>foo</name>
+    <value><i4>1</i4></value>
+  </member>
+  <member>
+    <name>bar</name>
+    <value><i4>2</i4></value>
+  </member>
+</struct>
+</source>
+|[[Associative array]]
+|-
+|nil
+|
+<source lang="xml">
+<nil/>
+</source>
+|[[nullable type|Discriminated null value]]; an XML-RPC [http://ontosys.com/xml-rpc/extensions.php extension]
+|}
+
+==Examples==
+
+An example of a typical XML-RPC request would be:
+<source lang="xml">
+<?xml version="1.0"?>
+<methodCall>
+  <methodName>examples.getStateName</methodName>
+  <params>
+    <param>
+        <value><i4>40</i4></value>
+    </param>
+  </params>
+</methodCall>
+</source>
+
+An example of a typical XML-RPC response would be:
+<source lang="xml">
+<?xml version="1.0"?>
+<methodResponse>
+  <params>
+    <param>
+        <value><string>South Dakota</string></value>
+    </param>
+  </params>
+</methodResponse>
+</source>
+
+A typical XML-RPC fault would be:
+<source lang="xml">
+<?xml version="1.0"?>
+<methodResponse>
+  <fault>
+    <value>
+      <struct>
+        <member>
+          <name>faultCode</name>
+          <value><int>4</int></value>
+        </member>
+        <member>
+          <name>faultString</name>
+          <value><string>Too many parameters.</string></value>
+        </member>
+      </struct>
+    </value>
+  </fault>
+</methodResponse>
+</source>
+
+== Criticism ==
+Critics of XML-RPC argue that RPC calls can be made with plain XML, and that XML-RPC doesn't add any value over XML.  Both XML-RPC and XML require an application level data model, such as which field names are defined in the XML schema or the parameter names in XML-RPC <ref>[http://stackoverflow.com/questions/1376688 What is the benefit of XML-RPC over plain XML?] Stack Overflow post 9.9.2009</ref> 
+<ref>[http://www.intertwingly.net/wiki/pie/XmlRpcDiscussion?action=show&redirect=DontUseXmlRpc] An open poll on the merits of XmlRpc versus alternatives</ref>
+<ref>[http://michaeldehaan.net/2008/07/17/xmlrpc-vs-rest-vs-soap-vs-all-your-rpc-options/] An overview of all the alternatives</ref>
+
+== Implementations ==
+=== Python ===
+* [http://docs.python.org/library/xmlrpclib.html xmlrpclib]
+** Renamed [http://docs.python.org/3.1/library/xmlrpc.client.html xmlrpc.client] in Python 3.
+* [http://twistedmatrix.com/documents/current/web/howto/xmlrpc.html Creating XML-RPC Servers and Clients with Twisted]
+=== C++ ===
+* [http://libiqxmlrpc.sourceforge.net/ Libiqxmlrpc]
+* [http://ulxmlrpcpp.sourceforge.net/ Ultra lightweight XML-RPC library for C++]
+* [http://xmlrpc-c.sourceforge.net/ XML-RPC for C and C++]
+* [http://xmlrpcpp.sourceforge.net/ XmlRpc++]
+* [https://sourceforge.net/projects/xmlrpcc4win/ XmlRpc C++ client for Windows]
+* [http://www.cs.fsu.edu/~engelen/soap.html gSOAP toolkit for C and C++ supporting XML-RPC and more]
+* [http://wiedi.frubar.net/blog/2008/03/08/libmaia-xml-rpc-with-qt4/ libmaia: XML-RPC for Qt/C++]
+
+=== Objective-C / GNUstep / Cocoa ===
+* [http://www.mulle-kybernetik.com/software/XMLRPC/ XMLRPC Framework]
+* [http://divisiblebyzero.com/ Cocoa XML-RPC Framework]: Open Source XML-RPC framework written for use in Mac OS X Cocoa applications.
+=== Erlang ===
+* [http://erlang.stacken.kth.se/contrib/xmlrpc-1.13.tgz XML-RPC for Erlang]: This is an HTTP 1.1 compliant XML-RPC library for Erlang. It is designed to make it easy to write XML-RPC Erlang clients and/or servers. The library is compliant with the XML-RPC specification published by http://www.xmlrpc.org/
+=== Java ===
+* [http://ws.apache.org/xmlrpc/ Apache XML-RPC]: Open source library for Java
+* [http://delight.opendfki.de/ XML-RPC Delight]: Convenient serialisation/deserialisation for Apache XML-RPC using Java Annotations and Beans
+* [http://members.fortunecity.com/neptune42/xmlrpc/index.htm]: Secure Apache XML-RPC
+* [http://xmlrpc.sourceforge.net/ Redstone XML-RPC Library]: Redstone's Open Source Library - XML-RPC implementation in Java
+* [http://kxmlrpc.sourceforge.net/ XML-RPC Library for Java ME]: Open source client-side library for Java ME
+
+=== XMPP ===
+* [http://gdr.geekhood.net/gdrwpl/jxmlrpc.php pyJabberXMLRPC]: Python classes for XMPP
+* [http://xmpp.org/extensions/xep-0009.html Jabber-RPC]: Over the [[Extensible Messaging and Presence Protocol]] protocol
+
+=== Other ===
+* [http://code.google.com/p/json-xml-rpc/ JSON/XML-RPC Client and Server]: Abstract away the differences between JSON-RPC and XML-RPC
+* [http://www.remobjects.com/ro RemObjects SDK] Delphi and .NET package for XML-RPC, in addition to [[SOAP (protocol)|SOAP]] and others
+* [http://www.realthinclient.com RealThinClient SDK]: For Delphi/C++
+* [http://search.cpan.org/~daan/XML-RPC-0.5/lib/XML/RPC.pm XML::RPC]: Perl module implementation
+* [http://xmlrpcflash.mattism.com XML-RPC for ActionScript]: For Flash ActionScript 2.0
+* [http://code.google.com/p/as3-rpclib/ as3-rpclib]: For Flex/Actionscript 3
+* [http://www.xml-rpc.net  XML-RPC.NET]: Open source library for .NET clients and servers
+* [http://code.google.com/p/xmlrpc-light/ XmlRpc-Light]: Client and server library for OCaml
+* [http://common-lisp.net/project/s-xml-rpc/ S-XML-RPC]: Client and server library for Common Lisp
+* [http://phpxmlrpc.sourceforge.net/ PHP-XML-RPC]: For PHP
+* [http://www.cr-solutions.net/p/projects crVCL PHP Framework]: Fast PHP Framework with native XML-RPC library
+* [http://www.haskell.org/haxr/ HaXR]: Client and server library for Haskell
+* [http://www.x2ii.info/x2ii/xi/ xi library with PHP and Javascript XML-RPC]: For PHP and Javascript
+* [http://www.ruby-doc.org/stdlib/libdoc/xmlrpc/rdoc/index.html Ruby XML-RPC library]: For Ruby
+* [http://www.keplerproject.org/luaxmlrpc/ XML-RPC interface to Lua]: For [[Lua (programming language)|Lua]]
+* [http://code.google.com/p/android-xmlrpc/ android-xmlrpc]: A light XML-RPC client for Google Android
+* [http://sourceforge.net/projects/xmlrpctcl/ XML-RPC for Tcl]: A Tcl implementation of XML-RPC providing client and server support
+* [http://earl.strain.at/space/rebXR+Users+Guide]: RebXR, a full client/server XML-RPC implementation for REBOL.
+
+==See also==
+*[[Ajax (programming)]]
+*[[Software componentry#Technologies for Software Components|Component technologies]]
+*[[List of web service markup languages]]
+*[[OPML]]
+*[[Web service]]
+
+==References==
+<references />
+
+==External links==
+* [http://www.xmlrpc.com/ XML-RPC Homepage]
+* [http://groups.yahoo.com/group/xml-rpc/ Forum]
+* [http://www.xml.com/pub/rg/XML_RPC_Tutorials Tutorials]
+* [http://xml.coverpages.org/xml-rpc.html Technology Reports]
+* [http://citeseer.ist.psu.edu/cis?q=XML+RPC&cs=1 Citations from CiteSeer]
+* [http://phpxmlrpc.sourceforge.net/wsdl/schema.rnc Relax-NG schema for XML-RPC]
+
+{{DEFAULTSORT:Xml-Rpc}}
+[[Category:XML-based standards]]
+[[Category:Web services]]
+[[Category:Internet protocols]]
+[[Category:Remote procedure call]]
+
+[[ar:XML-RPC]]
+[[bg:XML-RPC]]
+[[ca:XML-RPC]]
+[[cs:XML-RPC]]
+[[de:XML-RPC]]
+[[es:XML-RPC]]
+[[fr:XML-RPC]]
+[[ko:XML-RPC]]
+[[it:XML-RPC]]
+[[ja:XML-RPC]]
+[[pl:XML-RPC]]
+[[pt:XML-RPC]]
+[[ru:XML-RPC]]
+[[uk:XML-RPC]]
+[[zh:XML-RPC]]</body> </html>

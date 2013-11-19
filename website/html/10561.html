@@ -1,0 +1,81 @@
+<html> <head> <title>DirectSound</title></head><body>'''DirectSound''' is a software component of the [[DirectX]] library, supplied by [[Microsoft]], that resides on a computer with the [[Microsoft Windows|Windows]] [[operating system]]. It provides a direct interface between [[application software|applications]] and the [[sound card]] drivers on Windows XP and earlier operating systems, enabling applications to produce sounds and music. Besides providing the essential service of passing audio data to the sound card, it provides many needed capabilities such as recording and mixing sound; adding effects to sound e.g. [[Reverberation|reverb]], [[Echo (phenomenon)|echo]], [[Flanging|flange]]; using hardware controlled buffers for extra speed; positioning sounds in 3D space ([[3D audio effect|3D audio spatialization]]), capturing sounds from a microphone or other input and controlling capture effects during audio capture.
+
+DirectSound also allows several applications to conveniently share access to the sound card at the same time. Its ability to play sound in 3D added a new dimension to games. It also provides the ability for games to modify a musical script in response to game events in real time, e.g. the beat of the music could quicken as the action heats up.
+
+After many years of development, today DirectSound is a very mature [[API]], and supplies many other useful capabilities, such as the ability to play multichannel sounds at high resolution. While DirectSound was designed to be used by games, a number of professional audio applications now take advantage of its diverse capabilities.
+
+==DirectSound3D==
+
+'''DirectSound3D''' (DS3D) is an addition to Microsoft's [[DirectX]] system which is intended to standardize [[3D audio effect|3D audio]] under [[Microsoft Windows]], introduced with DirectX 3 in 1996.
+
+DirectSound3D allows software developers to write to a single standardized audio [[Application programming interface|API]] instead of writing code for each audio card manufacturer.
+
+In DirectX 5, DirectSound3D has the capability of having sound cards that use third party 3D audio algorithms accelerate DirectSound3D properly, through Microsoft-approved methods. This eliminates the need for separate 3D audio libraries.
+
+Starting with DirectX 8 onwards, DirectSound and DirectSound3D (DS3D) are together referred to as '''DirectX Audio'''.
+
+==Windows Vista==
+Windows Vista features a completely re-written audio [[solution stack|stack]] based on the ''[[Universal Audio Architecture]]''. Because of the architectural changes in the redesigned audio stack, a direct path from DirectSound to the audio drivers does not exist<ref>{{cite web |url=http://techreport.com/articles.x/13874 |title=Techreport article on Vista-ready soundcards |accessdate=2008-12-23}}</ref>. DirectSound and other APIs such as [[MultiMedia Extensions|MME]] are emulated as [[Technical features new to Windows Vista#Audio stack architecture|WASAPI]] Session instances. DirectSound runs in emulation mode on the Microsoft software mixer. The emulator does not have hardware abstraction, so there is no hardware DirectSound acceleration, meaning hardware and software relying on DirectSound acceleration may have degraded performance. It's likely a supposed performance hit might not be noticeable, depending on the application and actual system hardware. In the case of hardware [[3D audio effect]]s played using DirectSound3D, they will not be playable.
+
+Third-party APIs such as [[Audio stream input output|ASIO]] and [[OpenAL]] are not affected by these architectural changes in Windows Vista. A solution for applications that wish to take advantage of hardware accelerated high-quality 3D positional audio is to use OpenAL. However, this only works if the manufacturer provides an OpenAL driver for their hardware.<ref>{{cite web |url=http://www.openal.org/openal_vista.html |title=OpenAL and Windows Vista |accessdate=2008-01-10}}</ref>
+
+As of 2007, a solution to re-enable hardware acceleration of DirectSound3D and Audio Effects, such as EAX, called ''Creative ALchemy'' was launched<ref>{{cite web |url=http://www.soundblaster.com/alchemy/ |title=Creative ALchemy website |accessdate=2008-12-23}}</ref>. Creative ALchemy intercepts calls to DirectSound3D and translates them into OpenAL calls to be processed by supported hardware such as [[Sound Blaster X-Fi]] and [[Sound Blaster Audigy]]. For software-based Creative audio solutions, ALchemy utilizes its built-in 3D audio engine without using OpenAL at all.
+
+[[Realtek]], a manufacturer of integrated [[Intel High Definition Audio|HD audio codecs]], has a product similar to ALchemy called 3D SoundBack. [[C-Media]], a manufacturer of PC [[sound card]] chipsets, also has a solution called Xear3D EX, although it works instead by intercepting DirectSound3D calls transparently in the background without any user intervention.
+
+==XAudio 2==
+Because of [[Xbox 360]] and [[Microsoft Windows]] integration, Microsoft is actively pushing developers to migrate new applications to equivalent Xbox audio APIs such as XAudio and the [[Cross-platform Audio Creation Tool]] (XACT). XAudio is an Xbox-only API designed for digital signal processing, however, XAudio 2 is a cross-platform (Windows and Xbox) common low-level audio API, intended as the replacement for DirectSound.<ref>[http://download.microsoft.com/download/c/7/a/c7ab95ad-a23d-436a-9f06-faf06206c280/The%20Future%20of%20Audio%20on%20Windows%20and%20Xbox%20360.zip Game Developers Conference: Future of audio on Windows and Xbox]</ref> The RTM version of the XAudio 2 library is included in the March 2008 DirectX SDK.<ref>[http://connect.microsoft.com/XAudio2Beta The XAudio 2 Beta Program is being retired!]</ref> The target platforms include [[Windows XP]], [[Windows Vista]] and the Xbox 360. XAudio 2 provides low-level mixing and signal processing whereas high-level audio authoring and playback are available using XACT and 3D functions via the X3DAudio library. The XACT engine is a high-level audio [[programming library]] that operates through XAudio on the Xbox, as a DirectSound passthrough on [[Windows XP]], and directly on the low-level audio renderer in the [[Technical features new to Windows Vista#Audio|new audio stack]] on [[Windows Vista]]. X3DAudio is an abstracted math-driven spatialization helper library that can be replaced by custom 3D behaviors.<ref>[http://connect.microsoft.com/XAudio2Beta/content/content.aspx?ContentID=5127 XAudio 2 FAQ]</ref>
+
+Xaudio 2 has special emphasis on [[Audio signal processing|signal processing]] for high-level audio APIs such as XACT. Some of its features are:
+
+* Separation of sound data from “voice”
+* Submixing (arbitrary levels and routings)
+* Multi-rate processing
+* Per-voice filtering (built-in, in addition to programmable DSP effects)
+* Programmable voices
+* Effects processing, [[Sample rate conversion]] (SRC)
+* Software [[Digital Signal Processing|DSP]]
+* Enhanced [[surround sound]] (multichannel) and explicit multichannel [[Panning (audio)|panning]]/mapping dynamically to any speaker
+* Native compressed data support
+** [[XMA (audio format)|XMA]] on [[Xbox 360]]
+** [[ADPCM]] and xWMA ([[Windows Media Audio]] bitstream format in a lightweight wrapper) on Windows
+** Extensible
+* 3D audio handled as a separate replaceable library: XAudio 2 takes multichannel speaker volumes and X3DAudio library transforms source/listener coordinates into speaker volumes and other synthesis parameters
+
+==Windows CE==
+Although DirectSound support was available in Windows CE versions up to 4.2, it was removed starting 5.0 <ref>[http://msdn2.microsoft.com/en-us/library/aa446919.aspx Windows CE 5.0 removed functionality]</ref>. Windows CE 6.0 also does not support DirectSound, instead favoring that applications be rewritten to use the Waveform Audio API.
+
+== See also ==
+*[[DirectX plugin]]
+*[[Cross-platform Audio Creation Tool]]
+*[[Technical features new to Windows Vista#Audio|Windows Vista audio architecture]]
+*[[DirectMusic]]
+*[[OpenAL]]
+
+==References==
+{{reflist}}
+
+== External links ==
+*[http://msdn.microsoft.com/en-us/library/ee416960(v=VS.85).aspx MSDN DirectSound]
+*[http://www.gamedev.net/reference/articles/article593.asp What's the deal with 3D sound under DirectX]
+*[http://forums.creative.com/creativelabs/board/message?board.id=Vista&message.id=1694 Audio in Windows Vista]
+*[http://connect.creativelabs.com/alchemy/default.aspx Creative ALchemy]
+
+{{Microsoft APIs}}
+
+{{DEFAULTSORT:Directsound}}
+[[Category:Application programming interfaces]]
+[[Category:Audio libraries]]
+[[Category:Music software plugin architectures]]
+[[Category:Microsoft Windows multimedia technology]]
+[[Category:DirectX|Sound DirectSound]]
+
+[[es:DirectSound]]
+[[fr:DirectSound]]
+[[ko:다이렉트사운드]]
+[[nl:DirectSound]]
+[[ja:DirectSound]]
+[[pl:DirectSound]]
+[[ru:DirectSound]]
+[[uk:DirectSound]]
+[[zh:DirectSound]]</body> </html>

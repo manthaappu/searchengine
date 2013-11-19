@@ -1,0 +1,771 @@
+<html> <head> <title>JPEG 2000</title></head><body>{{multiple issues
+ | restructure=January 2008
+ | update=October 2009
+}}
+{{Infobox file format
+| name = JPEG 2000
+| screenshot = [[Image:JPEG JFIF and 2000 Comparison.png|300px]]
+| caption = Comparison of JPEG 2000 with the original JPEG format.
+| extension = <tt>.jp2</tt>, <tt>.j2k</tt>, <tt>.jpf</tt>, <tt>.jpx</tt>, <tt>.jpm</tt>, <tt>.mj2</tt>
+| mime = <tt>image/jp2</tt>, <tt>image/jpx</tt>, <tt>image/jpm</tt>, <tt>video/mj2</tt>
+| uniform type = <tt>public.jpeg-2000</tt>
+| owner = [[Joint Photographic Experts Group]]
+| creatorcode = <tt>jp2 </tt>
+| genre = [[graphics file format]]
+| containerfor =
+| containedby =
+| extendedfrom =
+| extendedto =
+| standard = ISO/IEC 15444
+}}
+'''JPEG 2000''' is an [[image compression]] standard and coding system. It was created by the [[Joint Photographic Experts Group]] committee in 2000 with the intention of superseding their original [[discrete cosine transform]]-based [[JPEG]] standard (created in 1992) with a newly designed, [[wavelet]]-based method. The standardized [[filename extension]] is '''.jp2''' for [[International Organization for Standardization|ISO]]/[[International Electrotechnical Commission|IEC]] 15444-1 conforming files and '''.jpx''' for the extended part-2 specifications, published as ISO/IEC 15444-2. The registered [[Internet media type|MIME types]] are defined in RFC 3745. For ISO/IEC 15444-1 it is '''image/jp2'''.
+
+== Aims of the standard ==
+While there is a modest increase in compression performance of JPEG 2000 compared to JPEG, the main advantage offered by JPEG 2000 is the significant flexibility of the codestream. The codestream obtained after compression of an image with JPEG 2000 is scalable in nature, meaning that it can be decoded in a number of ways; for instance, by truncating the codestream at any point, one may obtain a representation of the image at a lower resolution, or [[signal-to-noise]] ratio – see [[Lossy_data_compression#Downsampling.2Fcompressed_representation_scalability|scalable compression]]. By ordering the codestream in various ways, applications can achieve significant performance increases. However, as a consequence of this flexibility, JPEG 2000 requires [[encoder]]s/[[decoder]]s that are complex and computationally demanding. Another difference, in comparison with JPEG, is in terms of visual [[compression artifact|artifacts]]: JPEG 2000 produces [[ringing artifacts]], manifested as blur and rings near edges in the image, while JPEG produces ringing artifacts and 'blocking' artifacts, due to its [[JPEG#Block_splitting|8×8 blocks]].
+
+JPEG 2000 has been published as an [[International Organization for Standardization|ISO]] standard, ISO/IEC 15444. {{As of|2010}}, JPEG 2000 is not widely supported in [[web browser]]s, and hence is not generally used on the [[World Wide Web]].
+
+==Features==
+
+* ''Superior compression performance'': at high bit rates, where artifacts become nearly imperceptible, JPEG 2000 has a small machine-measured fidelity advantage over JPEG. At lower bit rates (e.g., less than 0.25 bits/pixel for grayscale images), JPEG 2000 has a much more significant advantage over certain modes of JPEG: artifacts are less visible and there is almost no blocking. The compression gains over JPEG are attributed to the use of [[Discrete wavelet transform|DWT]] and a more sophisticated entropy encoding scheme.
+[[Image:JPEG 2000 Artifacts Demonstration.png|thumb|96px|Top-to-bottom demonstration of the artifacts of JPEG 2000 compression. The numbers indicate the compression ratio used. See the unscaled image for an accurate view.]]
+
+* ''Multiple resolution representation'': JPEG 2000 decomposes the image into a multiple resolution representation in the course of its compression process. This representation can be put to use for other image presentation purposes beyond compression as such.
+
+* ''Progressive transmission'' by pixel and resolution accuracy, commonly referred to as progressive decoding and signal-to-noise ratio (SNR) scalability: JPEG 2000 provides efficient code-stream organizations which are progressive by pixel accuracy and by image resolution (or by image size). This way, after a smaller part of the whole file has been received, the viewer can see a lower quality version of the final picture. The quality then improves progressively through downloading more data bits from the source. The 1992 JPEG standard also has a progressive transmission feature but it's rarely used.{{Citation needed|date=October 2009}}
+
+* ''[[Lossless compression|Lossless]] and [[lossy compression]]'': Like JPEG 1992,<ref>[http://www.cis.temple.edu/~vasilis/Courses/CIS750/Papers/doc_jpeg_c_5.pdf The JPEG Still Picture Compression Standard] pp.6-7</ref> the JPEG 2000 standard provides both lossless and lossy compression in a single compression architecture.  Lossless compression is provided by the use of a reversible integer wavelet transform in JPEG 2000.
+
+* ''Random code-stream access and processing'', also referred as [[Region of interest|Region Of Interest]] (ROI): JPEG 2000 code streams offer several mechanisms to support spatial random access or region of interest access at varying degrees of granularity. This way it is possible to store different parts of the same picture using different quality.
+
+* ''Error resilience'': Like JPEG 1992, JPEG 2000 is robust to bit errors introduced by noisy communication channels, due to the coding of data in relatively small independent blocks.
+
+* ''Flexible file format'': The JP2 and JPX file formats allow for handling of color-space information, metadata, and for interactivity in networked applications as developed in the JPEG Part 9 JPIP protocol.
+
+* ''Side channel spatial information'': it fully supports transparency and alpha planes.
+
+More advantages associated with JPEG 2000 can be referred to from the [http://www.jpeg.org/JPEG2000.htm Official JPEG 2000 page].
+
+==JPEG 2000 image coding system - Parts==
+
+The JPEG 2000 image coding system (ISO/IEC 15444) consists of following parts:
+
+{| class="wikitable sortable" width="87%"
+|+JPEG 2000 image coding system - Parts<ref name="jpeg2000-jpeg">{{cite web | url=http://www.jpeg.org/jpeg2000/index.html | title=Joint Photographic Experts Group, JPEG2000 | author=JPEG | accessdate=2009-11-01}}</ref><ref name="jpeg2000-ign">{{cite web | url=http://eden.ign.fr/std/JPEG2000/index_html | title=JPEG2000 (ISO 15444) | author=IGN Standardization Team | accessdate=2009-11-01}}</ref>
+|-
+! width="8%" | Part
+! width="15%" | Number
+! width="8%" | First public release date (First edition)
+! width="8%" | Latest public release date (edition)
+! width="8%" | Latest amendment
+! width="8%" | Identical ITU-T standard
+! width="30%" | Title
+! Description
+|-
+| Part 1
+| [http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=27687 ISO/IEC 15444-1]
+| 2000
+| 2004
+| 2006<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=27687 | title=ISO/IEC 15444-1:2004 - Information technology -- JPEG 2000 image coding system: Core coding system | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.800 T.800]
+| Core coding system
+| the basic characteristics of JPEG 2000 compression (''.jp2'')
+|-
+| Part 2
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=33160 ISO/IEC 15444-2]
+| 2004
+| 2004
+| 2006<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=33160 | title=ISO/IEC 15444-2:2004 - Information technology -- JPEG 2000 image coding system: Extensions | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.801 T.801]
+| Extensions
+| (''.jpx'', ''.jpf'')
+|-
+| Part 3
+| [http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=33875 ISO/IEC 15444-3]
+| 2002
+| 2007<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=41570 | title=ISO/IEC 15444-3:2007 - Information technology -- JPEG 2000 image coding system: Motion JPEG 2000 | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+| [http://www.itu.int/rec/T-REC-T.802 T.802]
+| Motion JPEG 2000
+| (''.mj2'')
+|-
+| Part 4
+| [http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=33876 ISO/IEC 15444-4]
+| 2002
+| 2004<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=39079 | title=ISO/IEC 15444-4:2004 - Information technology -- JPEG 2000 image coding system: Conformance testing | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+| [http://www.itu.int/rec/T-REC-T.803 T.803]
+| Conformance testing
+|
+|-
+| Part 5
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=33877 ISO/IEC 15444-5]
+| 2003
+| 2003
+| 2003<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=33877 | title=ISO/IEC 15444-5:2003 - Information technology -- JPEG 2000 image coding system: Reference software | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.804 T.804]
+| Reference software
+| Java and C implementations
+|-
+| Part 6
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=35458 ISO/IEC 15444-6]
+| 2003
+| 2003
+| 2007<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=35458 | title=ISO/IEC 15444-6:2003 - Information technology -- JPEG 2000 image coding system -- Part 6: Compound image file format | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+| Compound image file format
+| (''.jpm'') e.g. document imaging, for pre-press and fax-like applications
+|-
+| Part 7
+| abandoned<ref name="jpeg2000-jpeg" />
+|
+|
+|
+|
+| Guideline of minimum support function of ISO/IEC 15444-1<ref>{{Cite web | url=http://www.itscj.ipsj.or.jp/sc29/open/29view/29n39731.doc | title=JPEG, JBIG - Resolutions of 22nd WG1 New Orleans Meeting | format=DOC | author=ISO/IEC JTC 1/SC 29/WG 1 | date=2000-12-08 | accessdate=2009-11-01}}</ref>
+| (Technical Report on Minimum Support Functions<ref>{{Cite web | url=http://www.itscj.ipsj.or.jp/sc29/open/29view/29n39741.doc | title=22nd WG1 New Orleans Meeting, Draft Meeting Report | format=DOC | date=2000-12-08 | accessdate=2009-11-01}}</ref>)
+|-
+| Part 8
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=37382 ISO/IEC 15444-8]
+| 2007
+| 2007
+| 2008<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=37382 | title=ISO/IEC 15444-8:2007 - Information technology -- JPEG 2000 image coding system: Secure JPEG 2000 | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.807 T.807]
+| Secure JPEG 2000
+| JPSEC (security aspects)
+|-
+| Part 9
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=39413 ISO/IEC 15444-9]
+| 2005
+| 2005
+| 2008<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=39413 | title=ISO/IEC 15444-9:2005 - Information technology -- JPEG 2000 image coding system: Interactivity tools, APIs and protocols | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.808 T.808]
+| Interactivity tools, APIs and protocols
+| [[JPIP]] (interactive protocols and API)
+|-
+| Part 10
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=40024 ISO/IEC 15444-10]
+| 2008
+| 2008
+| 2008<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=40024 | title=ISO/IEC 15444-10:2008 - Information technology -- JPEG 2000 image coding system: Extensions for three-dimensional data | author=ISO | accessdate=2009-11-01 }}</ref>
+| [http://www.itu.int/rec/T-REC-T.809 T.809]
+| Extensions for three-dimensional data
+| JP3D (volumetric imaging)
+|-
+| Part 11
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=40025 ISO/IEC 15444-11]
+| 2007
+| 2007<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=40025 | title=ISO/IEC 15444-11:2007 - Information technology -- JPEG 2000 image coding system: Wireless | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+| [http://www.itu.int/rec/T-REC-T.810 T.810]
+| Wireless
+| JPWL (wireless applications)
+|-
+| Part 12
+| [http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=38612 ISO/IEC 15444-12]
+| 2004
+| 2008<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=51537 | title=ISO/IEC 15444-12:2008 - Information technology -- JPEG 2000 image coding system -- Part 12: ISO base media file format | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+|
+| [[ISO base media file format]]
+|
+|-
+| Part 13
+| [http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=42271 ISO/IEC 15444-13]
+| 2008
+| 2008<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=42271 | title=ISO/IEC 15444-13:2008 - Information technology -- JPEG 2000 image coding system: An entry level JPEG 2000 encoder | author=ISO | accessdate=2009-11-01 }}</ref>
+|
+| [http://www.itu.int/rec/T-REC-T.812 T.812]
+| An entry level JPEG 2000 encoder
+|
+|-
+| Part 14
+| under development<ref>{{cite web | url=http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=50410 | title=ISO/IEC AWI 15444-14 - Information technology -- JPEG 2000 image coding system -- Part 14: XML structural representation and reference | author=ISO | date=2007-07-01 | accessdate=2009-11-01 }}</ref><ref>{{Cite web | url=http://www.itscj.ipsj.or.jp/sc29/open/29view/29n100261.doc | title=Resolutions of 47th WG1 San Francisco Meeting | format=DOC | author=ISO/IEC JTC 1/SC 29/WG 1 | date=2009-01-23 | accessdate=2009-11-01 }}</ref>
+|
+|
+|
+|
+| XML structural representation and reference
+| JPXML<ref>{{Cite web | url=http://www.itscj.ipsj.or.jp/sc29/open/29view/29n83811.doc | title=Resolutions of 41st WG1 San Jose Meeting | format=DOC | date=2007-04-27 | accessdate=2009-11-01}}</ref>
+|}
+
+==Technical discussion==
+
+The aim of JPEG 2000 is not only improving compression performance over JPEG but also adding (or improving) features such as scalability and editability. In fact, JPEG 2000's improvement in compression performance relative to the original JPEG standard is actually rather modest and should not ordinarily be the primary consideration for evaluating the design.  Very low and very high compression rates are supported in JPEG 2000.  In fact, the graceful ability of the design to handle a very large range of effective bit rates is one of the strengths of JPEG 2000. For example, to reduce the number of bits for a picture below a certain amount, the advisable thing to do with the first JPEG standard is to reduce the resolution of the input image before encoding it. That's unnecessary when using JPEG 2000, because JPEG 2000 already does this automatically through its multiresolution decomposition structure. The following sections describe the algorithm of JPEG 2000.
+
+===Color components transformation===
+Initially, images have to be transformed from the RGB [[color space]] to another color space, leading to three ''components'' that are handled separately. There are two possible choices:
+# Irreversible Color Transform (ICT) uses the well known [[YCbCr|YC<sub>B</sub>C<sub>R</sub>]] color space. It is called "irreversible" because it has to be implemented in floating or fix-point and causes round-off errors.
+# Reversible Color Transform (RCT) uses a modified YUV color space that does not introduce quantization errors, so it is fully reversible. Proper implementation of the RCT requires that numbers are rounded as specified that cannot be expressed exactly in matrix form. The transformation is:
+:<math>
+Y_r = \left\lfloor \frac{R+2G+B}{4} \right\rfloor ;
+C_b = B - G ;
+C_r = R - G ; 
+</math>
+and
+<math>
+G = Y - \left\lfloor \frac{C_b + C_r}{4} \right\rfloor ;
+R = C_r + G ;
+B = C_b + G.
+</math>
+
+The [[chrominance]] components can be, but do not necessarily have to be, down-scaled in resolution; in fact, since the wavelet transformation already separates images into scales, downsampling is more effectively handled by dropping the finest wavelet scale. This step is called ''multiple component transformation'' in the JPEG 2000 language since its usage is not restricted to the [[RGB color model]].
+
+===Tiling===
+
+After color transformation, the image is split into so-called ''tiles'', rectangular regions of the image that are transformed and encoded separately. Tiles can be any size, and it is also possible to consider the whole image as one single tile. Once the size is chosen, all the tiles will have the same size (except optionally those on the right and bottom borders). Dividing the image into tiles is advantageous in that the decoder will need less memory to decode the image and it can opt to decode only selected tiles to achieve a partial decoding of the image. The disadvantage of this approach is that the quality of the picture decreases due to a lower [[peak signal-to-noise ratio]]. Using many tiles can create a blocking effect similar to the older [[JPEG]] 1992 standard.
+
+===Wavelet transform===
+
+[[Image:Wavelet Bior2.2.svg|thumb|right|CDF 5/3 wavelet used for lossless compression.]]
+[[Image:Jpeg2000 2-level wavelet transform-lichtenstein.png|thumb|256px|An example of the wavelet transform that is used in JPEG 2000. This is a  2nd-level [[Cohen-Daubechies-Feauveau wavelet|CDF]] 9/7 [[wavelet transform]].]]
+
+These tiles are then [[wavelet transform]]ed to an arbitrary depth, in contrast to JPEG 1992 which uses an 8×8 block-size [[discrete cosine transform]]. JPEG 2000 uses two different wavelet transforms:
+#''irreversible'': the [[Cohen-Daubechies-Feauveau wavelet|CDF]] 9/7 [[wavelet transform]]. It is said to be "irreversible" because it introduces quantization noise that depends on the precision of the decoder.
+#''reversible'': a rounded version of the  biorthogonal [[Cohen-Daubechies-Feauveau wavelet|CDF]] 5/3 [[wavelet]] transform. It uses only integer coefficients, so the output does not require rounding (quantization) and so it does not introduce any quantization noise. It is used in lossless coding.
+The wavelet transforms are implemented by the [[lifting scheme]] or by [[convolution]].
+
+===Quantization===
+
+After the wavelet transform, the coefficients are scalar-[[Quantization (image processing)|quantized]] to reduce the amount of bits to represent them, at the expense of a loss of quality. The output is a set of integer numbers which have to be encoded bit-by-bit. The parameter that can be changed to set the final quality is the quantization step: the greater the step, the greater is the compression and the loss of quality. With a quantization step that equals 1, no quantization is performed (it is used in lossless compression).
+
+===Coding===
+
+The result of the previous process is a collection of ''sub-bands'' which represent several approximation scales. A sub-band is a set of ''coefficients''—[[real numbers]] which represent aspects of the image associated with a certain frequency range as well as a spatial area of the image.
+
+The quantized sub-bands are split further into ''precincts'', rectangular regions in the wavelet domain. They are typically selected in a way that the coefficients within them across the sub-bands form approximately spatial blocks in the (reconstructed) image domain, though this is not a requirement.
+
+Precincts are split further into ''code blocks''. Code blocks are located in a single sub-band and have equal sizes—except those located at the edges of the image. The encoder has to encode the bits of all quantized coefficients of a code block, starting with the most significant bits and progressing to less significant bits by a process called the ''EBCOT'' scheme. ''EBCOT'' here stands for ''Embedded Block Coding with Optimal Truncation''. In this encoding process, each [[bit plane]] of the code block gets encoded in three so-called ''coding passes'', first encoding bits (and signs) of insignificant coefficients with significant neighbors (i.e., with 1-bits in higher bit planes), then refinement bits of significant coefficients and finally coefficients without significant neighbors. The three passes are called ''Significance Propagation'', ''Magnitude Refinement'' and ''Cleanup'' pass, respectively.
+
+Clearly, in lossless mode all bit planes have to be encoded by the EBCOT, and no bit planes can be dropped.
+
+The bits selected by these coding passes then get encoded by a context-driven binary [[arithmetic coding|arithmetic coder]], namely the binary MQ-coder. The context of a coefficient is formed by the state of its nine neighbors in the code block.
+
+The result is a bit-stream that is split into ''packets'' where a ''packet'' groups selected passes of all code blocks from a precinct into one indivisible unit. Packets are the key to quality scalability (i.e., packets containing less significant bits can be discarded to achieve lower bit rates and higher distortion).
+
+Packets from all sub-bands are then collected in so-called ''layers''.
+The way the packets are built up from the code-block coding passes, and thus which packets a layer will contain, is not defined by the JPEG 2000 standard, but in general a codec will try to build layers in such a way that the image quality will increase monotonically with each layer, and the image distortion will shrink from layer to layer. Thus, layers define the progression by image quality within the code stream.
+
+The problem is now to find the optimal packet length for all code blocks which minimizes the overall distortion in a way that the generated target bitrate equals the demanded bit rate.
+
+While the standard does not define a procedure as to how to perform this form of [[rate–distortion optimization]], the general outline is given in one of its many appendices: For each bit encoded by the EBCOT coder, the improvement in image quality, defined as mean square error, gets measured; this can be implemented by an easy table-lookup algorithm. Furthermore, the length of the resulting code stream gets measured. This forms for each code block a graph in the rate–distortion plane, giving image quality over bitstream length. The optimal selection for the truncation points, thus for the packet-build-up points is then given by defining critical ''slopes'' of these curves, and picking all those coding passes whose curve in the rate–distortion graph is steeper than the given critical slope. This method can be seen as a special application of the method of ''[[Lagrange multiplier]]'' which is used for optimization problems under constraints. The [[Lagrange multiplier]], typically denoted by λ, turns out to be the critical slope, the constraint is the demanded target bitrate, and the value to optimize is the overall distortion.
+
+Packets can be reordered almost arbitrarily in the JPEG 2000 bit-stream; this gives the encoder as well as image servers a high degree of freedom.
+
+Already encoded images can be sent over networks with arbitrary bit rates by using a layer-progressive encoding order.
+On the other hand, color components can be moved back in the bit-stream; lower resolutions (corresponding to low-frequency sub-bands) could be sent first for image previewing.
+Finally, spatial browsing of large images is possible through appropriate tile and/or partition selection.
+All these operations do not require any re-encoding but only byte-wise copy operations.
+
+===Performance===
+
+[[Image:Lichtenstein jpeg2000 difference.png|thumb|right|256px|This image shows the (accentuated) difference between an image saved as JPEG 2000 (quality 50%) and the original.]]
+
+Compared to the previous JPEG standard, JPEG 2000 delivers a typical compression gain in the range of 20%, depending on the image characteristics.  Higher-resolution images tend to benefit more, where JPEG-2000's spatial-redundancy prediction can contribute more to the compression process.  In very low-bitrate applications, studies have shown JPEG 2000 to be outperformed<ref>{{Cite web | last = Halbach, Till | title = Performance comparison: H.26L intra coding vs. JPEG2000 |date = July 2002| url = http://etill.net/papers/jvt-d039.pdf | accessdate = 2008-04-22 }}</ref> by the intra-frame coding mode of H.264.  Good applications for JPEG 2000 are large images, images with low-contrast edges — e.g., medical images.
+
+==File format and code stream==
+
+Similar to JPEG-1, JPEG 2000 defines both a file format and a code stream. Whereas the latter entirely describes the image samples, the former includes additional meta-information such as the resolution of the image or the color space that has been used to encode the image. JPEG 2000 images should — if stored as files — be boxed in the JPEG 2000 file format, where they get the '''.jp2''' extender. The part-2 extension to JPEG 2000, i.e., ISO/IEC 15444-2, also enriches this file format by including mechanisms for animation or composition of several code streams into one single image. Images in this extended file-format use the '''.jpx''' extension.
+
+There is no standardized extension for code-stream data because code-stream data is not to be considered to be stored in files in the first place, though when done for testing purposes, the extension '''.jpc''' or '''.j2k''' appear frequently.
+
+==Metadata==
+For traditional JPEG, additional [[metadata]], e.g. lighting and exposure conditions, is kept in an application marker in the [[Exchangeable image file format|Exif]] format specified by the JEITA. JPEG 2000 chooses a different route, encoding the same metadata in [[XML]] form. The reference between the Exif tags and the XML elements is standardized by the ISO TC42 committee in the standard 12234-1.4.
+
+[[Extensible Metadata Platform]] can also be embedded in  JPEG 2000.
+
+==Applications of JPEG 2000==
+
+Some markets and applications intended to be served by this standard are listed below:
+* Consumer applications such as multimedia devices (e.g., digital cameras, personal digital assistants, 3G mobile phones, color facsimile, printers, scanners, etc.)
+* Client/server communication (e.g., the Internet, Image database, Video streaming, video server, etc.)
+* Military/surveillance (e.g., HD satellite images, Motion detection, network distribution and storage, etc.)
+* Medical imagery, esp. the [[DICOM]] specifications for medical data interchange.
+* [[Remote sensing]]
+* High-quality frame-based video recording, editing and storage.
+* [[Digital cinema]]
+* JPEG 2000 has many design commonalities with the [[ICER]] image compression format that is used to send images back from the [[Mars]] rovers.
+* [[World Meteorological Organization]] has built JPEG 2000 Compression into the new GRIB2 file format.  The GRIB file structure is designed for global distribution of meteorological data.  The implementation of JPEG 2000 compression in GRIB2 has reduced file sizes up to 80%.<ref>[http://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/ wgrib2 home page]</ref>
+
+==Comparison with PNG==
+Although JPEG 2000 format supports lossless encoding, it is not intended to completely supersede today's dominant lossless image file formats.
+
+The [[Portable Network Graphics|PNG]] (Portable Network Graphics) format is still more space-efficient in the case of images with many pixels of the same color, such as diagrams, and supports special compression features that JPEG 2000 does not.
+
+==Legal issues==
+
+JPEG 2000 is by itself licensed, but the contributing companies and organizations agreed that licenses for its first part—the core coding system—can be obtained free of charge from all contributors.
+
+The JPEG committee has stated:
+
+:It has always been a strong goal of the JPEG committee that its standards should be implementable in their baseline form without payment of royalty and license fees... The up and coming JPEG 2000 standard has been prepared along these lines, and agreement reached with over 20 large organizations holding many patents in this area to allow use of their intellectual property in connection with the standard without payment of license fees or royalties.<ref>[http://www.jpeg.org/newsrel1.html JPEG 2000 Concerning recent patent claims]</ref>
+
+However, the JPEG committee has also noted that undeclared and obscure [[submarine patent]]s may still present a hazard:
+
+:It is of course still possible that other organizations or individuals may claim intellectual property rights that affect implementation of the standard, and any implementers are urged to carry out their own searches and investigations in this area.<ref>[http://www.jpeg.org/jpeg2000/CDs15444.html JPEG 2000 Committee Drafts]</ref>
+
+Because of this statement, controversy remains in the software community concerning the legal status of the JPEG 2000 standard.
+
+JPEG 2000 is included in most [[Linux distribution]]s.
+
+==Related standards==
+
+Several additional parts of the JPEG 2000 standard exist;
+Amongst them are ISO/IEC 15444-2:2000, JPEG 2000 extensions defining the '''.jpx''' file format, featuring for example [[Trellis quantization]], an extended file format and additional [[color space]]s<ref name="ISO-15444-2">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=33160
+ | author = International Organization for Standardization
+ | title = ISO/IEC 15444-2:2004, Information technology -- JPEG 2000 image coding system: Extensions
+ | year = 2004
+ | accessdate = 2009-06-11 }}</ref>, ISO/IEC 15444-4:2000, the reference testing and ISO/IEC 15444-6:2000, the compound image file format ('''.jpm'''), allowing compression of compound text/image graphics.<ref name="ISO-15444-6">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=35458
+ | author = International Organization for Standardization
+ | title = ISO/IEC 15444-6:2003, Information technology -- JPEG 2000 image coding system -- Part 6: Compound image file format
+ | year = 2003
+ | accessdate = 2009-06-11 }}</ref>
+
+Extensions for secure image transfer, ''JPSEC'' (ISO/IEC 15444-8), enhanced error-correction schemes for wireless applications, ''JPWL'' (ISO/IEC 15444-11) and extensions for encoding of volumetric images, ''JP3D'' (ISO/IEC 15444-10) are also already available from the ISO.
+
+===JPIP protocol for streaming JPEG 2000 images===
+
+In 2005, a JPEG 2000 based image browsing protocol, called [[JPIP]] has been published as ISO/IEC 15444-9.<ref name="ISO-15444-9">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=39413
+ | author = International Organization for Standardization
+ | title = ISO/IEC 15444-9:2005, Information technology -- JPEG 2000 image coding system: Interactivity tools, APIs and protocols
+ | year = 2005
+ | accessdate = 2009-06-11 }}</ref> Within this framework, only selected regions of potentially huge images have to be transmitted from an image server on the request of a client, thus reducing the required bandwidth.
+
+===Motion JPEG 2000===
+
+Motion JPEG 2000 is defined in ISO/IEC 15444-3 and in ITU-T T.802<ref>{{cite web | url=http://www.itu.int/rec/T-REC-T.802/en | title=T.802 : Information technology - JPEG 2000 image coding system: Motion JPEG 2000 | date=2005-01 | accessdate=2009-11-01}}</ref>. It specifies the use of the JPEG 2000 format for timed sequences of images (motion sequences), possibly combined with audio, and composed into an overall presentation.<ref name="ISO-15444-3">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=41570
+ | author = International Organization for Standardization
+ | title = ISO/IEC 15444-3:2007, Information technology -- JPEG 2000 image coding system: Motion JPEG 2000
+ | year = 2007
+ | accessdate = 2009-06-11 }}</ref><ref>{{cite web | url=http://www.jpeg.org/jpeg2000/j2kpart3.html | title=Motion JPEG 2000 (Part 3) | author=JPEG | year=2007 | accessdate=2009-11-01}}</ref> It also defines a file format<ref>{{cite web |url=http://www.itu.int/dms_pubrec/itu-t/rec/t/T-REC-T.802-200501-I!!SUM-HTM-E.htm |title=T.802 : Information technology – JPEG 2000 image coding system: Motion JPEG 2000 - Summary |author=ITU-T |accessdate=2010-09-28}}</ref>, based on ISO base media file format (ISO 15444-12). Filename extensions for Motion JPEG 2000 video files are '''.mj2''' and '''.mjp2''' according to RFC 3745.
+
+Motion JPEG 2000 (often referenced as MJ2 or MJP2) also is under consideration as a digital archival format by the [[Library of Congress]]. It is an open [[International Organization for Standardization|ISO]] standard and an advanced update to [[MJPEG]] (or MJ), which was based on the legacy [[JPEG]] format. Unlike common video formats, such as [[MPEG-4 Part 2]], [[WMV]], and [[H.264/MPEG-4 AVC|H.264]], MJ2 does not employ temporal or inter-frame compression. Instead, each frame is an independent entity encoded by either a lossy or lossless variant of JPEG 2000. Its physical structure does not depend on time ordering, but it does employ a separate profile to complement the data. For audio, it supports [[LPCM]] encoding, as well as various MPEG-4 variants, as "raw" or complement data.<ref>[http://www.jpeg.org/jpeg2000/j2kpart3.html Motion JPEG 2000 (Part 3)]</ref><ref>[http://www.digitalpreservation.gov/formats/fdd/fdd000127.shtml Motion JPEG 2000 mj2 File Format]. Sustainability of Digital Formats Planning for Library of Congress Collections.</ref>
+
+===ISO base media file format===
+
+ISO/IEC 15444-12 is identical with ISO/IEC 14496-12 (MPEG-4 Part 12) and it defines [[ISO base media file format]]. For example, Motion JPEG 2000 file format, [[MP4]] file format or [[3GP]] file format are also based on this ISO base media file format.<ref name="mpeg4part12">{{cite journal
+  | author = [[ISO]]
+  | title =  ISO Base Media File Format white paper - Proposal
+  | publisher = archive.org
+  | date = 2006-04
+  | url = http://www.chiariglione.org/mpeg/technologies/mp04-ff/index.htm
+   | accessdate = 2009-12-26 |archiveurl = http://web.archive.org/web/20080714101745/http://www.chiariglione.org/mpeg/technologies/mp04-ff/index.htm |archivedate = 2008-07-14}}</ref><ref name="mpeg4part12--old">{{cite journal
+  | author = [[ISO]]
+  | title =  MPEG-4 File Formats white paper - Proposal
+  | publisher = archive.org
+  | date = 2005-10
+  | url = http://www.chiariglione.org/mpeg/technologies/mp04-ff/index.htm
+   | accessdate = 2009-12-26 |archiveurl = http://web.archive.org/web/20080115035235/http://www.chiariglione.org/mpeg/technologies/mp04-ff/index.htm |archivedate = 2008-01-15}}</ref><ref name="mpeg4part12--new">{{cite journal
+  | author = [[ISO]]
+  | title =  ISO Base Media File Format white paper - Proposal
+  | publisher = chiariglione.org
+  | date = 2009-10
+  | url = http://mpeg.chiariglione.org/technologies/mpeg-4/mp04-ff/index.htm
+  | accessdate = 2009-12-26 }}</ref><ref name="ISO-14496-12">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=38539
+ | author = International Organization for Standardization
+ | title = ISO/IEC 14496-12:2004, Information technology -- Coding of audio-visual objects -- Part 12: ISO base media file format
+ | year = 2004
+ | accessdate = 2009-06-11 }}</ref><ref name="ISO-15444-12">{{cite web
+ | url = http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=51537
+ | author = International Organization for Standardization
+ | title = ISO/IEC 15444-12:2008, Information technology -- JPEG 2000 image coding system -- Part 12: ISO base media file format
+ | year = 2008
+ | accessdate = 2009-06-11 }}</ref>
+
+===GML JP2 Georeferencing===
+
+The [[Open Geospatial Consortium]] (OGC) has defined a [[metadata (computing)|metadata]] standard for [[georeferencing]] JPEG 2000 images with embedded [[XML]] using the [[Geography Markup Language]] (GML) format: ''GML in JPEG 2000 for Geographic Imagery Encoding (GMLJP2)'', version 1.0.0, dated 2006-01-18 <ref name="gmljp2">Open Geospatial Consortium [http://www.opengeospatial.org/standards/gmljp2 GMLJP2 Home Page]</ref>.
+
+JP2 and JPX files containing GMLJP2 markup can be located and displayed in the correct position on the Earth's surface by a suitable [[Geographic Information System]] (GIS), in a similar way to [[GeoTIFF]] images.
+
+==Application support==
+===Applications===
+{| class="wikitable" style="margin: 1em auto 1em auto"
+|+ Application support for JPEG 2000
+!rowspan="2" | Program
+!colspan="2" | Basic {{r|group=Note|SupportLevel}}
+!colspan="2" | Advanced {{r|group=Note|SupportLevel}}
+!rowspan="2" | License
+|-
+!Read
+!Write
+!Read
+!Write
+|-
+! {{rh}} | [[ACDSee]]
+|{{yes}}
+|{{yes}}
+|?
+|?
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Accusoft Pegasus]] [http://www.accusoft.com/index.htm]
+|{{yes}}
+|{{yes}}
+|?
+|?
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Adobe Photoshop]] {{r|group=Note|PhotoShopsupport}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | Apple [[iPhoto]]
+|{{yes}}
+|{{no}}
+|{{yes}}
+|{{no}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | Apple [[Preview (software)|Preview]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Blender (software)|Blender]]<ref>{{cite web |url=http://www.blender.org/development/release-logs/blender-249/ |title=Blender 2.49 |date=2009-05-30 |accessdate=2010-01-20}}</ref>
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+| [[GNU General Public License|GPL]]
+|-
+! {{rh}} | [[Corel Photo-Paint]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [http://www.grrsystems.com/DBGallery DBGallery]
+|{{yes}}
+|{{no}}
+|{{?}}
+|{{no}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[digiKam]]<ref name="kde-jpeg2000">{{cite web |url=http://docs.kde.org/development/en/extragear-graphics/digikam/using-fileformatsupport.html |publisher=docs.kde.org |title=The digiKam Handbook - Supported File Formats |accessdate=2010-01-20}}</ref><ref>{{cite web |url=http://docs.kde.org/development/en/extragear-graphics/showfoto/using-fileformatsupport.html |title=The Showfoto Handbook - Supported File Formats |accessdate=2010-01-20}}</ref> ([[KDE]]<ref name="kde3">{{cite web |url=http://techbase.kde.org/Development/Architecture/KDE3/Imaging_and_Animation |title=Development/Architecture/KDE3/Imaging and Animation |accessdate=2010-01-20}}</ref>)
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[GNU General Public License|GPL]]
+|-
+! {{rh}} | [[ENVI]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[ERDAS IMAGINE]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[FastStone Image Viewer]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[FastStone MaxView]]
+|{{yes}}
+|{{no}}
+|{{yes}}
+|{{no}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Mozilla Firefox]]
+|via extension {{r|group=Note|FirefoxBug}}
+| -
+|{{?}}
+| -
+|[[Mozilla Public License|MPL]]/[[GNU General Public License|GPL]]/[[GNU Lesser General Public License|LGPL]]
+|-
+! {{rh}} | [[GIMP]]
+|{{yes}}<ref>{{cite web |url=http://www.gimp.org/release-notes/gimp-2.7.html |title=GIMP 2.7 RELEASE NOTES |author=The GIMP Team |date=2009-08-16 |accessdate=2009-11-17}}</ref>
+|{{no}}
+|{{?}}
+|{{no}}
+| [[GNU General Public License|GPL]]
+|-
+! {{rh}} | [[GraphicConverter]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{?}}
+|[[Shareware]]
+|-
+! {{rh}} | [[Gwenview]] ([[KDE]]<ref name="kde3" />)
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[GNU General Public License|GPL]]
+|-
+! {{rh}} | [[IDL (programming language)|IDL]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[ImageMagick]]
+|{{yes}}
+|{{yes}}
+|{{no}}
+|{{no}}
+|[http://www.imagemagick.org/script/license.php ImageMagick License]
+|-
+! {{rh}} | [[IrfanView]]
+|{{yes}} {{r|group=Note|IrfanViewSupport}}
+|{{partial}} {{r|group=Note|IrfanViewSupport}}
+|{{no}}
+|{{no}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[KolourPaint]] ([[KDE]]<ref name="kde3" />)
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|2-clause [[BSD Licenses|BSD]]
+|-
+! {{rh}} | [[Mathematica]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Matlab]]
+|via toolbox
+|via toolbox
+|via toolbox
+|via toolbox
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Opera (web browser)|Opera]]
+|via [[Quicktime]]
+| -
+|{{?}}
+| -
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Paint Shop Pro]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Pixel image editor]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Safari (web browser)|Safari]]
+|{{yes}}
+| -
+|{{?}}
+| -
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[SilverFast]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[SView5]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[XnView]] {{r|group=Note|XnViewSupport}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[Ziproxy]]
+|{{yes}}
+|{{yes}}
+|{{no}}
+|{{no}}
+|[[GPL]]
+|}
+{{reflist|group=Note|refs=
+<ref name=SupportLevel>'''basic''' and '''advanced''' support refer to conformance with, respectively, '''Part1''' and '''Part2''' of the JPEG 2000 Standard.</ref>
+<ref name=IrfanViewSupport>IrfanView's official plug-in package supports reading of .jp2 files but writing is quite limited until plug-in is purchased separately.</ref>
+<ref name=PhotoShopsupport>Adobe Photoshop CS2 and CS3's official JPEG 2000 plug-in package is not installed by default and must be manually copied from the install disk/folder to the Plug-Ins > File Formats folder.</ref>
+<ref name=FirefoxBug>Mozilla support for JPEG 2000 was requested in April 2000, but the report was closed as WONTFIX in August 2009.[https://bugzilla.mozilla.org/show_bug.cgi?id=36351] JPEG 2000 support is available as a plugin for Windows,[http://www.morgan-multimedia.com/JPEG2000/mozilla_plugin.htm] and an extension that adds support to older versions of Firefox.[http://eschew.org/test/jp2/xpi/]</ref>
+<ref name=XnViewSupport>[http://www.xnview.com/en/formats.html  XnView supports JPEG 2000 compression only in MS Windows version]</ref>
+}}
+
+===Libraries===
+{| class="wikitable" style="margin: 1em auto 1em auto"
+|+ Library support for JPEG 2000
+!rowspan="2" | Program
+!colspan="2" | Basic
+!colspan="2" | Advanced
+!rowspan="2" | Language
+!rowspan="2" | License
+|-
+!Read
+!Write
+!Read
+!Write
+|-
+! {{rh}} | [http://www.aware.com/imaging/accuradj2k.htm AccuRad J2KSuite]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[C++]]
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[ECW (file format)|ERDAS ECW JPEG2000 SDK]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[C/C++]]
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[FFmpeg]]
+|in progress {{r|group=Note|FFmpegSupport}}
+|in progress {{r|group=Note|FFmpegSupport}}
+|{{?}}
+|{{?}}
+|[[C (programming language)|C]]
+|[[LGPL]]
+|-
+! {{rh}} | [[GTK]] (from 2.14)
+|{{yes}}
+|{{no}}
+|{{?}}
+|{{no}}
+|[[C (programming language)|C]]/[[GTK]]
+|[[LGPL]]
+|-
+! {{rh}} | [[JasPer]]
+|{{yes}}
+|{{yes}}
+|{{no}}
+|{{no}}
+|[[C (programming language)|C]]
+|[[MIT License]]-style
+|-
+! {{rh}} | [[JJ2000]] [http://code.google.com/p/jj2000/]
+|{{yes}}
+|{{yes}}
+|{{no}}
+|{{no}}
+|[[Java (programming language)|Java]]
+|Special (similar to BSD-style)
+|-
+! {{rh}} | [[Kakadu (software)|Kakadu]]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[C++]]
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [http://www.leadtools.com/sdk/compression/jpeg2000.htm LEADTOOLS]
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|{{yes}}
+|[[C (programming language)|C]], [[C++]], [[.NET Framework|.NET]]
+|[[Proprietary software|Proprietary]]
+|-
+! {{rh}} | [[OpenJPEG]]
+|{{yes}}
+|{{yes}}
+|{{?}}
+|{{?}}
+|[[C (programming language)|C]]
+|[[BSD licenses|BSD]]
+|}
+{{reflist|group=Note|refs=
+<ref name=FFmpegSupport>[http://svn.mplayerhq.hu/soc/jpeg2000/  not merged to main repository, only in soc repository]</ref>
+}}
+
+==See also==
+* [[Comparison of graphics file formats]]
+* [[DjVu]] – a compression format that also uses wavelets and that is designed for use on the web.
+* [[ECW (file format)|ECW]] – a wavelet compression format that compares well to JPEG 2000.
+* [[High bit rate audio video over Internet Protocol]]
+* [[QuickTime]] – a multimedia framework, application and web browser plugin developed by Apple, capable of encoding, decoding and playing various multimedia files (including JPEG 2000 images by default).
+* [[MrSID]] – a wavelet compression format that compares well to JPEG 2000
+* [[Progressive Graphics File|PGF]] – a fast wavelet compression format that compares well to JPEG 2000
+* [[JPIP]] – JPEG 2000 Interactive Protocol
+
+==Notes==
+{{Reflist|colwidth=30em}}
+
+==References==
+*[http://www.jpeg.org/JPEG2000.htm Official JPEG 2000 page]
+*[http://www.jpeg.org/jpeg2000/CDs15444.html Final Committee Drafts of JPEG 2000 standard] (as the official JPEG 2000 standard is not freely available, the final drafts are the most accurate freely available documentation about this standard)
+*[http://www.crc.ricoh.com/~gormish/jpeg2000.html Gormish Notes on JPEG 2000]
+*[http://www.rii.ricoh.com/%7Egormish/pdf/dcc2000_jpeg2000_note.pdf Technical overview of JPEG 2000] ([[Portable Document Format|PDF]])
+*[http://www.intopix.com/pdf/JPEG%202000%20Handbook.pdf Everything you always wanted to know about JPEG 2000 - published by intoPIX in 2008] ([[Portable Document Format|PDF]])
+*[http://kom.aau.dk/~myap08/pjt/master.pdf An Efficient Implementation of High Speed JPEG-2000 Codec, M.Y. Appiah, Technical Report, Aalborg Universitet, 2006] ([[Portable Document Format|PDF]])
+
+==External links==
+*RFC 3745, MIME Type Registrations for JPEG 2000 (ISO/IEC 15444)
+*[http://www.jpeg.org/JPEG2000.htm Official JPEG 2000 website]
+*[http://www.watermarkingworld.com/books_list?k=Jpeg2000 All published books about JPEG 2000]
+
+;JPEG 2000 comparisons:
+*[http://www.fnordware.com/j2k/jp2samples.html Side-by side comparison of appearance of 16k JPEG and JPEG 2000 files]
+*[http://kt.ijs.si/aleks/jpeg/artifacts.htm JPEG and JPEG 2000 Artifacts]
+{{Graphics file formats}}
+{{CCSDS}}
+{{Compression Formats}}
+{{ISO standards}}
+
+{{DEFAULTSORT:Jpeg 2000}}
+[[Category:ISO standards]]
+[[Category:Graphics file formats]]
+[[Category:Wavelets]]
+
+[[ca:JPEG 2000]]
+[[cs:JPEG 2000]]
+[[de:JPEG 2000]]
+[[es:JPEG 2000]]
+[[fr:JPEG 2000]]
+[[ko:JPEG 2000]]
+[[it:JPEG 2000]]
+[[pam:JPEG 2000]]
+[[nl:JPEG 2000]]
+[[ja:JPEG 2000]]
+[[pl:JPEG 2000]]
+[[pt:JPEG 2000]]
+[[ru:JPEG 2000]]
+[[fi:JPEG 2000]]
+[[sv:JPEG 2000]]
+[[uk:JPEG 2000]]
+[[yo:JPEG 2000]]
+[[zh:JPEG 2000]]</body> </html>

@@ -1,0 +1,103 @@
+<html> <head> <title>Wirth-Weber precedence relationship</title></head><body>{{Unreferenced|date=December 2009}}
+{{Context|date=October 2009}}
+
+The [[Niklaus Wirth|Wirth]]-[[Helmut Weber|Weber]] relationship between a pair of symbols <math>(V_t \cup V_n)</math> is necessary to determine if a [[formal grammar]] is a [[Simple precedence grammar]], and in such case the [[Simple precedence parser]] can be used. 
+
+The goal is to identify the when the [[viable prefix]]es have the '''pivot''' and must be reduced. A <math>\gtrdot</math> means that the '''pivot''' is found, a <math>\lessdot</math> means that a potential '''pivot''' is starting, and a <math>\dot =</math> means that we are still in the same '''pivot'''.
+
+__TOC__
+
+==Formal definition==
+<math> G = <V_n, V_t, S, P> </math>
+
+*  <math> X \dot = Y \iff \begin{cases} A \to \alpha X Y \beta \in P  \\  A \in V_n \\ \alpha , \beta \in (V_n \cup V_t)^* \\ X, Y \in (V_n \cup V_t) \end{cases}  </math> 
+
+*  <math> X \lessdot Y \iff \begin{cases} A \to \alpha X B \beta \in P \\ B \Rightarrow^+ Y \gamma \\ A, B \in V_n \\ \alpha , \beta, \gamma \in (V_n \cup V_t)^* \\ X, Y \in (V_n \cup V_t) \end{cases} </math> 
+
+*  <math> X \gtrdot a \iff \begin{cases} A \to \alpha B Y \beta \in P \\ B \Rightarrow^+ \gamma X \\ Y \Rightarrow^* a \delta \\ A, B \in V_n \\ \alpha , \beta, \gamma, \delta \in (V_n \cup V_t)^* \\ X, Y \in (V_n \cup V_t) \\ a \in V_t \end{cases} </math>
+
+==Precedence Relations Computing Algorithm==
+We will define three Sets for a symbol:
+
+* <math>Head^+(X) = \{Y|X \Rightarrow^+ Y \alpha \}</math>
+* <math>Tail^+(X) = \{Y|X \Rightarrow^+ \alpha Y \}</math>
+* <math>Head^*(X) = (Head^+(X) \cup \{ X \}) \cap V_t</math>
+</br>
+''Note that Head<sup>*</sup>(X) is X if X is a terminal, and if X is a non-terminal, Head<sup>*</sup>(X) is the set with only the terminals belonging to Head<sup>+</sup>(X). This set is equivalent to  '''First-set''' or '''Fi(X)''' described in [[LL parser]]''
+</br>
+</br>
+''Note that Head<sup>+</sup>(X) and Tail<sup>+</sup>(X) are <math>\empty</math> if X is a terminal.'' 
+</br>
+
+</br>
+The pseudocode for computing relations is:
+
+* RelationTable := <math>\empty</math>
+* For each production <math> A \to \alpha \in P </math>
+** For each two adjacent symbols X Y in α
+*** add(RelationTable,<math>X \dot = Y</math>)
+*** add(RelationTable,<math>X \lessdot Head^+(Y)</math>)
+*** add(RelationTable,<math>Tail^+(X) \gtrdot Head^*(Y)</math>)
+* add(RelationTable,<math>$ \lessdot Head^+(S)</math>) where S is the initial non terminal of the grammar, and $ is a limit marker
+* add(RelationTable,<math>Tail^+(S) \gtrdot $ </math>) where S is the initial non terminal of the grammar, and $ is a limit marker
+</br>
+
+''Note that <math>\lessdot</math> and <math>\gtrdot</math> are used with sets instead of elements as they were defined, in this case you must add all the [[cartesian product]] between the sets/elements''
+
+==Examples==
+<math>S \to aSSb | c</math>
+
+* Head+(a) = <math>\empty</math>
+* Head+(S) = { a, c}
+* Head+(b) = <math>\empty</math>
+* Head+(c) = <math>\empty</math>
+* Tail+(a) = <math>\empty</math>
+* Tail+(S) = { b, c}
+* Tail+(b) = <math>\empty</math>
+* Tail+(c) = <math>\empty</math>
+* Head*(a) = a
+* Head*(S) = { a, c}
+* Head*(b) = b
+* Head*(c) = c
+
+* <math>S \to aSSb</math>
+** '''a''' Next to '''S'''
+*** a <math>\dot =</math> S
+*** a <math>\lessdot</math> Head+(S)
+****  a <math>\lessdot</math> a
+****  a <math>\lessdot</math> c
+** '''S''' Next to '''S'''
+*** S <math>\dot =</math> S
+*** S <math>\lessdot</math> Head+(S)
+****  S <math>\lessdot</math> a
+****  S <math>\lessdot</math> c
+*** Tail+(S) <math>\gtrdot</math> Head*(S)
+****  b <math>\gtrdot</math> a
+****  b <math>\gtrdot</math> c
+****  c <math>\gtrdot</math> a
+****  c <math>\gtrdot</math> c
+** '''S''' Next to '''b'''
+*** S <math>\dot =</math> b
+*** Tail+(S) <math>\gtrdot</math> Head*(b)
+****  b <math>\gtrdot</math> b
+****  c <math>\gtrdot</math> b
+* <math>S \to c</math>
+** there is only one symbol, so no relation is added.
+
+precedence table:
+{|border="1" cellpadding="2"
+| ||S||a||b||c||$
+|-
+|S||<math>\dot =</math>|| <math>\lessdot</math> || <math>\dot =</math> || <math>\lessdot</math>||
+|-
+|a||<math>\dot =</math>||<math>\lessdot</math>||  ||<math>\lessdot</math>||
+|-
+|b||  ||<math>\gtrdot</math>|| <math>\gtrdot</math> ||<math>\gtrdot</math>||<math>\gtrdot</math>
+|-
+|c||  ||<math>\gtrdot</math>||<math>\gtrdot</math>||<math>\gtrdot</math>||<math>\gtrdot</math>
+|-
+|$|| ||<math>\lessdot</math>||  ||<math>\lessdot</math>||
+|}
+
+{{DEFAULTSORT:Wirth-Weber Precedence Relationship}}
+[[Category:Formal languages]]</body> </html>

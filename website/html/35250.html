@@ -1,0 +1,50 @@
+<html> <head> <title>Spatial twist continuum</title></head><body>The '''spatial twist continuum''' is a dual representation of an all [[hexahedron|hexahedral]] [[mesh (mathematics)|mesh]] that defines the global [[Connectivity (graph theory)|connectivity]] [[constraint (mathematics)|constraint]]. 
+
+Discovered by Dr. [[Peter Murdoch]] on the 16th September 1993, the spatial twist continuum is a method that can be used in automatic and semi-automatic mesh generation methods to create all hexahedral meshes for both [[computational fluid dynamics]] and [[finite element method]] applications.
+ 
+The name is derived from the description of the surfaces that define the connectivity of the hexahedral elements. The surfaces are arranged in the three principal dimensions such that they form [[orthogonality|orthogonal]] intersections that conicide with the [[centroid]] of the hexahedral element. They are arranged predominately coplanar to each other in their respective dimensions yet they can twist into the other dimensional planes through transitions. The surfaces are unbroken throughout the entire volume of the mesh hence they are [[Continuum (theory)|continuum]]s.
+
+One of the areas where the STC finds application is CFD computational fluid dynamics which is a field of Science and analysis that involves simulating the flow of fluids such as air over and through bodies defined by boundary surfaces. The procedure involves building a mesh and solving the same on a computer using a finite volume approach. 
+
+An analyst has many choices available for creating a mesh that can be used in a CFD or CAE simulation, one is to use a Tetrahedral, Polyhedral, Trimmed Cartesian or Mixed of Hybrid of Hexahedra called hex dominate, these are classified as non-structured meshes, which can all be created automatically, however the CFD and FEA results are both inaccurate and prone to solution divergence, (the simulation fails to solve). 
+The other option for the analyst is to use an all-hexahedral mesh that offers far greater solver stability and speed as well as accuracy and the ability to run much more powerful turbulence solvers like Large eddy simulation LES in transient mode as opposed to the non-structured meshes that can only run a steady state RANS model. 
+
+The difficulty with generating an all-hexahedral mesh on a complex geometry is that mesh needs to take into consideration the local geometric detail as well as the global connectivity constraint. This is the STC, and it is only present in an all-hexahedral mesh. This is the reason why it is relatively easy to automate a non-structured mesh, the automatic generator only needs to be concerned with the local cell size geometry. 
+
+The tradeoffs and relative benefits of using either mesh method to build and solve a CFD or CAE model are best explained by looking at the total work flow.
+
+1)	CAD cleanup. This involves fixing the gaps and holes in the CAD data. Usually the forgotten task that can consume a lot of time and energy and not something any experienced analyst looks forward too.
+
+2)	Mesh generation: The two main choices are to use an automated non-structured mesh or build a full hexahedral mesh. <br />
+a)	Non-Structured: If one chooses to build a non-structured mesh then it is not as easy as first perceived. The process involves automatically building the mesh then manually fixing the regions of very poor cell quality. This process can take a considerable amount of time, another hidden time cost. <br />
+b)	All-Hexahedral: As of mid-2009 there are a few all-hexahedral mesh generating tools. Some of them are (in alphabetical order)
+
+* GridPro(1985)-a pure multiblock meshing tool ... with really good inter and intra block smoothing .For more details visit [[www.gridpro.com]]
+* Moceon(1995)-based on the STC ... just released .. and has generated good interest among the community. For more details [[www.moceon.com]]
+* IcemCFD  [[www.ansys.com/products/icemcfd.asp]]
+* Pointwise ( primarily a multiblock meshing tool .. but can also produce tetrahedrons ) [[www.pointwise.com]]
+* TrueGrid ( multiblock meshing tool ) [[www.truegrid.com]]
+
+However there are ways of quickly building a hexahedral mesh such as using a 2D quad mesh and projecting into the z-direction. Another method is building a block structured mesh by using a CAD based program to create logically connected splines. After the blocks are built the cell factors are added to the blocks and the mesh created. One significant advantage of using a block based hexahedral mesh is the mesh can be smoothed very quickly. For large complex geometric models the process of building a hexahedral mesh can take days, weeks and even months depending on the skill level and tool sets available to the analyst.
+
+3)	Set up the model and assign the boundary conditions:  This is a rather trivial step and it is usually taken care of by GUI assisted menus. 
+
+4)	Running the Simulation:  This is where the nightmares for the non-structured mesh begin. Since it takes six tetrahedrals to represent one hexahedral the tet mesh size will be considerably larger and will require a lot more computing power and RAM to solve an equivalent hexahedral mesh. The tetrahedral mesh will also require more relaxation factors to solve the simulation by effectively dampening the amplitude of the gradients. This increases the number of sub-cycle steps and drives the courant number up. If you built a hexahedral mesh this is where the tortoise passes the hare. 
+
+5)	Post processing the results: The time required in this step is highly dependent on the size of the mesh (number of cells).
+
+6)	Making design changes: If you build a non-structured mesh this is where you go back to the beginning and start all over again. If you build a hexahedral mesh then you make the geometric change, re-smooth the mesh and restart the simulation.
+
+7)	Accuracy: This is the major difference between a non-structured mesh and a hexahedral mesh, and the main reason why it is preferred. 
+
+The "spatial twist continuum" addresses the issue of complex mesh model creation by elevating the structure of the mesh to a higher level of abstraction that assists in the creation of the all-hexahedral mesh. 
+
+==References==
+
+Murdoch P.; Benzley S.1; Blacker T.; Mitchell S.A. "The spatial twist continuum: A connectivity based method for representing all-hexahedral finite element meshes." ''Finite Elements in Analysis and Design'', Volume 28, Number 2, 15 December 1997, Elsevier, pp. 137–149(13)
+
+Murdoch, Peter and Steven E. Benzley. "The Spatial Twist Continuum." ''Proceedings, 4th International Meshing Roundtable'', Sandia National Laboratories, pp. 243–251, October 1995
+
+[[Category:1995 introductions]]
+[[Category:Computational fluid dynamics]]
+[[Category:Finite element method]]</body> </html>

@@ -1,0 +1,40 @@
+<html> <head> <title>Global Interpreter Lock</title></head><body>In [[interpreted programming language]]s, most notably [[Python (language)|Python]] and [[Ruby (language)|Ruby]], a '''Global Interpreter Lock''' ('''GIL''') is a [[mutual exclusion]] [[lock (computer science)|lock]] held by a [[programming language]] [[interpreter (computing)|interpreter]] [[Thread (computer science)|thread]] to avoid sharing code that is not [[thread-safe]] with other threads. In languages with a GIL, there is always one GIL for each interpreter [[Process (computing)|process]].
+
+Applications written in programming languages with a GIL can be designed to use separate processes to achieve full concurrency, as each process has its own interpreter and in turn has its own GIL. Otherwise, the GIL can be a significant barrier to concurrency—a price paid for having the dynamism of the language.
+
+== Drawbacks and profits ==
+Usage of a Global Interpreter Lock in a language effectively limits [[Concurrency (computer science)|concurrency]] of a single interpreter process with multiple threads. If the process is almost purely made up of interpreted code and does not make calls outside of the interpreter for long periods of time (which can release the lock on the GIL on that thread while it processes), there is likely to be very little increase in speed when running the process on a [[multiprocessor]] machine.  Due to signaling with a CPU-bound thread, it can cause a significant slowdown, even on single processors.<ref>{{cite web | url=http://www.dabeaz.com/python/GIL.pdf | title=Inside the Python GIL | author=David Beazley | publisher=[http://chipy.org/ Chicago Python User Group] | date=2009-06-11 | location=Chicago | accessdate=2009-10-07}}</ref>
+
+The reasons of employing such a lock include:
+* increased speed of single-threaded programs (no necessity to acquire or release locks on all data structures separately)
+* easy integration of [[C (programming language)|C]] libraries that usually are not thread-safe.
+
+== Examples ==
+Languages that implement a Global Interpreter Lock are, among others:
+* [[Python (programming language)|Python]] (specifically its [[C (programming language)|C]] implementation, [[CPython]])<ref>{{cite web
+| url=http://www.ddj.com/linux-open-source/206103078?pgno=2
+| title=Concurrency and Python
+| page=2
+| author=Shannon -jj Behrens
+| publisher=[[Dr. Dobb's Journal]]
+| quote=''The GIL is a lock that is used to protect all the critical sections in Python. Hence, even if you have multiple CPUs, only one thread may be doing "pythony" things at a time.''
+| date=2008-02-03
+| accessdate=2008-07-12}}</ref><ref>[http://docs.python.org/api/threads.html Python/C API Reference Manual: Thread State and the Global Interpreter Lock]</ref>
+
+* [[Ruby (programming language)|Ruby]], specifically the [[Ruby MRI|MRI Interpreter]] (where it is called Global VM Lock).
+
+([[Java Virtual Machine|JVM]]-based equivalents of these languages ([[Jython]] and [[JRuby]]) are pure Java applications, so they don't have any limits on threading.)
+
+== References ==
+{{reflist|2}}
+
+== See also ==
+* [[Green threads]]
+
+[[Category:Python programming language]]
+[[Category:Concurrency control]]
+[[Category:Concurrent computing]]
+[[Category:Concurrency]]
+
+[[ja:グローバルインタプリタロック]]
+[[pl:Global Interpreter Lock]]</body> </html>

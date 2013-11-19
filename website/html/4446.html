@@ -1,0 +1,69 @@
+<html> <head> <title>Branch and bound</title></head><body>{{Unreferenced|date=December 2009}}
+'''Branch and bound''' ('''BB''' or '''B&B''') is a general [[algorithm]] for finding optimal solutions of various [[optimization (mathematics)|optimization]] problems, especially in [[discrete optimization|discrete]] and [[combinatorial optimization]]. It consists of a systematic enumeration of all candidate solutions, where large subsets of fruitless candidates are discarded ''en masse'', by using upper and lower estimated bounds of the quantity being optimized.
+
+The method was first proposed by A. H. Land and A. G. Doig<ref name=land_doig>{{cite article |author = A. H. Land and A. G. Doig | year = 1960 | title = An automatic method of solving discrete programming problems | journal = Econometrica | volume = 28 | number = 3 | month = July | pages = 497-520 }}</ref>  in 1960 for [[discrete optimization|discrete programming]].
+
+==General description==
+For definiteness, we assume that the goal is to find the ''minimum'' value of a function <math>f(x)</math>, where <math>x</math> ranges over some set <math>S</math> of ''admissible'' or ''candidate solutions'' (the ''[[search space]]'' or ''feasible region''). Note that one can find the ''maximum'' value of <math>f(x)</math> by finding the minimum of <math>g(x) = -f(x)</math>. (For example, <math>S</math> could be the set of all possible trip schedules for a bus fleet, and <math>f(x)</math> could be the expected revenue for schedule <math>x</math>.)
+
+A branch-and-bound procedure requires two tools.  The first one is a ''splitting'' procedure that, given a set <math>S</math> of candidates, returns two or more smaller sets <math>S_1, S_2, \ldots</math> whose union covers <math>S</math>.  Note that the minimum of <math>f(x)</math> over <math>S</math> is <math>\min\{v_1, v_2, \ldots\}</math>, where each <math>v_i</math> is the minimum of <math>f(x) </math> within <math>S_i</math>.   This step is called '''branching''', since its recursive application defines a [[tree structure]] (the ''search tree'') whose ''nodes'' are the subsets of <math>S</math>.
+
+Another tool is a procedure that computes upper and lower bounds for the minimum value of <math>f(x)</math> within a given subset <math>S</math>.  This step is called '''bounding'''.
+
+The key idea of the BB algorithm is: if the ''lower'' bound for some tree node (set of candidates) <math>A</math> is greater than the ''upper'' bound for some other node <math>B</math>, then A may be safely discarded from the search. This step is called '''pruning''', and is usually implemented by maintaining a global variable <math>m</math> (shared among all nodes of the tree) that records the minimum upper bound seen among all subregions examined so far. Any node whose lower bound is greater than <math>m</math> can be discarded.
+
+The recursion stops when the current candidate set <math>S</math> is reduced to a single element; or also when the upper bound for set <math>S</math> matches the lower bound.  Either way, any element of <math>S</math> will be a minimum of the function within <math>S</math>.
+
+===Effective subdivision===
+The efficiency of the method depends strongly on the node-splitting procedure and on the upper and lower bound estimators.  All other things being equal, it is best to choose a splitting method that provides non-overlapping subsets.
+
+Ideally the procedure stops when all nodes of the search tree are either pruned or solved. At that point, all non-pruned subregions will have their upper and lower bounds equal to the global minimum of the function.  In practice the procedure is often terminated after a given time; at that point, the maximum lower bound and the minimum upper bound, among all non-pruned sections, define a [[interval (mathematics)|range]] of values that contains the global minimum. Alternatively, within an overriding time constraint, the algorithm may be terminated when some ''error criterion'', such as ''(max − min)/(min + max)'', falls below a specified value.
+
+The efficiency of the method depends critically on the effectiveness of the branching and bounding algorithms used; bad choices could lead to repeated branching, without any pruning, until the sub-regions become very small.  In that case the method would be reduced to an exhaustive enumeration of the domain, which is often impractically large. There is no universal bounding algorithm that works for all problems, and there is little hope that one will ever be found; therefore the general paradigm needs to be implemented separately for each application, with branching and bounding algorithms that are specially designed for it.
+
+Branch and bound methods may be classified according to the bounding methods and according to the ways of creating/inspecting the search tree nodes.
+
+The branch-and-bound design strategy is very similar to backtracking in that a state space tree is used to solve a problem. The differences are that the branch-and-bound method (1) does not limit us to any particular way of traversing the tree and (2) is used only for optimization problems.
+
+This method naturally lends itself for [[parallel computing|parallel]] and [[distributed computing|distributed]] implementations, see, e.g., the [[traveling salesman problem]] article.
+
+==Applications==
+This approach is used for a number of [[NP-hard]] problems, such as
+
+* [[Knapsack problem]]
+* [[Integer programming]]
+* [[Nonlinear programming]]
+* [[Traveling salesman problem]] (TSP)
+* [[Quadratic assignment problem]] (QAP)
+* [[Maximum satisfiability problem]] (MAX-SAT)
+* [[Nearest neighbor search]] (NNS)
+* [[Cutting stock problem]]
+* [[False noise analysis]] (FNA)
+
+Branch-and-bound may also be a base of various [[heuristic]]s. For example, one may wish to stop branching when the gap between the upper and lower bounds becomes smaller than a certain threshold. This is used when the solution is "good enough for practical purposes" and can greatly reduce the computations required. This type of solution is particularly applicable when the cost function used is [[noise|''noisy'']] or is the result of [[statistics|statistical estimates]] and so is not known precisely but rather only known to lie within a range of values with a specific [[probability]]. An example of its application here is in [[biology]] when performing [[cladistics|cladistic analysis]] to evaluate evolutionary relationships between organisms, where the data sets are often impractically large without heuristics.
+
+For this reason, branch-and-bound techniques are often used in [[game tree]] [[search algorithm]]s, most notably through the use of [[alpha-beta pruning]].
+
+==See also==
+* [[A* search algorithm]]
+* [[Algorithm#By_design_paradigm|Classes of algorithms by design paradigm]]
+
+==References==
+{{Reflist}}
+
+{{DEFAULTSORT:Branch And Bound}}
+[[Category:Optimization algorithms]]
+[[Category:Combinatorial optimization]]
+
+[[ca:Sudoku ramificació i poda]]
+[[cs:Metoda větví a mezí]]
+[[de:Branch-and-Bound]]
+[[es:Ramificación y poda]]
+[[fr:Séparation et évaluation]]
+[[ko:분기 한정법]]
+[[it:Branch and bound]]
+[[ja:分枝限定法]]
+[[ru:Метод ветвей и границ]]
+[[uk:Метод гілок і меж]]
+
+{{Optimization algorithms}}</body> </html>

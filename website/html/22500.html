@@ -1,0 +1,23 @@
+<html> <head> <title>Lock (database)</title></head><body>{{Unreferenced|date=December 2007}}
+
+{{merge|Lock (computer science)|date=November 2010}}
+{{merge|MS SQL Server|date=November 2010}}
+
+A '''lock''' is used when [[multi-user|multiple users]] need to access a [[database]] [[concurrency (computer science)|concurrently]]. This prevents data from being corrupted or invalidated when multiple users try to write to the database. Any single user can only modify those [[database record]]s (that is, items in the database) to which they have applied a lock that gives them exclusive access to the record until the lock is released. Locking not only provides exclusivity to writes but also prevents (or controls) reading of unfinished modifications (AKA uncommitted data).
+
+There are two mechanisms for locking data in a database: ''[[pessimistic locking]]'', and ''[[optimistic locking]]''. In pessimistic locking a record or page is locked immediately when the lock is requested, while in an optimistic lock the record or page is only locked when the changes made to that record are updated. The latter situation is only appropriate when there is less chance of someone needing to access the record while it is locked; otherwise it cannot be certain that the update will succeed because the attempt to update the record will fail if another user updates the record first. With pessimistic locking it is guaranteed that the record will be updated.
+
+A complaint about very old versions of [[MS SQL Server]] concerns an apparent lack of row-level locking capabilities. Until version 6.5 (released in 1996), all locking was done at the page level (a 2K unit of data). The problem with a page-level locking mechanism surfaces when multiple records exist on the same page and multiple processes must access information on the same page. If the page is locked by a process, other processes must wait to access the data. These situations may result in [[deadlock]]s.
+
+The degree of locking can be controlled by [[isolation level]].
+
+Change of a lock is called [[lock conversion]] and the lock may be upgraded ([[lock upgrade]]) or downgraded ([[lock downgrade]]).
+
+{{DEFAULTSORT:Lock (Database)}}
+[[Category:Databases]]
+
+
+{{database-software-stub}}
+
+[[ru:Блокировка (СУБД)]]
+[[zh:封锁 (数据库)]]</body> </html>

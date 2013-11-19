@@ -1,0 +1,130 @@
+<html> <head> <title>Inversive congruential generator</title></head><body>'''Inversive congruential generators''' are a type of nonlinear congruential [[pseudorandom number generator]], which use the [[modular multiplicative inverse]] (if it exists) to generate the next number in a sequence. The standard formula for an inversive congruential generator is
+     
+:     x<sub>0</sub>=seed
+:     x<sub>i+1</sub> ≡ (ax<sub>i</sub><sup>-1</sup> + c) mod q if  x<sub>i</sub>≠0            ''where 0<x<sub>i</sub><q and q [[prime number|prime]].''
+:     x<sub>i+1</sub>=c if  x<sub>i</sub>=0
+Such a generator is denoted symbolically as ICG(q,a,c,seed) and is said to be ICG with parameter ''q'',''a'',''c'' and ''seed''.
+=='''Example:'''==
+''The ICG(5,12,3,1) gives the sequence:(1,0,3,2,4,1,.....)
+(as in <math>\in \mathbb F_5 </math>,  1 and 4 are their own inverse, 2 is the inverse of 3 and conversely)''.
+
+For the sequence  (x<sub>n</sub>)<sub>n≥0</sub> ,its [[periodic function |periods]] length T is maximum if T=q.If the [[polynomial]] f(x)=x²-cx-a <math>\in \mathbb F_q[x] </math>(polynomial ring over <math>\in \mathbb F_q </math>) is [[primitive]] then sequences have the maximum length.<br />
+''In our example f(x)=x²-3x-2 is irreducible in <math>\in \mathbb F_5[x] </math> as neither 0,1,2,3 or 4 are root of  it and the period of our sequence is maximum equals to q=5.In order to show that f is primitive one should show that x is a [[primitive element (finite field)|primitive element]] of <math>\in \mathbb F_5[x]/(f) </math>.''<br />
+Such polynomial are called IMP polynomial (for Inversive Maximal Period).The sufficient condition for maximum sequence period  is a proper choice of parameter ''a'' and ''c'' according to the [[algorithm]] described in <ref name="one"/>.<br />
+Eichenauer,Lehn,Grothe and Niederreiter have shown that the inversive congruential generator have good uniformity properties,in particular with regard to lattice structure and serial correlations.
+
+=='''Compound Inversive Generator'''==
+
+The construction of a Compound Inversive Generator (CIG) relies on combining two or more congruential inversive generators according to the method described below.<br />
+Let p<sub>1</sub>,...,p<sub>r</sub> be distinct prime integers,each p<sub>j</sub> ≥ 5.For each index j,1≤ j ≤ r,let (x<sub>n</sub>)<sub>n≥0</sub>  be a sequence of elements of <math>\in \mathbb F_{p_j} </math>, that is periodic with period length p<sub>j</sub>.In other words,{x<sub>n</sub><sup>(j)</sup> | 0 ≤ n ≤ p<sub>j</sub>}=<math>\in \mathbb F_{p_j} </math>.<br />
+For each index j, 1≤  j ≤ r, we consider T<sub>j</sub>=T/p<sub>j</sub>  where T=p<sub>1</sub>*...*p<sub>r</sub> is the period length of the following sequence (x<sub>n</sub>)<sub>n≥0</sub>.<br />
+The sequence (x<sub>n</sub>)<sub>n≥0</sub> of compound pseudorandom numbers is defined as the sum 
+:x<sub>n</sub>=T<sub>1</sub>x<sub>n</sub><sup>(1)</sup>+T<sub>2</sub> x<sub>n</sub><sup>(2)</sup>+... +T<sub>r</sub>x<sub>n</sub><sup>(r)</sup> mod T.
+The compound approach allows combining Inversive Congruential Generators, provided they have full period, in parallel generation systems.
+=='''Example:'''==
+''Let  p<sub>1</sub>=5 and p<sub>2</sub> =7 (r =2).To simplify, let take (x<sub>n</sub><sup>(1)</sup>)<sub>n≥0</sub> = (0,1,2,3,4,...) and (x<sub>n</sub><sup>(2)</sup>)<sub>n≥0</sub> =(0,1,2,3,4,5,6,...).We compute for every 1≤ j≤ 35, x<sub>j</sub>=7x<sub>j</sub><sup>(1)</sup>+5x<sub>j</sub><sup>(2)</sup> mod 35
+
+then (x<sub>n</sub>)<sub>n≥0</sub>=(0, 12, 24, 1, 13, 25, 2, 14, 26, 3, 15, 27, 4, 16, 28, 5, 17, 29, 6, 18, 30, 7, 19, 31, 8, 20, 32, 9, 21, 33, 10, 22, 34, 11, 23)''<br/>
+''(we have to do the 35 different sums to obtain 0+0  and rebegin the same sequence again,the period is well  <math>5 \times 7 = 35 \,</math>).''<br />
+This method allows obtaining very long period and modular operations may be carried out with relatively small moduli.
+
+=='''Advantages of CIG'''==
+The CIG are accepted for practical purposes for a number of reason.<br />
+Firstly,binary sequences produced in this way are free of undesirable statistical deviations.Inversive sequences extensively tested with variety of statistical tests remain stable under the variation of parameter <ref name="two"/><ref name="three"/><ref name="four"/>.<br />
+Secondly, there exists steady and simple way of parameter choice,based on the Chou algorithm <ref name="one"/> that guarantees maximum period length.<br />
+Thirdly,compound approach has the same properties as single inversive generators <ref name="five"/><ref name="six"/> but it also provides period length significantly greater than obtained by a single Inversive Congruential Generator.They seem to be designed for application with multiprocessor parallel hardware platforms.<br />
+
+There exists an algorithm <ref name="seven"/> which allows designing compound generator with predictable period length,predictable linear complexity level,with excellent statistical properties of produced bit streams.<br />
+The procedure of designing this complex structure starts with defining finite field of p elements and ends with choosing the parameters ''a'' and ''c'' for each Inversive Congruential Generator being the component of the compound generator.It means that with each generator is associated a fixed IMP polynomial.Such a condition is sufficient for maximum period of each Inversive Congruential Generator<ref name="eight"/> and finally for maximum period of the compound generator.The construction of IMP polynomial is the most efficient approach to find parameters for Inversive Congruential Generator with maximum period length.<br />
+
+=='''Discrepancy and its bounderies'''==
+
+Equidistribution and statistical independence properties of the generated sequences, which are very important for their usability in a [[stochastic process|stochastic simulation]],can be analyzed based on the '''discrepancy''' of s-tuples of successive pseudorandom numbers with s=1 and s=2 respectively.<br />
+The discrepancy computes the distance of a generator from a uniform one,a low discrepancy means that the sequence generated can be use for [[cryptography|cryptographic]] purposes and the first aim of the Inversive congruential generator is to provide pseudorandom numbers.
+==Definition==
+For N arbitrary points '''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub> ∈ [0,1)<sup>s</sup>  the discrepancy is defined by
+:               D<sub>N</sub>('''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub>)=sup<sub>J</sub> |F<sub>N</sub>(J) – V(J)|,
+where the supremum is extended over all subintervals J of [0,1)<sup>s</sup> , F<sub>N</sub> (J) is N<sup>-1</sup> times the number of points among  '''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub> falling into J and V(J) denotes the s-dimensional volume of J.<br />
+''Until now,we had sequences of integers from 0 to T-1, in order to have sequences of [0,1)<sup>s</sup>, one can divide its sequences of integers by the period T.''<br />
+From this definition, we can say that if the sequence '''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub> is perfectly random then its well distributed on the interval J=[0,1)<sup>s</sup> then V(J)=1 and all points are in J so F<sub>N</sub>(J)=N/N=1 hence
+D<sub>N</sub>('''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub>)=0 but instead if the sequence is concentrated close to one point then the subinterval J is very small V(j)≈0 and F<sub>N</sub>(j)≈N/N≈1 so D<sub>N</sub>('''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub>)=1.<br />
+Then we have from the better and worst case: 
+0≤ D<sub>N</sub>('''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub>) ≤ 1
+
+==Notations==
+Some further notation is necessary. For integers k ≥1 and q ≥2 let C<sub>k</sub>(q) be the set of nonzero lattice points (h<sub>1</sub>,...,h<sub>k</sub>) ∈ Z<sup>k</sup> with -q/2< h<sub>j</sub>< q/2 for 1≤ j ≤ k.<br />
+
+Define
+
+:<math>r(h,q)= \begin{cases}
+q \sin (\pi|h|/q)&\text{for }h \in C_{1}(q)\\
+1 &\text{for }h = 0
+
+\end{cases}</math>
+
+
+and                
+:<math>
+r (\mathbf{h},q)=\prod_{j=1}^k r(h_j,q)
+</math>
+for '''h'''=(h<sub>1</sub>,...,h<sub>k</sub>) ∈ C<sub>k</sub>(q).For real t the abbreviation e(t)=exp(2π*it)is used, and u•v stands for the standard inner product of u,v in R<sup>k</sup>
+
+==Higher bound==
+Let N ≥1 and q ≥2 be integers. Let '''t'''<sub>n</sub> = y<sub>n</sub>/q ∈ [0,1)<sup>k</sup> with y<sub>n</sub> ∈ {0,1,...q-1}<sup>k</sup> for 0≤ n< N. 
+
+Then the discrepancy of the points  '''t'''<sub>0</sub> ,..., '''t'''<sub>N-1</sub>  satisfies
+
+
+:          <math>D_N (\mathbf{t}_0,\mathbf{t}_1...,\mathbf{t}_{N-1})</math> ≤ <math>  \frac kq </math> + <math>\frac 1N</math> <math>\sum_{h \in\C_k(q)}</math><math>\frac 1{r(\mathbf{h},q)} \Bigg| \sum_{n=0}^{N-1} e(\mathbf{h}\cdot \mathbf{t}_n)\Bigg|</math>
+
+==Lower bound==
+The discrepancy of N arbitrary points '''t'''<sub>1</sub>,...,'''t'''<sub>N-1</sub> ∈ [0,1)<sup>k</sup> satisfies
+
+:      <math>D_N (\mathbf{t}_0,\mathbf{t}_1...,\mathbf{t}_{N-1})</math> ≥ <math>\frac {\pi}{2N((\pi+1)^l -1)\prod_{j=1}^k max(1,h_j)}\Bigg|\sum_{n=0}^{N-1} e(\mathbf{h}\cdot \mathbf{t}_n)\Bigg|</math>
+
+for any nonzero lattice point '''h'''=(h<sub>1</sub>,...,h<sub>k</sub>)  ∈ Z<sup>k</sup> where l denotes the number of nonzero coordinates of '''h'''.<br />
+
+These two theorem show that the CIG is not perfect as the discrepancy is greater strictly than a positive value but also the CIG is not the worst generator as the discrepancy is lower than a value less than 1 as one can see.<br />
+
+There exists also theorems which bound the average  value of the discrepancy for Compound Inversive Generator and also ones which denumber values such that the discrepancy is bounded by some value depending on the parameters.For more details see the clear paper <ref name="nine"/>.<br />
+
+==See also==
+*[[Pseudorandom number generator]]
+*[[List of random number generators]]
+*[[Linear congruential generator]]
+*[[Generalized inversive congruential pseudorandom numbers]]
+*[[Naor-Reingold Pseudorandom Function]]
+
+
+==References==
+{{Reflist|refs=
+<ref name="one"> W.S.Chou,''On inversive Maximal Period Polynomials over Finite Fields'' ,Applicable Algebra in Engineering,Communication and Computing,No. 4/5,1995,pp. 245-250.</ref>
+
+<ref name="two"> J. Eichenauer,J. Herrmannn. ''Inversive congruential pseudorandom numbers avoid the planes'',
+Math.Comp., Vol. 56,1991,pp. 297-301.</ref>
+
+<ref name="three">J. Eichenauer,J. Herrmannn,H.Grothe,A.Topuzoglu, ''On the lattice structure of a nonlinear generator with modulus 2a'' ,J.Comput. Appl. Math., Vol. 31,1990,pp. 81-85.</ref>
+
+<ref name="four">  J. Eichenauer,J. Herrmannn,H. Niederreiter, ''Lower bounds fot the discrepancy of inversive congruential pseudorandom numbers withpower of two modulus'', Math. Comp.,Vol. 58,1992,pp. 775-779. </ref>
+
+<ref name="five"> J. Eichenauer,J. Herrmannn,''Statistical independence of a new class of inversive congruential pseudorandom numbers'',Math. Comp.,Vol 60,1993,pp. 375-384.</ref>
+
+<ref name="six">P. Hellekalek, ''Inversive pseudorandom number generators:concepts, results and links'' ,Proceedings of the Winter Simulation Conference,1995,pp 255-262.</ref>
+
+<ref name="seven">J. Bubicz,J. Stoklosa, ''Compound Inversive Congruential Generator Design Algorithm'', §3 .</ref>
+
+<ref name="eight">H. Niederreiter, ''New developments in uniform pseudorandom number and vector generation'', Monte Carlo and Quasi-Monte Carlo Methods in Scientific Computing,Berlin,1995.</ref>
+
+<ref name="nine">J. Eichenauer-Herrmann,F.Emmerich, ''Compound Inversive Congruential Pseudorandom Numbers: An average-Case Analysis'', American Mathematical Society.</ref>
+
+
+}}
+
+==External links==
+* [http://random.mat.sbg.ac.at/generators/wsc95/inversive/node2.html Inversive Generators] at the [[University of Salzburg]].
+
+[[Category:Pseudorandom number generators]]
+
+[[de:Inverser Kongruenzgenerator]]
+[[ko:역 합동 생성기]]
+[[nl:Omgekeerde congruentiegenerator]]</body> </html>

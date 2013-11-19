@@ -1,0 +1,199 @@
+<html> <head> <title>Actor model and process calculi</title></head><body>{{Copy to Wikibooks}}
+
+In [[computer science]], the '''[[Actor model]]''' and [[Process calculi|'''process calculi''']] are two closely related approaches to the modelling of [[concurrency (computer science)|concurrent digital computation]].  See [[Actor model and process calculi history]].
+
+There are many similarities between the two approaches, but also several differences (some philosophical, some technical):
+*There is only one [[Actor model]] (although it has numerous formal systems for design, analysis, verification, modeling, ''etc.''); there are numerous [[process calculi]], developed for reasoning about a variety of different kinds of concurrent systems at various levels of detail (including calculi that incorporate time, stochastic transitions, or constructs specific to application areas such as security analysis).
+*The Actor model was inspired by the laws of [[physics]] and depends on them for its fundamental axioms, ''i.e.'' [[physical law]]s (see [[Actor model theory]]); the process calculi were originally inspired by [[algebra]] {{harv|Milner|1993}}. 
+*Processes in the process calculi are anonymous, and communicate by sending messages either through named [[Channel (communications)|channels]] (synchronous or asynchronous), or via [[Ambient calculus|ambients]] (which can also be used to model channel-like communications {{harv|Cardelli and Gordon|1998}}). In contrast, actors in the Actor model possess an identity, and communicate by sending messages to the mailing addresses of other actors (this style of communication can also be used to model channel-like communications &mdash; see below).    
+
+The publications on the Actor model and on process calculi have a fair number of cross-references, acknowledgments, and reciprocal citations (see [[Actor model and process calculi history]]).
+
+==How do channels work?==
+Indirect communication using channels (''e.g.'' Gilles Kahn and David MacQueen [1977]) has been an important issue for communication in parallel and concurrent computation affecting both semantics and performance.  Some process calculi differ from the Actor model in their use of channels as opposed to direct communication.
+
+==Issues with synchronous channels==
+Synchronous channels have the property that a sender putting a message in the channel must wait for a receiver to get the message out of the channel before the sender can proceed.
+
+===Simple synchronous channels===
+
+A synchronous channel can be modeled by an Actor that receives <tt>put</tt> and <tt>get</tt> communications.  The following is the behavior of an Actor for a simple synchronous channel:
+*Each <tt>put</tt> communication has a message and an address to which an acknowledgment is sent when the message is received by a <tt>get</tt> communication from the channel in [[FIFO]] order.
+*Each <tt>get</tt>  communication has an address to which the received message is sent.
+
+===Synchronous channels in process calculi===
+
+However, simple synchronous channels do not suffice for process calculi such as [[Communicating Sequential Processes]] (CSP) [Hoare 1978 and 1985] because use of the ''guarded choice'' (after Dijkstra) command (called the ''alternative'' command in CSP).  In a guarded choice command multiple offers (called guards) can be made concurrently on multiple channels to <tt>put</tt> and <tt>get</tt> messages; however at most one of the guards can be chosen for each execution of the guarded choice command.  Because only one guard can be chosen, a guarded choice command in general effectively requires a kind of [[two-phase commit protocol]] or perhaps even a [[three-phase commit protocol]] if [[Timeout (telecommunication)|time-outs]] are allowed in guards (as in Occam 3 [1992]).
+
+Consider the following program written in CSP [Hoare 1978]:
+ [X :: Z!stop() ||
+  Y :: guard: boolean; guard := true;
+      *[guard  →  Z!go(); Z?guard] ||
+  Z :: n: integer; n:= 0;
+        *[X?stop()  →  Y!false; print!n;
+          [] Y?go()  →  n := n+1; Y!true]
+ ]
+According to Clinger [1981], this program illustrates global nondeterminism, since the nondeterminism arises from incomplete specification of the timing of signals between the three processes <tt>X</tt>, <tt>Y</tt>, and <tt>Z</tt>.  The repetitive guarded command in the definition of <tt>Z</tt> has two alternatives:  
+#the <tt>stop</tt> message is accepted from <tt>X</tt>, in which case <tt>Y</tt> is sent the value '''false''' and <tt>print</tt> is sent the value <tt>n</tt>
+#a <tt>go</tt> message is accepted from <tt>Y</tt>, in which case <tt>n</tt> is incremented and <tt>Y</tt> is sent the value '''true'''.
+If <tt>Z</tt> ever accepts the <tt>stop</tt> message from <tt>X</tt>, then <tt>X</tt> terminates.  Accepting the <tt>stop</tt> causes <tt>Y</tt> to be sent '''false''' which when input as the value of its guard will cause <tt>Y</tt> to terminate.  When both <tt>X</tt> and <tt>Y</tt> have terminated, <tt>Z</tt> terminates because it no longer has live processes providing input.
+
+In the above program, there are synchronous channels from <tt>X</tt> to <tt>Z</tt>, <tt>Y</tt> to <tt>Z</tt>, and <tt>Z</tt> to <tt>Y</tt>.
+
+===Analogy with the committee coordination problem===
+According to Knabe [1992], Chandy and Misra [1988] characterized this as analogous to the committee coordination problem:
+
+:Professors in a university are assigned to various committees.  Occasionally a professor will decide to attend a meeting of any of her committees, and will wait until that is possible.  Meetings may begin only if there is full attendance.  The task is to ensure that if all the members of a committee are waiting, then at least one of them will attend some meeting.
+:The crux of this problem is that two or more committees might share a professor.  When that professor becomes available, she can only choose one of the meetings, while the others continue to wait.
+
+===A simple distributed protocol===
+This section presents a simple distributed protocol for channels in synchronous process calculi.  The protocol has some problems that are addressed in the sections below.
+
+The behavior of a guarded choice command is as follows:
+*The command sends a message to each of its guards to <tt>prepare</tt>.
+*When it receives the first response from one of its guards that it is prepared, then it sends a message to that guard to <tt>prepare to commit</tt> and sends messages to all of the other guards to <tt>abort</tt>.
+**When it receives a message from the guard that it is <tt>prepared to commit</tt>, then it sends the guard a <tt>commit</tt> message. However, if the guard throws an exception that it cannot <tt>prepare to commit</tt>, then guarded choice command starts the whole process all over again.
+*If all of its guards respond that they cannot <tt>prepare</tt>, then the guarded command does nothing.
+
+The behavior of a guard is as follows:
+*When a message to <tt>prepare</tt> is received, then the guard sends a <tt>prepare</tt> message to each of the channels with which it is offering to communicate.  If the guard has booleans such that it cannot <tt>prepare<tt> or if any of the channels respond that they cannot <tt>prepare</tt>, then it sends <tt>abort</tt> messages to the other channels and then responds that it cannot <tt>prepare</tt>.
+:*When a message to <tt>prepare to commit</tt> is received, then the guard sends a <tt>prepare to commit</tt> message to each of the channels. If any of the channels respond that they cannot <tt>prepare to commit</tt>, then it sends <tt>abort</tt> messages to the other channels and then throws an exception that it cannot <tt>prepare to commit</tt>.
+:*When a message to <tt>commit</tt> is received, then the guard sends an <tt>commit</tt> message to each of the channels.
+:*When a message to <tt>abort</tt> is received, then the guard sends an <tt>abort</tt> message to each of the channels.
+
+The behavior of a channel is as follows:
+*When a <tt>prepare to put</tt> communication is received, then respond that it is prepared if there is a <tt>prepare to get<tt> communication pending unless a <tt>terminate</tt> communication has been received, in which case throw an exception that it cannot <tt>prepare to put</tt>.
+*When a <tt>prepare to get</tt> communication is received, then respond that it is prepared if there is a <tt>prepare to put<tt> communication pending unless a <tt>terminate</tt> communication has been received, in which case throw an exception that it cannot <tt>prepare to get</tt>.
+:*When a <tt>prepare to commit to put</tt> communication is received, then respond that it is prepared if there is a <tt>prepare to commit to get<tt> communication pending unless a <tt>terminate</tt> communication has been received, in which case throw an exception that it cannot <tt>prepare to commit to put</tt>.
+:*When a <tt>prepare to commit to get</tt> communication is received, then respond that it is prepared if there is a <tt>prepare to commit to put<tt> communication pending unless a <tt>terminate</tt> communication has been received, in which case throw an exception that it cannot <tt>prepare to commit to get</tt>.
+::*When a <tt>commit put<tt> communication is received, then depending on which of the following is received:
+::**When a <tt>commit get<tt> communication is received, then if not already done perform the <tt>put</tt> and <tt>get</tt> and clean up the preparations.
+::**When an <tt>abort get<tt> communication is received, then cancel the preparations
+::*When a <tt>commit get<tt> communication is received, then depending on which of the following is received:
+::**When a <tt>commit put<tt> communication is received, then if not already done perform the <tt>get</tt> and <tt>put</tt> and clean up the preparations.
+::**When an <tt>abort put<tt> communication is received, then cancel the preparations.
+::*When an <tt>abort put<tt> communication is received, then cancel the preparations.
+::*When an <tt>abort get<tt> communication is received, then cancel the preparations.
+
+===Starvation on getting from multiple channels===
+Again consider the program written in CSP (discussed in [[Actor model and process calculi#Synchronous channels in process calculi|Synchronous channels in process calculi]] above):
+ [X :: Z!stop() ||
+  Y :: guard: boolean; guard := true;
+      *[guard  →  Z!go(); Z?guard] ||
+  Z :: n: integer; n:= 0;
+        *[X?stop()  →  Y!false; print!n;
+          [] Y?go()  →  n := n+1; Y!true]
+ ]
+
+As pointed out in Knabe [1992], a problem with the above protocol ([[Actor model and process calculi#A simple distributed protocol|A simple distributed protocol]]) is that the process <tt>Z</tt> might never accept the <tt>stop</tt> message from <tt>X</tt> (a phenomenon called [[Resource starvation|starvation]]) and consequently the above program might never print anything.
+
+In contrast consider, a simple Actor system that consists of Actors '''X''', '''Y''', '''Z''', and '''print''' where
+
+:the Actor '''X''' is created with the following behavior:
+:*If the message <tt>"start"</tt> is received, then send '''Z''' the message  <tt>"stop"</tt>
+
+:the Actor '''Y''' is created with the following behavior:
+:*If the message <tt>"start"</tt> is received, then send '''Z''' the message  <tt>"go"</tt>
+:*If the message '''true''' is received, then send '''Z''' the message  <tt>"go"</tt>
+:*If the message '''false''' is received, then do nothing
+
+:the Actor '''Z''' is created with the following behavior that has a count <tt>n</tt> that is initially '''0''':
+:*If the message <tt>"start"</tt> is received, then do nothing.
+:*If the message <tt>"stop"</tt> is received, then send '''Y''' the message '''false''' and send '''print''' the message the count <tt>n</tt>.
+:*If the message <tt>"go"</tt> is received, then send '''Y''' the message '''true''' and process the next message received with count <tt>n</tt> being <tt>n+1</tt>.
+
+By the laws of Actor semantics, the above Actor system will always halt when the Actors '''X''', '''Y''', are '''Z''' are each sent a <tt>"start"</tt> message resulting in sending '''print''' a number that can be unbounded large.
+
+The difference between the CSP program and the Actor system is that the Actor '''Z''' does not get messages using a guarded choice command from multiple channels.  Instead it processes messages in arrival ordering, and by the laws for Actor systems, the <tt>stop</tt> message is guaranteed to arrive.
+
+===Livelock on getting from multiple channels===
+Consider the following program written in CSP  [Hoare 1978]:
+ [Bidder1 :: b: bid;
+        *[Bids1?b  →  process1!b;
+          [] Bids2?b  →  process1!b;] ||
+  Bidder2 :: b: bid;
+        *[Bids1?b  →  process2!b;
+          [] Bids2?b  →  process2!b;] 
+ ]
+
+As pointed out in Knabe [1992], an issue with the above protocol ([[Actor model and process calculi#A simple distributed protocol|A simple distributed protocol]]) is that the process <tt>Bidder2</tt> might never accept a bid from <tt>Bid1</tt> or <tt>Bid2</tt> (a phenomenon called [[livelock]]) and consequently <tt>process2</tt> might never be sent anything.  In each attempt to accept a message, <tt>Bidder2</tt> is thwarted because the bid that was offered by <tt>Bids1</tt> or <tt>Bids2</tt> is snatched away by <tt>Bidder1</tt> because it turns out that <tt>Bidder1</tt> has much faster access than <tt>Bidder2</tt> to <tt>Bids1</tt> and <tt>Bids2<tt>.  Consequently <tt>Bidder1</tt> can accept a bid, process it and accept another bid before <tt>Bidder2</tt> can commit to accepting a bid.
+
+===Efficiency===
+As pointed out in Knabe [1992], an issue with the above protocol ([[Actor model and process calculi#A simple distributed protocol|A simple distributed protocol]]) is the large number of communications that must be sent in order to perform the handshaking in order to send a message through a synchronous channel.  Indeed as shown in the previous section ([[Actor model and process calculi#Livelock on getting from multiple channels|Livelock]]), the number of communications can be unbounded.
+
+===Summary of Issues===
+The subsections above have articulated the following three issues concerned with the use of synchronous channels for process calculi:
+#''Starvation.'' The use of sychronous channels can cause starvation when a process attempts to get messages from multiple channels in a guarded choice command.
+#''Livelock.'' The use of synchronous channels can cause a process to be caught in livelock when it attempts to get messages from multiple channels in a guarded choice command.
+#''Efficiency.''  The use of synchronous channels can require a large number of communications in order to get messages from multiple channels in a guarded choice command.
+
+It is notable that in all of the above, issues arise from the use of a guarded choice command to get messages from multiple channels.
+
+==Asynchronous channels==
+Asynchronous channels have the property that a sender putting a message in the channel need not wait for a receiver to get the message out of the channel.
+
+===Simple asynchronous channels===
+
+An asynchronous channel can be modeled by an Actor that receives <tt>put</tt> and <tt>get</tt> communications.  The following is the behavior of an Actor for a simple asynchronous channel:
+*Each <tt>put</tt> communication has a message and an address to which an acknowledgment is sent immediately (without waiting for the message to be gotten by a <tt>get</tt> communication).
+*Each <tt>get</tt>  communication has an address to which the gotten message is sent.
+
+===Asynchronous channels in process calculi===
+The Join-calculus programming language (published in 1996) implemented local and distributed concurrent computations.  It incorporated asynchronous channels as well as a kind of synchronous channel that is used for procedure calls. Agha's Aπ Actor calculus {{harv|Agha and Thati|2004}} is based on a typed version of the asynchronous [[Pi-calculus|π-calculus]].
+
+==Algebras==
+The use of algebraic techniques was pioneered in the process calculi.  Subsequently several different process calculi intended to provide algebraic reasoning about Actor systems have been developed in {{harv|Gaspari and Zavattaro|1997}}, {{harv|Gaspari and Zavattaro|1999}}, {{harv|Agha and Thati|2004}}
+
+==Denotational Semantics==
+Will Clinger (building on the work of Irene Greif [1975], Gordon Plotkin [1976], [[Henry Baker (computer scientist)|Henry Baker]] [1978], Michael Smyth [1978], and Francez, [[Hoare]], Lehmann, and de Roever [1979]) published the first satisfactory mathematical [[Denotational semantics|denotational]] theory of the [[Actor model]] using [[domain theory]] in [[denotational semantics of the Actor model#Clinger's Model|his dissertation]] in 1981.  His semantics contrasted the [[unbounded nondeterminism]] of the [[Actor model]] with the bounded nondeterminism of [[Communicating Sequential Processes|CSP]] [Hoare 1978] and Concurrent Processes [Milne and Milner 1979] (see [[denotational semantics]]). Roscoe [2005] has developed a denotational semantics with unbounded nondeterminism for a subsequent version of Communicating Sequential Processes Hoare [1985].  More recently [[Carl Hewitt]] [2006b] developed a denotational semantics for Actors based on [[Denotational semantics of the Actor model#The Timed Diagrams Model|timed diagrams]]. 
+
+Ugo Montanari and Carolyn Talcott [1998] have contributed to attempting to reconcile Actors with process calculi.
+
+==References==
+*Carl Hewitt, Peter Bishop and Richard Steiger. '''A Universal Modular Actor Formalism for Artificial Intelligence'''  IJCAI 1973.
+*Robin Milner. '''Processes: A Mathematical Model of Computing Agents''' in Logic Colloquium 1973.
+*Irene Greif and Carl Hewitt.  '''[http://www.ai.mit.edu/research/publications/publications Actor Semantics of PLANNER-73]''' Conference Record of ACM Symposium on Principles of Programming Languages. January 1975.
+*Irene Greif.  '''Semantics of Communicating Parallel Professes''' MIT EECS Doctoral Dissertation.  August 1975.
+*Gordon Plotkin.  '''A powerdomain construction''' SIAM Journal of Computing  September 1976.
+*Carl Hewitt and Henry Baker '''[http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-194.pdf Actors and Continuous Functionals]'''  Proceeding of IFIP Working Conference on Formal Description of Programming Concepts. August 1-5, 1977.
+*Gilles Kahn and David MacQueen. '''Coroutines and networks of parallel processes''' IFIP. 1977
+*Aki Yonezawa '''Specification and Verification Techniques for Parallel Programs Based on Message Passing Semantics''' MIT EECS Doctoral Dissertation. December 1977.
+* Michael Smyth.  ''Power domains''  Journal of Computer and System Sciences.  1978.
+* George Milne and [[Robin Milner]].  ''Concurrent processes and their syntax''  JACM.  April, 1979.
+* [[CAR Hoare]].  [http://www.usingcsp.com/ '''Communicating Sequential Processes'''] CACM.  August, 1978.
+* Nissim Francez, [[C.A.R. Hoare]], Daniel Lehmann, and Willem de Roever.  '''Semantics of nondetermiism, concurrency, and communication'''  Journal of Computer and System Sciences.  December 1979. 
+*Mathew Hennessy and Robin Milner. '''On Observing Nondeterminism and Concurrency''' LNCS 85.  1980.
+*Will Clinger.  '''[https://dspace.mit.edu/handle/1721.1/6935 Foundations of Actor Semantics]''' MIT Mathematics Doctoral Dissertation. June 1981.
+*Mathew Hennessy. '''A Term Model for Synchronous Processes''' Computer Science Dept. Edinburgh University.  CSR-77-81. 1981.
+*J.A. Bergstra and J.W. Klop. '''Process algebra for synchronous communication''' Information and Control. 1984.
+*Luca Cardelli.  '''An implementation model of rendezvous communication'''  Seminar on Concurrency. Lecture Notes in Computer Science 197.  Springer-Verlag. 1985
+*Robert van Glabbeek.  '''Bounded nondeterminism and the approximation induction principle in process algebra''' Symposium on Theoretical Aspects of Computer Sciences on STACS 1987.
+*K. Mani Chandy and Jayadev Misra. '''Parallel Program Design: A Foundation''' Addison-Wesley 1988.
+*Robin Milner, Joachim Parrow and David Walker.  '''A calculus of mobile processes''' Computer Science Dept.  Edinburgh.  Reports ECS-LFCS-89-85 and ECS-LFCS-89-86.  June 1989.  Revised Sept. 1990 and Oct. 1990 respectively.
+*Robin Milner.  '''The Polyadic pi-Calculus: A Tutorial'''  Edinburgh University.  LFCS report ECS-LFCS-91-180.  1991.
+*Kohei Honda and Mario Tokoro.  '''An Object Calculus for Asynchronous Communication'''  ECOOP 91.
+*José Meseguer. '''Conditional rewriting logic as a unified model of concurrency''' in Selected papers of the Second Workshop on Concurrency and compositionality.  1992.
+*Frederick Knabe. '''A Distributed Protocol for Channel-Based Communication with Choice''' PARLE 1992.
+*Geoff Barrett.  [http://www.wotug.org/occam/ '''Occam 3 reference manual'''] INMOS. 1992. 
+*Benjamin Pierce, Didier Rémy and David Turner.  '''A typed higher-order programming language based on the pi-calculus'''  Workshop on type Theory and its application to computer Systems.  Kyoto University.  July 1993.
+*{{citation|last = Milner|first =Robin|authorlink = Robin Milner|title = Elements of interaction: Turing award lecture|publisher = CACM|month = January|year = 1993|url = http://doi.acm.org/10.1145/151233.151240}}.
+*R. Amadio and S. Prasad.  '''Locations and failures'''  Foundations of Software Technology and Theoretical Computer Science Conference.  1994.
+*Cédric Fournet and Georges Gonthier.  '''The reflexive chemical abstract machine and the join-calculus''' POPL 1996.
+*Cédric Fournet, Georges Gonthier, Jean-Jacques Lévy, Luc Maranget, and Didier Rémy. '''A Calculus of Mobile Agents'''  CONCUR 1996.
+*Tatsurou Sekiguchi and [[Akinori Yonezawa]].  '''A Calculus with Code Mobility'''  FMOODS 1997.
+*{{citation|ref={{harvid|Gaspari and Zavattaro|1997}}|first1=Mauro |last1=Gaspari |first2=Gianluigi|last2=Zavattaro |title = An Algebra of Actors|format = Technical Report|number = UBLCS-97-4|publisher = University of Bologna|date = May 1997}} 
+* {{citation|ref={{harvid|Cardelli and Gordon|1998}}|author= Luca Cardelli and Andrew Gordon|title = Mobile Ambients|journal = Foundations of Software Science and Computational Structures|editor = Maurice Nivat|work = Lecture Notes in Computer Science|volume = 1378|publisher = Springer|year = 1998}}
+*Ugo Montanari and Carolyn Talcott.  '''Can Actors and Pi-Agents Live Together?'''  Electronic Notes in Theoretical Computer Science.  1998.
+*Robin Milner. '''Communicating and Mobile Systems: the Pi-Calculus''' Cambridge University Press.  1999.
+*{{citation|ref={{harvid|Gaspari and Zavattaro|1999}}|author = M. Gaspari and G. Zavattaro|title = An Algebra of Actors| journal = Formal Methods for Open Object Based Systems|year = 1999}}
+*Davide Sangiorgi and David Walker. '''The Pi-Calculus : A Theory of Mobile Processes'''  Cambridge University Press.  2001.
+*P. Thati, R. Ziaei, and G. Agha. '''A theory of may testing for asynchronous calculi with locality and no name matching''' Algebraic Methodology and Software Technology. Springer Verlag. September 2002. LNCS 2422.
+*{{citation|ref = {{harvid|Agha and Thati|2004}}|author = Gul Agha and Prasanna Thati|url = http://formal.cs.uiuc.edu/papers/ATactors_festschrift.pdf|title = An Algebraic Theory of Actors and Its Application to a Simple Object-Based Language|journal =  OO to FM (Dahl Festschrift) LNCS|volume = 2635|publisher =  Springer-Verlag|year = 2004}}
+*J.C.M. Baeten, T. Basten, and M.A. Reniers. '''Algebra of Communicating Processes''' Cambridge University Press. 2005.
+*He Jifeng and C.A.R. Hoare. '''Linking Theories of Concurrency''' United Nations University International Institute for Software Technology UNU-IIST Report No. 328.  July, 2005.
+*Luca Aceto and Andrew D. Gordon (editors). '''Algebraic Process Calculi: The First Twenty Five Years and Beyond''' Process Algebra. Bertinoro, Forl`ı, Italy, August 1–5, 2005.
+*{{citation|ref={{harvid|Roscoe|2005}}|authorlink = Bill Roscoe|first = A. W.|last =  Roscoe|title = The Theory and Practice of Concurrency|publisher = [[Prentice Hall]]|isbn = 0-13-674409-5|year = Revised 2005}}
+*Carl Hewitt (2006b) [http://www.pcs.usp.br/~coin-aamas06/10_commitment-43_16pages.pdf ''What is Commitment? Physical, Organizational, and Social'']  COIN@AAMAS.  2006.
+
+[[Category:Actor model]]
+[[Category:Process calculi]]</body> </html>

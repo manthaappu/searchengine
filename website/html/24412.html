@@ -1,0 +1,318 @@
+<html> <head> <title>Microkernel</title></head><body>[[Image:OS-structure.svg|thumb|450px|Structure of monolithic and microkernel-based operating systems, respectively]]
+
+In [[computer science]], a '''microkernel''' is the near-minimum amount of software that can provide the mechanisms needed to implement an [[operating system]].  These mechanisms include low-level [[address space]] management, [[thread (computer science)|thread]] management, and [[inter-process communication]](I.P.C). As an operating system design approach, microkernels permit typical operating system services, such as [[device driver]]s, [[protocol stack]]s, [[file system]]s and [[user interface]] code, to run in [[user space]].  If the hardware provides multiple [[Hierarchical protection domains|rings]] or [[CPU modes]], the microkernel is the only software executing at the most privileged level (generally referred to as [[kernel mode|supervisor or kernel mode]]).
+
+Microkernels are closely related to [[exokernel]]s.<ref name="Liedtke_96">{{cite journal
+ | last = Liedtke
+ | first = Jochen
+ | month = September
+ | year = 1996
+ | title = Towards Real Microkernels
+ | journal = Communications of the ACM
+ | volume = 39
+ | issue = 9
+ | pages = 70&ndash;77
+ | pmid =
+ | doi = 10.1145/234215.234473
+ | id =
+ | url =
+ | language =
+ | format =
+ | accessdate =
+ | laysummary =
+ | laysource =
+ | laydate =
+ | quote =
+ }}</ref>
+They also have much in common with [[hypervisor]]s,<ref name="Heiser_UL_06">{{cite journal
+ | title=Are Virtual-Machine Monitors Microkernels Done Right?
+ | author=[[Gernot Heiser|Heiser, Gernot]]; Uhlig, Volkmar and LeVasseur, Joshua
+ | journal=ACM SIGOPS Operating Systems Review
+ | volume=40
+ | issue=1
+ | pages=95–99
+ | month=January
+ | year=2006
+ | url=http://l4ka.org/publications/2006/p95-heiser.pdf
+ | publisher=ACM
+ | doi = 10.1145/1113361.1113363
+ | format=PDF}}</ref>
+but the latter make no claim to minimality and are specialized to supporting [[virtual machine]]s; indeed, the [[L4 microkernel]] frequently finds use in a hypervisor capacity.
+
+The historical term [[nanokernel]] has been used to distinguish modern, high-performance microkernels from earlier implementations which still contained many system services. However, nanokernels have all but replaced their microkernel progenitors, and the term has fallen into disuse.
+
+==Introduction==
+Early operating system kernels were rather small, partly because computer memory was limited. As the capability of computers grew, the number of devices the kernel had to control also grew. Through the early history of [[Unix]], kernels were generally small, even though those kernels contained device drivers and file system managers. When address spaces increased from 16 to 32 bits, kernel design was no longer cramped by the hardware architecture, and kernels began to grow.
+
+Berkeley [[UNIX]] ([[BSD]]) began the era of big kernels. In addition to operating a basic system consisting of the CPU, disks and printers, BSD started adding additional [[file system]]s, a complete [[protocol stack|TCP/IP networking system]], and a number of "virtual" devices that allowed the existing programs to work invisibly over the network. This growth continued for many years, resulting in kernels with millions of lines of [[source code]]. As a result of this growth, kernels were more prone to bugs and became increasingly difficult to maintain.
+
+The microkernel was designed to address the increasing growth of kernels and the difficulties that came with them. In theory, the microkernel design allows for easier management of code due to its division into [[user space]] services. This also allows for increased security and stability resulting from the reduced amount of code running in [[kernel mode]]. For example, if a networking service crashed due to [[buffer overflow]], only the networking service's memory would be corrupted, leaving the rest of the system still functional.
+
+==Inter-process communication==
+
+[[Inter-process communication]] (IPC) is any mechanism which allows separate processes to communicate with each other, usually by sending [[Message passing|messages]]. [[Shared memory]] is strictly speaking also an inter-process communication mechanism, but the abbreviation IPC usually only refers to message passing, and it is the latter that is particularly relevant to microkernels.  IPC allows the operating system to be built from a number of small programs called servers, which are used by other programs on the system, invoked via IPC.  Most or all support for peripheral  hardware is handled in this fashion, with servers for device drivers, network protocol stacks, file systems, graphics, etc.
+
+IPC can be synchronous or asynchronous. Asynchronous IPC is analogous to network communication: the sender dispatches a message and continues executing. The receiver checks (polls) for the availability of the message by attempting a receive, or is alerted to it via some notification mechanism. Asynchronous IPC requires that the kernel maintains buffers and queues for messages, and deals with buffer overflows; it also requires double copying of messages (sender to kernel and kernel to receiver). In synchronous IPC, the first party (sender or receiver) blocks until the other party is ready to perform the IPC. It does not require buffering or multiple copies, but the implicit rendezvous can make programming tricky. Most programmers prefer asynchronous send and synchronous receive.
+
+First-generation microkernels typically supported synchronous as well as asynchronous IPC, and suffered from poor IPC performance. [[Jochen Liedtke]] identified the design and implementation of the IPC mechanisms as the underlying reason for this poor performance. In his [[L4 microkernel family|L4 microkernel]] he pioneered techniques that led to an [[order of magnitude|order-of-magnitude]] reduction of IPC costs.<ref name="Liedtke_93">{{cite conference
+ | first = Jochen
+ | last = Liedtke
+ | authorlink = Jochen Liedtke
+ | coauthors =
+ | title = Improving IPC by kernel design
+ | booktitle = 14th ACM Symposium on Operating System Principles
+ | pages = 175&ndash;88
+ | publisher =
+ | month = December
+ | year = 1993
+ | location = Asheville, NC, USA
+ | url = http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.40.1293&rep=rep1&type=pdf
+ | accessdate =
+ | id =
+}}</ref> These include an IPC system call that supports a send as well as a receive operation, making all IPC synchronous, and passing as much data as possible in registers. Furthermore, Liedtke introduced the concept of the ''direct process switch'', where during an IPC execution an (incomplete) [[context switch]] is performed from the sender directly to the receiver. If, as in L4, part or all of the message is passed in registers, this transfers the in-register part of the message without any copying at all. Furthermore, the overhead of invoking the scheduler is avoided; this is especially beneficial in the common case where IPC is used in an [[remote procedure call|RPC]]-type fashion by a client invoking a server. Another optimization, called ''lazy scheduling'', avoids traversing scheduling queues during IPC by leaving threads that block during IPC in the ready queue. Once the scheduler is invoked, it moves such threads to the appropriate waiting queue. As in many cases a thread gets unblocked before the next scheduler invocation, this approach saves significant work. Similar approaches have since been adopted by [[QNX]] and [[MINIX 3]].{{Citation needed|date=August 2010}}
+
+In a client-server system, most communication is essentially synchronous, even if using asynchronous primitives, as the typical operation is a client invoking a server and then waiting for a reply. As it also lends itself to more efficient implementation, modern microkernels generally follow L4's lead and  only provide a synchronous IPC primitive. Asynchronous IPC can be implemented on top by using helper threads. However, versions of L4 deployed in commercial products have found it necessary to add an asynchronous notification mechanism to better support asynchronous communication. This [[signal (computing)|signal]]-like mechanism does not carry data and therefore does not require buffering by the kernel.
+
+As synchronous IPC blocks the first party until the other is ready, unrestricted use could easily lead to deadlocks. Furthermore, a client could easily mount a [[denial-of-service]] attack on a server by sending a request and never attempting to receive the reply. Therefore synchronous IPC must provide a means to prevent indefinite blocking. Many microkernels provide [[timeout (telecommunication)|timeouts]] on IPC calls, which limit the blocking time. In practice, choosing sensible timeout values is difficult, and systems almost inevitably use infinite timeouts for clients and zero timeouts for servers. As a consequence, the trend is towards not providing arbitrary timeouts, but only a flag which indicates that the IPC should fail immediately if the partner is not ready. This approach effectively provides a choice of the two timeout values of zero and infinity. Recent versions of L4 and MINIX have gone down this path (older versions of L4 used timeouts, as does QNX).
+
+==Servers==
+Microkernel servers are essentially [[daemon (computer software)|daemon]] programs like any others, except that the kernel grants some of them privileges to interact with parts of physical memory that are otherwise off limits to most programs. This allows some servers, particularly device drivers, to interact directly with hardware.
+
+A basic set of servers for a general-purpose microkernel includes file system servers, device driver servers, networking servers, display servers, and user interface device servers.  This set of servers (drawn from [[QNX]]) provides roughly the set of services offered by a [[monolithic kernel|monolithic]] UNIX kernel. The necessary servers are started at system startup and provide services, such as file, network, and device access, to ordinary application programs. With such servers running in the environment of a user application, server development is similar to ordinary application development, rather than the build-and-boot process needed for kernel development.
+
+Additionally, many "crashes" can be corrected by simply [[Crash-only software|stopping and restarting the server]]. However, part of the system state is lost with the failing server, hence this approach requires applications to cope with failure. A good example is a server responsible for [[Internet protocol suite|TCP/IP]] connections: If this server is restarted, applications will experience a "lost" connection, a normal occurrence in networked system. For other services, failure is less expected and may require changes to application code. For QNX, restart capability is offered as the QNX High Availability Toolkit.<ref><nowiki>http://www.qnx.com/download/download/8107/QNX_High_Availability_Toolkit.pdf</nowiki>{{Dead link|date=June 2009}} QNX High Availability Toolkit</ref>
+
+In order to make all servers restartable, some microkernels have concentrated on adding various [[database]]-like techniques like [[database transaction|transaction]]s, [[Replication (computer science)|replication]] and [[checkpointing]] in order to preserve essential state across single server restarts. An example is [[ChorusOS]], which was targeted at high-availability applications in the [[telecommunication]]s world. Chorus included features to allow any "properly written" server to be restarted at any time, with clients using those servers being paused while the server brought itself back into its original state.{{Citation needed|date=February 2007}} However, such kernel features are incompatible with the minimality principle, and are therefore not provided in modern microkernels, which instead rely on appropriate user-level protocols.
+
+==Device drivers==
+
+[[Device driver]]s frequently perform [[direct memory access]] (DMA), and therefore can write to arbitrary locations of physical memory, including over kernel data structures. Such drivers must therefore be trusted. It is a common misconception that this means that they must be part of the kernel. In fact, a driver is not inherently more or less trustworthy by being part of the kernel.
+
+While running a device driver in user space does not necessarily reduce the damage a misbehaving driver can cause, in practice it is beneficial for system stability in the presence of buggy (rather than malicious) drivers: memory-access violations by the driver code itself (as opposed to the device) may still be caught by the memory-management hardware. Furthermore, many devices are not DMA-capable, their drivers can be made untrusted by running them in user space. Recently, an increasing number of computers feature [[IOMMU]]s, many of which can be used to restrict a device's access to physical memory.<ref name="Wong_07">{{cite journal |title=I/O, I/O, It's Off to Virtual Work We Go |url=http://www.elecdesign.com/Articles/Index.cfm?AD=1&ArticleID=15350 |last=Wong |first=William |journal=[[Electronic Design Magazine]] |date=2007-04-27 |accessdate=2009-06-08}}</ref> (IBM mainframes have had IO MMUs since the [[IBM System/360 Model 67]] and [[System/370]].) This also allows user-mode drivers to become untrusted.
+
+User-mode drivers actually predate microkernels.  The [[Michigan Terminal System]] (MTS), in 1967, supported user space drivers (including its file system support), the first operating system to be designed with that capability.<ref>{{cite journal |title=Organization and Features of the Michigan Terminal System |first=Michael T. |last=Alexander |journal=Proceedings of the November 16–18, 1971, fall joint computer conference |volume=40 |year=1971  |pages=589–591 |doi=10.1145/1478873.1478951}}</ref>
+Historically, drivers were less of a problem, as the number of devices was small and trusted anyway, so having them in the kernel simplified the design and avoided potential performance problems. This led to the traditional driver-in-the-kernel style of UNIX,<ref name="Lions book">{{cite book |title=[[Lions' Commentary on UNIX 6th Edition, with Source Code]] |last=Lions |first=John |date=1977-08-01 |isbn=978-1-57398-013-5 |publisher=Peer-To-Peer Communications}}</ref> Linux, and Windows.
+With the proliferation of various kinds of peripherals, the amount of driver code escalated and in modern operating systems dominates the kernel in terms of code size.
+
+==Essential components and minimality==
+
+As a microkernel must allow building arbitrary operating system services on top, it must provide some core functionality. At the least, this includes:
+* some mechanisms for dealing with [[address space]]s — this is required for managing memory protection;
+* some execution abstraction to manage CPU allocation — typically [[thread (computer science)|threads]] or [[scheduler activation]]s; and
+* [[inter-process communication]] — required to invoke servers running in their own address spaces.
+This minimal design was pioneered by [[Brinch Hansen]]'s [[RC 4000 Multiprogramming System|Nucleus]] and the hypervisor of IBM's [[VM (operating system)|VM]]. It has since been formalised in Liedtke's ''minimality principle'':
+<blockquote>A concept is tolerated inside the microkernel only if moving it outside the kernel, i.e., permitting competing implementations, would prevent the implementation of the system's required functionality.<ref name="Liedtke_95">{{cite conference | first=Jochen | last=Liedtke
+ | authorlink = Jochen Liedtke |title=On µ-Kernel Construction | booktitle = 15th ACM symposium on Operating Systems Principles | pages=237&ndash;250 | year=1995 | month=December |doi=10.1145/224056.224075}}</ref></blockquote>
+Everything else can be done in a usermode program, although device drivers implemented as user programs may on some processor architectures require special privileges to access I/O hardware.
+
+Related to the minimality principle, and equally important for microkernel design, is the [[separation of mechanism and policy]], it is what enables the construction of arbitrary systems on top of a minimal kernel. Any policy built into the kernel cannot be overwritten at user level and therefore limits the generality of the microkernel.<ref name="Liedtke_96"/>
+Policy implemented in user-level servers can be changed by replacing the servers (or letting the application choose between competing servers offering similar services).
+
+For efficiency, most microkernels contain schedulers and manage timers, in violation of the minimality principle and the principle of policy-mechanism separation.
+
+Start up ([[booting]]) of a microkernel-based system requires [[device drivers]], which are not part of the kernel. Typically this means that they are packaged with the kernel in the boot image, and the kernel supports a bootstrap protocol that defines how the drivers are located and started; this is the traditional bootstrap procedure of [[L4 microkernel family|L4 Microkernels]]. Some microkernels simplify this by placing some key drivers inside the kernel (in violation of the minimality principle), [[LynxOS]] and the original [[Minix]] are examples. Some even include a [[file system]] in the kernel to simplify booting. On other cases microkernel-based system may boot via multiboot compatible boot loader, [[GNU GRUB]] for example, such systems usually load statically-linked servers to make an initial bootstrap or mount an OS image to continue bootstrapping.
+
+A key component of a microkernel is a good [[Inter-process communication|IPC]] system and virtual-memory-manager design that allows implementing page-fault handling and swapping in usermode servers in a safe way. Since all services are performed by usermode programs, efficient means of communication between programs are essential, far more so than in monolithic kernels. The design of the IPC system makes or breaks a microkernel. To be effective, the IPC system must not only have low overhead, but also interact well with CPU scheduling.
+
+==Performance==
+On most mainstream processors, obtaining a service is inherently more expensive in a microkernel-based system than a monolithic system.<ref name="Liedtke_96"/> In the monolithic system, the service is obtained by a single system call, which requires two ''mode switches'' (changes of the processor's [[ring (computer security)|ring]] or [[CPU modes|CPU mode]]). In the microkernel-based system, the service is obtained by sending an IPC message to a server, and obtaining the result in another IPC message from the server. This requires a [[context switch]] if the drivers are implemented as processes, or a function call if they are implemented as procedures. In addition, passing actual data to the server and back may incur extra copying overhead, while in a monolithic system the kernel can directly access the data in the client's buffers.
+
+Performance is therefore a potential issue in microkernel systems. Indeed, the experience of first-generation microkernels such as [[Mach (kernel)|Mach]] and [[ChorusOS|Chorus]] showed that systems based on them performed very poorly.<ref name="Chen_Bershad_93">{{cite conference
+ | first = Bradley
+ | last = Chen
+ | coauthors = Bershad, Brian
+ | title = The Impact of Operating System Structure on Memory System Performance
+ | booktitle = 14th ACM Symposium on Operating System Principles
+ | pages = 120&ndash;33
+ | publisher =
+ | month = December
+ | year = 1993
+ | location = Asheville, NC, USA
+ | accessdate =
+ | doi = 10.1145/168619.168629
+}}</ref>
+However, [[Jochen Liedtke]] showed that Mach's performance problems were the result of poor design and implementation, and specifically Mach's excessive [[cache]] footprint.<ref name="Liedtke_95"/>
+Liedtke demonstrated with his own [[L4 microkernel]] that through careful design and implementation, and especially by following the minimality principle, IPC costs could be reduced by more than an order of magnitude compared to Mach. L4's IPC performance is still unbeaten across a range of architectures.<ref name="Liedtke_ESHHIJ_97">{{cite conference
+ | first = Jochen
+ | last = Liedtke
+ | authorlink = Jochen Liedtke
+ | coauthors = Elphinstone, Kevin; Schönberg, Sebastian; Härtig, Hermann; [[Gernot Heiser|Heiser, Gernot]]; Islam, Nayeem; Jaeger, Trent
+ | title = Achieved IPC performance (still the foundation for extensibility)
+ | booktitle = 6th Workshop on Hot Topics in Operating Systems
+ | pages = 28&ndash;31
+ | publisher = IEEE
+ | month = May | year = 1997
+ | location = Cape Cod, MA, USA
+ | url = http://ieeexplore.ieee.org/xpl/RecentCon.jsp?punumber=4643
+ | accessdate =
+ | id =
+}}</ref><ref name="Gray_CCMH_05">{{cite conference
+ |first=Charles |last=Gray |coauthors=Chapman, Matthew; Chubb, Peter; Mosberger-Tang, David; [[Gernot Heiser|Heiser, Gernot]] |title=Itanium&mdash;a system implementor's tale |booktitle=USENIX Annual Technical Conference |pages=264&ndash;278 |date=April 2005|location=Annaheim, CA, USA |url=http://www.usenix.org/publications/library/proceedings/usenix05/tech/general/gray.html
+}}</ref><ref name="vanSchaik_Heiser_07">
+{{cite conference
+ | first = Carl
+ | last = van Schaik
+ | coauthors = [[Gernot Heiser|Heiser, Gernot]]
+ | title = High-performance microkernels and virtualisation on ARM and segmented architectures
+ | booktitle = 1st International Workshop on Microkernels for Embedded Systems
+ | pages = 11&ndash;21
+ | publisher = NICTA
+ | date = January 2007
+ | location = Sydney, Australia
+ | url = http://ertos.nicta.com.au/publications
+ | accessdate = 2007-04-01
+ | id =
+}}</ref>
+
+While these results demonstrate that the poor performance of systems based on first-generation microkernels is not representative for second-generation kernels such as L4, this constitutes no proof that microkernel-based systems can be built with good performance. It has been shown that a monolithic Linux server ported to L4 exhibits only a few percent overhead over native Linux.<ref name="Hartig_97">{{cite journal | first = Hermann | last = Härtig |
+coauthors=Hohmuth, Michael; [[Jochen Liedtke|Liedtke, Jochen]]; Schönberg, Sebastian|title=The performance of µ-kernel-based systems | journal = Proceedings of the sixteenth ACM symposium on Operating systems principles  | year=1997 | month = October|id=ISBN 0-89791-916-5 | url = http://portal.acm.org/citation.cfm?id=266660&dl=ACM&coll=&CFID=15151515&CFTOKEN=6184618 | pages=66&ndash;77|doi=10.1145/268998.266660 }}</ref>
+However, such a single-server system exhibits few, if any, of the advantages microkernels are supposed to provide by structuring operating system functionality into separate servers.
+
+A number of commercial multi-server systems exist, in particular the [[Real-time operating system|real-time systems]] [[QNX]] and [[Integrity (operating system)|Integrity]]. No comprehensive comparison of performance relative to monolithic systems has been published for those multiserver systems. Furthermore, performance does not seem to be the overriding concern for those commercial systems, which instead emphasize reliably quick interrupt handling response times (QNX) and simplicity for the sake of robustness. An attempt to build a high-performance multiserver operating system was the IBM Sawmill Linux project.<ref name="Gefflaut_JPLEUTDR_00">
+{{ cite conference
+ | first = Alain
+ | last = Gefflaut
+ | coauthors = Jaeger, Trent; Park, Yoonho; [[Jochen Liedtke|Liedtke, Jochen]]; Elphinstone, Kevin J.; Uhlig, Volkmar; Tidswell, Jonathon E.; Deller, Luke; Reuther, Lars
+ | title = The Sawmill multiserver approach
+ | booktitle = 9th ACM SIGOPS European Worshop
+ | location = Kolding, Denmark
+ | pages = 109&ndash;114
+ | year = 2000
+}}</ref>
+However, this project was never completed.
+
+It has been shown in the meantime that user-level device drivers can come close to the performance of in-kernel drivers even for such high-throughput, high-interrupt devices as Gigabit Ethernet.<ref name="Leslie_CFGGMPSEH_05">{{cite journal |last=Leslie |first=Ben |coauthors=Chubb, Peter; FitzRoy-Dale, Nicholas; Götz, Stefan; Gray, Charles; Macpherson, Luke; Potts, Daniel; Shen, Yueting; Elphinstone, Kevin; [[Gernot Heiser|Heiser, Gernot]] |year=2005 |month=September |title=User-level device drivers: achieved performance |journal=Journal of Computer Science and Technology |volume=5 |issue=20 |pages=654&ndash;664 |doi=10.1007/s11390-005-0654-4}}</ref> This seems to imply that high-performance multi-server systems are possible.
+
+== Security ==
+The security benefits of microkernels have been frequently discussed.<ref>[[Andrew S. Tanenbaum|Tanenbaum, Andrew S.]], [http://www.cs.vu.nl/~ast/reliable-os/ Tanenbaum-Torvalds debate, part II]</ref><ref>Tanenbaum, A., Herder, J. and Bos, H. (May 2006).</ref> In the context of security the minimality principle of microkernels is a direct consequence of the principle of [[least privilege]], according to which all code should have only the privileges needed to provide required functionality. Minimality requires that a system's [[trusted computing base]] (TCB) should be kept minimal. As the kernel (the code that executes in the privileged mode of the hardware) is always part of the TCB, minimizing it is natural in a security-driven design.
+
+Consequently, microkernel designs have been used for systems designed for high-security applications, including [[KeyKOS]], [[Extremely Reliable Operating System|EROS]] and military systems. In fact [[common criteria]] (CC) at the highest assurance level ([[Evaluation Assurance Level|EAL7]]) has an explicit requirement that the target of evaluation be “simple”, an acknowledgment of the practical impossibility of establishing true trustworthiness for a complex system.
+
+==Third generation==
+Recent work on microkernels has been focusing on formal specifications of the kernel API, and formal proofs of security properties of the API. The first example of this is a mathematical proof of the confinement mechanisms in EROS, based on a simplified model of the EROS API.<ref>{{cite conference
+  | first = Jonathan S.
+  | last = Shapiro
+  | coauthors = Weber, Samuel
+  | title = Verifying the EROS Confinement Mechanism
+  | booktitle = IEEE Conference on Security and Privacy
+  | pages =
+  | publisher =
+  | date =
+  | location =
+  | url = http://www.eros-os.org/papers/oakland2000.ps
+  | doi =
+  | id =
+  | accessdate =  }}</ref> More recently, a comprehensive set of machine-checked proofs has been performed of the properties of the protection model of [http://ertos.org/research/l4.verified seL4], a version of L4.<ref>{{Cite book
+  | first = Dhammika
+  | last = Elkaduwe
+  | author-link =
+  | first2 =  Gerwin
+  | last2 = Klein
+  | first3 = Kevin
+  | last3 = Elphinstone
+  | author2-link =
+  | editor-last =
+  | editor-first =
+  | editor2-last =
+  | editor2-first =
+  | contribution =
+  | contribution-url =
+  | title =Verified Protection Model of the seL4 Microkernel
+  | year = 2007
+  | pages =
+  | place =
+  | publisher = submitted for publication
+  | url = http://ertos.org/publications/papers/Elkaduwe_GE_07.abstract
+  | doi =
+  | id =  }}</ref>
+
+This has led to what is referred to as '''third-generation microkernels''',<ref Name="Klein_EHACDEEKNSTW_09">
+{{ cite conference
+ | first = Gerwin
+ | last = Klein
+ | coauthors = Elphinstone, Kevin; Heiser, Gernot; Andronick, June; Cock, David; Derrin, Philip; Elkaduwe, Dhammika; Engelhardt, Kai; Kolanski, Rafal; Norrish, Michael; Sewell, Thomas; Tuch, Harvey; Winwood, Simon
+ | title = seL4: Formal verification of an OS kernel
+ | booktitle = 22nd ACM Symposium on Operating System Principles
+ | pages =
+ | month = October
+ | year = 2009
+ | location = Big Sky, MT, USA
+ | doi =
+ | url = http://www.sigops.org/sosp/sosp09/papers/klein-sosp09.pdf
+}}</ref>
+characterised by a security-oriented API with resource access controlled by [[capability-based security|capabilities]], [[virtual machines#System virtual machines|virtualization]] as a first-class concern, novel approaches to kernel resource management,<ref Name="Elkaduwe_DE_08">
+{{ cite conference
+ | first = Dhammika
+ | last = Elkaduwe
+ | coauthors = Derrin, Philip; Elphinstone, Kevin
+ | title = Kernel design for isolation and assurance of physical memory
+ | booktitle = 1st Workshop on Isolation and Integration in Embedded Systems
+ | month = April
+ | year = 2008
+ | location = Glasgow, UK
+ | doi = 10.1145/1435458
+ | url = http://ertos.nicta.com.au/publications/papers/Elkaduwe_DE_08.abstract
+}}</ref>
+and a design goal of suitability for [[formal methods|formal analysis]], besides the usual goal of high performance. Examples are [[Coyotos]], seL4 and [http://www.inf.tu-dresden.de/index.php?node_id=1429&ln=en#T2008120109 Nova].
+
+In the case of seL4, complete formal verification of the implementation has been achieved,<ref Name="Klein_EHACDEEKNSTW_09"/> i.e. a mathematical proof that the kernel's implementation is consistent with its formal specification. This provides a guarantee that the properties proved about the API actually hold for the real kernel, a degree of assurance which goes beyond even CC EAL7.
+
+== Nanokernel ==
+The term '''nanokernel''' or '''picokernel''' historically referred to:
+# A kernel where the total amount of kernel code, i.e. code executing in the privileged mode of the hardware, is very small. The term '''picokernel''' was sometimes used to further emphasize small size. The term '''nanokernel''' was coined by Jonathan S. Shapiro in the paper [http://citeseer.ist.psu.edu/135535.html ''The KeyKOS NanoKernel Architecture'']. It was a sardonic response to Mach, which claimed to be a microkernel while being monolithic, was essentially unstructured, and slower than the systems it sought to replace. Subsequent reuse of and response to the term, including the picokernel coinage, suggest that the point was largely missed. Both '''nanokernel''' and '''picokernel''' have subsequently come to have the same meaning expressed by the term microkernel.
+# A virtualization layer underneath an operating system; this is more correctly referred to as a [[hypervisor]].
+# A [[hardware abstraction layer]] that forms the lowest-level part of a kernel, sometimes used to provide [[Real-time computing|real-time]] functionality to normal OS's, like [[Adeos]].
+
+There is also at least one case where the term nanokernel is used to refer not to a small kernel, but one that supports a nanosecond clock resolution.<ref>http://www.eecis.udel.edu/~mills/database/papers/nano/nano2.pdf</ref>
+
+==See also==
+*[[Kernel (computer science)]]
+**[[Exokernel]], a research kernel architecture with a more minimalist approach to kernel technology.
+**[[Hybrid kernel]]
+**[[Monolithic kernel]]
+**[[Loadable kernel module]]
+*[[Trusted computing base]]
+
+== References ==
+{{Reflist|2}}
+
+==Further reading==
+*[http://citeseer.csail.mit.edu/cs?q=microkernel scientific articles about microkernels] (on [[CiteSeer]]), including:
+** {{cite journal | author=   Dan Hildebrand|title=An Architectural Overview of QNX|journal=Proceedings of the Workshop on Micro-kernels and Other Kernel Architectures  | year=1992 |id=ISBN 1-880446-42-1 |   pages=113–126 }} - the basic QNX reference.
+** {{cite journal | title=Can We Make Operating Systems Reliable and Secure? | author=Tanenbaum, A., Herder, J. and Bos, H.| journal = Computer| month = May | year = 2006 | url = http://www.computer.org/portal/site/computer/menuitem.eb7d70008ce52e4b0ef1bd108bcd45f3/index.jsp?&pName=computer_level1&path=computer/homepage/0506&file=cover1.xml&xsl=article.xsl |pages = 44–51 | doi=10.1109/MC.2006.156 | volume=39}} -the basic reliable reference.
+** {{cite journal |title=Microkernel Operating System Architecture and Mach | author=Black, D.L., Golub, D.B., Julin, D.P., Rashid, R.F., Draves, R.P., Dean, R.W., Forin, A., Barrera, J., Tokuda, H., Malan, G., and Bohman, D. |journal=J. of Information Processing|volume=14 | month=March | year=1992 | issue=4}} - the basic Mach reference.
+*[http://c2.com/cgi/wiki?MicroKernel MicroKernel page] from the [[Portland Pattern Repository]]
+* The [[Tanenbaum–Torvalds debate]]
+**[http://www.oreilly.com/catalog/opensources/book/appa.html The Tanenbaum-Torvalds Debate, 1992.01.29]
+** Tanenbaum, A. S. "[http://www.computer.org/portal/site/computer/menuitem.5d61c1d591162e4b0ef1bd108bcd45f3/index.jsp?&pName=computer_level1_article&TheCat=1005&path=computer/homepage/0506&file=cover1.xml&xsl=article.xsl& Can We Make Operating Systems Reliable and Secure?]".
+** Torvalds, L. [http://www.realworldtech.com/forums/index.cfm?action=detail&id=66630&threadid=66595&roomid=11 Linus Torvalds about the microkernels again, 2006.05.09]
+** Shapiro, J. "[http://www.coyotos.org/docs/misc/linus-rebuttal.html Debunking Linus's Latest]".
+** Tanenbaum, A. S. "[http://www.cs.vu.nl/~ast/reliable-os/ Tanenbaum-Torvalds Debate: Part II]".
+
+{{Operating System}}
+{{Use mdy dates|date=August 2010}}
+
+[[Category:Operating system technology]]
+[[Category:Microkernels]]
+
+[[bg:Микроядро]]
+[[ca:Microkernel]]
+[[cs:Mikrojádro]]
+[[de:Mikrokern]]
+[[es:Micronúcleo]]
+[[fa:ریزهسته]]
+[[fr:Noyau de système d'exploitation#Systèmes à micro-noyaux]]
+[[id:Mikrokernel]]
+[[hu:Mikrokernel]]
+[[ml:മൈക്രോകേർണൽ]]
+[[nl:Microkernel]]
+[[ja:マイクロカーネル]]
+[[no:Mikrokjerne]]
+[[pl:Mikrojądro]]
+[[pt:Micronúcleo (informática)]]
+[[ru:Микроядро]]
+[[sk:Mikrokernel]]
+[[fi:Käyttöjärjestelmän ydin#Mikroydin]]
+[[sv:Mikrokärna]]
+[[uk:Мікроядро]]
+[[zh:微內核]]</body> </html>

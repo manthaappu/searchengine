@@ -1,0 +1,142 @@
+<html> <head> <title>Yorick (programming language)</title></head><body>{{Unreferenced|date=October 2009}}
+{{Infobox programming language
+| name                   = Yorick
+| logo                   = 
+| caption                = 
+| file_ext               = .i
+| paradigm               = 
+| year                   = [[1996]]
+| designer               = [[David H. Munro]]
+| developer              = 
+| latest_release_version = 2.1.06
+| latest_release_date    = June 2010
+| latest_test_version    = 
+| latest_test_date       = 
+| typing                 = 
+| implementations        = 
+| dialects               = 
+| influenced_by          = 
+| influenced             =
+| operating_system       = [[Unix]], [[Linux]], [[Mac OS|Mac]], [[Windows]]
+| license                = [[BSD licenses|BSD]]
+| website                = [http://yorick.sourceforge.net Yorick Home Page]
+}}
+
+'''Yorick''' is an [[Interpreted language|interpreted]] [[programming language]] designed for [[numerics]], [[graph of a function|graph]] plotting and steering large scientific simulation codes. It is quite fast due to [[Array data structure|array]] syntax, and extensible via [[C (programming language)|C]] or [[Fortran]] routines. It was created in 1996 by [[David H. Munro]] of [[Lawrence Livermore National Laboratory]].
+
+== Features ==
+* Indexing
+Yorick is good at manipulating elements in N-dimensional arrays conveniently with its powerful syntax.
+
+;Range of indices
+
+Several elements can be accessed all at once: 
+
+<source lang="python">
+> x=[1,2,3,4,5,6];
+> x
+[1,2,3,4,5,6]
+> x(3:6)
+[3,4,5,6]
+> x(3:6:2)
+[3,5]
+> x(6:3:-2)
+[6,4]
+</source>
+
+;Arbitrary elements
+
+<source lang="python">
+> x=[[1,2,3],[4,5,6]]
+> x
+[[1,2,3],[4,5,6]]
+> x([2,1],[1,2])
+[[2,1],[5,4]]
+> list=where(1<x)
+> list
+[2,3,4,5,6]
+> y=x(list)
+> y
+[2,3,4,5,6]
+</source>
+
+;Pseudo-index
+
+Like "theading" in PDL (Perl Data Language) and "broadcasting" in Numpy ( Numeric extension for Python), Yorick has a mechanism to do this:
+
+<source lang="python">
+> x=[1,2,3]
+> x
+[1,2,3]
+> y=[[1,2,3],[4,5,6]]
+> y
+[[1,2,3],[4,5,6]]
+> y(-,)
+[[[1],[2],[3]],[[4],[5],[6]]]
+> x(-,)
+[[1],[2],[3]]
+> x(,-)
+[[1,2,3]]
+> x(,-)/y
+[[1,1,1],[0,0,0]]
+> y=[[1.,2,3],[4,5,6]]
+> x(,-)/y
+[[1,1,1],[0.25,0.4,0.5]]
+</source>
+
+;Rubber index
+
+".." is  a rubber-index to represent zero or more dimensions of the array.
+
+<source lang="python">
+> x=[[1,2,3],[4,5,6]]
+> x
+[[1,2,3],[4,5,6]]
+> x(..,1)
+[1,2,3]
+> x(1,..)
+[1,4]
+> x(2,..,2)
+5
+</source>
+
+"*" is a kind of rubber-index to reshape a slice(sub-array) of array to a vector.
+
+<source lang="python">
+> x(*)
+[1,2,3,4,5,6]
+</source>
+
+;Tensor multiplication
+
+Tensor multiplication is done as follows in Yorick:
+
+P(,+,,)*Q(,,+)
+
+means <math>\sum_{j=1}^{j=N}{P_{ijkl}Q_{mnj}}</math>
+
+<source lang="python">
+> x=[[1,2,3],[4,5,6]]
+> x
+[[1,2,3],[4,5,6]]
+> y=[[7,8],[9,10],[11,12]]
+> x(,+)*y(+,)
+[[39,54,69],[49,68,87],[59,82,105]]
+> x(+,)*y(,+)
+[[58,139],[64,154]]
+</source>
+
+==External links==
+*[http://yorick.sourceforge.net Yorick Homepage]
+
+[[Category:Lawrence Livermore National Laboratory]]
+[[Category:Programming languages created in 1996]]
+[[Category:Array programming languages]]
+
+
+{{compu-lang-stub}}
+
+[[fr:Yorick]]
+[[ms:Bahasa pengaturcaraan Yorick]]
+[[pt:Yorick (linguagem de programação)]]
+[[fi:Yorick]]</body> </html>

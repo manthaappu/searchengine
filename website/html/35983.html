@@ -1,0 +1,37 @@
+<html> <head> <title>Structured program theorem</title></head><body>The '''structured program theorem''' is a result in [[programming language]] theory. It states that every [[computable function]] can be implemented in a programming language that combines subprograms in only three specific ways. These three [[control structure]]s are
+#Executing one subprogram, and then another subprogram (sequence)
+#Executing one of two subprograms according to the value of a [[Boolean data type|boolean]] variable (selection)
+#Executing a subprogram until a boolean variable is true (repetition)
+Computer scientists usually credit the theorem to a 1966 paper by [[Corrado Böhm]] and [[Giuseppe Jacopini]]. However, [[David Harel]] traced its origins to the 1946 description of the [[von Neumann architecture]] and [[Stephen Kleene]]'s [[Kleene normal form|normal form theorem]].
+
+The Böhm-Jacopini proof describes how to construct a structured flow chart from an arbitrary chart, using the [[bit]]s in an extra integer variable to keep track of information that the original program represents by the program location. This construction was based on Böhm's programming language [[P′′]]. The Böhm-Jacopini proof did not settle the question of whether to adopt [[structured programming]] for software development, partly because the construction was more likely to obscure a program than to improve it. On the contrary, it signalled the beginning of the debate. [[Edsger Dijkstra]]'s famous letter, "[[Go To Statement Considered Harmful]]," followed in 1968. Subsequent proofs of the theorem addressed practical shortcomings of the Böhm-Jacopini proof with constructions that maintained or improved the clarity of the original program.[http://www.cse.buffalo.edu/~rapaport/111F04/greatidea3.html]
+
+In the 1980s [[IBM]] researcher [[Harlan Mills]] oversaw the development of the [[COBOL Structuring Facility]], which applied a structuring algorithm to [[COBOL]] code. Mills's transformation involved the following steps for each procedure.
+
+#Identify the [[basic block]]s in the procedure.
+#Assign a unique [[Label (programming language)|label]] to each block's entry path, and label each block's exit paths with the labels of the entry paths they connect to. Use 0 for return from the procedure and 1 for the procedure's entry path.
+#Break the procedure into its basic blocks.
+#For each block that is the destination of only one exit path, reconnect that block to that exit path.
+#Declare a new variable in the procedure (called L for reference).
+#On each remaining unconnected exit path, add a statement that sets L to the label value on that path.
+#Combine the resulting programs into a selection statement that executes the program with the entry path label indicated by L
+#Construct a loop that executes this selection statement as long as L is not 0.
+#Construct a sequence that initializes L to 1 and executes the loop.
+
+Note that this construction can be improved by converting some cases of the selection statement into subprocedures.
+
+==See also==
+*[[Structured programming]]
+
+==References==
+*{{cite journal|last=Ashcroft|first=Edward|coauthors=and Zohar Manna|year=1971|title=The translation of go to programs to 'while' programs|journal=Proceedings of IFIP Congress}}
+*{{cite journal|last=Bohm|first=Corrado|coauthors=and Giuseppe Jacopini|date=May 1966|title=Flow Diagrams, Turing Machines and Languages with Only Two Formation Rules|journal=Communications of the ACM|volume=9|issue=5|pages=366–371|doi=10.1145/355592.365646}}
+*{{cite journal|last=Harel|first=David|year=1980|title=On Folk Theorems|journal=Communications of the ACM|volume=23|issue=7|pages=379–389|doi=10.1145/358886.358892}}
+*{{cite journal|last=Dijkstra|first=Edsger|year=1968|title=Go To Statement Considered Harmful|journal=Communications of the ACM|volume=11|issue=3|pages=147–148|doi=10.1145/362929.362947}} http://www.acm.org/classics/oct95/
+
+[[Category:Programming paradigms]]
+[[Category:Mathematical theorems]]
+
+[[ca:Teorema del programa estructurat]]
+[[es:Teorema del programa estructurado]]
+[[it:Teorema di Böhm-Jacopini]]</body> </html>

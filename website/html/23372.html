@@ -1,0 +1,42 @@
+<html> <head> <title>Mandatory Integrity Control</title></head><body>In the context of the [[Microsoft Windows]] range of operating systems, '''Mandatory Integrity Control''' ('''MIC''') or '''Integrity Levels''' (or '''Protected Mode''' in the context of applications like [[Internet Explorer]], [[Google Chrome]] and [[Adobe Reader]])<ref name="symantec">{{cite web | url = http://www.symantec.com/avcenter/reference/Windows_Vista_Security_Model_Analysis.pdf | title = Analysis of the Windows Vista Security Model | author = Matthew Conover | publisher = [[Symantec Corporation]] | accessdate = 2007-10-08}}</ref> is a core security feature, introduced in [[Windows Vista]] and [[Windows Server 2008]], that adds ''Integrity Levels'' (IL) to [[Process (computing)|processes]] running in a login session. (See also [[Security features new to Windows Vista]].) This mechanism is able to selectively restrict the access permissions of certain programs or software components in contexts that are considered to be potentially less trustworthy, compared with other contexts running under the same user account that are more trusted.  Windows Vista defines four integrity levels: ''Low'' (''[[Security Identifier|SID]]:'' S-1-16-4096), ''Medium'' (''SID:'' S-1-16-8192), ''High'' (''SID:'' S-1-16-12288), and ''System'' (''SID:'' S-1-16-16384).<ref name="symantec"/> By default, processes started by a regular user gain a ''Medium'' IL and [[User Account Control|elevated]] processes have ''High'' IL.<ref name="steve">{{cite web | url = http://blogs.technet.com/steriley/archive/2006/07/21/442870.aspx | title = Mandatory Integrity Control in Windows Vista | author = Steve Riley | accessdate = 2007-10-08}}</ref> Processes must be configured explicitly to run with ''Low'' IL. Processes with ''Low'' IL are called low-integrity processes. While processes inherit the integrity level of the process that spawned it, the integrity level can be customized on a per-process basis as well. For example, executables originating from the [[Internet]] are marked for and executed with ''Low'' IL. Windows controls access to [[Object Manager (Windows)|objects]] based on ILs, as well as for defining the boundary for window messages, via [[User Interface Privilege Isolation]].
+
+==Operation==
+Named [[Object Manager (Windows)|objects]], including [[Computer file|files]], [[Windows Registry|registry]] keys or even other [[Process (computing)|processes]] and [[Thread (computer science)|threads]], have an entry in the [[Access Control List|ACL]] governing access to them, that defines the minimum integrity level of the process that can use the object. Windows makes sure that a process can ''write to'' or ''delete'' an object only when its integrity level is equal to or higher than the requested integrity level specified by the object.<ref name="steve"/> Additionally, [[Object Manager (Windows)|process objects]] with higher IL are out-of-bounds for even ''read'' access.<ref name="mark">{{cite web | url = http://blogs.technet.com/markrussinovich/archive/2007/02/12/638372.aspx | title = PsExec, User Account Control and Security Boundaries | accessdate = 2007-10-08 | author = [[Mark Russinovich]]}}</ref>
+
+Consequently, a process cannot interact with another process that has a higher IL. So a process cannot perform functions such as inject a [[DLL]] into a higher IL process by using the <code>CreateRemoteThread()</code><ref>{{cite web | url = http://msdn2.microsoft.com/en-us/library/ms682437.aspx | title = CreateRemoteThread Function (Windows) | publisher = [[MSDN]] | accessdate = 2007-10-08}}</ref> API function or send data to a different process by using the <code>WriteProcessMemory()</code><ref>{{cite web | url = http://msdn2.microsoft.com/en-us/library/ms681674.aspx | title = WriteProcessMemory Function | publisher = [[MSDN]] | accessdate = 2007-10-08}}</ref> function. However, the higher IL process can execute such functions against the lower IL process.<ref name="symantec"/> However, they can still communicate by using files, [[Named pipe]]s, [[Local Procedure Call|LPC]] or other shared objects. The shared object must have an integrity level as low as the low IL process and should be shared by both the Low-IL and High-IL process.<ref name="mark"/>
+
+==Security==
+Access control lists (ACLs) are limited to granting access rights (read, write, and execute permissions) and privileges to users or groups. MIC allows classes of applications to be isolated, enabling scenarios like sandboxing potentially-vulnerable applications (such as [[Internet]]-facing application). 
+
+However, since it does not prevent a low IL process from sharing objects with a higher IL process, it can trigger flaws in the higher IL process and have it work on behalf of the low IL process, thereby causing a [[Squatting attack]].<ref name="mark"/> [[Shatter attack]]s, however, can be prevented by using another feature, [[User Interface Privilege Isolation]], in conjunction with MIC.
+
+Mandatory Integrity Control is defined using a new access control entry (ACE) type to represent the object's IL in its [[security descriptor]]. A subject IL is also assigned to the security [[access token]] when it is initialized. The integrity level in the [[access token]] is compared against the integrity level in the [[security descriptor]] when the security reference monitor performs authorization before granting access to objects. Windows restricts the allowed access rights depending on whether the subject's integrity level is higher or lower than the object, and depending on the integrity policy flags in the new access control ACE. The security subsystem implements the integrity level as a mandatory label to distinguish it from the discretionary access under user control that ACLs provide.
+
+==Usage==
+One of the most common applications for integrity controls in Windows is with [[Internet Explorer 7]] and [[Internet Explorer 8]], which can run in "Protected Mode" on Windows Vista and later operating systems.  In this configuration, the iexplore.exe process runs with a ''Low'' integrity level to limit its access to the underlying system, and thereby prevent some classes of security vulnerabilities; since Internet Explorer in this case runs as a Low-IL process, it cannot modify system level objects—file and registry operations are instead virtualized.  [[Adobe Reader]] 10 and [[Google Chrome]] are two other notable applications that are introducing the technology in order to limit their vulnerability to malware.<ref>{{cite web|url=http://blogs.adobe.com/asset/2010/07/introducing-adobe-reader-protected-mode.html|title=Introducing Adobe Reader Protected Mode|author=Brad Arkin|publisher=[[Adobe Systems]]|date=2010-07-10|accessdate=2010-09-10}}</ref>
+
+==See also==
+* [[icacls]]
+* [[Security Identifier]]
+* [[Mandatory access control]]
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://msdn.microsoft.com/en-us/library/ms537319(VS.85).aspx Introduction to the Protected Mode API]
+* [http://msdn2.microsoft.com/en-us/library/bb625964.aspx Windows Vista Integrity Mechanism technical reference on MSDN]
+* [http://www.securityfocus.com/print/infocus/1887 Introduction to Windows Integrity Control: Security Focus article]
+*[http://www.verizonbusiness.com/resources/whitepapers/wp_escapingmicrosoftprotectedmodeinternetexplorer_en_xg.pdf Escaping from Microsoft’s Protected Mode Internet Explorer]
+
+{{Windows Components}}
+
+[[Category:Windows Vista]]
+[[Category:Microsoft Windows security technology]]
+[[Category:Access control]]
+[[Category:Computer security]]
+[[Category:Windows 7]]
+[[Category:Internet Explorer]]
+
+[[fr:Mandatory Integrity Control]]
+[[ms:Mandatory Integrity Control]]</body> </html>

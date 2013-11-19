@@ -1,0 +1,153 @@
+<html> <head> <title>Interaction information</title></head><body>The '''interaction information''' (McGill 1954) or '''co-information''' (Bell 2003) is one of several generalizations of the [[mutual information]], and expresses the amount information (redundancy or synergy) bound up in a set of variables, ''beyond'' that which is present in any subset of those variables.  Unlike the mutual information, the interaction information can be either positive or negative.  This confusing property has likely retarded its wider adoption as an information measure in machine learning and cognitive science. 
+
+== The Three-Variable Case ==
+
+For three variables <math>\{X,Y,Z\}</math>, the interaction information <math>I(X;Y;Z)</math> is given by
+
+:<math>
+\begin{matrix}
+I(X;Y;Z) & = & I(X;Y|Z)-I(X;Y) \\ 
+\ & = & I(X;Z|Y)-I(X;Z)  \\ 
+\ & = & I(Y;Z|X)-I(Y;Z)  
+\end{matrix}
+</math>
+
+where, for example, <math>I(X;Y)</math> is the mutual information between variables <math>X</math> and <math>Y</math>, and <math>I(X;Y|Z)</math> is the [[conditional mutual information]] between variables <math>X</math> and <math>Y</math> given <math>Z</math>.  Formally,
+
+:<math>
+\begin{matrix}
+I(X;Y|Z) & = & H(X|Z) + H(Y|Z) - H(X,Y|Z) \\
+\ & = & H(X|Z)-H(X|Y,Z)
+\end{matrix}
+</math>
+
+For the three-variable case, the interaction information <math>I(X;Y;Z)</math> is the difference between the information shared by <math>\{Y,X\}</math> when <math>Z</math> has been fixed and when <math>Z</math> has not been fixed.  (See also Fano's 1961 textbook.)  Interaction information measures the influence of a variable <math>Z</math> on the amount of information shared between <math>\{Y,X\}</math>. Because the term <math>I(X;Y|Z)</math> can be zero — for example, when the
+dependency between <math>\{X,Y\}</math> is due entirely to the influence of a common cause <math>Z</math>, the interaction information can be negative as well as positive. '''Negative''' interaction information indicates that variable <math>Z</math> inhibits (i.e., ''accounts for'' or ''explains'' some of) the correlation between <math>\{Y,X\}</math>, whereas '''positive''' interaction information indicates that variable <math>Z</math> facilitates or enhances the correlation between <math>\{Y,X\}</math>.
+
+Interaction information is bounded.  In the three variable case, it is bounded by
+
+:<math>
+-min\ \{ I(X;Y), I(Y;Z), I(X;Z) \} \leq I(X;Y;Z) \leq min\ \{ I(X;Y|Z), I(Y;Z|X), I(X;Z|Y) \}
+</math>
+
+=== Example of Negative Interaction Information ===
+
+Negative interaction information seems much more natural than positive interaction information in the sense that such ''explanatory'' effects are typical of common-cause structures. For example, clouds cause rain and also block the sun; therefore, the correlation between rain and darkness is partly accounted for by the presence of clouds, <math>I(rain;dark|cloud) \leq I(rain;dark)</math>. The result is negative interaction information <math>I(rain;dark;cloud)</math>.
+
+=== Example of Positive Interaction Information ===
+
+[[Image:Xor_interaction.png|right]]The case of positive interaction information seems a bit less natural. A prototypical example of positive <math>I(X;Y;Z)</math> has <math>X</math> as the output of an XOR gate to which <math>Y</math> and <math>Z</math> are the independent random inputs.  In this case <math>I(Y;Z)</math> will be zero, but <math>I(Y;Z|X)</math> will be positive (1 [[bit]]) since once output <math>X</math> is known, the value on input <math>Y</math> completely determines the value on input <math>Z</math>.  Since <math>I(Y;Z|X)>I(Y;Z)</math>, the result is positive interaction information <math>I(X;Y;Z)</math>. It may seem that this example relies on a peculiar ordering of <math>X,Y,Z</math> to obtain the positive interaction, but the symmetry of the definition for <math>I(X;Y;Z)</math> indicates that the same positive interaction information results regardless of which variable we consider as the ''interloper'' or conditioning variable. For example, input <math>Y</math> and output <math>X</math> are also independent until input <math>Z</math> is fixed, at which time they are totally dependent (obviously), and we have the same positive interaction information as before, <math>I(X;Y;Z)=I(X;Y|Z)-I(X;Y)</math>.
+
+[[Image:Common-effect.png|right]]This situation is an instance where fixing the ''common effect'' <math>X</math> of causes <math>Y</math> and <math>Z</math> induces a dependency among the causes that did not formerly exist.  This behavior is colloquially referred to as ''explaining away'' and is thoroughly discussed in the [[Bayesian Network]] literature (e.g., Pearl 1988).  Pearl's example is auto diagnostics: A car's engine can fail to start <math>(X)</math> due either to a dead battery <math>(Y)</math> or due to a blocked fuel pump <math>(Z)</math>. Ordinarily, we assume that battery death and fuel pump blockage are independent events, because of the essential modularity of such automotive systems. Thus, in the absence of other information, knowing whether or not the battery is dead gives us no information about whether or not the fuel pump is blocked. However, if we happen to know that the car fails to start (i.e., we fix common effect <math>X</math>), this information induces a dependency between the two causes ''battery death'' and ''fuel blockage''.  Thus, knowing that the car fails to start, if an inspection shows the battery to be in good health, we can conclude that the fuel pump must be blocked.
+
+''Battery death'' and ''fuel blockage'' are thus dependent, conditional on their common effect ''car starting''. What the foregoing discussion indicates is that the obvious directionality in the common-effect graph belies a deep informational symmetry: If conditioning on a common effect
+increases the dependency between its two parent causes, then conditioning on one of the causes must create the same increase in dependency between the second cause and the common effect. In Pearl's automotive example, if conditioning on ''car starts'' induces <math>I(X;Y;Z)</math> bits of dependency between the two causes ''battery dead'' and ''fuel blocked'', then conditioning on
+''fuel blocked'' must induce <math>I(X;Y;Z)</math> bits of dependency between ''battery dead'' and ''car starts''. This may seem odd because ''battery dead'' and ''car starts'' are already governed by the implication ''battery dead'' <math>\rightarrow</math> ''car doesn't start''.  However, these variables are still not totally correlated because the converse is not true. Conditioning on ''fuel blocked'' removes the major alternate cause of failure to start, and strengthens the converse relation and therefore the association between ''battery dead'' and ''car starts''.  A paper by Tsujishita (1995) focuses in greater depth on the third-order mutual information.
+
+== The Four-Variable Case ==
+
+One can recursively define the ''n''-dimensional interaction information in terms of the <math>(n-1)</math>-dimensional interaction information.  For example, the four-dimensional interaction information can be defined as 
+
+:<math>
+\begin{matrix}
+I(W;X;Y;Z) & = & I(X;Y;Z|W)-I(X;Y;Z)  \\
+\ & = & I(X;Y|Z,W)-I(X;Y|W)-I(X;Y|Z)+I(X;Y)
+\end{matrix}
+</math>
+
+or, equivalently, 
+
+:<math>
+\begin{matrix}
+I(W;X;Y;Z)& = & H(W)+H(X)+H(Y)+H(Z) \\
+\ & - & H(W,X)-H(W,Y)-H(W,Z)-H(X,Y)-H(X,Z)-H(Y,Z)  \\
+\ & + & H(W,X,Y)+H(W,X,Z)+H(W,Y,Z)+H(X,Y,Z)-H(W,X,Y,Z)  
+\end{matrix}
+</math>
+
+== The ''n''-Variable Case ==
+
+It is possible to extend all of these results to an arbitrary number of dimensions. The general expression for interaction information on variable set <math>\mathcal{V}=\{X_{1},X_{2},\ldots ,X_{n}\}</math> in terms of the marginal entropies is given by Jakulin & Bratko (2003).
+ 
+
+:<math>
+I(\mathcal{V})\equiv -\sum_{\mathcal{T}\subseteq \mathcal{V}}(-1)^{\left\vert\mathcal{V}\right\vert -\left\vert \mathcal{T}\right\vert}H(\mathcal{T})  
+</math>
+
+which is an alternating (inclusion-exclusion) sum over all subsets <math>\mathcal{T}\subseteq \mathcal{V}</math>, where <math>\left\vert \mathcal{V}\right\vert =n</math>. Note
+that this is the information-theoretic analog to the [[Kirkwood approximation]]. 
+
+== Difficulties Interpreting Interaction Information ==
+
+The possible negativity of interaction information can be the source of some confusion (Bell 2003). As an example of this confusion, consider a set of eight independent binary variables <math>\{X_{1},X_{2},X_{3},X_{4},X_{5},X_{6},X_{7},X_{8}\}</math>. Agglomerate these variables as follows: 
+
+:<math>
+\begin{matrix}
+Y_{1} &=&\{X_{1},X_{2},X_{3},X_{4},X_{5},X_{6},X_{7}\} \\
+Y_{2} &=&\{X_{4},X_{5},X_{6},X_{7}\} \\
+Y_{3} &=&\{X_{5},X_{6},X_{7},X_{8}\} 
+\end{matrix}
+</math>
+
+Because the <math>Y_{i}</math>'s overlap each other (are redundant) on the three binary variables <math>\{X_{5},X_{6},X_{7}\}</math>, we would expect the interaction information <math>I(Y_{1};Y_{2};Y_{3})</math> to equal <math>-3</math> bits, which it does. However, consider
+now the agglomerated variables
+
+:<math>
+\begin{matrix}
+Y_{1} &=&\{X_{1},X_{2},X_{3},X_{4},X_{5},X_{6},X_{7}\} \\
+Y_{2} &=&\{X_{4},X_{5},X_{6},X_{7}\} \\
+Y_{3} &=&\{X_{5},X_{6},X_{7},X_{8}\} \\
+Y_{4} &=&\{X_{7},X_{8}\}
+\end{matrix}
+</math>
+
+These are the same variables as before with the addition of <math>Y_{4}=\{X_{7},X_{8}\}</math>. Because the <math>Y_{i}</math>'s now overlap each other (are redundant) on only one binary variable <math>\{X_{7}\}</math>, we would expect the interaction information <math>I(Y_{1};Y_{2};Y_{3};Y_{4})</math> to equal <math>-1</math> bit. However, <math>I(Y_{1};Y_{2};Y_{3};Y_{4})</math> in this case is actually equal to <math>+1</math> bit,
+indicating a synergy rather than a redundancy. This is correct in the sense that 
+
+:<math>
+\begin{matrix}
+I(Y_{1};Y_{2};Y_{3};Y_{4}) & = & I(Y_{1};Y_{2};Y_{3}|Y_{4})-I(Y_{1};Y_{2};Y_{3}) \\
+\ & = & -2+3 \\
+\ & = & 1
+\end{matrix}
+</math>
+
+but it remains difficult to interpret. 
+
+== Uses of Interaction Information ==
+* Jakulin and Bratko (2003b) provide a machine learning algorithm which uses interaction information.
+* Killian, Kravitz and Gilson (2007) use mutual information expansion to extract entropy estimates from molecular simulations.
+* Moore et al. (2006), Chanda P, Zhang A, Brazeau D, Sucheston L, Freudenheim JL, Ambrosone C, Ramanathan M. (2007) and Chanda P, Sucheston L, Zhang A, Brazeau D, Freudenheim JL, Ambrosone C, Ramanathan M. (2008) demonstrate the use of interaction information for analyzing gene-gene and gene-environmental interactions associated with complex diseases.
+
+== References ==
+
+* Bell, A J (2003), The co-information lattice [http://www.rni.org/bell/nara4.pdf]
+
+* Fano, R M (1961), ''Transmission of Information: A Statistical Theory of Communications'', MIT Press, Cambridge, MA.
+
+* Garner W R (1962). ''Uncertainty and Structure as Psychological Concepts'', JohnWiley & Sons, New York.
+
+* Han T S (1978). Nonnegative entropy measures of multivariate symmetric correlations, ''Information and Control'' '''36''', 133-156.
+
+* Han T S (1980). Multiple mutual informations and multiple interactions in frequency data, ''Information and Control'' '''46''', 26-45.
+
+* Jakulin A & Bratko I (2003a). Analyzing Attribute Dependencies, in N Lavra\quad{c}, D Gamberger, L Todorovski & H Blockeel, eds, ''Proceedings of the 7th European Conference on Principles and Practice of Knowledge Discovery in Databases'', Springer, Cavtat-Dubrovnik, Croatia, pp. 229–240.
+
+* Jakulin A & Bratko I (2003b). Quantifying and visualizing attribute interactions [http://arxiv.org/abs/cs/0308002v1].
+
+* McGill W J (1954). Multivariate information transmission, ''Psychometrika'' '''19''', 97-116.
+
+* Moore JH, Gilbert JC, Tsai CT, Chiang FT, Holden T, Barney N, White BC (2006). A flexible computational framework for detecting, characterizing, and interpreting statistical patterns of epistasis in genetic studies of human disease susceptibility, ''Journal of Theoretical Biology'' '''241''', 252-261. [http://www.ncbi.nlm.nih.gov/pubmed/16457852?ordinalpos=19&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum]
+
+* Nemenman I (2004). Information theory, multivariate dependence, and genetic network inference [http://arxiv.org/abs/q-bio.QM/0406015].
+
+* Pearl, J (1988), ''Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference'', Morgan Kaufmann, San Mateo, CA.
+
+* Tsujishita, T (1995), On triple mutual information, ''Advances in applied mathematics'' '''16''', 269-274.
+
+* Chanda P, Zhang A, Brazeau D, Sucheston L, Freudenheim JL, Ambrosone C, Ramanathan M. (2007). Information-theoretic metrics for visualizing gene-environment interactions. American Journal of Human Genetics. 2007 Nov;81(5):939-63.PMID: 17924337. http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=17924337
+
+* Chanda P, Sucheston L, Zhang A, Brazeau D, Freudenheim JL, Ambrosone C, Ramanathan M. (2008). AMBIENCE: a novel approach and efficient algorithm for identifying informative genetic and environmental associations with complex phenotypes. Genetics. 2008 Oct;180(2):1191-210. PMID: 17924337. http://www.genetics.org/cgi/content/full/180/2/1191
+* Killian B J, Kravitz J Y & Gilson  M K  (2007) Extraction of configurational entropy from molecular simulations via an expansion approximation. ''J. Chem. Phys.'', '''127''', 024107.
+
+[[Category:Information theory]]</body> </html>

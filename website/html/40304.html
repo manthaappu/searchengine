@@ -1,0 +1,118 @@
+<html> <head> <title>Windows Metafile</title></head><body>{{Infobox file format
+| name = Windows Metafile
+| extension = <tt>.wmf</tt>, <tt>.emf</tt>, <tt>.wmz</tt>, <tt>.emz</tt>
+| mime = image/x-wmf, image/x-emf
+| owner = [[Microsoft]]
+| genre = [[Image file formats]]
+| creatorcode =
+| containerfor = 
+| containedby = 
+| extendedfrom = 
+| extendedto = 
+}}
+
+'''Windows Metafile''' ('''WMF''') is a [[Image file formats|graphics file format]] on [[Microsoft Windows]] systems, originally designed in the early 1990s. Windows Metafiles are intended to be portable between applications and may contain both [[vector graphics]] and [[bitmap]] components.
+
+Essentially, a WMF file stores a list of function calls that have to be issued to the Windows [[Graphics Device Interface]] (GDI) layer in order to display an image on screen. Since some GDI functions accept [[Pointer (computing)|pointer]]s to [[Callback (computer science)|callback function]]s for [[error handling]], a WMF file may erroneously include executable code.<ref>{{cite web
+| url=http://www.f-secure.com/weblog/archives/archive-012006.html#00000761
+| title=It's not a bug, it's a feature
+| publisher=[[F-Secure]]
+| accessdate=2009-10-08}}</ref>
+
+WMF is a [[16-bit]] format introduced in [[Windows 3.0]]. It is the native [[Vector graphics|vector format]] for [[Microsoft Office]] applications such as [[Microsoft Word|Word]], [[Microsoft PowerPoint|PowerPoint]], and [[Microsoft Publisher|Publisher]].
+
+In 2007 '''Enhanced Metafile''' ('''EMF''') a newer [[32-bit]] version
+with additional commands appeared.
+EMF is also used as a graphics language for printer drivers.
+The last(?) version of EMF, 4.0, appeared in 2008.
+
+With the release of [[Windows XP]], the '''Enhanced Metafile Format Plus Extensions''' ('''EMF+''') format was introduced. EMF+ provides a way to serialize calls to the [[GDI+]] API in the same way that WMF/EMF stores calls to GDI.
+
+There are also compressed versions of Windows Metafiles known as '''Compressed Windows Metafile (WMZ)''' and '''Compressed Windows Enhanced Metafile (EMZ)'''<ref>{{cite web
+| url=http://support.microsoft.com/kb/895083
+| title=You receive a "This file is an unsupported graphic format" error message when you try to insert a picture into a PowerPoint for Mac presentation
+| publisher=[[Microsoft]]
+| accessdate=2008-06-01}}</ref>.
+
+== Specifications and patents ==
+The original 16 bit WMF file format was fully specified in volume 4 of the 1992 Windows 3.1 SDK documentation<ref>Microsoft Windows 3.1 Programmers Reference, Volume 4 Resources, Microsoft Press 1992, ISBN 1-55615-494-1, chapter 3 pp. 21-45</ref> (at least if combined with the descriptions of the individual functions and structures in the other volumes), but that specification (like most computer manuals){{Citation needed|date=June 2010}} was vague about a few details.  These manuals were published as printed books available in bookstores with no click through EULA or other unusual restrictions (just a general warning that if purchased as part of a software bundle, the software would be subject to one).
+
+Over time the existence of that historic specification was largely forgotten and some alternative implementations resorted to reverse engineering to figure out the file format from existing WMF files, which was difficult and error prone.<ref>{{cite web
+| url=http://wvware.sourceforge.net/caolan/support.html
+| title=Window Metafile (wmf) Reference
+| quote=''These opcodes are unimplemented, for the reason that i dont know what they are, no known documentation''
+| author=Caolan McNamara
+| accessdate=2008-06-01}}</ref> In September 2006, Microsoft again published the WMF file format specification<ref>{{cite web 
+| url=http://msdn.microsoft.com/en-us/library/cc215212.aspx
+| title=MS-WMF: Windows Metafile Format Specification
+| accessdate=2008-06-01
+}}</ref> in the context of the [[Microsoft Open Specification Promise]], promising to not assert patent rights to file format implementors.<ref name="osp">{{cite web 
+| url=http://www.microsoft.com/interop/osp/
+| title=Microsoft Open Specification Promise
+| accessdate=2008-06-01
+}}</ref>
+
+== Windows Metafile vulnerability ==
+{{Main|Windows Metafile vulnerability}}
+In December 2005, a vulnerability was reported to [[Microsoft]] by [[Symantec]]. By using a metafile to invoke a historic form of some printer management functions, Windows GDI could be tricked into executing data from the WMF file as code.  It was assessed and classified as critical.  This vulnerability was resolved in a security update on January 5, 2006 on Microsoft TechNet (MS06-001) and generally released January 10, 2006. Details can be found in Microsoft Knowledge Base Article "Vulnerability in Graphics Rendering Engine Could Allow Remote Code Execution" (912919). It was also referred to as the WMF (Windows Meta File) vulnerability.
+
+Security expert Steve Gibson did a thorough analysis of the WMF vulnerability and reached the conclusion that it had been included intentionally by Microsoft as a "backdoor" for whatever reason. Hence, the idea that hackers used a bug is erroneous. What hackers did was just discovering existing but - thus far - undisclosed functionality. The discovery was presented in issue 22 of Security Now.<ref>{{cite web
+| url=http://www.grc.com/securitynow.htm#22
+| title=Security Now, Issue #22, The Windows Metafile Backdoor?
+| quote=''''
+| author=Steve Gibson
+| accessdate=2010-06-11}}</ref>. This claim has been challenged by Microsoft employee and Windows expert [[Mark Russinovich]]. <ref> [http://blogs.technet.com/b/markrussinovich/archive/2006/01/18/inside-the-wmf-backdoor.aspx "Inside the WMF Backdoor"]</ref>
+
+== Alternative implementations ==
+The WMF format was designed to be executed by the Windows GDI layer in order to restore the [[image]], but  as the WMF binary files contain the definition of the GDI graphic primitives that constitute this image, it is possible to design alternative libraries that render WMF binary files, or convert them into other graphic formats.  For example, the [[Batik (software)|Batik]] library is able to render WMF files and convert them to their [[Scalable Vector Graphics]] (SVG) equivalent.  The Vector Graphics package of the [[FreeHEP]] Java library allows the saving of [[Java2D]] drawings as EMF files. EMZ is an EMF file compressed with [[gzip]].
+
+== See also ==
+* [[Vector Markup Language]]
+* [[Scalable Vector Graphics]]
+* [[PostScript]]
+* [[STDU Viewer]]
+
+== References ==
+{{Reflist|2}}
+
+== External links ==
+{{External links|date=May 2009}}
+
+=== Tutorials and articles ===
+* [http://msdn2.microsoft.com/en-us/library/cc215212.aspx Windows Metafile Format Specification from Microsoft]
+* [http://msdn2.microsoft.com/en-us/library/cc204166.aspx Enhanced Metafile Format Specification from Microsoft]
+* [http://msdn.microsoft.com/en-us/library/cc230724(PROT.13).aspx Enhanced Metafile Format Plus Extensions Specification from Microsoft]
+* [http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/metafile_0hmb.asp Windows GDI]
+* [http://www.fileformat.info/format/wmf/ File Format Summary at fileformat.info]
+* [http://wvware.sourceforge.net/caolan/index.html WMF operand documentation]
+* [http://www.companionsoftware.com/PR/WMRC/WindowsMetafileFaq.html Windows Metafile FAQ]
+* [http://www.undocprint.org/formats/winspool/emf EMF/EMF+/EMZ Information at the Undocumented Printing Wiki]
+
+=== Libraries ===
+* [[Batik (software)|Batik]] Java library : the [http://xml.apache.org/batik/javadoc/org/apache/batik/transcoder/wmf/tosvg/package-summary.html  WMF to SVG transcoder package] can convert WMF Metafiles to [[Scalable Vector Graphics|SVG]]  
+* [[FreeHEP]] Java library : the [http://java.freehep.org/freehep1.x/vectorgraphics/index.html Vector graphics package] can convert EMF Metafiles to SVG, or Java2D drawings to EMF
+* [http://wvware.sourceforge.net/libwmf.html libWMF], a library for reading WMF Metafiles, which is able to display them or convert them to [[Scalable Vector Graphics|SVG]]
+* [http://libemf.sourceforge.net/ libEMF], a C/C++ library which provides a drawing toolkit to create vector graphics files on [[POSIX]] systems
+* [http://www.blackdirt.com/graphics/svg/ wmf2svg], a small Java class to convert WMF Metafiles to [[Scalable Vector Graphics|SVG]]
+* [http://sourceforge.net/project/showfiles.php?group_id=51669&package_id=58464 Pixie] Java library
+* [http://pyemf.sourceforge.net/ pyemf] Python library : pyemf can create EMF metafiles
+* [http://www.aspose.com/categories/file-format-components/aspose.metafiles-for-java/default.aspx Aspose.Metafiles] : A Java library for managing metafiles.
+* [http://www.wmf2wpf.com/ wmf2wpf], a .net application and library to convert WMF Metafiles to WPF ([[XAML]])
+{{Graphics file formats}}
+[[Category:Graphics file formats]]
+[[Category:Vector graphics]]
+[[Category:Microsoft Windows multimedia technology]]
+
+[[bs:Windows Metafile]]
+[[de:Windows Metafile]]
+[[es:Metaarchivo de Windows]]
+[[eu:Windows Metafile]]
+[[fr:Windows Metafile]]
+[[it:Windows Metafile]]
+[[ja:Windows Metafile]]
+[[pl:Windows Metafile]]
+[[pt:Windows Metafile]]
+[[ru:Windows Metafile]]
+[[sv:Windows Metafile]]
+[[tr:Windows Metafile]]
+[[zh:WMF]]</body> </html>

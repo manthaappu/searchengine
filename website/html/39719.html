@@ -1,0 +1,43 @@
+<html> <head> <title>WCF Data Services</title></head><body>{{Primary sources|date=November 2010}}
+'''[[Windows Communication Foundation|WCF]] Data Services''' (formerly '''ADO.NET Data Services'''<ref>{{cite web|url=http://blogs.msdn.com/astoriateam/archive/2009/11/17/simplifying-our-n-tier-development-platform-making-3-things-1-thing.aspx|title=Simplifying our n-tier development platform: making 3 things 1 thing|date=2009-11-17|accessdate=2009-12-17|publisher=ADO.NET Data Services Team Blog}}</ref>, codename '''"Astoria"''')<ref>{{cite web | url = http://blogs.msdn.com/data/archive/2007/12/10/ado-net-data-services-ctp-released.aspx | title = ADO.NET Data Services CTP Released! | accessdate = 2007-11-12}}</ref> is a platform for what [[Microsoft]] calls ''Data Services''. It is actually a combination of the runtime and a [[web service]] through which the services are exposed. In addition, it also includes the '''Data Services Toolkit''' which lets Astoria Data Services be created from within [[ASP.NET]] itself. The Astoria project was announced at [[MIX (Microsoft)|MIX]] 2007, and the first developer preview was made available on April 30, 2007. The first [[CTP]] was made available as a part of the [[ASP.NET]] 3.5 Extensions Preview. The final version was released as part of [[Service Pack]] 1 of the [[.NET Framework 3.5]] on August 11, 2008.  The name change from ADO.NET Data Services to WCF data Services was announced at the 2009 [[Professional Developers Conference|PDC]].
+
+==Overview==
+ADO.NET Data Services exposes data, represented as [[ADO.NET#Entity Framework|Entity Data Model]] (EDM) objects, via web services accessed over [[HTTP]]. The data can be addressed using a [[Representational State Transfer|REST]]-like [[URI]]. The Astoria service, when accessed via the HTTP GET method with such a URI, will return the data. The web service can be configured to return the data in either plain [[XML]], [[JSON]] or [[Resource Description Framework|RDF+XML]]. In the initial release, formats like [[RSS]] and [[ATOM]] are not supported, though they may be in the future. In addition, using other HTTP methods like PUT, POST or DELETE, the data can be updated as well. POST can be used to create new entities, PUT for updating an entity, and DELETE for deleting an entity.
+
+The URIs representing the data will contain the physical location of the service, as well as the service name. In addition, it will also need to specify an EDM Entity-Set or a specific entity instance, as in respectively
+ <nowiki>http://dataserver/service.svc/MusicCollection</nowiki>
+or
+ <nowiki>http://dataserver/service.svc/MusicCollection[SomeArtist]</nowiki>
+The former will list all entities in the ''Collection'' set whereas the latter will list only for the entity which is indexed by ''SomeArtist''.
+
+In addition, the URIs can also specify a traversal of a relationship in the Entity Data Model. For example,
+ <nowiki>http://dataserver/service.svc/MusicCollection[SomeSong]/Genre</nowiki>
+traverses the relationship ''Genre'' (in SQL parlance, joins with the ''Genre'' table) and retrieves all instances of ''Genre'' that are associated with the entity ''SomeSong''. Simple predicates can also be specified in the URI, like
+ <nowiki>http://dataserver/service.svc/MusicCollection[SomeArtist]/ReleaseDate[Year eq 2006]</nowiki>
+will fetch the items that are indexed by ''SomeArtist'' and had their ''release'' in ''2006''. Filtering and partition information can also be encoded in the URL as
+ <nowiki>http://dataserver/service.svc/MusicCollection?$orderby=ReleaseDate&$skip=100&$top=50</nowiki>
+It is important to note that although the presence of skip and top keywords indicate paging support, in Data Services version 1 there is no method of determining the number of records available and thus impossible to determine how many pages there may be.  The OData 2.0 spec adds support for the '''$count''' path segment (to return just a count of entities) and '''$inlineCount''' (to retrieve a page worth of entities and a total count without a separate round-trip).<ref>http://msdn.microsoft.com/en-us/library/ee373845.aspx</ref>
+
+==References==
+{{Reflist}}
+{{Refbegin}}
+* {{cite web | url = http://blogs.msdn.com/pablo/archive/2007/04/30/codename-astoria-data-services-for-the-web.aspx | title = Codename "Astoria": Data Services for the Web | accessdate = 2007-04-30}}
+* [http://astoria.mslivelabs.com/ ADO.NET Data Services Framework (formerly "Project Astoria")]
+{{Refend}}
+
+==External links==
+*[http://msdn.microsoft.com/en-us/library/cc907912.aspx Using Microsoft ADO.NET Data Services]
+*[http://www.asp.net/downloads/3.5-extensions/ ASP.NET 3.5 Extensions Preview]
+*[http://blogs.msdn.com/astoriateam/ ADO.NET Data Services (Project Astoria) Team Blog]
+*[http://entmag.com/news/article.asp?EditorialsID=9105 Access Cloud Data with Astoria: ENT News Online]
+
+{{DotNET}}
+
+{{DEFAULTSORT:Ado.Net Data Services}}
+[[Category:Data management]]
+[[Category:Web services]]
+[[Category:ADO.NET Data Access technologies]]
+[[Category:.NET framework]]
+
+[[ru:ADO.NET Data Services]]
+[[zh:WCF Data Services]]</body> </html>

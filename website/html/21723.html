@@ -1,0 +1,126 @@
+<html> <head> <title>Linear congruential generator</title></head><body>A '''Linear Congruential Generator''' ('''LCG''') represents one of the oldest and best-known [[pseudorandom number generator]] [[algorithm]]s.<ref>"[http://demonstrations.wolfram.com/LinearCongruentialGenerators/ Linear Congruential Generators]" by Joe Bolte, [[Wolfram Demonstrations Project]].</ref>  The theory behind them is easy to understand, and they are easily implemented and fast.
+
+The generator is defined by the [[recurrence relation]]:
+
+: <math>X_{n+1} \equiv \left( a X_n + c \right)~~\pmod{m}</math>
+
+where <math>X_{n}</math> is the [[sequence]] of pseudorandom values, and
+
+: <math> m,\, 0<m </math> — the "[[modulo operation|modulus]]"
+: <math> a,\,0 < a < m</math> — the "multiplier"
+: <math> c,\,0 \le c < m</math> — the "increment" 
+: <math> X_0,\,0 \le X_0 < m</math> — the "seed" or "start value"
+
+are [[integer]] constants that specify the generator. If <math>c=0</math>, the generator is often called a ''multiplicative congruential method'', or [[Lehmer RNG]]. If <math>c \ne 0</math>, the generator is called a ''mixed congruential method''.<ref name="Knuth-1997">Knuth 1997, Sec. 3.2.1</ref>
+
+== Period length ==
+
+The [[Periodic function|period]] of a general LCG is at most ''m'', and for some choices of ''a'' much less than that.  Provided that ''c'' is nonzero, the LCG will have a full period for all seed values [[if and only if]]:<ref name="Knuth-1997">Knuth 1997, pp. 17-19</ref>
+<!-- <ref>[[Donald E. Knuth]], ''The Art of Computer Programming'', Volume 2, 3rd Edition, pp. 17-19</ref>.-->
+# <math>\,c</math> and <math>\,m</math> are [[relatively prime]],
+# <math>\,a - 1</math> is divisible by all [[prime factor]]s of <math>\,m</math>,
+# <math>\,a - 1</math> is a multiple of 4 if <math>\,m</math> is a multiple of 4.
+
+While LCGs are capable of producing decent [[pseudorandom numbers]], this is extremely sensitive to the choice of the parameters ''c'', ''m'', and ''a''. 
+
+Historically, poor choices had led to ineffective implementations of LCGs. A particularly illustrative example of this is [[RANDU]] which was widely used in the early 1970s and lead to many results which are currently being questioned because of the use of this poor LCG.<ref>{{cite book |author=Press, William H., et al. |year=1992 |title=[[Numerical Recipes]] in Fortran 77: The Art of Scientific Computing |edition=2nd |isbn=0-521-43064-X}}</ref>
+
+== Parameters in common use ==
+
+The most efficient LCGs have an ''m'' equal to a power of 2, most often ''m = 2<sup>32</sup>'' or ''m = 2<sup>64</sup>'', because this allows the modulus operation to be computed by merely truncating all but the rightmost 32 or 64 bits. The following table lists the parameters of LCGs in common use, including built-in ''rand()'' functions in [[Runtime library|runtime libraries]] of various [[compiler]]s.
+
+{|class="wikitable"
+! Source || m || a || c || output bits of seed in ''rand()'' / ''Random(L)''
+|-
+| [[Numerical Recipes]] || 2<sup>32</sup> || 1664525 || 1013904223 || 
+|-
+| [[Borland]] C/C++ || 2<sup>32</sup> || 22695477 || 1 || bits 30..16 in ''rand()'', 30..0 in ''lrand()''
+|-
+| [[glibc]] (used by [[GNU Compiler Collection|GCC]])<ref>The GNU C library's ''rand()'' in [[stdlib.h]] uses a simple (single state) linear congruential generator only in case that the state is declared as 8 bytes. If the state is larger (an array), the generator becomes an additive feedback generator and the period increases. See the [http://www.mscs.dal.ca/~selinger/random/ simplified code] that reproduces the random sequence from this library.</ref>
+|| 2<sup>32</sup> || 1103515245 || 12345 || bits 30..0
+|-
+| [[ANSI C]]: [[Watcom C compiler|Watcom]], [[Digital Mars]], [[CodeWarrior]], [[IBM VisualAge]] C/C++ || 2<sup>32</sup> || 1103515245 || 12345 || bits 30..16
+|-
+| [[Borland Delphi]], [[Virtual Pascal]] || 2<sup>32</sup> || 134775813 || 1 || bits 63..32 of ''(seed * L)''
+|-
+| [[Visual C++|Microsoft Visual/Quick C/C++]] || 2<sup>32</sup> || 214013 || 2531011 || bits 30..16
+|-
+| RtlUniform from [[Native API]] <ref>In spite of documentation on [http://msdn.microsoft.com/en-us/library/bb432429(VS.85).aspx|MSDN], RtlUniform uses LCG, and not Lehmer's algorithm, implementations before [[Windows Vista]] are flawed, because the result of multiplication is cut to 32 bits, before modulo is applied</ref> || 2<sup>31</sup>-1
+|| 2147483629 || 2147483587 ||
+|-
+| [[CarbonLib|Apple CarbonLib]] || 2<sup>31</sup> − 1 || 16807 || 0 || see [[MINSTD]]
+|-
+| [[MMIX]] by [[Donald Knuth]] || 2<sup>64</sup> || 6364136223846793005 || 1442695040888963407 ||
+|-
+| [[VAX]]'s '''MTH$RANDOM''',<ref>[http://www.gnu.org/software/gsl/manual/html_node/Other-random-number-generators.html GNU Scientific Library: Other random number generators]</ref> old versions of [[glibc]] || 2<sup>32</sup> || 69069 || 1 ||
+|-
+| Random class in Java API || 2<sup>48</sup> || 25214903917 || 11 || bits 47...16
+|-
+| LC53<ref>[http://www.forth.org/novice.html Novice Forth library]</ref> in [[Forth (programming language)]] || 2<sup>32</sup> − 5 || 2<sup>32</sup> − 333333333 || 0 ||
+|-
+|}
+{{Citation needed|date=November 2008}}
+
+As shown above, LCG's do not always use all of the bits in the values they produce.  The Java implementation produces 48 bits with each iteration but only returns the 32 most significant bits from these values.  This is because the higher-order bits have longer periods than the lower order bits (see below).  LCG's that use this technique produce much better values than those that do not.
+
+== Advantages and disadvantages of LCGs ==
+
+LCGs are fast and require minimal memory (typically 32 or 64 bits) to retain state.  This makes them valuable for simulating multiple independent streams.
+
+[[Image:Lcg 3d.gif|thumb|200px|[[Hyperplane]]s of a linear congruential generator in three dimensions]]
+
+LCGs should not be used for applications where high-quality [[randomness]] is critical.
+
+For example, it is not suitable for a [[Monte Carlo simulation]] because of the serial [[correlation]] (among other things). They should also not be used for cryptographic applications; see [[cryptographically secure pseudo-random number generator]] for more suitable generators. If a linear congruential generator is seeded with a character and then iterated once, the result is a simple classical cipher called an [[affine cipher]]; this cipher is easily broken by standard [[frequency analysis]].
+
+LCGs tend to exhibit some severe defects. For instance, if an LCG is used to choose points in an n-dimensional space, the points will lie on, at most, m<sup>1/n</sup> [[hyperplanes]] ([[Marsaglia's Theorem]], developed by [[George Marsaglia]]). This is due to serial correlation between successive values of the sequence X<sub>n</sub>.  The [[spectral test]], which is a simple test of an LCG's quality, is based on this fact. 
+
+A further problem of LCGs is that the lower-order bits of the generated sequence have a far shorter period than the sequence as a whole if ''m'' is set to a [[power of two|power of 2]].  In general, the ''n''th least significant digit in the base ''b'' representation of the output sequence, where ''b''<sup>''k''</sup> = ''m'' for some integer ''k'', repeats with at most period ''b''<sup>''n''</sup>. 
+
+Nevertheless, LCGs may be a good option. For instance, in an embedded system, the amount of memory available is often very severely limited. Similarly, in an environment such as a [[video game console]] taking a small number of high-order bits of an LCG may well suffice.  The low-order bits of LCGs when m is a power of 2 should never be relied on for any degree of randomness whatsoever.  Indeed, simply substituting 2<sup>n</sup> for the modulus term reveals that the low order bits go through very short cycles. In particular, any full-cycle LCG when m is a power of 2 will produce alternately odd and even results.
+
+==Comparison with other PRNGs==
+
+If higher quality random numbers are needed, and sufficient memory is available (~ 2 [[kilobyte]]s), then the [[Mersenne twister]] algorithm provides a vastly longer period (2<sup>19937</sup>-1) and variate uniformity<ref>Matsumoto, Makoto, and Takuji Nishimura (1998) ACM Transactions on Modeling and Computer Simulation 8</ref>   The Mersenne twister generates higher-quality deviates than almost any LCG.{{Citation needed|date=December 2009}} A common Mersenne twister implementation, interestingly enough, uses an LCG to generate seed data.
+
+A [[Linear feedback shift register|Linear Feedback Shift Register]] PRNG can be implemented with essentially the same amount of memory and produces a stream of pseudorandom numbers with better randomness qualities{{Citation needed|date=April 2010}} when considering streams of bits, albeit with a bit more computation.
+
+==See also==
+* [[Full cycle]]
+* [[Inversive congruential generator]]
+* [[Multiply-with-carry]]
+* [[Lehmer RNG]] (sometimes called the [[Park-Miller RNG]])
+
+==Notes==
+{{Reflist|2}}
+
+==References==
+<references/>
+* {{cite journal | author = S.K. Park and K.W. Miller |title=Random Number Generators: Good Ones Are Hard To Find |journal=[[Communications of the ACM]] |year=1988 |volume=31 |issue=10 |pages=1192–1201 |url=http://portal.acm.org/citation.cfm?id=63042 |doi=10.1145/63039.63042}}
+* [[Donald Knuth|D. E. Knuth]]. ''The Art of Computer Programming'', Volume 2: ''Seminumerical Algorithms'', Third Edition. Addison-Wesley, 1997. ISBN 0-201-89684-2. Section 3.2.1: The Linear Congruential Method, pp. 10&ndash;26.
+* {{cite journal |author=P. L'Ecuyer |title=Tables of Linear Congruential Generators of Different Sizes and Good Lattice Structure |journal=[[Mathematics of Computation]] |volume=68 |issue=225 |pages=249&ndash;260 |year=1999 |url=http://citeseer.ist.psu.edu/132363.html |doi=10.1090/S0025-5718-99-00996-5}}
+* Press, William H., ''et al.'' (1992). ''[[Numerical Recipes]] in Fortran 77: The Art of Scientific Computing'', 2nd edition. ISBN 0-521-43064-X.
+*Gentle, James E., (2003). ''Random Number Generation and Monte Carlo Methods'', 2nd edition , Springer, ISBN 0-387-00178-6.
+* {{cite journal |author=Joan Boyar |title=Inferring sequences produced by pseudo-random number generators |journal=[[Journal of the ACM]] |year=1989 |volume=36 |issue=1 |pages=129–141 |url=http://portal.acm.org/citation.cfm?id=59305&dl=ACM&coll=portal |doi=10.1145/58562.59305}} (in this paper, efficient algorithms are given for inferring sequences produced by certain pseudo-random number generators).
+
+==External links==
+* The simulation [http://www.vias.org/simulations/simusoft_lincong.html Linear Congruential Generator] visualizes the correlations between the pseudo-random numbers when manipulating the parameters.
+* [http://www.cs.virginia.edu/~rjg7v/annotated.html Security of Random Number Generation: An Annotated Bibliography]
+* [http://www.math.niu.edu/~rusin/known-math/99/LCG Linear Congruential Generators post to sci.math]
+* [http://www.goldsteintech.com/art/deathofart.html The "Death of Art" computer art project at Goldstein Technologies LLC, uses an LCG to generate 33,554,432 images]
+* [http://www.iro.umontreal.ca/~lecuyer/myftp/papers/testu01.pdf  P. L'Ecuyer and R. Simard, ``TestU01: A C Library for Empirical Testing of Random Number Generators'', May 2006, Revised November 2006, ACM Transactions on Mathematical Software, 33, 4, Article 22, August 2007.]
+* [http://www.paragarora.com/2010/03/additive-congruential-method-maths-and-logic-behind-its-spread/ Additive Congruential Method : maths and logic behind its spread ]
+
+[[Category:Pseudorandom number generators]]
+[[Category:Modular arithmetic]]
+
+[[cs:Lineární kongruentní generátor]]
+[[de:Kongruenzgenerator]]
+[[fr:Générateur congruentiel linéaire]]
+[[ko:선형 합동 생성기]]
+[[it:Generatore lineare congruenziale]]
+[[nl:Lineaire congruentiegenerator]]
+[[ja:線形合同法]]
+[[ru:Линейный конгруэнтный метод]]
+[[sv:Linjär kongruensgenerator]]
+[[zh:線性同餘方法]]</body> </html>

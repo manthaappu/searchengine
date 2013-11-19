@@ -1,0 +1,146 @@
+<html> <head> <title>Dbfree</title></head><body>'''DBFree''' is a [[free software]] package for [[Microsoft Windows]] (x32/x64) that includes a [[web server]] and an [[Interpreter (computing)|interpreter]] ([[Maxscript]]) intended for developing [[web application]]s based on the [[xBase]] language dialect and conventions.
+*Web applications built with DBFree are built around [[dynamic web page]]s (identified by the '''.msp''' extension, that is automatically recognized by the interpreter, and parsed line-by-line in search of [[xBase]] code embedded between '''<%''' and '''%>''' markers).
+*Anytime valid xBase code is found is processed by the interpreter, and the results of its logic (in form of [[plain text]]) are embedded in the exact position where the code was found.
+*This realizes true ''[[server-side scripting]]'' because the original code is never passed back to [[browser]], and all the calculations are done on the web server host.
+*[[HTML]], [[Javascript]] and xBase code can be merged seamlessly. Because the interpretation is taken ''before'' to pass the page to browser, xBase code can be used to feed Javascript functions with live data, in response to different contexts or conditions.
+*Database support is built-in into the interpreter, thus no other software is needed to feed data to [[web page]]s; the default drivers provided with installation package give access to standard [[dBASE|DBF]] tables (level 3) used by dBase III.
+Other commercial drivers are available, including [[Clipper (programming language)|Clipper]], [[FoxPro]], visual dBase and [[Open Database Connectivity|ODBC]], but not included. Tables in use by the web application can be accessed via internet from remote clients using web browser concurrently with users using other software capable to manage the DBF file format on the LAN side, like the latest versions of [http://www.dbase.com dBase Plus].
+*Web pages can also be written using dBase syntax, although in both cases (Clipper 87 or dBase syntax) only commands that make sense in the specific environment of a web page are recognized.Commands include logic branching with IF..ENDIF, looping with DO..WHILE, FOR..NEXT and DO CASE..ENDCASE. MaxScript commands and functions give complete access to host's file system with SET ALTERNATE or memoread() and memowrite() functions. The webserver (being the preconfigured [[Xitami]] or the optional [[Apache server|Apache]]) can be accessed programmatically modifying their initialization file and launching batch files with appropriate links.
+*DBFree is derived from [http://www.maxsis.it Maxsis] commercial product [http://www.dbmax.it DBMax] and maintained by volunteers sponsored by the original producers.
+
+==Programming in MaxScript==
+*All [[Maxscript]] instructions must be contained between <% and %> tags. Pages to be interpreted must have the .msp extension.
+*All pages are to be written in plain text using a text editor (or specialized web authoring tools).
+
+A simple ''hello world'' application:
+<syntaxhighlight lang="text">
+
+<html>
+
+<body>
+
+Hello World! Time is <% ? time()%> 
+
+</body>
+
+</html>
+
+</syntaxhighlight>
+
+Another example: a FOR..NEXT loop:
+<syntaxhighlight lang="text">
+
+<html><body>
+<p>These are the days of the week:<br>
+<%
+declare aDays(7)  //-- declaring an array of 7 elements
+for iii = 1 to alen(aDays)
+   aDays[iii] := cdow(iii)  //-- assigning name of the day (string) to array element
+   ? aDays[iii] + "<br>"    //-- printing list to web page
+next
+%></p>
+</body></html>
+
+</syntaxhighlight>
+
+Another example: using a DBF table:
+<syntaxhighlight lang="text">
+
+<html><body>
+<p>Listing content of table CUSTOMERS.DBF:<hr>
+<%
+use CUSTOMERS index CUSTOMERS_BY_NAME key CUST_NAME
+go top
+do while not eof()
+   ? recno() | CUST_NAME | CUST_ADDR | CITY | STATE html
+   skip
+enddo
+close CUSTOMERS
+%>
+<br>
+</body></html>
+
+</syntaxhighlight>
+
+==MaxScript's DBFree implementation==
+DBFree offers a triple choice to programming with MaxScript: 
+*Standard style
+*Ajax mode
+*MaxObjects.
+All these techniques can easily coexist in the same application: must be noticed that the standard CGI style can be considered a first step to Ajax mode, that is its natural evolution.
+
+==Standard Style==
+The standard CGI programming style is typical of plain MaxScript code, offering maximum backward compatibility with Clipper and Xbase existing code.
+This programming approach consists into dividing all application logic into single tasks, where almost each operation is demanded to a specific pair of pages,  one containing the HTML code for collecting user inputs (with a web form) and the sibling containing the MaxScript code for processing the data submitted by the form.
+
+Main advantages of CGI-style programming:
+*Does not depend from external libraries, so pages load faster
+*Web forms are presented into static HTML pages relieving the CPU workload 
+*Code is clearer to read while all links are hardcoded into the pages
+*Development is simple and can be done just using a browser with editing tools (like Firefox) because the code for each task is clearly isolated
+
+Some notably disadvantages:
+*The web applications tends to have lot of pages (thus becomes more complex to maintain)
+*Development can be very tedious because of the higher number of pages to code and the exponential complexity of the resulting web site
+*Without libraries most of MaxScript advanced functions won't be available
+*Modularity (reusability of code) is greatly reduced while most of the code refer to fixed locations on host
+*Every action requires the page to be reloaded (and this can be annoying for the user), even if in most cases using Javascript along with MaxScript can mitigate this inconvenience
+
+==Ajax mode==
+Javascript can be of great help into moving part of workload from server to user's CPU. It can also add lot of interactivity to web pages, especially if the user's browser supports Ajax asynchronous operations.
+
+Using Ajax most of the reloads typical of Standard Style programming can be avoided: more over, performances are greatly enhanced, because of caching mechanisms of modern webservers, with only a minor impact on server's CPU workload.
+Incorporating Ajax consists mainly into redesigning the user interface so to have a clear division inside the page from static elements and dynamics ones.
+
+Static element (that can be either HTML forms or HTML links) remain untouched inside the page, while dynamics elements (like <div> elements) and not the page itself become the target of  MaxScript calculations, and are going to be updated "in place" without reloading the page.
+With this programming style there is a single static web page (hosting all the necessary user interface)  that drives the action, calling several active pages, each one providing only the results of data extraction or manipulation done in the background.
+
+Main advantages of Ajax mode programming:
+*Results of data extractions can be shown while user is typing
+*HTML grids can be made interactive, with "in place editing"
+
+Some notable disadvantages:
+*A good understanding of Javascript is required
+*Debugging can be very difficult because it is not always clear what a certain page does (and how).
+*FrontPage and other visual development tools get "fouled" by this technique (you will have a lot in "code view" not "design view")
+*Ajax is a feature of the browser, not of the server. Anyway today almost every computer browser around supports Ajax. 
+
+Adopting Ajax with MaxScript should be accompanied with adoption of Json notation.
+
+==MaxObjects==
+MaxObjects are active pages written in MaxScript just like all other active pages we've seen so far, with some notably exceptions:
+*MaxObjects expects parameters
+*MaxObjects are recursive (they repeatedly call themselves)
+*MaxObjects can respond to the caller performing specific actions (usually MaxScript calculations)
+
+MaxObjects can be considered the web counterpart of the "objects" of an Object Oriented Language.
+
+MaxObjects are standard MaxScript pages with specific structure that permits recursive calls of the page itself.
+Even if MaxObjects can be built with plain MaxScript classic code, DBFree offers specific libraries to facilitate this task.
+In theory a complete web application can be implemented with a single, large MaxObject: this simple web application can consists in a web made of a single web page that is loaded at the beginning without parameters and that stands waiting for user inputs to call itself after submission to react at the inputs.
+
+MaxObjects' main advantages:
+*MaxObjects can be implemented so to be shared between different applications through the use of parameterization
+*There is no need to know the internal mechanisms of a MaxObject to make use of it: it is enough to provide the necessary documentation of necessary parameters
+*MaxObjects can include thousands of lines of code without any impact on performances: only the branch of code relevant to parameters passed is executed
+*MaxObjects may call other MaxObjects in a circular way taking advantage of webserver caching mechanisms
+*Reusability of code: pieces of code can be easily moved from an object to another (providing they all use the same libraries and headers) 
+
+==DBFree and mobiles==
+MaxScript is well suited for developing data-centric web application for mobiles. Writing such applications is considerably simplified by the extreme compactness of the pages for mobiles when unburdened from HTML beautifying code.
+Anyway must be noticed that while developing for mobile the Ajax-style is generally not supported.
+
+==See also==
+* [[xBase]]
+* [[maxscript]]
+* [[DBF]]
+
+==External links==
+*[http://www.dbfree.org DBFree official site]
+*[http://www.clicketyclick.dk/databases/xbase/format/index.html Xbase (and dBase) File Format Description]
+*[http://www.dbase.com Current dBASE product]
+
+[[Category:Web development]]
+[[Category:XBase programming language family]]
+[[Category:Proprietary database management systems]]
+[[Category:Microcomputer software]]</body> </html>

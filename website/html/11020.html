@@ -1,0 +1,107 @@
+<html> <head> <title>Double dispatch</title></head><body>{{Polymorphism}}
+In [[software engineering]], '''double dispatch''' is a special form of [[multiple dispatch]], and a mechanism that dispatches a function call to different concrete functions depending on the runtime types of two objects involved in the call. In most [[object-oriented]] systems, the concrete function that is called from a function call in the code depends on the dynamic type of a single object and therefore they are known as single dispatch calls, or simply [[virtual function]] calls.
+
+==Examples==
+Double dispatch is useful in situations where the choice of computation depends on the runtime types of its arguments. For example, a programmer could use double dispatch in the following situations:
+* ''Adaptive collision algorithms'' usually require that collisions between different objects are handled in different ways. A typical example is in a game environment where the collision between a spaceship and an asteroid will be computed differently than the collision between a spaceship and a spacestation<ref>More Effective C++ by Scott Meyers(Addison-Wesley, 1996)</ref>.
+* ''Painting algorithms'' that shade different types of 2-D [[sprite (computer graphics)|sprites]] that may overlap require that we render the intersection points of these sprites in a different manner.
+* ''Personnel management'' systems may ''dispatch'' different types of jobs to different personnel. A <code>schedule</code> algorithm passed a person object typed as an accountant and a job typed as engineering will reject the scheduling of that person for that job.
+* ''Event handling'', where the appropriate handling routine to call depends on both the event type and the type of the receptor object.
+* [[Keyboard (computing)|Keyboard handling]], where [[ASCII]] key values map to specific [[subroutine]]s
+
+==A common idiom==
+The common idiom in the examples presented above, is that the selection of the appropriate algorithm is based on the call's argument types at runtime. The call is therefore subject to all the usual additional performance costs that are associated with dynamic resolution of calls, usually more than in a language supporting only single method dispatch. In [[C++]], for example, a dynamic function call is usually resolved by a ''single'' [[Offset (computer science)|offset]] calculation - which is possible because the compiler knows the location of the function in the object's [[virtual method table|method table]] and so can statically calculate the offset. In a language supporting ''double'' dispatch, this is slightly more costly, because the compiler must generate code to calculate the method's offset in the method table at runtime, thereby increasing the overall [[instruction path length]] (by an amount that is likely to be no more than the total number of calls to the function, which may not be very significant).
+
+==Double dispatch is more than function overloading==<!-- This section is linked from [[Visitor pattern]] -->
+At first glance, double dispatch appears to be a natural result of [[function overloading]]. Function overloading allows the function called to depend on the type of the argument.  Function overloading however is done at compile time using something called [[Name_mangling|"name mangling"]] where the internal name of the function has the argument's type encoded in it.  So for example function foo(int) would internally be called "__foo_i" and function foo() would be called "__foo_v" ("v" for void).  So there is no runtime overhead because there is no name collision and calling an overloaded function goes through at most one virtual table just like any other function. Dynamic dispatch is only based on the type of the calling object. Consider the following example, written in [[C++]], of collisions in a game:
+<source lang="cpp">
+class SpaceShip {};
+class GiantSpaceShip : public SpaceShip {};
+
+class Asteroid {
+public:
+  virtual void CollideWith(SpaceShip&) {
+    cout << "Asteroid hit a SpaceShip" << endl;
+  }
+  virtual void CollideWith(GiantSpaceShip&) {
+    cout << "Asteroid hit a GiantSpaceShip" << endl;
+  }
+};
+
+class ExplodingAsteroid : public Asteroid {
+public:
+  virtual void CollideWith(SpaceShip&) {
+    cout << "ExplodingAsteroid hit a SpaceShip" << endl;
+  }
+  virtual void CollideWith(GiantSpaceShip&) {
+    cout << "ExplodingAsteroid hit a GiantSpaceShip" << endl;
+  }
+};
+</source>
+If you have
+<source lang="cpp">
+Asteroid theAsteroid;
+SpaceShip theSpaceShip;
+GiantSpaceShip theGiantSpaceShip;
+</source>
+then, because of function overloading,
+<source lang="cpp">
+theAsteroid.CollideWith(theSpaceShip); 
+theAsteroid.CollideWith(theGiantSpaceShip); 
+</source>
+will print <code>Asteroid hit a SpaceShip</code> and <code>Asteroid hit a GiantSpaceShip</code> respectively, without using any dynamic dispatch. Furthermore
+<source lang="cpp">
+ExplodingAsteroid theExplodingAsteroid;
+theExplodingAsteroid.CollideWith(theSpaceShip); 
+theExplodingAsteroid.CollideWith(theGiantSpaceShip);
+</source> 
+will print <code>ExplodingAsteroid hit a SpaceShip</code> and <code>ExplodingAsteroid hit a GiantSpaceShip</code> respectively, again without dynamic dispatch.
+
+With a reference to an <code>Asteroid</code>, dynamic dispatch is used and
+<source lang="cpp">
+Asteroid& theAsteroidReference = theExplodingAsteroid;
+theAsteroidReference.CollideWith(theSpaceShip); 
+theAsteroidReference.CollideWith(theGiantSpaceShip);
+</source>
+prints <code>ExplodingAsteroid hit a SpaceShip</code> and <code>ExplodingAsteroid hit a GiantSpaceShip</code>, again as expected. However,
+<source lang="cpp">
+SpaceShip& theSpaceShipReference = theGiantSpaceShip;
+theAsteroid.CollideWith(theSpaceShipReference);
+theAsteroidReference.CollideWith(theSpaceShipReference);
+</source>
+prints <code>Asteroid hit a SpaceShip</code> and <code>ExplodingAsteroid hit a SpaceShip</code>, neither of which is correct. The problem is that, while virtual functions are dispatched dynamically in C++, function overloading is done statically.
+
+===Double dispatch in C++===
+The problem described above can be resolved by [[simulating]] double dispatch, for example by using a [[visitor pattern]]. Suppose <code>SpaceShip</code> and <code>GiantSpaceShip</code> both have the function
+<source lang="cpp">
+virtual void CollideWith(Asteroid& inAsteroid) {
+  inAsteroid.CollideWith(*this);
+}
+</source>
+Then, while the previous example still does not work correctly, the following does:
+<source lang="cpp">
+SpaceShip& theSpaceShipReference = theGiantSpaceShip;
+Asteroid& theAsteroidReference = theExplodingAsteroid;
+theSpaceShipReference.CollideWith(theAsteroid);
+theSpaceShipReference.CollideWith(theAsteroidReference);
+</source>
+It prints out <code>Asteroid hit a GiantSpaceShip</code> and <code>ExplodingAsteroid hit a GiantSpaceShip</code>, as expected. The key is that <code>theSpaceShipReference.CollideWith(theAsteroidReference);</code> does the following at run time:
+# <code>theSpaceShipReference</code> is a reference, so C++ looks up the correct method in the vtable. In this case, it will call <code>GiantSpaceShip::CollideWith(Asteroid&)</code>.
+# Within <code>GiantSpaceShip::CollideWith(Asteroid&)</code>, <code>inAsteroid</code> is a reference, so <code>inAsteroid.CollideWith(*this)</code> will result in ''another vtable lookup''. In this case, <code>inAsteroid</code> is a reference to an <code>ExplodingAsteroid</code> so <code>ExplodingAsteroid::CollideWith(GiantSpaceShip&)</code> will be called.
+
+==See also==
+* [[Visitor pattern]]
+* [[Multiple dispatch]]
+* [[Virtual table]]
+* [http://www.javaperformancetuning.com/articles/ddispatch.shtml Double dispatch in java and an example]
+
+==References==
+{{Reflist}}
+{{Refimprove|article|date=August 2008}}
+
+{{DEFAULTSORT:Double Dispatch}}
+[[Category:Software design patterns]]
+[[Category:Object-oriented programming]]
+[[Category:Articles with example C++ code]]
+
+[[ja:ダブルディスパッチ]]</body> </html>

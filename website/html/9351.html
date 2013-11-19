@@ -1,0 +1,197 @@
+<html> <head> <title>Data compression</title></head><body>{{redirect|Source coding|the term in computer programming|Source code}}
+
+In [[computer science]] and [[information theory]], '''data compression''' or '''source coding''' is the process of [[encoding]] [[information]] using fewer [[bit]]s (or other information-bearing units) than an [[code|unencoded]] representation would use, through use of specific [[encoding]] schemes.
+
+In computing, [[data deduplication]] is a specialized data compression technique for eliminating coarse-grained redundant data, typically to improve storage utilization.
+
+Compression is useful because it helps reduce the consumption of expensive resources, such as [[hard disk]] space or transmission [[bandwidth (computing)|bandwidth]]. On the downside, compressed data must be decompressed to be used, and this extra processing may be detrimental to some applications. For instance, a compression scheme for video may require expensive hardware for the video to be decompressed fast enough to be viewed as it is being decompressed (the option of decompressing the video in full before watching it may be inconvenient, and requires storage space for the decompressed video). The design of data compression schemes therefore involves trade-offs among various factors, including the degree of compression, the amount of distortion introduced (if using a [[lossy data compression|lossy compression scheme]]), and the computational resources required to compress and uncompress the data.
+
+== Lossless versus lossy compression ==
+{{main|Lossless data compression|lossy data compression}}
+[[Lossless data compression|Lossless]] compression algorithms usually exploit statistical redundancy in such a way as to represent the sender's data more concisely without error. Lossless compression is possible because most real-world data has statistical redundancy. For example, in English text, the letter 'e' is much more common than the letter 'z', and the probability that the letter 'q' will be followed by the letter 'z' is very small. 
+Another kind of compression, called ''[[lossy data compression]]'' or [[perceptual coding]], is possible if some loss of [[fidelity]] is acceptable.  Generally, a lossy data compression will be guided by research on how people perceive the data in question.  For example, the human eye is more sensitive to subtle variations in [[luminance]] than it is to variations in color.  [[JPEG]] image compression works in part by "rounding off" some of this less-important information.  Lossy data compression provides a way to obtain the best fidelity for a given amount of compression.  In some cases, ''transparent'' (unnoticeable) compression is desired; in other cases, fidelity is sacrificed to reduce the amount of data as much as possible.
+
+Lossless compression schemes are reversible so that the original data can be reconstructed, while lossy schemes accept some loss of data in order to achieve higher compression.
+
+However, lossless data compression algorithms will always fail to compress some files; indeed, any compression algorithm will necessarily fail to compress any data containing no discernible patterns. Attempts to compress data that has been compressed already will therefore usually result in an expansion, as will attempts to compress all but the most trivially [[encryption|encrypted]] data.
+
+In practice, lossy data compression will also come to a point where compressing again does not work, although an extremely lossy algorithm, like for example always removing the last byte of a file, will always compress a file up to the point where it is empty.
+
+An example of lossless vs. lossy compression is the following string:
+:25.888888888
+This string can be compressed as:
+:25.[9]8
+
+Interpreted as, "twenty five point 9 eights", the original string is perfectly recreated, just written in a smaller form. In a lossy system, using 
+:26
+
+instead, the exact original data is lost, at the benefit of a shorter representation.
+
+== Example algorithms and applications ==
+The above is a very simple example of [[run-length encoding]], wherein large runs of consecutive identical data values are replaced by a simple code with the data value and length of the run. This is an example of lossless data compression. It is often used to optimize disk space on office computers, or better use the connection [[bandwidth compression|bandwidth]] in a [[computer network]]. For symbolic data such as spreadsheets, text, [[executable compression|executable programs]], etc., losslessness is essential because changing even a single bit cannot be tolerated (except in some limited cases).
+
+For visual and audio data, some loss of quality can be tolerated without losing the essential nature of the data. By taking advantage of the limitations of the human sensory system, a great deal of space can be saved while producing an output which is nearly indistinguishable from the original. These lossy data compression methods typically offer a three-way tradeoff between compression speed, compressed data size and quality loss.
+
+=== Lossy ===
+
+Lossy [[image compression]] is used in [[digital camera]]s, to increase storage capacities with minimal degradation of picture quality. Similarly, [[DVD]]s use the lossy [[MPEG-2]] [[Video codec]] for [[video compression]].
+
+In lossy [[audio compression (data)|audio compression]], methods of [[psychoacoustics]] are used to remove non-audible (or less audible) components of the [[Audio signal processing|signal]]. Compression of human speech is often performed with even more specialized techniques, so that "[[Speech encoding|speech compression]]" or "voice coding" is sometimes distinguished as a separate discipline from "audio compression". Different audio and speech compression standards are listed under [[audio codec]]s. Voice compression is used in [[Internet telephony]] for example, while audio compression is used for CD ripping and is decoded by audio players.
+
+=== Lossless ===
+The [[Lempel-Ziv]] (LZ) compression methods are among the most popular algorithms for lossless storage. [[DEFLATE (algorithm)|DEFLATE]] is a variation on LZ which is optimized for decompression speed and compression ratio, therefore compression can be slow. DEFLATE is used in [[PKZIP]], [[gzip]] and [[Portable Network Graphics|PNG]]. [[LZW]] (Lempel-Ziv-Welch) is used in GIF images. Also noteworthy are the LZR (LZ-Renau) methods, which serve as the basis of the Zip method. LZ methods utilize a table-based compression model where table entries are substituted for repeated strings of data. For most LZ methods, this table is generated dynamically from earlier data in the input. The table itself is often [[Huffman coding|Huffman encoded]] (e.g. SHRI, LZX).
+A current LZ-based coding scheme that performs well is [[LZX (algorithm)|LZX]], used in Microsoft's [[cabinet (file format)|CAB]] format.
+
+The very best compressors use [[Probabilistic algorithm|probabilistic]] models, in which predictions are coupled to an algorithm called [[arithmetic coding]]. Arithmetic coding, invented by [[Jorma Rissanen]], and turned into a practical method by Witten, Neal, and Cleary, achieves superior compression to the better-known Huffman algorithm, and lends itself especially well to adaptive data compression tasks where the predictions are strongly context-dependent. Arithmetic coding is used in the bilevel image-compression standard [[JBIG]], and the document-compression standard [[DjVu]]. The text ''entry'' system, [[Dasher]], is an inverse-arithmetic-coder.
+
+== Theory ==
+The theoretical background of compression is provided by [[information theory]] (which is closely related to [[algorithmic information theory]]) for lossless compression, and by [[rate–distortion theory]] for lossy compression.  These fields of study were essentially created by [[Claude Shannon]], who published fundamental papers on the topic in the late 1940s and early 1950s. [[Cryptography]] and [[coding theory]] are also closely related.  The idea of data compression is deeply connected with [[statistical inference]].
+
+Many lossless data compression systems can be viewed in terms of a four-stage model. Lossy data compression systems typically include even more stages, including, for example, prediction, frequency transformation, and quantization.
+
+=== Machine learning ===
+{{see also|Machine learning}}
+There is a close connection between [[machine learning]] and compression: a system that predicts the posterior probabilities of a sequence given its entire history can be used for optimal data compression (by using arithmetic coding on the output distribution), while an optimal compressor can be used for prediction (by finding the symbol that compresses best, given the previous history).  This equivalence has been used as justification for data compression as a benchmark for "general intelligence".<ref>[http://cs.fit.edu/~mmahoney/compression/rationale.html Rationale for a Large Text Compression Benchmark]</ref>
+
+=== Data differencing ===
+{{main|Data differencing}}
+Data compression can be seen as a special case of [[data differencing]]<ref>RFC 3284</ref><ref>{{Citation | first1=D.G. | last1 = Korn | first2 = K.P. |last2=Vo |title=Vdelta: Differencing and Compression | series=Practical Reusable Unix Software | editor = B. Krishnamurthy | publisher=[[John Wiley & Sons]] | year = 1995}}</ref> – data differencing consists of producing a ''difference'' given a ''source'' and a ''target'', with patching producing a ''target'' given a ''source'' and a ''difference,'' while data compression consists of producing a compressed file given a target, and decompression consists of producing a target given only a compressed file. Thus, one can consider data compression as data differencing with empty source data, the compressed file corresponding to a "difference from nothing". This is the same as considering absolute [[entropy (information theory)|entropy]] (corresponding to data compression) as a special case of [[relative entropy]] (corresponding to data differencing) with no initial data.
+
+When one wishes to emphasize the connection, one may use the term '''[[differential compression]]''' to refer to data differencing.
+
+==See also==
+=== Data compression topics===
+<div style="-moz-column-count:2; column-count:2;">
+* [[Algorithmic complexity theory]]
+* [[Information entropy]]
+* [[Self-extracting archive]]
+* [[Image compression]]
+* [[Speech coding]]
+* [[Video compression]]
+* [[Multimedia compression]]
+* [[Minimum description length]]
+* [[Minimum message length]] (two-part lossless compression designed for inference)
+* [[List of archive formats]]
+* [[Comparison of file archivers]]
+* [[List of Unix programs]]
+* [[Free file format]]
+* [[HTTP compression]]
+* [[Magic compression algorithm]]
+* [[Data compression symmetry]]
+* [[Dyadic distribution]]
+</div>
+
+=== Compression algorithms ===
+==== Lossless data compression ====
+* [[Data deduplication]]
+* [[run-length encoding]]
+* [[dictionary coder]]s
+** [[LZ77|LZ77 & LZ78]]
+** [[LZW]]
+* [[Burrows-Wheeler transform]]
+* [[prediction by partial matching]] (also known as PPM)
+* [[context mixing]]
+* [[Dynamic Markov Compression]] (DMC)
+* [[entropy encoding]]
+** [[Huffman coding]] (simple entropy coding; commonly used as the final stage of compression)
+*** [[Adaptive Huffman coding]]
+*** [[Shannon-Fano coding]]
+** [[arithmetic coding]] (more advanced)
+*** [[range encoding]] (same as arithmetic coding, but looked at in a slightly different way)
+** [[Golomb coding]] (simple entropy coding for infinite input data with a [[geometric distribution]])
+** [[universal code (data compression)|universal code]]s (entropy coding for infinite input data with an arbitrary distribution)
+*** [[Elias gamma coding]]
+*** [[Fibonacci coding]]
+* Slepian-Wolf coding (SWC) (lossless [[distributed source coding]] (DSC))
+
+==== Lossy data compression ====
+* [[discrete cosine transform]]
+* [[fractal compression]]
+** [[fractal transform]]
+* [[wavelet compression]]
+* [[vector quantization]]
+* [[linear predictive coding]]
+* [[Modulo-N code|Modulo-N code for correlated data]]
+* [[A-law]] Compander
+* [[Mu-law]] Compander
+* Wyner-Ziv coding(WZC) (lossy [[Distributed source coding]](DSC))
+
+==== Example implementations ====
+* [[DEFLATE (algorithm)|DEFLATE]] (a combination of LZ77 and Huffman coding) &ndash; used by [[ZIP file format|ZIP]], [[gzip]] and [[Portable Network Graphics|PNG]] files
+* [[LZMA]] used by [[7-Zip]]
+* [[LZO]] (very fast LZ variation, speed oriented)
+* [[LZX (algorithm)|LZX]] (an LZ77 family compression algorithm)
+* [[liblzg]] (a minimal LZ77 based compression library)
+* [[Unix]] ''[[compress]]'' utility (the .Z file format), and [[Graphics Interchange Format|GIF]] use [[LZW]]
+* Unix ''[[pack (program)|pack]]'' utility (the .z file format) used [[Huffman coding]]
+* [[bzip2]] (a combination of the Burrows-Wheeler transform and Huffman coding)
+* [[PAQ]] (very high compression based on [[context mixing]], but extremely slow; competing in the top of the highest compression competitions)
+
+* [[JPEG]] (image compression using a discrete cosine transform, then quantization, then Huffman coding)
+* [[MPEG]] (audio and video compression standards family in wide use, using [[Discrete cosine transform|DCT]] and motion-compensated prediction for video)
+** [[MP3]] (a part of the [[MPEG-1]] standard for sound and music compression, using subbanding and [[Modified discrete cosine transform|MDCT]], perceptual modeling, quantization, and Huffman coding)
+** [[Advanced Audio Coding|AAC]] (part of the [[MPEG-2]] and [[MPEG-4]] audio coding specifications, using [[Modified discrete cosine transform|MDCT]], perceptual modeling, quantization, and Huffman coding)
+* [[Vorbis]] (DCT based AAC-alike audio codec, designed with a focus on avoiding patent encumbrance)
+* [[JPEG 2000]] (image compression using wavelets, then quantization, then entropy coding)
+* [[TTA (codec)|TTA]] (uses [[linear predictive coding]] for lossless audio compression)
+* [[Free Lossless Audio Codec|FLAC]] ([[linear predictive coding]] for lossless audio compression)
+
+=== Corpora ===
+Data collections, commonly used for comparing compression algorithms.
+* [[Canterbury Corpus]]
+* [[Calgary Corpus]]
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://www.cs.cmu.edu/afs/cs/project/pscico-guyb/realworld/www/compression.pdf Introduction to Data Compression] by Guy E Blelloch from [[Carnegie Mellon University|CMU]]
+
+{{Compression Methods}}
+{{Compression Formats}}
+{{Compression Software Implementations}}
+
+{{DEFAULTSORT:Data Compression}}
+[[Category:Data compression| ]]
+[[Category:Computer storage]]
+[[Category:Formal sciences]]
+
+[[als:Datenkompression]]
+[[ar:ضغط بيانات]]
+[[be-x-old:Сьцісканьне зьвестак]]
+[[bs:Sažimanje podataka]]
+[[bg:Компресиране на данни]]
+[[ca:Compressió de dades]]
+[[cs:Komprese dat]]
+[[da:Datakomprimering]]
+[[de:Datenkompression]]
+[[et:Andmete pakkimine]]
+[[el:Συμπίεση δεδομένων]]
+[[es:Compresión de datos]]
+[[fa:فشرده‌سازی داده‌ها]]
+[[fr:Compression de données]]
+[[ga:Comhbhrú sonraí]]
+[[ko:데이터 압축]]
+[[hr:Sažimanje podataka]]
+[[id:Kompresi data]]
+[[it:Compressione dei dati]]
+[[he:דחיסת נתונים]]
+[[lt:Glaudinimas]]
+[[hu:Adattömörítés]]
+[[ms:Mampatan data]]
+[[nl:Datacompressie]]
+[[ja:データ圧縮]]
+[[pl:Kompresja (informatyka)]]
+[[pt:Compressão de dados]]
+[[ro:Compresia datelor]]
+[[ru:Сжатие данных]]
+[[simple:Data compression]]
+[[sk:Kompresia dát]]
+[[sh:Kompresija podataka]]
+[[fi:Tiedonpakkaus]]
+[[sv:Datakompression]]
+[[th:การบีบอัดข้อมูล]]
+[[tr:Veri sıkıştırma]]
+[[uk:Стиснення даних]]
+[[ur:معطیاتی دابیت]]
+[[zh:数据压缩]]</body> </html>

@@ -1,0 +1,62 @@
+<html> <head> <title>Generalized context-free grammar</title></head><body>Generalized Context-free Grammar (GCFG) is a grammar formalism that expands on context-free grammars by adding potentially non-context free composition functions to rewrite rules.<ref name="weir1988">Weir, David H. 1988. Characterizing mildly context-sensitive grammar formalisms. Dissertation, U Penn.</ref> [[Head grammar]] (and its weak equivalents) is an instance of such a GCFG which is known to be especially adept at handling a wide variety of non-CF properties of natural language.
+
+==Description==
+
+A GCFG consists of two components: a set of composition functions that combine string tuples, and a set of rewrite rules. The composition functions all have the form <math>f(\langle x_1, ..., x_m \rangle, \langle y_1, ..., y_n \rangle, ...) = \gamma</math>, where <math>\gamma</math> is either a single string tuple, or some use of a (potentially different) composition function which reduces to a string tuple. Rewrite rules look like <math>X \to f(Y, Z, ...)</math>, where <math>Y</math>, <math>Z</math>, ... are string tuples or non-terminal symbols.
+
+The rewrite semantics of GCFGs is fairly straight forward. An occurrence of a non-terminal symbol is rewritten using rewrite rules as in a context-free grammar, eventually yielding just compositions (composition functions applied to string tuples or other compositions). The composition functions are then applied, reducing successively reducing the tuples to a single tuple.
+
+==Example==
+
+A simple translation of a context-free grammar into a GCFG can be performed in the following fashion. Given the grammar in (1), which generates the palindrome language <math>\{ ww^R : w \in \{a, b\}^{*} \}</math>, where <math>w^R</math> is the string reverse of <math>w</math>, we can define the composition function ''conc'' as in (2a) and the rewrite rules as in (2b).
+
+# <math>S \to \epsilon ~|~ aSa ~|~ bSb</math>
+#
+## <math>conc(\langle x \rangle, \langle y \rangle, \langle z \rangle) = \langle xyz \rangle</math>
+## <math> S \to conc(\langle \epsilon \rangle, \langle \epsilon \rangle, \langle \epsilon \rangle) ~|~ conc(\langle a \rangle, S, \langle a \rangle) ~|~ conc(\langle b \rangle, S, \langle b \rangle)</math>
+
+The CF production of ''abbbba'' is
+
+S
+
+aSa
+
+abSba
+
+abbSbba
+
+abbbba
+
+and the corresponding GCFG production is
+
+<math>S \to conc(\langle a \rangle, S, \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, conc(\langle b \rangle, S, \langle b \rangle), \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, conc(\langle b \rangle, conc(\langle b \rangle, S, \langle b \rangle), \langle b \rangle), \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, conc(\langle b \rangle, conc(\langle b \rangle, conc(\langle \epsilon \rangle, \langle \epsilon \rangle, \langle \epsilon \rangle), \langle b \rangle), \langle b \rangle), \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, conc(\langle b \rangle, conc(\langle b \rangle, \langle \epsilon \rangle, \langle b \rangle), \langle b \rangle), \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, conc(\langle b \rangle, \langle bb \rangle, \langle b \rangle), \langle a \rangle)</math>
+
+<math>conc(\langle a \rangle, \langle bbbb \rangle, \langle a \rangle)</math>
+
+<math>\langle abbbba \rangle</math>
+
+==Linear Context-free Rewriting Systems (LCFRSs)==
+
+Weir (1988)<ref name="weir1988" /> describes two properties of composition functions, linearity and regularity. A function defined as <math>f(x_1, ..., x_n) = ...</math> is linear if and only if each variable appears at most once on either side of the ''='', making <math>f(x) = g(x, y)</math> linear but not <math>f(x) = g(x, x)</math>. A function defined as <math>f(x_1, ..., x_n) = ...</math> is regular if the left hand side and right hand side have exactly the same variables, making <math>f(x, y) = g(y, x)</math> regular but not <math>f(x) = g(x, y)</math> or <math>f(x, y) = g(x)</math>.
+
+A grammar in which all composition functions are both linear and regular is called a Linear Context-free Rewriting System (LCFRS), a subset of the GCFGs with strictly less computational power than the GCFGs as a whole, which is weakly equivalent to multicomponent [[Tree adjoining grammar]]s. [[Head grammar]] is an example of an LCFRS that is strictly less powerful than the class of LCFRSs as a whole.
+
+==References==
+
+<references/>
+
+{{Formal languages and grammars}}
+
+{{DEFAULTSORT:Generalized Context-Free Grammar}}
+[[Category:Formal languages]]
+[[Category:Grammar frameworks]]</body> </html>

@@ -1,0 +1,699 @@
+<html> <head> <title>Serial presence detect</title></head><body>'''Serial presence detect''' ('''SPD''') refers to a standardized way to automatically access information about a [[random access memory|computer memory module]].  Earlier 72-pin [[SIMM]]s included 5 pins which provided 5 bits of ''parallel presence detect'' (PPD) data, but the 168-pin [[DIMM]] standard changed to a serial presence detect to encode much more information.<ref>{{Citation |url=http://findarticles.com/p/articles/mi_m0EKF/is_n2153_v43/ai_19102210/ |title=Serial Presence Detection poised for limelight |author1=Thomas P. Koenig |author2=Nathan John |journal=Electronic News |date=1997-02-03 |volume=43 |issue=2153}}</ref>
+
+When an ordinary modern computer is turned on, it starts by doing a [[power-on self-test]] (POST).  Since about the mid-1990s, this process includes automatically configuring the hardware currently present.  SPD is a memory hardware feature that makes it possible for the computer to know what memory is present, and what [[Dynamic random access memory#Memory_timing|timings]] to use to access the memory.
+
+Some computers adapt to hardware changes completely automatically.  In most cases, there is a special optional procedure for accessing [[BIOS]] parameters, to view and potentially make changes in settings.  It may be possible to control how the computer uses the memory SPD data—to choose which settings to use, to selectively modify the memory timings, or possibly to completely over-ride the SPD data (see [[overclocking]]).
+
+==Stored information==
+In order for a memory module to support SPD, the [[JEDEC]] standards require certain parameters to be placed in the lower 128 bytes of an [[EEPROM]] located on the memory module.  These bytes contain timing parameters, manufacturer, serial number and other useful information about the module.  This data allows a device utilizing the memory to automatically determine key parameters of the module.  For example, the SPD data on an [[SDRAM]] module might provide information about the [[CAS latency]], allowing this to be correctly set without user intervention.
+
+The SPD EEPROM is accessed using [[SMBus]], a variant of the [[I²C]] protocol.  This reduces the number of communication pins on the module to just two: a clock signal and a data signal.  The EEPROM shares ground pins with the RAM, has its own power pin, and has three additional pins (SA0–2) to identify the slot, which are used to assign the EEPROM a unique address in the range 0x50–0x57.  Not only can the communication lines be shared among 8 memory modules, the same SMBus is commonly used on motherboards for system health monitoring tasks such as reading power supply voltages, [[Central processing unit|CPU]] temperatures, and fan speeds.
+
+(SPD EEPROMs also respond to I²C addresses 0x30–0x37 if they have not been write protected, and an extension uses addresses 0x18–0x1F to access an optional on-chip temperature sensor.<ref>[http://www.jedec.org/download/search/4_01_04R18.pdf JEDEC Standard 21-C section 4.1.4] "Definition of the TSE2002av Serial Presence Detect (SPD) EEPROM with Temperature Sensor (TS) for Memory Module Applications"</ref>)
+
+===SDR SDRAM===
+[[File:SPD SDRAM.jpg|thumb|Memory device onto an [[SDRAM]] module, containing ''SPD'' data (red circled)]]
+The first SPD specification was issued by JEDEC and tightened up by Intel as part of its [[PC100]] memory specification.<ref>[http://www.memorytesters.com/ramcheck/rc_ap3.htm Application note INN-8668-APN3: SDRAM SPD Data Standards], memorytesters.com</ref>  Most values specified are in [[binary coded decimal]] form.  The most significant nibble can contain values from 10 to 15, and in some cases extends higher.  In such cases, the encodings for 1, 2 and 3 are instead used to encode 16, 17 and 18.  A most significant nibble of 0 is reserved to represent "undefined".
+
+The SPD ROM defines up to three DRAM timings, for three CAS latencies specified by set bits in byte 18.  First comes the highest CAS latency (fastest clock), then two lower CAS latencies with progressively lower clock speeds.
+{|class=wikitable
+|+ SPD contents for SDR SDRAM<ref name=spd_pc100>{{Citation |url=http://www.softnology.biz/pdf/SPDSDRAM1.2a.pdf |title=PC SDRAM Serial Presence Detect (SPD) Specification |date=December 1997 |version=1.2A |pages=28}}</ref>
+! Byte,d !! Byte,x !! b7 !! b6 !! b5 !! b4 !! b3 !! b2 !! b1 !! b0 !! Notes
+|-
+|  0 || 0x00 ||colspan=8| Number of bytes written || Typically 128
+|-
+|  1 || 0x01 ||colspan=8| log<sub>2</sub>(size of SPD EEPROM) || Typically 8 (256 bytes)
+|-
+|  2 || 0x02 ||colspan=8| Basic memory type (4 = SPD SDRAM) ||
+|-
+|  3 || 0x03 ||colspan=4| Bank 2 row address bits (0–15)  ||colspan=4| Bank 1 row address bits (1–15) || Bank 2 is 0 if same as bank 1.
+|-
+|  4 || 0x04 ||colspan=4| Bank 2 column address bits (0–15) ||colspan=4| Bank 1 column address bits (1–15)  || Bank 2 is 0 if same as bank 1.
+|-
+|  5 || 0x05 ||colspan=8| Number of RAM banks on module (1–255) ||Commonly 1 or 2
+|-
+|  6 || 0x06 ||colspan=8| Module data width low byte || Commonly 64, or 72 for ECC DIMMs
+|-
+|  7 || 0x07 ||colspan=8| Module data width high byte || Zero unless width ≥ 256 bits
+|-
+|  8 || 0x08 ||colspan=8| Interface voltage level of this assembly (not the same as V<sub>cc</sub> supply voltage) (0–4) || Decoded by table lookup
+|-
+|  9 || 0x09 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at highest CAS latency.
+|-
+| 10 || 0x0a ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || SDRAM access time from clock (t<sub>AC</sub>)
+|-
+| 11 || 0x0b ||colspan=8| DIMM configuration type (0–2): non-ECC, parity, ECC || Table lookup
+|-
+| 12 || 0x0c || Self ||colspan=7| Refresh period (0–5): 64, 256, 128, 32, 16, 8 kHz|| Refresh requirements
+|-
+| 13 || 0x0d || Bank 2 2× ||colspan=7 | Bank 1 primary SDRAM width (1–127, usually 8) || Width of bank 1 data SDRAM devices.  Bank 2 may be same width, or 2× width if bit 7 is set.
+|-
+| 14 || 0x0e || Bank 2 2× ||colspan=7 | Bank 1 ECC SDRAM width (0–127)|| Width of bank 1 ECC/parity SDRAM devices.  Bank 2 may be same width, or 2× width if bit 7 is set.
+|-
+| 15 || 0x0f ||colspan=8| Clock delay for random column reads || Typically 1
+|-
+| 16 || 0x10|| Page || — || — || — || 8 || 4 || 2 || 1 || Burst lengths supported (bitmap)
+|-
+| 17 || 0x11 ||colspan=8| Banks per SDRAM device (1–255) || Typically 2 or 4
+|-
+| 18 || 0x12 || — || 7 || 6 || 5 || 4 || 3 || 2 || 1 || {{overline|CAS}} latencies supported (bitmap)
+|-
+| 19 || 0x13 || — || 6 || 5 || 4 || 3 || 2 || 1 || 0 || {{overline|CS}} latencies supported (bitmap)
+|-
+| 20 || 0x14 || — || 6 || 5 || 4 || 3 || 2 || 1 || 0 || {{overline|WE}} latencies supported (bitmap)
+|-
+| 21 || 0x15 || — || Redundant || Diff clock || Registered data || Buffered data || On-card PLL || Registered Addr|| Buffered Addr || Memory module feature bitmap
+|-
+| 22 || 0x16 || — || — || Upper V<sub>cc</sub> (supply voltage) tolerance || Lower V<sub>cc</sub> (supply voltage) tolerance || Write/&#8203;1 Read Burst|| Precharge All || Auto-&#8203;precharge || Early {{overline|RAS}} precharge || Memory chip feature support bitmap
+|-
+| 23 || 0x17 ||colspan=4| Nanoseconds (4–18) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at medium CAS latency.
+|-
+| 24 || 0x18 ||colspan=4| Nanoseconds (4–18) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 25 || 0x19 ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Clock cycle time at short CAS latency.
+|-
+| 26 || 0x1a ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 27 || 0x1b ||colspan=8| Nanoseconds (1–255) || Minimum row precharge time (t<sub>RP</sub>)
+|-
+| 28 || 0x1c ||colspan=8| Nanoseconds (1–255) || Minimum row active–row active delay (t<sub>RRD</sub>)
+|-
+| 29 || 0x1d ||colspan=8| Nanoseconds (1–255) || Minimum {{overline|RAS}} to {{overline|CAS}} delay (t<sub>RCD</sub>)
+|-
+| 30 || 0x1e ||colspan=8| Nanoseconds (1–255) || Minimum active to precharge time (t<sub>RAS</sub>)
+|-
+| 31 || 0x1f || 512 MiB || 256 MiB || 128 MiB || 64 MiB || 32 MiB || 16 MiB || 8 MiB || 4 MiB || Module bank density (bitmap).  Two bits set if different size banks.
+|-
+| 32 || 0x20 || Sign (1=neg) || colspan=3| Nanoseconds (0–7) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Address/command setup time from clock
+|-
+| 33 || 0x21 || Sign (1=neg) || colspan=3| Nanoseconds (0–7) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Address/command hold time after clock
+|-
+| 34 || 0x22 || Sign (1=neg) || colspan=3| Nanoseconds (0–7) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Data input setup time from clock
+|-
+| 35 || 0x23 || Sign (1=neg) || colspan=3| Nanoseconds (0–7) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Data input hold time after clock
+|-
+| 36–61 || 0x24–0x3d ||colspan=8| ''Reserved'' || For future standardization
+|-
+| 62 || 0x3e ||colspan=4| Major revision (0–9) ||colspan=4| Minor revision (0.0–0.9) || SPD revision level, e.g. 1.2
+|-
+| 63 || 0x3f ||colspan=8| Checksum || Sum of bytes 0–62, ''not negated''
+|-
+| 64–71 || 0x40–47 ||colspan=8| Manufacturer JEDEC ID || Stored little-endian, trailing zero-pad.
+|-
+| 72 || 0x48 ||colspan=8| Module manufacturing location || Vendor-specific code
+|-
+| 73–90 || 0x49–0x5a ||colspan=8| Module part number || ASCII, space-padded
+|-
+| 91–92 || 0x5b–0x5c ||colspan=8| Module revision code || Vendor-specific code
+|-
+| 93 || 0x5d ||colspan=4| Tens of years (00–90) ||colspan=4| years (0–9) ||rowspan=2| Manufacturing date (YYWW)
+|-
+| 94 || 0x5e ||colspan=4| Tens of weeks (00–50) ||colspan=4| weeks (0–9)
+|-
+| 95–98 || 0x5f–0x62 ||colspan=8| Module serial number || Vendor-specific code
+|-
+| 99–125 || 0x63–0x7f ||colspan=8| Manufacturer-specific data || Could be enhanced performance profile
+|-
+| 126 || 0x7e ||colspan=8| 0x66{{sic}} for 66 MHz, 0x64 for 100 MHz || Intel frequency support
+|-
+| 127 || 0x7f || CLK0 || CLK1 || CLK3 || CLK3 || 90/100°C || CL3 || CL2 || Concurrent AP || Intel feature bitmap
+|}
+
+===DDR SDRAM===
+The DDR DIMM SPD format is an extension of the SDR SDRAM one.  Mostly, parameter ranges are rescaled to accommodate higher speeds.
+<!-- This table is a bit too big.  If you don't like it, please move it to the talk page. -->
+{|class=wikitable
+|+ SPD contents for DDR SDRAM<ref name=spd_ddr/>
+! Byte,d !! Byte,x !! b7 !! b6 !! b5 !! b4 !! b3 !! b2 !! b1 !! b0 !! Notes
+|-
+|  0 || 0x00 ||colspan=8| Number of bytes written || Typically 128
+|-
+|  1 || 0x01 ||colspan=8| log<sub>2</sub>(size of SPD EEPROM) || Typically 8 (256 bytes)
+|-
+|  2 || 0x02 ||colspan=8| Basic memory type (7 = DDR SDRAM) ||
+|-
+|  3 || 0x03 ||colspan=4| Bank 2 row address bits (0–15)  ||colspan=4| Bank 1 row address bits (1–15) || Bank 2 is 0 if same as bank 1.
+|-
+|  4 || 0x04 ||colspan=4| Bank 2 column address bits (0–15) ||colspan=4| Bank 1 column address bits (1–15)  || Bank 2 is 0 if same as bank 1.
+|-
+|  5 || 0x05 ||colspan=8| Number of RAM banks on module (1–255) ||Commonly 1 or 2
+|-
+|  6 || 0x06 ||colspan=8| Module data width low byte || Commonly 64, or 72 for ECC DIMMs
+|-
+|  7 || 0x07 ||colspan=8| Module data width high byte || Zero unless width ≥ 256 bits
+|-
+|  8 || 0x08 ||colspan=8| Interface voltage level of this assembly (not the same as V<sub>cc</sub> supply voltage) (0–5) || Decoded by table lookup
+|-
+|  9 || 0x09 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at highest CAS latency.
+|-
+| 10 || 0x0a ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || SDRAM access time from clock (t<sub>AC</sub>)
+|-
+| 11 || 0x0b ||colspan=8| DIMM configuration type (0–2): non-ECC, parity, ECC || Table lookup
+|-
+| 12 || 0x0c || Self ||colspan=7| Refresh period (0–5): 64, 256, 128, 32, 16, 8 kHz|| Refresh requirements
+|-
+| 13 || 0x0d || Bank 2 2× ||colspan=7 | Bank 1 primary SDRAM width (1–127) || Width of bank 1 data SDRAM devices.  Bank 2 may be same width, or 2× width if bit 7 is set.
+|-
+| 14 || 0x0e || Bank 2 2× ||colspan=7 | Bank 1 ECC SDRAM width (0–127)|| Width of bank 1 ECC/parity SDRAM devices.  Bank 2 may be same width, or 2× width if bit 7 is set.
+|-
+| 15 || 0x0f ||colspan=8| Clock delay for random column reads || Typically 1
+|-
+| 16 || 0x10|| Page || — || — || — || 8 || 4 || 2 || 1 || Burst lengths supported (bitmap)
+|-
+| 17 || 0x11 ||colspan=8| Banks per SDRAM device (1–255) || Typically 4
+|-
+| 18 || 0x12 || — || 4 || 3.5 || 3 || 2.5 || 2 || 1.5 || 1 || {{overline|CAS}} latencies supported (bitmap)
+|-
+| 19 || 0x13 || — || 6 || 5 || 4 || 3 || 2 || 1 || 0 || {{overline|CS}} latencies supported (bitmap)
+|-
+| 20 || 0x14 || — || 6 || 5 || 4 || 3 || 2 || 1 || 0 || {{overline|WE}} latencies supported (bitmap)
+|-
+| 21 || 0x15 || — || x || Diff clock || FET switch external enable || FET switch on-board enable || On-card PLL || Registered || Buffered || Memory module feature bitmap
+|-
+| 22 || 0x16 || Fast AP || Concurrent auto precharge || Upper V<sub>cc</sub> (supply voltage) tolerance || Lower V<sub>cc</sub> (supply voltage) tolerance || — || — || — || Includes weak driver || Memory chip feature bitmap
+|-
+| 23 || 0x17 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at medium CAS latency.
+|-
+| 24 || 0x18 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 25 || 0x19 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at short CAS latency.
+|-
+| 26 || 0x1a ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 27 || 0x1b ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Minimum row precharge time (t<sub>RP</sub>)
+|-
+| 28 || 0x1c ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Minimum row active–row active delay (t<sub>RRD</sub>)
+|-
+| 29 || 0x1d ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Minimum {{overline|RAS}} to {{overline|CAS}} delay (t<sub>RCD</sub>)
+|-
+| 30 || 0x1e ||colspan=8| Nanoseconds (1–255) || Minimum active to precharge time (t<sub>RAS</sub>)
+|-
+| 31 || 0x1f || 512 MiB || 256 MiB || 128 MiB || 64 MiB || 32 MiB || 16 MiB/<br />4 GiB || 8 MiB/<br />2 GiB || 4 MiB/<br />1 GiB || Module bank density (bitmap).  Two bits set if different size banks.
+|-
+| 32 || 0x20 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Address/command setup time from clock
+|-
+| 33 || 0x21 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Address/command hold time after clock
+|-
+| 34 || 0x22 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data input setup time from clock
+|-
+| 35 || 0x23 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data input hold time after clock
+|-
+| 36–40 || 0x24–0x28 ||colspan=8| ''Reserved'' || Superset information
+|-
+| 41 || 0x29 ||colspan=8| Nanoseconds (1–255) || Minimum active to active/refresh time (t<sub>RC</sub>)
+|-
+| 42 || 0x2a ||colspan=8| Nanoseconds (1–255) || Minimum refresh to active/refresh time (t<sub>RFC</sub>)
+|-
+| 43 || 0x2b ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Maximum clock cycle time (t<sub>CK</sub> max.)<br />If all-ones, there is no maximum.
+|-
+| 44 || 0x2c ||colspan=8| Hundredths of nanoseconds (0.01–2.55) || Maximum skew, DQS to any DQ. (t<sub>DQSQ</sub> max.)
+|-
+| 45 || 0x2d ||colspan=4| Tenths of nanoseconds (0.0–1.2) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Read data hold skew factor (t<sub>QHS</sub>)
+|-
+| 46 || 0x2e ||colspan=8| ''Reserved'' || For future standardization
+|-
+| 47 || 0x2f ||colspan=6| — ||colspan=2| Height || Height of DIMM module, table lookup
+|-
+| 48–61 || 0x30–0x3d ||colspan=8| ''Reserved'' || For future standardization
+|-
+| 62 || 0x3e ||colspan=4| Major revision (0–9) ||colspan=4| Minor revision (0.0–0.9) || SPD revision level, 0.0 or 1.0
+|-
+| 63 || 0x3f ||colspan=8| Checksum || Sum of bytes 0–62, ''not negated''
+|-
+| 64–71 || 0x40–47 ||colspan=8| Manufacturer JEDEC ID || Stored little-endian, trailing zero-pad.
+|-
+| 72 || 0x48 ||colspan=8| Module manufacturing location || Vendor-specific code
+|-
+| 73–90 || 0x49–0x5a ||colspan=8| Module part number || ASCII, space-padded
+|-
+| 91–92 || 0x5b–0x5c ||colspan=8| Module revision code || Vendor-specific code
+|-
+| 93 || 0x5d ||colspan=4| Tens of years (00–90) ||colspan=4| years (0–9) ||rowspan=2| Manufacturing date (YYWW)
+|-
+| 94 || 0x5e ||colspan=4| Tens of weeks (00–50) ||colspan=4| weeks (0–9)
+|-
+| 95–98 || 0x5f–0x62 ||colspan=8| Module serial number || Vendor-specific code
+|-
+| 99–127 || 0x63–0x7f ||colspan=8| Manufacturer-specific data || Could be enhanced performance profile
+|}
+
+===DDR2 SDRAM===
+The DDR2 SPD standard makes a number of changes, but is roughly similar to the above.  One useful thing it deletes is the confusing and little-used support for DIMMS with two ranks of different sizes.  For cycle time fields (bytes 9, 23, 25 and 49) which are encoded in [[Binary-coded decimal|BCD]], some additional encodings are defined for the last digit to represent some common timings exactly:
+{|class=wikitable
+! Hex !! Binary !! Significance
+|-
+| A || 1010 || 0.25
+|-
+| B || 1011 || 0.33
+|-
+| C || 1100 || 0.66
+|-
+| D || 1101 || 0.75
+|-
+| ''E'' || ''1110'' || ''0.875 (nVidia XMP extension)''
+|-
+| F || 1111 || ''Reserved, do not use''
+|}
+
+{|class=wikitable
+|+ SPD contents for DDR2 SDRAM<ref name=spd_ddr2/>
+! Byte !! Byte (hex) !! b7 !! b6 !! b5 !! b4 !! b3 !! b2 !! b1 !! b0 !! Notes
+|-
+|  0 || 0x00 ||colspan=8| Number of bytes written || Typically 128
+|-
+|  1 || 0x01 ||colspan=8| log<sub>2</sub>(size of SPD EEPROM) || Typically 8 (256 bytes)
+|-
+|  2 || 0x02 ||colspan=8| Basic memory type (8 = DDR2 SDRAM) ||
+|-
+|  3 || 0x03 ||colspan=4| ''Reserved, zero'' ||colspan=4| Row address bits (1–15) ||
+|-
+|  4 || 0x04 ||colspan=4| ''Reserved, zero'' ||colspan=4| Column address bits (1–15)  ||
+|-
+|  5 || 0x05 ||colspan=3| Vertical height || Stack? || ConC? ||colspan=3| Ranks−1 (1–8) || Commonly 0 or 1, meaning 1 or 2
+|-
+|  6 || 0x06 ||colspan=8| Module data width || Commonly 64, or 72 for ECC DIMMs
+|-
+|  7 || 0x07 ||colspan=8| ''Reserved, zero'' ||
+|-
+|  8 || 0x08 ||colspan=8| Interface voltage level of this assembly (not the same as V<sub>cc</sub> supply voltage) (0–5) || Decoded by table lookup.<br />Commonly 5 = SSTL 1.8 V
+|-
+|  9 || 0x09 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at highest CAS latency.
+|-
+| 10 || 0x0a ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || SDRAM access time from clock (t<sub>AC</sub>)
+|-
+| 11 || 0x0b ||colspan=8| DIMM configuration type (0–2): non-ECC, parity, ECC || Table lookup
+|-
+| 12 || 0x0c || Self ||colspan=7| Refresh period (0–5): 64, 256, 128, 32, 16, 8 kHz|| Refresh requirements
+|-
+| 13 || 0x0d ||colspan=8 | Primary SDRAM width (1–255) || Commonly 8 (module built from ×8 parts) or 16
+|-
+| 14 || 0x0e ||colspan=8 | ECC SDRAM width (0–255)|| Width of bank ECC/parity SDRAM devices.  Commonly 0 or 8.
+|-
+| 15 || 0x0f ||colspan=8| ''Reserved, zero'' ||
+|-
+| 16 || 0x10||| — || — || — || — || 8 || 4 || — || — || Burst lengths supported (bitmap)
+|-
+| 17 || 0x11 ||colspan=8| Banks per SDRAM device (1–255) || Typically 4 or 8
+|-
+| 18 || 0x12 || — || — || 5 || 4 || 3 || 2 || — || — || {{overline|CAS}} latencies supported (bitmap)
+|-
+| 19 || 0x13 ||colspan=8| ''Reserved, zero'' ||
+|-
+| 20 || 0x14 || — || — || Mini-UDIMM || Mini-RDIMM || Micro-DIMM || SO-DIMM || UDIMM || RDIMM || DIMM type of this assembly (bitmap)
+|-
+| 21 || 0x15 || — || Module is analysis probe || — || FET switch external enable || — || — || — || — || Memory module feature bitmap
+|-
+| 22 || 0x16 || — || — || — || — || — || — || — || Includes weak driver || Memory chip feature bitmap
+|-
+| 23 || 0x17 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at medium CAS latency.
+|-
+| 24 || 0x18 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 25 || 0x19 ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Clock cycle time at short CAS latency.
+|-
+| 26 || 0x1a ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data access time from clock (t<sub>AC</sub>)
+|-
+| 27 || 0x1b ||colspan=6| Nanoseconds (1–63) ||colspan=2| 1/4 ns (0–0.75) || Minimum row precharge time (t<sub>RP</sub>)
+|-
+| 28 || 0x1c ||colspan=6| Nanoseconds (1–63) ||colspan=2| 1/4 ns (0–0.75) || Minimum row active–row active delay (t<sub>RRD</sub>)
+|-
+| 29 || 0x1d ||colspan=6| Nanoseconds (1–63) ||colspan=2| 1/4 ns (0–0.75) || Minimum {{overline|RAS}} to {{overline|CAS}} delay (t<sub>RCD</sub>)
+|-
+| 30 || 0x1e ||colspan=8| Nanoseconds (1–255) || Minimum active to precharge time (t<sub>RAS</sub>)
+|-
+| 31 || 0x1f || 512 MiB || 256 MiB || 128 MiB || 16 GiB || 8 GiB || 4 GiB || 2 GiB || 1 GiB || Size of each rank (bitmap).
+|-
+| 32 || 0x20 ||colspan=4| Tenths of nanoseconds (0.0–1.2) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Address/command setup time from clock
+|-
+| 33 || 0x21 ||colspan=4| Tenths of nanoseconds (0.0–1.2) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Address/command hold time after clock
+|-
+| 34 || 0x22 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data input setup time from strobe
+|-
+| 35 || 0x23 ||colspan=4| Tenths of nanoseconds (0.0–0.9) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Data input hold time after strobe
+|-
+| 36 || 0x24 ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Minimum write recovery time (t<sub>WR</sub>)
+|-
+| 37 || 0x25 ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Internal write to read command delay (t<sub>WTR</sub>)
+|-
+| 38 || 0x26 ||colspan=6| Nanoseconds (1–63) ||colspan=2| 0.25 ns (0–0.75) || Internal read to precharge command delay (t<sub>RTP</sub>)
+|-
+| 39 || 0x27 ||colspan=8| ''Reserved, zero'' || Reserved for "memory analysis probe characteristics"
+|-
+| 40 || 0x28 || — ||colspan=3| t<sub>RC</sub> fractional ns (0–5):<br />0, 0.25, 0.33, 0.5, 0.66, 0.75 ||colspan=3| t<sub>RFC</sub> fractional ns (0–5):<br/>0, 0.25, 0.33, 0.5, 0.66, 0.75 || t<sub>RFC</sub> + 256 ns || Extension of bytes 41 and 42.
+|-
+| 41 || 0x29 ||colspan=8| Nanoseconds (1–255) || Minimum active to active/refresh time (t<sub>RC</sub>)
+|-
+| 42 || 0x2a ||colspan=8| Nanoseconds (1–255) || Minimum refresh to active/refresh time (t<sub>RFC</sub>)
+|-
+| 43 || 0x2b ||colspan=4| Nanoseconds (0–15) ||colspan=4| Tenths of nanoseconds (0.0–0.9) || Maximum clock cycle time (t<sub>CK</sub> max)
+|-
+| 44 || 0x2c ||colspan=8| Hundredths of nanoseconds (0.01–2.55) || Maximum skew, DQS to any DQ. (t<sub>DQSQ</sub> max)
+|-
+| 45 || 0x2d ||colspan=4| Tenths of nanoseconds (0.0–1.2) ||colspan=4| Hundredths of nanoseconds (0.00–0.09) || Read data hold skew factor (t<sub>QHS</sub>)
+|-
+| 46 || 0x2e ||colspan=8| Microseconds (1–255) || PLL relock time
+|-
+| 47–61 || 0x2f–0x3d ||colspan=8| ''Reserved'' || For future standardization.
+|-
+| 62 || 0x3e ||colspan=4| Major revision (0–9) ||colspan=4| Minor revision (0.0–0.9) || SPD revision level, usually 1.0
+|-
+| 63 || 0x3f ||colspan=8| Checksum || Sum of bytes 0–62, ''not negated''
+|-
+| 64–71 || 0x40–47 ||colspan=8| Manufacturer JEDEC ID || Stored little-endian, trailing zero-pad.
+|-
+| 72 || 0x48 ||colspan=8| Module manufacturing location || Vendor-specific code
+|-
+| 73–90 || 0x49–0x5a ||colspan=8| Module part number || ASCII, space-padded (limited to (,-,),A-Z,a-z,0-9,space)
+|-
+| 91–92 || 0x5b–0x5c ||colspan=8| Module revision code || Vendor-specific code
+|-
+| 93 || 0x5d ||colspan=8| Years since 2000 (0–255) ||rowspan=2| Manufacturing date (YYWW)
+|-
+| 94 || 0x5e ||colspan=8| Weeks (1–52)
+|-
+| 95–98 ||0x5f–0x62 ||colspan=8| Module serial number || Vendor-specific code
+|-
+| 99–127 || 0x63–0x7f ||colspan=8| Manufacturer-specific data || Could be enhanced performance profile
+|}
+
+===DDR3 SDRAM===
+The DDR3 SDRAM standard significantly overhauls and simplifies the SPD contents layout.  Instead of a number of BCD-encoded nanosecond fields, some "timebase" units are specified to high precision, and various timing parameters are encoded as multiples of that base unit.<ref>[http://www.simmtester.com/page/news/showpubnews.asp?num=153 Understanding DDR3 Serial Presence Detect (SPD) Table]</ref>  Further, the practice of specifying different time values depending on the CAS latency has been dropped; now there are just a single set of timing parameters.
+
+{|class=wikitable
+|+ SPD contents for DDR3 SDRAM<ref name=spd_ddr3>[http://www.jedec.org/sites/default/files/docs/4_01_02_11R20.pdf JESD21-C Annex K: Serial Presence Detect for DDR3 SDRAM Modules], SPD Revision 1.0</ref>
+!colspan=2| Byte !! b7 !! b6 !! b5 !! b4 !! b3 !! b2 !! b1 !! b0 !! Notes
+|-
+|  0 || 0x00 || CRC exclude 117–125 ||colspan=3| SPD bytes total (undef/256) ||colspan=4| SPD bytes used (undef/128/176/256) || Bit 7 indicates serial number excluded from CRC
+|-
+|  1 || 0x01 ||colspan=4| SPD major revision ||colspan=4| SPD minor revision || Typically 1.0
+|-
+|  2 || 0x02 ||colspan=8| Basic memory type (11 = DDR3 SDRAM) || Type of RAM chips
+|-
+|  3 || 0x03 ||colspan=4| ''Reserved, zero'' ||colspan=4| Module type || Type of module, e.g. 2 = Unbuffered DIMM, 3 = SO-DIMM
+|-
+|  4 || 0x04 || — ||colspan=3| Bank address bits−3 ||colspan=4| log<sub>2</sub>(bits per chip)−28 || Zero means 8 banks, 256 Mibit.
+|-
+|  5 || 0x05 ||colspan=2| — ||colspan=3| Row address bits−12 ||colspan=3| Column address bits−9 ||
+|-
+|  6 || 0x06 ||colspan=5| ''reserved'' || 1.2''x'' V || 1.35 V || NOT 1.5 V || Modules voltages supported.  1.5V is default.
+|-
+|  7 || 0x07 ||colspan=2| — ||colspan=3| log<sub>2</sub>(ranks) ||colspan=3| log<sub>2</sub>(I/O bits/chip)−2 || Module organization
+|-
+|  8 || 0x08 ||colspan=3| — ||colspan=2| ECC bits (001=8) ||colspan=3| log<sub>2</sub>(data bits)−3 || 0x03 for 64-bit, non-ECC DIMM.
+|-
+|  9 || 0x09 ||colspan=4| FTP dividend (1–15) ||colspan=4| FTP divisor (1–15) || Fine Time Base = dividend/divisor ps.
+|-
+| 10 || 0x0a ||colspan=8| Medium time base dividend (1–255)||rowspan=2| MTB = dividend/divisor ns, commonly 1/8
+|-
+| 11 || 0x0b ||colspan=8| Medium time base divisor (1–255)
+|-
+| 12 || 0x0c ||colspan=8| Minimum cycle time t<sub>CK</sub>min || In multiples of MTB
+|-
+| 13 || 0x0d ||colspan=8 | ''reserved'' ||
+|-
+| 14 || 0x0e || 11 || 10 || 9 || 8 || 7 || 6 || 5 || 4 ||rowspan=2| CAS latencies supported (bitmap)
+|-
+| 15 || 0x0f || — || 18 || 17 || 16 || 15 || 14 || 13 || 12
+|-
+| 16 || 0x10 ||colspan=8| Minimum CAS latency time t<sub>AA</sub>min || In multiples of MTB, e.g. 80/8 ns.
+|-
+| 17 || 0x11 ||colspan=8| Minimum write recovery time t<sub>WR</sub>min || In multiples of MTB, e.g. 120/8 ns.
+|-
+| 18 || 0x12 ||colspan=8| Minimum RAS to CAS delay time t<sub>RCD</sub>min || In multiples of MTB, e.g. 100/8 ns.
+|-
+| 19 || 0x13 ||colspan=8| Minimum row to row active delay time t<sub>RRD</sub>min || In multiples of MTB, e.g. 60/8 ns.
+|-
+| 20 || 0x14 ||colspan=8| Minimum row precharge time t<sub>RP</sub>min || In multiples of MTB, e.g. 100/8 ns.
+|-
+| 21 || 0x15 ||colspan=4| t<sub>RC</sub>min, bits 11:8 ||colspan=4| t<sub>RAS</sub>min, bits 11:8 || Upper 4 bits of bytes 23 and 22
+|-
+| 22 || 0x16 ||colspan=8| Minimum active to time t<sub>RAS</sub>min, bits 7:0 || In multiples of MTB, e.g. 280/8 ns.
+|-
+| 23 || 0x17 ||colspan=8| Minimum active to active/refresh t<sub>RC</sub>min, bits 7:0 || In multiples of MTB, e.g. 396/8 ns.
+|-
+| 24 || 0x18 ||colspan=8| Minimum refresh recovery delay t<sub>RFC</sub>min, bits 7:0 ||rowspan=2| In multiples of MTB, e.g. 1280/8 ns.
+|-
+| 25 || 0x19 ||colspan=8| Minimum refresh recovery delay t<sub>RFC</sub>min, bits 15:8
+|-
+| 26 || 0x20 ||colspan=8| Minimum internal write to read delay t<sub>WTR</sub>min || In multiples of MTB, e.g. 60/8 ns.
+|-
+| 27 || 0x21 ||colspan=8| Minimum internal read to precharge delay t<sub>RTP</sub>min || In multiples of MTB, e.g. 60/8 ns.
+|-
+| 28 || 0x22 ||colspan=4|''reserved'' ||colspan=4| t<sub>FAW</sub>min, bits 11:8 ||rowspan=2| In multiples of MTB, e.g. 240/8 ns.
+|-
+| 29 || 0x23 ||colspan=8| Minimum four activate window delay t<sub>FAW</sub>min, bits 7:0
+|-
+| 30 || 0x24 || DLL-off || — || — || — || — || — || RZQ/7 || RZQ/6 || SDRAM optional features support bitmap
+|-
+| 31 || 0x25 || PASR || — || — || — || ODTS || ASR || ETR 1× || ETR (95°C) || SDRAM thermal and refresh options
+|-
+| 32 || 0x26 || Present ||colspan=7| Accuracy (TBD; currently 0 = undefined) || DIMM thermal sensor present?
+|-
+| 33 || 0x27 || Nonstd. ||colspan=7| Nonstandard device type || Nonstandard SDRAM device type (e.g. stacked die)
+|-
+| 34–59 || 0x28–0x3b ||colspan=8| ''Reserved'' || For future standardization.
+|-
+| 60 || 0x3c || colspan=3| — ||colspan=5 | Module height, ceil(mm)−15 || Module nominal height (31 = Height > 45 mm)
+|-
+| 61 || 0x3d || colspan=4| Back thickness ||colspan=4 | Front thickness || Module thickness, value=ceil(mm)−1
+|-
+| 62 || 0x3e || Design ||colspan=2|Revision ||colspan=5| JEDEC design number || JEDEC reference design used (11111=none)
+|-
+| 63–116 || 0x3f–0x74 ||colspan=8| Module-specific section || Differs between registered/unbuffered
+|-
+| 117 || 0x75 ||colspan=8| Module manufacturer ID, lsbyte ||rowspan=2| Assigned by JEP-106
+|-
+| 118 || 0x76 ||colspan=8| Module manufacturer ID, msbyte
+|-
+| 119 || 0x77 ||colspan=8| Module manufacturing location || Vendor-specific code
+|-
+| 120 || 0x78 ||colspan=4| Decades ||colspan=4| Years || Manufacturing year (BCD)
+|-
+| 121 || 0x79 ||colspan=4| Tens of weeks ||colspan=4| weeks || Manufacturing week (BCD)
+|-
+| 122–125 || 0x7a–0x7d ||colspan=8| Module serial number || Vendor-specific code
+|-
+| 126–127 || 0x7e–0x7f ||colspan=8| SPD CRC-16 || Includes bytes 0–116 or 0–125; see byte 0 bit 7
+|-
+| 128–145 || 0x80–0x91 ||colspan=8| Module part number || ASCII subset, space-padded
+|-
+| 146–147 || 0x92–0x93 ||colspan=8| Module revision code || Vendor-defined
+|-
+| 148–149 || 0x94–0x95 ||colspan=8| DRAM manufacturer ID || As distinct from module manufacturer
+|-
+| 150–175 || 0x96–0xAF ||colspan=8| Manufacturer-specific data
+|}
+The memory capacity of a module can be computed from bytes 4, 7 and 8.  The module width (byte 8) divided by the number of bits per chip (byte 7) gives the number of chips per rank.  That can then be multiplied by the per-chip capacity (byte 4) and the number of ranks of chips on the module (usually 1 or 2, from byte 7).
+
+==Extensions==
+The JEDEC standard only specifies some of the SPD bytes.  The truly critical data fits into the first 64 bytes,<ref name=spd_ddr>[http://www.jedec.org/download/search/4_01_02_04R13.PDF JEDEC Standard 21-C section 4.1.2.4] "SPDs for DDR SDRAM"</ref><ref name=spd_ddr2>[http://www.jedec.org/download/search/4_01_02_10R13.pdf JEDEC Standard 21-C section 4.1.2.10] "Specific SPDs for DDR2 SDRAM"</ref><ref name=spd_ddr3>[http://www.jedec.org/download/search/4_01_02_11R18.pdf JEDEC Standard 21-C section 4.1.2.11] "Serial Presence Detect (SPD) for DDR3 SDRAM Modules"</ref><ref name=spd_base>[http://www.jedec.org/download/search/4_01_02_00r9.pdf JEDEC Standard 21-C section 4.1.2] "SERIAL PRESENCE DETECT STANDARD, General Standard"</ref><ref name=spd_sdr>[http://www.jedec.org/download/search/4_01_02_05R12.PDF JEDEC Standard 21-C section 4.1.2.5] "Specific PDs for Synchronous DRAM (SDRAM)"</ref> while the some of the remainder is earmarked for manufacturer identification.  However, a 256-byte EEPROM is generally provided.  A number of uses have been made of the remaining space.
+
+===Enhanced Performance Profiles (EPP)===
+Memory generally comes with conservative timing recommendations in the SPD ROM, to ensure basic functionality on all systems.  Enthusiasts often spend considerable time manually adjusting the memory timings for higher speed.
+
+Enhanced Performance Profiles is an extension of SPD, developed by [[NVIDIA]] and [[Corsair]], which includes additional information for higher-performance operation of [[DDR2 SDRAM]], including supply voltages and command timing information not included in the JEDEC SPD spec.  The EPP information is stored in the same EEPROM, but in bytes 99-127 which are unused by standard DDR2 SPD.<ref>{{Citation |url=http://www.nvidia.com/content/epp/epp_specifications.pdf |title=DDR2 UDIMM Enhanced Performance Profiles Design Specification |publisher=[[NVIDIA]] |date=2006-05-12 |accessdate=2009-05-05}}</ref>
+
+{|class=wikitable
+|+ EPP SPD ROM usage
+|-
+! Bytes !! Size !! Full profiles !! Abbreviated profiles
+|-
+|  99–103 || 5 ||colspan=2| EPP header
+|-
+| 104–109 || 6 ||rowspan=2| Profile FP1 || Profile AP1
+|-
+| 110–115 || 6 || Profile AP2
+|-
+| 116–121 || 6 ||rowspan=2| Profile FP2 || Profile AP3
+|-
+| 122–127 || 6  || Profile AP4
+|}
+The parameters are particularly designed to fit the memory controller on the [[NForce 500|nForce 5]], [[NForce 600|nForce 6]] and [[NForce 700|nForce 7]] chipsets.  NVIDIA encourages support for EPP in the [[BIOS]] for its high-end motherboard chipsets.  This is intended to provide "one-click [[overclocking]]" to get better performance with minimal effort.
+
+NVIDIA's name for EPP memory that has been qualified for performance and stability is "SLI-ready memory".<ref>http://www.nvidia.com/docs/CP/45121/sli_memory.pdf</ref>  The term "SLI-ready-memory" has caused some confusion, as it has nothing to do with [[Scalable Link Interface|SLI video]].  One can use EPP/SLI memory with a single video card (even a non-NVIDIA card), and one can run a multi-card SLI video setup without EPP/SLI memory.
+
+An extended version, EPP 2.0, supports DDR3 memory as well.<ref>[http://www.nvidia.com/docs/IO/52280/NVIDIA_EPP2_TB.pdf Enhanced Performance Profiles 2.0] (pages 2–3)</ref>
+
+===Extreme Memory Profile (XMP)===
+A similar, [[Intel]]-developed JEDEC SPD extension for [[DDR3 SDRAM]] DIMMs.  This uses bytes 176–255, which are unallocated by JEDEC, to encode higher-performance memory timings.<ref>[http://www.intel.com/assets/pdf/whitepaper/319124.pdf Intel Extreme Memory Profile (Intel XMP) DDR3 Technology]</ref>
+{|class=wikitable
+|+ XMP SPD ROM usage<ref name="xmp1.1">{{Citation |url=http://www.softnology.biz/pdf/IntelXMP_Rev1.1.pdf |title=Intel<sup>®</sup> Extreme Memory Profile (XMP) Specification, Rev 1.1 |date=October 2007 |accessdate=2010-05-25}}</ref>
+|-
+! Bytes !! Size !! Use
+|-
+| 176–184 || 10 || XMP header
+|-
+| 185–219 || 33 || XMP profile 1 ("enthusiast" settings)
+|-
+| 220–254 || 36 || XMP profile 2 ("extreme" settings)
+|}
+<!-- Still searching for more details.  According to http://www.legitreviews.com/article/613/1/, bytes 206–209 and 241–244 are platform-specific bytes, only used in manual XMP mode -->
+
+The header contains the following data.  Most importantly, it contains a "medium timebase" value MTB, as a rational number of nanoseconds (common values are 1/8, 1/12 and 1/16 ns).  Many other later timing values are expressed as an integer number of MTB units.
+
+Also included in the header is the number of DIMMS per memory channel that the profile is designed to support; including more DIMMS may not work well.
+{|class="wikitable"
+|+ XMP Header bytes<ref name="xmp1.1"/>
+|-
+! Byte !! Bits !! Use
+|-
+| 176 || 7:0 || XMP [[Magic number (programming)|magic number]] byte 1 0x0C
+|-
+| 177 || 7:0 || XMP magic number byte 2 0x4A
+|-
+|rowspan=5| 178 || 0 || Profile 1 enabled (if 0, disabled)
+|-
+| 1 || Profile 2 enabled
+|-
+| 3:2 || Profile 1 DIMMS per channel (1–4 encoded as 0–3)
+|-
+| 5:4 || Profile 2 DIMMS per channel
+|-
+| 7:6 || ''Reserved, must be zero''
+|-
+|rowspan=2| 179 || 3:0 || XMP minor version number (x.0 or x.1)
+|-
+| 7:4 || XMP major version number (0.x or 1.x)
+|-
+| 180 || 7:0 || Medium timebase divisor for profile 1
+|-
+| 181 || 7:0 || Medium timebase dividend for profile 1 (MTB = dividend/divisor ns)
+|-
+| 182 || 7:0 || Medium timebase divisor for profile 2 (e.g. 8)
+|-
+| 183 || 7:0 || Medium timebase dividend for profile 2 (e.g. 1, giving MTB = 1/8 ns)
+|-
+| 184 || 7:0 || ''Reserved, must be zero''
+|}
+{|class="wikitable"
+|+ XMP profile bytes<ref name="xmp1.1"/>
+|-
+! Byte 1 !! Byte 2 !! Bits !! Use
+|-
+|rowspan=3| 185 ||rowspan=3| 220 || 4:0 || Module Vdd voltage fraction (x.00–x.95 encoded as 0–19)
+|-
+| 6:5 || Module Vdd voltage units (0–2)
+|-
+| 7 || ''Reserved, must be zero''
+|-
+| 186 || 221 || 7:0 || Minimum SDRAM clock period t<sub>CK</sub>min (MTB units)
+|-
+| 187 || 222 || 7:0 || Minimum CAS latency time  t<sub>AA</sub>min (MTB units)
+|-
+| 188 || 223 || 7:0 || CAS latencies supported (bitmap, 4–11 encoded as bits 0–7)
+|-
+|rowspan=2| 189 ||rowspan=2| 224 || 6:0 || CAS latencies supported (bitmap, 12–18 encoded as bits 0–6)
+|-
+| 7 || ''Reserved, must be zero''
+|-
+| 190 || 225 || 7:0 || Minimum CAS write latency time t<sub>CWL</sub>min (MTB units)
+|-
+| 191 || 226 || 7:0 || Minimum row precharge delay time t<sub>RP</sub>min (MTB units)
+|-
+| 192 || 227 || 7:0 || Minimum RAS to CAS delay time t<sub>RCD</sub>min (MTB units)
+|-
+| 193 || 228 || 7:0 || Minimum write recovery time t<sub>WR</sub>min (MTB units)
+|-
+|rowspan=2| 194 ||rowspan=2| 229 || 3:0 || t<sub>RAS</sub>min upper [[nibble]] (bits 11:8)
+|-
+| 7:4 || t<sub>RC</sub>min upper nibble (bits 11:8)
+|-
+| 195 || 230 || 7:0 || Minimum active to precharge delay time t<sub>RAS</sub>min bits 7:0 (MTB units)
+|-
+| 196 || 231 || 7:0 || Minimum active to active/refresh delay time t<sub>RC</sub>min bits 7:0 (MTB units)
+|-
+| 197 || 232 || 7:0 || Maximum average refresh interval t<sub>REFI</sub> lsbyte (MTB units)
+|-
+| 198 || 233 || 7:0 || Maximum average refresh interval t<sub>REFI</sub> msbyte (MTB units)
+|-
+| 199 || 234 || 7:0 || Minimum refresh recovery delay time t<sub>RFC</sub>min lsbyte (MTB units)
+|-
+| 200 || 235 || 7:0 || Minimum refresh recovery delay time t<sub>RFC</sub>min msbyte (MTB units)
+|-
+| 201 || 236 || 7:0 || Minimum internal read to precharge command delay time t<sub>RTP</sub>min (MTB units)
+|-
+| 202 || 237 || 7:0 ||  Minimum row active to row active delay time t<sub>RRD</sub>min (MTB units)
+|-
+|rowspan=2| 203 ||rowspan=2| 238 || 3:0 || t<sub>FAW</sub>min upper nibble (bits 11:8)
+|-
+| 7:4 || ''Reserved, must be zero''
+|-
+| 204 || 239 || 7:0 || Minimum four activate window delay time t<sub>FAW</sub>min bits 7:0 (MTB units)
+|-
+| 205 || 240 || 7:0 || Minimum internal write to read command delay time t<sub>WTR</sub>min (MTB units)
+|-
+|rowspan=4| 206 ||rowspan=4| 241 || 2:0 || Write to read command turnaround time adjustment (0–7 clock cycles)
+|-
+| 3 || Write to read command turnaround adjustment sign (0=pull-in, 1=push-out)
+|-
+| 6:4 || Read to write command turnaround time adjustment (0–7 clock cycles)
+|-
+| 7 || Read to write command turnaround adjustment sign (0=pull-in, 1=push-out)
+|-
+|rowspan=3| 207 ||rowspan=3| 242 || 2:0 || Back-to-back command turnaround time adjustment (0–7 clock cycles)
+|-
+| 3 || Back-to-back turnaround adjustment sign (0=pull-in, 1=push-out)
+|-
+| 7:4 || ''Reserved, must be zero''
+|-
+| 208 || 243 || 7:0 || System CMD rate mode.  0=JTAG default, otherwise in peculiar units of MTB&thinsp;×&thinsp;t<sub>CK</sub>/ns.<br/>E.g. if MTB is 1/8 ns, then this is in units of 1/8 clock cycle.
+|-
+| 209 || 244 || 7:0 || SDRAM auto self refresh performance.<br/>Standard version 1.1 says documentation is [[Wikt:TBD|TBD]].
+|-
+| 210–218 || 245–253 || 7:0 || ''Reserved, must be zero''
+|-
+| 219 || 254 || 7:0 || ''Reserved'', vendor-specific personality code.
+|}
+
+===Vendor-specific memory===
+A very common (mis-)use is the writing of information to certain memory regions in order to bind vendor-specific memory modules to a specific system. One vendor known to do this is Fujitsu-Siemens Computers. Adding different memory module to the system usually results in a refusal or other counter-measures (like pressing F1 on every boot, very problematic for a server which usually reboots without user intervention).
+
+<pre>
+02 0E 00 01-00 00 00 EF-02 03 19 4D-BC 47 C3 46 ...........M.G.F
+53 43 00 04-EF 4F 8D 1F-00 01 70 00-01 03 C1 CF SC...O....p.....
+</pre>
+
+This is the output of a 512 MB memory module from Micron Technologies, branded for Fujitsu-Siemens Computers, note the "FSC" string.
+Memory modules which do not have this information starting at offset 128h will be refused by the BIOS of the system.
+
+==Reading and writing SPD information==
+Memory module manufacturers write the SPD information to the [[EEPROM]] on the module. Motherboard [[BIOS]]es read the SPD information to configure the memory controller.  There exist several  programs that are able to read and modify SPD information on most, but not all motherboard chipsets.
+* [http://www.nongnu.org/dmidecode/ dmidecode] program that can decode information about memory (and other things) and runs on [[Linux]], [[FreeBSD]],  [[NetBSD]], [[OpenBSD]], [[BeOS]], [[Cygwin]] and [[Solaris (operating system)|Solaris]].  dmidecode does not access SPD information directly; it reports the BIOS data about the memory.<ref>http://www.linux.com/archive/articles/40412
+dmidecode: What's it good for?</ref> This information may be limited or incorrect.
+
+* On [[Linux]] systems, the [[user space]] program decode-dimms.pl<ref>http://www.lm-sensors.org/browser/i2c-tools/trunk/eeprom/decode-dimms
+decode-dimms.pl Perl program</ref> provided with [[lm-sensors|lm_sensors]] <ref>http://www.lm-sensors.org/</ref> decodes and prints information on any memory with SPD information in the computer. On more recent Linux distributions, decode-dimms is available as part of i2c-tools.
+
+* OpenBSD has included a driver ([http://www.openbsd.org/cgi-bin/man.cgi?query=spdmem&sektion=4 spdmem(4)]) since version 4.3 to provide information about memory modules.  The driver was ported from NetBSD, where it is available since release 5.0.
+
+* [[Coreboot]] reads and uses SPD information to initialize all [[memory controller]]s in a computer with timing, size and other properties.
+
+* On [[Microsoft Windows|Windows]] systems, there are programs like [http://www.hwinfo.com/ HWiNFO32] and [http://www.cpuid.com/ CPU-Z] which are capable of reading and displaying DRAM module information from SPD.
+
+Chipset independent reading and writing of SPD information is done by accessing the memory's eeprom directly with eeprom programmer hard- and software.
+
+==On older equipment==
+{{Off-topic|Parallel Presence Detect|date=September 2010}}
+<!-- 72-pin SIMMs had parallel, not serial, presence detect. -->
+Some older equipment require the use of [[SIMM]]s with SPD (more commonly called simply ''presence detect'' or PD). Some of this equipment uses non-standard PD coding; [[IBM]] computers and [[Hewlett-Packard]] [[LaserJet]] and other printers in particular. While old computers are rarely found, many old Laserjet printers are in use. Discontinued HP memory modules are officially recommended, but any 72-pin SIMM module within the capacity range supported by the printer and with the correct PD code should work. All printers will work with FPM (Fast Page Mode) memory; it is reported that some, but not all, will work with EDO memory<ref>[http://www.hpprintermemory.com/index.html#y Page on memory upgrades for HP printers]</ref>.  It is fairly easy to solder wires to the PD pins to make non-HP modules work<ref>[http://www.keycruncher.com/blog/2003/12/14/making-standard-simm-s-work-memory-upgrade-on-the-hp-laserjet-6mp-5mp/ Making Standard SIMMs Work – Memory Upgrade on the HP LaserJet 6MP/5MP]</ref>. HP printers of this type specify that RAM not faster than 70ns be used; this is probably due to a limitation of the PD encoding. Faster RAM can be used, but the PD encoding should indicate a speed of 70 ns.
+
+==References==
+<references/>
+
+==External links==
+* [http://www.jedec.org/download/search/4_01_02_00R9.PDF Serial Presence Detect Standard, General Standard]
+* [http://www.jedec.org/download/search/4_01_02_04R13.PDF SPD Rev1.0 for DDR SDRAM]
+* [http://www.jedec.org/download/search/4_01_02_10R14.pdf SPD Rev1.2 for DDR2 SDRAM]
+* [http://www.jedec.org/download/search/4_01_02_10R17.pdf SPD Rev1.3 for DDR2 SDRAM]
+* [http://www.jedec.org/download/search/JESD208.pdf SPECIALITY DDR2-1066 SDRAM]
+* Linux package [http://www.lm-sensors.org/wiki/I2CTools i2c-tools]
+* Instructions on how to use lm-sensors or i2c-tools to read the data: [http://ornellas.apanela.com/dokuwiki/pub:spd http://ornellas.apanela.com/dokuwiki/pub:spd]
+
+{{Use dmy dates|date=September 2010}}
+
+{{DEFAULTSORT:Serial Presence Detect}}
+[[Category:Computer memory]]
+
+[[de:Serial Presence Detect]]
+[[es:Serial Presence Detect]]
+[[pl:Serial Presence Detect]]</body> </html>

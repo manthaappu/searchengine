@@ -1,0 +1,134 @@
+<html> <head> <title>Two-phase locking</title></head><body>In [[databases]] and [[transaction processing]] (transaction management), '''Two-phase locking''', ('''2PL''') is a ''[[concurrency control]]'' locking protocol, or mechanism, that guarantees ''[[Serializability]]'' (e.g., see [[#Bern1987|Bernstein et al. 1987]], [[#Weikum2001|Weikum and Vossen 2001]]). It is also the name of the resulting ''class'' (set) of [[Database transaction|transaction]] [[schedule (computer science)|schedule]]s. The protocol utilizes ''[[lock (computer science)|locks]]'' that during a transaction's life block other transactions from accessing data accessed by the transaction. Locks are applied and removed in two phases:
+# Expanding phase (number of locks can only increase): locks are acquired and no locks are released.
+# Shrinking phase: locks are released and no locks are acquired.
+Using locks that block processes, 2PL may be subject to ''[[deadlock]]s'' that result from the mutual blocking of two transactions or more.
+
+2PL is a super-class of '''Strong strict two-phase locking''' ('''SS2PL'''; name from [[#Raz1992|Raz 1992]] and its earlier versions), also called '''Rigorousness''' (name from [[#Breit1991|Breitbart et al. 1991]] and its earlier versions), which has been widely utilized for concurrency control in general-purpose database systems since their early days in the 1970s. SS2PL implementation has many variants. SS2PL was called in the past ''Strict 2PL'' (e,g., in [[#Bern1987|Bernstein et al. 1987]], page 59), and confusingly it is still called so by some (now Strict 2PL, or S2PL, is the intersection of ''[[Schedule (computer science)#Strict|Strictness]]'' and 2PL, which is different from SS2PL). SS2PL is also a [[special case]] (subclass) of ''[[Commitment ordering]]'' (Commit ordering; CO; [[#Raz1992|Raz 1992]]), and [[Global serializability#The commitment ordering solution|inherits many of CO's useful properties]]. SS2PL actually comprises only one phase: Phase-2 does not exist, and all locks are released only after transaction end.
+
+Neither 2PL in its general form, nor even when combined with [[Schedule (computer science)#Strict|Strictness]], i.e., Strict 2PL (S2PL), are known to be utilized in practice. Thus 2PL by itself does not seem to have much practical importance, and whenever 2PL (or Strict 2PL, S2PL) practical utilization has been mentioned in the professional literature, the intention has been SS2PL. What has made SS2PL (and Distributed SS2PL) so popular is the effective and efficient locking-based combination of two ingredients:
+#[[Commitment ordering]], which provides both [[Serializability]] and effective [[Serializability#Distributed serializability|Distributed serializability]] and [[Global serializability]] (without the need in the [[Scalability|not scalable]] [[Distributed lock manager]], and while distributed deadlocks are resolved automatically), and
+#[[Schedule (computer science)#Strict|Strictness]], which provides cascadeless [[Serializability#Correctness - recoverability|Recoverability]] and (independently) allows efficient database [[data recovery|recovery]] from failure.
+In addition to this SS2PL is easier to implement than 2PL and S2PL (no need in handling end of phase-1 separately from transaction end), with practically the same concurrency (exactly same locking, with practically not much earlier lock release for 2PL and S2PL).
+
+'''Comment''': Note that the two-phase locking protocol (2PL protocol) is different from the [[two-phase commit protocol]] (2PC protocol) for commit [[Consensus (computer science)|consensus]] within a distributed transaction.
+
+==Data-access locks==
+A [[Lock (computer science)|lock]] is a system object associated with a shared resource such as a data item of an elementary type, a row in a database, or a page of memory. In a database, a lock on a database object (a data-access lock) may need to be acquired by a transaction before accessing the object. Correct use of locks prevents undesired, incorrect or inconsistent operations on shared resources by other concurrent transactions. When a database object with an existing lock acquired by one transaction needs to be accessed by another transaction, the existing lock for the object and the type of the intended access are checked by the system. If the existing lock type does not allow this specific attempted concurrent access type, the transaction attempting access is blocked (according to a predefined agreement/scheme). In practice a lock on an object does not directly block a transaction' operation upon the object, but rather blocks that transaction from acquiring another lock on the same object, needed to be held/owned by the transaction before performing this operation. Thus, with a locking mechanism, needed operation blocking is controlled by a proper lock blocking scheme, which indicates which lock type blocks which lock type.
+
+Two major types of locks are utilized:
+
+*'''Write-lock''' ('''exclusive lock''') is associated with a database object by a transaction (Terminology: "the transaction locks the object," or "acquires lock for it") before ''writing'' (inserting/modifying/deleting) this object.
+*'''Read-lock''' ('''shared lock''') is associated with a database object by a transaction before ''reading'' (retrieving the state of) this object.
+
+The common interactions between these lock types are defined by blocking behavior as follows:
+
+* An existing ''write-lock'' on a database object blocks an intended ''write'' upon the same object (already requested/issued) by another transaction by blocking a respective ''write-lock'' from being acquired by the other transaction. The second write-lock will be acquired and the requested write of the object will take place (materialize) after the existing write-lock is released.
+* A ''write-lock'' blocks an intended (already requested/issued) ''read'' by another transaction by blocking the respective ''read-lock ''.
+* A ''read-lock'' blocks an intended ''write'' by another transaction by blocking the respective ''write-lock ''.
+* A ''read-lock'' does not block an intended ''read'' by another transaction. The respective ''read-lock'' for the intended read is acquired (shared with the previous read) immediately after the intended read is requested, and then the intended read itself takes place.
+
+Several variations and refinements of these major lock types exist, with respective variations of blocking behavior. If a first lock blocks another lock, the two locks are called ''incompatible''; otherwise the locks are ''compatible''. Often lock types blocking interactions are presented in the technical literature by a ''Lock compatibility table''. The following is an example with the common, major lock types:
+
+:{| class="wikitable" style="text-align:center;"
+|+Lock compatibility table
+|-
+! Lock type !! read-lock  !! write-lock
+|-
+! read-lock
+|   || '''X'''
+|-
+! write-lock
+| '''X''' || '''X'''
+|}
+
+:'''X''' indicates incompatibility, i.e, a case when a lock of the first type (in left column) on an object blocks a lock of the second type (in top row) from being acquired on the same object (by another transaction). An object typically has a queue of waiting requested (by transactions) operations with respective locks. The first blocked lock for operation in the queue is acquired as soon as the existing blocking lock is removed from the object, and then its respective operation is executed. If a lock for operation in the queue is not blocked by any existing lock (existence of multiple compatible locks on a same object is possible concurrently) it is acquired immediately.
+:'''Comment:''' In some publications the table entries are simply marked "compatible" or "incompatible", or respectively "yes" or "no".
+
+==Two-phase locking and its special cases==
+===Two-phase locking===
+According to the '''two-phase locking''' protocol a transaction handles its locks in two distinct, consecutive phases during the transaction's execution:
+
+# '''Expanding phase''' (aka Growing phase): locks are acquired and no locks are released (the number of locks can only increase).
+# '''Shrinking phase''': locks are released and no locks are acquired.
+
+The [[serializability]] property is guaranteed for a schedule with transactions that obey the protocol. The 2PL ''schedule class'' is defined as the class of all the schedules comprising transactions with data access orders that could be generated by the 2PL protocol (or in other words, all the schedules that the 2PL protocol can generate).
+
+Typically, without explicit knowledge in a transaction on end of phase-1, it is safely determined only when a transaction has entered its ''ready'' state in all its processes (processing has ended, and it is ready to be committed; no additional data access and locking are needed and can happen). In this case phase-2 can end immediately (no additional processing is needed), and actually no phase-2 is needed. Also, if several processes (two or more) are involved, then a [[Synchronization (computer science)#Process synchronization|synchronization point]] (similar to ''[[atomic commitment]]'') among them is needed to determine end of phase-1 for all of them (i.e., in the entire distributed transaction), to start releasing locks in phase-2 (otherwise it is very likely that both 2PL and Serializability are quickly violated). Such synchronization point is usually too costly (involving a distributed protocol similar to atomic commitment), and end of phase-1 is usually postponed to be merged with transaction end (atomic commitment protocol for a multi-process transaction), and again phase-2 is not needed. This turns 2PL to SS2PL (see below). All known implementations of 2PL in products are SS2PL based, and whenever 2PL (or Strict 2PL, S2PL) practical utilization has been mentioned in the professional literature, the intention has been SS2PL.
+
+===Strict two-phase locking===
+The '''strict two-phase locking''' (S2PL) class of schedules is the intersection of the 2PL class with the class of schedules possessing the ''[[schedule (computer science)#Strict|Strictness]]'' property.
+
+To comply with the S2PL protocol a transaction needs to comply with 2PL, and release its ''write (exclusive)'' locks only after it has ended, i.e., being either ''committed'' or ''aborted''. On the other hand, ''read (shared)'' locks are released regularly during phase 2. Implementing general S2PL requires explicit support of phase-1 end, separate from transaction end, and no such widely utilized product implementation is known.
+
+S2PL is a special case of 2PL, i.e., the S2PL class is a proper subclass of 2PL.
+
+===Strong strict two-phase locking===
+or '''Rigorousness''', or '''Rigorous scheduling''', or '''Rigorous two-phase locking'''
+
+To comply with '''strong strict two-phase locking''' (SS2PL) the locking protocol releases both ''write (exclusive)'' and ''read (shared)'' locks applied by a transaction only after the transaction has ended, i.e., only after both completing executing (being ''ready'') and becoming either ''committed'' or ''aborted''. This protocol also complies with the S2PL rules. A transaction obeying SS2PL can be viewed as having phase-1 that lasts the transaction's entire execution duration, and no phase-2 (or a degenerate phase-2). Thus, only one phase is actually left, and "two-phase" in the name seems to be still utilized due to the historical development of the concept from 2PL, and 2PL being a super-class. The SS2PL property of a schedule is also called '''Rigorousness'''. It is also the name of the class of schedules having this property, and an SS2PL schedule is also called a "rigorous schedule". The term "Rigorousness" is free of the unnecessary legacy of "two-phase," as well as being independent of any (locking) mechanism (in principle other blocking mechanisms can be utilized). The property's respective locking mechanism is sometimes referred to as '''Rigorous 2PL'''.
+
+SS2PL is a special case of S2PL, i.e., the SS2PL class of schedules is a proper subclass of S2PL (every SS2PL schedule is also an S2PL schedule, but S2PL schedules exist that are not SS2PL).
+
+SS2PL has been the concurrency control protocol of choice for most [[database system]]s and utilized since their early days in the 1970s. It is proven to be an effective mechanism in many situations, and provides besides [[Serializability]] also [[Schedule (computer science)#Strict|Strictness]] (a special case of cascadeless Recoverability), which is instrumental for efficient [[database]] [[data recovery|recovery]], and also [[Commitment ordering]] (CO) for participating in distributed environments where a CO based [[Serializability#Distributed serializability|distributed serializability]] and [[global serializability]] solutions are employed. Being a subset of CO, an efficient implementation of ''[[Commitment ordering#Distributed serializability and CO|distributed SS2PL]]'' exists without a [[distributed lock manager]] (DLM), while distributed deadlocks (see below) are resolved automatically. The fact that SS2PL employed in multi database systems ensures global serializability has been known for years before the discovery of CO, but only with CO came the understanding of the role of an [[atomic commitment]] protocol in maintaining global serializability, as well as the observation of automatic distributed deadlock resolution. As a matter of fact, SS2PL inheriting properties of Recoverability and CO is more significant than being a subset of 2PL, which by itself in its general form, besides comprising a simple serializability mechanism (however serializability is also implied by CO), in not known to provide SS2PL with any other significant qualities. 2PL in its general form, as well as when combined with Strictness, i.e., Strict 2PL (S2PL), are not known to be utilized in practice. The popular SS2PL does not require to mark "end of phase-1" as 2PL and S2PL do, and thus is simpler to implement. Also unlike the general 2PL, SS2PL provides, as mentioned above, the useful [[Schedule (computer science)#Strict|Strictness]] and [[Commitment ordering]] properties.
+
+Many variants of SS2PL exist that utilize various lock types with various semantics in different situations, including cases of lock-type change during a transaction. Notable are variants that use [[Multiple granularity locking]].
+
+'''Comments:'''
+#SS2PL Vs. S2PL: Both provide Serializability and Strictness. Since S2PL is a super class of SS2PL it may, in principle, provide more concurrency. However no concurrency advantage is typically practically noticed (exactly same locking exists for both, with practically not much earlier lock release for S2PL), and the overhead of dealing with an end-of-phase-1 mechanism in S2PL, separate from transaction-end, is not justified. Also, while SS2PL provides [[Commitment ordering]], S2PL does not. This explains the preference of SS2PL over S2PL.
+# Especially before 1990, but also after, in many articles and books, e.g., ([[#Bern1987|Bernstein et al. 1987]], p. 59), the term "Strict 2PL" (S2PL) has been frequently defined by the locking protocol "Release all locks only after transaction end," which is the protocol of SS2PL. Thus, "Strict 2PL" could not be there the name of the intersection of Strictness and 2PL, which is larger than the class generated by the SS2PL protocol. This has caused confusion. With an explicit definition of S2PL as the intersection of Strictness and 2PL, a new name for SS2PL, and an explicit distinction between the classes S2PL and SS2PL, the articles ([[#Breit1991|Breitbart et al. 1991]]) and ([[#Raz1992|Raz 1992]]) have intended to clear the confusion: The first using the name "Rigorousness," and the second "SS2PL."  
+# A more general property than SS2PL exists (a schedule super-class), [[Commitment ordering#Strict CO (SCO)|'''Strict commitment ordering''']] (Strict CO, or SCO), which as well provides both serializability, strictness, and CO, and has similar locking overhead. Unlike SS2PL, SCO does not block upon a read-write conflict (a read-lock does not block acquiring a write-lock; both SCO and SS2PL have the same behavior for write-read and write-write conflicts) at the cost of a possible delayed commit, and upon such conflict type SCO has shorter average transaction completion time and better performance than SS2PL. While SS2PL obeys the ''lock compatibility table'' above, SCO has the following table: 
+::{| class="wikitable" style="text-align:center;"
+|+Lock compatibility for SCO
+|-
+! Lock type !! read-lock  !! write-lock
+|-
+! read-lock
+|   || 
+|-
+! write-lock
+| '''X''' || '''X'''
+|} 
+
+::Note that though SCO releases all locks at transaction end and complies with the 2PL locking rules, SCO is not a subset of 2PL because of its different lock compatibility table. SCO allows materialized read-write conflicts between two transactions in their phases 1, which 2PL does not allow in phase-1 (see about materialized conflicts in [[Serializability]]).  On the other hand 2PL allows other materialized conflict types in phase-2 that SCO does not allow at all. Together this implies  that the schedule classes 2PL and SCO are incomparable (i.e., no class contains the other class).
+
+===Summary - Relationships among classes===
+
+[[Image:CO-ScheduleClasses.jpg|thumb|350px| '''Schedule classes containment:''' An arrow from class A to class B indicates that class A strictly contains B; a lack of a directed path between classes means that the classes are incomparable.
+
+A property is '''inherently-blocking''', if it can be enforced only by blocking transaction’s data access operations until certain events occur in other transactions. ([[#Raz1992|Raz 1992]])]]
+
+Between any two schedule classes (define by their schedules' respective properties) that have common schedules, either one ''contains'' the other (''strictly contains'' if they are not equal), or they are ''incomparable''. The containment relationships among the 2PL classes and other major schedule classes are summarized in the following diagram. 2PL and its subclasses are ''inherently blocking'', which means that no optimistic implementations for them exist.
+
+==Deadlocks in 2PL==
+
+Locks block data-access operations. Mutual blocking between transactions results in a ''[[deadlock]]'', where execution of these transactions is stalled, and no completion can be reached. Thus deadlocks need to be resolved to complete these transactions' executions and release related computing resources. A deadlock is a reflection of a potential cycle in the ''[[Serializability#Testing conflict serializability|precedence graph]]'', that would occur without the blocking. A deadlock is resolved by aborting a transaction involved with such potential cycle, and breaking the cycle. It is often detected using a ''[[wait-for graph]]'' (a graph of conflicts blocked by locks from being materialized; conflicts not materialized in the database due to blocked operations are not reflected in the precedence graph and do not affect ''[[serializability]]''), which indicates which transaction is "waiting for" lock release by which transaction, and a cycle means a deadlock. Aborting one transaction per cycle is sufficient to break the cycle. Transactions aborted due to deadlock resolution are executed again immediately.
+
+In a distributed environment an [[atomic commitment]] protocol, typically the [[Two-phase commit]] (2PC) protocol, is utilized for [[Atomicity (database systems)|atomicity]]. When recoverable data (data under transaction control) are partitioned among 2PC participants (i.e., each data object is controlled by a single 2PC participant), then distributed (global) deadlocks, deadlocks involving two or more participants in 2PC, are resolved automatically:
+
+When SS2PL is effectively utilized in a distributed environment, then global deadlocks due to locking generate voting-deadlocks in 2PC, and are resolved automatically by 2PC (see [[Commitment ordering]] (CO), in [[Commitment ordering#Exact characterization of voting-deadlocks by global cycles|Exact characterization of voting-deadlocks by global cycles]]; No reference except the CO articles is known to notice this). For the general case of 2PL, global deadlocks are similarly resolved automatically by the [[Synchronization (computer science)#Process synchronization|synchronization point]] protocol of phase-1 end in a distributed transaction (synchronization point is achieved by "voting" (notifying local phase-1 end), and being propagated to the participants in a distributed transaction the same way as a decision point in atomic commitment; in analogy to decision point in CO, a conflicting operation in 2PL cannot happen before phase-1 end synchronization point, with the same resulting voting-deadlock in the case of a global data-access deadlock; the voting-deadlock (which is also a locking based global deadlock) is automatically resolved by the protocol aborting some transaction involved, with a missing vote, typically using a [[Timeout (telecommunication)|timeout]]).
+
+'''Comment''': 
+:When data are partitioned among the ''[[atomic commitment]] protocol'' (e.g., 2PC) participants, automatic ''global deadlock'' resolution has been overlooked in the database research literature, though deadlocks in such systems has been a quite intensive research area:
+::*For CO and its special case SS2PL, the automatic resolution by the ''atomic commitment protocol'' has been noticed only in the CO articles. However, it has been noticed in practice that in many cases global deadlocks are very infrequently detected by the dedicated resolution mechanisms, less that could be expected ("Why do we see so few global deadlocks?"). The reason is probably the deadlocks that are automatically resolved and thus not handled and uncounted by the mechanisms;
+::*For 2PL in general, the automatic resolution by the (mandatory) ''end-of-phase-one synchronization point protocol'' (which has same voting mechanism as atomic commitment protocol, and same missing vote handling upon voting deadlock, resulting in global deadlock resolution) has not been mentioned until today (2009). Practically only the special case SS2PL is utilized, where no end-of-phase-one synchronization is needed in addition to atomic commit protocol.
+:In a distributed environment where recoverable data are not partitioned among atomic commitment protocol participants, no such automatic resolution exists, and [[Deadlock#Distributed deadlock|distributed deadlocks]] need to be resolved by dedicated techniques.
+
+==See also==
+*[[Serializability]]
+*[[Lock (computer science)]]
+
+==References==
+
+*<cite id=Bern1987>[[Phil Bernstein|Philip A. Bernstein]], Vassos Hadzilacos, Nathan Goodman (1987): [http://research.microsoft.com/en-us/people/philbe/ccontrol.aspx  ''Concurrency Control and Recovery in Database Systems''] (free PDF download), Addison Wesley Publishing Company, ISBN 0-20110-715-5 </cite>
+*<cite id=Weikum2001>[[Gerhard Weikum]], Gottfried Vossen (2001): [http://www.elsevier.com/wps/find/bookdescription.cws_home/677937/description#description  ''Transactional Information Systems''], Elsevier, ISBN 1-55860-508-8 </cite>
+*<cite id=Breit1991>Yuri Breitbart, Dimitrios Georgakopoulos, Marek Rusinkiewicz, [[Abraham Silberschatz]] (1991): [http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=92915 "On Rigorous Transaction Scheduling"], ''IEEE Transactions on Software Engineering'' (TSE), September 1991, Volume 17, Issue 9, pp. 954-960, ISSN: 0098-5589 </cite>
+*<cite id=Raz1992>[[Yoav Raz]] (1992): [http://www.informatik.uni-trier.de/~ley/db/conf/vldb/Raz92.html  "The Principle of Commitment Ordering, or Guaranteeing Serializability in a Heterogeneous Environment of Multiple Autonomous Resource Managers Using Atomic Commitment"] ([http://www.vldb.org/conf/1992/P292.PDF  PDF]), ''Proceedings of the Eighteenth International Conference on Very Large Data Bases'' (VLDB), pp. 292-312, Vancouver, Canada, August 1992, ISBN 1-55860-151-1 (also DEC-TR 841, [[Digital Equipment Corporation]], November 1990) </cite>
+
+[[Category:Databases]]
+[[Category:Transaction processing]]
+[[Category:Concurrency control]]
+
+[[de:Sperrverfahren#Zwei-Phasen-Sperrprotokoll]]
+[[el:Κλείδωμα δύο Φάσεων]]
+[[it:Two Phase Locking]]
+[[ja:ツーフェーズロック]]</body> </html>

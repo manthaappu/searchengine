@@ -1,0 +1,65 @@
+<html> <head> <title>Type punning</title></head><body>__FORCETOC__
+In [[computer science]], '''type punning''' is a common term for any programming technique that subverts or circumvents the [[type system]] of a [[programming language]] in order to achieve an effect that would be difficult or impossible to achieve within the bounds of the formal language.
+
+In [[C programming language|C]] and [[C++]], constructs such as [[type conversion]], <code>[[union (computer science)|union]]</code>, and <code>reinterpret_cast</code> are provided in order to permit many kinds of type punning, although some kinds are not actually supported by the standard language. For example, reading from a different union member than the last one written invokes [[unspecified behavior]],<ref>From the C99 standard (ISO/IEC 9899:TC2, WG14/N1124 Committee Draft — May 6, 2005), Annex J (informative): "The following are unspecified: ... The value of a union member other than the last one stored into (6.2.6.1)."</ref> but the effect in practice is usually to permit type punning. (See [[Type punning#Floating-point example|the floating-point example]] below.)
+
+== Sockets example ==
+One classic example of type punning is found in the [[Berkeley sockets]] interface. The function to bind an opened but uninitialized socket to an [[IP address]] is declared as follows:
+
+<source lang="c">
+int bind(int sockfd, struct sockaddr *my_addr, socklen_t addrlen);
+</source>
+
+The <code>bind</code> function is usually called as follows:
+
+<source lang="c">
+struct sockaddr_in sa = {0};
+int sockfd = ...;
+sa.sin_family = AF_INET;
+sa.sin_port = htons(port);
+bind(sockfd, (struct sockaddr *)&sa, sizeof sa);
+</source>
+
+The Berkeley sockets library fundamentally relies on the fact that in [[C programming language|C]], a pointer to <code>struct sockaddr_in</code> is freely convertible to a pointer to <code>struct sockaddr</code>; and, in addition, that the two structure types share the same memory layout. Therefore, a reference to the structure field <code>my_addr->sin_family</code> (where <code>my_addr</code> is of type <code>struct sockaddr*</code>) will actually refer to the field <code>sa.sin_family</code> (where <code>sa</code> is of type <code>struct sockaddr_in</code>). In other words, the sockets library uses type punning to implement a rudimentary form of [[inheritance (computer science)|inheritance]].
+
+== Floating-point example ==
+Not all examples of type punning involve structures, as the previous example did. Suppose we want to determine whether a [[floating-point]] number is negative. We could write:
+
+<source lang="c">
+bool is_negative(float x) {
+    return (x < 0.0);
+}</source>
+
+However, supposing that floating-point comparisons are expensive, and also supposing that <code>float</code> is represented according to the [[IEEE floating-point standard]], and integers are 32 bits wide, we could engage in type punning to extract the [[sign bit]] of the floating-point number using only integer operations:
+
+<source lang="c">
+bool is_negative(float x) {
+    unsigned int *ui = (unsigned int *)&x;
+    return ((*ui & 0x80000000) != 0);
+}</source>
+
+Although most [[programming style]] guides frown on any kind of type punning, this kind of type punning is more dangerous than most. Whereas the former relied only on guarantees made by the C programming language about structure layout and pointer convertibility, this example relies on assumptions about a particular system's hardware. Some situations, such as [[real-time computing|time-critical]] code that the compiler otherwise fails to [[compiler optimization|optimize]], may require dangerous code. In these cases, documenting all such assumptions in [[comment (computer programming)|comment]]s helps to keep the code [[maintainability|maintainable]].
+
+Also potentially dangerous is the following implementation, which tries to use C's [[union (computer science)|union]] data type to retrieve the integer representation of <code>x</code>. In this case, the code is not just relying on the hardware representation of <code>float</code>, but also relying on the compiler not to optimize away the write to <code>my_union.d</code>. 
+
+<source lang="c">
+bool is_negative(float x) {
+    union {
+        unsigned int ui;
+        float d;
+    } my_union;
+    my_union.d = x;
+    return ((my_union.ui & 0x80000000) != 0);
+}</source>
+
+For another example of type punning, see [[Stride of an array]].
+
+== External links ==
+*[http://gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/Optimize-Options.html#index-fstrict_002daliasing-542 Section] of the [[GNU Compiler Collection|GCC]] manual on <tt>-fstrict-aliasing</tt>, which defeats some type punning
+*[http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/docs/dr_257.htm Defect Report 257] to the [[C99]] standard, incidentally defining "type punning" in terms of <code>union</code>, and discussing the issues surrounding the implementation-defined behavior of the last example above
+
+==References==
+<references/>
+
+[[Category:Programming constructs]]
+[[Category:Articles with example C code]]</body> </html>

@@ -1,0 +1,164 @@
+<html> <head> <title>Hybrid theory for photon transport in tissue</title></head><body>{{Orphan|date=February 2009}}
+{{Context|date=October 2009}}
+'''Hybrid Theory''' for photon transport in tissue uses the advantages and eliminates the deficiencies of both the '''Monte Carlo''' method and the '''Diffusion Theory''' for photon transport to model photons traveling through tissue both accurately and efficiently.
+
+==MCML (Monte Carlo Modeling of Light Transportation in Multi-Layered Medium)==
+The [[Monte Carlo method for photon transport|MCML]] is a numerical way to simulate photon transport in biological tissue. Each photon packet follows a random walk with persistence, where the direction of each step dependent on the direction of the previous step. By averaging multiple independent random walks, MCML estimates the ensemble-averaged quantities such as reflectance, transmittance, absorption, and fluence.
+
+Briefly, a packet of photon is first launched into the biological tissue. The parameters of photon transport, including the step size and deflection angle due to scattering, are determined by random sampling from probability distributions. A fraction of weight, determined by the scattering and absorption coefficients is deposited at the interaction site. The photon packet continues propagating until the weight left is smaller than a certain threshold. If this packet of photon hits the boundary during the propagation, it is either reflected or transmitted, determined by a pseudorandom number. Statistically sufficient numbers of photon packets must be simulated to obtain the expected values accurately.<ref name = Wang_BioMedBooK>{{cite book |author=LV Wang and HI Wu |title=Biomedical Optics|publisher=Wiley |year=2007|isbn=9780471743040}}</ref>
+
+'''Advantages and Disadvantages'''
+
+This [[Monte Carlo method]] is rigorous and flexible. However, because of its statistical nature, this method requires tracking a large number of photon packets, making it computationally expensive.
+
+==Diffusion Theory==
+The [[Radiative transfer equation and diffusion theory for photon transport in biological tissue|Diffusion Theory]] is an approximation of the radiative transfer equation (RTE), and an analytical way to simulate photon transport. As such, it has the ability to model photon propagation through tissue quickly.
+
+As an example, one way to attain a solution for a pencil beam that is vertically incident on a semi-infinite homogeneous scattering medium is by taking three approximation steps as follows:
+*The anisotropically scattering medium is converted to an isotropically scattering medium. That is, the scattering coefficient is scaled by <math>1-g</math>, where <math>g</math> is the anisotropy. The anisotropy <math>g</math> is then set to zero;
+*The unit-power pencil beam is converted into an equivalent isotropic point source at a depth that is equal to the transport mean free path, with a power equal to the transport albedo;
+*The boundary effect of the scattering medium is removed by adding an image source to satisfy the boundary condition.<ref name="Wang_BioMedBooK"/>
+'''Advantages and Disadvantages'''
+
+Diffusion Theory is more computationally efficient than MCML. However, it is also less accurate than MCML near the source and boundaries.
+
+==Hybrid Theory==
+The Hybrid Theory combines the Diffusion Theory and the Monte Carlo method in order to increase accuracy near the source and boundaries while reducing computation time.  In the previous example for the Diffusion Theory, a semi-infinite scattering medium with only one boundary was assumed. If the geometry is a slab, the second boundary must be taken into account. The fluence rate at the extrapolated boundaries must be approximately 0. Using an array of image sources fulfills this boundary condition. The extrapolated boundary is located at distance <math>z_b = 2C_RD</math>. The <math>z</math> coordinates for the source pairs are <math>z_{\pm i} = -z_b + 2i(d+2z_b)\pm(z'+z_b)</math> where <math>z^'</math> is the <math>z</math> coordinate for the point source and <math>d</math> is the slab thickness. Only 2-3 pairs are usually necessary to achieve good accuracy.
+
+[[Image:Hybrid Slab Geometry1.png|thumb|400 px|right|Figure 1: Slab geometry and Source pairs for Hybrid Theory]]
+
+A Monte Carlo approach can be used to make up for the Diffusion Theory's inherently poor accuracy near the boundaries. As mentioned before, the Monte Carlo simulation is time consuming. When a photon packet is within a critical depth <math>z_c</math> the Monte Carlo simulation tracks all packets but within the center region the photon packet is transformed to an isotropic source and subsequently treated with Diffusion Theory. Just like in the Monte Carlo simulation, any photon packet that gets reemitted is added to the diffuse reflectance <math>R_{MC}</math>.
+
+When a photon packet is scattered into the center zone <math>z_c \le z \le -z_c</math>, it is conditionally converted to an isotropic point source. The photon packet must still be in the center region after one transport mean free path <math>l_t'</math> along the direction of the photon packet propagation for it to be converted to a point source, otherwise the Monte Carlo simulation continues. Before the conversion to an isotropic point source, the photon packet reduces its weight due to its interaction with the scattering medium. The resulting weight is recorded as a source function <math>S(r, z)</math>. This is the accumulated weight distribution which can be converted to relative source density function <math>S_d</math> by:
+
+:<math> S_d [i_r, i_z] = \frac{S[i_r, i_z]}{N\Delta V(i_r)}</math> where <math>\Delta V</math> is the grid volume and <math>N</math> is the number of photon packets.
+
+The additional diffuse reflectance <math>R_{DT}</math> from the sources is calculated as:
+
+:<math>R_{DT}(r) = \int_{0}^{\infty}\int_{0}^{\infty}\int_{0}^{2\pi}S_d(r',z')R(r,0,0;r',\phi',z')r'd\phi'dr'dz'</math> where <math>R</math> is from the diffusion theory approximation for a slab and <math>\phi</math> is the azimuthal angle. The total diffuse reflectance would be <math>R_{DT}</math> and <math>R_{MC}</math> added together.<ref name="Wang_BioMedBooK"/>
+
+===Advantages over Diffusion Theory and MCML===
+A trade-off between simulation speed and accuracy exists; choosing a critical depth <math>z_c</math> becomes the deciding factor for simulation speed with a deeper critical depth resulting in slower times due to packets needing to be tracked for a longer distance before the transition to diffusion theory.<ref name=Hybrid_Theory>{{cite journal |doi=10.1364/AO.39.002235 |author=Alexandrakis G., Farrell TJ., and Patterson MS. |title=Monte Carlo diffusion hybrid model for photon migration in a two-layer turbid medium in the frequency domain|journal=[[Applied Optics]]|volume=39|pages=2235–2244|year=2000}}</ref>
+
+Advantages
+*More accurate than the Diffusion Theory, especially near the source
+*Faster than the Monte Carlo method
+
+{|style="margin: 1em auto 1em auto"| class="wikitable" border="1"| style="margin: 1em auto 1em auto"
+|+ User times for Monte Carlo (MC) method and Hybrid model (H) using IBM ThinkPad T43 with 1.86 GHz processor and 1.5 GB RAM
+|-
+! <math>n_{rel}</math>
+! <math>d(cm)</math>
+! <math>\mu_{a}(cm^{-1})</math>
+! <math>T_{MC}(s)</math>
+! <math>T_H(s)</math>
+! <math>T_{MC}(s)/T_H(s)</math>
+|-
+| width="100pt" |1.37
+| width="100pt"|3
+| width="100pt"|0.01
+| width="100pt"|7537
+| width="100pt"|25
+| width="100pt"|301
+|-
+| 1.37
+| 3
+| 0.1
+| 4924
+| 25
+| 189
+|-
+| 1.37
+| 3
+| 1
+| 1150
+| 25
+| 46
+|-
+| 1.37
+| 1
+| 0.01
+| 2600
+| 25
+| 104
+|-
+| 1.37
+| 1
+| 0.1
+| 2286
+| 25
+| 91
+|-
+| 1.37
+| 1
+| 1
+| 1051
+| 25
+| 41
+|-
+| 1
+| 3
+| 0.01
+| 1529
+| 19
+| 80
+|-
+| 1
+| 3
+| 0.1
+| 1645
+| 19
+| 87
+|-
+| 1
+| 3
+| 1
+| 547
+| 19
+| 29
+|-
+| 1
+| 1
+| 0.01
+| 480
+| 19
+| 25
+|-
+| 1
+| 1
+| 0.1
+| 480
+| 19
+| 25
+|-
+| 1
+| 1
+| 1
+| 442
+| 19
+| 23
+|}
+<center>Where <math>n_{rel}</math> is the relative refraction coefficient, <math>d</math> is the slab thickness, <math>\mu_a</math> is the absorption coefficient, and <math>T</math> is the user time.</center>
+
+===Comparisons Between Theories===
+
+<gallery widths="300px" heights="300px" align=center>
+Image:Hb11.jpg|Comparisons between the Diffusion Theory and the Monte Carlo method in terms of the fluence in response to a isotropic point source.
+Image:Hb22.jpg|Relative errors between the Diffusion Theory and the Monte Carlo method.
+</gallery>
+<gallery widths="300px" heights="300px" align=center>
+Image:Hb33.JPG|Comparisons between the pure Monte Carlo method and the Hybrid Model in terms of the diffuse reflectance in response to a pencil beam.
+Image:Hb4.JPG|Relative errors between the pure Monte Carlo method and the Hybrid Model. </gallery>
+<gallery widths="300px" heights="300px" align=center>
+Image:Hb55.jpg|Diffuse reflectance of the Hybrid Model in response to a pencil beam when the critical depth is set to 0.01cm, 0.03cm, 0.05cm and 0.1cm.
+Image:Hb7.JPG|Relative errors with different critical depths for the Hybrid Model.
+</gallery>
+<gallery widths="300px" heights="300px" align=center>
+Image:Hb7.jpg|Comparisons between the Monte Carlo method and the Hybrid Model in terms of diffuse reflectance in response to a pencil beam when the critical depth is set to 0.1cm. The absorption coefficient <math>\mu_a</math> varies among 0.1, 1, and 10 <math>cm^{-1}</math>.
+</gallery>
+
+==References==
+{{reflist}}
+
+[[Category:Scientific simulation software]]
+[[Category:Optical software]]</body> </html>

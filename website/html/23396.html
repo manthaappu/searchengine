@@ -1,0 +1,47 @@
+<html> <head> <title>Manual memory management</title></head><body>{{Onesource|date=June 2009}}
+In [[computer science]], '''manual memory management''' refers to the usage of manual instructions by the programmer to identify and deallocate unused objects, or [[garbage (computer science)|garbage]].  Up until the mid 1990s, the majority of [[programming language]]s used in industry supported manual memory management.  Today, however, languages with [[garbage collection (computer science)|garbage collection]] are becoming increasingly popular; the main manually-managed languages still in widespread use today are [[C (programming language)|C]] and [[C++]].  
+
+==Description==
+
+All programming languages use manual techniques to determine when to ''allocate'' a new object from the free store.  C uses the <tt>[[malloc]]</tt> function; C++ and Java use the <tt>[[new (C++)|new]]</tt> operator; determination of when an object ought to be created is trivial and unproblematic.  The fundamental issue is determination of when an object is no longer needed (ie. is garbage), and arranging for its underlying storage to be returned to the free store so that it may be re-used to satisfy future memory requests.  In manual memory allocation, this is also specified manually by the programmer; via functions such as <tt>free()</tt> in C, or the <tt>delete</tt> operator in C++.
+
+===Manual management and correctness===
+
+Manual memory management is known to enable several major classes of bugs into a program, when used incorrectly.
+
+* When an unused object is never released back to the free store, this is known as a [[memory leak]].  In some cases, memory leaks may be tolerable, such as a program which "leaks" a bounded amount of memory over its lifetime, or a short-running program which relies on an [[operating system]] to deallocate its resources when it terminates.  However, in many cases memory leaks occur in long-running programs, and in such cases an ''unbounded'' amount of memory is leaked.  When this occurs, the size of the available free store continues to decrease over time; when it finally is exhausted the program then crashes.
+
+* When an object is deleted more than once, or when the programmer attempts to release a pointer to an object ''not'' allocated from the free store, catastrophic failure of the [[dynamic memory management]] system can result.  The result of such actions can include [[heap corruption]], premature destruction of a ''different'' (and newly-created) object which happens to occupy the same location in memory as the multiply-deleted object, and other forms of [[undefined behavior]].
+
+* Pointers to deleted objects become [[wild pointer]]s if used post-deletion; attempting to use such pointers can result in difficult-to-diagnose bugs.
+
+Languages which exclusively use [[garbage collection (computer science)|garbage collection]] are known to avoid the last two classes of defects.  Memory leaks can still occur (and bounded leaks frequently occur with generational or conservative garbage collection), but are generally less severe than memory leaks in manual systems.
+
+===Resource acquisition is initialization===
+
+Manual memory management has one correctness advantage, which comes into play when objects own scarce system resources (like graphics resources, file handles, or database connections) which must be relinquished when an object is destroyed.  Languages with manual management, via the use of [[destructor (computer science)|destructor]]s, can arrange for such actions to occur at the precise time of object destruction; this is known as the [[resource acquisition is initialization]] paradigm (RAII).  In C++, this ability is put to further use to automate memory deallocation within an otherwise-manual framework, use of the <tt>[[auto ptr]]</tt> template in the language's standard library to perform memory management is a common paradigm.  (auto_ptr is ''not'' suitable for all object usage patterns).
+
+Garbage collected languages have difficulty with this paradigm, as it is difficult to define (or determine) when or if a [[finalizer]] method might be called; this is commonly known as the [[finalizer problem]].  Java and other GC'd languages frequently use manual management for scarce system resources ''besides'' memory (such as [[graphics resource]]s); any object which manages graphics resources is expected to implement the <tt>dispose()</tt> method, which releases any such resources and marks the object as inactive.  Programmers are expected to invoke <tt>dispose()</tt> manually as appropriate; to prevent "leaking" of scarce graphics resources.  Depending on the <tt>finalize()</tt> method (how Java implements finalizers) to release graphics resources is widely viewed as poor programming practice among Java programmers.
+
+===Performance===
+
+Many advocates of manual memory management argue that it affords superior performance when compared to automatic techniques such as [[garbage collection (computer science)|garbage collection]].  Manual allocation does not suffer from the long "pause" times often associated with garbage collection (although modern garbage collectors have collection cycles which are often not noticeable), and manual allocation frequently has superior locality of reference.  This is especially an issue in [[Real-time computing|real time]] systems, where unbounded collection cycles are generally unacceptable.
+
+Manual allocation is also known to be more appropriate for systems where memory is a scarce resource.  Memory systems can and do frequently "thrash" as the size of a program's [[working set]] approaches the size of available memory; unused objects in a garbage-collected system tend to remain in an un-reclaimed state for longer than in manually-managed systems, increasing the effective working set size.  
+
+On the other hand, manual management has documented performance ''disadvantages'':
+
+* Calls to <tt>delete</tt> and such incur an overhead each time they are made, this overhead can be amortized in garbage collection cycles.  This is especially true of multithreaded applications, where delete calls must be synchronized.
+* The allocation routine may be more complicated, and slower.  Some garbage collection schemes, such as those with heap compaction, can maintain the free store as a simple array of memory (as opposed to the complicated implementations required by manual management schemes).
+
+==References==
+*Berger (2002) [http://portal.acm.org/citation.cfm?id=582421&dl=GUIDE&coll=GUIDE&CFID=21814080&CFTOKEN=29852334 Reconsidering custom memory allocation]
+
+==External links==
+*[http://www.memorymanagement.org/ The Memory Management Reference]
+* Richard Jones and Rafael Lins, ''Garbage Collection: Algorithms for Automated Dynamic Memory Management'', Wiley and Sons (1996), ISBN 0-471-94148-4
+
+{{DEFAULTSORT:Manual Memory Management}}
+[[Category:Memory management]]
+
+[[ar:تنظيم الذاكرة اليدوي]]</body> </html>

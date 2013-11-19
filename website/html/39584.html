@@ -1,0 +1,163 @@
+<html> <head> <title>Visual odometry</title></head><body>[[Image:Optical flow example v2.png|thumb|right|The [[optical flow]] vector of a moving object in a video sequence.]]
+
+In [[robotics]] and [[computer vision]], '''visual odometry''' is the process of determining the position and orientation of a robot by analyzing the associated camera images. It has been used in a wide variety of robotic applications, such as on the [[Mars Exploration Rover]]s.<ref name=Maimone2007>{{cite journal
+ | author = Maimone, M.
+ | coauthors = Cheng, Y.; Matthies, L.
+ | year = 2007
+ | title = Two years of Visual Odometry on the Mars Exploration Rovers
+ | journal = Journal of Field Robotics
+ | volume = 24
+ | issue = 3
+ | pages = 169–186
+ | url = http://www-robotics.jpl.nasa.gov/publications/Mark_Maimone/rob-06-0081.R4.pdf 
+ | accessdate = 2008-07-10
+ | doi = 10.1002/rob.20184
+}}</ref>
+
+==Overview==
+In [[navigation]], [[odometry]] is the use of data from the movement of actuators to estimate change in position over time through devices such as [[rotary encoder]]s to measure wheel rotations. While useful for many wheeled or tracked vehicles, traditional odometry techniques cannot be applied to robots with non-standard locomotion methods, such as legged robots. In addition, odometry universally suffers from precision problems, since wheels tend to slip and slide on the floor creating a non-uniform distance traveled as compared to the wheel rotations. The error is compounded when the vehicle operates on non-smooth surfaces. Odometry reading become increasingly unreliable over time as these errors accumulate and compound over time. 
+
+Visual odometry is the process of determining equivalent odometry information using sequential camera images to estimate the distance traveled. Visual odometry allows for enhanced navigational accuracy in robots or vehicles using any type of locomotion on any surface.
+
+==Algorithm==
+Most existing approaches to visual odometry are based on the following stages.
+
+# Acquire input images: using either [[single camera]]s.<ref name=ChhaniyaraS>{{cite conference
+ | author = Chhaniyara, Savan
+ | coauthors = KASPAR ALTHOEFER ;LAKMAL D. SENEVIRATNE
+ | year = 2008
+ | title = Visual Odometry Technique Using Circular Marker Identification For Motion Parameter Estimation
+ | conference =The Eleventh International Conference on Climbing and Walking Robots and the Support Technologies for Mobile Machines 
+ | booktitle = Advances in Mobile Robotics: Proceedings of the Eleventh International Conference on Climbing and Walking Robots and the Support Technologies for Mobile Machines, Coimbra, Portugal
+ | volume = 11
+ | publisher =World Scientific, 2008 
+ | url = http://eproceedings.worldscinet.com/9789812835772/9789812835772_0128.html
+ | conferenceurl = http://books.google.co.uk/books?id=8L7izBmmCuQC&pg=PA1069&dq=savan+chhaniyara&cd=1#v=onepage&q=savan%20chhaniyara&f=false
+}}</ref><ref name=Nister:2004p211></ref>, [[stereo camera]]s<ref name=Nister:2004p211>{{cite conference
+| author = Nister, D; Naroditsky, O.; Bergen, J
+| conference = Computer Vision and Pattern Recognition, 2004. CVPR 2004.
+| title = Visual Odometry
+| pages = I–652 - I--659 Vol.1
+| volume = 1
+| year = 2004
+| month = Jan
+| doi = 10.1109/CVPR.2004.1315094
+| url = http://ieeexplore.ieee.org/search/srchabstract.jsp?arnumber=1315094&isnumber=29133&punumber=9183&k2dockey=1315094@ieeecnfs
+}}</ref>, or [[omnidirectional camera]]s.<ref name=ScaramuzzaIEEE-TRO08>{{cite journal
+ | author = Scaramuzza, D.
+ | coauthors = Siegwart, R.
+ | year = 2008
+ | month = October
+ | title = Appearance-Guided Monocular Omnidirectional Visual Odometry for Outdoor Ground Vehicles
+ | journal = IEEE Transactions on Robotics
+ | pages = 1–12
+ | url = http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4625958&isnumber=4359257
+ | accessdate = 2008-10-20
+}}</ref><ref name=Corke>{{cite conference
+ | author = Corke, P.
+ | coauthors = Strelow, D.; Singh, S.
+ | year = 
+ | title = Omnidirectional visual odometry for a planetary rover
+ | conference = 
+ | booktitle = Intelligent Robots and Systems, 2004.(IROS 2004). Proceedings. 2004 IEEE/RSJ International Conference on
+ | volume = 4
+ | publisher = 
+ | url = http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1390041
+ | conferenceurl = 
+}}</ref>
+# Image correction: apply [[image processing]] techniques for lens distortion removal, etc
+# Feature detection: define interest operators, and match features across frames and construct [[optical flow]] field.
+## Use correlation to establish correspondence of two images, and no long term feature tracking.
+## Feature extraction and correlation ([[Lucas–Kanade method]]). 
+##Construct optical flow field.
+# Check flow field vectors for potential tracking errors and remove outliers.<ref name=Campbell>{{cite conference
+ | author = Campbell, J.
+ | coauthors = Sukthankar, R.; Nourbakhsh, I.; Pittsburgh, I.R.
+ | year = 
+ | title = Techniques for evaluating optical flow for visual odometry in extreme terrain
+ | conference = 
+ | booktitle = Intelligent Robots and Systems, 2004.(IROS 2004). Proceedings. 2004 IEEE/RSJ International Conference on
+ | volume = 4
+ | publisher = 
+ | url = http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1389991
+ | conferenceurl = 
+}}</ref>
+# Estimation of the camera motion of the camera from the optical flow.<ref name=Sunderhauf2005>{{cite journal
+ | author = Sunderhauf, N.
+ | coauthors = Konolige, K.; Lacroix, S.; Protzel, P.
+ | year = 2005
+ | title = Visual odometry using sparse bundle adjustment on an autonomous outdoor vehicle
+ | journal = Levi, Schanz, Lafrenz, and Avrutin, editors, Tagungsband Autonome Mobile Systeme
+ | pages = 157–163
+ | url = http://www.tu-chemnitz.de/etit/proaut/index.download.df493a7bc2c27263f7d8ff467ea84879.pdf 
+ | accessdate = 2008-07-10
+}}</ref><ref name=Konolige2006>{{cite journal
+ | author = Konolige, K.
+ | coauthors = Agrawal, M.; Bolles, R.C.; Cowan, C.; Fischler, M.; Gerkey, B.P.
+ | year = 2006
+ | title = Outdoor mapping and navigation using stereo vision
+ | journal = Proc. of the Intl. Symp. on Experimental Robotics (ISER)
+ | url = http://www.springerlink.com/index/g442h0p7n313w1g2.pdf 
+ | accessdate = 2008-07-10
+}}</ref><ref name=Olson2002>{{cite journal
+ | author = Olson, C.F.
+ | coauthors = Matthies, L.;Schoppers, M.; Maimone, M.W.
+ | year = 2002
+ | title = Rover navigation using stereo ego-motion
+ | journal = Robotics and Autonomous Systems
+ | volume = 43
+ | pages = 215–229
+ | url = http://faculty.washington.edu/cfolson/papers/pdf/ras03.pdf
+ | accessdate = 2010-06-06}}</ref><ref name=Cheng2006>{{cite journal
+ | author = Cheng, Y.
+ | coauthors = Maimone, M.W.; Matthies, L.
+ | year = 2006
+ | title = Visual Odometry on the Mars Exploration Rovers
+ | journal = IEEE Robotics and Automation Magazine
+ | volume = 13
+ | issue = 2
+ | pages = 54–62
+ | url = http://ieeexplore.ieee.org/iel5/100/31467/101109RA2006CHENG.pdf?arnumber=101109RA2006CHENG 
+ | accessdate = 2008-07-10
+ | doi = 10.1109/MRA.2006.1638016
+}}</ref>
+## Choice 1: [[Kalman filter]] for state estimate distribution maintenance. 
+## Choice 2: find the geometric and 3D properties of the features that minimize a [[cost function]] based on the re-projection error between two adjacent images. This can be done by mathematical minimization or [[random sampling]].
+# Periodic repopulation of trackpoints to maintain coverage across the image.
+
+Another method, coined 'visiodometry' estimates the planar roto-translations between images using [[Phase correlation]] instead of extracting features.<ref name=ZamanICRA>{{cite conference
+ | author = Zaman, M.
+ |
+ | year = 2007
+ | title = High Precision Relative Localization Using a Single Camera
+ | conference = 
+ | booktitle = Robotics and Automation, 2007.(ICRA 2007). Proceedings. 2007 IEEE International Conference on
+ | volume = 
+ | publisher = 
+ | url = http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4209696&userType=inst
+ | conferenceurl = 
+}}</ref><ref name=ZamanJRAS>{{cite journal
+ | author = Zaman, M.
+ | coauthors = 
+ | year = 2007
+ | title = High resolution relative localisation using two cameras
+ | journal = Journal of Robotics and Autonomous Systems (JRAS)
+ | publisher = Elsevier
+ | pages = 685–692
+ | url = 
+ | accessdate = 
+}}</ref>
+
+==See also==
+* [[Optical flow]]
+* [[Odometry]]
+* [[Dead reckoning]]
+
+==References==
+{{reflist|2}}
+
+[[Category:Robotics]]
+[[Category:Motion in computer vision]]
+[[Category:Surveying]]
+
+[[ru:Визуальная одометрия]]</body> </html>

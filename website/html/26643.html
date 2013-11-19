@@ -1,0 +1,160 @@
+<html> <head> <title>Normalisation by evaluation</title></head><body>In [[programming language]] [[formal semantics of programming languages|semantics]], '''normalisation by evaluation (NBE)''' is a style of obtaining the [[normal form]] of terms in the [[λ calculus]] by appealing to their [[denotational semantics]]. A term is first ''interpreted'' into a denotational model of the λ-term structure, and then a canonical (β-normal and η-long) representative is extracted by ''reifying'' the denotation. Such an essentially semantic approach differs from the more traditional syntactic description of normalisation as a reductions in a [[term rewrite system]] where [[β-reduction]]s are allowed deep inside λ-terms.
+
+NBE was first described for the [[simply typed lambda calculus]].<ref name="berger schwichtenberg lics-91">{{cite journal|author=Berger, Ulrich|coauthors=Schwichtenberg, Helmut|year=1991|title=An inverse of the evaluation functional for typed λ-calculus|journal=[[Logic in Computer Science|LICS]]}}</ref> It has since been extended both to weaker [[type system]]s such as the [[untyped lambda calculus]]<ref name="filinski rohde fossacs-04">{{cite journal|author=Filinski, Andrzej|coauthors=Rohde, Henning Korsholm|year=2004|title=A denotational account of untyped normalization by evaluation|url=http://www.diku.dk/hjemmesider/ansatte/andrzej/papers/ADAoUNbE.pdf|format=PDF|journal=[[Foundations of Software Science and Computation Structures|FOSSACS]]}}</ref> using a [[domain theory|domain theoretic]] approach, and to richer type systems such as several variants of [[Martin-Löf type theory]].<ref name="abel aehlig dybjer mfps-07">{{cite journal|author=Abel, Andreas|coauthors=Aehlig, Klaus; Dybjer, Peter|year=2007|title=Normalization by Evaluation for Martin-Löf Type Theory with One Universe|url=http://www.tcs.informatik.uni-muenchen.de/~abel/nbemltt.pdf|format=PDF|journal=[[Mathematical Foundations of Programming Semantics|MFPS]]}}</ref><ref name="abel coquand dybjer lics-07">{{cite journal|author=Abel, Andreas|coauthors=Coquand, Thierry; Dybjer, Peter|year=2007|title=Normalization by Evaluation for Martin-Löf Type Theory with Typed Equality Judgements|url=http://www.tcs.informatik.uni-muenchen.de/~abel/univnbe.pdf|format=PDF|journal=[[Logic in Computer Science|LICS]]}}</ref>
+
+== Outline ==
+
+Consider the [[simply typed lambda calculus]], where types τ can be basic types (α), function types (→), or products (×), given  by the following [[Backus–Naur Form]] grammar (→ associating to the right, as usual):
+
+:(Types) τ ::= α | τ<sub>1</sub> → τ<sub>2</sub> | τ<sub>1</sub> × τ<sub>2</sub>
+
+These can be implemented as a [[datatype]] in the meta-language; for example, for [[Standard ML]], we might use:
+<blockquote><table><tr><td>
+ datatype ty = Basic of string
+             | Arrow of ty * ty
+             | Prod of ty * ty
+</td></tr></table></blockquote>
+Terms are defined at two levels.<ref name="danvy popl 96">{{cite journal|author=Danvy, Olivier|title=Type-directed partial evaluation|url=ftp://ftp.daimi.au.dk/pub/empl/danvy/Papers/danvy-popl96.ps.gz|format=[[gzip]]ped [[PostScript]]|year=1996|pages=242–257|journal=[[Principles of Programming Languages|POPL]]}}</ref> The lower ''syntactic'' level (sometimes called the ''dynamic'' level) is the representation that one intends to normalise.
+
+:(Syntax Terms) ''s'',''t'',… ::= '''var''' ''x'' | '''lam''' (''x'', ''t'') | '''app''' (''s'', ''t'') | '''pair''' (''s'', ''t'') | '''fst''' ''t'' | '''snd''' ''t''
+
+Here '''lam'''/'''app''' (resp. '''pair'''/'''fst''','''snd''') are the [[introduction rule|intro]]/[[elimination rule|elim]] forms for → (resp. ×), and ''x'' are [[Variable (programming)|variables]]. These terms are intended to be implemented as a [[first-order logic|first-order]] in the meta-language:
+
+<blockquote><table><tr><td>
+ datatype tm = var of string
+             | lam of string * tm | app of tm * tm
+             | pair of tm * tm | fst of tm | snd of tm
+</td></tr></table></blockquote>
+
+The [[denotational semantics]] of (closed) terms in the meta-language interprets the constructs of the syntax in terms of features of the meta-language; thus, '''lam''' is interpreted as abstraction, '''app''' as application, etc. The semantic objects constructed are as follows:
+
+:(Semantic Terms) ''S'',''T'',… ::= '''LAM''' (λ''x''. ''S'' ''x'') | '''PAIR''' (''S'', ''T'') | '''SYN''' ''t''
+
+Note that there are no variables or elimination forms in the semantics; they are represented simply as syntax. These semantic objects are represented by the following datatype:
+
+<blockquote><table><tr><td>
+ datatype sem = LAM of (sem -> sem)
+              | PAIR of sem * sem
+              | SYN of tm
+</td></tr></table></blockquote>
+
+There are a pair of type-indexed functions that move back and forth between the syntactic and [[semantic layer]]. The first function, usually written ↑<sub>τ</sub>, ''reflects'' the term syntax into the semantics, while the second ''reifies'' the semantics as a syntactic term (written as ↓<sup>τ</sup>). Their definitions are mutually recursive as follows:
+
+<blockquote><math>
+\begin{align}
+  \uparrow_{\alpha} t &= \mathbf{SYN}\ t \\
+  \uparrow_{\tau_1 \to \tau_2} v &= 
+     \mathbf{LAM} (\lambda S.\ \uparrow_{\tau_2} (\mathbf{app}\ (v, \downarrow^{\tau_1} S))) \\
+  \uparrow_{\tau_1 \times \tau_2} v &=
+     \mathbf{PAIR} (\uparrow_{\tau_1} (\mathbf{fst}\ v), \uparrow_{\tau_2} (\mathbf{snd}\ v)) \\[1ex]
+  \downarrow^{\alpha} (\mathbf{SYN}\ t) &= t \\
+  \downarrow^{\tau_1 \to \tau_2} (\mathbf{LAM}\ S) &=
+     \mathbf{lam}\ (x, \downarrow^{\tau_2} (S\ (\uparrow_{\tau_1} (\mathbf{var}\ x)))) 
+     \text{ where } x \text{ is fresh} \\
+  \downarrow^{\tau_1 \times \tau_2} (\mathbf{PAIR}\ (S, T)) &=
+     \mathbf{pair}\ (\downarrow^{\tau_1} S, \downarrow^{\tau_2} T)
+\end{align}
+</math></blockquote>
+
+These definitions are easily implemented in the meta-language:
+
+<blockquote><table><tr><td>
+ (* reflect : ty -> tm -> sem *)
+ fun reflect (Arrow (a, b)) t =
+       LAM (fn S => reflect b (app t (reify a S)))
+   | reflect (Prod (a, b)) t =
+       PAIR (reflect a (fst t)) (reflect b (snd t))
+   | reflect (Basic _) t =
+       SYN t
+
+ (* reify   : ty -> sem -> tm *)
+ and reify (Arrow (a, b)) (LAM S) =
+       let x = fresh_var () in
+         Lam (x, reify b (S (reflect a (var x))))
+       end
+   | reify (Prod (a, b)) (PAIR S T) =
+       Pair (reify a S, reify b T)
+   | reify (Basic _) (SYN t) = t
+</td></tr></table></blockquote>
+
+By [[mathematical induction|induction]] on the structure of types, it follows that if the semantic object ''S'' denotes a well-typed term ''s'' of type τ, then reifying the object (i.e., ↓<sup>τ</sub> S) produces the β-normal η-long form of ''s''. All that remains is, therefore, to construct the initial semantic interpretation ''S'' from a syntactic term ''s''. This operation, written ∥''s''∥<sub>Γ</sub>, where Γ is a context of bindings, proceeds by induction solely on the term structure:
+
+<blockquote><math>
+\begin{align}
+  \| \mathbf{var}\ x \|_\Gamma &= \Gamma(x) \\
+  \| \mathbf{lam}\ (x, s) \|_\Gamma &= 
+     \mathbf{LAM}\ (\lambda S.\ \| s \|_{\Gamma, x \mapsto S}) \\
+  \| \mathbf{app}\ (s, t) \|_\Gamma &=
+    S\ (\|t\|_\Gamma) \text{ where } \|s\|_\Gamma = \mathbf{LAM}\ S \\
+  \| \mathbf{pair}\ (s, t) \|_\Gamma &=
+     \mathbf{PAIR}\ (\|s\|_\Gamma, \|t\|_\Gamma) \\
+  \| \mathbf{fst}\ s \|_\Gamma &=
+      S \text{ where } \|s\|_\Gamma = \mathbf{PAIR}\ (S, T) \\
+  \| \mathbf{snd}\ t \|_\Gamma &=
+      T \text{ where } \|t\|_\Gamma = \mathbf{PAIR}\ (S, T)
+\end{align}
+</math></blockquote>
+
+In the implementation:
+
+<blockquote><table><tr><td>
+ (* meaning : ctx -> tm -> sem *)
+ fun meaning G t =
+       case t of
+         var x => lookup G x
+       | lam (x, s) => LAM (fn S => meaning (add G (x, S)) s)
+       | app (s, t) => (case meaning G s of
+                          LAM S => S (meaning G t))
+       | pair (s, t) => PAIR (meaning G s, meaning G t)
+       | fst s => (case meaning G s of
+                     PAIR (S, T) => S)
+       | snd t => (case meaning G t of
+                     PAIR (S, T) => T)
+</td></tr></table></blockquote>
+
+Note that there are many non-exhaustive cases; however, if applied to a ''closed'' well-typed term, none of these missing cases are ever encountered. The NBE operation on closed terms is then:
+
+<blockquote><table><tr><td>
+ (* nbe : ty -> tm -> tm *)
+ fun nbe a t = reify a (meaning empty t)
+</td></tr></table></blockquote>
+
+As an example of its use, consider the syntactic term <code>SKK</code> defined below:
+
+<blockquote><table><tr><td>
+ val K = lam ("x", lam ("y", var "x"))
+ val S = lam ("x", lam ("y", lam ("z", app (app (var "x", var "z"), app (var "y", var "z")))))
+ val SKK = app (app (S, K), K)
+</td></tr></table></blockquote>
+
+This is the well-known encoding of the [[identity function]] in [[combinatory logic]]. Normalising it at an identity type produces:
+
+<blockquote><table><tr><td>
+ - nbe (Arrow (Basic "a", Basic "a")) SKK;
+ val it = lam ("v0",var "v0") : tm
+</td></tr></table></blockquote>
+
+The result is actually in η-long form, as can be easily seen by normalizing it at a different identity type:
+
+<blockquote><table><tr><td>
+ - nbe (Arrow (Arrow (Basic "a", Basic "b"), Arrow (Basic "a", Basic "b"))) SKK;
+ val it = lam ("v1",lam ("v2",app (var "v1",var "v2"))) : tm
+</td></tr></table></blockquote>
+
+== Correctness ==
+{{Empty section|date=June 2008}}
+
+== Extensions ==
+{{Empty section|date=June 2008}}
+
+== See also ==
+
+* [[MINLOG]], a [[proof assistant]] that uses NBE as its rewrite engine.
+
+== References ==
+
+{{reflist}}
+
+{{DEFAULTSORT:Normalisation By Evaluation}}
+[[Category:Lambda calculus]]
+[[Category:Programming language semantics]]</body> </html>

@@ -1,0 +1,134 @@
+<html> <head> <title>Test Template Framework</title></head><body>The Test Template Framework (TTF) is a [[model-based testing]] (MBT) framework proposed by Phil Stocks and David Carrington in {{Harv|Stocks|Carrington|1996}}. Although the TTF was meant to be notation-independent, the original presentation was made using the [[Z notation|Z formal notation]]. It is one of the few MBT frameworks approaching [[unit testing]].
+
+
+==Introduction==
+''The TTF is a specific proposal of [[model-based testing]] (MBT). It considers models to be [[Z notation|Z specifications]]. Each operation within the specification is analyzed to derive or generate [[#Abstract test case|''abstract test cases'']]. This analysis consists of the following steps:''''''
+
+# Define the [[#Input space|''input space'']] (IS) of each operation.
+# Derive the [[#Valid input space|''valid input space'']] (VIS) from the [[#Input space|IS]] of each operation.
+# Apply one or more [[#Testing tactic|''testing tactics'']]<ref name="testing strategy">Stocks and Carrington use the term ''testing strategies'' in {{Harv|Stocks|Carrington|1996}}.</ref>, starting from each [[#Valid input space|VIS]], to build a [[#Testing tree|''testing tree'']] for each operation. Testing trees are populated with nodes called [[#Test class|''test classes'']].
+# [[#Pruning testing trees|''Prune'']] each of the resulting [[#Testing tree|testing trees]].
+# Find one or more [[#Abstract test case|''abstract test cases'']] from each leaf in each [[#Testing tree|testing tree]].
+
+One of the main advantages of the TTF is that all of these concepts are expressed in the same notation of the specification, i.e. the [[Z notation]]. Hence, the engineer has to know only one notation to perform the analysis down to the generation of [[#Abstract test case|abstract test cases]].
+
+==Important concepts==
+In this section the main concepts defined by the TTF are described.
+
+===Input space===
+Let <math>Op</math> be a Z operation. Let <math>x_{1} \dots x_{n}</math> be all the input and (non-primed) state variables referenced in <math>Op</math>, and <math>T_{1} \dots T_{n}</math> their corresponding types. The ''Input Space'' (IS) of <math>Op</math>, written <math>IS_{Op}</math>, is the Z schema box defined by <math>[x_{1}:T_{1} \dots x_{n}:T_{n}]</math>.
+
+===Valid input space===
+Let <math>Op</math> be a Z operation. Let <math>\text{pre } Op</math> be the [[precondition]] of <math>Op</math>. The ''Valid Input Space'' (VIS) of <math>Op</math>, written <math>VIS_{Op}</math>, is the Z schema box defined by <math>[IS_{Op} | \text{pre } Op]</math>.
+
+===Test class===
+Let <math>Op</math> be a Z operation and let <math>P</math> be any [[Predicate (mathematical logic)|predicate]] depending on one or more of the variables defined in <math>VIS_{Op}</math>. Then, the Z schema box <math>[VIS_{Op} | P]</math> is a ''test class'' of <math>Op</math>. Note that this schema is equivalent to <math>[IS_{Op} | \text{pre } Op \land P]</math>. This observation can be generalized by saying that if <math>C_{Op}</math> is a test class of <math>Op</math>, then the Z schema box defined by <math>[C_{Op} | P]</math> is also a test class of <math>Op</math>. According to this definition the VIS is also a test class. 
+
+If <math>C_{Op}</math> is a test class of <math>Op</math>, then the predicate <math>P</math> in <math>C'_{Op} == [C_{Op} | P]</math> is said to be the ''characteristic'' predicate of <math>C'_{Op}</math> or <math>C'_{Op}</math> is ''characterized'' by <math>P</math>.
+
+Test classes are also called test objectives {{Harv|Utting|Legeard|2007}}, test templates {{Harv|Stocks|Carrington|1996}} and test specifications.
+
+===Testing tactic===
+In the context of the TTF a ''testing tactic''<ref name="testing strategy"/> is a means to [[Partition of a set|partition]] any [[#Test class|test class]] of any operation. However, some of the testing tactics used in practice actually do not always generate a partition of some test classes. 
+
+Some testing tactics originally proposed for the TTF are the following:
+
+*[[Disjunctive Normal Form]] (DNF). By applying this tactic the operation is written in [[Disjunctive Normal Form]] and the [[#Test class|test class]] is divided in as many test classes as terms are in the resulting operation's predicate. The predicate added to each new test class is the [[precondition]] of one of the terms in the operation's predicate.
+
+*Standard Partitions (SP). This tactic uses a predefined partition of some mathematical operator {{Harv|Stocks|1993}}. For example, the following is a good partition for expresions of the form <math>S \spadesuit T</math> where <math>\spadesuit</math> is one of <math>\cup</math>, <math>\cap</math> and <math>\setminus</math> (see [[Set theory]]).
+
+<center>
+{| class="wikitable"
+|-
+| <math>S = \emptyset, T = \emptyset</math>
+| <math>S \neq \emptyset, T \neq \emptyset, S \subset T</math>
+|-
+| <math>S = \emptyset, T \neq \emptyset</math>
+| <math>S \neq \emptyset, T \neq \emptyset, T \subset S</math>
+|-
+| <math>S \neq \emptyset, T = \emptyset</math>
+| <math>S \neq \emptyset, T \neq \emptyset, T = S</math>
+|-
+| <math>S \neq \emptyset, T \neq \emptyset, S \cap T = \emptyset</math>
+| <math>S \neq \emptyset, T \neq \emptyset, S \cap T \neq \emptyset, \lnot (S \subseteq T), \lnot (T \subseteq S), S \neq T</math>
+|}
+</center>
+
+:As can be noticed, standard partitions might change according to how much testing the engineer wants to perform.
+
+*Sub-domain Propagation (SDP). This tactic is applied to expressions containing:
+
+# Two or more mathematical operators for which there are already defined standard partitions, or 
+# Mathematical operators which are defined in terms of other mathematical operators. 
+
+:In any of these cases, the standard partitions of the operators appearing in the expression or in the definition of a complex one, are combined to produce a partition for the expression. If the tactic is applied to the second case, then the resulting partition can be considered as the standard partition for that operator. Stocks and Carrington in {{Harv|Stocks|Carrington|1996}} illustrate this situation with <math>R \oplus G = (\text{dom } G \ntriangleleft R)\cup G</math>, where <math>\ntriangleleft</math> means [[Restriction (mathematics)|domain anti-restriction]], by giving standard partitions for <math>\ntriangleleft</math> and <math>\cup</math> and propagating them to calculate a partition for <math>\oplus</math>.
+
+*Specification Mutation (SM). The first step of this tactic consists in generating a ''mutant'' of the Z operation. A mutant of a Z operation is similar in concept to a [[Mutation testing|mutant of a program]], i.e. it is a modified version of the operation. The modification is introduced by the engineer with the intention of uncovering an error in the implementation. The mutant should be the specification that the engineer guesses the programmer has implemented. Then, the engineer has to calculate the subset of the VIS that yields different results in both specifications. The predicate of this set is used to derive a new test class.
+
+Some other testing tactics that may also be used are the following:
+
+*In Set Extension (ISE). It applies to predicates of the form <math>expr \in \{expr_{1}, \dots, expr_{n}\}</math>. In this case, it generates <math>n</math> test classes such that a predicate of the form <math>expr = expr_{i}</math> is added to each of them.
+
+*Mandatory Test Set (MTS). This tactic associates a set of constant values to a VIS' variable and generates as many test classes as elements are in the set. Each test class is characterized by a predicate of the form <math>var = val</math> where <math>var</math> is the name of the variable and <math>val</math> is one of the values of the set.
+
+*Numeric Ranges (NR). This tactic applies only to VIS' variables of type <math>\mathbb{Z}</math> (or its "subtype" <math>\mathbb{N}</math>). It consists in associating a range to a variable and deriving test classes by comparing the variable with the limits of the range in some ways. More formally, let <math>n</math> be a variable of type <math>\mathbb{Z}</math> and let <math>[i,j]</math> be the associated range. Then, the tactic generates the test classes characterized by the following predicates: <math>n<i</math>, <math>n=i</math>, <math>i<n \land n<j</math>, <math>n=j</math>, <math>n>j</math>.
+
+*Free Type (FT). This tactic generates as many test classes as elements a free (enumerated) type has. In other words, if a model defines type <math>COLOUR ::= red | blue | green</math> and some operation uses <math>c</math> of type <math>COLOUR</math>, then by applying this tactic each test class will by divided into three new test classes: one in which <math>c</math> equals <math>red</math>, the other in which <math>c</math> equals <math>blue</math>, and the third where <math>c</math> equals <math>green</math>.
+
+*Proper Subset of Set Extension (PSSE). This tactic uses the same concept of ISE but applied to set inclusions. PSSE helps to test operations including predicates like <math>expr \subset \{expr_{1}, \dots, expr_{n}\}</math>. When PSSE is applied it generates <math>2^{n} - 1</math> test classes where a predicate of the form <math>expr = A_{i}</math> with <math>i \in [1, 2^{n} -1]</math> and <math>A_{i} \in \mathbb{P} \{expr_{1}, \dots, expr_{n}\} \setminus \{\{expr_{1}, \dots, expr_{n}\}\}</math>, is added to each class. <math>\{expr_{1}, \dots, expr_{n}\}</math> is excluded from <math>\mathbb{P} \{expr_{1}, \dots, expr_{n}\}</math> because <math>expr</math> is a proper subset of <math>\{expr_{1}, \dots, expr_{n}\}</math>.
+
+*Subset of Set Extension (SSE). It is identical to PSSE but it applies to predicates of the form <math>expr \subseteq \{expr_{1}, \dots, expr_{n}\}</math> in which case it generates <math>2^{n}</math> by considering also <math>\{expr_{1}, \dots, expr_{n}\}</math>.
+
+===Testing tree===
+The application of a testing tactic to the VIS generates some test classes. If some of these test classes are further partitioned by applying one or more testing tactics, a new set of test classes is obtained. This process can continue  by applying testing tactics to the test classes generated so far. Evidently, the result of this process can be drawn as a [[Tree (data structure)|tree]] with the VIS as the root node, the test classes generated by the first testing tactic as its children, and so on. Furthermore, Stocks and Carrington in {{Harv|Stocks|Carrington|1996}} propose to use the Z notation to build the tree, as follows. 
+
+<math>VIS == [IS | P]</math>
+
+<math>TCL_{T_{1}}^{1} == [VIS | P_{T_{1}}^{1}]</math>
+
+<math>\dots</math>
+
+<math>TCL_{T_{1}}^{n} == [VIS | P_{T_{1}}^{n}]</math>
+
+<math>TCL_{T_{2}}^{1} == [TCL_{T_{1}}^{i} | P_{T_{2}}^{1}]</math>
+
+<math>\dots</math>
+
+<math>TCL_{T_{2}}^{m} == [TCL_{T_{1}}^{i} | P_{T_{2}}^{m}]</math>
+
+<math>\dots</math>
+
+<math>TCL_{T_{3}}^{1} == [TCL_{T_{2}}^{j} | P_{T_{3}}^{1}]</math>
+
+<math>\dots</math>
+
+<math>TCL_{T_{3}}^{k} == [TCL_{T_{2}}^{j} | P_{T_{3}}^{k}]</math>
+
+<math>\dots</math>
+
+<math>\dots</math>
+
+<math>\dots</math>
+
+===Pruning testing trees===
+In general a test class' predicate is a conjunction of two or more predicates. It is likely, then, that some test classes are empty because their predicates are contradictions. These test classes must be pruned from the testing tree because they represent impossible combinations of input values, i.e. no [[#Abstract test case|abstract test case]] can be derived out of them.
+
+===Abstract test case===
+An abstract test case is an element belonging to a [[#Test class|test class]]. The TTF prescribes that abstract test cases should be derived only from the leaves of the [[#Testing tree|testing tree]]. Abstract test cases can also be written as Z schema boxes. Let <math>Op</math> be some operation, let <math>VIS_{Op}</math> be the [[#Valid input space|VIS]] of <math>Op</math>, let <math>x_{1}:T_{1} \dots x_{n}:T_{n}</math> be all the variables declared in <math>VIS_{Op}</math>, let <math>C_{Op}</math> be a (leaf) test class of the testing tree associated to <math>Op</math>, let <math>P_{1} \dots P_{m}</math> be the [[#Test class|characteristic predicates]] of each test class from <math>C_{Op}</math> up to <math>VIS_{Op}</math> (by following the [[Tree (data structure)|edges from child to parent]]), and let <math>v_{1}:T_{1} \dots v_{n}:T_{n}</math> be <math>n</math> constant values satisfying <math>P_{1}  \land \dots \land P_{m}</math>. Then, an abstract test case of <math>C_{Op}</math> is the Z schema box defined by <math>[C_{Op} | x_{1} = v_{1} \land \dots \land x_{n} = v_{n}]</math>.
+
+==See also==
+*[[Model-based testing]]
+*[[Fastest]]
+
+==References==
+*{{Citation | last1=Stocks | last2=Carrington | first1=Phil | first2=David | title=A framework for specification-based testing | journal=IEEE Transactions on Software Engineering | volume=22 | number=11 | year=1996 | pages=777&ndash;793}}.
+*{{Citation | last1=Utting | last2=Legeard | first1=Mark | first2=Bruno | title=Practical Model-Based Testing: A Tools Approach | publisher=[[Morgan Kaufmann]] | year=2007 | isbn=0123725011 | edition=1st}}.
+*{{Citation | last1=Stocks | first1=Phil | title=Applying Formal Methods to Software Testing | publisher=Department of Computer Science, University of Queensland, PhD thesis | year=1993}}.
+
+
+<!-- {{Citation | last1=Ebbinghaus | first1=Heinz-Dieter | last2=Flum | first2=Jörg | last3=Thomas | first3=Wolfgang | title=Mathematical Logic | publisher=[[Springer-Verlag]] | location=Berlin, New York | edition=2nd | series=Undergraduate Texts in Mathematics | isbn=978-0-387-94258-2 | year=1994}} -->
+
+==Notes==
+<references/>
+
+[[Category:Software testing]]</body> </html>

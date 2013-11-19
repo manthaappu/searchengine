@@ -1,0 +1,54 @@
+<html> <head> <title>Author Domain Signing Practices</title></head><body>In [[computing]], '''Author Domain Signing Practices''' ('''ADSP''')
+is an optional extension to the [[DKIM]] E-mail authentication
+scheme, <!-- formerly [[DomainKeys]] --> whereby a domain can publish the signing practices it adopts when relaying mail on behalf of associated authors.
+ADSP was adopted as a standards track RFC 5617 in August 2009.
+
+== Concepts ==
+===Author address===
+The ''author address'' is the one defined in the <tt>From</tt> header field defined in RFC 5322.  In the unusual cases where more than one address is defined in that field, RFC 5322 provides for a <tt>Sender</tt> field to be used instead.
+
+The domains in 5322-''From'' addresses are not necessarily the same as in the more elaborated ''Purported Responsible Address'' covered by [[Sender ID]] specified in RFC 4407.
+The domain in a 5322-''From'' address is also not necessarily the same as in the ''[[envelope sender]]'' address defined in RFC 5321, also known as [[SMTP]] MAIL FROM, envelope-''From'', 5321-''From'', or <tt>Return-Path</tt>, optionally protected by [[Sender Policy Framework|SPF]] specified in RFC 4408.
+
+===Author Domain Signature===
+An ''Author Domain Signature'', is a valid DKIM signature in which the domain name of the DKIM signing entity, i.e., the '''d''' tag in the ''DKIM-Signature'' header field, is the same as the domain name in the '''author address'''.
+
+This binding recognizes a higher value for author domain signatures than other valid signatures that may happen to be found in a message. In facts, it proves that the entity that controls the DNS zone for the author —an hence also the destination of replies to the message's author— has '''relayed''' the author's message. Most likely, the author has submitted the message through the proper [[message submission agent]]. Such message qualification can be verified independently of any published domain signing practice.
+
+===Author Domain Signing Practices===
+The '''practices''' consists in a [[Domain Name System|DNS]] record published by the author domain. For an author address <tt>john.doe@example.com</tt>, it may be set as
+
+ _adsp._domainkey.example.com   IN   TXT   "dkim=unknown"
+
+Three possible signing practices are provided for:
+* '''unknown''', which is the same as not defining any record, says the domain might sign some, most, or all email,
+* '''all''' says all mail from the domain is signed with an Author Domain Signature,
+* '''discardable''' says all mail from the domain is signed with an Author Domain Signature; furthermore, if such signature is missing or invalid, the receiving server is expected to drop the message<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2008q1/009557.html |title=discardable means discardable |author=[[John Levine]] |date=Sat Feb 23 17:44:49 PST 2008 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-28}}</ref>.
+
+==Caveat==
+The ADSP specification explicitly discourages publishing a record different from "unknown" for domains who have independent users and a usage policy that does not explicitly restrict them to sending mail only from designated mail servers, since mail sent independently of the organization will not be signed.<ref>[http://tools.ietf.org/html/rfc5617#appendix-B.5 rfc5617#appendix-B.5]</ref>.
+
+However explicitly that caveat is worded, it is not straightforward to understand the purpose and the limitations of ADSP. One of ADSP authors holds that it is better to publish private lists of ''discardable'' domains, maintained by competent people, rather than letting each domain state their policy<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2008q1/008985.html |title=1: 1 and assertions about third parties |author=[[John Levine]] |date=Thu Jan 17 20:58:34 PST 2008 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-28}}</ref><ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2010q2/013664.html |title=shared drop lists |author=[[John Levine]] |date=Wed Jun 2 21:13:05 PDT 2010 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-09}}</ref>. Recognizing that the spec has shipped an untested prototype, the author of a popular ADSP implementation has proposed to downgrade ADSP to ''experimental'' status<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2010q2/013643.html |title=the danger of ADSP, was list vs contributor |author=Murray S. Kucherawy |date=Wed Jun 2 14:58:13 PDT 2010 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-09}}</ref>.
+
+== History ==
+For some time ADSP was known as ASP (Author Signing Practices)<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2008q1/009316.html |title=Draft of ASP, Author Signing Policy  |author=[[John Levine]] |date=Thu Jan 31 20:31:14 PST 2008 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-24}}</ref>, or the original SSP (Sender Signing Practices) considered misleading, until a protocol naming poll<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2008q2/009866.html |title=Practices protocol naming poll (Closing issue 1550) |author=Stephen Farrell |date=Fri Apr 4 05:05:48 PDT 2008 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-24}}</ref>.
+
+[[Domainkeys]], DKIM's predecessor, had an ''Outbound Signing policy'' consisting of a single character, "-" if a domain signs all email, and "~" otherwise<ref>RFC 4870, Section 3.6 ''Policy Statement of Sending Domain''.</ref>.  DKIM specification intentionally avoided signers' policies considerations, so that DKIM does not validate a message's "From" field ''directly'', but is a policy-neutral authentication protocol. The association between the signer and the right to use "From", a field visible to end users, was deferred to a separate specification<ref>{{cite web |url=http://mipassoc.org/pipermail/ietf-dkim/2005q3/000047.html |title=DKIM Threat Assessment v0.02 (very rough draft)  |author=[[Eric Allman]] |date=Tue Aug 9 15:45:15 PDT 2005 |work=IETF DKIM Discussion List |publisher=mipassoc |accessdate=2010-06-24}}</ref>.  The draft ADSP specification started in June 2007 and went through 11 revisions and uncountable discussions before being published as RFC in August 2009.
+
+[[Eric Allman]], the author of [[Sendmail]], was an editor of the ADSP specification for the [[IETF]] [[DKIM]] Working Group.
+
+==See also==
+*[[DKIM]]
+*[[Simple Mail Transfer Protocol|SMTP]]
+*[[Phishing]]
+*[[E-mail authentication]]
+
+==References==
+{{Reflist}}
+
+== External links ==
+* [http://tools.ietf.org/html/rfc5617 DomainKeys Identified Mail (DKIM) Author Domain Signing Practices (ADSP)]
+* [http://tools.ietf.org/wg/dkim IETF DKIM working group] (started 2006)
+* [http://www.dkim.org/ Domain Keys Identified Mail (DKIM)]
+
+[[Category:Email authentication]]</body> </html>

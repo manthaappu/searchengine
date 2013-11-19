@@ -1,0 +1,387 @@
+<html> <head> <title>Binary search tree</title></head><body>[[Image:Binary search tree.svg|right|200px|thumb|A binary search tree of size 9 and depth 3, with root 8 and leaves 1, 4, 7 and 13]]
+In [[computer science]], a '''binary search tree''' ('''BST'''), which may sometimes also be called '''ordered''' or '''sorted''' binary tree, is a [[Node_(computer_science)|node-based]] [[binary tree]] [[data structure]]
+which has the following properties:<ref>{{citation
+|last1=Gilberg
+|first1=R.
+|last2=Forouzan
+|first2=B.
+|title=Data Structures: A Pseudocode Approach With C++
+|publisher=Brooks/Cole
+|location=Pacific Grove, CA
+|year=2001
+|isbn=0-534-95216-X
+|page=339
+|chapter=8
+}}</ref>
+* The left [[Tree (data structure)#subtrees|subtree]] of a node contains only nodes with keys less than the node's key.
+* The right subtree of a node contains only nodes with keys greater than the node's key.
+* Both the left and right subtrees must also be binary search trees.
+
+Generally, the information represented by each node is a '''record''' rather than a single data element.  However, for sequencing purposes, nodes are compared according to their '''keys''' rather than any part of their associated records.
+
+The major advantage of binary search trees over other data structures is that the related [[sorting algorithm]]s and [[search algorithm]]s such as [[in-order traversal]] can be very efficient. 
+
+Binary search trees are a fundamental [[data structure]] used to construct more abstract data structures such as [[set (computer science)|sets]], [[multiset]]s, and [[associative array]]s.
+
+==Operations==
+Operations on a binary tree require comparisons between nodes. These comparisons are made with calls to a [[comparator (computer science)|comparator]], which is a [[subroutine]] that computes the total order (linear order) on any two values. This comparator can be explicitly or implicitly defined, depending on the language in which the BST is implemented.
+
+===Searching===
+Searching a binary tree for a specific value can be a [[Recursion (computer science)|recursive]] or [[Iteration#Computing|iterative]] process. This explanation covers a recursive method.
+
+We begin by examining the [[Tree (data structure)#root nodes|root node]]. If the tree is null, the value we are searching for does not exist in the tree. Otherwise, if the value equals the root, the search is successful. If the value is less than the root, search the left subtree. Similarly, if it is greater than the root, search the right subtree. This process is repeated until the value is found or the indicated subtree is null. If the searched value is not found before a null subtree is reached, then the item must not be present in the tree.
+
+Here is the search algorithm in the [[Python (programming language)|Python programming language]]:
+<source lang="python">
+# 'node' refers to the parent-node in this case
+ def search_binary_tree(node, key):
+     if node is None:
+         return None  # key not found
+     if key < node.key:
+         return search_binary_tree(node.leftChild, key)
+     elif key > node.key:
+         return search_binary_tree(node.rightChild, key)
+     else:  # key is equal to node key
+         return node.value  # found key
+</source>
+… or equivalent [[Haskell (programming language)|Haskell]]:
+<source lang="haskell">
+ searchBinaryTree _   NullNode = Nothing
+ searchBinaryTree key (Node nodeKey nodeValue (leftChild, rightChild)) =
+     case compare key nodeKey of
+       LT -> searchBinaryTree key leftChild
+       GT -> searchBinaryTree key rightChild
+       EQ -> Just nodeValue
+</source>
+This operation requires [[Big O notation|O]](log ''n'') time in the average case, but needs [[Big O notation|O]](''n'') time in the worst case, when the unbalanced tree resembles a [[linked list]] ([[Binary Tree#Types of binary trees|degenerate tree]]).
+
+Assuming that BinarySearchTree is a class with a member function "search(int)" and a pointer to the root node, the algorithm is also easily implemented in terms of an iterative approach. The algorithm enters a loop, and decides whether to branch left or right depending on the value of the node at each parent node. 
+
+<source lang="cpp">
+bool BinarySearchTree::search(int val)
+{
+    Node *next = this->root();
+    
+    while (next != NULL) {
+        if (val == next->value()) {
+            return true;
+        } else if (val < next->value()) {
+            next = next->left();   
+        } else {
+            next = next->right();
+        }
+    } 
+            
+    //not found
+    return false;
+}</source>
+
+===Insertion===<!-- This section is linked from [[Red-black tree]] -->
+Insertion begins as a search would begin; if the root is not equal to the value, we search the left or right subtrees as before. Eventually, we will reach an external node and add the value as its right or left child, depending on the node's value. In other words, we examine the root and recursively insert the new node to the left subtree if the new value is less than the root, or the right subtree if the new value is greater than or equal to the root.
+
+Here's how a typical binary search tree insertion might be performed in [[C++ (programming language)|C++]]:
+
+<source lang="cpp">
+ /* Inserts the node pointed to by "newNode" into the subtree rooted at "treeNode" */
+ void InsertNode(Node* &treeNode, Node *newNode)
+ {
+     if (treeNode == NULL)
+       treeNode = newNode;
+     else if (newNode->key < treeNode->key)
+       InsertNode(treeNode->left, newNode);
+     else
+       InsertNode(treeNode->right, newNode);
+ }
+</source>
+
+The above "destructive" procedural variant modifies the tree in place. It uses only constant space, but the previous version of the tree is lost. Alternatively, as in the following [[Python (programming language)|Python]] example, we can reconstruct all ancestors of the inserted node; any reference to the original tree root remains valid, making the tree a [[persistent data structure]]:
+
+<source lang="python">
+ def binary_tree_insert(node, key, value):
+     if node is None:
+         return TreeNode(None, key, value, None)
+      if key == node.key:
+         return TreeNode(node.left, key, value, node.right)
+     if key < node.key:
+         return TreeNode(binary_tree_insert(node.left, key, value), node.key, node.value, node.right)
+     else:
+         return TreeNode(node.left, node.key, node.value, binary_tree_insert(node.right, key, value))
+</source>
+
+The part that is rebuilt uses Θ(log ''n'') space in the average case and Ω(''n'') in the worst case (see [[big-O notation]]).
+
+In either version, this operation requires time proportional to the height of the tree in the worst case, which is [[Big O notation|O]](log ''n'') time in the average case over all trees, but Ω(''n'') time in the worst case.
+
+Another way to explain insertion is that in order to insert a new node in the tree, its value is first compared with the value of the root. If its value is less than the root's, it is then compared with the value of the root's left child. If its value is greater, it is compared with the root's right child. This process continues, until the new node is compared with a leaf node, and then it is added as this node's right or left child, depending on its value.
+
+There are other ways of inserting nodes into a binary tree, but this is the only way of inserting nodes at the leaves and at the same time preserving the BST structure.
+
+Here is an iterative approach to inserting into a binary search tree the in [[Java (programming language)|Java Programming Language]]:
+<source lang="java">
+public static void insert(Node root, int data) {
+    if (root == null) {
+        root = new TreeNode(data, null, null);
+        return;
+    }
+    while (root != null) {
+        if (data < root.getData()) {
+            // insert left
+            if (root.getLeft() == null) {
+                root.setLeft(new TreeNode(data, null, null));
+                return;
+            } else {
+                root = root.getLeft();
+            }
+         } else {
+            // insert right
+            if (root.getRight() == null) {
+                root.setRight(new TreeNode(data, null, null));
+                return;
+            } else {
+                root = root.getRight();
+            }
+        }
+    }
+}
+</source>
+
+Below is a recursive approach to the insertion method. 
+<source lang="java">
+public static void insert(Node root, int data){
+    if (root==null) {
+        root = TreeNode(data, null, null);	
+    }else{
+        internalInsert(root, data);
+    }
+}
+	
+private static void internalInsert(Node node, int data){
+    // Not the same value twice
+    if (data == node.getValue()) {
+        return;
+    }
+	
+    if (data < node.mValue) {
+        if (node.getLeft() == null) {
+            node.setLeft(new TreeNode(data, null, null));
+        }else{
+            internalInsert(current.getLeft(), data);
+        }
+    }else{
+        if (node.getRight() == null) {
+            node.setRight(TreeNode(data, null, null));
+        }else{
+            internalInsert(current.getRight(), data);
+        }	
+    }
+}
+</source>
+
+===Deletion===<!--This section is linked from [[Red-black tree]]-->
+There are three possible cases to consider:
+* '''Deleting a leaf (node with no children):''' Deleting a leaf is easy, as we can simply remove it from the tree.
+* '''Deleting a node with one child:''' Remove the node and replace it with its child.
+* '''Deleting a node with two children:''' Call the node to be deleted ''N''.  Do not delete ''N''.  Instead, choose either its in-order successor node or its in-order predecessor node, ''R''.  Replace the value of ''N'' with the value of ''R'', then delete ''R''.
+
+As with all binary trees, a node's in-order successor is the left-most child of its right subtree, and a node's in-order predecessor is the right-most child of its left subtree. In either case, this node will have zero or one children. Delete it according to one of the two simpler cases above.
+[[Image:binary search tree delete.svg|frame|center|Deleting a node with two children from a binary search tree.  The triangles represent subtrees of arbitrary size, each with its leftmost and rightmost child nodes at the bottom two vertices.]]
+
+Consistently using the in-order successor or the in-order predecessor for every instance of the two-child case can lead to an [[Balanced tree|unbalanced]] tree, so good implementations add inconsistency to this selection.
+
+Running Time Analysis:
+Although this operation does not always traverse the tree down to a leaf, this is always a possibility; thus in the worst case it requires time proportional to the height of the tree. It does not require more even when the node has two children, since it still follows a single path and does not visit any node twice.
+
+Here is the code in Python:
+
+<source lang="python">
+def findMin(self):
+    '''
+    Finds the smallest element that is a child of *self*
+    '''
+    current_node = self
+    while current_node.left_child:
+        current_node = current_node.left_child
+    return current_node
+
+def replace_node_in_parent(self, new_value=None):
+    '''
+    Removes the reference to *self* from *self.parent* and replaces it with *new_value*.
+    '''
+    if self == self.parent.left_child:
+        self.parent.left_child = new_value
+    else:
+        self.parent.right_child = new_value
+    if new_value:
+        new_value.parent = self.parent
+
+def binary_tree_delete(self, key):
+    if key < self.key:
+        self.left_child.binary_tree_delete(key)
+    elif key > self.key:
+        self.right_child.binary_tree_delete(key)
+    else: # delete the key here
+        if self.left_child and self.right_child: # if both children are present
+            # get the smallest node that's bigger than *self*
+            successor = self.right_child.findMin()
+            self.key = successor.key
+            # if *successor* has a child, replace it with that
+            # at this point, it can only have a *right_child*
+            # if it has no children, *right_child* will be "None"
+            successor.replace_node_in_parent(successor.right_child)
+        elif self.left_child or self.right_child:   # if the node has only one child
+            if self.left_child:
+                self.replace_node_in_parent(self.left_child)
+            else:
+                self.replace_node_in_parent(self.right_child)
+        else: # this node has no children
+            self.replace_node_in_parent(None)
+
+</source>
+
+===Traversal===
+{{main|Tree traversal}}
+Once the binary search tree has been created, its elements can be retrieved [[in-order traversal|in-order]] by [[recursion|recursively]] traversing the left subtree of the root node, accessing the node itself, then recursively traversing the right subtree of the node, continuing this pattern with each node in the tree as it's recursively accessed. As with all binary trees, one may conduct a [[pre-order traversal]] or a [[post-order traversal]], but neither are likely to be useful for binary search trees.
+
+The code for in-order traversal in Python is given below. It will call '''callback''' for every node in the tree.
+
+<source lang="python">
+def traverse_binary_tree(node, callback):
+    if node is None:
+        return
+    traverse_binary_tree(node.leftChild, callback)
+    callback(node.value)
+    traverse_binary_tree(node.rightChild, callback)
+</source>
+
+Traversal requires [[Big O notation#Related asymptotic notations|Ω(''n'')]] time, since it must visit every node. This algorithm is also O(''n''), so it is [[asymptotically optimal]].
+
+===Sort===
+A binary search tree can be used to implement a simple but efficient [[sorting algorithm]]. Similar to [[heapsort]], we insert all the values we wish to sort into a new ordered data structure&mdash;in this case a binary search tree&mdash;and then traverse it in order, building our result:
+
+<source lang="python">
+def build_binary_tree(values):
+    tree = None
+    for v in values:
+        tree = binary_tree_insert(tree, v)
+    return tree
+
+def get_inorder_traversal(root):
+    '''
+    Returns a list containing all the values in the tree, starting at *root*.
+    Traverses the tree in-order(leftChild, root, rightChild).
+    '''
+    result = []
+    traverse_binary_tree(root, lambda element: result.append(element))
+    return result
+</source>
+
+The worst-case time of <code>build_binary_tree</code> is <math>O(n^2)</math>&mdash;if you feed it a sorted list of values, it chains them into a [[linked list]] with no left subtrees. For example, <code>traverse_binary_tree([1, 2, 3, 4, 5])</code> yields the tree <code>(1 (2 (3 (4 (5)))))</code>. 
+
+There are several schemes for overcoming this flaw with simple binary trees; the most common is the [[self-balancing binary search tree]]. If this same procedure is done using such a tree, the overall worst-case time is [[Big O notation|O]](''n''log ''n''), which is [[asymptotically optimal]] for a [[comparison sort]]. In practice, the poor [[CPU cache|cache]] performance and added overhead in time and space for a tree-based sort (particularly for node [[dynamic memory allocation|allocation]]) make it inferior to other asymptotically optimal sorts such as  [[heapsort]] for static list sorting. On the other hand, it is one of the most efficient methods of ''incremental sorting'', adding items to a list over time while keeping the list sorted at all times.
+
+==Types==
+There are many types of binary search trees. [[AVL tree]]s and [[red-black tree]]s are both forms of [[self-balancing binary search tree]]s. A [[splay tree]] is a binary search tree that automatically moves frequently accessed elements nearer to the root. In a [[treap]] ("tree [[heap (data structure)|heap]]"), each node also holds a priority and the parent node has higher priority than its children.
+
+Two other titles describing binary search trees are that of a '''complete''' and '''degenerate''' tree.
+
+A complete tree is a tree with n levels, where for each level d <= n - 1, the number of existing nodes at level d is equal to 2<sup>d</sup>. This means all possible nodes exist at these levels. An additional requirement for a complete binary tree is that for the n<sup>th</sup> level, while every node does not have to exist, the nodes that do exist must fill from left to right.
+
+A degenerate tree is a tree where for each parent node, there is only one associated child node. What this means is that in a performance measurement, the tree will essentially behave like a linked list data structure.
+
+===Performance comparisons===
+D. A. Heger (2004)<ref> {{Citation | title=A Disquisition on The Performance Behavior of Binary Search Tree Data Structures | first1=Dominique A. | last1=Heger | year=2004 | journal=European Journal for the Informatics Professional | volume=5 | url=http://www.cepis.org/upgrade/files/full-2004-V.pdf | issue=5 | pages=67–75}} </ref> presented a performance comparison of binary search trees. [[Treap]] was found to have the best average performance, while [[red-black tree]] was found to have the smallest amount of performance fluctuations.
+
+===Optimal binary search trees===
+If we don't plan on modifying a search tree, and we know exactly how often each item will be accessed, we can construct an '''optimal binary search tree''', which is a search tree where the average cost of looking up an item (the ''expected search cost'') is minimized.
+
+Even if we only have estimates of the search costs, such a system can considerably speed up lookups on average. For example, if you have a BST of English words used in a [[spell checker]], you might balance the tree based on word frequency in [[text corpus|text corpora]], placing words like "the" near the root and words like "agerasia" near the leaves. Such a tree might be compared with [[Huffman tree]]s, which similarly seek to place frequently-used items near the root in order to produce a dense information encoding; however, Huffman trees only store data elements in leaves and these elements need not be ordered.
+
+If we do not know the sequence in which the elements in the tree will be accessed in advance, we can use [[splay tree]]s which are asymptotically as good as any static search tree we can construct for any particular sequence of lookup operations.
+
+'''Alphabetic trees''' are Huffman trees with the additional constraint on order, or, equivalently, search trees with the modification that all elements are stored in the leaves. Faster algorithms exist for '''optimal alphabetic binary trees''' (OABTs).
+
+Example:
+<pre lang="python">
+procedure Optimum Search Tree(f, f´, c):
+ for j = 0 to n do
+  c[j, j] = 0, F[j, j] = f´j
+  for d = 1 to n do
+   for i = 0 to (n − d) do
+    j = i + d
+    F[i, j] = F[i, j − 1] + f´ + f´j
+    c[i, j] = MIN(i<k<=j){c[i, k − 1] + c[k, j]} + F[i, j]
+</pre>
+
+==See also==
+<div style="-moz-column-count:2; column-count:2;">
+*[[Binary search]]
+*[[Search tree]]
+*[[Binary tree]]
+*[[Binary search algorithm]]
+*[[Self-balancing binary search tree]]
+*[[Randomized binary search tree]]
+*[[Red-black tree]]
+*[[B-tree]]
+*[[Data structure]]
+*[[Trie]]
+*[[Ternary search tree]]
+*[[Elastic binary tree]]
+*[[Hash table]]
+*[[Skip list]]
+</div>
+
+==References==
+{{Reflist}}
+
+==Further reading==
+*[[Donald Knuth]]. ''The Art of Computer Programming'', Volume 3: ''Sorting and Searching'', Third Edition. Addison-Wesley, 1997. ISBN 0-201-89685-0. Section 6.2.2: Binary Tree Searching, pp.426&ndash;458.
+*[[Thomas H. Cormen]], [[Charles E. Leiserson]], [[Ronald L. Rivest]], and [[Clifford Stein]]. ''[[Introduction to Algorithms]]'', Second Edition. MIT Press and McGraw-Hill, 2001. ISBN 0-262-03293-7. Chapter 12: Binary search trees, pp.253&ndash;272. Section 15.5: Optimal binary search trees, pp.356&ndash;363.
+
+==External links==
+* [http://www.student.seas.gwu.edu/~idsv/idsv.html Binary Search Trees Animation]
+*[http://jdserver.homelinux.org/wiki/Binary_Search_Tree Full source code to an efficient implementation in C++]
+*[http://wiki.portugal-a-programar.org/c:snippet:binary_search_tree Implementation of Binary Search Trees in C]
+*[http://cg.scs.carleton.ca/~dana/pbst Implementation of a Persistent Binary Search Tree in C]
+*[http://www.24bytes.com/Binary-Search-Tree.html Implementation of Binary Search Trees in Java]
+*[http://www.goletas.com/solutions/collections/ Iterative Implementation of Binary Search Trees in C#]
+*[http://cslibrary.stanford.edu/110/ An introduction to binary trees from Stanford]
+*[http://www.nist.gov/dads/HTML/binarySearchTree.html Dictionary of Algorithms and Data Structures - Binary Search Tree]
+*[http://code.activestate.com/recipes/286239/ Binary Search Tree Example in Python]
+*[http://webpages.ull.es/users/jriera/Docencia/AVL/AVL%20tree%20applet.htm Java Model illustrating the behaviour of binary search trees(In JAVA Applet)]
+*[http://nova.umuc.edu/~jarc/idsv/lesson1.html Interactive Data Structure Visualizations - Binary Tree Traversals]
+*[http://en.literateprograms.org/Category:Binary_search_tree Literate implementations of binary search trees in various languages] on LiteratePrograms
+*[http://people.ksp.sk/~kuko/bak/index.html BST Tree Applet] by Kubo Kovac
+*[http://www.algolist.net/Data_structures/Binary_search_tree Well-illustrated explanation of binary search tree. Implementations in Java and C++]
+*[http://employees.oneonta.edu/zhangs/PowerPointPlatform/index.php Teacing Binary Search Tree through visualization ]
+
+{{CS-Trees}}
+{{Data structures}}
+
+[[Category:Articles with example C++ code]]
+[[Category:Articles with example Python code]]
+[[Category:Binary trees]]
+
+[[ca:Arbre binari de cerca]]
+[[cs:Binární vyhledávací strom]]
+[[da:Binært søgetræ]]
+[[de:Binärer Suchbaum]]
+[[es:Árbol binario de búsqueda]]
+[[fa:درخت جستجوی دودویی]]
+[[fr:Arbre binaire de recherche]]
+[[ko:이진 탐색 트리]]
+[[id:Pohon biner terurut]]
+[[it:Albero binario di ricerca]]
+[[he:עץ חיפוש]]
+[[nl:Binaire zoekboom]]
+[[ja:2分探索木]]
+[[pl:Binarne drzewo poszukiwań]]
+[[pt:Árvore binária de busca]]
+[[ro:Arbore binar de căutare]]
+[[ru:Двоичное дерево поиска]]
+[[sk:Binárny vyhľadávací strom]]
+[[fi:Binäärinen hakupuu]]
+[[sv:Binärt sökträd]]
+[[th:ต้นไม้ค้นหาแบบทวิภาค]]
+[[uk:Бінарне дерево пошуку]]
+[[vi:Cây tìm kiếm nhị phân]]
+[[zh:二元搜尋樹]]</body> </html>

@@ -1,0 +1,70 @@
+<html> <head> <title>Design predicates</title></head><body>{{Unreferenced|date=January 2007}}
+'''Design predicates''' are a method, invented by Thomas McCabe, to quantify the complexity of the integration of two units of software. Each of the four types of design predicates have an associated integration complexity rating. For pieces of code that apply more than one design predicate, integration complexity ratings can be combined. 
+
+The sum of the integration complexity for a unit of code, plus one, is the maximum number of test cases necessary to exercise the integration fully. Though a test engineer can typically reduce this by covering as many previously uncovered design predicates as possible with each new test. Also, some combinations of design predicates might be logically impossible. 
+
+==Types of Calls==
+===Unconditional Call===
+Unit A always calls unit B. This has an integration complexity of 0. For example:
+
+ unitA::functionA() {
+    unitB->functionB();
+ }
+
+===Conditional Call===
+Unit A may or may not call unit B. This integration has a complexity of 1, and needs two tests: one that calls B, and one that doesn't.
+
+ unitA::functionA() {
+    if (condition) 
+       unitB->functionB();
+ }
+
+===Mutually Exclusive Conditional Call===
+This is like a programming language's switch statement. Unit A calls exactly one of several possible units. Integration complexity is n - 1, where n is the number of possible units to call.
+
+ unitA::functionA() {
+    switch (condition) {
+       case 1:
+          unitB->functionB();
+          break;
+       case 2:
+          unitC->functionC();
+          break;
+       ...
+       default:
+          unitN->functionN();
+          break;
+    }
+ }
+
+===Iterative Call===
+In an iterative call, unit A calls unit B at least once, but maybe more. This integration has a complexity of 1. It also requires two tests: one that calls unit B once, and one test that calls it more than once.
+
+ unitA::functionA() {
+    do {
+       unitB->functionB();
+    } while (condition);
+ }
+
+==Combining Calls==
+Any particular integration can combine several types of calls. For example, unit A may or may not call unit B; and if it does, it can call it one or more times. This integration combines a conditional call, with its integration complexity of 1, and an iterative call, with its integration complexity of 1. The combined integration complexity totals 2. 
+
+ unitA::functionA() {
+    if (someNumber > 0) {
+       for ( i = 0 ; i < someNumber ; i++ ) {
+          unitB->functionB();
+       }
+    }
+ }
+
+Since the number of necessary tests is the total integration complexity plus one, this integration would require 3 tests. In one, where someNumber isn't greater than 0, unit B isn't called. In another, where someNumber is 1, unit B is called once. And in the final, someNumber is greater than 1, unit B is called more than once.
+
+==See also==
+{{Portal|Software Testing}}
+* [[Cyclomatic complexity]]
+* [[Integration testing]]
+* [[White box testing]]
+
+{{DEFAULTSORT:Design Predicates}}
+[[Category:Software testing]]
+[[Category:Software metrics]]</body> </html>

@@ -1,0 +1,38 @@
+<html> <head> <title>SabreTalk</title></head><body>{{Unreferenced|date=December 2009}}
+
+'''SabreTalk''' is a dialect of [[PL/I]] for the [[S/360]] [[IBM mainframe]]s running the [[Transaction Processing Facility|TPF]] platform. SabreTalk was developed jointly by [[American Airlines]], [[Eastern Air Lines]] and [[IBM]].
+
+SabreTalk programs are still running in the [[British Airways]] Flight Operations system ([[Flight Information and Control of Operations|FICO]]), although a commercially available automatic converter is being used to translate SabreTalk programs to [[C (programming language)|C]] programs.  Both the Reservations and Operations Support System (OSS) of [[Delta Air Lines]] were developed using both SabreTalk and IBM 360 Assembler.  Although development is currently restricted to [[C++]], the majority of Delta's programming platform remains in SabreTalk.
+
+Because of the translator<ref>S. Dhinakar Jacob, Madhuchhanda Das, [http://doi.ieeecomputersociety.org/10.1109/WPC.2003.1199217 "TALK2C: A Tool for Automatic Migration,"] icpc, pp.288, 11th IEEE International Workshop on Program Comprehension (IWPC'03), 2003</ref>
+from SabreTalk to [[C (programming language)|C]] and because it is no longer supported by the original developers, several companies are beginning the move away from SabreTalk to purely C-based programs.
+
+Code Sample:
+
+ SAMPLE: PROCEDURE;
+       DECLARE ARRAY(10) DECIMAL(5) BASED(POINTUR);
+       DECLARE COUNTER BINARY(15) ALIGNED;
+       DECLARE TOTAL BINARY(31) ALIGNED;
+       START(POINTUR=#RG1);                  /* RECEIVE POINTER TO ARRAY IN REGISTER 1 */
+       TOTAL = 0;
+ LOOP: 
+       DO COUNTER = 0 TO 10 BY 2;
+         TOTAL = TOTAL + ARRAY(COUNTER);     /* TALLY EVEN NUMBERED ITEMS */
+       END LOOP;
+       IF TOTAL = 0 THEN                     /* VALUE OF TOTAL COMPUTED? */ 
+          ENTRC ERRO;                        /* N=CHECK VALIDITY IN PROG ERRO W/RETURN EXPECTED*/
+       BACKC(#RAC= TOTAL);                   /* BACK TO CALLING PROGRAM PASSING VALUE OF       */
+ END SAMPLE;                                 /*  TOTAL IN REGISTER RAC.                        */
+
+==References==
+{{Reflist}}
+
+== External links ==
+* [http://home.roadrunner.com/~pflass/PLI/Sabretalk_Reference_Guide.pdf Sabretalk Programmer's Reference Guide]
+
+{{DEFAULTSORT:Sabretalk}}
+[[Category:Legacy systems]]
+[[Category:PL/I programming language family]]
+[[Category:IBM software]]
+
+[[de:SabreTalk]]</body> </html>

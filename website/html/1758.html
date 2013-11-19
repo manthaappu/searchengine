@@ -1,0 +1,137 @@
+<html> <head> <title>Amplitude amplification</title></head><body>'''Amplitude amplification''' is a technique in [[quantum computing]] which generalizes the idea behind
+the [[Grover's algorithm|Grover's search algorithm]], and gives rise to a family of
+[[quantum algorithm]]s.
+It was discovered by [[Gilles Brassard]] and
+[[Peter Høyer]] in 1997,
+<ref name="brassard1997">
+{{cite journal
+|author=Gilles Brassard, Peter Høyer
+|year=1997
+|month=June
+|title=An exact quantum polynomial-time algorithm for Simon's problem
+|journal=Proceedings of Fifth Israeli Symposium on Theory of Computing and Systems
+|pages=12–23
+|publisher=IEEE Computer Society Press
+|url=http://arxiv.org/abs/quant-ph/9704027
+}}
+</ref>
+and independently rediscovered by [[Lov K. Grover|Lov Grover]] in 1998.
+<ref name="grover1998">
+{{cite journal
+|author=Grover, Lov K.
+|year=1998
+|month=May
+|title=Quantum Computers Can Search Rapidly by Using Almost Any Transformation
+|journal=Phys. Rev. Lett.
+|volume=80
+|issue=19
+|pages=4329–4332
+|doi=10.1103/PhysRevLett.80.4329
+}}
+</ref>
+
+In a quantum computer, amplitude amplification can be used to obtain a
+quadratic speedup over several classical algorithms.
+
+== Algorithm ==
+
+The derivation presented here roughly follows the one given in
+<ref name="brassard2000">
+{{cite journal
+|author=Gilles Brassard, Peter Høyer, Michele Mosca, Alain Tapp
+|date=2000-05-15
+|title=Quantum Amplitude Amplification and Estimation
+|journal=arXiv:quant-ph/0005055
+|url=http://arxiv.org/abs/quant-ph/0005055
+}}
+</ref>.
+Assume we have an N-dimensional [[Hilbert space]] <math>\mathcal{H}</math>
+representing the [[mathematical formulation of quantum mechanics|state space]] of our quantum system, spanned by the
+orthonormal computational basis states <math>\mathbf{B} := \{ |x\rangle \}_{x=0}^{N-1}</math>.
+Furthermore assume we have a Boolean [[Oracle_machine#Definition|oracle]] function
+:<math>\chi:\mathbb{Z} \to \{0,1\}</math>.
+<math>\chi</math> can be used to partition
+<math>\mathcal{H}</math> into a direct sum of two mutually orthogonal subspaces,
+the ''good'' subspace <math>\mathcal{H}_1 = \operatorname{span}\{|x\rangle \in \mathbf{B} \;|\; \chi(x) = 1\}</math>, and
+the ''bad'' subspace <math>\mathcal{H}_0 = \operatorname{span}\{|x\rangle \in \mathbf{B} \;|\; \chi(x) = 0\}</math>.
+
+Given a (normalized) state vector <math>|\psi\rangle \in \mathcal{H}</math> which has nonzero overlap with both subspaces, we can
+uniquely decompose it as 
+:<math>|\psi\rangle = a |\psi_1\rangle  + b |\psi_0\rangle</math>,
+where
+<math>|\psi_1\rangle</math> and <math>|\psi_0\rangle</math> are the
+normalized projections of  <math>|\psi\rangle</math> into the
+subspaces <math>\mathcal{H}_1</math> and <math>\mathcal{H}_0</math>,
+respectively, and <math>0 < a < 1</math>.
+This decomposition defines a two-dimensional subspace
+<math>\mathcal{H}_\psi</math>, spanned by the vectors
+<math>|\psi_0\rangle</math> and <math>|\psi_1\rangle</math>.
+<!-- (The degenerate case, where<math>|\psi\rangle</math> lies entirely in one of the subspaces ...) -->
+The probability of finding the system in a ''good'' state when measured
+is <math>a^2</math>. Furthermore we have <math>a^2+b^2=1</math>.
+
+Define a unitary operator
+<math>Q(\psi, \chi) := -S_\psi S_\chi \,\!</math>,
+where
+:<math>
+\begin{align}
+S_\psi &= I - 2|\psi\rangle \langle\psi|\quad \text{and}\\
+S_\chi |x\rangle &= (-1)^{\chi(x)} |x\rangle.
+\end{align}
+</math>
+The action of this operator on <math>\mathcal{H}_\psi</math> is given by
+:<math>Q |\psi_0\rangle = -S_\psi |\psi_0\rangle = (1-2a^2)|\psi_0\rangle +2ab|\psi_1\rangle</math> and
+:<math>Q |\psi_1\rangle = S_\psi |\psi_1\rangle = -2ab|\psi_0\rangle
++(1-2a^2)|\psi_1\rangle</math>.
+By defining <math>\theta := \arcsin(a) \,\!</math>,
+<math>0 < \theta < \pi/2 \,\!</math>, we can clearly see that in this subspace <math>Q</math>
+corresponds to a rotation by the angle <math>2\theta\,\!</math>:
+:<math>Q = \begin{pmatrix}
+\cos(2\theta) & \sin(2\theta)\\
+-\sin(2\theta) & \cos(2\theta)
+\end{pmatrix}</math>.
+
+<!-- Outside <math>\mathcal{H}_\psi</math> the operator <math>Q</math> acts simply as <math>-S_\chi</math>...-->
+
+Applying <math>Q(\psi, \chi)\,\!</math> repeatedly on the state
+<math>|\psi\rangle</math>
+gives
+:<math>Q^n |\psi\rangle = \cos((2n+1) \theta) |\psi_0\rangle +\sin((2n+1)\theta) |\psi_1\rangle</math>,
+rotating the state between the ''good'' and ''bad'' subspaces.
+After <math>n</math> iterations the probability of finding the
+system in a ''good'' state is <math>\sin^2((2n+1)\theta)\,\!</math>.<br/>
+The probability is maximized if we choose
+:<math>n = \left\lfloor\frac{\pi}{4\theta}\right\rfloor</math>.
+Up until this point each iteration increases the amplitude of the ''good'' states, hence
+the name of the technique.
+
+== Applications ==
+
+Assume we have an unsorted database with N elements, and an oracle function
+<math>\chi</math> which can recognize the ''good'' entries we are searching for.
+
+If there are G such entries in the database in total, then we can find them by
+initializing the quantum computer into a uniform superposition
+:<math>|\psi\rangle = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} |k\rangle</math>
+of all the database elements,
+and running the above algorithm. In this case the overlap of the initial state with the ''good'' subspace is equal to the
+frequency of the ''good'' entries in the database, <math>a^2 = G/N</math>.
+If <math>a \ll 1</math>, we can approximate the number of required iterations as
+:<math>n = \left\lfloor\frac{\pi}{4\theta}\right\rfloor
+= \left\lfloor\frac{\pi}{4 \arcsin(a)}\right\rfloor
+\approx \left\lfloor\frac{\pi}{4 a}\right\rfloor
+= \left\lfloor\frac{\pi}{4} \sqrt{\frac{N}{G}}\right\rfloor = O(\sqrt{N}).
+</math>
+Measuring the state will now give one of the ''good'' entries with a high probability. Since each iteration requires a single oracle query,
+we can find a ''good'' entry with just <math>O(\sqrt{N})</math> oracle queries, thus obtaining a quadratic speedup over the best possible classical algorithm.
+
+If we set G to one, the above scenario essentially reduces to the original Grover search.
+
+== References ==
+{{reflist}}
+
+{{Quantum computing}}
+
+{{DEFAULTSORT:Amplitude Amplification}}
+[[Category:Quantum algorithms]]
+[[Category:Search algorithms]]</body> </html>

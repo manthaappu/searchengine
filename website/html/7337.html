@@ -1,0 +1,136 @@
+<html> <head> <title>Composite data type</title></head><body>{{Unreferenced|date=May 2009}}
+In [[computer science]], '''composite data types''' are [[data type]]s which can be constructed in a program using its [[programming language]]'s [[primitive data types]] and other composite types. The act of constructing a composite type is known as [[Object composition|composition]].
+
+==C/C++ structures and classes==
+{{seedetails|C++ classes}}
+A <code>struct</code> is [[C (programming language)|C]]'s and [[C++]]'s notion of a composite type, a datatype that composes a fixed set of labeled '''fields''' or '''members'''. It is so called because of the <code>struct</code> keyword used in declaring them, which is short for ''structure'' or, more precisely, ''user-defined data structure''.{{Fact|reason=Please give a reliable source for this assertion.|date=March 2009}}
+
+In C++, the only difference between a <code>struct</code> and a [[class (computer science)|class]] is the default [[access level]], which is ''private'' for classes and ''public'' for <code>struct</code>s.
+
+Note that while classes and the <code>class</code> [[keyword (computer programming)|keyword]] were completely new in C++, the [[C (programming language)|C programming language]] already had a crude type of <code>struct</code>s. For all intents and purposes, C++ <code>struct</code>s form a [[superset]] of C <code>struct</code>s: virtually all valid C <code>struct</code>s are valid C++ <code>struct</code>s with the same semantics.
+
+===Declaration===
+A <code>struct</code> declaration consists of a list of fields, each of which can have any type.  The total storage required for a <code>struct</code> object is the sum of the storage requirements of all the fields, plus any internal [[Data structure alignment#Data structure padding|padding]].
+
+For example:
+<source lang="c">
+struct Account {
+   int account_number;
+   char *first_name;
+   char *last_name;
+   float balance;
+};
+</source>
+
+defines a type, referred to as <code>struct Account</code>. To create a new variable of this type, we can write <code>struct Account myAccount;</code>
+which has an integer component, accessed by <code>myAccount.account_number</code>, and a floating-point component, accessed by <code>myAccount.balance</code>, as well as the <code>first_name</code> and <code>last_name</code> components. The structure <code>myAccount</code> contains all four values, and all four fields may be changed independently.
+
+Since writing <code>struct Account</code> repeatedly in code becomes cumbersome, it is not unusual to see a <code>typedef</code> statement in C code to provide a more convenient synonym for the <code>struct</code>.
+
+For example:
+<source lang="c">
+typedef struct Account_ {
+   int    account_number;
+   char   *first_name;
+   char   *last_name;
+   float  balance;
+} Account;
+</source>
+
+In C++ code, the [[Typedef|<code>typedef</code>]] is not needed because types defined using <code>struct</code> are already part of the regular namespace, so the type can be referred to as either <code>struct Account</code> or simply <code>Account</code>.
+
+As another example, a three-dimensional Vector composite type that uses the floating point data type could be created with:
+<source lang="c">
+struct Vector {
+  float x;
+  float y;
+  float z;
+};
+</source>
+
+A variable named <code>velocity</code> with a <code>Vector</code> composite type would be declared as <code>Vector velocity;</code> Members of the <code>velocity</code> would be accessed using a dot notation.  For example, <code>velocity.x = 5;</code> would set the <code>x</code> component of <code>velocity</code> equal to 5.
+
+Likewise, a color structure could be created using:
+<source lang="c">
+struct Color {
+  unsigned int red;
+  unsigned int green;
+  unsigned int blue;
+};
+</source>
+
+In 3D graphics, you usually must keep track of both the position and color of each vertex.  One way to do this would be to create a <code>Vertex</code> composite type, using the previously created <code>Vector</code> and <code>Color</code> composite types:
+<source lang="c">
+struct Vertex {
+  Vector position;
+  Color color;
+};
+</source>
+
+===Instantiation===
+Create a variable of type <code>Vertex</code> using the same format as before: <code>Vertex v;</code>
+
+===Member access===
+Assign values to the components of <code>v</code> like so:
+
+<source lang="c">
+v.position.x = 0.0;
+v.position.y = 1.5;
+v.position.z = 0.0;
+v.color.red = 128;
+v.color.green = 0;
+v.color.blue = 255;
+</source>
+
+===Primitive subtype===
+The primary use of <code>struct</code> is for the construction of complex datatypes, but sometimes it is used to create primitive [[Structural type system|structural]] [[subtype|subtyping]]. For example, since [[Standard C]] requires that if two structs have the same initial fields, those fields will be represented in the same way, the code
+
+<source lang="c">
+struct ifoo_old_stub {
+   long x, y;
+};
+struct ifoo_version_42 {
+   long x, y, z;
+   char *name;
+   long a, b, c;
+};
+void operate_on_ifoo(struct ifoo_old_stub *);
+struct ifoo_version_42 s;
+. . .
+operate_on_ifoo(&s);
+</source>
+
+will work correctly.
+
+==Function types==
+[[Function type]]s (or [[type signature]]s) are constructed from primitive and composite types, and can serve as types themselves when constructing composite types:
+
+<source lang="c">
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+typedef double (*Metric) (Point p1, Point p2);
+
+typedef struct {
+    Point centre;
+    double radius;
+    Metric metric;
+} Circle;
+</source>
+
+==See also==
+*[[Object composition]]
+*[[struct (C programming language)]]
+
+{{Data types}}
+
+[[Category:Data types]]
+[[Category:Composite data types|*]]
+[[Category:Type theory]]
+[[Category:Articles with example C code]]
+[[Category:Articles with example C++ code]]
+
+[[hu:Összetett adattípusok]]
+[[zh:複合型別]]</body> </html>

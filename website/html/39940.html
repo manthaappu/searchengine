@@ -1,0 +1,100 @@
+<html> <head> <title>Web Server Gateway Interface</title></head><body>The '''Web Server Gateway Interface (WSGI)''' defines a simple and universal [[interface (computer science)|interface]] between [[web server]]s and [[web application]]s or [[web application framework|framework]]s for the [[Python (programming language)|Python programming language]].
+
+==Idea==
+Historically Python web application frameworks have been a problem for new Python users because, generally speaking, the choice of web framework would limit the choice of usable [[web server]]s, and vice versa. Python applications were often designed for either [[Common Gateway Interface|CGI]], [[FastCGI]], [[mod_python]] or even custom API interfaces of specific web-servers.
+
+WSGI<ref>[http://www.python.org/dev/peps/pep-0333/ PEP 333], Python Web Server Gateway Interface v1.0</ref> (sometimes pronounced like 'whiskey' or 'wiz-gee') was created as a low-level [[interface (computer science)|interface]] between web servers and web applications or frameworks to promote common ground for portable web application development. WSGI is based on the existing [[Common Gateway Interface|CGI]] standard.
+
+==Specification overview==
+The WSGI has two sides: the "[[server (computing)|server]]" or "gateway" side, and the "application" or "framework" side.  The server side calls the application side, providing environment information plus a callback function (for the application to use to convey headers to the server side), and receiving web content in return.
+
+So-called ''WSGI [[middleware]]'' implements both sides of the API so that it can intermediate between a WSGI server and a WSGI application: the middleware acts as an application from some WSGI server's point of view and as a server from some WSGI application's point of view.  A "middleware" component can perform such functions as:
+* Routing a request to different application objects based on the target [[Uniform Resource Locator|URL]], after changing the [[environment variables]] accordingly.
+* Allowing multiple applications or frameworks to run side-by-side in the same [[process (computing)|process]]
+* [[Load balancing (computing)|Load balancing]] and remote processing, by forwarding requests and responses over a [[computer network|network]]
+* Perform content postprocessing, such as applying [[XSLT]] stylesheets
+
+==Example application==
+A WSGI compatible "[[Hello World]]" application written in [[Python (programming language)|Python]]:
+<source lang="python">
+def app(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    yield 'Hello World\n'
+</source>
+
+==Example of calling an application==
+An example of calling an application and retrieving its response:
+<source lang="python">
+def call_application(app, environ):
+    body = []
+    status_headers = [None, None]
+    def start_response(status, headers):
+        status_headers[:] = [status, headers]
+        return body.append
+    app_iter = app(environ, start_response)
+    try:
+        for item in app_iter:
+            body.append(item)
+    finally:
+        if hasattr(app_iter, 'close'):
+            app_iter.close()
+    return status_headers[0], status_headers[1], ''.join(body)
+
+status, headers, body = call_application(app, {...environ...})
+</source>
+
+==WSGI-compatible applications and frameworks==
+There are numerous [[web application framework]]s supporting WSGI:
+* [[CherryPy]]
+* [[Django (web framework)|Django]]<ref name="djangowsgi">[http://www.djangoproject.com/weblog/2005/jul/18/local_server/] Django with WSGI support</ref>
+* [[web2py]] 
+* [[TurboGears]]
+* [[Tornado (web server)|Tornado]] 
+* [[Pylons (web framework)|Pylons]]
+* [[BlueBream]]
+* [[nginx]] 
+* [[Google App Engine]]
+* [[Trac]]
+* [[Flask (programming)|Flask]]
+* [[Pyramid (web framework) |Pyramid]]
+* Bottle<ref name="bottle">[http://bottle.paws.de/] Bottle Micro-Framework</ref>
+* weblayer<ref name="weblayer">[http://packages.python.org/weblayer] weblayer package for writing WSGI application</ref>
+
+==Wrappers==
+The server or gateway invokes the application callable once for each request it receives from an [[HTTP]] client, that is directed at the application.
+
+Currently wrappers are available for [[FastCGI]], [[Common Gateway Interface|CGI]], [[SCGI]], [[Apache JServ Protocol|AJP]] (using flup), Apache (using [[mod_wsgi]] or [[mod_python]]) and [[Internet Information Services|Microsoft IIS]] (using [http://code.google.com/p/isapi-wsgi/ isapi-wsgi], [http://pyisapie.sourceforge.net/ PyISAPIe], or an [[Active Server Pages|ASP]] gateway).
+
+==WSGI and Python 3==
+The separation of binary and text data in Python 3 poses a problem for WSGI, as it specifies that header data should be strings, while it sometimes needs to be binary and sometimes text. This works in Python 2 where text and binary data both are kept in "string" variables, but in Python 3 binary data is kept in "bytes" variables and "string" variables are for unicode text data.
+
+The result has been a reworked standard called Web3, specified in PEP444. This standard is an incompatible derivative of WSGI designed to work on Python 2.6, 2.7, 3.1+. <ref>{{cite web|title=PEP 444 -- Python Web3 Interface|url=http://python.org/dev/peps/pep-0444/|author=Chris McDonough, Armin Ronacher|date=2010-09-16|accessdate=2010-09-20}}</ref>
+
+==See also==
+* [[Rack (web server interface)|Rack]] - [[Ruby (programming language)|Ruby]] web server interface
+* [[PSGI]] - [[Perl]] Web Server Gateway Interface
+* [[Simple Common Gateway Interface|SCGI]]
+
+==References==
+<references/>
+
+==External links==
+* [http://www.pythonpaste.org/ WSGI metaframework]
+* [http://wsgi.org/ Comprehensive wiki about everything WSGI]
+* [http://webpython.codepoint.net/wsgi WSGI Tutorial]
+* [http://docs.python.org/library/wsgiref.html Python standard library module wsgiref]
+
+{{Web server interfaces}}
+
+[[Category:Python programming language]]
+
+[[cs:Web Server Gateway Interface]]
+[[de:Web Server Gateway Interface]]
+[[fr:Web Server Gateway Interface]]
+[[it:Web Server Gateway Interface]]
+[[nl:Web Server Gateway Interface]]
+[[ja:Web Server Gateway Interface]]
+[[pt:Web Server Gateway Interface]]
+[[ru:WSGI]]
+[[uk:WSGI]]
+[[zh:WSGI]]</body> </html>

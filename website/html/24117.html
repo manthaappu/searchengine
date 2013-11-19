@@ -1,0 +1,80 @@
+<html> <head> <title>Mesa (programming language)</title></head><body>{{ infobox programming language
+| name                   = Mesa
+| logo                   = 
+| paradigm               = 
+| year                   = 1970s and 80s
+| designer               = 
+| developer              = [[Xerox PARC]]
+| latest_release_version = 
+| latest_release_date    = 
+| latest_test_version    = 
+| latest_test_date       = 
+| typing                 = strongly typed
+| implementations        = 
+| dialects               = 
+| influenced_by          = [[ALGOL]]
+| influenced             = [[Java (programming language)|Java]], [[Modula-2]], Cedar
+| operating_system       =
+| license                =
+| website                =
+}}
+'''Mesa''' was an innovative [[computer programming|programming]] [[programming language|language]] developed in the late 1970s at the [[PARC (company)|Xerox Palo Alto Research Center]] in [[Palo Alto, California]], [[United States]].<ref name="manual">{{cite book | url = http://research.microsoft.com/lampson/23a-MesaManual/23a-MesaManualAbstract.html | title = Mesa Language Manual | author = James G. Mitchell | authorlink = James G. Mitchell | coauthors = William Maybury, [[Richard Sweet]] | publisher = XEROX PARC Technical Report | issue = CSL-79-3}}</ref> The language was named after the [[mesa]]s of the [[American Southwest]], referring to its design intent to be a [[high-level programming language|"high-level" programming language]].
+
+Mesa is an [[ALGOL]]-like language with strong support for [[modularity (programming)|modular programming]]. Every library module has at least two [[source code|source]] files: a ''definitions'' file specifying the library's [[interface (computer science)|interface]] plus one or more ''program'' files specifying the [[implementation]] of the procedures in the interface.<ref>Mesa Language Manual, chapter 7. (The Manual uses the term ''module'' to mean a source file.)</ref> To use a library, a program or higher-level library must "import" the definitions. The Mesa compiler [[Type system#Type checking|type-checks]] all uses of imported entities; this combination of separate compilation with type-checking was unusual at the time.
+
+Mesa introduced several other innovations in language design and implementation, notably in the handling of [[exception (programming)|software exception]]s, [[thread (computer programming)|thread]] [[synchronization (computer science)|synchronization]], incremental [[compiler|compilation]], and more.
+
+Mesa was developed on the [[Xerox Alto]], one of the first [[personal computer]]s with a [[graphical user interface]], however most of the Alto's system software was written in [[BCPL]]. Mesa was the system programming language of the later [[Xerox Star]] workstations, and for the [[GlobalView]] desktop environment.  Xerox PARC developed Cedar, which was based on Mesa, with a number of additions including garbage collection, better string support, called Ropes, and a native compiler for Sun SPARC workstations.
+
+Mesa had a major influence on the design of other important languages, such as [[Modula-2]] and [[Java (programming language)|Java]], and was an important vehicle for the development and dissemination of the fundamentals of [[GUI]]s, networked environments, and the other advances [[Xerox]] contributed to the field of [[computer science]].
+
+==History==
+Mesa was originally designed<!--Dates??? Names???--> in the Computer Systems Laboratory (CSL), a branch of the Xerox Palo Alto Research Center, for the [[Xerox Alto|Alto]], an experimental micro-coded workstation.  Initially its spread was confined to PARC and a few universities to which Xerox had donated some Altos.
+
+Mesa was later adopted as the system's programming language for Xerox's commercial workstations such as the [[Xerox Star|Xerox 8010 (Xerox Star, Dandelion)]] and [[Xerox Daybreak|Xerox 6085 (Daybreak)]], in particular for the [[Pilot (operating system)|Pilot operating system]].   
+
+A secondary development environment, called the [[Xerox Development Environment]] (XDE) allowed developers to debug both the operating system Pilot as well as ViewPoint GUI applications using a world swap mechanism. This allowed the entire "state" of the world to be swapped out, and allowed low level system crashes which paralyzed the whole system to be debugged. The Pilot/Mesa world in later releases moved away from the world swap view when the micro-coded machines were phased out in favor of SPARC workstations and Intel PC's running a Mesa PrincOps emulator for the basic hardware instruction set.
+
+Mesa was taught via the Mesa Programming Course that took people through the wide range of technology Xerox had available at the time and ended with the programmer writing a "[[hack (technology slang)|hack]]", a workable program designed to be useful. An actual example of such a hack is the BWSMagnifier, which was written in 1988 and allowed people to magnify sections of the workstation screen as defined by a resizable window and a changeable magnification factor.  Trained Mesa programmers from Xerox were well versed in the fundamental of GUIs, networking, exceptions, and multi-threaded programming, almost a decade before they became standard tools of the trade.
+
+Within Xerox, Mesa was eventually superseded by the [[Cedar (programming language)|Cedar]] programming language. Many Mesa programmers and developers left Xerox in 1985; some of them went to [[DEC Systems Research Center]] where they used their experience with Mesa in the design of [[Modula-2+]], and later of [[Modula-3]].
+
+==Main features==
+===Semantics===
+Mesa was a [[strongly typed programming language]] with type-checking across module boundaries, but with enough flexibility in its type system that heap allocators could be written in Mesa.<ref name="geschke">{{cite journal | author = Charles Geschke | authorlink = Charles Geschke | coauthors = [[James H. Morris]], [[Edwin H Satterthwaite]] | year = 1977 | url = http://portal.acm.org/citation.cfm?id=359771 | title = Early Experience with Mesa | work = [[Communications of the ACM|CACM]] | volume = 20 | issue = 8 | pages = 540–552 | month = August}}</ref>
+
+Because of its strict separation between interface and implementation, Mesa allows true incremental compilation and encourages [[computer architecture|architecture]]- and [[platform (computing)|platform]]-independent programming.  They also simplified source-level [[debugger|debugging]], including remote debugging via the [[Ethernet]]. 
+
+Mesa had rich exception-handling facilities, with four types of exceptions.  It has support for thread synchronization via monitors. Mesa was the first language to implement monitor BROADCAST, a concept introduced by the Pilot operating system <ref name="monit">{{cite journal | url = http://portal.acm.org/citation.cfm?id=358824 | title = Experience with Processes and Monitors in Mesa | author = Butler W. Lampson | authorlink = Butler W. Lampson | coauthors = [[David D. Redell]] | work = Communications of the ACM | volume = 23 | issue = 2 | pages = 105–117 | month = February | year = 1980 | note = [http://research.microsoft.com/lampson/23-ProcessesInMesa/Abstract.html alternate link]}}</ref>.
+
+===Syntax===
+Mesa has an "imperative" and "algebraic" [[syntax]], in many respects more similar to ALGOL and [[Pascal (programming language)|Pascal]] than to [[C (programming language)|C]].  For instance, [[block (programming)|compound command]]s are indicated by BEGIN/END keywords, rather than [[brace (punctuation)|brace]]s. In Mesa, all keywords are written in uppercase.<ref name="manual"/>
+
+Due to a peculiarity of the Alto's [[Keyboard (computing)|keyboard]], Mesa's original character set did not include the [[underscore]], so programmers were forced to use [[CamelCase]] for compound identifiers --- a practice which was incorporated in PARC's standard programming style. On the other hand, Mesa designers adopted the left-pointing arrow '←' character, which took the place of underscore in the Alto keyboard, for the assignment operator.
+
+When the MESA designers wanted to implement an exception facility, they hired a recent M.S. graduate from Colorado who had written his thesis on exception handling facilities in algorithmic languages.  This led to the richest exception facility for its time, with primitives : SIGNAL, ERROR, ABORT, RETRY, CATCH, and CONTINUE.  Because the language did not have type-safe checks to verify proper signal handling, uncaught exceptions were a common cause of bugs in released software.
+
+==Descendants==
+*Mesa was the precursor to the programming language Cedar.<ref name="cedar1">{{cite book | url = http://research.microsoft.com/lampson/32a-CedarLang/32a-CedarLangAbstract.htm | title = A Description of the Cedar Language | author = Butler Lampson | authorlink = Butler Lampson | publisher = Xerox PARC Technical Report | issue = CSL-83-15}}</ref><ref name="cedar2">{{cite journal | url = http://portal.acm.org/citation.cfm?id=806844 | title = The Structure of Cedar | author = D. Swinehart et al. | work = [[SIGPLAN Notices]] | volume = 20 | issue = 7 | pages = 230–244 | month = July | year = 1985}}</ref> Cedar's main additions were [[garbage collection (computer science)|garbage collection]], [[type system|dynamic types]], a limited form of [[type polymorphism|type parameterization]], and special syntax to identify the "type-safe" parts of a multi-module software package.
+*The [[United States Department of Defense]] approached Xerox to use Mesa for its "IronMan" programming language, but Xerox declined due to conflicting goals.  Xerox PARC employees argued that MESA was a proprietary advantage that made Xerox software engineers more productive than engineers at other companies.  The Department of Defense instead eventually chose and developed the [[Ada (programming language)|Ada programming language]] from the candidates {{Citation needed|date=June 2007}}.
+*The original Star Desktop evolved into the ViewPoint Desktop and later became GlobalView which was ported to various Unix platforms, such as [[Solaris (operating system)|SunOS Unix]] and [[AIX operating system|AIX]], A Mesa to [[C Programming Language|C]] compiler was written and the resulting code compiled for the target platform. This was a workable solution but made it nearly impossible to develop on the Unix machines since the power of the Mesa compiler and associated tool chain was lost using this approach. There was some commercial success on Sun SPARC workstations in the publishing world, but this approach resulted in isolating the product to narrow market opportunities.
+*In 1976, during a sabbatical at Xerox PARC, [[Niklaus Wirth]] became acquainted with Mesa, which had a major influence in the design of his [[Modula-2]] language <ref>{{cite journal | url = http://portal.acm.org/citation.cfm?id=1238847 | title = Modula-2 and Oberon | author = Niklaus Wirth | work = Proc. 3rd Conf. History of Programming Languages | address = San Diego | year = 2007}}.</ref>
+* [[Java (programming language)|Java]] explicitly refers to Mesa as a predecessor <ref>{{cite book | url = http://java.sun.com/docs/books/jls/second_edition/html/intro.doc.html#237601 | title = Java Language Specification | author = J. Gosling | authorlink = James Gosling | coauthors = [[Bill Joy]], [[Guy Steele]], G. Brachda | edition = 2nd}}</ref>.
+
+==See also==
+*[[History of the graphical user interface]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://www.ece.ubc.ca/~gillies/note1.html World-Stop Debuggers], Don Gillies, Xerox SDD/ISD Employee, 1984-86.
+*[http://www.oberon2005.ru/paper/wt1984-01e.pdf A Tour Through Cedar], Warren Teitelman. ''IEEE Software'', Volume 1, Issue 2 (April 1984)
+
+[[Category:Xerox]]
+[[Category:Procedural programming languages]]
+[[Category:Concurrent programming languages]]
+
+[[de:Mesa (Programmiersprache)]]
+[[es:Mesa (lenguaje de programación)]]
+[[zh:Mesa语言]]</body> </html>

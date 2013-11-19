@@ -1,0 +1,200 @@
+<html> <head> <title>Standard streams</title></head><body>{{No footnotes|date=March 2010}}
+:''This article is about standard I/O file descriptors; for System V streams, see [[STREAMS]].''
+
+[[Image:Stdstreams-notitle.svg|thumb|right|The standard streams for input, output, and error]]
+In [[Unix]] and [[Unix-like]] operating systems (and, to some extent, Windows), as well as certain [[programming language]] interfaces, the '''standard streams''' are preconnected input and output channels between a computer program and its environment (typically a [[text terminal]]) when it begins execution. The three [[input/output|I/O]] connections are called '''standard input''' ('''stdin'''), '''standard output''' ('''stdout''') and '''standard error''' ('''stderr''').
+
+==Background==
+In most operating systems predating Unix, programs had to explicitly connect to the appropriate input and output data.  On many of those systems, this could be an intimidating programming challenge created by OS-specific intricacies such as obtaining control environment settings, accessing a local file table, determining the intended data set, and handling the correct case of a card reader, magnetic tape drive, disk drive, line printer, card punch, or interactive terminal.
+
+Unix provided several groundbreaking advances, one of which was to provide ''abstract devices'':  it removed the need for a program to know or care what kind of devices it was communicating with.  Older operating systems forced upon the programmer a record structure and, frequently [[orthogonal#Computer science|non-orthogonal]] data semantics and device control.  Unix eliminated this complexity with the concept of a data stream:  an ordered sequence of data bytes which can be read until the [[End-of-file|end of file]].  A program may also write bytes as desired and need not (and can't easily) declare how many there will be, or how they will be grouped.
+
+Another Unix breakthrough was to automatically associate input and output by default—the program (and programmer) did absolutely nothing to establish input and output for a typical input-process-output program (unless it chose a different paradigm).  In contrast, previous operating systems usually required some—often complex—[[Job Control Language|job control language]] to establish connections, or the equivalent burden had to be orchestrated by the program.
+
+Since Unix provided standard streams, the Unix C runtime environment was obligated to support it as well.  As a result, most C runtime environments (and C's descendants), regardless of the operating system, provide equivalent functionality.
+
+==Standard input (stdin)==<!-- This section is linked from [[COMMAND.COM]] -->
+Standard input is data (often text) going into a program.  The program requests data transfers by use of the ''read'' operation.  Not all programs require input.  For example, the ''dir'' or ''ls'' program (which displays file names contained in a directory) performs its operation without any stream data input.
+
+Unless [[Redirection (computing)|redirected]], input is expected from the [[Keyboard (computing)|keyboard]] which started the program.
+
+The [[file descriptor]] for standard input is 0 (zero); the [[POSIX]] ''<unistd.h>'' definition is <tt>STDIN_FILENO</tt>; the corresponding ''<stdio.h>'' variable is <tt>FILE* stdin</tt>; similarly, the ''<iostream>'' variable is <tt>std::cin</tt>.
+
+==Standard output (stdout)==<!-- This section is linked from [[COMMAND.COM]] -->
+Standard output is the stream where a program writes its output data.  The program requests data transfer with the ''write'' operation.  Not all programs generate output.  For example the ''file rename'' command (variously called ''mv'', ''move'', ''ren'') is silent on success.
+
+Unless [[Redirection (Unix)|redirected]], standard output is the [[text terminal]] which initiated the program.
+
+The [[file descriptor]] for standard output is 1 (one); the [[POSIX]] ''<unistd.h>'' definition is <tt>STDOUT_FILENO</tt>; the corresponding ''<stdio.h>'' variable is <tt>FILE* stdout</tt>; similarly, the ''<iostream>'' variable is <tt>std::cout</tt>.
+
+==Standard error (stderr)==<!-- This section is linked from [[COMMAND.COM]] -->
+Standard error is another output stream typically used by programs to output [[error message]]s or diagnostics.  It is a stream independent of standard output and can be redirected separately.  The usual destination is the [[text terminal]] which started the program to provide the best chance of being seen even if ''standard output'' is redirected (so not readily observed). For example, output of a program in a [[pipeline (Unix)|pipeline]] is redirected to input of the next program, but errors from each program still go directly to the text terminal.
+
+It is acceptable—and normal—for ''standard output'' and ''standard error'' to be directed to the same destination, such as the text terminal.  Messages appear in the same order as the program writes them, unless buffering is involved. (For example, a common situation is when the standard error stream is unbuffered but the standard output stream is line-buffered; in this case, text written to standard error later may appear on the terminal earlier, if the standard output stream's buffer is not yet full.)
+
+The [[file descriptor]] for standard error is 2; the [[POSIX]] ''<unistd.h>'' definition is <tt>STDERR_FILENO</tt>; the corresponding ''<stdio.h>'' variable is <tt>FILE* stderr</tt>. The C++ ''<iostream>'' standard header provides two variables associated with this stream: <tt>std::cerr</tt> and <tt>std::clog</tt>, the former being unbuffered and the latter using the same buffering mechanism as all other C++ streams.
+
+Most [[Shell_(computing)|shells]] allow both ''standard output'' and ''standard error'' to be redirected to the same file using
+  >& filename
+
+Bourne-style shells allow ''standard error'' to be redirected to the same destination that standard output is directed to using
+  2>&1
+
+== Timeline ==
+=== 1950s: Fortran ===
+Fortran has the equivalent of Unix file descriptors: <code>UNIT=5</CODE> for stdin, <CODE>UNIT=6</CODE> for stdout and <CODE>UNIT=0</CODE> for stderr.
+<source lang="fortran">
+! FORTRAN 77 example
+      PROGRAM MAIN
+      READ(UNIT=5,*)NUMBER
+      WRITE(UNIT=6,'(F5.3)')' NUMBER IS: ',NUMBER
+      END
+</source>
+<!-- It is FORTRAN 77? -->
+
+=== 1960: ALGOL 60===
+[[ALGOL 60]] was criticized for having no standard file access. 
+=== 1968: ALGOL 68===
+[[ALGOL 68]]'s input and output facilities were collectively referred to as the transput.  [[Cornelis H. A. Koster|Koster]]  coordinated the definition of the ''transput'' standard.  The model included three standard channels: <code>stand in</code>, <code>stand out</code>, and <code>stand back</code>. 
+
+Example: <pre>
+# ALGOL 68 example #
+main:(
+  REAL number;
+  getf(stand in,($g$,number));
+  printf(($"Number is: "g(6,4)"OR "$,number)); # OR #
+  putf(stand out,($" Number is: "g(6,4)"!"$,number));
+  newline(stand out)
+)</pre>
+{|
+!align="left"|Input:
+!align="left"|Output: 
+|-
+|<pre>3.14159</pre>
+|<pre>Number is: +3.142 OR Number is: +3.142!</pre>
+|}
+
+=== 1970s: C and Unix ===
+In the '''[[C (programming language)|C programming language]]''' stdin, stdout and stderr streams are attached to the existing Unix file descriptors 0, 1 and 2 respectively. But rather than [[Magic number (programming)|magic numbers]], the POSIX ''<unistd.h>'' definitions should be used instead.
+
+===1995: Java ===
+In [[Java (programming language)|Java]], the standard streams are referred to by {{Javadoc:SE|java/lang|System|in}} (for stdin), {{Javadoc:SE|java/lang|System|out}} (for stdout), and  {{Javadoc:SE|java/lang|System|err}} (for stderr).
+<source lang="java">
+public static void main(String args[]) {
+    try {
+        BufferedReader br = 
+          new BufferedReader(new InputStreamReader(System.in));
+        String s = br.readLine();
+        double number = Double.parseDouble(s);
+        System.out.println("Number is:" + number);
+    } catch (Exception e) {
+        System.err.println("Error:" + e.getMessage());
+    }
+}
+</source>
+Or you can use the {{Javadoc:SE|java/util|Scanner}} class of package java.util.
+<source lang="java">
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while(sc.hasNextLine()) {
+            String line = sc.nextLine();
+            double number = Double.parseDouble(line);
+            System.out.println("Number is: " + number);
+        }
+    }
+</source>
+
+===2000s: .NET ===
+In [[C Sharp (programming language)|C#]] and other [[.NET Framework|.NET]] languages, the standard streams are referred to by <code>System.Console.In</code> (for stdin), <code>System.Console.Out</code> (for stdout) and <code>System.Console.Error</code> (for stderr). Basic read and write capabilities for the stdin and stdout streams are also accessible directly through the class <code>System.Console</code> (e.g. <code>System.Console.WriteLine()</code> can be used instead of <code>System.Console.Out.WriteLine()</code>).
+
+<code>System.Console.In</code>, <code>System.Console.Out</code> and <code>System.Console.Error</code> are <code>System.IO.TextReader</code> (stdin) and <code>System.IO.TextWriter</code> (stdout, stderr) objects, which only allow access to the underlying standard streams on a text basis. Full binary access to the standard streams must be performed through the <code>System.IO.Stream</code> objects returned by <code>System.Console.OpenStandardInput()</code>, <code>System.Console.OpenStandardOutput()</code> and <code>System.Console.OpenStandardError()</code> respectively.
+<source lang="csharp">
+// C# example
+public static int Main(string[] args)
+{
+    try {
+        string s = System.Console.In.ReadLine();
+        double number = double.Parse(s);
+        System.Console.Out.WriteLine("Number is: {0:F3}", number);
+        return 0;
+
+    // If Parse() threw an exception
+    } catch (System.ArgumentNullException) { 
+        System.Console.Error.WriteLine("No number was entered!");
+    } catch (System.FormatException) {
+        System.Console.Error.WriteLine("The specified value is not a valid number!");
+    } catch (System.OverflowException) {
+        System.Console.Error.WriteLine("The specified number is too big!");
+    }
+
+    return -1;
+}
+</source>
+
+<source lang="vbnet">
+' Visual Basic .NET example
+
+Public Function Main() As Integer
+    Dim number As Double
+    Dim s As String
+
+    Try
+        s = System.Console.In.ReadLine()
+        number = CDbl(s)
+        System.Console.Out.WriteLine("Number is: {0:F3}", number)
+        Return 0
+    Catch e As System.InvalidCastException
+        ' if CDbl() threw an exception
+        System.Console.Error.WriteLine("No number was entered!")
+        Return 1
+    End Try
+End Function
+</source>
+
+When applying the <code>System.Diagnostics.Process</code> [[class (computer science)|class]] one can use the instance [[Property (programming)|properties]] <code>StandardInput</code>, <code>StandardOutput</code>, and <code>StandardError</code> of that class to access the standard streams of the process.
+
+===GUIs===
+[[Graphical user interface]]s (GUIs) rarely make use of the standard streams.  Consequently, redirecting GUI programs or constructing a GUI pipeline is neither practical nor useful.  The nearest analog is probably ''cutting'' (or ''copying'') from one application and ''pasting'' into another.  Since manual user operations are required, moving large numbers of ''pastes'' is not especially efficient. One notable exception is the [[dwm]] [[tiling window manager]], which displays data directed through stdin on a status bar.
+
+Some GUI programs, primarily on Unix, still write debug information to standard error. Others may take files to operate from standard in (for example many Unix media players do so).<br />
+Popular Windows programs that open a separate console window in addition to their GUI windows are the emulators [[pSX]] and [[DOSBox]].
+
+[[GTK-server]] can use stdin as communication interface with an interpreted program to realize a GUI.
+
+The [[CLIM|Common Lisp Interface Manager]] paradigm "presents" GUI elements sent to an extended output stream..
+
+==See also==
+* [[Redirection (computing)]]
+* [[Pipeline (Unix)]]
+* [[Stream (computing)]]
+* [[Input/output]]
+* [[C file input/output]]
+
+==References==
+* ''KRONOS 2.1 Reference Manual'', Control Data Corporation, Part Number 60407000, 1974
+* ''NOS Version 1 Applications Programmer's Instant'', Control Data Corporation, Part Number 60436000, 1978
+* [http://www.bitsavers.org/pdf/honeywell/multics/AG90-03_PgmgIntro_Dec81.pdf Level 68 Introduction to Programming on MULTICS], Honeywell Corporation, 1981
+* [http://www.research.ibm.com/journal/rd/255/auslander.pdf Evolution of the MVS Operating System], IBM Corporation, 1981
+* ''Lions' Commentary on UNIX Sixth Edition'', John Lions, ISBN 1-57398-013-7, 1977
+* [http://msdn2.microsoft.com/en-us/library/system.console.aspx Console Class, .NET Framework Class Library], Microsoft Corporation, 2008
+
+==External links==
+* [http://www.linfo.org/standard_output.html Standard Output Definition] - by The Linux Information Project 
+
+[[Category:C programming language]]
+[[Category:Unix]]
+
+[[cs:Standardní proudy]]
+[[de:Standard-Datenströme]]
+[[es:Entrada estándar]]
+[[fr:Flux standard]]
+[[gl:Entrada estándar]]
+[[ko:표준 스트림]]
+[[it:Canali standard]]
+[[nl:Standaard stromen]]
+[[ja:標準ストリーム]]
+[[pl:Standardowe strumienie]]
+[[pt:Fluxos padrão]]
+[[ru:Стандартные потоки]]
+[[uk:Стандартні потоки]]
+[[zh:標準串流]]</body> </html>

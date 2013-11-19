@@ -1,0 +1,320 @@
+<html> <head> <title>STEbus</title></head><body>The '''STEbus''' is a non-proprietary, processor-independent, bus with 8 data lines and 20 address lines. It was  popular for industrial control systems in the late 1980s and early 1990s before the ubiquitous IBM PC dominated this market.
+
+It remains a well-designed standard. Although no longer competitive in its original market, it is valid choice for hobbyists wishing to make 'home brew' computer systems. The Z80 and probably the CMOS 65C02 would be good processors to use. The standardized bus would allow hobbyists to interface to each others designs.
+
+==Origins==
+In the early 1980s there were many proprietary bus systems, each with its own strengths and weaknesses. Most had grown in an ad-hoc manner, typically around a particular microprocessor. The [[S-100 bus]] is based on [[Intel 8080]] signals, the [[STDbus]] around [[Z80]] signals, the [[SS-50 Bus]] around the [[Motorola 6800]], and the [[G64 bus]] around [[68000]] signals.
+
+This made it harder to interface other processors. Upgrading to a more powerful processor would subtly change the timings, and timing restraints were not always tightly specified. Nor were electrical parameters and physical dimensions. They usually used edge-connectors for the bus, which were vulnerable to dirt and vibration.
+
+The [[VMEbus]] had provided a high-quality solution for high-performance 16-bit processors, using reliable DIN41612 connectors and well-specified [[Eurocard (printed circuit board)|Eurocard]] board sizes and rack systems. However, these were too costly where an application only needed a modest 8-bit processor.
+
+In the mid 1980s the STEbus standard addressed these issues by specifying what is rather like a [[VMEbus]] simplified for 8-bit processors. The bus signals are sufficiently generic so that they are easy for 8-bit processors to interface with. The board size was usually a single-height Eurocard but allowed for double-height boards as well. The latter positioned the bus connector so that it could neatly merge into VME-bus systems.
+
+==Maturity==
+The STEbus was very successful in its day. It was given the official standard [[IEEE]]1000-1987, and supported processors from the popular Z80, the 6809, to the powerful 68020. The only popular micro notably absent was the 6502, because it did not naturally support wait-states while writing. The CMOS 65C02 did not have this shortcoming, but this was rarer and more expensive than the NMOS 6502 and Z80. The 6809 used cycle stretching.
+
+Peripheral boards included prototyping boards, disc controllers, video cards, serial I/O, analogue and digital I/O.
+The STEbus achieved its goal of providing a rack-mounting system robust enough for industrial use, with easily interchangeable boards and processor independence.
+<ref>{{cite book|last=Tooley|first=Michael H|title=PC-based instrumentation and control|isbn=0-7506-2083-5|pages=91–101}}</ref>
+==Decline==
+
+The STEbus market began to decline as the IBM PC made progress into industrial control systems. Customers opted for PC-based products as the software base was larger and cheaper. More programmers were familiar with the PC and did not have to learn new systems.
+
+Memory costs fell, so there was less reason to have bus-based memory expansion when one could have plenty on the processor board.
+
+So despite the disadvantages, manufacturers created industrial PC systems and eventually dropped other bus systems.
+
+Moving on, PC systems did away with the need for card cages and backplanes by moving to the [[PC104]] format where boards stack onto each other. While not as well designed as the STEbus, PC104 is good enough for many applications.
+
+The major manufacturers from its peak period now support STEbus mostly for goodwill with old customers who bought a lot of product from them.
+
+The IEEE have withdrawn the standard, not because of any faults but because it is no longer active enough to update.
+
+==Physical format==
+
+3U [[Eurocard (printed circuit board)|Eurocard]] - The most common size was the 100 x 160 mm Eurocard.
+
+6U [[Eurocard (printed circuit board)|Eurocard]] - Rare, sometimes used in VMEbus hybrid boards
+
+==Connector==
+
+DIN41612, rows a and c, 0.1" pitch.
+
+VME/STE hybrid boards have the STEbus and VMEbus sharing the VME P2 connector, VME signals on row b. For this reason, STEbus boards may not use row b for any purpose.
+
+== Pinout ==
+
+{| class="wikitable" style=" float: right; clear: right;"
+|+ STEbus pinout<br>Seen looking into backplane socket
+!num.
+!name
+!a b c
+!name
+|-
+!1
+!GND
+! o + o 
+!GND
+|-
+!2
+! +5V
+! o + o 
+! +5V
+|-
+!3
+!D0
+! o + o 
+!D1
+|-
+!4
+!D2
+! o + o 
+!D3
+|-
+!5
+!D4
+! o + o 
+!D5
+|-
+!6
+!D6
+! o + o 
+!D7
+|-
+!7
+!A0
+! o + o 
+!GND
+|-
+!8
+!A2
+! o + o 
+!A1
+|-
+!9
+!A4
+! o + o 
+!A3
+|-
+!10
+!A6
+! o + o 
+!A5
+|-
+!11
+!A8
+! o + o 
+!A7
+|-
+!12
+!A10
+! o + o 
+!A9
+|-
+!13
+!A12
+! o + o 
+!A11
+|-
+!14
+!A14
+! o + o 
+!A13
+|-
+!15
+!A16
+! o + o 
+!A15
+|-
+!16
+!A18
+! o + o 
+!A17
+|-
+!17
+!CM0
+! o + o 
+!A19
+|-
+!18
+!CM2
+! o + o 
+!CM1
+|-
+!19
+!ADRSTB*
+! o + o 
+!GND
+|-
+!20
+!DATACK*
+! o + o 
+!DATSTB*
+|-
+!21
+!TRFERR*
+! o + o 
+!GND
+|-
+!22
+!ATNRQ0*
+! o + o 
+!SYSRST*
+|-
+!23
+!ATNRQ2*
+! o + o 
+!ATNRQ1*
+|-
+!24
+!ATNRQ4*
+! o + o 
+!ATNRQ3*
+|-
+!25
+!ATNRQ6*
+! o + o 
+!ATNRQ5*
+|-
+!26
+!GND
+! o + o 
+!ATNRQ7*
+|-
+!27
+!BUSRQ0*
+! o + o 
+!BUSRQ1*
+|-
+!28
+!BUSAK0*
+! o + o 
+!BUSAK1*
+|-
+!29
+!SYSCLK
+! o + o 
+!VSTBY
+|-
+!30
+!-12V
+! o + o 
+!+12V
+|-
+!31
+! +5V
+! o + o 
+! +5V
+|-
+!32
+!GND
+! o + o 
+!GND
+|}
+
+Active low signals indicated by asterisk.
+
+'''GND:'''
+Ground reference voltage
+
+'''+5V:'''
+Powers most logic.
+
+'''+12V and -12V:'''
+Primarily useful for RS232 buffer power. The +12V has been used for programming voltage generators. Both can be used in analogue circuitry, but note that these are primarily power rails for digital circuitry and as such they often
+have digital noise. Some decoupling or local regulation is recommended for analogue circuitry.
+
+'''VSTBY:'''
+Standby voltage. Optional. This line is reserved for carrying a battery backup voltage to boards that supply or consume it. A 3.6V NiCad battery is a common source. The STEbus spec is not rigid about where this should be sourced from.
+
+In practice, this means that most boards requiring backup power tend to play safe and have a battery on board, often with a link to allow it to supply or accept power from VSTBY. Hence you can end up with more batteries in your system than you need, and you must then take care that no more than one battery is driving VSTBY. 
+
+'''D0...7:'''
+Data bus. This is only 8-bits wide, but most I/O or memory-mapped peripherals are byte-oriented. 
+
+'''A0...19:'''
+Address bus. This allows up to 1 MByte of memory to be addressed. Current technology is such that processor requiring large amounts of memory have this on the processor board, so this is not a great limitation. I/O space is limited to 4K, to simplify I/O address decoding to a practical level. A 74LS688 can decode A11...4 to locate I/O slave boards at 16-byte boundaries.
+
+'''CM0...2:'''
+Command Modifiers. These indicate the nature of the data transfer cycle.
+
+{| class="wikitable" style=" clear: left;"
+|+ Command modifers
+|-
+!CM<br>2 1 0
+!colspan="2"| Function
+|-
+! 1 1 1 
+! read
+!rowspan="2"| memory 
+|- 
+! 1 1 0
+!  write
+|- 
+! 1 0 1
+!  read
+!rowspan="2"| I/O
+|- 
+! 1 0 0
+!  write
+|- 
+! 0 1 1
+!colspan="2"| acknowledge 
+|- 
+! 0 1 0 
+!rowspan="3" colspan="2"| reserved 
+|- 
+! 0 0 1 
+|- 
+! 0 0 0 
+|}
+
+A simple processor board can ignore the acknowledge state and drive CM2 high for all bus access, drive CM1 from a memory/not_IO signal, and CM0 from a read/not_write signal.
+
+'''ATNRQ0...7*:'''
+Attention Requests. These are reserved for boards to signal for processor attention, a term which covers Interrupts and Direct Memory Access (DMA). The wise choice of signal does not commit these lines to being specific types, such as maskable interrupts, non-maskable interrupts, or DMA.
+
+The number of Attention Requests reflects the intended role of the STEbus, in real-time control systems. Eight lines can be priority encoded into three bits, and is a reasonably practical number of lines to handle.
+
+'''BUSRQ0...1* and BUSAK0...1*:'''
+Bus Requests and Bus Acknowledge. Optional. Used by multi-master systems. 
+
+The number of Attention Requests reflects that the STEbus aims to be simple. Single-master systems are the norm, but these signals allow systems to have secondary bus masters if needed.
+
+'''DATSTB*:'''
+Data Strobe. This is the primary signal in data transfer cycles.
+
+'''DATACK*:'''
+Data Acknowledge. A slave will assert this signal when to acknowledge the safe completion of a data transfer via the STEbus. 
+
+'''TRFERR*:'''
+Transfer Error. A slave will assert this signal when acknowledging the erroneous completion of a data transfer via the STEbus.
+ 
+'''ADRSTB*:'''
+Address Strobe. This signal indicates the address bus is valid. A long time ago, this had some practical use in DRAM boards which could start strobing the address lines into DRAM chips before the data bus was ready. The STEbus spec was later firmed up to say that slaves were not allowed to start transfers until DATSTB* was ready, so ADRSTB* has become quite redundant. Nowadays, STEbus masters simply have to generate DATSTB*. ADRSTB* is often created from the same signal as DATSTB*. Slaves simply note when DATSTB* is valid (since the bus definition insists that the address will also be valid at the same time as the data.
+
+'''SYSCLK:'''
+System Clock. Fixed at 16 MHz. 50% duty cycle. 
+
+'''SYSRST*:'''
+System Reset.
+<ref>
+[http://web.archive.org/web/20060924093354/www.howell1964.freeserve.co.uk/Arcom/STEbus.htm STE bus information]
+</ref>
+
+== Technical notes ==
+
+* Signal inputs  must be Schmitt trigger.
+* Signal outputs must have a fanout of 20
+* Backplane can have up to 21 sockets
+* Active bus-termination recommended
+
+== External links ==
+* [http://ieeexplore.ieee.org/servlet/opac?punumber=2607 STEbus (IEEE1000) standard] (available to subscribers and IEEE members)
+* [http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?ics1=35&ics2=160&ics3=&csnumber=18891 STEbus (ISO/IEC 10859:1997)] cost: 192 Swiss francs
+
+== References ==
+{{reflist}}
+
+[[Category:Computer buses]]</body> </html>

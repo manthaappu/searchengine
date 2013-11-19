@@ -1,0 +1,234 @@
+<html> <head> <title>Optimal control</title></head><body>'''Optimal control theory''', an extension of the [[calculus of variations]], is a mathematical [[optimization (mathematics)|optimization]] method for deriving [[control theory|control policies]]. The method is largely due to the work of [[Lev Pontryagin]] and his collaborators in the Soviet Union<ref>L. S. [[Pontryagin]], 1962. ''The Mathematical Theory of Optimal Processes''.</ref> and [[Richard Bellman]] in the United States.
+
+==General method==
+Optimal control deals with the problem of finding a control law for a given system such that a certain optimality criterion is achieved. A control problem includes a [[cost functional]] that is a function of state and control variables. An '''optimal control''' is a set of differential equations describing the paths of the control variables that minimize the cost functional. The optimal control can be derived using [[Pontryagin's maximum principle]] (a [[necessary condition]]), or by solving the [[Hamilton-Jacobi-Bellman equation]] (a [[sufficient condition]]).
+
+We begin with a simple example. Consider a car traveling on a straight line through a hilly road. The question is, how should the driver press the accelerator pedal in order to ''minimize'' the total traveling time? Clearly in this example, the term control law refers specifically to the way in which the driver presses the accelerator and shifts the gears. The "system" consists of both the car and the road, and the optimality criterion is the minimization of the total traveling time. Control problems usually include ancillary [[Constraint (mathematics)|constraint]]s. For example the amount of available fuel might be limited, the accelerator pedal cannot be pushed through the floor of the car, speed limits, etc.
+
+A proper cost functional is a mathematical expression giving the traveling time as a function of the speed, geometrical considerations, and initial conditions of the system. It is often the case that the constraints are interchangeable with the cost functional.
+
+Another optimal control problem is to find the way to drive the car so as to minimize its fuel consumption, given that it must complete a given course in a time not exceeding some amount. Yet another control problem is to minimize the total monetary cost of completing the trip, given assumed monetary prices for time and fuel.
+
+A more abstract framework goes as follows.  Minimize the continuous-time cost functional
+
+:<math>J=\Phi(\textbf{x}(t_0),t_0,\textbf{x}(t_f),t_f) + \int_{t_0}^{t_f} \mathcal{L}(\textbf{x}(t),\textbf{u}(t),t) \,\operatorname{d}t</math>
+
+subject to the first-order dynamic constraints
+
+:<math> \dot{\textbf{x}}(t) = \textbf{a}(\textbf{x}(t),\textbf{u}(t),t),</math>
+
+the algebraic ''path constraints''
+
+:<math> \textbf{b}(\textbf{x}(t),\textbf{u}(t),t) \leq \textbf{0},</math>
+
+and the boundary conditions
+
+:<math>\boldsymbol{\phi}(\textbf{x}(t_0),t_0,\textbf{x}(t_f),t_f)</math>
+
+where <math>\textbf{x}(t)</math> is the ''state'', <math>\textbf{u}(t)</math> is the ''control'', <math>t</math> is the independent variable (generally speaking, time), <math>t_0</math> is the initial time, and <math>t_f</math> is the terminal time.  The terms <math>\Phi</math> and <math>\mathcal{L}</math> are called the ''endpoint cost '' and ''[[Lagrangian]]'', respectively.  Furthermore, it is noted that the path constraints are in general ''inequality'' constraints and thus may not be active (i.e., equal to zero) at the optimal solution.  It is also noted that the optimal control problem as stated above may have multiple solutions (i.e., the solution may not be unique).  Thus, it is most often the case that any solution <math>(\textbf{x}^*(t^*),\textbf{u}^*(t^*),t^*)</math> to the optimal control problem is ''locally minimizing''.
+
+==Linear quadratic control==
+A special case of the general nonlinear optimal control problem given in the previous section is the [[Linear-quadratic regulator|''linear quadratic'' (LQ) optimal control problem]].  The LQ problem is stated as follows.  Minimize the ''quadratic'' continuous-time cost functional
+
+:<math>J=\tfrac{1}{2} \textbf{x}^{\text{T}}(t_f)\textbf{S}_f\textbf{x}(t_f) + \tfrac{1}{2} \int_{t_0}^{t_f} ( \textbf{x}^{\text{T}}(t)\textbf{Q}(t)\textbf{x}(t) + \textbf{u}^{\text{T}}(t)\textbf{R}(t)\textbf{u}(t) )\, \operatorname{d}t</math>
+
+Subject to the ''linear'' first-order dynamic constraints
+
+:<math>\dot{\textbf{x}}(t)=\textbf{A}(t) \textbf{x}(t) + \textbf{B}(t) \textbf{u}(t), </math>
+
+and the initial condition
+
+:<math> \textbf{x}(t_0) = \textbf{x}_0</math>
+
+A particular form of the LQ problem that arises in many control system problems is that of the ''linear quadratic regulator'' (LQR) where all of the matrices (i.e., <math>\textbf{A}</math>, <math>\textbf{B}</math>, <math>, \textbf{Q}</math>, and <math>\textbf{R}</math>) are ''constant'', the initial time is arbitrarily set to zero, and the terminal time is taken in the limit <math>t_f\rightarrow\infty</math> (this last assumption is what is known as ''infinite horizon'').  The LQR problem is stated as follows.  Minimize the infinite horizon quadratic continuous-time cost functional
+
+:<math>J=\tfrac{1}{2} \int_{0}^{\infty} ( \textbf{x}^{\text{T}}(t)\textbf{Q}\textbf{x}(t) + \textbf{u}^{\text{T}}(t)\textbf{R}\textbf{u}(t) )\, \operatorname{d}t</math>
+
+Subject to the ''linear time-invariant'' first-order dynamic constraints
+
+:<math>\dot{\textbf{x}}(t)=\textbf{A} \textbf{x}(t) + \textbf{B} \textbf{u}(t), </math>
+
+and the initial condition
+
+:<math> \textbf{x}(t_0) = \textbf{x}_0</math>
+
+In the finite-horizon case the matrices are restricted in that <math>\textbf{Q}(t)</math> and <math>\textbf{R}(t)</math> are positive semi-definite and positive definite, respectively.  In the infinite-horizon case, however, the [[matrix (mathematics)|matrices]] <math>\textbf{Q}</math> and <math>\textbf{R}</math> are not only positive-semidefinite and positive-definite, respectively, but are also ''constant''.  These additional restrictions on
+<math>\textbf{Q}</math> and <math>\textbf{R}</math> in the infinite-horizon case are enforced to ensure that the cost functional remains positive.  Furthermore, in order to ensure that the cost function is ''bounded'', the additional restriction is imposed that the pair <math>(\textbf{A},\textbf{B})</math> is ''controllable''.  Note that the LQ or LQR cost functional can be thought of physically as attempting to minimize the ''control energy'' (measured as a quadratic form).
+
+The infinite horizon problem (i.e., LQR) may seem overly restrictive and essentially useless because it assumes that the operator is driving the system to zero-state and hence driving the output of the system to zero. This is indeed correct. However the problem of driving the output to a desired nonzero level can be solved ''after'' the zero output one is. In fact, it can be proved that this secondary LQR problem can be solved in a very straightforward manner.  It has been shown in classical optimal control theory that the LQ (or LQR) optimal control has the feedback form
+
+:<math>\textbf{u}(t)=-\textbf{K}(t)\textbf{x}(t)</math>
+
+where <math>\textbf{K}(t)</math> is a properly dimensioned matrix, given as
+
+:<math>\textbf{K}(t)=\textbf{R}^{-1}\textbf{B}^{\text{T}}\textbf{S},</math>
+
+and <math>\textbf{S}</math> is the solution of the differential [[Riccati equation]].  The differential Riccati equation is given as
+
+:<math>\dot{\textbf{S}} = -\textbf{S}\textbf{A}-\textbf{A}^{\text{T}}\textbf{S}+\textbf{S}\textbf{B}\textbf{R}^{-1}\textbf{B}^{\text{T}}\textbf{S}-\textbf{Q}</math>
+
+For the finite horizon LQ problem, the Riccati equation is integrated backward in time using the terminal boundary condition
+
+:<math>\textbf{S}(t_f) = \textbf{S}_f</math>
+
+For the infinite horizon LQR problem, the differential Riccati equation is replaced with the ''algebraic'' Riccati equation (ARE) given as
+
+:<math>\textbf{0} = -\textbf{S}\textbf{A}-\textbf{A}^{\text{T}}\textbf{S}+\textbf{S}\textbf{B}\textbf{R}^{-1}\textbf{B}^{\text{T}}\textbf{S}-\textbf{Q}</math>
+
+Understanding that the ARE arises from infinite horizon problem, the matrices <math>\textbf{A}</math>, <math>\textbf{B}</math>, <math>\textbf{Q}</math>, and <math>\textbf{R}</math> are all ''constant''.  It is noted that there are in general ''two'' solutions to the algebraic Riccati equation and the ''positive definite'' (or positive semi-definite) solution is the one that is used to compute the feedback gain.  It is noted that the LQ (LQR) problem was elegantly solved by [[Rudolf Kalman]].<ref>Kalman, Rudolf. ''A new approach to linear filtering and prediction problems''. Transactions of the ASME, Journal of Basic Engineering, 82:34–45, 1960</ref>
+
+==Numerical methods for optimal control==
+Optimal control problems are generally nonlinear and therefore, generally do not have analytic solutions (e.g., like the linear-quadratic optimal control problem).  As a result, it is necessary to employ numerical methods to solve optimal control problems.  In the early years of optimal control (circa 1950s to 1980s) the favored approach for solving optimal control problems was that of ''indirect methods''.  In an indirect method, the calculus of variations is employed to obtain the first-order optimality conditions.  These conditions result in a two-point (or, in the case of a complex problem, a multi-point) boundary-value problem.  This boundary-value problem actually has a special structure because it arises from taking the derivative of a Hamiltonian.  Thus, the resulting dynamical system is a ''Hamiltonian system'' of the form
+
+: <math>\begin{array}{lcl} \dot{\textbf{x}} & = & \partial H/\partial\boldsymbol{\lambda} \\ \dot{\boldsymbol{\lambda}} & = & -\partial H/\partial\textbf{x} \end{array}</math>
+
+where
+
+: <math>H=\mathcal{L}+\boldsymbol{\lambda}^{\text{T}}\textbf{a}-\boldsymbol{\mu}^{\text{T}}\textbf{b}</math>
+
+is the ''augmented Hamiltonian'' and in an indirect method, the boundary-value problem is solved (using the appropriate boundary or ''transversality'' conditions).  The beauty of using an indirect method is that the state and adjoint (i.e., <math>\boldsymbol{\lambda}</math>) are solved for and the resulting solution is readily verified to be an extremal trajectory.  The disadvantage of indirect methods is that the boundary-value problem is often extremely difficult to solve (particularly for problems that span large time intervals or problems with interior point constraints).   A well-known software program that implements indirect methods is BNDSCO.<ref>Oberle, H. J. and Grimm, W., "BNDSCO-A Program for the Numerical Solution of Optimal Control Problems," Institute for Flight Systems Dynamics, DLR, Oberpfaffenhofen, 1989</ref>
+
+The approach that has risen to prominence in numerical optimal control over the past two decades (i.e., from the 1980s to the present) is that of so called ''direct methods''.  In a direct method, the state and/or control are approximated using an appropriate function approximation (e.g., polynomial approximation or piecewise constant parameterization).  Simultaneously, the cost functional is approximated as a ''cost function''.  Then, the coefficients of the function approximations are treated as optimization variables and the problem is "transcribed" to a nonlinear optimization problem of the form:
+
+Minimize
+
+: <math> F(\textbf{z})\,</math>
+
+subject to the algebraic constraints
+
+: <math> \begin{array}{lcl} \textbf{g}(\textbf{z}) & = & \textbf{0} \\ \textbf{h}(\textbf{z}) & \leq & \textbf{0} \end{array} </math>
+
+Depending upon the type of direct method employed, the size of the nonlinear optimization problem can be quite small (e.g., as in a direct shooting or quasilinearization method) or may be quite large (e.g., a direct collocation method<ref>Betts, J. T., ''Practical Methods for Optimal Control Using Nonlinear Programming,'' SIAM Press, Philadelphia, Pennsylvania, 2001</ref>). In the latter case (i.e., a collocation method), the nonlinear optimization problem may be literally thousands to tens of thousands of variables and constraints. Given the size of many NLPs arising from a direct method, it may appear somewhat counter-intuitive that solving the nonlinear optimization problem is easier than solving the boundary-value problem. It is, however, the fact that the NLP is easier to solve than the boundary-value problem. The reason for the relative ease of computation, particularly of a direct collocation method, is that the NLP is ''sparse'' and many well-known software programs exist (e.g., [[SNOPT]]<ref>Gill, P. E., Murray, W. M., and Saunders, M. A., ''User's Manual for SNOPT Version 7: Software for Large-Scale Nonlinear Programming'', University of California, San Diego Report, 24 April 2007</ref>) to solve large sparse NLPs. As a result, the range of problems that can be solved via direct methods (particularly direct ''collocation methods'' which are very popular these days) is significantly larger than the range of problems that can be solved via indirect methods. In fact, direct methods have become so popular these days that many people have written elaborate software programs that employ these methods. In particular, many such programs written in FORTRAN include ''DIRCOL'',<ref>von Stryk, O., ''User's Guide for DIRCOL (version 2.1): A Direct Collocation Method for the Numerical Solution of Optimal Control Problems'', Fachgebiet Simulation und Systemoptimierung (SIM), Technische Universität Darmstadt (2000, Version of November 1999).</ref> SOCS,<ref>Betts, J.T. and Huffman, W. P., ''Sparse Optimal Control Software, SOCS'', Boeing Information and Support Services, Seattle, Washington, July 1997</ref> OTIS,<ref>Hargraves, C. R. and Paris, S. W., "Direct Trajectory Optimization Using Nonlinear Programming and Collocation", ''Journal of Guidance, Control, and Dynamics'', Vol. 10, No. 4., 1987, pp. 338-342</ref>, GESOP.<ref>Gath, P.F., Well, K.H., "Trajectory Optimization Using a Combination of Direct Multiple Shooting and Collocation", AIAA 2001-4047, AIAA Guidance, Navigation, and Control Conference, Montréal, Québec, Canada, 6–9 August 2001</ref> and DITAN<ref>Vasile M., Bernelli-Zazzera F., Fornasari N., Masarati P., "Design of Interplanetary and Lunar Missions Combining Low-Thrust and Gravity Assists", Final Report of the ESA/ESOC Study Contract No. 14126/00/D/CS, September 2002</ref>. In recent years, due to the advent of the MATLAB programming language, optimal control software in MATLAB has become more common. Examples of academically developed MATLAB software tools implementing direct methods include ''[http://www.schwartz-home.com/RIOTS/ RIOTS]''<ref>Schwartz, Adam, ''Theory and Implementation of Methods based on Runge-Kutta Integration for Solving Optimal Control Problems'', University of California at Berkeley, PhD Dissertation, 1996.</ref>,''[[DIDO (optimal control)|DIDO]]'',<ref>Ross, I. M. and Fahroo, F., ''User's Manual for DIDO: A MATLAB Package for Dynamic Optimization'', Dept. of Aeronautics and Astronautics, Naval Postgraduate School Technical Report, 2002</ref> ''DIRECT'',<ref>Williams, P., ''User's Guide to DIRECT, Version 2.00,'' Melbourne, Australia, 2008</ref> and ''[http://gpops.sourceforge.net GPOPS],''<ref>Rao, A. V., Benson, D. A., Huntington, G. T., Francolin, C., Darby, C. L., and Patterson, M. A., ''User's Manual for GPOPS: A MATLAB Package for Dynamic Optimization Using the [[Gauss pseudospectral method|Gauss Pseudospectral Method]]'', University of Florida Report, August 2008.</ref> while an example of an industry developed MATLAB tool is ''[[PROPT]]''.<ref>Rutquist, P. and Edvall, M. M, ''PROPT - MATLAB Optimal Control Software," 1260 S.E. Bishop Blvd Ste E, Pullman, WA 99163, USA: Tomlab Optimization, Inc.</ref> These software tools have increased significantly the opportunity for people to explore complex optimal control problems both for academic research and industrial-strength problems. Finally, it is noted that general-purpose [[MATLAB]] optimization environments such as [[TOMLAB]] have made coding complex optimal control problems significantly easier than was previously possible in languages such as C and [[FORTRAN]].
+
+==Discrete-time optimal control==
+The examples thus far have shown [[continuous time]] systems and control solutions. In fact, as optimal control solutions are now often implemented [[digital]]ly, contemporary control theory is now primarily concerned with [[discrete time]] systems and solutions.  The Theory of [[Consistent Approximations]]<ref>E. Polak, ''On the use of consistent approximations in the solution of semi-infinite optimization and optimal control problems'' Math. Prog. 62 pp. 385-415 (1993).</ref> provides conditions under which solutions to a series of increasingly accurate discretized optimal control problem converge to the solution of the original, continuous-time problem.  Not all discretization methods have this property, even seemingly obvious ones.  For instance, using a variable step-size routine to integrate the problem's dynamic equations may generate a gradient which does not converge to zero (or point in the right direction) as the solution is approached.   The direct method ''[http://www.schwartz-home.com/RIOTS RIOTS]'' is based on the Theory of Consistent Approximation.
+
+==Examples==
+A common solution strategy in many optimal control problems is to solve for the costate (sometimes called the [[shadow price]]) <math>\lambda(t)</math>. The costate summarizes in one number the marginal value of expanding or contracting the state variable next turn. The marginal value is not only the gains accruing to it next turn but associated with the duration of the program. It is nice when <math>\lambda(t)</math> can be solved analytically, but usually the most one can do is describe it sufficiently well that the intuition can grasp the character of the solution and an equation solver can solve numerically for the values.
+
+Having obtained <math>\lambda(t)</math>, the turn-t optimal value for the control can usually be solved as a differential equation conditional on knowledge of <math>\lambda(t)</math>. Again it is infrequent, especially in continuous-time problems, that one obtains the value of the control or the state explicitly. Usually the strategy is to solve for thresholds and regions that characterize the optimal control and use a numerical solver to isolate the actual choice values in time.
+
+===Finite time===
+Consider the problem of a mine owner who must decide at what rate to extract ore from his mine. He owns rights to the ore from date <math>0</math> to date <math>T</math>. At date <math>0</math> there is <math>x_0</math> ore in the ground, and the instantaneous stock of ore <math>x(t)</math> declines at the rate the mine owner extracts it u(t). The mine owner extracts ore at cost <math>u(t)^2/x(t)</math> and sells ore at a constant price <math>p</math>. He does not value the ore remaining in the ground at time <math>T</math> (there is no "scrap value"). He chooses the rate of extraction in time u(t) to maximize profits over the period of ownership with no time discounting.
+
+{| cellpadding="2" style="border:1px solid darkgray;"
+|- border=0;
+| 1. Discrete-time version
+
+The manager maximizes profit <math>\Pi</math>:
+:<math>\Pi = \sum_{t=0}^{T-1} \left[ pu_t - \frac{u_t^2}{x_t} \right] </math>
+subject to the law of evolution for the state variable <math>x_t</math>
+:<math>x_{t+1} - x_t = - u_t\!</math>
+
+Form the Hamiltonian and differentiate:
+:<math>H = pu_t - \frac{u_t^2}{x_t} - \lambda_{t+1} u_t</math>
+::<math>\frac{\partial H}{\partial u_t} = p - \lambda_{t+1} - 2\frac{u_t}{x_t} = 0</math>
+::<math>\lambda_{t+1} - \lambda_t = -\frac{\partial H}{\partial x_t} = -\left( \frac{u_t}{x_t} \right)^2</math>
+
+As the mine owner does not value the ore remaining at time <math>T</math>,
+::<math>\lambda_T = 0\!</math>
+
+Using the above equations, it is easy to solve for the <math>x_t</math> and <math>\lambda_t</math> series
+:<math>\lambda_t = \lambda_{t+1} + \frac{(p-\lambda_{t+1})^2}{4}</math>
+:<math>x_{t+1} = x_t \frac{2 - p + \lambda_{t+1}}{2}</math>
+and using the initial and turn-T conditions, the <math>x_t</math> series can be solved explicitly, giving <math>u_t</math>.
+
+!width="50"|
+| 2. Continuous-time version
+
+The manager maximizes profit <math>\Pi</math>:
+:<math>\Pi = \int_0^T \left[ pu(t) - \frac{u(t)^2}{x(t)} \right] dt </math>
+subject to the law of evolution for the state variable <math>x(t)</math>
+:<math> \dot x(t) = - u(t) </math>
+
+Form the Hamiltonian and differentiate:
+:<math>H = pu(t) - \frac{u(t)^2}{x(t)} - \lambda(t) u(t) </math>
+::<math>\frac{\partial H}{\partial u} = p - \lambda(t) - 2\frac{u(t)}{x(t)} = 0</math>
+::<math>\dot\lambda(t) = -\frac{\partial H}{\partial x} = -\left( \frac{u(t)}{x(t)} \right)^2</math>
+
+As the mine owner does not value the ore remaining at time <math>T</math>,
+::<math>\lambda(T) = 0</math>
+
+Using the above equations, it is easy to solve for the differential equations governing <math>u(t)</math> and <math>\lambda(t)</math>
+:<math>\dot\lambda(t) = -\frac{(p-\lambda(t))^2}{4}  </math>
+:<math>u(t) = x(t) \frac{p- \lambda(t)}{2}</math>
+and using the initial and turn-T conditions, the functions can be solved numerically.
+|}
+
+==See also==
+*[[Dynamic programming]]
+*[[Bellman equation]]
+*[[Linear-quadratic regulator]]
+*[[Stochastic control]]
+*[[Trajectory optimization]]
+*[[Gauss pseudospectral method]]
+*[[Pseudospectral optimal control]]
+*[[Pursuit-evasion]] games
+*[[DIDO (optimal control)|DIDO]]
+*[[PROPT| PROPT (Optimal Control Software for MATLAB)]]
+*[[SNOPT]]
+*[[Sliding mode control]]
+*[[DNSS point]]
+*[[Brachistochrone]]
+
+==References==
+{{Reflist}}
+
+==Further reading==
+{{Refbegin}}
+;Books
+* Athans, M. A. and Falb, P. L., ''Optimal Control'', McGraw-Hill, New York, 1966.
+* Becerra, V.M., 2008, [http://www.scholarpedia.org/article/Optimal_control ''Optimal control'']. [http://www.scholarpedia.org Scholarpedia], 3(1):5354
+* Bryson, A. E., 1969. ''Applied Optimal Control: Optimization, Estimation, & Control''.
+* Evans, L.C., ''An Introduction to Optimal Control Theory'' ([http://math.berkeley.edu/~evans/control.course.pdf available free online])
+*H. O. Fattorini and S. S. Sritharan, "Existence of Optimal Controls for Viscous Flow Problems," Proceedings of the Royal Society of London Series A, Vol. 439, 1992, pp. 81–102.
+*H. O. Fattorini and S. S. Sritharan, "Necessary and Sufficient Conditions for Optimal Controls in Viscous Flow," Proceedings of the Royal Society of Edinburgh, Series A, Vol. 124A, 1994, pp. 211–251.
+*H. O. Fattorini and S. S. Sritharan, "Optimal chattering controls for viscous flow," Nonlinear analysis, Theory, Methods and Applications, Vol. 25, No. 8, pp. 763–797, 1995.
+*H. O. Fattorini and S. S. Sritharan,"Optimal control problems with state constraints in fluid mechanics and combustion," Applied Mathematics and Optimization, Vol. 38(2), 1998, pp. 159–192.
+* Kirk, D. E., 2004. ''Optimal Control Theory: An Introduction''.
+* Lebedev, L. P., and Cloud, M. J., 2003. ''The Calculus of Variations and Functional Analysis with Optimal Control and Applications in Mechanics''. World Scientific. Especially chpt. 2.
+* Lewis, F. L., and Syrmos, V. L., 19nn. ''Optimal Control'', 2nd ed. John Wiley & Sons.
+* S. S. Sritharan, "Optimal Control of Viscous Flow", SIAM, 1998. (http://www.ec-securehost.com/SIAM/ot59.html)
+*S. S. Sritharan, "An Optimal Control Problem in Exterior Hydrodynamics," Proceedings of the Royal Society of Edinburgh, Series 121A, 1992, pp. 5–32.
+*S. S. Sritharan,"Deterministic and stochastic control of viscous flow with linear, monotone and hyper viscosities," Applied Mathematics and Optimization, Vol. 41(2), pp. 255–308, 2000.
+* Stengel, R. F., 1994. ''[http://www.princeton.edu/~stengel/OptConEst.html Optimal Control and Estimation.]'' Dover.
+* Sethi, S. P., and Thompson, G. L., 2000. ''Optimal Control Theory: Applications to Management Science and Economics'', 2nd edition, Springer (ISBN 0387280928 and ISBN 0792386086). Slides are available at http://www.utdallas.edu/~sethi/OPRE7320presentation.html
+* Sontag, Eduardo D.  ''Mathematical Control Theory: Deterministic Finite Dimensional Systems. Second Edition''. Springer.  (ISBN 0-387-984895) ([http://www.math.rutgers.edu/~sontag/FTP_DIR/sontag_mathematical_control_theory_springer98.pdf available free online])
+* Brogan, William L. 1990. ''Modern Control Theory''. ISBN 0135897637
+* {{Cite book
+ | author = Bryson, A.E.
+ | coauthors = Ho, Y.C.
+ | year = 1975
+ | title = Applied optimal control
+ | publisher = Washington, DC: Hemisphere
+ | isbn =
+}}
+
+;Journals
+* ''[http://www3.interscience.wiley.com/cgi-bin/jhome/2133?CRETRY=1&SRETRY=0 Optimal Control Applications and Methods.]'' John Wiley & Sons, Inc.
+* SIAM Journal of Control and Optimization.
+{{Refend}}
+
+==External links==
+* [http://www.acadotoolkit.org ACADO Toolkit - Open Source Toolkit for Automatic Control and Dynamic Optimization (C++, MATLAB interface available)]
+* Dr. Benoît CHACHUAT: [http://lawww.epfl.ch/page4234.html Automatic Control Laboratory] - Nonlinear Programming, Calculus of Variations and Optimal Control.
+* [http://www.cimne.com/flood Flood: An open source neural networks C++ library]
+* [http://gpops.sourceforge.net GPOPS - Open Source Pseudospectral Optimal Control Solver in MATLAB]
+* Elmer G. Wiens: [http://www.egwald.ca/optimalcontrol/index.php Optimal Control] - Applications of Optimal Control Theory Using the Pontryagin Maximum Principle with interactive models.
+* [http://tomdyn.com/ PPOPT - MATLAB Optimal Control Software]
+* [https://sites.google.com/a/psopt.org/psopt/ PSOPT - Open Source Pseudospectral Optimal Control Solver in C++]
+* [http://www.astos.de/products/gesop GESOP - Graphical Environment for Simulation and OPtimization]
+{{Use dmy dates|date=September 2010}}
+
+{{DEFAULTSORT:Optimal Control}}
+[[Category:Mathematical optimization]]
+[[Category:Optimal control]]
+
+[[ar:هندسة اتصالات]]
+[[de:Optimale Steuerung]]
+[[es:Control óptimo]]
+[[ko:통신공학]]
+[[it:Controllo ottimo]]
+[[he:בקרה אופטימלית]]
+[[ja:通信工学]]
+[[ru:Оптимальное управление]]</body> </html>

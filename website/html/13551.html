@@ -1,0 +1,274 @@
+<html> <head> <title>Filesystem permissions</title></head><body>{{Merge from|Share permissions|date=January 2010}}
+
+Most current [[file system]]s have methods of administering '''permissions''' or '''access rights''' to specific [[user (computing)|users]] and groups of users. These systems control the ability of the users affected to view or make changes to the contents of the [[filesystem]].
+
+==Differences between operating systems==
+[[Unix-like]] and otherwise [[POSIX]]-compliant systems, including [[Linux]]-based systems and all [[Mac OS X]] versions, have a simple system for managing individual file permissions, which in this article are called "traditional Unix permissions". Most of these systems also support some kind of [[access control list]]s, either proprietary (old HP-UX ACLs, for example), or POSIX.1e ACLs, based on an early POSIX draft that was abandoned, or NFSv4 ACLs, which are part of the [[NFSv4]] standard.
+
+[[DOS]] variants (including [[MS-DOS]], [[Windows 95]], [[Windows 98]], and [[Windows Me]]) do not have permissions, only [[file attribute]]s. There is a read-only attribute (R), which can be set or unset on a file by any user or program, and therefore does not prevent him/her from changing/deleting the file. There is no permission in these systems which would keep a user from reading a file.
+
+[[OpenVMS]] (a.k.a. VMS), as well as [[Windows NT|Microsoft Windows NT]] and its derivatives (including [[Windows 2000]] and [[Windows XP]]), use [[access control list]]s (ACLs)<ref>http://technet.microsoft.com/en-us/library/bb727008.aspx</ref> to administer a more complex and varied set of permissions. [[OpenVMS]] also uses a permission scheme similar to that of Unix, but more complex. There are four categories(System, Owner, Group, and World) and four types of access permissions (Read, Write, Execute, and Delete). The categories are not mutually disjoint: World includes Group which in turn includes Owner. The System category independently includes system users (similar to superusers in Unix).<ref>http://h71000.www7.hp.com/doc/731final/6489/6489pro_025.html#int_prot_code</ref>
+
+Classic [[Mac OS history|Mac]] OSes are similar to DOS variants and DOS-based Windows: they do not support permissions, but only a "Protected" file attribute.
+
+[[AmigaDOS|The AmigaOS Filesystem, AmigaDOS]] supports a relatively advanced permissions system, for a single-user OS.  In AmigaOS 1.x, files had Archive, Read, Write, Execute and Delete (collectively known as ARWED) permissions/flags.  In AmigaOS 2.x and higher, additional Hold, Script, and Pure permissions/flags were added.
+
+[[Mac OS X]] versions 10.3 ("Panther") and prior use POSIX-compliant permissions.  [[Mac OS X]], beginning with version 10.4 ("Tiger"), also support the use of [[NFSv4]] [[access control list|ACL]]s. They still support "traditional Unix permissions" as used in previous versions of Mac OS X, and the ''Apple Mac OS X Server version 10.4+ File Services Administration Manual'' recommends using only traditional Unix permissions if possible. It also still supports the Mac OS Classic's "Protected" attribute.
+
+[[Solaris (operating system)|Solaris]] ACL support depends on the filesystem being used - older [[UFS]] filesystem supports POSIX.1e ACLs, while [[ZFS]] supports only [[NFSv4]] ACLs.<ref>http://docs.sun.com/app/docs/doc/819-5461/ftyxi?a=view</ref>
+
+[[Linux]] supports POSIX.1e ACLs. There is experimental support for NFSv4 ACLs for [[ext3]] filesystem.<ref>http://www.suse.de/~agruen/nfs4acl/</ref>
+
+[[FreeBSD]] supports POSIX.1e ACLs on [[UFS]] and NFSv4 ACLs on [[ZFS]].. There is experimental support for NFSv4 ACLs for [[UFS]].<ref>http://wiki.freebsd.org/NFSv4_ACLs</ref>
+
+<!--Where are IBM mainframe and mini OSs?-->
+[[IBM z/OS]] implements file security via RACF (Resource Access Control Facility
+)<ref>http://publib.boulder.ibm.com/infocenter/zos/v1r9/index.jsp?topic=/com.ibm.zos.r9.ieab600/xddprot.htm</ref>
+
+==Traditional Unix permissions==
+Permissions on [[Unix-like]] systems are managed in three distinct ''classes''. These classes are known as ''user'', ''group'', and ''others''. In effect, Unix permissions are a simplified form of [[access control list]]s (ACLs).
+
+When a new file is created on a Unix-like system, its permissions are determined from the [[umask]] of the process that created it.
+
+===Classes===
+[[Computer file|Files]] and [[directory (file systems)|directories]] are owned by a user. The owner determines the file's ''owner class''. Distinct permissions apply to the owner.
+
+Files and directories are assigned a group, which define the file's ''group class.'' Distinct permissions apply to  members of the file's group members. The owner need not be a member of the file's group.
+
+Users who are not the owner, nor a member of the group, comprise a file's ''others class''. Distinct permissions apply to others.
+
+The ''effective permissions'' are determined based on the user's class. For example, the user who is the owner of the file will have the permissions given to the owner class regardless of the permissions assigned to the group class or others class.
+
+=== Permissions===
+There are three specific permissions on [[Unix-like]] systems that apply to each class:
+*The ''read'' permission, which grants the ability to read a file. When set for a directory, this permission grants the ability to read the '''names''' of files in the directory (but '''not''' to find out any further information about them such as contents, file type, size, ownership, permissions, etc.)
+*The ''write'' permission, which grants the ability to modify a file. When set for a directory, this permission grants the ability to modify entries in the directory. This includes creating files, deleting files, and renaming files.
+*The ''execute'' permission, which grants the ability to execute a file. This permission must be set for executable binaries (for example, a compiled C++ program) or shell scripts (for example, a Perl program) in order to allow the operating system to run them. When set for a directory, this permission grants the ability to traverse its tree in order to access files or subdirectories, but not see the content of files inside the directory (unless ''read'' is set).
+
+The effect of setting the permissions on a directory (rather than a file) is "one of the most frequently misunderstood file permission issues" (Hatch 2003).
+
+When a permission is not set, the rights it would grant are denied. Unlike [[Access control list|ACL]]-based systems, permissions on a Unix-like system are not ''inherited''. Files created within a directory will not necessarily have the same permissions as that directory. The permissions to be assigned are determined using [[umask]]s.
+
+<!--
+These are not permissions and are discussed in chmod
+===Additional Permissions===
+[[Unix-like]] systems typically employ three additional modes. These are actually attributes but are referred to as permissions or modes.  These special modes are for a file or directory overall, not by a class.
+*The ''[[Setuid|set user ID]]'', ''setuid'', or SUID mode. When a file with setuid is executed, the resulting process will assume the effective [[User identifier (Unix)|user ID]] given to the owner class. This enables users to be treated temporarily as root (or another user).
+*The ''[[Setgid|set group ID]]'', ''setgid'', or SGID permission. When a file with setgid is executed, the resulting process will assume the [[Group identifier (Unix)|group ID]] given to the group class. When setgid is applied to a directory, new files and directories created under that directory will inherit the group from that directory. (Default behaviour is to use the primary group of the effective user when setting the group of new files and directories.)
+*The ''[[Sticky bit|sticky]]'' mode. (Also known as the ''Text'' mode.)  The typical behaviour of the sticky bit on executable files encourages the [[Kernel (computer science)|kernel]] to retain the resulting process image in memory beyond termination. On a directory, the sticky permission prevents users from renaming, moving or deleting contained files owned by users other than themselves, even if they have write permission to the directory. Only the directory owner and superuser are exempt from this.
+
+These additional modes are also referred to as ''setuid bit'', ''setgid bit'', and ''sticky bit'', due to the fact that they each occupy only one bit.
+-->
+
+==Notation of traditional Unix permissions==
+===Symbolic notation===
+There are many ways by which Unix permission schemes are represented. The most common form is '''symbolic notation'''.
+
+<!--lets stay on topic, permissions, other filds of the ls command are described elsewhere
+
+ This scheme represents permissions as a series of 10 characters.
+-->
+{|class="wikitable" style="float: right; margin-right:0; margin-left: 1em"
+<!-- 
+!colspan="2" style="text-align: left"|First Character
+|-
+|style="text-align: center"|<tt>-</tt>||a regular file
+|-
+|style="text-align: center"|<tt>d</tt>||a [[directory (file systems)|directory]]
+|-
+|style="text-align: center"|<tt>l</tt>|| a symbolic link
+|-
+-->
+!colspan="2" style="text-align: left"|Three groups of three
+|-
+|style="text-align: center"|first||what the owner can do
+|-
+|style="text-align: center"|second||what the group members can do
+|-
+|style="text-align: center"|third||what other users can do
+|-
+!colspan="2" style="text-align: left"|The triplet
+|-
+|style="text-align: center"|first||<tt>r</tt>: readable.
+|-
+|style="text-align: center"|second||<tt>w</tt>: writable.
+|-
+|style="text-align: center"|third||<tt>x</tt>: executable.<br><tt>s</tt> or <tt>t</tt>: executable and [[setuid]]/[[setgid]]/[[sticky bit|sticky]].<br><tt>S</tt> or <tt>T</tt>: setuid/setgid or sticky, but not executable.
+<!--
+|-
+|other: see [[#Symbolic notation and additional permission|below]].
+-->
+|}
+
+The first character indicates the [[Unix file types|file type]]:
+*<tt>-</tt> denotes a regular file
+*<tt>d</tt> denotes a [[directory (file systems)|directory]]
+*<tt>b</tt> denotes a [[block special file]]
+*<tt>c</tt> denotes a [[character special file]]
+*<tt>l</tt> denotes a [[symbolic link]]
+*<tt>p</tt> denotes a [[named pipe]]
+*<tt>s</tt> denotes a [[Unix domain socket|domain socket]]
+
+Each class of permissions is represented by three characters. The first set of characters represents the user class. The second set represents the group class. The third and final set of three characters represents the others class.
+
+Each of the three characters represent the read, write, and execute permissions respectively:
+*<tt>r</tt> if the read bit is set, <tt>-</tt> if it is not.
+*<tt>w</tt> if the write bit is set, <tt>-</tt> if it is not.
+*<tt>x</tt> if the execute bit is set, <tt>-</tt> if it is not.
+<!--
+* The <tt>x</tt> will be an <tt>s</tt> if the setuid or setgid bit is also set, and in the third, it will be a <tt>t</tt> if the [[sticky bit]] is set. If these are set but the execute bit is not, the letter will be in uppercase.
+-->
+The following are some examples of symbolic notation:
+*<code>-rwxr-xr-x</code> for a regular file whose user class has full permissions and whose group and others classes have only the read and execute permissions.
+*<code>crw-rw-r--</code> for a character special file whose user and group classes have the read and write permissions and whose others class has only the read permission.
+*<code>dr-x------</code> for a directory whose user class has read and execute permissions and whose group and others classes have no permissions.
+
+<!--
+
+not permissions at all
+
+===Symbolic notation and additional permission===
+The three additional permissions are indicated by changing one of the three "execute" characters as shown in the following table:
+{|class="wikitable"
+!style="text-align:left"|Permission
+!style="text-align:left"|Class
+!style="width: 6em"|Executable<sup>1</sup>
+!style="width: 6em"|Non-executable<sup>2</sup>
+|-
+|[[Setuid|Set User ID]] (<tt>setuid</tt>)
+|User
+|style="text-align: center"|<tt>s</tt>
+|style="text-align: center"|<tt>S</tt>
+|-
+|[[Setgid|Set Group ID]] (<tt>setgid</tt>)
+|Group
+|style="text-align: center"|<tt>s</tt>
+|style="text-align: center"|<tt>S</tt>
+|-
+|[[Sticky bit]]
+|Others
+|style="text-align: center"|<tt>t</tt>
+|style="text-align: center"|<tt>T</tt>
+|-
+|}
+<ol style="font-size: 0.75em">
+<li>The character that will be used to indicate that the execute bit is also set.</li>
+<li>The character that will be used when the execute bit is not set.</li>
+</ol>
+
+Here is an example:
+*<tt>"-rwsr-Sr-x"</tt> for a file whose user class has read, write and execute permissions; whose group class has read permission; whose others class has read and execute permissions; and which has ''[[setuid]]'' and ''[[setgid]]'' permissions set.
+-->
+
+===Octal notation===
+Another common method for representing Unix permissions is ''[[octal]] notation''. Octal notation consists of a three- or four-digit [[Number base#Bases_used|base]]-8 value.
+
+With three-digit octal notation, each numeral represents a different component of the permission set: user class, group class, and "others" class respectively.
+
+Each of these digits is the sum of its component bits (see also [[Binary numeral system]]). As a result, specific bits add to the sum as it is represented by a numeral:
+*The read bit adds 4 to its total (in binary 100),
+*The write bit adds 2 to its total (in binary 010), and
+*The execute bit adds 1 to its total (in binary 001).
+These values never produce ambiguous combinations; each sum represents a specific set of permissions.
+
+These are the examples from the [[#Symbolic_notation|Symbolic notation]] section given in octal notation:
+*<tt>"-rwxr-xr-x"</tt> would be represented as <tt>755</tt> in three-digit octal.
+*<tt>"-rw-rw-r--"</tt> would be represented as <tt>664</tt> in three-digit octal.
+*<tt>"-r-x------"</tt> would be represented as <tt>500</tt> in three-digit octal.
+
+Here is a summary of the meanings for individual octal digit values:
+
+ 0 --- no permission
+ 1 --x execute
+ 2 -w- write
+ 3 -wx write and execute
+ 4 r-- read
+ 5 r-x read and execute
+ 6 rw- read and write
+ 7 rwx read, write and execute
+
+Note the similarity to binary counting (starting at the right and going left):
+
+ 0: 000
+ 1: 001
+ 2: 010
+ 3: 011
+ 4: 100
+ 5: 101
+ 6: 110
+ 7: 111
+
+Octal digit values can be added together to make Symbolic Notations:<br />
+(4=r)+(1=x)       == (5=r-x)<br />
+(4=r)+(2=w)       == (6=rw-)<br />
+(4=r)+(2=w)+(1=x) == (7=rwx)
+
+Here is a summary showing which octal digits affect permissions for user, group, and other:
+*UGO = User, Group, Other
+*777 = <tt>"-rwxrwxrwx"</tt>  = rwx for all
+*754 = <tt>"-rwxr-xr--"</tt>  = rwx for owner, r-x for group, r-- for other
+*124 = <tt>"--x-w-r--"</tt>  = x for owner, w for group, r for other
+
+<!--
+
+no permissions at all!
+
+===Octal notation and additional permissions===
+There is also a ''four-digit'' form of octal notation. In this scheme, the standard three digits described above become the last three digits. The first digit represents the additional permissions. On some systems, this first digit cannot be omitted; it is therefore common to use all four digits (where the first digit is zero).
+
+This first digit is also the sum of component bits:
+*The setuid bit adds 4 to the total,
+*The setgid bit adds 2 to the total, and
+*The sticky bit adds 1 to the total.
+
+The example from the ''Symbolic notation and additional permissions'' section, <tt>"-rwsr-Sr-x"</tt> would be represented as <tt>6745</tt> in four-digit octal. In addition, the examples in the previous section (<tt>755</tt>, <tt>664</tt>, and <tt>500</tt>) would be represented as <tt>0755</tt>, <tt>0664</tt>, and <tt>0500</tt> respectively in four-digit octal notation.
+-->
+
+===Listing Permissions===
+'''ls -l'''  prints symbolic notation for files and directories.
+
+'''stat -c '%n %a %A'''' can be used to print out octal notation.
+
+==User private group==
+Some systems diverge from the traditional POSIX-model of users and groups, by creating a new group &ndash; a "user private group" &ndash; for each user.
+The "user private group" scheme can be preferred for a variety of reasons<ref>
+    O'Reilly ONLamp Blog,
+    [http://www.oreillynet.com/onlamp/blog/2006/09/using_user_private_groups.html Using User Private Groups]
+</ref><ref>
+    Red Hat 9 Manual,
+    [http://www.redhat.com/docs/manuals/linux/RHL-9-Manual/ref-guide/s1-users-groups-private-groups.html User Private Groups]
+</ref><ref>
+    Red Hat Enterprise Linux 5 Manual,
+    [http://www.redhat.com/docs/manuals/enterprise/RHEL-5-manual/Deployment_Guide-en-US/s1-users-groups-private-groups.html 32.5. User Private Groups]
+</ref> including using a umask of 002 and not having every "user" able to write to newly created files. In this case however, no other users must be added to the "user private group" or they will have write-permission on all files.
+
+==See also==
+*[[Access control list]]
+*[[chattr]]
+*[[chmod]], the command used to set permissions on Unix-like systems
+*[[File system]]
+*[[Group identifier (Unix)]]
+*[[lsattr]]
+*[[POSIX]]
+*[[User identifier (Unix)]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://manuals.info.apple.com/en/File_Services_v10.4.pdf Apple Mac OS X Server version 10.4+ ''File Services Administration'' Manual (see pages 16-26)]
+* [http://www.hackinglinuxexposed.com/articles/20030417.html "Linux File Permission Confusion"] by Brian Hatch 2003.
+* [http://www.hackinglinuxexposed.com/articles/20030424.html "Linux File Permission Confusion pt 2"] by Brian Hatch 2003.
+* [http://dsl.org/cookbook/cookbook_9.html The Linux Cookbook: Groups and How to Work in Them] by Michael Stutz 2004
+
+{{DEFAULTSORT:Filesystem Permissions}}
+[[Category:Computer file systems]]
+[[Category:Computer security procedures]]
+
+[[cs:Oprávnění v systému souborů]]
+[[de:Dateiberechtigung]]
+[[el:Άδειες συστήματος αρχείων]]
+[[es:Permisos de acceso a archivos]]
+[[ja:ファイルパーミッション]]
+[[pl:Prawa dostępu]]
+[[zh:文件系统权限]]</body> </html>

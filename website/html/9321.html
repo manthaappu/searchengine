@@ -1,0 +1,167 @@
+<html> <head> <title>Data Transformation Services</title></head><body>'''Data Transformation Services''', or '''DTS''', is a set of objects and utilities to allow the automation of [[extract, transform, load|extract, transform and load]] operations to or from a database. The objects are DTS packages and their components, and the utilities are called DTS tools. DTS was included with earlier versions of [[Microsoft SQL Server]], and was almost always used with SQL Server databases, although it could be used independently with other databases. 
+
+DTS allows data to be transformed and loaded from [[heterogeneous]] sources using [[OLE DB]], [[ODBC]], or text-only files, into any supported [[database]]. DTS can also allow automation of data import or transformation on a scheduled basis, and can perform additional functions such as [[File Transfer Protocol|FTPing]] files and executing external programs. In addition, DTS provides an alternative method of version control and backup for packages when used in conjunction with a version control system, such as [[Microsoft Visual SourceSafe]] .
+[[Image:DTS Designer screenshot.PNG|right|thumb|300px|Here a DTS package is edited with DTS Designer in [[Windows XP]].]]
+
+__TOC__
+<div style="clear: both"></div>
+==History==
+
+In SQL Server versions 6.5 and earlier, [[Database administrators]] (DBAs) used [[SQL Server Transfer Manager]] and [[Bulk Copy Program]], included with SQL Server, to transfer data. These tools had significant shortcomings, and many DBAs used third-party tools such as [[Pervasive Data Integrator]] to transfer data more flexibly and easily. When SQL Server 7 was released, "Data Transformation Services" was packaged with it to replace all these tools. 
+
+SQL Server 2000 expanded DTS functionality in several ways. Many new types of tasks were made, including the ability to [[File Transfer Protocol|FTP]] files, move databases or database components, and add messages into [[Microsoft Message Queuing|Microsoft Message Queue]]. DTS packages can be saved as a Visual Basic file in SQL Server 2000, and this can be expanded to save into any COM-compliant language. Packages were also integrated into [[Windows 2000 security]], DTS tools were made more user-friendly, and tasks can accept input and output parameters.
+
+DTS comes with all editions of SQL Server 7 and 2000, but was superseded by [[SQL Server Integration Services]] in the Microsoft SQL Server 2005 release.
+
+== DTS packages ==
+The DTS package is the fundamental logical component of DTS; every DTS object is a [[Information hiding|child component]] of the package. Packages are used whenever one modifies data using DTS. All the [[metadata]] about the data transformation is contained within the package. Packages can be saved directly in a SQL Server, or can be saved in the [[Microsoft Repository]] or in [[Component Object Model|COM]] files. SQL Server 2000 also allows a programmer to save packages in a [[Visual Basic]] or other language file. (When stored to a VB file, the package is actually scripted -- that is, a VB script is executed to dynamically create the package objects and its component objects.)
+
+A package can contain any number of [[ActiveX Data Objects|connection objects]], but does not have to contain any. These allow the package to read data from any [[OLE DB]]-compliant data source, and can be expanded to handle other sorts of data. The functionality of a package is organized into ''tasks'' and ''steps''. 
+
+A DTS Task is a discrete set of functionalities executed as a single step in a DTS package. Each task defines a work item to be performed as part of the data movement and data transformation process or as a job to be executed.
+
+Data Transformation Services supplies a number of tasks that are part of the DTS [[object model]] and that can be accessed graphically through the DTS Designer or accessed programmatically. These tasks, which can be configured individually, cover a wide variety of data copying, data transformation and notification situations. For example, the following types of tasks represent some actions that you can perform by using [[Data transformation service|DTS]]: executing a single SQL statement, sending an email, and transferring a file with FTP.
+
+A step within a DTS package describes the order in which tasks are run and the precedence constraints that describe what to do in the case of failure. These steps can be executed sequentially or in parallel.
+
+Packages can also contain [[global variable]]s which can be used throughout the package. SQL Server 2000 allows input and output parameters for tasks, greatly expanding the usefulness of global variables. DTS packages can be edited, password protected, scheduled for execution, and retrieved by version.
+
+==DTS tools==
+DTS tools packaged with SQL Server include the DTS wizards, DTS Designer, and DTS Programming Interfaces.
+
+===DTS wizards===
+The DTS [[Wizard (software)|wizards]] can be used to perform simple or common DTS tasks. These include the ''Import/Export Wizard'' and the ''Copy Database Wizard''. They provide the simplest method of copying data between [[OLE DB]] data sources. There is a great deal of functionality that is not available by merely using a wizard. However, a package created with a wizard can be saved and later altered with one of the other DTS tools.
+
+A ''Create Publishing Wizard'' is also available to schedule packages to run at certain times. This only works if [[SQL Server Agent]] is running; otherwise the package will be scheduled, but will not be executed.
+
+===DTS Designer===
+The DTS Designer is a [[graphical tool]] used to build complex DTS Packages with workflows and event-driven logic. DTS Designer can also be used to edit and customize DTS Packages created with the DTS wizard.
+
+Each connection and task in DTS Designer is shown with a specific [[Icon (computing)|icon]]. These icons are joined with precedence constraints, which specify the order and requirements for tasks to be run. One task may run, for instance, only if another task succeeds (or fails). Other tasks may run concurrently. 
+
+The DTS Designer has been criticized for having unusual quirks and limitations, such as the inability to visually [[copy and paste]] multiple tasks at one time. Many of these shortcomings have been overcome in [[SQL Server Integration Services]], DTS's successor.
+
+===DTS Query Designer===
+A graphical tool used to build [[queries]] in DTS.
+
+===DTS Run Utility===
+DTS Packages can be run from the command line using the DTSRUN Utility.<BR/>
+The utility is invoked using the following  syntax: 
+<PRE>
+dtsrun /S server_name[\instance_name]
+        { {/[~]U user_name [/[~]P password]} | /E }
+    ]
+    {    
+        {/[~]N package_name }
+        | {/[~]G package_guid_string}
+        | {/[~]V package_version_guid_string}
+    }
+    [/[~]M package_password]
+    [/[~]F filename]
+    [/[~]R repository_database_name]
+    [/A global_variable_name:typeid=value] 
+    [/L log_file_name]
+    [/W NT_event_log_completion_status]
+    [/Z] [/!X] [/!D] [/!Y] [/!C]
+]
+</PRE> 
+
+
+When passing in parameters which are mapped to Global Variables, you are required to include the typeid. This is rather difficult to find on the Microsoft site. Below are the TypeIds used in passing in these values.
+
+{| class="wikitable sortable"
+! Type !! typeid
+|-
+| Boolean
+| align="right" | 11
+|-
+| Currency
+| align="right" | 6
+|-
+| Date
+| align="right" | 7
+|-
+| Decimal
+| align="right" | 14
+|-
+| HRESULT
+| align="right" | 25
+|-
+| Int
+| align="right" | 22
+|-
+| Integer (1-byte)
+| align="right" | 16
+|-
+| Integer (8-byte)
+| align="right" | 20
+|-
+| Integer (small)
+| align="right" | 2
+|-
+| Integer
+| align="right" | 3
+|-
+| LPSTR
+| align="right" | 30
+|-
+| LPWSTR
+| align="right" | 31
+|-
+| Pointer
+| align="right" | 26
+|-
+| Real (4-byte)
+| align="right" | 4
+|-
+| Real (8-byte)
+| align="right" | 5
+|-
+| String
+| align="right" | 8
+|-
+| Unsigned int (1-byte)
+| align="right" | 17
+|-
+| Unsigned int (2-byte)
+| align="right" | 18
+|-
+| Unsigned int (4-byte)
+| align="right" | 19
+|-
+| Unsigned int (1-byte)
+| align="right" | 21
+|-
+| Unsigned int
+| align="right" | 23
+|}
+
+==See also==
+
+* [[OLAP]]
+* [[Data warehouse]]
+* [[Data mining]]
+* [[SQL Server Integration Services]]
+* [[Meta Data Services]].
+
+==References==
+* {{cite book | author=Chaffin, Mark; Knight, Brian; and Robinson, Todd | title=Professional SQL Server 2000 DTS | publisher=[[Wrox Press]] (Wiley Publishing, Inc.) | year=2003 | isbn=0-7645-4368-7}}
+
+== External links ==
+
+* [http://msdn2.microsoft.com/en-us/library/aa933484(SQL.80).aspx Microsoft SQL Server: Data Transformation Services (DTS)]
+* [http://www.sqldts.com/ SQL DTS unique DTS information resource]
+* [http://support.microsoft.com/kb/238912 Understanding Microsoft Repository]
+* [http://www.dtspackagesearch.com SSIS-DTS Package Search, a tool to search and document DTS packages. SSIS too!]
+* [http://pragmaticworks.com/Resources/webinars/Default.aspx DTS Videos & Training]
+
+* [http://www.softrus.org/dts/ DTS Documenter]
+
+[[Category:Microsoft database software]]
+[[Category:Data management]]
+[[Category:ETL tools]]
+[[Category:Microsoft server technology]]
+
+[[de:Data Transformation Services]]
+[[fr:Data Transformation Services]]
+[[pl:Data Transformation Services]]</body> </html>

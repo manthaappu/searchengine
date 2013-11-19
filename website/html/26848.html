@@ -1,0 +1,71 @@
+<html> <head> <title>Nyquist ISI criterion</title></head><body>[[Image:Raised-cosine-ISI.png|thumb|400px|Raised cosine response meets the Nyquist ISI criterion. Consecutive raised-cosine impulses demonstrate the zero ISI property between transmitted symbols at the sampling instants. At t=0 the middle pulse is at its maximum and the sum of other impulses is zero.]]
+In communications, the '''Nyquist ISI criterion''' describes the conditions which, when satisfied by a [[Channel (communications)|communication channel]], result in no [[intersymbol interference]] or ISI. It provides a method for constructing band-limited functions to overcome the effects of intersymbol interference. 
+
+When consecutive symbols are transmitted over a channel by a linear modulation (such as [[Amplitude-shift keying|ASK]], [[Quadrature amplitude modulation|QAM]], etc.), the [[impulse response]] (or equivalently the [[frequency response]]) of the channel causes a transmitted symbol to be spread in the time domain. This causes intersymbol interference because the previously transmitted symbols affect the currently received symbol, thus reducing tolerance for [[noise]]. The Nyquist theorem relates this [[time-domain]] condition to an equivalent [[frequency-domain]] condition.
+
+The Nyquist criterion is closely related to the [[Nyquist-Shannon sampling theorem]], with only a differing point of view.
+
+==Nyquist criterion==
+
+If we denote the channel impulse response as <math>h(t)</math>, then the condition for an ISI-free response can be expressed as:
+
+:<math>h(n T_s) = \begin{cases} 1; & n = 0 \\ 0; & n \neq 0 \end{cases} </math>
+
+for all integers <math>n</math>, where <math>T_s</math> is the [[symbol (data)|symbol]] period.  The Nyquist theorem says that this is equivalent to:
+
+:<math>\frac{1}{T_s} \sum_{k = -\infty}^{+\infty} H \left( f - \frac{k}{T_s} \right) = 1</math>,
+
+where <math>H(f)</math> is the [[Fourier transform]] of <math>h(t)</math>.  This is the Nyquist ISI criterion.
+
+This criterion can be intuitively understood in the following way: frequency-shifted replicas of ''H(f)'' must add up to a constant value.
+
+In practice this criterion is applied to baseband filtering by regarding the symbol sequence as weighted impulses ([[Dirac delta function]]). When the baseband filters in the communication system satisfy the Nyquist criterion, symbols can be transmitted over a channel with flat response within a limited frequency band, without ISI.  Examples of such baseband filters are the [[raised-cosine filter]], or the [[sinc filter]] as the ideal case.
+
+==Derivation==
+
+To derive the criterion, we first express the received signal in terms of the transmitted symbol and the channel response. Let the function ''h(t)'' be the channel [[impulse response]], ''x[n]'' the symbols to be sent, with a symbol period of ''T<sub>s</sub>''; the received signal ''y(t)'' will be in the form (where noise has been ignored for simplicity):
+
+:<math> y(t) = \sum_{n = -\infty}^{\infty} x[n] \cdot h(t - n T_s) </math>.
+
+Sampling this signal at intervals of ''T<sub>s</sub>'', we can express ''y(t)'' as a discrete-time equation:
+
+:<math> y[k] = y(k T_s) = \sum_{n = -\infty}^{\infty} x[n] \cdot h[k - n] </math>.
+
+If we write the ''h[0]'' term of the sum separately, we can express this as:
+
+:<math> y[k] = x[k] \cdot h [0] + \sum_{n \neq k} x[n] \cdot h[k - n] </math>,
+
+and from this we can conclude that if a response ''h[n]'' satisfies
+
+:<math>h[n] = \begin{cases} 1; & n = 0 \\ 0; & n \neq 0 \end{cases} </math>,
+
+only one transmitted symbol has an effect on the received ''y[k]'' at sampling instants, thus removing any ISI. This is the [[time-domain]] condition for an ISI-free channel. Now we find a [[frequency-domain]] equivalent for it. We start by expressing this condition in continuous time:
+
+:<math>h(n T_s) = \begin{cases} 1; & n = 0 \\ 0; & n \neq 0 \end{cases} </math>
+
+for all integer <math>n</math>. We multiply such a ''h(t)'' by a sum of [[Dirac delta function]] (impulses) <math>\delta (t)</math> separated by intervals ''T<sub>s</sub>'' This is equivalent of sampling the response as above but using a continuous time expression. The right side of the condition can then be expressed as one impulse in the origin:
+
+:<math>h(t) \cdot \sum_{k = -\infty}^{+\infty} \delta (t - k T_s) = \delta (t) </math>
+
+Fourier transforming both members of this relationship we obtain:
+
+:<math>H \left( f \right) * \frac{1}{T_s}\sum_{k = -\infty}^{+\infty} \delta \left( f - \frac{k}{T_s} \right) = 1</math>
+
+and
+
+:<math>\frac{1}{T_s} \sum_{k = -\infty}^{+\infty} H \left( f - \frac{k}{T_s} \right) = 1</math>.
+
+This is the Nyquist ISI criterion and, if a channel response satisfies it, then there is no ISI between the different samples.
+
+==See also==
+* [[Intersymbol interference]]
+* [[Nyquist rate]]
+* [[Nyquist-Shannon sampling theorem]]
+* [[Pulse shaping]]
+* [[Raised-cosine filter]]
+
+==References==
+*''John G. Proakis'', "''Digital Communications, 3rd Edition''", ''McGraw-Hill Book Co., 1995''. ISBN 0-07-113814-5
+*''[[Behzad Razavi]]'', "''RF Microelectronics''", ''Prentice-Hall, Inc., 1998''. ISBN 0-13-887571-5
+
+[[Category:Telecommunication theory]][[Category:Digital signal processing]]</body> </html>

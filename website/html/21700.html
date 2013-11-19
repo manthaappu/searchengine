@@ -1,0 +1,71 @@
+<html> <head> <title>Line number</title></head><body>In [[computing]], a '''line number''' is a method used to specify a particular sequence of characters in a [[text file]].  The most common method of assigning numbers to lines is to assign every [[line (text file)|line]] a unique number, starting at 1 for the first line, and incrementing by 1 for each successive line. 
+
+In the [[C (programming language)|C]] [[programming language]] the line number of a [[source code]] line is one greater than the number of [[new-line]] characters read or introduced up to that point.<ref>{{cite web|url=http://c0x.coding-guidelines.com/6.10.4.html|title=6.10.4 Line control|date=2008-01-30|accessdate=2008-07-03|author=}}</ref>
+
+Line numbers were a required element of [[syntax]] in some older [[programming languages]] such as [[GW-BASIC]].<ref name="GBvsQB">{{cite web|url=http://support.microsoft.com/kb/73084|title=Differences Between GW-BASIC and QBasic|date=2003-05-12|accessdate=2008-06-28|author=}}</ref>  The primary reason for this is that most [[operating systems]] at the time lacked interactive [[text editors]]; since the programmer's interface was usually limited to a [[line editor]], line numbers provided a mechanism by which specific lines in the [[source code]] could be referenced for editing, and by which the programmer could insert a new line at a specific point.  Line numbers also provided a convenient means of distinguishing between code to be entered into the program and commands to be executed immediately when entered by the user (which do not have line numbers).
+
+Largely due to the prevalence of interactive text editing in modern [[operating system]]s, line numbers are not a feature of most programming languages. 
+
+==Line numbers and style==
+It was a matter of [[programming style]], if not outright necessity, in these languages to leave gaps between successive line numbers—i.e., a programmer would use the sequence (10, 20, 30, …) rather than (1, 2, 3, …). This permitted the programmer to insert a [[line of code]] at a later time. For example, if a line of code between lines 20 and 30 was left out, the programmer might insert the forgotten line at line number 25. If no gaps were left in the numbering, the programmer would be required to renumber line 3 and all subsequent lines in order to insert the new line after line 2. Of course, if the programmer needed to insert more than nine additional lines, renumbering would be required even with the sparser numbering.  However, this renumbering would be limited to renumbering only 1 line per ten lines added; when the programmer finds he needs to add a line between 29 and 30, only line 30 would need to be renumbered and line 40 could be left unchanged.
+
+Some BASICs had a <tt>RENUM</tt> command, which typically would go through the program (or a specified portion of it), reassigning line numbers in equal increments.  It would also renumber all references to those line numbers so they would continue to work properly.
+
+In a large program containing [[subroutine]]s, each subroutine would usually start at a line number sufficiently large to leave room for expansion of the main program (and previous subroutines). For example, subroutines might begin at lines 10000, 20000, 30000, etc.
+
+==Line numbers and GOTOs==
+In "unstructured" programming languages such as [[BASIC]] and [[Fortran]], line numbers were used to specify the targets of [[branch (computer science)|branching statements]]. For example:
+
+<source lang="qbasic">
+10 IF X = 42 GOTO 40
+20 X = X + 1
+30 GOTO 10
+40 PRINT "X is finally 42!"
+</source>
+
+[[GOTO]]-style branching is now widely considered by programmers to be poor programming style, as it tends to lead to the development of [[spaghetti code]]. (See [[Considered harmful]], [[Structured programming]].) Even in some later versions of BASIC that still mandated line numbers, the use of line number-controlled GOTOs was phased out whenever possible in favor of cleaner constructs such as the [[for loop]] and [[while loop]]. 
+
+Many modern languages (including [[C (programming language)|C]] and [[C++]]) include a version of the GOTO statement; however, in these languages the target of a GOTO is specified by a [[line label]] instead of a line number, and the use of GOTO is strongly discouraged by most programming style guides. The typically accepted use being when it is used to escape out of deep looping. For example:
+
+<source lang="c">
+while(1) {
+  while (1) {
+    if (done) {
+      goto freedom;
+    }
+  }
+}
+freedom:
+</source>
+
+This is much cleaner than the alternative that follows, which needs to have a much more widely scoped `done` variable.
+
+<source lang="c">
+while(1) {
+  while (1) {
+    if (done) {
+      break;
+    }
+  }
+  if (done) {
+    break;
+  }
+}
+</source>
+
+==Line numbers and syntax errors==
+If a programmer introduces a [[syntax error]] into a program, the [[compiler]] (or [[interpreter (computing)|interpreter]]) will inform the programmer that the attempt to compile (or execute) failed at the given line number. This simplifies the job of finding the error immensely for the programmer.
+
+The use of line numbers to describe the location of errors remains standard in modern programming tools, even though line numbers are never required to be manually specified. It is a simple matter for a program to count the [[newline]]s in a [[source file]] and display an automatically generated line number as the location of the error. In [[Integrated development environment|IDEs]] such as [[Microsoft Visual Studio]], in which the compiler is usually integrated with the text editor, the programmer can even [[double-click]] on an error and be taken directly to the line containing that error.
+==See also==
+*[[Line label]]
+*[[Listing (computer)]]
+
+==References==
+{{reflist}}
+
+[[Category:Source code]]
+[[Category:Articles with example code]]
+[[Category:Text editor features]]
+
+[[ja:行番号]]</body> </html>

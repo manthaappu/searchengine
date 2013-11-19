@@ -1,0 +1,93 @@
+<html> <head> <title>SymbOS</title></head><body>{{for|the mobile device [[operating system]]|Symbian}}
+{{Infobox OS
+| name                   = SymbOS
+| logo                   = 
+| screenshot             = [[Image:symbos-cpc.png|250px]]
+| caption                = Screenshot of the SymbOS desktop on the Amstrad CPC
+| developer              = SymbiosiS
+| source_model           = [[Freeware]]
+| kernel_type            = [[Microkernel]]
+| supported_platforms    = [[Zilog Z80|Z80]] ([[Amstrad CPC]], [[MSX]], [[Amstrad PCW]])
+| ui                     = [[Graphical user interface]]
+| family                 = 
+| released               = May 1, 2006
+| latest_release_version = 2.0
+| latest_release_date    = August 30, 2007
+| latest_test_version    = 
+| latest_test_date       = 
+| marketing_target       = 
+| programmed_in          = 
+| prog_language          = 
+| language               = 
+| updatemodel            = 
+| package_manager        = 
+| working_state          = Current
+| license                = 
+| website                = [http://www.symbos.de/ www.symbos.de]
+}}
+'''SymbOS''' is a free [[Computer multitasking|multitasking]] [[operating system]] for [[Zilog Z80|Z80]]-based [[8-bit]] [[computer]] systems. At present it is available for the [[Amstrad CPC]] series of computers, as well as for all [[MSX]] models starting from the [[MSX2]] standard and for most [[Amstrad PCW]] models. Contrary to early 8-bit operating systems it is based on a [[microkernel]], which provides pre-emptive and priority oriented multitasking and manages RAM with a size of up to 1024 kB. SymbOS contains a [[Microsoft Windows]] like [[Graphical user interface]], supports [[hard disk]]s with a capacity of up to 128 GB and can already be booted on an unexpanded [[Amstrad CPC]]-6128, a 128K-[[MSX]]2 and an [[Amstrad PCW]].
+
+==Background==
+Although only an 8-bit CPU, the Z80 is capable of running a [[Preemption (computing)|pre-emptive]] [[Computer multitasking|multitasking]] [[operating system]]. Features such as memory protection, which the Z80 does not support, are not essential in such an OS. For example, [[AmigaOS]] does not feature [[memory protection]] either. The [[MP/M]] OS proved that multitasking on the Z80 CPU was possible, however it was not generally available for home computers.
+
+While the [[MOS Technology]] [[MOS Technology 6502|6502]] cannot move the [[stack pointer]], the Z80 can freely relocate it to any position in memory, which is more or less a requirement for [[pre-emptive multitasking]]. The existence of an alternative register set accelerates context switching between tasks dramatically. The restriction of Z80 system to a 64 kB [[address space]] can be solved with [[bank switching]]. In this way computers like the [[Amstrad CPC]] and [[Amstrad PCW|PCW]], [[MSX]], [[Enterprise 128|Enterprise]] or [[SAM Coupé]] are able to access hundreds or thousands of kilobytes of memory.
+
+==Kernel==
+SymbOS includes a microkernel, which is capable of performing task management, memory management and [[inter-process communication]].
+
+===Task management===
+For task management, a combination of preemptive and cooperative multitasking was chosen, which makes different task priorities possible. Preemptive means that tasks are interrupted after a certain amount of time by the operating system, in order to share the CPU time with other tasks. Cooperatively means that a task stops using CPU time by itself. It does that, if it's finished with its current job or waiting for a certain event. Because of this combination it is possible to assign priorities. Tasks with low priority get CPU time only if all tasks with higher priorities are not then working.
+
+===Memory and banking management===
+Memory management divides the entire RAM into small 256 byte blocks, which can be assigned dynamically. Applications are always running in a secondary 64 kB RAM bank, where no memory space is occupied by the operating system or the video memory. That makes it possible to reserve up to 63 kB in one piece.
+
+Banking management ensures that the system is able to administer memory with a size of up to one megabyte, even though the Z80 CPU has only a [[16-bit]] address bus. It makes transparent access to memory and functions placed in other 64 kB banks possible.
+
+===Inter-process communication===
+Communication between different tasks and the operating system usually does not take place via "Calls", but is done via "Messages". This is necessary inside a multitasking environment to avoid organization problems with the stack, global variables and shared system resources. The SymbOS kernel supports synchronous as well as asynchronous IPC.
+
+==Graphical user interface==
+[[Image:Symbos-msx2.gif|thumb|250px|Screenshot of the MSX version of SymbOS]]
+[[Image:SymbOS-PCW-1.gif|thumb|250px|SymbOS running on the Amstrad PCW in high-resolution mode]]
+The GUI of SymbOS works in a completely object-oriented manner. The look and feel mimics that of Microsoft Windows. It contains the well-known task bar with the clock and the "start" menu and can open up to 32 windows that can be moved, resized and scrolled. As the complete system is written in optimized assembly language, the GUI is fast compared to modern systems.
+
+Content of a window is defined with "controls" that are primitive GUI elements such as sliders, check boxes, text lines, buttons or graphics. The background or invisible areas of a window don't need to be saved in a separate bitmap buffer. If an area needs to be restored on the display, its contents will be redrawn instead. This makes SymbOS GUI much more memory-friendly compared to most other 8-bit GUIs.
+
+==File system management==
+SymbOS supports the file systems [[CP/M]], [[AMSDOS]], [[File Allocation Table|FAT 12-16-32]], on all platforms. With the last one SymbOS is able to address mass storage devices with a capacity of up to 128 GB. Also the ability to administer files with a size of up to 2 GB is uncommon for an 8-bit system. Because of the FAT support data exchange with other computers is quite easy, as most 32 and 64 bit operating systems do support the three FAT file systems.
+
+==Applications==
+There are several standard applications available for SymbOS, which most resemble their well-known Windows and Mac OS counterparts. Few examples are SymCommander (similar to [[Norton Commander]]), SymShell ([[cmd.exe]]), SymZilla ([[Mozilla Firefox]]), SymPlay ([[QuickTime]]), SymAmp ([[Winamp]]) and [[Minesweeper (computer game)|Minesweeper]].
+
+==Porting and cross platform ability==
+SymbOS was originally developed for the Amstrad CPC. Owing to its modular structure, with the strict separation of general and hardware components, porting to other Z80-based systems is quite easy.
+
+The [[MSX]] computers starting with the MSX2 standard have been supported since summer 2006. The [[Amstrad PCW]] port has been available since August 2007. Versions for the [[Enterprise 128]] and the [[SAM Coupé]] are possible, too, as they fulfill the requirements for SymbOS.
+
+By keeping a basic condition for an operating system, the strict separation of hardware and application software by an intermediate layer, SymbOS applications run platform-independently on each computer and do not have to be adapted for a special system, with the obvious exception of applications that directly access particular hardware.
+
+==Motivation==
+SymbOS was originally started as an experiment to find out to what extent it is possible to implement a multitasking based operating system with a windowed GUI on an 8-bit computer from 1985. [[GEOS (8-bit operating system)|GEOS]] contributed to the motivation, but the structure and features of SymbOS aren't similar to that system. The release in 2006 proved that such a "mini windows" system is possible on a 20 year-old home computer with only quantitative limitations. SymbOS is one of the largest retro computing software projects of recent years. One of the goals of the project is to allow these old machines to be used like a modern PC, using hardware extensions.
+
+==See also==
+* [[Amstrad CPC]]
+* [[MSX]]
+* [[Amstrad PCW]]
+* [[Contiki]]
+* [[MSX-DOS]]
+* [[OS-9]]
+
+==External links==
+* [http://www.symbos.de/ Official SymbOS homepage]
+* [http://groups.yahoo.com/group/symbos8bit/ SymbOS mailing list]
+* [http://www.cpcwiki.eu/index.php/SymbOS Page at the CPCWiki]
+* [http://www.youtube.com/group/symbos SymbOS video collection on YouTube]
+* [http://video.google.com/videoplay?docid=-8517523543573905150 SymbOS demo video running on a real MSX turboR GT with MP3MSX cartridge]
+
+[[Category:Amstrad CPC]]
+[[Category:MSX]]
+[[Category:Free software operating systems]]
+
+[[es:SymbOS]]
+[[it:SymbOS]]
+[[ru:SymbOS]]</body> </html>

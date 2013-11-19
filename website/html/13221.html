@@ -1,0 +1,256 @@
+<html> <head> <title>Factorial number system</title></head><body>{{numeral systems}}
+
+In [[combinatorics]], the '''factorial number system''', also called '''factoradic''', is a [[mixed radix]] [[numeral system]] adapted to numbering [[permutation]]s.  It is also called '''factorial base''', although [[factorial]]s do not function as base, but as place value of digits. By converting a number less than ''n''! to factorial representation, one obtains a sequence of ''n'' digits that can be converted to a permutation of ''n'' in a straightforward way, either using them as [[Lehmer code]] or as [[inversion (discrete mathematics)|inversion]] table<ref>{{citation
+| last=Knuth | first = D. E. | author-link = Donald Ervin Knuth
+| title = The Art of Computer Programming
+| contribution = Volume 3: Sorting and Searching | publisher = Addison-Wesley | year = 1973
+| isbn = 0-201-89685-0
+| pages = 12}}</ref> representation; in the
+former case the resulting map from integers to permutations of ''n'' lists them in [[lexicographical]] order. General mixed radix systems were studied by [[Georg Cantor]].<ref>{{citation
+ | last = Cantor | first = G. | author-link= Georg Cantor
+ | title = Zeitschrift für Mathematik und Physik | volume = 14 | year =1869}}.</ref>
+The term "factorial number system" is used by [[Donald Ervin Knuth|Knuth]],<ref>{{citation
+ | last = Knuth | first = D. E. | author-link = Donald Ervin Knuth
+ | contribution = Volume 2: Seminumerical Algorithms
+ | edition = 3rd
+ | isbn = 0-201-89684-2
+ | pages = 192
+ | publisher = Addison-Wesley
+ | title = The Art of Computer Programming
+ | year = 1997}}.</ref>
+while the French equivalent "numérotation factorielle" was first used in 1888.<ref>{{citation
+ | last = Laisant | first = Charles-Ange | author-link = Charles-Ange Laisant
+ | journal = Bulletin de la Société Mathématique de France
+ | language = French
+ | pages = 176–183
+ | title = Sur la numération factorielle, application aux permutations
+ | url = http://www.numdam.org/item?id=BSMF_1888__16__176_0
+ | volume = 16
+ | year = 1888}}.</ref> The term "factoradic", which is a [[portmanteau]] of factorial and mixed radix, appears to be of more recent date.<ref>The term "factoradic" is apparently introduced in {{citation
+ | last = McCaffrey | first = James | author-link = James D. McCaffrey
+ | publisher = Microsoft Developer Network
+ | title = Using Permutations in .NET for Improved Systems Security
+ | url = http://msdn2.microsoft.com/en-us/library/aa302371.aspx
+ | year = 2003}}.</ref>
+
+== Definition ==
+
+The factorial number system is a [[mixed radix]] [[numeral system]]: the ''i''-th digit from the right has base ''i'', which means that the digit must be strictly less than ''i'', and that (taking into account the bases of the less significant digits) its value to be multiplied by {{nowrap|(''i'' − 1)}}! (its place value).
+
+{| class="wikitable"
+|-
+| '''Radix'''                     ||    8 ||   7 ||   6 ||  5 ||  4 ||  3 ||  2 || 1
+|-
+| '''Place value'''               ||   7! ||  6! ||  5! || 4! || 3! || 2! || 1! || 0!
+|-
+| '''Place value in decimal'''    || 5040 || 720 || 120 || 24 ||  6 ||  2 ||  1 || 0
+|-
+| '''Highest digit allowed'''     ||    7 ||   6 ||   5 ||  4 ||  3 ||  2 ||  1 || 0
+|}
+
+From this it follows that the rightmost digit is always 0, the second can be 0 or 1, the third 0, 1 or 2, and so on. The factorial number system is sometimes defined with the rightmost digit omitted, because it is always zero {{OEIS|id=A007623}}. In this article a factorial number representation will be flagged by a subscript "!", so for instance 341010<sub>!</sub> stands for 3<sub>6</sub>4<sub>5</sub>1<sub>4</sub>0<sub>3</sub>1<sub>2</sub>0<sub>1</sub>, whose value is ((((3×5 + 4)×4 + 1)×3 + 0)×2 + 1)×1 + 0 = 463<sub>10</sub>.
+
+General properties of mixed radix number systems apply to the factorial number system as well. For instance, one can convert a number into factorial representation producing digits from right to left, by repeatedly dividing the number by the place values (1, 2, 3, ...), taking the remainder as digits, and continuing with the [[integer]] quotient, until this [[quotient]] becomes 0. One could in principle extend the system to deal with fractional numbers by choosing base values for the positions after the "decimal" point, but the natural extension by values 0, −1, −2, ... is not an option. The symmetric choice of base values 1, 2, 3, ... after the point would be possible, with corresponding place values {{fraction|1|''n''!}}, but it is not distinguished by any particular mathematical properties (except that the number ''[[e (mathematical constant)|e]]'' takes the form 10.011111...).
+
+==Examples==
+
+Here are the first twenty-four numbers, counting from zero.
+
+The table on the left shows permutations, and inversion vectors<ref>{{MathWorld|urlname=InversionVector|title=Inversion Vector}}</ref> (which are reflected factorial numbers) below them. Another column shows the inversion sets. The digit sums of the inversion vectors (or factorial numbers) and the cardinalities of the inversion sets are equal (and have the same [[w:Parity (mathematics)|parity]] as the permutation). They form the sequence [[w:OEIS|OEIS]] [http://www.research.att.com/~njas/sequences/A034968 A034968].
+
+[[File:Symmetric group 4; permutohedron; permutations and inversion vectors.svg|thumb|400px|[[Permutohedron]], showing permutations and their inversion vectors<br>
+([http://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Symmetric_group_4%3B_permutohedron%3B_permutations_and_inversion_vectors.svg/1000px-Symmetric_group_4%3B_permutohedron%3B_permutations_and_inversion_vectors.svg.png zoom in] or see [[:File:Symmetric group 4; permutohedron; factorial number system.svg|the same with factorial numbers]])<br>The arrows indicate the bitwise ''less or equal'' <math>\le</math> relation.]]
+
+{|
+| style="vertical-align:top;"|[[File:Symmetric group 4; permutation list with matrices.svg|214px]]
+| style="vertical-align:top;"|<!---START TABLE IN TABLE--->
+{| class="wikitable" style="text-align:right; height: 662px;"
+|-
+!height="34px"|decimal
+!factorial
+|-
+|0
+|0<sub>!</sub>
+|-
+|1
+|10<sub>!</sub>
+|-
+|2
+|100<sub>!</sub>
+|-
+|3
+|110<sub>!</sub>
+|-
+|4
+|200<sub>!</sub>
+|-
+|5
+|210<sub>!</sub>
+|-
+|6
+|1000<sub>!</sub>
+|-
+|7
+|1010<sub>!</sub>
+|-
+|8
+|1100<sub>!</sub>
+|-
+|9
+|1110<sub>!</sub>
+|-
+|10
+|1200<sub>!</sub>
+|-
+|11
+|1210<sub>!</sub>
+|-
+|12
+|2000<sub>!</sub>
+|-
+|13
+|2010<sub>!</sub>
+|-
+|14
+|2100<sub>!</sub>
+|-
+|15
+|2110<sub>!</sub>
+|-
+|16
+|2200<sub>!</sub>
+|-
+|17
+|2210<sub>!</sub>
+|-
+|18
+|3000<sub>!</sub>
+|-
+|19
+|3010<sub>!</sub>
+|-
+|20
+|3100<sub>!</sub>
+|-
+|21
+|3110<sub>!</sub>
+|-
+|22
+|3200<sub>!</sub>
+|-
+|23
+|3210<sub>!</sub>
+|}<!---END TABLE IN TABLE--->
+|}
+
+For another example, the greatest number that could be represented with six digits would be 543210<sub>!</sub> which equals 719 in [[decimal]]:
+:5×5! + 4×4! + 3x3! + 2×2! + 1×1! + 0×0!.
+
+Clearly the next factorial number representation after 543210<sub>!</sub> is 1000000<sub>!</sub> which designates 6! = 720<sub>10</sub>, the place value for the radix-7 digit. So the former number, and its summed out expression above, is equal to:
+:6! − 1.
+
+The factorial number system provides a unique representation for each natural number, with the given restriction on the "digits" used. No number can be represented in more than one way because the sum of consecutive factorials multiplied by their index is always the next factorial minus one:
+:<math> \sum_{i=0}^n {i\cdot i!} = {(n+1)!} - 1. </math>
+
+This can be easily proved with [[mathematical induction]].
+
+However, when using [[Arabic numeral]]s to write the digits (and not including the subscripts as in the above examples), their simple concatenation becomes ambiguous for numbers having a "digit" greater than 9. The smallest such example is the number 10 × 10! = 36288000<sub>10</sub>, which may be written A0000000000<sub>!</sub>, but not 100000000000<sub>!</sub> which denotes 11!=39916800<sub>10</sub>. Thus using letters A–Z to denote digits 10, ..., 35 as in other base-N make the largest representable number 36! − 1=371993326789901217467999448150835199999999<sub>10</sub>. For arbitrarily greater numbers one has to choose a base for representing individual digits, say decimal, and provide a separating mark between them (for instance by subscripting each digit by its base, also given in decimal). In fact the factorial number system itself is not truly a [[numeral system]] in the sense of providing a representation for all natural numbers using only a finite alphabet of symbols.
+
+==Permutations==
+
+There is a natural [[function (mathematics)|mapping]] between the [[integer]]s 0, ..., ''n''! &minus; 1 (or equivalently the numbers with ''n'' digits in factorial representation) and [[permutation]]s of ''n'' elements in [[lexicographical]] order, when the integers are expressed in factoradic form.  This mapping has been termed the [[Lehmer code]] (or inversion table). For example, with ''n'' = 3, such a mapping is
+
+{|
+|decimal
+|factorial
+|permutation
+|-
+|0<sub>10</sub>
+|000<sub>!</sub>
+|(0,1,2)
+|-
+|1<sub>10</sub>
+|010<sub>!</sub>
+|(0,2,1)
+|-
+|2<sub>10</sub>
+|100<sub>!</sub>
+|(1,0,2)
+|-
+|3<sub>10</sub>
+|110<sub>!</sub>
+|(1,2,0)
+|-
+|4<sub>10</sub>
+|200<sub>!</sub>
+|(2,0,1)
+|-
+|5<sub>10</sub>
+|210<sub>!</sub>
+|(2,1,0)
+|}
+
+The leftmost factoradic digit 0, 1, or 2 is chosen as the first permutation digit from the ordered list (0,1,2) and is removed from the list. Think of this new list as zero indexed and each successive digit dictates which of the remaining elements is to be chosen. If the second factoradic digit is "0" then the first element of the list is selected for the second permutation digit and is then removed from the list. Similarly if the second factoradic digit is "1", the second is selected and then removed. The final factoradic digit is always "0", and since the list now contains only one element it is selected as the last permutation digit.
+
+The process may become clearer with a longer example.  For example, here is how the digits in the factoradic 4041000<sub>!</sub> (equal to 2982<sub>10</sub>) pick out the digits in (4,0,6,2,1,3,5), the 2982nd permutation of the numbers 0 through 6.
+                                  4041000<sub>!</sub> → (4,0,6,2,1,3,5)
+ factoradic:  4          0                        4        1          0          0        0<sub>!</sub>
+              |          |                        |        |          |          |        |
+     (0,1,2,3,4,5,6) -> (0,1,2,3,5,6) -> (1,2,3,5,6) -> (1,2,3,5) -> (1,3,5) -> (3,5) -> (5)
+              |          |                        |        |          |          |        |
+ permutation:(4,         0,                       6,       2,         1,         3,       5)
+
+A natural index for the [[group direct product]] of two [[permutation group]]s is the [[concatenation]] of two factoradic numbers, with two subscript "!"s.
+            concatenated
+  decimal   factoradics            permutation pair
+     0<sub>10</sub>     000<sub>!</sub>000<sub>!</sub>           ((0,1,2),(0,1,2))
+     1<sub>10</sub>     000<sub>!</sub>010<sub>!</sub>           ((0,1,2),(0,2,1))
+                ...
+     5<sub>10</sub>     000<sub>!</sub>210<sub>!</sub>           ((0,1,2),(2,1,0))
+     6<sub>10</sub>     010<sub>!</sub>000<sub>!</sub>           ((0,2,1),(0,1,2))
+     7<sub>10</sub>     010<sub>!</sub>010<sub>!</sub>           ((0,2,1),(0,2,1))
+                ...
+    22<sub>10</sub>     110<sub>!</sub>200<sub>!</sub>           ((1,2,0),(2,0,1))
+                ...
+    34<sub>10</sub>     210<sub>!</sub>200<sub>!</sub>           ((2,1,0),(2,0,1))
+    35<sub>10</sub>     210<sub>!</sub>210<sub>!</sub>           ((2,1,0),(2,1,0))
+
+== References ==
+
+<references/>
+
+== External links ==
+
+*{{citation
+ | last1 = Mantaci | first1 = Roberto
+ | last2 = Rakotondrajao | first2 = Fanja
+ | journal = Discrete Mathematics and Theoretical Computer Science
+ | pages = 101–108
+ | title = A permutation representation that knows what “Eulerian” means
+ | url = http://www.dmtcs.org/volumes/abstracts/pdfpapers/dm040203.pdf
+ |format=PDF| volume = 4
+ | year = 2001}}.
+*{{cite book
+ | last = Arndt | first = Jörg
+ | title = Algorithms for Programmers: Ideas and source code (draft)
+ | pages = 224–234
+ | url = http://www.jjj.de/fxt/#fxtbook
+ | date =  March 5, 2009 }}
+
+==See also==
+
+* [[Combinatorial number system]] (also called combinadics)
+* [[Factorial]]
+
+== External links ==
+
+* [http://www-ang.kfunigraz.ac.at/~fripert/fga/k1lehm.html A Lehmer code calculator] Note that their permutation digits start from 1, so mentally reduce all permutation digits by one to get results equivalent to the ones on this page
+
+[[Category:Combinatorics]]
+[[Category:Non-standard positional numeral systems]]
+
+[[de:Fakultätsbasiertes Zahlensystem]]
+[[es:Factorádico]]
+[[id:Faktoradik]]
+[[nl:Faculteitssysteem]]
+[[pl:Silniowy system pozycyjny]]</body> </html>

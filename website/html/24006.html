@@ -1,0 +1,101 @@
+<html> <head> <title>Memento pattern</title></head><body>The '''memento pattern''' is a [[design pattern (computer science)|software design pattern]] that provides the ability to restore an object to its previous state ([[undo]] via rollback).
+
+The memento pattern is used by two objects: the ''originator'' and a ''caretaker''. The originator is some object that has an internal state. The caretaker is going to do something to the originator, but wants to be able to undo the change. The caretaker first asks the originator for a memento object. Then it does whatever operation (or sequence of operations) it was going to do. To roll back to the state before the operations, it returns the memento object to the originator. The memento object itself is an [[magic cookie|opaque object]] (one which the caretaker cannot, or should not, change). When using this pattern, care should be taken if the originator may change other objects or resources - the memento pattern operates on a single object.
+
+Classic examples of the  memento pattern include the seed of a [[pseudorandom number generator]] (it will always produce the same sequence thereafter when initialized with the [[Random_seed|seed state]]) and the state in a [[finite state machine]].
+
+== Example ==
+<!-- Wikipedia is not a list of examples. Do not add examples from your favorite programming language here; this page exists to explain the design pattern, not to show how it interacts with subtleties of every language under the sun. Feel free to add examples here: http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns/Memento -->
+
+{{wikibooks|Computer Science Design Patterns|Memento|Memento implementations in various languages}}
+
+The following [[Java (programming language)|Java]] program illustrates the "undo" usage of the Memento Pattern.
+
+<source lang="java">
+import java.util.List;
+import java.util.ArrayList;
+class Originator {
+    private String state;
+    // The class could also contain additional data that is not part of the
+    // state saved in the memento.
+ 
+    public void set(String state) {
+        System.out.println("Originator: Setting state to " + state);
+        this.state = state;
+    }
+ 
+    public Memento saveToMemento() {
+        System.out.println("Originator: Saving to Memento.");
+        return new Memento(state);
+    }
+ 
+    public void restoreFromMemento(Memento memento) {
+        state = memento.getSavedState();
+        System.out.println("Originator: State after restoring from Memento: " + state);
+    }
+ 
+    public static class Memento {
+        private final String state;
+ 
+        private Memento(String stateToSave) {
+            state = stateToSave;
+        }
+ 
+        private String getSavedState() {
+            return state;
+        }
+    }
+}
+ 
+class Caretaker {
+    public static void main(String[] args) {
+        List<Originator.Memento> savedStates = new ArrayList<Originator.Memento>();
+ 
+        Originator originator = new Originator();
+        originator.set("State1");
+        originator.set("State2");
+        savedStates.add(originator.saveToMemento());
+        originator.set("State3");
+        // We can request multiple mementos, and choose which one to roll back to.
+        savedStates.add(originator.saveToMemento());
+        originator.set("State4");
+ 
+        originator.restoreFromMemento(savedStates.get(1));   
+    }
+}
+</source>
+
+The output is:
+ Originator: Setting state to State1
+ Originator: Setting state to State2
+ Originator: Saving to Memento.
+ Originator: Setting state to State3
+ Originator: Saving to Memento.
+ Originator: Setting state to State4
+ Originator: State after restoring from Memento: State3
+
+<!-- Wikipedia is not a list of examples. Do not add examples from your favorite programming language here; this page exists to explain the design pattern, not to show how it interacts with subtleties of every language under the sun. Feel free to add examples here: http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns/Memento -->
+
+
+==External links==
+*[http://adapower.com/index.php?Command=Class&ClassID=Patterns&CID=271 Description of Memento Pattern] in [[Ada (programming language)|Ada]]
+* [http://dofactory.com/Patterns/PatternMemento.aspx Memento UML Class Diagram] with C# and .NET code samples
+* [http://sourcemaking.com/design_patterns/memento SourceMaking Tutorial]
+
+{{Design Patterns Patterns}}
+
+[[Category:Software design patterns]]
+[[Category:Articles with example Java code]]
+
+[[bg:Спомен (шаблон)]]
+[[ca:Memento (patró de disseny)]]
+[[de:Memento (Entwurfsmuster)]]
+[[es:Memento (patrón de diseño)]]
+[[fr:Mémento (patron de conception)]]
+[[it:Memento pattern]]
+[[ja:Memento パターン]]
+[[pl:Pamiątka (wzorzec projektowy)]]
+[[pt:Memento (informática)]]
+[[ru:Хранитель (шаблон проектирования)]]
+[[uk:Знімок (шаблон проектування)]]
+[[vi:Memento pattern]]</body> </html>

@@ -1,0 +1,301 @@
+<html> <head> <title>Tight binding</title></head><body>{{Electronic structure methods}}
+In [[solid-state physics]], the '''tight binding model''' (or '''TB model''') is an approach to the calculation of [[electronic band structure]] using an approximate set of [[wave function]]s based upon [[Quantum superposition|superposition]] of wave functions for isolated [[atom]]s located at each atomic site. The method is closely related to the [[Linear combination of atomic orbitals molecular orbital method|LCAO method]] used in chemistry. Tight binding models are applied to a wide variety of solids. The model gives good qualitative results in many cases and can be combined with other models that give better results where the tight binding model fails. Though the tight binding model is a one-electron model, the model also provides a basis for more advanced calculations like the calculation of [[surface states]] and application to various kinds of [[many-body problem]] and [[quasiparticle]] calculations.
+==Introduction==
+The name '''"tight binding"''' of this [[Electronic band structure|electronic band structure model]] suggests that this [[Quantum mechanics|quantum mechanical model]] describes the properties of tightly bound electrons in solids. The [[Electron|electrons]] in this model should be tightly bound to the [[atom]] to which they belong and they should have limited interaction with [[Quantum state|states]] and potentials on surrounding atoms of the solid. As a result the [[wave function]] of the electron will be rather similar to the [[atomic orbital]] of the free atom where it belongs to. The energy of the electron will also be rather close to the '''[[ionization energy]]''' of the electron in the free atom or ion because the interaction with potentials and states on neighboring atoms is limited.
+
+Though the mathematical formulation<ref name=SlaterKoster>
+{{cite journal
+| author = J. C. Slater, G. F. Koster | year = 1954
+| title = Simplified LCAO method for the Periodic Potential Problem
+| journal = Physical Review | volume = 94 | pages = 1498–1524
+| url=http://prola.aps.org/abstract/PR/v94/i6/p1498_1 }}
+</ref> of the one-particle tight binding [[Hamiltonian (quantum mechanics)|Hamiltonian]] may look complicated at first glance, the model is not complicated at all and can be understood intuitively quite easily. There are only [[#The_tight_binding_matrix_elements|three kinds of elements]] that play a significant role in the theory. Two of those three kinds of elements should be close to zero and can often be neglected. The most important elements in the model are the inter atomic matrix elements, which would simply be called the '''[[Bond energy|bond energies]]''' by a chemist.
+
+In general there is a number of [[Energy level|atomic energy levels]] and atomic orbitals involved in the model. This can lead to complicated band structures because the orbitals belong to different [[Point groups in three dimensions|point group]] representations. The [[reciprocal lattice]] and the [[Brillouin zone]] often belong to a different [[space group]] than the [[Crystal structure|crystal]] of the solid. High symmetry points in the Brillouin zone belong to different point group representations. When simple systems are studied, like the lattices of elements or simple compounds, it is often not very difficult to calculate eigenstates in high symmetry points analytically. So the tight binding model can provide nice examples for those who want to learn more about [[group theory]].
+
+What is known as the '''"tight binding model"''' has a long history and has been applied in many ways and with many different purposes and different outcomes. The model doesn't stand on its own. Parts of the model can be filled in or extended by other kinds of calculations and models like the [[nearly-free electron model]]. The model itself, or parts of it, can serve as the basis for other calculations<ref name=Harrison>
+{{cite book |author=Walter Ashley Harrison |title=Electronic Structure and the Properties of Solids |year= 1989 
+|publisher=Dover Publications |url=http://books.google.com/books?id=R2VqQgAACAAJ |isbn=0-486-66021-4 }}
+</ref>. In the study of [[Conductive polymer|conductive polymers]], [[Organic semiconductor|organic semiconductors]] and [[molecular electronics]] for example, tight binding like models are applied in which the role of the atoms in the original concept is replaced by the [[Molecular orbital|molecular orbitals]] of [[Conjugated system|conjugated systems]] and where the inter atomic matrix elements are replaced by inter or intra molecular hopping and [[Quantum tunneling|tunneling]] parameters. These conductors nearly all have very anisotropic properties and sometimes are almost perfectly one-dimensional.
+
+==Historical background==
+
+By 1928, the idea of a molecular orbital had been advanced by [[Robert_S._Mulliken|Robert Mulliken]], who was influenced considerably by the work of [[Friedrich Hund]]. The LCAO method for approximating molecular orbitals was introduced in 1928 by B. N. Finklestein and G. E. Horowitz, while the LCAO method for solids was developed by [[Felix Bloch]], as part of his doctoral dissertation in 1928, concurrently with and independent of the LCAO-MO approach. A much simpler interpolation scheme for approximating the electronic band structure, especially for the d-bands of [[Transition metal|transition metals]], is the parameterized tight-binding method conceived in 1954 by [[John_C._Slater|John Clarke Slater]] and George Fred Koster<ref name=SlaterKoster></ref>, ''the absolute climax in the history of this model''.  Hence, it is sometimes referred to as the [[#Table_of_inter_atomic_matrix_elements|SK tight-binding method]].   With the SK tight-binding method, electronic band structure calculations on a solid need not be carried out with full rigor as in the original [[Bloch's theorem]] but, rather, first-principles calculations are carried out only at high-symmetry points and the band structure is interpolated over the remainder of the [[Brillouin zone]] between these points.
+
+In this approach, interactions between different atomic sites are considered as [[Perturbation theory (quantum mechanics)|perturbation]]s. There exists several kinds of interactions we must consider. The crystal [[Hamiltonian (quantum mechanics)|Hamiltonian]] is only approximately a sum of atomic Hamiltonians located at different sites and atomic wave functions overlap adjacent atomic sites in the crystal, and so are not accurate representations of the exact wave function. There are further explanations in the next section with some mathematical expressions. 
+
+Recently, in the research about [[strongly correlated material]], the tight binding approach is basic approximation because highly localized electrons like 3-d [[transition metal]] electrons sometimes indicate strongly correlated behaviors. In this case, the role of electron-electron interaction must be considered using the [[Many-body theory|many-body physics]] description.
+
+The tight-binding model is typically used for calculations of [[electronic band structure]] and [[band gap]]s in the static regime.  However, in combination with other methods such as the [[random phase approximation]] (RPA) model, the dynamic response of systems may also be studied.
+
+==Mathematical formulation==
+We introduce the [[atomic orbital]]s <math>\varphi_m( \boldsymbol{r} )</math>, which are [[eigenfunction]]s of the [[Hamiltonian (quantum mechanics)|Hamiltonian]] ''H''<sub>at</sub> of a single isolated atom. When the atom is placed in a crystal, this atomic wave function overlaps adjacent atomic sites, and so are not true eigenfunctions of the crystal Hamiltonian. The overlap is less when electrons are tightly bound, which is the source of the descriptor "tight-binding".  Any corrections to the atomic potential Δ''U'' required to obtain the true Hamiltonian ''H'' of the system, are assumed small:
+
+:<math>H (\boldsymbol{r}) = \sum_{\boldsymbol{R_n}}  H_{\mathrm{at}}(\boldsymbol{r - R_n}) +\Delta U (\boldsymbol{r}) \ . </math>
+
+A solution ψ('''''r''''') to the time-independent single electron [[Schrödinger equation]] is then approximated as a [[Linear combination of atomic orbitals molecular orbital method|linear combination of atomic orbitals]] <math>\varphi_m( \boldsymbol{r- R_n})</math>:
+
+:<math>\psi(\boldsymbol{r}) = \sum_{m,\boldsymbol{R_n}} b_m ( \boldsymbol{R_n}) \ \varphi_m (\boldsymbol{r-R_n})</math>,
+
+where ''m'' refers to the ''m-th'' atomic energy level and '''''R<sub>n</sub>''''' locates an atomic site in the [[Crystal structure|crystal lattice]]. 
+===Translational symmetry and normalization===
+The [[translational symmetry]] of the crystal implies the wave function under translation can change only by a phase factor:
+
+:<math>\psi(\boldsymbol{r+R_{\ell}}) = e^{i\boldsymbol{k \cdot R_{\ell}}}\psi(\boldsymbol{r}) \ , </math>
+
+where '''''k''''' is the [[wave vector]] of the wave function. Consequently, the coefficients satisfy
+
+:<math>\sum_{m,\boldsymbol{R_n}} b_m ( \boldsymbol{R_n}) \ \varphi_m (\boldsymbol{r-R_n+R_{\ell}})=e^{i\boldsymbol{k \cdot R_{\ell}}}\sum_{m,\boldsymbol{R_n}} b_m ( \boldsymbol{R_n}) \ \varphi_m (\boldsymbol{r-R_n})\ .</math>
+
+By substituting '''''R'''''<sub>p</sub> = '''''R'''''<sub>n</sub> − '''''R'''''<sub>ℓ</sub>, we find
+
+:<math>b_m ( \boldsymbol{R_p+R_{\ell}}) = e^{i\boldsymbol{k \cdot R_{\ell}}}b_m ( \boldsymbol{R_p}) \ , </math>
+
+or
+
+:<math> b_m (\boldsymbol{R_p}) = e^{i\boldsymbol{k \cdot R_{p}}} b_m ( \boldsymbol{0}) \ . </math>
+
+[[Normalizable wave function|Normalizing]] the wave function to unity:
+
+:<math> \int d^3 r \  \psi^* (\boldsymbol{r}) \psi (\boldsymbol{r}) = 1 </math>
+
+:::<math>= \sum_{\boldsymbol{R_n}} b^* ( \boldsymbol{R_n})\sum_{\boldsymbol{R_{\ell}}} b ( \boldsymbol{R_{\ell}})\int d^3 r \  \varphi^* (\boldsymbol{r-R_n}) \varphi (\boldsymbol{r-R_{\ell}})</math>
+
+:::<math>= b^*(0)b(0)\sum_{\boldsymbol{R_n}} e^{-i \boldsymbol{k \cdot R_n}}\sum_{\boldsymbol{R_{\ell}}} e^ {i \boldsymbol{k \cdot R_{\ell}}}\ \int d^3 r \  \varphi^* (\boldsymbol{r-R_n}) \varphi (\boldsymbol{r-R_{\ell}})</math>
+
+:::<math>=N b^*(0)b(0)\sum_{\boldsymbol{R_p}} e^{-i \boldsymbol{k \cdot R_p}}\ \int d^3 r \  \varphi^* (\boldsymbol{r-R_p}) \varphi (\boldsymbol{r})\ </math>
+
+:::<math>=N b^*(0)b(0)\sum_{\boldsymbol{R_p}} e^{i \boldsymbol{k \cdot R_p}}\ \int d^3 r \  \varphi^* (\boldsymbol{r}) \varphi (\boldsymbol{r-R_p})\ ,</math>
+so the normalization sets ''b(0)'' as
+
+:<math> b^*(0)b(0) = \frac {1} {N}\ \cdot \  \frac {1}{1 + \sum_{\boldsymbol{R_p \neq 0}} e^{-i \boldsymbol{k \cdot R_p}} \alpha (\boldsymbol{R_p})} \ , </math>
+
+where α ('''''R'''''<sub>p</sub> ) are the atomic overlap integrals, which frequently are neglected resulting in<ref name=Lowdin>As an alternative to neglecting overlap, one may choose as a basis instead of atomic orbitals a set of orbitals based upon atomic orbitals but arranged to be orthogonal to orbitals on other atomic sites, the so-called [[Löwdin orbitals]]. See {{cite book |title=Fundamentals of Semiconductors |author=PY Yu & M Cardona |url=http://books.google.com/books?id=W9pdJZoAeyEC&pg=PA87 |page=87 |chapter=Tight-binding or LCAO approach to the band structure of semiconductors |isbn=3540254706 |edition=3 |year=2005 |publisher=Springrer}}</ref>
+
+:<math> b_n (0) \approx \frac {1} {\sqrt{N}} \ , </math>
+
+and
+::<math>\psi (\boldsymbol{r}) \approx \frac {1} {\sqrt{N}}  \sum_{m,\boldsymbol{R_n}} e^{i \boldsymbol{k \cdot R_n}} \ \varphi_m (\boldsymbol{r-R_n}) \ .</math>
+
+===The tight binding Hamiltonian===
+Using the tight binding form for the wave function, and assuming only the ''m-th'' atomic [[energy level]] is important for the ''m-th'' energy band, the  Bloch energies <math>\varepsilon_m</math> are of the form
+
+:<math> \varepsilon_m = \int d^3 r \  \psi^* (\boldsymbol{r})H(\boldsymbol{r})  \psi (\boldsymbol{r}) </math>
+:::<math>=\sum_{\boldsymbol{R_n}} b^* ( \boldsymbol{R_n})\  \int d^3 r \  \varphi^* (\boldsymbol{r-R_n})H(\boldsymbol{r})  \psi (\boldsymbol{r}) \ </math>
+:::<math>=\sum_{\boldsymbol{R_{\ell}}} \  \sum_{\boldsymbol{R_n}} b^* ( \boldsymbol{R_n})\  \int d^3 r \   \varphi^* (\boldsymbol{r-R_n})H_{\mathrm{at}}(\boldsymbol{r-R_{\ell}})  \psi (\boldsymbol{r}) \ + \sum_{\boldsymbol{R_n}} b^*( \boldsymbol{R_n})\  \int d^3 r \  \varphi^* (\boldsymbol{r-R_n})\Delta U (\boldsymbol{r})  \psi (\boldsymbol{r}) \ .</math>
+
+:::<math>\approx E_m + b^*(0)\sum_{\boldsymbol{R_n}} e^{-i \boldsymbol{k \cdot R_n}}\  \int d^3 r \  \varphi^* (\boldsymbol{r-R_n})\Delta U (\boldsymbol{r})  \psi (\boldsymbol{r}) \ .</math>
+
+Here terms involving the atomic Hamiltonian at sites other than where it is centered are neglected. The energy then becomes
+
+:<math>\varepsilon_m(\boldsymbol{k}) = E_m - N\ |b (0)|^2 \left(\beta_m + \sum_{\boldsymbol{R_n}\neq 0}\sum_l \gamma_{m,l}(\boldsymbol{R_n}) e^{i \boldsymbol{k} \cdot \boldsymbol{R_n}}\right) \ ,</math>
+:::<math>= E_m -  \  \frac {\beta_m + \sum_{\boldsymbol{R_n}\neq 0}\sum_l  \gamma_{m,l}(\boldsymbol{R_n}) e^{i \boldsymbol{k} \cdot \boldsymbol{R_n}}}{1 + \sum_{\boldsymbol{R_n \neq 0}}\sum_l  e^{i \boldsymbol{k \cdot R_n}} \alpha_{m,l} (\boldsymbol{R_n})} \ , </math>
+
+where ''E''<sub>m</sub> is the energy of the ''m''-th atomic level, and <math>\alpha_{m,l}</math>, <math>\beta_m</math> and  <math>\gamma_{m,l}</math> are the tight binding matrix elements.
+
+===The tight binding matrix elements===
+The element
+
+:<math> \beta_m = -\int \varphi_m^*(\boldsymbol{r})\Delta U(\boldsymbol{r}) \varphi_m(\boldsymbol{r}) \, d^3 r \ </math>,
+
+is the atomic energy shift due to the potential on neighboring atoms. This term is relatively small in most cases. If it is large it means that potentials on neighboring atoms have a large influence on the energy of the central atom.
+
+The next term
+
+:<math> \gamma_{m,l}(\boldsymbol{R_n}) = -\int \varphi_m^*(\boldsymbol{r}) \Delta U(\boldsymbol{r}) \varphi_l(\boldsymbol{r - R_n}) \, d^3 r \ ,</math>
+
+is the '''[[#Table_of_inter_atomic_matrix_elements|inter atomic matrix element]]''' between the atomic orbitals ''m'' and ''l'' on adjacent atoms. It is also called the bond energy or two center integral and it is is the '''most important element''' in the tight binding model.
+
+The last terms
+
+:<math> \alpha_{m,l}(\boldsymbol{R_n}) = \int \varphi_m^*(\boldsymbol{r}) \varphi_l(\boldsymbol{r - R_n}) \, d^3 r \ </math>,
+
+denote the [[Overlap matrix|overlap integrals]] between the atomic orbitals ''m'' and ''l'' on adjacent atoms.
+
+==Evaluation of the matrix elements==
+As mentioned before the values of the <math>\beta_m</math>-matrix elements are not so large in comparison with the ionization energy because the potentials of neighboring atoms on the central atom are limited. If <math>\beta_m</math> is not relatively small it means that the potential of the neighboring atom on the central atom is not small either. In that case it is an indication that the tight binding model is not a very good model for the description of the band structure for some reason. The inter atomic distances can be too small or the charges on the atoms or ions in the lattice is wrong for example.
+
+The inter atomic matrix elements <math>\gamma_{m,l}</math> can be calculated directly if the atomic wave functions and the potentials are known in detail. Most often this is not the case. There are numerous ways to get parameters for these matrix elements. Parameters can be obtained from [[Bond_energy#External_links|chemical bond energy data]]. Energies and eigenstates on some high symmetry points in the [[Brillouin zone]] can be evaluated and values integrals in the matrix elements can be matched with band structure data from other sources.
+
+The inter atomic overlap matrix elements <math>\alpha_{m,l}</math> should be rather small or neglectable. If they are large it is again an indication that the tight binding model is of limited value for some purposes. Large overlap is an indication for too short inter atomic distance for example. In metals and transition metals the broad s-band or sp-band can be fitted better to an existing band structure calculation by the introduction of next-nearest-neighbor matrix elements and overlap integrals but fits like that don't yield a very useful model for the electronic wave function  of a metal. Broad bands in dense materials are better described by a [[nearly free electron model]].
+
+The tight binding model works particularly well in cases where the band width is small and the electrons are strongly localized, like in the case of d-bands and f-bands. The model also gives good results in the case of open crystal structures, like diamond or silicon, where the number of neighbors is small. The model can easily be combined with a nearly free electron model in a hybrid NFE-TB model<ref name=Harrison></ref>.
+
+==Connection to Wannier functions==
+
+[[Bloch wave]] functions describe the electronic states in a periodic [[Crystal structure|crystal lattice]]. Bloch functions can be represented as a [[Fourier series]]<ref>Orfried Madelung, ''Introduction to Solid-State Theory'' (Springer-Verlag, Berlin Heidelberg, 1978).</ref>
+
+:<math>\psi_m\mathbf{(k,r)}=\frac{1}{\sqrt{N}}\sum_{n}{a_m\mathbf{(R_n,r)}} e^{\mathbf{ik\cdot R_n}}\ ,</math>
+
+where '''''R'''''<sub>n</sub> denotes an atomic site in a periodic crystal lattice, '''''k''''' is the [[wave vector]] of the Bloch wave, '''''r''''' is the electron position, ''m'' is the band index, and the sum is over all ''N'' atomic sites. The Bloch wave is an exact eigensolution for the wave function of an electron in a periodic crystal potential corresponding to an energy ''E''<sub>m</sub> ('''''k'''''), and is spread over the entire crystal volume.
+
+Using the [[Fourier transform]] analysis, a spatially localized wave function for the ''m''-th energy band can be derived from this Bloch wave: 
+
+:<math>a_m\mathbf{(R_n,r)}=\frac{1}{\sqrt{N}}\sum_{\mathbf{k}}{e^{\mathbf{-ik\cdot R_n}}\psi_m\mathbf{(k,r)}}=\frac{1}{\sqrt{N}}\sum_{\mathbf{k}}{e^{\mathbf{ik\cdot (r-R_n)}}u_m\mathbf{(k,r)}}.</math>
+
+These real space wave functions <math>{a_m\mathbf{(R_n,r)}}</math> are called [[Wannier function]]s, and are fairly closely localized to the atomic site '''''R'''''<sub>n</sub>. Of course, if we have exact [[Wannier function]]s, the exact Bloch functions can be derived using the inverse Fourier transform. 
+
+However it is not easy to calculate directly either [[Bloch wave|Bloch functions]] or [[Wannier function]]s. An approximate approach is necessary in the calculation of [[electronic structure]]s of solids. If we consider the extreme case of isolated atoms, the Wannier function would become an isolated atomic orbital. That limit suggests the choice of an atomic wave function as an approximate form for the Wannier function, the so-called tight binding approximation.
+
+==Second quantization==
+Modern explanations of electronic structure like [[t-J model]] and [[Hubbard model]] are based on tight binding model.<ref name=Altland>{{cite book |title=Condensed Matter Field Theory |author=Alexander Altland and Ben Simons |publisher=Cambridge University Press |pages=58 ''ff'' |chapter=Interaction effects in the tight-binding system |isbn=9780521845083 |year=2006 |url=http://books.google.com/books?id=0KMkfAMe3JkC&pg=RA4-PA58}}</ref> If we introduce [[second quantization]] formalism, it is clear to understand the concept of tight binding model. 
+
+Using the atomic orbital as a basis state, we can establish the second quantization Hamiltonian operator in tight binding model. 
+: <math> H = -t \sum_{\langle i,j \rangle,\sigma}( c^{\dagger}_{i,\sigma} c^{}_{j,\sigma}+ h.c.)</math>,
+: <math> c^\dagger_{i\sigma} , c_{j\sigma}</math> - creation and annihilation operators
+
+: <math>\displaystyle\sigma</math> - spin polarization
+
+: <math>\displaystyle t</math> - hopping integral 
+
+: <math>\displaystyle \langle i,j \rangle </math> -nearest neighbor index 
+
+Here, hopping integral <math>\displaystyle t</math> corresponds to the transfer integral <math>\displaystyle\gamma</math> in tight binding model. Considering extreme cases of <math>t\rightarrow 0</math>, it is impossible for electron to hop into neighboring sites. This case is the isolated atomic system. If the hopping term is turned on (<math>\displaystyle t>0</math>) electrons can stay in both sites lowering their [[kinetic energy]].
+
+In the strongly correlated electron system, it is necessary to consider the electron-electron interaction. This term can be written in 
+:<math>\displaystyle H_{ee}=\frac{1}{2}\sum_{n,m,\sigma}\langle n_1 m_1, n_2 m_2|\frac{e^2}{|r_1-r_2|}|n_3 m_3, n_4 m_4\rangle c^\dagger_{n_1 m_1 \sigma_1}c^\dagger_{n_2 m_2 \sigma_2}c_{n_4 m_4 \sigma_2} c_{n_3 m_3 \sigma_1}</math>
+This interaction Hamiltonian includes direct [[Coulomb's law|Coulomb]] interaction energy and exchange interaction energy between electrons. There are several novel physics induced from this electron-electron interaction energy, such as [[metal-insulator transition]]s (MIT), [[high-temperature superconductivity]], and several [[quantum phase transition]]s.
+==Example: one-dimensional s-band== 
+Here the tight binding model is illustrated with a '''s-band model''' for a string of atoms with a single [[Cubic_harmonic#The_s-orbitals|s-orbital]] in a straight line with spacing ''a'' and [[Sigma bond|σ bonds]] between atomic sites. 
+
+To find approximate eigenstates of the Hamiltonian, we can use a linear combination of the atomic orbitals
+
+: <math>|k\rangle =\frac{1}{\sqrt{N}}\sum_{n=1}^N e^{inka} |n\rangle </math>
+
+where ''N'' = total number of sites and <math>k</math> is a real parameter with <math>-\frac{\pi}{a}\leqq k\leqq\frac{\pi}{a}</math>. (This wave function is normalized to unity by the leading factor 1/√N provided overlap of atomic wave functions is ignored.) Assuming only nearest neighbor overlap, the only non-zero matrix elements of the Hamiltonian can be expressed as
+
+:<math> \langle n|H|n\rangle= E_0 = E_i - U \ .</math>
+
+:<math> \langle n\pm 1|H|n\rangle=-\Delta \ </math> 
+
+:<math> \langle n|n\rangle= 1 \ ;</math> &ensp; <math>\langle n \pm 1|n\rangle= S \ .</math>
+
+The energy ''E''<sub>i</sub> is the ionization energy corresponding to the chosen atomic orbital and ''U'' is the energy shift of the orbital as a result of the potential of neighboring atoms. The <math> \langle n\pm 1|H|n\rangle=-\Delta </math> elements, which are the [[#Table_of_interatomic_matrix_elements|Slater and Koster interatomic matrix elements]], are the [[Chemical bond|bond energies]] <math>E_{i,j}</math>. In this one dimensional s-band model we only have <math>\sigma</math>-bonds between the s-orbitals with bond energy <math>E_{s,s} = V_{ss\sigma}</math>. The overlap between states on neighboring atoms is ''S''. We can derive the energy of the state <math>|k\rangle</math> using the above equation:
+
+: <math> H|k\rangle=\frac{1}{\sqrt{N}}\sum_n e^{inka} H |n\rangle </math>
+: <math> \langle k| H|k\rangle =\frac{1}{N}\sum_{n,\ m} e^{i(n-m)ka} \langle m|H|n\rangle </math>&ensp;<math>=\frac{1}{N}\sum_n \langle n|H|n\rangle+\frac{1}{N}\sum_n \langle n-1|H|n\rangle e^{+ika}+\frac{1}{N}\sum_n\langle n+1|H|n\rangle e^{-ika}</math>&ensp;<math>= E_0 -2\Delta\,\cos(ka)\ ,</math>
+
+where, for example,
+
+:<math> \frac{1}{N}\sum_n \langle n|H|n\rangle = E_0 \frac{1}{N}\sum_n 1 = E_0 \ , </math>
+
+and
+:<math>\frac{1}{N}\sum_n \langle n-1|H|n\rangle e^{+ika}=-\Delta e^{ika}\frac{1}{N}\sum_n 1 = -\Delta e^{ika} \ .</math>
+:<math>\frac{1}{N}\sum_n \langle n-1|n\rangle e^{+ika}= S e^{ika}\frac{1}{N}\sum_n 1 = S e^{ika} \ .</math>
+
+Thus the energy of this state <math>|k\rangle</math> can be represented in the familiar form of the energy dispersion:
+
+:<math> E(k)= \frac{E_0-2\Delta\,\cos(ka)}{1 + 2 S\,\cos(ka)}</math>.
+
+*For <math>k = 0</math> the energy is  <math>E = (E_0 - 2 \Delta)/ (1 + 2 S)</math> and the state consists of a sum of all atomic orbitals. This state can be viewed as a chain of [[Molecular orbital|bonding orbitals]].
+*For <math>k = \pi / (2 a)</math> the energy is  <math>E = E_0</math> and the state consists of a sum of atomic orbitals which are a factor <math>e^{i \pi / 2}</math> out of phase. This state can be viewed as a chain of [[Non-bonding orbital|non-bonding orbitals]].
+*Finally for <math>k = \pi / a</math> the energy is  <math>E = (E_0 + 2 \Delta) / (1 - 2 S)</math> and the state consists of an alternating sum of atomic orbitals. This state can be viewed as a chain of [[Antibonding|anti-bonding orbitals]].
+
+This example is readily extended to three dimensions, for example, to a body-centered cubic or face-centered cubic lattice by introducing the nearest neighbor vector locations in place of simply ''n a''.<ref name= Mott> {{cite book |title= The theory of the properties of metals and alloys |url=http://books.google.com/books?id=LIPsUaTqUXUC&printsec=frontcover&source=gbs_summary_r&cad=0#PPA58,M1 |author=Sir Nevill F Mott & H Jones   |year= 1958 |publisher=Courier Dover Publications |isbn=048660456X |edition=Reprint of Clarendon Press (1936) |chapter=II §4 Motion of electrons in a periodic field |pages=56 ''ff''}}</ref> Likewise, the method can be extended to multiple bands using multiple different atomic orbitals at each site. The general formulation above shows how these extensions can be accomplished.
+
+==Table of interatomic matrix elements==
+In 1954 J.C. Slater and F.G. Koster published, mainly for the calculation of [[transition metal]] d-bands, a table of inter atomic matrix elements<ref name=SlaterKoster></ref>
+:<math>E_{i,j}(\vec{\bold{r}}_{n,n'}) = \langle n,i|H|n',j\rangle</math>
+which, with a little patience and effort, can also be derived from the [[Cubic harmonic|cubic harmonic orbitals]] straightforwardly. The table expresses the matrix elements as functions of [[LCAO]] two-centre [[Chemical bond|bond integrals]] between two [[cubic harmonic]] orbitals, ''i'' and ''j'', on adjacent atoms. The bond integrals are for example the <math>V_{ss\sigma}</math>, <math>V_{pp\pi}</math> and <math>V_{dd\delta}</math> for [[sigma bond|sigma]], [[pi bond|pi]] and [[delta bond|delta]] bonds.
+
+The inter atomic vector is expressed as
+:<math>\vec{\bold{r}}_{n,n'} = (r_x,r_y,r_z) = d (l,m,n)</math>
+where ''d'' is the distance between the atoms and ''l'', ''m'' and ''n'' are the direction cosines to the neighboring atom.
+:<math>E_{s,s} = V_{ss\sigma}</math>
+:<math>E_{s,x} = l V_{sp\sigma}</math>
+:<math>E_{x,x} = l^2 V_{pp\sigma} + (1 - l^2) V_{pp\pi}</math>
+:<math>E_{x,y} = l m V_{pp\sigma} - l m V_{pp\pi}</math>
+:<math>E_{x,z} = l n V_{pp\sigma} - l n V_{pp\pi}</math>
+:<math>E_{s,xy} = \sqrt{3} l m V_{sd\sigma}</math>
+:<math>E_{s,x^2-y^2} = \frac{\sqrt{3}}{2} (l^2 - m^2) V_{sd\sigma}</math>
+:<math>E_{s,3z^2-r^2} = [n^2 - (l^2 + m^2) / 2] V_{sd\sigma}</math>
+:<math>E_{x,xy} = \sqrt{3} l^2 m V_{pd\sigma} + m (1 - 2 l^2) V_{pd\pi}</math>
+:<math>E_{x,yz} = \sqrt{3} l m n V_{pd\sigma} - 2 l m n V_{pd\pi}</math>
+:<math>E_{x,zx} = \sqrt{3} l^2 n V_{pd\sigma} + n (1 - 2 l^2) V_{pd\pi}</math>
+:<math>E_{x,x^2-y^2} = \frac{\sqrt{3}}{2} l (l^2 - m^2) mV_{pd\sigma} +
+l (1 - l^2 + m^2) V_{pd\pi}</math>
+:<math>E_{y,x^2-y^2} = \frac{\sqrt{3}}{2} m(l^2 - m^2) V_{pd\sigma} -
+m (1 + l^2 - m ^2) V_{pd\pi}</math>
+:<math>E_{z,x^2-y^2} = \frac{\sqrt{3}}{2} n(l^2 - m^2) V_{pd\sigma} - n(l^2 - m^2) V_{pd\pi}</math>
+:<math>E_{x,z^2-r^2} = l[n^2 - (l^2 + m^2)/2]V_{pd\sigma} - \sqrt{3} l n^2 V_{pd\pi}</math>
+:<math>E_{y,3z^2-r^2} = m [n^2 - (l^2 + m^2) / 2] V_{pd\sigma} - \sqrt{3} m n^2 V_{pd\pi}</math>
+:<math>E_{z,3z^2-r^2} = n [n^2 - (l^2 + m^2) / 2] V_{pd\sigma} +
+\sqrt{3} n (l^2 + m^2) V_{pd\pi}</math>
+:<math>E_{xy,xy} = 3 l^2 m^2 V_{dd\sigma} + (l^2 + m^2 - 4 l^2 m^2) V_{dd\pi} +
+(n^2 + l^2 m^2) V_{dd\delta}</math>
+:<math>E_{xy,yz} = 3 l m^2 nV_{dd\sigma} + l n (1 - 4 m^2) V_{dd\pi} +
+l n (m^2 - 1) V_{dd\delta}</math>
+:<math>E_{xy,zx} = 3 l^2 m n V_{dd\sigma} + m n (1 - 4 l^2) V_{dd\pi} +
+m n (l^2 - 1) V_{dd\delta}</math>
+:<math>E_{xy,x^2-y^2} = \frac{3}{2} l m (l^2 - m^2) V_{dd\sigma} +
+2 l m (m^2 - l^2) V_{dd\pi} + l m (l^2 - m^2) / 2 V_{dd\delta}</math>
+:<math>E_{yz,x^2-y^2} = \frac{3}{2} m n (l^2 - m^2) V_{dd\sigma} -
+m n [1 + 2(l^2 - m^2)] V_{dd\pi} + m n [1 + (l^2 - m^2) / 2] V_{dd\delta}</math>
+:<math>E_{zx,x^2-y^2} = \frac{3}{2} n l (l^2 - m^2) V_{dd\sigma} +
+n l [1 - 2(l^2 - m^2)] V_{dd\pi} - n l [1 - (l^2 - m^2) / 2] V_{dd\delta}</math>
+:<math>E_{xy,3z^2-r^2} = \sqrt{3} \left[ l m (n^2 - (l^2 + m^2) / 2) V_{dd\sigma} -
+2 l m n^2 V_{dd\pi} + l m (1 + n^2) / 2 V_{dd\delta} \right]</math>
+:<math>E_{yz,3z^2-r^2} = \sqrt{3} \left[ m n (n^2 - (l^2 + m^2) / 2) V_{dd\sigma} +
+m n (l^2 + m^2 - n^2) V_{dd\pi} - m n (l^2 + m^2) / 2 V_{dd\delta} \right]</math>
+:<math>E_{zx,3z^2-r^2} = \sqrt{3} \left[ l n (n^2 - (l^2 + m^2) / 2) V_{dd\sigma} +
+l n (l^2 + m^2 - n^2) V_{dd\pi} - l n (l^2 + m^2) V_{dd\delta} \right]</math>
+:<math>E_{x^2-y^2,x^2-y^2} = \frac{3}{4} (l^2 - m^2) V_{dd\sigma} +
+[l^2 + m^2 - (l^2 - m^2)^2] V_{dd\pi} + [n^2 + (l^2 - m^2)^2 / 4] V_{dd\delta}</math>
+:<math>E_{x^2-y^2,3z^2-r^2} = \sqrt{3} \left[
+(l^2 - m^2) [n^2 - (l^2 - m^2) / 2] V_{dd\sigma} / 2 + n^2 (m^2 - l^2) V_{dd\pi} +
+(1 + n^2)(l^2 - m^2) / 4 V_{dd\delta}\right]</math>
+:<math>E_{3z^2-r^2,3z^2-r^2} = [n^2 - (l^2 - m^2) / 2]^2 V_{dd\sigma} +
+3 n^2 (l^2 + m^2) V_{dd\pi} + \frac{3}{4} (l^2 + m^2) V_{dd\delta}</math>
+Not all inter atomic matrix elements are listed explicitly. Matrix elements that are not listed in this table can be constructed by permutation of indices and cosine directions of other matrix elements in the table.
+
+==See also==
+{{multicol}}
+* [[Electronic band structure]]
+* [[Nearly-free electron model]]
+* [[Bloch wave]]s
+* [[Kronig-Penney model]]
+* [[Fermi surface]]
+* [[Wannier function]]
+* [[Hubbard model]]
+* [[t-J model]]
+{{multicol-break}}
+* [[Effective mass]]
+* [[Anderson's rule]]
+* [[Dynamical theory of diffraction]]
+* [[Solid state physics]]
+* [[Linear combination of atomic orbitals molecular orbital method]] (LCAO)
+{{multicol-end}}
+
+==References==
+{{commons category|Dispersion relations of electrons}}
+{{reflist}}
+* N. W. Ashcroft and N. D. Mermin, ''Solid State Physics'' (Thomson Learning, Toronto, 1976).
+* Stephen Blundell ''Magnetism in Condensed Matter''(Oxford, 2001).
+* S.Maekawa et al ''Physics of Transition Metal Oxides'' (Spinger-Verlag Berlin Heidelberg, 2004).
+* John Singleton ''Band Theory and Electronic Properties of Solids'' (Oxford, 2001).
+
+==Further reading==
+*{{cite book |author=Walter Ashley Harrison |title=Electronic Structure and the Properties of Solids |year= 1989 
+|publisher=Dover Publications |url=http://books.google.com/books?id=R2VqQgAACAAJ |isbn=0-486-66021-4 }}
+* N. W. Ashcroft and N. D. Mermin, ''Solid State Physics'' (Thomson Learning, Toronto, 1976).
+*{{cite book
+  | last  = Davies
+  | first = John H.
+  | title = The physics of low-dimensional semiconductors: An introduction
+  | year  = 1998
+  | publisher = Cambridge University Press
+  | location  = Cambridge, United Kingdom
+  | isbn      = 0-521-48491-X
+}}
+* C.M. Goringe, D.R. Bowler and E. Hernández, [http://dx.doi.org/10.1088/0034-4885/60/12/001 Rep. Prog. Phys. '''60''', 1447 (1997)].
+* J.C. Slater and G.F. Koster, [http://dx.doi.org/10.1103/PhysRev.94.1498 Phys. Rev. '''94''', 1498 (1954)].
+
+[[Category:Electronic structure methods]]
+[[Category:Electronic band structures]]
+
+[[de:Tight-Binding-Methode]]
+[[it:Metodo Tight Binding]]
+[[ja:強結合近似]]
+[[ru:Приближение сильно связанных электронов]]
+[[uk:Наближення сильного зв'язку]]
+[[zh:紧束缚近似]]</body> </html>

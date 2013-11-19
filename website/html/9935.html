@@ -1,0 +1,241 @@
+<html> <head> <title>Denavit-Hartenberg Parameters</title></head><body>[[File:Sample_Denavit-Hartenberg_Diagram.png |375px|right]]
+==Definition==
+A commonly used convention for selecting [[frames of reference]] in [[robotics]] applications is the  [[Robotics conventions#Denavit-Hartenberg link frame convention (DH)|Denavit and Hartenberg (D-H) convention]] which was introduced by [[Jaques Denavit]] and [[Richard S. Hartenberg]]. In this convention, each homogeneous transformation is represented as a product of four basic [[Transformation (geometry)|transformations]]. The common normal between two lines was the main geometric concept that allowed Denavit and Hartenberg to find a [[Robotics conventions#Minimal line representation|minimal representation]].  The reference frames are laid out as follows:
+# the <math>z</math>-axis is in the direction of the joint axis
+# the <math>x</math>-axis is parallel to the [[Common normal (robotics)|common normal]]: <math>x_n = z_n \times z_{n-1}</math><br>If there is no unique common normal (parallel <math>z</math> axes), then <math>d</math> (below) is a free parameter.  The direction of <math>x_n</math> is from <math>z_{n - 1}</math> to <math>z_n</math>, as shown in the video below.
+# the <math>y</math>-axis follows from the <math>x</math>- and <math>z</math>-axis by choosing it to be a [[Cartesian coordinate system#In three dimensions|right-handed coordinate system]].
+
+The transformation is then described by the following four parameters known as '''D-H Parameters''':<ref>Spong, M., M. Vidyasagar, ”Robot Dynamics and Control”, John Wiley and Sons, 1989, ISBN 047161243X</ref>.
+* <math>d\,</math>: offset along previous <math>z</math> to the common normal
+* <math>\theta\,</math>: angle about previous <math>z</math>, from old <math>x</math> to new <math>x</math>
+* <math>r\,</math>: length of the common normal (aka <math>a</math>, but if using this notation, do not confuse with <math>\alpha</math>).  Assuming a revolute joint, this is the radius about previous <math>z</math>.
+* <math>\alpha\,</math>: angle about common normal, from old <math>z</math> axis to new <math>z</math> axis
+
+<center>[[File:Denavit-Hartenberg_Tutorial_Video.ogv |thumbtime=0]]
+A visualization of D-H parameterization.  Also available: [http://www.youtube.com/watch?v=rA9tm0gTln8 YouTube], [http://tekkotsu.no-ip.org/movie/dh-hd.mp4 1280x720 MPEG-4], [http://tekkotsu.no-ip.org/movie/dh-sd.mp4 640x360 MPEG-4]
+</center>
+
+There is some choice in frame layout as to whether the previous <math>x</math> axis or the next <math>x</math> points along the common normal.  The latter system allows branching chains more efficiently, as multiple frames can all point away from their common ancestor, but in the alternative layout the ancestor can only point toward one successor.  Thus the commonly used notation places each down-chain <math>x</math> axis collinear with the common normal, yielding the transformation calculations shown below.
+
+We can note constraints on the relationships between the axes:
+
+* the <math>x_n</math>-axis is perpendicular to both the <math>z_{n - 1}</math> and <math>z_n</math> axes
+* the <math>x_n</math>-axis intersects both <math>z_{n - 1}</math> and <math>z_n</math> axes
+* the origin of joint <math>n</math> is at the intersection of <math>x_n</math> and <math>z_n</math>
+* <math>y_n</math> completes a right-handed reference frame based on <math>x_n</math> and <math>z_n</math>
+
+Every link/joint pair can be described as a [[coordinate transformation]] from the previous coordinate system to the next coordinate system.
+
+: <math>{}^{n - 1}T_n
+  = \operatorname{Trans}_{z_{n - 1}}(d_n) \cdot
+    \operatorname{Rot}_{z_{n - 1}}(\theta_n) \cdot
+    \operatorname{Trans}_{x_n}(r_n) \cdot
+    \operatorname{Rot}_{x_n}(\alpha_n)</math>
+
+Note that these are 2 screws after oneanother. See [[Screw (motion)]].
+
+The matrices mentioned above are as follows:
+
+: <math>\operatorname{Trans}_{z_{n - 1}}(d_n)
+  = 
+\left[
+\begin{array}{ccc|c}
+    1 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 1 & d_n \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+</math>
+
+: <math>\operatorname{Rot}_{z_{n - 1}}(\theta_n)
+  = 
+\left[
+\begin{array}{ccc|c}
+    \cos\theta_n & -\sin\theta_n & 0 & 0 \\
+    \sin\theta_n &  \cos\theta_n & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+</math>
+
+: <math>\operatorname{Trans}_{x_n}(r_n)
+  = 
+\left[
+\begin{array}{ccc|c}
+    1 & 0 & 0 & r_n \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+</math>
+
+: <math>\operatorname{Rot}_{x_n}(\alpha_n)
+  = 
+\left[
+\begin{array}{ccc|c}
+    1 & 0 & 0 & 0 \\
+    0 & \cos\alpha_n & -\sin\alpha_n & 0 \\
+    0 & \sin\alpha_n & \cos\alpha_n & 0 \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+</math>
+
+This gives:
+
+: <math>\operatorname{}^{n - 1}T_n
+  = 
+\left[
+\begin{array}{ccc|c}
+    \cos\theta_n & -\sin\theta_n \cos\alpha_n & \sin\theta_n \sin\alpha_n & r_n \cos\theta_n \\
+    \sin\theta_n & \cos\theta_n \cos\alpha_n & -\cos\theta_n \sin\alpha_n & r_n \sin\theta_n \\
+    0 & \sin\alpha_n & \cos\alpha_n & d_n \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+
+=
+
+\left[
+\begin{array}{ccc|c}
+     &  &  &  \\
+     & R &  & T \\
+     & &  &  \\
+    \hline
+    0 & 0 & 0 & 1 \\
+  \end{array}
+\right]
+</math>
+
+where <math> R </math> is the  <math> 3 \times 3 </math> submatrix describing rotation and  <math> T </math> is the  <math> 3 \times 1 </math> submatrix describing translation.
+
+==Use of Denavit and Hartenberg matricies==
+The Denavit and Hartenberg notation gives a standard methodology to write the kinematic equations of a manipulator. This is specially useful for serial manipulators where a matrix is use to represent the pose (position and orientation) of one body with respect to another.
+
+The position of body <math>n</math> with respect to  <math>n-1</math> may be represented by a position matrix indicated with the symbol <math> T </math> or <math> M </math>
+: <math>   \operatorname{}^{n - 1}T_n = M_{n-1,n} </math>
+
+This matrix is also used to trasform a point from frame <math>n</math> to <math>n-1</math>
+
+: <math>   P_{(n-1)} =  M_{n-1,n} P_{(n)} =  \left[ \begin{array}{c} x_{n-1} \\y_{n-1} \\z_{n-1} \\ 1 \end{array} \right] =  \left[ \begin{array}{ccc|c} X_x & Y_x & Z_x & T_x \\ X_y & Y_y & Z_y & T_y \\ X_z & Y_z & Z_z & T_z \\ 
+\hline
+0 & 0 & 0 & 1 \end{array}\right] 
+ \left[ \begin{array}{c} x_{n} \\y_{n} \\z_{n} \\ 1 \end{array} \right]</math>
+Where the upper left <math>3\times 3</math> submatrix of <math>M</math> represents the relative  
+orientation of the two bodies, and the upper right <math>3\times 1</math> represents their relative position.
+
+The position of body <math>k</math> with respect to body <math>i</math> can be obtained as the product of the matrices representing the pose of <math>j</math> with respect of <math>i</math> and that of <math>k</math> with respect of <math>j</math>
+
+<math> M_{i,k}= M_{i,j} M_{j,k} </math>
+
+An importnat properties of the Denavit and Hartemberg matrices is 
+
+<math> M_{j,i} = M_{i,j}^{-1} </math>
+
+==Extensions==
+see <ref>  Giovanni Legnani, Federico Casolo, Paolo Righettini and Bruno Zappa ”A homogeneous matrix approach to 3D kinematics and dynamics — I”. Theory Mechanism and Machine Theory, Volume 31, Issue 5, July 1996, Pages 573-587 </ref>
+<ref> Giovanni Legnani, Federico Casalo, Paolo Righettini and Bruno Zappa ”A homogeneous matrix approach to 3D kinematics and dynamics—II”. Applications to chains of rigid bodies and serial manipulators Mechanism and Machine Theory, Volume 31, Issue 5, July 1996, Pages 589-605 </ref>
+===Kinematics===
+Further matrices can be defined to represents velocity and acceleration of bodies.
+
+The '''velocity''' of body <math>i</math> with respect to body <math>j</math> can be represented in frame <math>k</math> by the matrix
+:<math> W_{i,j(k)}=\left[ \begin{array}{ccc|c} 0 & -\omega_z & \omega_y & v_x \\ \omega_z & 0 & -\omega_x & v_y \\ -\omega_y & \omega_x & 0 & v_z \\ 
+\hline
+0 & 0 & 0 & 0 \end{array}\right]</math>
+where <math> \omega </math> is the angular velocity of body <math> j </math> with respect to body <math> i </math> and all the components are expressed in frame <math> k </math>; <math> v </math> is the velocity of one point of body <math> j </math> with respect to body <math> i  
+</math> (the pole). The pole is the point of <math> j </math> passing through the origin of frame <math>i</math>.
+
+The '''acceleration''' matrix can be defined as the sum of the time derivative of the velocity plus the velocity squared
+:<math> H_{i,j(k)}=\dot{W}_{i,j(k)}+W_{i,j(k)}^2 </math>
+
+The velocity and the acceleration in frame <math> i </math> of a point of body <math> j </math> can be evaluated as
+:<math>\dot{P} = W_{i,j} P </math>
+:<math>\ddot{P} = H_{i,j} P </math>
+
+It is also possible to prove that
+
+:<math>\dot{M}_{i,j} = W_{i,j(i)} M_{i,j} </math>
+
+:<math>\ddot{M}_{i,j} = H_{i,j(i)} M_{i,j} </math>
+
+Velocity and acceleration matrices add up according to the following rules
+
+:<math> W_{i,k}= W_{i,j} + W_{j,k} </math>
+
+:<math> H_{i,k}= H_{i,j} + H_{j,k} + 2W_{i,j} W_{j,k}</math>
+in other words the absolute velocity is the sum of the drag plus the relative velocity; for the acceleration the Coriolis' term is also present.
+
+The components of velocity and acceleration matrices are expressed in an arbitrary frame <math>k</math> and transform from one frame to another by the following rule
+
+:<math> W_{(h)}=M_{h,k} W_{(k)} M_{k,h} </math>
+:<math> H_{(h)}=M_{h,k} H_{(k)} M_{k,h} </math>
+
+===Dynamics===
+
+For the dynamics 3 further matrices are necessary to describe the inertia <math> J </math>, the linear and angular momentum <math> \Gamma </math>, and the forces and torques <math> \Phi </math> applied to a body.
+
+Inertia <math> J </math>:
+
+:<math> J=\left[ \begin{array}{ccc|c} I_{xx} & I_{xy}  & I_{xz}  & x_g m \\ I_{xy}  & I_{yy}  &  
+I_{yz}  & y_g m \\ I_{xz}  & I_{yz}  & I_{zz}  & z_g m \\ 
+\hline
+x_g m & y_g m & z_g m & m \end{array}\right] </math>
+
+where <math> m </math> is the mass, <math> x_g,\, y_g,\, z_g </math> represent the position of the center of mass, and the terms <math> I_{xx},\,I_{xy},\ldots</math> represent inertia and are defined as
+:<math> I_{xx} =\int\int x^2 dm </math>  
+
+:<math> I_{xy} =\int\int xy dm </math> 
+
+:<math> I_{xz} =\ldots </math>
+:<math> \ldots </math>
+
+Action matrix <math>\Phi</math>, containing force <math> f </math> and torque <math> t </math>:
+:<math> \Phi = \left[ \begin{array}{ccc|c} 0 & -t_z & t_y & f_x \\ t_z & 0 & -t_x & f_y \\ -t_y & t_x & 0 & f_z \\ 
+\hline
+-f_x & -f_y & -f_z & 0 \end{array}\right]</math>
+
+Momentum matrix <math>\Gamma</math>, containing linear <math> \rho </math> and angular <math> \gamma </math> momentum
+:<math> \Phi = \left[ \begin{array}{ccc|c} 0 & -\gamma_z & \gamma_y & \rho_x \\ \gamma_z & 0 & -\gamma_x & \rho_y \\ -\gamma_y & \gamma_x & 0 & \rho_z \\ 
+\hline
+-\rho_x & -\rho_y & -\rho_z & 0 \end{array}\right]</math>
+
+the all the matrices are represented with the vector components in a certain frame <math>k</math>. Transformation of the components from frame <math> k </math> to frame <math> h </math> follows to rule
+
+: <math> J_{(h)}= M_{h,k} J_{(k)} M_{h,k}^T </math>
+: <math> \Gamma_{(h)}= M_{h,k} \Gamma_{(k)} M_{h,k}^T </math>
+: <math> \Phi_{(h)}= M_{h,k} \Phi_{(k)} M_{h,k}^T </math>
+
+The matrices described allow the writing of the dynamic equations in a concise way.
+
+Newton's law:
+: <math> \Phi = H J - J H^t </math> 
+Momentum:
+: <math> \Gamma = W J - J W^t </math>
+
+The first of these equations express the Newton's law and is the equivalent of the vector equation <math> f = m a </math> (force equal mass times acceleration) plus <math> t = J \dot{\omega} + \omega \times J \omega </math> (angular acceleration in function of inertia and angular velocity); the second equation permits the evaluation of the linear and angular momentum when velocity and inertia are known.
+
+==See also==
+* [[Robotics conventions]]
+* J. Denavit and R.S. Hartenberg. A kinematic notation for lower-pair mechanisms based on matrices. Trans ASME J. Appl. Mech, 23:215-221,1955
+* [http://kmoddl.library.cornell.edu/bib.php?m=23 R.S. HartenBerg and J. Denavit ''Kinematic synthesis of linkages'' McGraw-Hill, New York, NY, 1964]
+* Giovanni Legnani, Federico Casolo, Paolo Righettini and Bruno Zappa A homogeneous matrix approach to 3D kinematics and dynamics — I. Theory Mechanism and Machine Theory, Volume 31, Issue 5, July 1996, Pages 573-587
+* Giovanni Legnani, Federico Casalo, Paolo Righettini and Bruno Zappa A homogeneous matrix approach to 3D kinematics and dynamics—II. Applications to chains of rigid bodies and serial manipulators Mechanism and Machine Theory, Volume 31, Issue 5, July 1996, Pages 589-605
+==References==
+<references/>
+
+{{commonscat|Denavit-Hartenberg transformation}}
+
+[[Category:Robotics]]
+
+[[de:Denavit-Hartenberg-Transformation]]
+[[fr:Denavit-Hartenberg]]
+[[it:Convenzione di Denavit-Hartenberg]]
+[[pl:Notacja Denavita-Hartenberga]]</body> </html>

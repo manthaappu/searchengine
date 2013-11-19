@@ -1,0 +1,50 @@
+<html> <head> <title>Random early detection</title></head><body>[[Image:Random Early Detection algorithm en.svg|right|350px]]
+'''Random early detection''' (RED), also known as '''random early discard''' or '''random early drop''' is an [[Active Queue Management|active queue management]] [[algorithm]]. It is also a [[Network congestion avoidance|congestion avoidance]] algorithm.<ref>{{cite journal | last = Floyd | first = Sally | coauthors =  Jacobson, Van | title = Random Early Detection (RED) gateways for Congestion Avoidance | url = http://www.icir.org/floyd/papers/red/red.html | journal = IEEE/ACM Transactions on Networking | volume = 1 | issue = 4 | year = 1993 | month = August | accessdate = 2008-03-16 | pages = 397–413 | doi = 10.1109/90.251892}}</ref>
+
+In the traditional [[tail drop]] algorithm, a [[router]] or other [[Computer networking device|network component]] buffers as many packets as it can, and simply drops the ones it cannot buffer. If buffers are constantly full, the network is [[Network congestion|congested]]. Tail drop distributes buffer space unfairly among traffic flows (as the number of packets lost is proportional to the number sent - irrespective of their size). Tail drop can also lead to [[TCP global synchronization]] as all [[Transmission Control Protocol|TCP]] connections "hold back" simultaneously, and then step forward simultaneously. Networks become under-utilized and flooded by turns. RED addresses these issues.
+
+It monitors the average queue size and drops (or marks when used in conjunction with [[Explicit Congestion Notification|ECN]]) packets based on statistical probabilities. If the buffer is almost empty, all incoming packets are accepted. As the queue grows, the probability for dropping an incoming packet grows too. When the buffer is full, the probability has reached 1 and all incoming packets are dropped.
+
+RED is more fair than tail drop, in the sense that it does not possess a bias against bursty traffic that uses only a small portion of the bandwidth. The more a host transmits, the more likely it is that its packets are dropped as the probability of a host's packet being dropped is proportional to the amount of data it has in a queue. Early detection helps avoid TCP global synchronization.
+
+Pure RED does not accommodate [[quality of service]] (QoS) differentiation. [[Weighted random early detection|Weighted RED]] (WRED) and RED In/Out (RIO) provide early detection with QoS considerations.
+
+== Problems with Classic RED ==
+
+According to [[Jim Gettys]] and [[Van Jacobson]], "there are not one, but two bugs in classic RED."<ref>{{cite web |url=http://gettys.wordpress.com/2010/12/17/red-in-a-different-light/ |title=RED in a Different Light |first=Jim |last=Gettys |date=17 December 2010 |work=jg's Ramblings |accessdate=27 December 2010}}</ref> Improvements to the algorithm were developed, and a draft paper<ref>{{Citation
+  | last = Jacobson
+  | first = Van
+  | last2 = Nichols
+  | first2 = Kathy
+  | last3 = Poduri
+  | first3 = Kedar
+  | title = RED in a Different Light
+  | date = 30 September 1999
+  | url = http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.22.9406
+  | doi = 10.1.1.22.9406 }}</ref> was prepared, but the paper was never published, and the improvements were not widely disseminated or implemented.
+
+== Other variants ==
+In ''Weighted RED'' you can have different probabilities for different priorities ([[Type of Service|IP precedence]], [[DSCP]])  and/or queues <ref>{{cite book | first=H. Jonathan |last=Chao | url= http://onlinelibrary.wiley.com/doi/10.1002/0471224391.fmatter_indsub/pdf|title= Quality of service control in high speed networks |publisher = John Wiley & Sons Inc.| location = 605 Third Avenue, New York, NY |year = 2002 | isbn= 0-471-00397-2 }} </ref>.
+
+The ''Adaptive / Active RED'' (ARED) algorithm<ref>{{cite paper | first = Sally | last = Floyd | coauthors = Gummadi, Ramakrishna; Shenker, Scott | title = Adaptive RED: An Algorithm for Increasing the Robustness of RED's Active Queue Management  | url = http://citeseer.ist.psu.edu/floyd01adaptive.html | date = 2001-08-01 | accessdate = 2008-03-16}}</ref> infers whether to make RED more or less aggressive based on the observation of the average queue length. If the average queue length oscillates around ''min'' threshold then early detection is too aggressive. On the other hand if the average queue length oscillates around ''max'' threshold then early detection is being too conservative. The algorithm changes the probability according to how aggressive it senses it has been discarding traffic.
+
+See Srikant<ref>{{cite book | last = Srikant | first = Rayadurgam | url = http://www.springer.com/birkhauser/mathematics/book/978-0-8176-3227-4 | title = The Mathematics of Internet Congestion Control | publisher = Birkhäuser | location = Boston, MA, USA | year = 2004 | isbn = 978-0-8176-3227-4 }}</ref> for an in-depth account on these techniques and their analysis.
+
+==Notes and references==
+<references />
+
+==External links==
+* [http://www.icir.org/floyd/red.html RED (Random Early Detection) Queue Management]. Author: Sally Floyd
+* [http://code.google.com/p/guduz/ Guduz] – A Simple Random Early Detection (RED) Simulator
+* [http://www.ee.ust.hk/~heixj/publication/thesis/node37.html Variants of RED]. Author: Hei Xiao Jun
+
+[[Category:Network performance]]
+
+[[da:Undgåelse af datanet-trafikforstoppelse#RED og WRED]]
+[[de:Random early detection]]
+[[it:Rilevazione casuale anticipata]]
+[[ja:ランダム初期検知]]
+[[pl:Random early detection]]
+[[ru:Random early detection]]
+[[sk:Random early detection]]
+[[fi:Random early detection]]</body> </html>

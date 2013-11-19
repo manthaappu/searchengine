@@ -1,0 +1,48 @@
+<html> <head> <title>Disk mirroring</title></head><body>In [[data storage device|data storage]], '''disk mirroring''' or '''[[RAID1]]''' is the replication of logical disk volumes onto separate physical [[hard disk]]s in [[Real-time computing|real time]] to ensure [[continuous availability]].  A '''mirrored volume''' is a complete logical representation of separate volume copies.
+
+[[File:Raid1_Version_for_Wiki.jpg|thumb]]
+
+In a [[Disaster Recovery]] context, mirroring data over long distance is referred to as [[storage replication]].
+Depending on the technologies used, replication can be performed synchronously, asynchronously, semi-synchronously, or point-in-time. Replication is enabled via [[microcode]] on the [[disk array controller]] or via [[server (computing)|server]] [[software]]. It is typically a proprietary solution, not compatible between various storage vendors.
+
+Mirroring is typically only synchronous. Synchronous writing typically achieves a [[Recovery Point Objective]] (RPO) of zero lost data. Asynchronous replication can achieve an RPO of just a few seconds while the remaining methodologies provide an RPO of a few minutes to perhaps several hours.
+
+Mirroring is different from [[file shadowing]].
+
+== Explanation ==
+
+It is recognized that disks are an inherently unreliable component of computer systems. Mirroring is a technique to allow a system to automatically maintain multiple copies of data so that in the event of a disk hardware failure a system can continue to process or quickly recover data. Mirroring may be done locally where it is specifically to cater for disk unreliability, or it may be done remotely where it forms part of a more sophisticated disaster recovery scheme, or it may be done both locally and remotely, especially for high availability systems. Normally data is mirrored onto physically identical drives, though the process can be applied to logical drives where the underlying physical format is hidden from the mirroring process.
+
+Typically mirroring is provided in either hardware solutions such as [[disk array]]s or in software within the operating system. 
+There are several scenarios for what happens when a disk fails. In a [[hot swap]] system, in the event of a disk failure, the system itself typically diagnoses a disk failure and signals a failure. Sophisticated systems may automatically activate a [[hot standby]] disk and use the remaining active disk to copy live data onto this disk. Alternatively, a new disk is installed and the data is copied to it. In less sophisticated systems, the system is operated on the remaining disk until such time as a spare disk can be installed with minimum disruption. 
+
+The copying of data from one pair of a mirror to another is sometimes called ''resilvering'' though more commonly it is simply known as rebuilding. During the rebuilding process, system performance is usually degraded as the disk system is fully occupied in copying data from one disk to the other.
+
+It is often misunderstood that mirroring of disks is a substitute for taking regular backups as it is incorrectly assumed that the only cause of data loss is disk failure. In fact the most trivial of user actions can delete data which then would need to be recovered, and in commercial operations it is far more likely that backups are used to recover from processing errors, user mistakes or vandalism, none of which are protected against by mirroring.{{Citation needed|date=October 2009}}
+
+Mirroring can be performed site to site either by rapid data links, for example fibre optic links, which over distances of 500m or so can maintain adequate performance to support real-time mirroring. Longer distances or slower links maintain mirrors using an asynchronous copying system. For remote disaster recovery systems, this mirroring may not be done by integrated systems but simply by additional applications on master and slave machines.
+<!--- not sure what this following comment is meaning to say --->
+It is differentiated from a [[disk snapshot|snapshot]] in that there are no remaining links between the original (or ''source'') and the copy (or ''mirror'').
+
+== Other benefits of mirroring ==
+In addition to providing an additional copy of the data for the purpose of redundancy in case of hardware failure, disk mirroring can allow each disk to be accessed separately for reading purposes. Under certain circumstances, this can significantly improve performance as the system can choose for each read which disk can seek most quickly to the required data. This is especially significant where there are several tasks competing for data on the same disk, and thrashing (where the switching between tasks takes up more time than the task itself) can be reduced. This is an important consideration in hardware configurations that frequently access the data on the disk.
+
+In some implementations, the mirrored disk can be split off and used for data backup, allowing the first disk to remain active. However merging the two disks then may require a synchronization period if any write I/O activity has occurred to the mirrored disk.
+
+== Other schemes ==
+Some mirroring schemes employ three disks, with two of the disks for the redundancy mirroring and the third to be split off for performing backups. In [[EMC Corporation|EMC]] nomenclature, the third disk is called a [[Business Continuance Volumes|Business Continuance Volume]] (BCV).
+
+== See also ==
+* [[RAID1]]
+* [[Disk cloning]]
+* [[Mirror (computing)]]
+* [[Stable storage]]
+
+==External links==
+
+[[Category:RAID]]
+[[Category:Fault-tolerant computer systems]]
+
+[[da:Spejl (edb)]]
+[[de:RAID]]
+[[es:Copia espejo]]</body> </html>

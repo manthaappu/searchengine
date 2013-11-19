@@ -1,0 +1,31 @@
+<html> <head> <title>6in4</title></head><body>{{IPv6 transition mechanisms}}
+'''6in4''' is an Internet [[IPv6#Transition mechanisms|transition mechanism]] for migrating from [[IPv4|Internet Protocol version 4]] (IPv4) to [[IPv6]]. 6in4 uses [[Tunneling protocol|tunneling]] to encapsulate IPv6 traffic over explicitly-configured IPv4 links as defined in RFC 4213 (obsoletes RFC 2893 and RFC 1933). The 6in4 traffic is sent over the IPv4 Internet inside IPv4 packets whose IP headers have the [[IP protocol number]] set to 41. This protocol number is specifically designated for ''IPv6 encapsulation''.<ref>{{cite web |url=http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml |title=Protocol Numbers}}</ref> In 6in4, the IPv4 packet header is immediately followed by the IPv6 packet being carried. This means that the encapsulation overhead is simply the size of the IPv4 header of 20 bytes. With an Ethernet [[Maximum Transmission Unit]] (MTU) of 1500 bytes, one can thus send IPv6 packets of 1480 bytes without fragmentation. 6in4 tunneling is also referred to as ''proto-41 static'' because the endpoints are configured statically. Although 6in4 tunnels are generally manually configured, for example the utility [[AICCU]] can configure tunnel parameters automatically after retrieving information from a [[Tunnel Information and Control Protocol]] (TIC) server. 
+
+There are similarly named methods, namely [[6to4]] or [[6over4]], which describe a different mechanism. The method [[6to4]] makes use of proto-41 too, but instead of static configuration of the endpoints, the endpoint IPv4 address information is derived from the IPv6 addresses within the IPv6 packet header.
+
+==Network address translators (NAT)==
+When an endpoint of a 6in4 tunnel is behind a [[Network Address Translation|NAT]], one can in some cases still make use of the [[DMZ (computing)|DMZ]] feature of a NAT router. The NAT router will then forward all incoming proto-41 packets to the configured host, thus making the tunnel work. Some NAT devices even allow transparent operation of 6in4.
+
+==Dynamic 6in4 tunnels and heartbeat==
+Even though 6in4 tunnels are static in nature, with the help of for example the heartbeat protocol<ref name=heartbeat>[http://www.sixxs.net/tools/heartbeat/ Heartbeat Protocol], J. Massar and P. van Pelt</ref> one can still have dynamic tunnel endpoints. The heartbeat protocol signals the other side of the tunnel with its current endpoint location. A tool such as [[AICCU]] can then update the endpoints, in effect making the endpoint dynamic while still using the 6in4 protocol. These kind of tunnels are generally called 'proto-41 heartbeat' tunnels.
+
+==Security issues==
+The 6in4 protocol has no security features, thus one can easily inject IPv6 packets by [[IP_address_spoofing|spoofing]] the source IPv4 address of a tunnel endpoint and sending it to the other endpoint. This problem can partially be solved by implementing [[network ingress filtering]] or with [[IPsec]]. Another solution is to use a secure protocol such as [[AYIYA]] or other tunneling methods that compute digital signatures for each packet thus facilitating verification of packet authenticity.
+
+The mentioned packet injection loophole of 6in4 was exploited for a research benefit in a method called ''IPv6 Tunnel Discovery'' <ref name=tundisco>[http://www.dia.uniroma3.it/~compunet/tunneldiscovery IPv6 Tunnel Discovery], L. Colitti, G. Di Battista, and M. Patrignani</ref> which allowed the researchers to discover operating IPv6 tunnels around the world.
+
+==References==
+* RFC 1933, Transition Mechanisms for IPv6 Hosts and Routers, R. Gilligan and E. Nordmark, [[1996]]
+{{refs}}
+
+==External links==
+*[http://www.sixxs.net/faq/connectivity/?faq=ossetup How do I configure my machine to setup an IPv6 in IPv4 tunnel]
+*[http://wiki.debian.org/DebianIPv6 6in4 and other tunnel setups on Debian]
+*[http://www.cs.bell-labs.com/magic/man2html/8/6in4 6in4 setup on Plan9 OS]
+
+[[Category:Tunneling protocols]]
+[[Category:IPv6 transition technologies]]
+[[Category:Network protocols]]
+
+[[fr:6in4]]
+[[zh:6in4]]</body> </html>

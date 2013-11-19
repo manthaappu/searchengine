@@ -1,0 +1,37 @@
+<html> <head> <title>Initialization vector</title></head><body>In [[cryptography]], an '''initialization vector''' ('''IV''') is a block of bits that is required to allow a [[stream cipher]] or a [[block cipher]] to be executed in any of several [[block cipher modes of operation|modes of operation]] to produce a unique stream independent from other streams produced by the same [[encryption]] key, without having to go through a (usually lengthy) re-keying process.
+
+The size of the IV depends on the encryption algorithm and on the cryptographic protocol in use and is normally as large as the block size of the cipher or as large as the encryption key. The IV must be known to the recipient of the encrypted information to be able to decrypt it. This can be ensured in a number of ways: by transmitting the IV along with the [[ciphertext]], by agreeing on it beforehand during the key exchange or the handshake, by calculating it (usually incrementally), or by measuring such parameters as current time (used in hardware authentication tokens such as [[RSA SecurID]], [[VASCO_Data_Security_International|VASCO]] [[Digipass]], etc.), [[Digital identity|IDs]] such as sender's and/or recipient's address or ID, file ID, the packet, sector or cluster number, etc. A number of variables can be combined or [[Cryptographic hash function|hashed]] together, depending on the protocol. If the IV is chosen at [[random]], the cryptographer must take into consideration the probability of collisions, and if an incremental IV is used as a [[cryptographic nonce|nonce]], the algorithm's resistance to related-IV attacks must also be considered.
+
+==Block Ciphers==
+IVs are implemented differently in [[block ciphers]] than in [[stream ciphers]]. In straight-forward operation of block ciphers or so-called Electronic Code Book (ECB) mode, encryption of the same plain text with the same key results in the same cipher text, which is a considerable threat to security. Use of an initialization vector linearly added to ([[XOR]]ed with) the first block of plain text or included in front of the plain text prior to encryption solves this problem.
+
+==Stream Ciphers==
+In stream ciphers, IVs are loaded into the keyed internal secret state of the cipher, after which a number of cipher rounds is executed prior to releasing the first bit of output. For performance reasons, designers of stream ciphers try to keep that number of rounds as small as possible, but because determining the minimal secure number of rounds for stream ciphers is not a trivial task, and considering other issues such as [[Information entropy|entropy]] loss, unique to each cipher construction, related-IVs and other IV-related attacks are a known security issue for stream ciphers, which makes IV loading in stream ciphers a serious concern and a subject of ongoing research.
+
+== WEP IV ==
+
+The [[802.11]] [[encryption]] [[algorithm]] called WEP (short for [[Wired Equivalent Privacy]]) used a short, 24-bit IV, leading to reused IVs with the same key, which led to it being easily cracked.<ref name="Intercepting_Mobile_Comm_Nik_Ian_Dav">{{cite paper| author=[[Nikita Borisov]], [[Ian Goldberg]], [[David A. Wagner|David Wagner]]| title=Intercepting Mobile Communications: The Insecurity of 802.11|url=http://www.isaac.cs.berkeley.edu/isaac/mobicom.pdf | accessdate=2006-09-12}}</ref>  [[Packet injection]] allowed for WEP to be cracked in times as short as several seconds.  This ultimately led to the deprecation of WEP.
+
+== See also ==
+
+* [[Cryptographic nonce]]
+* [[Salt (cryptography)]]
+* [[Block cipher modes of operation]]
+* [[CipherSaber]] (RC4 with IV)
+
+== References ==
+{{reflist|1}}
+* B. [[Schneier]], 'Applied Cryptography', Wiley 1996
+* N. Ferguson and B. [[Schneier]], 'Practical Cryptography', Wiley 2003
+
+{{Crypto navbox | block | stream}}
+
+[[Category:Cryptography]]
+[[Category:Block cipher modes of operation]]
+
+[[de:Initialisierungsvektor]]
+[[es:Vector de inicialización]]
+[[fr:Vecteur d'initialisation]]
+[[it:Vettore di inizializzazione]]
+[[ja:初期化ベクトル]]
+[[lt:Inicializacijos vektorius]]</body> </html>

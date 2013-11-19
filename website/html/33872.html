@@ -1,0 +1,98 @@
+<html> <head> <title>Semigroup action</title></head><body>In [[algebra]] and [[theoretical computer science]], an '''action''' or '''act''' of a '''[[semigroup]]''' on a [[Set (mathematics)|set]] is a rule which associates to each element of the semigroup a [[transformation (geometry)|transformation]] of the set in such a way that the product of two elements of the semigroup (using the semigroup [[binary operation|operation]]) is associated with the [[function composition|composite]] of the two corresponding transformations. The terminology conveys the idea that the elements of the semigroup are ''acting'' as transformations of the set. From an [[algebraic structure|algebraic]] perspective, a semigroup action is a generalization of the notion of a [[group action]] in [[group (mathematics)|group theory]]. From the computer science point of view, semigroup actions are closely related to [[finite state machine|automata]]: the set models the state of the automaton and the action models transformations of that state in response to inputs.
+
+An important special case is a '''monoid action''' or '''act''', in which the semigroup is a [[monoid]] and the [[identity element]] of the monoid acts as the [[identity transformation]] of a set. From a [[category theoretic]] point of view, a monoid is a [[category (mathematics)|category]] with one object, and an act is a functor from that category to the [[category of sets]]. This immediately provides a generalization to monoid acts on objects in categories other than the category of sets.
+
+Another important special case is a '''[[transformation semigroup]]'''. This is a semigroup of transformations of a set, and hence it has a tautological action of on that set. This concept is linked to the more general notion of a semigroup by an analogue of [[Cayley's theorem]].
+
+''(A note on terminology: the terminology used in this area varies, sometimes significantly, from one author to another. See the article for details.)''
+
+==Formal definitions==
+
+Let ''S'' be a semigroup. Then a (left) '''semigroup action''' (or '''act''') of ''S'' is a set ''X'' together with an operation • : ''S'' &times; ''X'' → ''X'' which is compatible with the semigroup [[binary operation|operation]] * as follows:
+* for all ''s'', ''t'' in ''S'' and ''x'' in ''X'', ''s'' • (''t'' • ''x'') = (''s'' * ''t'') • ''x''.
+This is the analogue in semigroup theory of a (left) [[group action]], and is equivalent to a [[semigroup#Semigroup homomorphisms|semigroup homomorphism]] into the set of functions on ''X''. Right semigroup actions are defined in a similar way using an operation • : ''X'' &times; ''S'' → ''X'' satisfying (''x'' • ''a'') • ''b'') = ''x'' • (''a'' * ''b'').
+
+If ''M'' is a monoid, then a (left) '''monoid action''' (or '''act''') of ''M'' is a (left) semigroup action of ''M'' with the additional property that
+* for all ''x'' in ''X'': ''e'' • ''x'' = ''x''
+where ''e'' is the identity element of ''M''. This correspondly gives a monoid homomorphism. Right monoid actions are defined in a similar way. A monoid ''M'' with an action on a set is also called an '''operator monoid'''.
+
+A semigroup action of ''S'' on ''X'' can be made into monoid act by adjoining an identity to the semigroup and requiring that it acts as the identity transformation on ''X''. 
+
+===Terminology and notation===
+
+If ''S'' is a semigroup or monoid, then a set ''X'' on which ''S'' acts as above (on the left, say) is also known as a (left) '''''S''-act''', '''''S''-set''', '''''S''-action''', '''''S''-operand''', or '''left act over ''S'''''. Some authors do not distinguish between semigroup and monoid actions, by regarding the identity axiom (''e'' • ''x'' = ''x'') as empty when there is no identity element, or by using the term '''unitary ''S''-act''' for an ''S''-act with an identity.<ref>Kilp, Knauer and Mikhalev, 2000, pages 43-44.</ref> Furthermore, since a monoid is a semigroup, one can consider semigroup actions of monoids.
+
+The defining property of an act is analogous to the [[associativity]] of the semigroup operation, and means that all parentheses can be omitted. It is common practice, especially in computer science, to omit the operations as well so that both the semigroup operation and the action are indicated by juxtaposition. In this way  [[string (computer science)|strings]] of letters from ''S'' act on ''X'', as in the expression ''stx'' for ''s'', ''t'' in ''S'' and ''x'' in ''X''.
+
+It is also quite common to work with right acts rather than left acts.<ref>Kilp, Knauer and Mikhalev, 2000.</ref> However, every right S-act can be interpreted as a left act over the '''opposite monoid''', which has the same elements as S, but where multiplication is defined by reversing the factors, ''s''•''t'' = ''t''•''s'', so the two notions are essentially equivalent. Here we primarily adopt the point of view of left acts.
+
+===Acts and transformations===
+
+It is often convenient (for instance if there is more than one act under consideration) to use a letter, such as ''T'', to denote the function
+:<math> T\colon S\times X \to X</math>
+defining the ''S''-action and hence write ''T''(''s'',''x'') in place of ''s'' • ''x''. Then for any ''s'' in ''S'', we denote by
+:<math> T_s\colon X \to X</math>
+the transformation of ''X'' defined by
+:<math> T_s(x) = T(s,x).</math>
+Hence ''s'' → ''T''<sub>''s''</sub> is a rule assigning a transformation of ''X'' to each ''s'' in ''S''. By the defining property of an ''S''-act, ''T'' satisfies
+:<math> T_{s*t} = T_s\circ T_t.</math>
+Conversely any such rule defines an ''S''-act.
+
+===''S''-homomorphisms===
+
+Let ''X'' and ''X''&prime; be ''S''-acts. Then an ''S''-homomorphism from ''X'' to ''X''&prime; is a map
+:<math>F\colon X\to X'</math>
+such that 
+:<math>F(sx) =s F(x)</math> for all <math>s\in S</math> and <math>x\in S</math>.
+The set of all such ''S''-homomorphisms is commonly written as <math>\mathrm{Hom}_S(X,X')</math>.
+
+''M''-homomorphisms of ''M''-acts, for ''M'' a monoid, are defined in exactly the same way.
+
+===''S''-Act and ''M''-Act===
+
+For a fixed semigroup ''S'', the left ''S''-acts are the objects of a category, denoted ''S''-Act, whose morphisms are the ''S''-homomorphisms. The corresponding category of right ''S''-acts is sometimes denoted by Act-''S''. (This is analogous to the categories ''R''-Mod and Mod-''R'' of left and right [[module (mathematics)|modules]] over a [[ring (mathematics)|ring]].)
+
+For a monoid ''M'', the categories ''M''-Act and Act-''M'' are defined in the same way.
+
+==Transformation semigroups==
+
+{{main|Transformation semigroup}}
+
+An important special class of semigroup actions are the '''transformation semigroups'''. In this case, the semigroup ''S'' is a semigroup of transformations of a set ''X'', i.e., a collection of functions from ''X'' to itself that is [[closure (mathematics)|closed]] under composition. Thus ''S'' is a subsemigroup of the monoid of all transformations of ''X''. In this case the elements of the semigroup really ''are'' transformations of the set, so there is an obvious (tautological) action defined by evalutation:
+:<math> s\cdot x = s(x)</math> for <math> s\in S, x\in X.</math>
+
+The characteristic feature of transformation semigroups, as actions, is that they are ''effective'', i.e., if
+:<math> s\cdot x = t\cdot x</math> for all <math> x\in X,</math>
+then ''s'' = ''t''. Conversely if a semigroup ''S'' acts on a set ''X'' and the action is effective, then ''S'' is isomorphic to a transformation semigroup of ''X''.
+
+Any semigroup can be realized as a transformation semigroup via an analogue of [[Cayley's theorem]]: after adjoining an identity element if necessary, the action of the semigroup on itself by (say) left multiplication is effective.
+
+==Applications to computer science==
+===Semiautomata===
+
+{{main|semiautomaton}}
+
+Transformation semigroups are of essential importance for the structure theory of [[finite state machine]]s in [[automata theory]]. In particular, a ''semiautomaton'' is a triple (''Σ'',''X'',''T''), where ''Σ'' is a non-empty set called the ''input alphabet'', ''X'' is a non-empty set called the ''set of states'' and ''T'' is a function
+:<math>T\colon \Sigma\times X \to X</math>
+called the ''transition function''. Semiautomata arise from [[deterministic finite state machine|deterministic automata]] by ignoring the initial state and the set of accept states.
+
+Given a semiautomaton, let ''T''<sub>''a''</sub>: ''X'' → ''X'', for ''a'' ∈ ''Σ'', denote the transformation of ''X'' defined by ''T''<sub>''a''</sub>(''x'') = ''T''(''a'',''x''). Then semigroup of transformations of ''X'' generated by {''T''<sub>''a''</sub> : ''a'' ∈ ''Σ''} is called the ''[[characteristic semigroup]]'' or ''transition system'' of (''Σ'',''X'',''T''). The corresponding monoid is called the ''characteristic'' or ''[[transition monoid]]''. It is also sometimes viewed as an ''Σ''<sup>∗</sup>-act on ''X'', where ''Σ''<sup>∗</sup> is the [[free monoid]] of strings generated by the alphabet ''Σ'' and the action of strings extends the action of ''Σ'' via the property
+:<math>T_{vw} = T_v \circ T_w.</math>
+
+===Krohn–Rhodes theory===
+
+{{main|Krohn–Rhodes theory}}
+
+Krohn–Rhodes theory, sometimes also called ''algebraic automata theory'', gives powerful decomposition results for finite transformation semigroups by cascading simpler components.
+
+==Notes==
+{{reflist|2}}
+
+==References==
+* A. H. Clifford and G. B. Preston (1961), ''The Algebraic Theory of Semigroups'', volume 1. American Mathematical Society, ISBN 978-0821802724.
+* A. H. Clifford and G. B. Preston (1967), ''The Algebraic Theory of Semigroups'', volume 2. American Mathematical Society, ISBN 978-0821802724.
+* Mati Kilp, Ulrich Knauer, Alexander V. Mikhalev (2000), ''Monoids, Acts and Categories: with Applications to Wreath Products and Graphs'', Expositions in Mathematics '''29''', Walter de Gruyter, Berlin, ISBN 978-3110152487.
+* Rudolf Lidl and Günter Pilz, ''Applied Abstract Algebra'' (1998), Springer, ISBN 978-0387982908
+
+[[Category:Semigroup theory]]
+[[Category:Theoretical computer science]]</body> </html>

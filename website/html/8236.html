@@ -1,0 +1,75 @@
+<html> <head> <title>Correspondence problem</title></head><body>{{for|the problem in theory of computation|Post correspondence problem}}
+The '''correspondence problem''' tries to figure out which parts of an image correspond to which parts of another image, after the camera has moved, time has elapsed, and/or the objects have moved around.
+
+==Overview==
+Given two or more images of the same 3D scene, taken from different points of view, the correspondence problem is to find a set of points in one image which can be identified as the same points in another image. To do this, try to match points or features from one image with the same points or features in another image. The images can be taken from a different point of view, at different times, and with objects in the scene in general motion relative to the camera(s).
+
+The correspondence problem typically occurs when two images of the same scene are used, the stereo correspondence problem. This concept can be generalized to the three-view correspondence problem or, in general, the N-view correspondence problem. In the general case, the images can either come from N different cameras which depict (more or less) the same scene or from one and the same camera which is moving relative to the scene. The problem is made even more difficult when the objects in the scene can be in general motion relative to the camera(s).
+
+A typical application of the correspondence problem occurs in [[panorama]] creation or [[image stitching]] — when two or more images which only have a small overlap are to be stitched into a larger composite image. In this case it is necessary to be able to identify a set of corresponding points in a pair of images in order to calculate the transformation of one image to stitch it onto the other image.
+
+==Basic Methods==
+There are two basic ways to find the correspondences between two images. 
+
+Correlation-based - checking if one location in one image looks/seems like another in another image.
+
+Feature-based - finding features in the image and seeing if the layout of a subset of features is similar in the two images. To avoid the [[aperture problem]] a good feature should have local variation in two directions.
+
+==Use==
+In computer vision the '''correspondence problem''' is studied for the case when a computer should solve it automatically with only images as input. Once the correspondence problem has been solved, resulting in a set of image points which are in correspondence, other methods can be applied to this set to reconstruct the position, motion and/or rotation of the corresponding 3D points in the scene.
+
+==Very Simple Example==
+To find the correspondence between set A[2,4,6,1,5] and set B[8,0,2,4] find where they overlap and how far off one set is from the other. Here we see that the first two points in set A correspond with the last two point in set B. This shows that B is offset 2 to the left of A.
+
+==Simple Correlation-based Example==
+A simple method is to compare small patches between [[Image rectification|rectified]] images. This works best with images taken at roughly the same point of view and either at the same time or with little to no movement of the scene between image captures; such as stereo images.
+
+Using a left and right image, pass a small window over each position in the left image. For each position check how well it compares with the same location in the right image. Also compare against several locations near that, for the objects in one image may not be at exactly the same image-location in the other image. When you find the best fit the difference in image-location is the correspondence of that feature/point. It is possible that there is no fit that is good enough. This may mean the feature is not present in both images, moved farther than your search accounted for, changed enough between images that the method you use to match is not working, or are being hidden by other parts of the image.
+
+==Further Issues==
+Many methods discard any information that is not present in both images. In A Bayesian Treatment of the Stereo Correspondence Problem Using Half-Occluded Regions, P. Belhumeur and D. Mumford attempt to use this information to incorporate them from the start as a strong clue to depth discontinuities.
+
+==See also==
+
+*[[Stereoscopy]]
+*[[Parallax]]
+*[[Photogrammetry]]
+*[[Depth perception]]
+*[[Stereopsis]]
+*[[Computer vision]]
+*[[fundamental matrix (computer vision)|Fundamental matrix]]
+*[[Joint Compatibility Branch and Bound|The Joint Compatibility Branch and Bound algorithm]]
+
+==References==
+* {{cite journal
+ | author = Abhijit S. Ogale and Yiannis Aloimonos
+ | year = October 2005. 
+ | title = Shape and the stereo correspondence problem
+ | journal = International Journal of Computer Vision
+ | volume = 65
+ | url = http://www.cs.umd.edu/~ogale/papers/ogaleIJCV05shape.pdf
+ | accessdate = 2010-08-06
+| issue=1
+}}
+* {{cite journal
+ | author = Peter N. Belhumeur, David Mumford
+ | year = 1992
+ | title = A Bayesian Treatment of the Stereo Correspondence Problem Using Half-Occluded Regions
+ | journal = IEEE
+ | volume = 3/92
+ | pages = 506–512
+ | url = http://www.cs.columbia.edu/~belhumeur/conference/bayesian-cvpr92.pdf
+ | accessdate = 2010-08-06
+}}
+
+==External links==
+*[http://vision.middlebury.edu/stereo/ Middlebury Stereo Vision page]
+
+===Papers===
+*[http://cat.middlebury.edu/stereo/taxonomy-IJCV.pdf D. Scharstein and R. Szeliski. A Taxonomy and Evaluation of Dense Two-Frame Stereo Correspondence Algorithms.] (PDF)
+{{Stereoscopy}}
+
+[[Category:Geometry in computer vision]]
+[[Category:Stereoscopy]]
+
+[[de:Korrespondenzproblem]]</body> </html>

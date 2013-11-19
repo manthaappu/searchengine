@@ -1,0 +1,61 @@
+<html> <head> <title>LOCUS (operating system)</title></head><body>{{Infobox_OS |
+  name = LOCUS |
+  developer = [[UCLA]] |
+  family = [[Unix]] |
+  source_model = [[Closed source]] |
+  working_state = Historic |
+  kernel_type = [[Monolithic kernel]] |
+  license = [[Proprietary software|Proprietary]] |
+}}
+
+'''LOCUS''' was a [[distributed operating system]] developed at [[UCLA]] during the 1980s.  It was notable for providing an early implementation of the [[single-system image]] idea, where a [[cluster (computing)|cluster]] of machines appeared to be one larger machine.
+<ref>
+{{cite web
+ |title=The LOCUS Distributed Operating System
+ |url=http://www.cs.princeton.edu/courses/archive/fall03/cs518/papers/locus.pdf
+ |author = [[Bruce J. Walker|Walker, Bruce]]
+ |year = 1983
+ |doi = 10.1145/800217.806615
+}}
+</ref>
+
+A desire to commercialize the technologies developed for LOCUS inspired the creation of the [[Locus Computing Corporation]] which went on to include ideas from LOCUS in various products, including [[Tru64 UNIX#OSF/1 AD|OSF/1 AD]] and, finally, the [[Santa Cruz Operation|SCO]]–[[Tandem Computers|Tandem]] [[UnixWare NonStop Clusters]] product.
+
+==Description==
+The LOCUS system was created at [[UCLA]] between 1980 and 1983, initial implementation was on a cluster of [[PDP-11]]/45s using 1 and 10 megabit [[token ring network|ring network]]s, by 1983 the system was running on 17 [[VAX-11|VAX-11/750]]s using a 10 megabit [[Ethernet]].  The system was [[Unix]] compatible and provided both a [[Single-system image#Single root|single root]] view of the file system and a [[Single-system image#Single process space|unified process space]] across all nodes.
+
+The development of LOCUS was supported by an [[DARPA|ARPA]] research contract, DSS-MDA-903-82-C-0189.
+
+===File system===
+In order to allow reliable and rapid access to the cluster wide filesystem LOCUS used [[replication (computer science)|replication]], the data of files could be stored on more than one node and LOCUS would keep the various copies up to date.  This provided particularly good access times for files that were read more often than they were written, the normal case for directories for example.
+
+In order to ensure that all access was made to the most recent version of any file LOCUS would nominate one node as the "current synchronization site" (CSS) for a particular file system.  All accesses to files a file system would need to be coordinated with the appropriate CSS.
+
+=====Node dependent files=====
+As with other [[Single-system image|SSI]] systems LOCUS sometimes found it necessary to ''break the illusion'' of a single system, notably to allow some files to be different on a per-node basis.  For example it was possible to build a LOCUS cluster containing both PDP-11/45 and VAX 750 machines, but instruction sets used were not identical, so two versions of each object program would be needed<ref group="note">Rather like Apple [[Fat binary]] files</ref>
+
+The solution was to replace the files that needed to be different on a per node basis by special hidden directories.  These directories would then contain the different versions of the file.  When a user accessed one of these hidden directories the system would check the users ''context'' and open the appropriate file.
+
+For example, if the user was running on one of the PDP-11/45's and typed the command <code>/bin/who</code> then the system would find that <code>/bin/who</code> was actually a hidden directory and run the command <code>/bin/who/45</code>.  Another user on a VAX node who typed <code>/bin/who</code> would run the command <code>/bin/who/vax</code>.
+
+===Devices===
+LOCUS provided remote access to I/O devices.
+<!-- Yes, do go on -->
+
+===Processes===
+LOCUS provided a single process space.  Processes could be created on any node on the system.  Both the Unix [[Fork (operating system)|fork]] and [[exec (operating system)|exec]] calls would examine an ''advice list'' which determined on which node the process would be run.  LOCUS was designed to work with heterogeneous nodes, (e.g. a mix of VAX 750s and PDP 11/45s) and could decide to execute a process on a different node if it needed a particular instruction set.  As an optimization a ''run'' call was added which was equivalent to a combined fork and exec, thus avoiding the overhead of copying the process memory image to another node before overwriting it by the new image.<ref group="note">''run'' is the same operation as [[Spawn (computing)|spawn]] on [[Microsoft Windows|Windows]] systems.</ref>
+
+===Pipes===
+Processes could use [[Pipeline (Unix)|pipes]] for inter node communication, including [[named pipe]]s,
+
+===Partitioning===
+The LOCUS system was designed to be able to cope with [[network partitioning]] - one or more nodes becoming disconnected from the rest of the system.  As the file system was [[Replication (computer science)|replicated]] the disconnected nodes could continue to access files.  When the nodes were reconnected any files modified by the disconnected nodes would be merged back into the system.  For some file types (for example mailboxes) the system would perform the merge automatically, for others the user would be informed (by mail) and tools were provided to allow access to the different versions of the file.
+
+==Notes==
+<references group="note"/>
+
+==References==
+<references/>
+
+[[Category:Proprietary operating systems]]
+[[Category:Cluster computing]]</body> </html>

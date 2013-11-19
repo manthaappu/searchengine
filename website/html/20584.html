@@ -1,0 +1,51 @@
+<html> <head> <title>Key-agreement protocol</title></head><body>In [[cryptography]], a '''key-agreement protocol''' is a [[protocol (cryptography)|protocol]] whereby two or more parties can agree on a [[Cryptographic key|key]] in such a way that both influence the outcome. If properly done, this precludes undesired third-parties from forcing a key choice on the agreeing parties. Protocols that are useful in practice also do not reveal to any eavesdropping party what key has been agreed upon.
+
+==Exponential key exchange==
+The first publicly-known<ref>See [[Diffie-Hellman]] for a more complete history of both the secret and public development of public-key cryptography. </ref> public-key agreement protocol that meets the above criteria was the [[Diffie-Hellman]] exponential key exchange, in which two parties jointly [[Exponentiation|exponentiate]] a generator with random numbers, in such a way that an eavesdropper has no way of guessing what the key is.
+
+However, exponential key exchange in and of itself does not specify any prior agreement or subsequent authentication between the participants.  It has thus been described as an anonymous key agreement protocol.
+
+==Authentication==
+Anonymous key exchange, like Diffie-Hellman, does not provide authentication of the parties, and is thus vulnerable to [[Man-in-the-middle]] attacks. 
+
+A wide variety of cryptographic authentication schemes and protocols have been developed to provide authenticated key agreement to prevent man-in-the-middle and related attacks. These methods generally mathematically bind the agreed key to other agreed-upon data, such as the following:
+* Public/private key pairs
+* Shared secret keys
+* Passwords
+
+===Public keys===
+A widely-used mechanism for defeating such attacks is the use of [[digital signature|digitally signed]] keys that must be integrity-assured: if Bob's key is signed by a [[trusted third party]] vouching for his identity, Alice can have considerable confidence that a signed key she receives is not an attempt to intercept by Eve. When Alice and Bob have a public-key infrastructure, they may digitally sign an agreed Diffie-Hellman agreed key, or exchanged Diffie-Hellman public keys. Such signed keys, sometimes signed by a [[certificate authority]], are one of the primary mechanisms used for secure [[web traffic]] (including [[HTTPS]], [[Secure Sockets Layer|SSL]] or [[Transport Layer Security]] protocols). Other specific examples are [[MQV]], [[YAK (cryptography) | YAK]] and the [[Internet Security Association and Key Management Protocol|ISAKMP]] component of the IPsec protocol suite for securing Internet Protocol communications. However, these systems require care in endorsing the match between identity information and public keys by certificate authorities in order to work properly.
+
+===Hybrid systems===
+Hybrid systems use public-key cryptography to exchange secret keys, which are then used in a symmetric-key cryptography systems. Most practical applications of cryptography use a combination of cryptographic functions to implement an overall system that provides all of the four desirable features of secure communications (Confidentiality, Integrity, Authentication, and Non-repudiation).
+
+===Passwords===
+[[Password-authenticated key agreement]] protocols require the separate establishment of a password (which may be smaller than a key) in a manner that is both private and integrity-assured. These are designed to resist MITM and other active attacks on the password and the established keys. For example, DH-[[Encrypted key exchange|EKE]], [[SPEKE_(cryptography)|SPEKE]], and [[Secure remote password protocol|SRP]] are password-authenticated variations of Diffie-Hellman.
+
+===Other tricks===
+If one has an integrity-assured way to verify a shared key over a public channel, one may engage in a [[Diffie-Hellman key exchange]] to derive a one-time shared key, and then subsequently authenticate that the keys match. One way is to use a voice-authenticated read-out of the key, as in [[PGPfone]]. Voice authentication, however, presumes that it is infeasible for a MITM to spoof one participant's voice to the other in real-time, which may be an undesirable assumption. Such protocols may be designed to work with even a small public value, such as a password. Variations on this theme have been proposed for [[Bluetooth]] pairing protocols.
+
+In an attempt to avoid using any additional out-of-band authentication factors, Davies and Price proposed the use of the [[Interlock Protocol]] of [[Ron Rivest]] and [[Adi Shamir]], which has been subject to both attack and subsequent refinement.
+
+==Shared secret keys==
+Secret-key (symmetric) cryptography requires the initial exchange of a shared key in a manner that is private and integrity-assured. When done right, MITM attack is prevented. However, without the use of public-key cryptography, one may be left with undesirable key-management problems.
+
+==Notes==
+<references />
+
+==See also==
+* [[Key (cryptography)]]
+* [[Computer security]] 
+* [[Cryptanalysis]]
+* [[Secure channel]]
+* [[Digital signature]]
+* [[Key encapsulation]]
+* [[Key management]]
+* [[Password-authenticated key agreement]]
+* [[Interlock Protocol]]
+* [[zero-knowledge password proof]]
+* [[neural cryptography#Neural key exchange protocol]]
+
+[[Category:Cryptographic protocols]]
+
+[[simple:Key-agreement protocol]]</body> </html>

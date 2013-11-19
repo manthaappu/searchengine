@@ -1,0 +1,152 @@
+<html> <head> <title>Uniform access principle</title></head><body>{{Citations missing|date=January 2010}}
+The '''Uniform Access Principle''' was put forth by [[Bertrand Meyer]].  It states "All services offered by a module should be available through a uniform notation, which does not betray whether they are implemented through storage or through computation."  This principle applies generally to [[object-oriented]] [[programming languages]].  In simpler form, it states that there should be no difference between working with an [[Attribute (computing)|attribute]], precomputed [[Property (programming)|property]], or [[Method (computer science)|method]]/[[query]].
+
+While most examples focus on the "read" aspect of the principle, Meyer shows that the "write" implications of the principle are harder to deal with in [http://www.eiffel.com/general/monthly_column/2005/Sept_October.html his monthly column] on the [[Eiffel (programming language)|Eiffel programming language]] official website.
+
+==Explanation==
+
+The problem being addressed by Meyer is that in the maintenance large software projects or software libraries, sometimes it is necessary, after much code is in place to change an object such that what was a simple attribute, being accessed using attribute syntax (obj.attribute), becomes a function call to compute the value or a function which does more than simply setting a value. This would require, in popular computer languages of the day, a different syntax ( obj.getAttribute()) in the calling routine.  Changing all the places where the attribute was used might require changing source code in many different locations throughout the code base. Or worse, if the change is in an object library used by hundreds of customers, each of those customers would have to find and change all the places the attribute was used in their own code and recompile their programs.
+
+Going the reverse way (from method to simple attribute) really wasn't a problem, as one can always just keep the function and have it simply return the attribute value.
+
+Meyer recognized the need for software developers to write code in such a way as to minimize or eliminate cascading changes in code that result from changes which convert an object attribute to a method call(or vice versa). For this he developed the Uniform Access Principle.
+
+Many programming languages do not strictly support the UAP but do support forms of it.  Properties, which are provided in a number of programming languages, address the problem Meyer was addressing with the UAP in different way. Instead of providing a single uniform notation, properties provide a way to invoke a method of an object while using the same notation as is used for attribute access.  The separate method invocation syntax is still available.
+
+== UAP Example ==
+If the language uses the method invocation syntax it may look something like this.
+<pre>
+//Assume print displays the variable passed to it, with or without parens
+//Set Foo's attribute 'bar' to  value 5.
+Foo.bar(5)
+print Foo.bar()
+</pre>
+When executed, should display :
+<pre>
+5
+</pre>
+Whether or not Foo.bar(5) invokes a function or simply sets an attribute is hidden from the caller.
+Likewise whether Foo.bar() simply retrieves the value of the attribute, or invokes a function
+to compute the value returned, is an implementation detail hidden from the caller.
+
+If the language uses the attribute syntax the syntax may look like this.
+<pre>
+Foo.bar = 5
+print Foo.bar
+</pre>
+Again, whether or not a method is invoked, or the value is simply assigned to an attribute is hidden
+from the calling method.
+
+== Language Examples ==
+
+=== [[Ruby programming language|Ruby]] ===
+Consider the following
+<source lang="ruby">
+y = Egg.new( "Green")
+y.color = "White" 
+puts y.color
+</source>
+Now the Egg class could be defined as follows
+<source lang="ruby">
+class Egg
+  attr_accessor :color
+  def initialize( c )
+     @color = c
+  end
+end
+</source>
+The above initial code segment would work fine with the Egg being defined as such. The Egg
+class could also be defined as below, where color is instead a method. The calling code would
+still work, unchanged if Egg were to be defined as follows.
+<source lang="ruby">
+class Egg
+  
+  def initialize(x)
+    @rgbClr = toRgb(x)
+  end
+  def color
+     toColorName(@rgbClr)
+  end 
+  def color=(c) 
+     @rgbClr = toRgb(c)
+  end
+  def toRgb( cname)
+     .....
+  end
+  def toColorName(c)
+     ....
+  end
+end
+</source>
+
+Note how even though <code>color</code> looks like an attribute in one case and a pair of methods
+in the next, the interface to the class remains the same.  The person maintaining the Egg class can switch from one form to the other without fear of breaking any caller's code.
+Ruby enforces UAP, the <code>attr_accessor :color</code> only acts as syntactic sugar for generating accessor/setter methods for <code>color</code>. There is no way in Ruby to retrieve an instance variable from an object without calling a method on it, making Ruby a language which enforces the UAP.
+
+=== [[Python (programming language)|Python]] ===
+
+[[Python (programming language)#Objects|Python properties]] may be used to allow a method
+to be invoked with the same syntax as accessing an attribute.  Whereas Meyer's UAP would have
+a single notation for both attribute access and method invocation (method invocation syntax), 
+a language with support for properties still supports separate notations for attribute
+and method access.  Properties allow the attribute notation to be used, but to hide the
+fact that a method is being invoked instead of simply retrieving or setting a value. 
+
+In the strict sense, Python does NOT follow the UAP because there is a syntax difference
+between normal method invocations and attribute access.
+
+In Python, we may have code that access an object as follows 
+<source lang="python">
+egg = Egg( 4, "White")
+egg.color = "Green"
+print egg.weight, egg.color, egg.quack()  # prints: 4 Green quack
+</source>
+A Egg object could be defined such that weight and color are simple attributes as in the following
+<source lang="python">
+class Egg(object):
+   def __init__(self, weight, color):
+      self.weight = weight
+      self.color = color
+   def quack(self):
+      return "quack"
+</source>
+Or the Egg object could use properties, and invoke methods instead
+<source lang="python">
+class Egg(object):
+    def __init__(self, weight, color):
+      self.__weight = toGrams(weight)
+      self.__color = toRGB(color)
+
+    def setColor(self, colorname):
+      self.__color = toRGB(colorname)
+
+    def getColor(self):
+      return toColorName(self.__color)
+    
+    color = property(getColor, setColor, doc="Color of the Egg")
+
+    def setWeight(self, weightOz);
+       self.__weight = 29.3*weightOz
+
+    def getWeight(self):
+       return self.__weight/29.3;
+
+    weight = property(setWeight, getWeight, doc="Weight in Ounces")
+
+    def quack(self):
+       return "quack"
+</source>
+Regardless of which way Egg is defined, the calling code can remain the same.  The implementation of Egg can switch from one form to the other without affecting code that uses the Egg class. Languages which implement the UAP have this property as well.
+
+C++ has neither the UAP nor properties, when an object is changed such that an attribute (color) becomes a pair of functions (getA, setA). Any place in that uses an instance of the object and either sets or gets the attribute value ( x = obj.color or obj.color= x) must be changed to invoke one of the functions. ( x = obj.getColor() or obj.setColor(x)).  This complicates maintenance of C++ programs. Distributed libraries of C++ objects must be careful about how they provide access to member data.
+
+==See also==
+* [http://c2.com/cgi/wiki?UniformAccessPrinciple The UniformAccessPrinciple on the c2 wiki]
+* http://www.eiffel.com/general/monthly_column/2005/Sept_October.html
+[[Category:Articles with example Python code]]
+[[Category:Software design]]
+[[Category:Programming paradigms]]
+
+{{compu-prog-stub}}
+{{Computer Science}} 
+[[fi:Yhtenäinen osoitusperiaate]]</body> </html>

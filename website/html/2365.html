@@ -1,0 +1,69 @@
+<html> <head> <title>Ariane 5 Flight 501</title></head><body>'''Flight 501''', which took place on June 4, 1996, was the first, and unsuccessful, test flight of the European [[Ariane 5]] [[expendable launch system]]. Due to an error in the software design (inadequate protection from integer overflow), the rocket veered off its flight path 37 seconds after launch and was destroyed by its automated self-destruct system when high aerodynamic forces caused the core of the vehicle to disintegrate. It is one of the most infamous [[computer bug]]s in history.
+
+As it was an unmanned flight, there were no victims, but the breakup caused the loss of four [[Cluster mission]] spacecraft, resulting in a loss of more than US$370 million<ref>{{cite journal | title = The Ariane 5 Software Failure | month = March | year  = 1997 | volume = 22 | journal = Software Engineering Notes | last = Dowson | first = M. | pages  = 84 | doi = 10.1145/251880.251992 | issue = 2}}</ref>.
+
+== Summary ==
+
+The Ariane 5 software reused the specifications from the [[Ariane 4]], but the Ariane 5's flight path was considerably different and beyond the range for which the reused computer program had been designed. Specifically, the Ariane 5's greater acceleration caused the back-up and primary [[inertial guidance]] computers to crash, after which the launcher's nozzles were directed by spurious data. Pre-flight tests had never been performed on the re-alignment code under simulated Ariane 5 flight conditions, so the error was not discovered before launch.
+
+Because of the different flight path, a data conversion from a [[64-bit]] [[floating point]] to [[16-bit]] [[signedness|signed]] [[integer (computer science)|integer]] value caused a [[hardware]] [[exception handling|exception]] (more specifically, an [[arithmetic overflow]], as the floating point number had a value too large to be represented by a 16-bit signed integer). Efficiency considerations had led to the disabling of the software handler (in [[Ada programming language|Ada]] code) for this error trap, although other conversions of comparable variables in the code remained protected.  This caused a cascade of problems, culminating in destruction of the entire flight.
+
+Although the report identifies a software bug as the direct cause,
+other investigators see the causes as system design failures and management issues.<ref>
+{{cite journal	| title = Ariane 5: Who Dunnit?| first = Bashar| last = Nuseibeh| month = May| year = 1997| volume = 14 | issue = 3| journal = IEEE Software| pages = 15–16| url = http://www.doc.ic.ac.uk/~ban/pubs/ariane5.pdf	| doi = 10.1109/MS.1997.589224 |format=PDF}}</ref><ref>{{cite conference | title = An Analysis of the Ariane 5 Flight 501 Failure - A System Engineering Perspective| first = G. | last = Le Lann| booktitle = 10th IEEE Intl. ECBS Conference| month = March| year = 1997| pages = 339–346}}</ref>
+
+:h) On the basis of those calculations the main computer commanded the booster nozzles, and somewhat later the main engine nozzle also, to make a large correction for an attitude deviation that had not occurred.
+:i) A rapid change of [[Aircraft attitude|attitude]] occurred, which caused the launcher to disintegrate at 39 seconds after H0 due to aerodynamic forces.
+:...
+:m) Ariane 5's inertial reference system is essentially the same as a system presently flying on Ariane 4. The part of the software that caused the interruption in the inertial system computers is used before launch to align the inertial reference system and, in Ariane 4, also to enable a rapid realignment of the system in case of a late hold in the countdown. This realignment function, which does not serve any purpose on Ariane 5, was nevertheless retained for commonality reasons and allowed, as in Ariane 4, to operate for approx. 40 seconds after lift-off.
+:n) During design of the software of the inertial reference system used for Ariane 4 and Ariane 5, a decision was taken that it was not necessary to protect the inertial system computer from being made inoperative by an excessive value of the variable related to the horizontal velocity, a protection provided for several other variables of the alignment software. When taking this design decision, it was not analysed or fully understood which values this particular variable might assume when the alignment software was allowed to operate after lift-off.
+:o) In Ariane 4 flights using the same type of inertial reference system there has been no such failure because the trajectory during the first 40 seconds of flight is such that the particular variable related to horizontal velocity cannot reach, with an adequate operational margin, a value beyond the limit present in the software.
+:p) Ariane 5 has a high initial acceleration and a trajectory, which leads to a build-up of horizontal velocity five times more rapid than for Ariane 4. The higher horizontal velocity of Ariane 5 generated, within the 40-second timeframe, the excessive value that caused the inertial system computers to cease operation.
+:q) The purpose of the review process, which involves all major partners in the Ariane 5 programme, is to validate design decisions and to obtain flight qualification. In this process, the limitations of the alignment software were not fully analysed and the possible implications of allowing it to continue to function during flight were not realised.
+:r) The specification of the inertial reference system and the tests performed at equipment level did not specifically include the Ariane 5 trajectory data. Consequently the realignment function was not tested under simulated Ariane 5 flight conditions, and the design error was not discovered.
+:...
+:t) Post-flight simulations have been carried out on a computer with software of the inertial reference system and with a simulated environment, including the actual trajectory data from the Ariane 501 flight. These simulations have faithfully reproduced the chain of events leading to the failure of the inertial reference systems
+
+==Aftermath==
+{{ref improve section|date=June 2010}}
+
+Flight 501's high profile disaster brought the high risks associated with complex computing systems to the attention of the general public, [[politician]]s, and [[corporate officer|executives]], resulting in increased support for research on ensuring the reliability of [[safety-critical system]]s. The subsequent automated analysis of the Ariane [[source code|code]] was the first example of large-scale [[static code analysis]] by [[abstract interpretation]] <ref>{{cite web|title=PolySpace Technologies History | last=Faure | first=Christèle | url=http://christele.faure.pagesperso-orange.fr/polyspace.html | accessdate=2010-10-03}}</ref>.
+
+The failure also harmed the excellent success record of the European Space Agency's rocket family, set by the high success rate of the [[Ariane 4]] model. It was not until 2007 that Ariane 5 launches were recognised as reliable as those of the predecessor model.<ref>{{Cite news
+  | last = Todd
+  | first = David 
+  | newspaper = ASCEND Space Intelligence News
+  | date = March 2007
+  | postscript = <!--None-->
+}}</ref>
+
+==See also==
+*[[Computer bug]]
+*[[Ada (programming language)|Ada]]
+* [[Apollo guidance computer#PGNCS trouble|Apollo guidance computer – PGNCS trouble]], another case where a spacecraft guidance computer suffered from having a subsystem inappropriately left running
+* [[Mars_Climate_Orbiter#The_metric.2FUS_customary_units_mix-up|Mars Climate Orbiter]] Software that had been adapted from an earlier Mars Climate Orbiter was not adequately tested before launch.
+
+==References==
+<references />
+
+Thomas, L.D. (2007) Selected Systems Engineering Process Deficiencies and their Consequences. Acta Astronautica, 61, 406–415.
+
+==External links==
+*[[Jacques-Louis Lions]] et al., [http://esamultimedia.esa.int/docs/esa-x-1819eng.pdf Ariane 501 Inquiry Board report] ({{wayback
+|url=www.esrin.esa.it/htdocs/tidc/Press/Press96/ariane5rep.html
+|title=html version
+|date=20000815230639}})
+*[http://spaceflightnow.com/cluster2/000714feature/ariane501_qt.html Spaceflight Now - Cluster II - Ariane 501 explodes] &mdash; Footage of the final seconds of the rocket flight (216 kB [[QuickTime]] file).
+*[http://wired.com/news/technology/bugs/0,2924,69355,00.html?tw=wn_tophead_1 Wired - History's Worst Software Bugs] &mdash; An article about the top 10 software bugs. The Ariane 5 Flight 501 software glitch is mentioned as one of the these bugs.
+*{{de icon}} [http://www-aix.gsi.de/~giese/swr/ariane5.html Ariane 5 - 501 (1-3)] &mdash; A good article (in [[German language|German]]) where the actual code in question is given
+
+[[Category:Ada programming language]]
+[[Category:Software engineering disasters]]
+[[Category:European Space Agency]]
+[[Category:Satellite launch failures]]
+
+{{Link GA|de}}
+[[de:Ariane V88]]
+[[fr:Vol 501 d'Ariane 5]]
+[[ru:Авария ракеты-носителя Ариан 5 (4 июня 1996)]]
+[[uk:Катастрофа Аріан 5]]</body> </html>

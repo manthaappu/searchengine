@@ -1,0 +1,105 @@
+<html> <head> <title>Event loop</title></head><body>In [[computer science]], the '''event loop''', '''message dispatcher''', '''message loop''' or '''message pump''' is a programming construct that waits for and dispatches [[Event-driven programming|events]] or [[Message passing|messages]] in a [[Computer program|program]]. It works by [[Polling (computer science)|polling]] some internal or external "event provider", which generally [[blocking (computing) | blocks]] until an event has arrived, and then calls the relevant [[event handler]] ("dispatches the event"). The event-loop may be used in conjunction with a [[Reactor pattern|reactor]], if the event provider follows the [[#File interface|file interface]] (which can be selected or polled).  The event loop almost always operates asynchronously with the message originator.
+
+When the event loop forms the central control flow construct of a program, as it often does, and is thus at the highest level of control within the program, it may be termed the '''main loop''' or '''main event loop'''.
+
+==Message passing==
+Message pumps are said to 'pump' messages from the program's [[message queue]] (assigned and usually owned by the underlying operating system) into the program for processing.  In the strictest sense, an event loop is one of the methods for implementing [[inter-process communication]].  In fact, message processing exists in many systems, including a [[Kernel (computer science)|kernel-level]] component of the [[Mach kernel|Mach operating system]].  The event loop is a specific implementation technique of systems that use [[message passing]].
+
+==Alternative designs==
+This approach is in contrast to a number of other alternatives:
+* Traditionally, a program simply ran once then terminated. This type of program was very common in the early days of computing, and lacked any form of user interactivity. This is still used frequently, particularly in the form of [[command line]] driven programs. Any [[parameters]] are set up in advance and passed in one go when the program starts.
+* Menu-driven designs. These still may feature a main loop but are not usually thought of as event driven in the usual sense. Instead, the user is presented with an ever-narrowing set of options until the task they wish to carry out is the only option available. Limited interactivity through the menus is available.
+
+==Usage==
+Due to the predominance of [[GUI]] interfaces, most modern applications feature a main loop. The get_next_message() routine is typically provided by the operating system, and [[blocking (computing) | blocks]] until a message is available. Thus, the loop is only entered when there is something to process.
+
+ '''function''' main
+     initialize()
+     '''while''' message != quit
+         message := get_next_message()
+         process_message(message)
+     '''end''' '''while'''
+ '''end''' '''function'''
+
+==File interface==
+Under [[Unix]], the "everything is a file" paradigm naturally leads to a file-based event loop.  Reading from and writing to files, inter-process communication, network communication and device control are all achieved using file I/O, with the target identified by a [[file descriptor]].  The [[select (Unix)|select]] and [[poll (Unix)|poll]] system calls allow a set of file descriptors to be monitored for a change of state, e.g. when data becomes available to be read.
+
+For example, consider a program that reads from a continuously updated file and displays its contents in the [[X Window System]], which communicates with clients over a socket (either [[Unix domain socket|Unix domain]] or [[Berkeley sockets|Berkeley]]):
+
+ '''main'''():     
+     file_fd = open ("logfile")
+     x_fd = open_display ()
+     construct_interface ()
+     '''while''' changed_fds = select ({file_fd, x_fd}):
+         '''if''' file_fd in changed_fds:
+             data = read_from (file_fd)
+             append_to_display (data)
+             send_repaint_message ()
+         '''if''' x_fd in changed_fds:
+             process_x_messages ()
+
+===Handling signals===
+One of the few things in Unix that do not conform to the file interface are asynchronous events ([[signal (computing)|signals]]).  Signals are received in [[signal handler]]s, small, limited pieces of code that run while the rest of the task is suspended; if a signal is received and handled while the task is blocking in <code>select()</code> then select will return early with [[Error codes in Linux|EINTR]]; if a signal is received while the task is [[CPU bound]] then the task will be suspended between instructions until the signal handler returns.
+
+Thus an obvious way to handle signals is for signal handlers to set a global flag and have the event loop check for the flag immediately before and after the <code>select()</code> call; if it is set, handle the signal in the same manner as with events on file descriptors.  Unfortunately, this gives rise to a [[race condition]]: if a signal arrives immediately between checking the flag and calling <code>select()</code>, then it will not be handled until <code>select()</code> returns for some other reason (for example, being interrupted by a frustrated user).
+
+The solution arrived at by [[POSIX]] is the [[pselect]] call, which is similar to <code>select()</code> but takes an additional <code>sigmask</code> parameter, which describes a ''signal mask''.  This allows an application to mask signals in the main task, then remove the mask for the duration of the <code>select()</code> call, such that signal handlers are only called while the application is [[I/O bound]].  However, implementations of <code>pselect()</code> have only recently become reliable; versions of Linux prior to 2.6.16 do not have a <code>pselect()</code> [[system call]], forcing [[glibc]] to emulate it via a method prone to the very same race condition <code>pselect()</code> is intended to avoid.
+
+An alternative, more portable solution, is to convert asynchronous events to file-based events using the ''[[self-pipe trick]]'', where "a signal handler writes a byte to a pipe whose other end is monitored by select() in the main program".<ref>BUGS, {{man|2|pselect||synchronous I/O multiplexing}}</ref> In [[Linux kernel]] version 2.6.22, a new system call signalfd() was added, which allows receiving signals via a special file descriptor.
+
+==Implementations==
+===Windows applications===
+{{main|Message loop in Microsoft Windows}}
+The [[Microsoft Windows]] operating system requires user-interactive processes that wish to run on the operating system to construct a [[Message loop in Microsoft Windows|message loop]] for responding to events.  In this operating system, a message is equated to an event created and imposed upon the operating system.  An event can range from user interaction, network traffic, system processing, timer activity, and interprocess communication among others.
+
+The "heart" of most [[Win32]] [[Application software|applications]] is the [http://msdn2.microsoft.com/en-us/library/ms633559.aspx WinMain] function, which calls GetMessage(), in a loop. GetMessage blocks until a message, or "event", is received. After some optional processing, it will call DispatchMessage(), which dispatches the message to the relevant handler, also known as [[WindowProc]]. Normally, messages that have no special WindowProc are dispatched to [[WindowProc#Default_processing|DefWindowProc]], the default one. DispatchMessage calls the window-proc of the [[HWND]] [[Smart pointer|handle]] of the message (Registered with the RegisterClass function).
+
+====Message ordering====
+More recent versions of Microsoft Windows provide the guarantee to the programmer that messages will be delivered to an application's message loop in the order that they were perceived by the system and its peripherals.  This guarantee is essential when considering the design consequences of [[Thread (computer science)|multithreaded]] applications.
+
+However, some messages have different rules, such as messages that are always received last, or messages with a different documented priority.<ref>[http://msdn.microsoft.com/en-us/library/ms644936(VS.85).aspx GetMessage() function] with message priority list.</ref>
+
+===X Window System===
+====Xlib event loop====
+[[X Window System|X]] applications using [[Xlib]] directly are built around the <code>XNextEvent</code> family of functions; <code>XNextEvent</code> blocks until an event appears on the event queue, whereupon the application processes it appropriately.  The Xlib event loop only handles window system events; applications which need to be able to wait on other files and devices could construct their own event loop from primitives such as <code>ConnectionNumber</code>, but in practice tend to use [[Thread (computer science)|multithreading]].
+
+Very few programs use Xlib directly. In the more common case, GUI toolkits based on Xlib usually support adding events. For example, toolkits based on [[Intrinsics|Xt]] intrinsics have <code>XtAppAddInput()</code> and <code>XtAppAddTimeout()</code>.
+
+Please note that it is not safe to call Xlib functions from a signal handler, because the X application may have been interrupted in an arbitrary state, e.g. within <code>XNextEvent</code>. See [http://www.ist.co.uk/motif/books/vol6A/ch-26.fm.html] for a solution for X11R5, X11R6 and Xt.
+
+===GLib event loop===
+The [[GLib]] event loop was originally created for use in [[GTK+]] but is now used in non-GUI applications as well, such as [[D-Bus]].  The resource polled is the collection of [[file descriptor]]s the application is interested in; the polling block will be interrupted if a [[Signal (computing)|signal]] arrives or a [[Timeout (computing)|timeout]] expires (e.g. if the application has specified a timeout or idle task).  While GLib has built-in support for file descriptor and child termination events, it is possible to add an event source for any event that can be handled in a prepare-check-dispatch model.[http://developer.gnome.org/doc/API/2.0/glib/glib-The-Main-Event-Loop.html#mainloop-states]
+
+Application libraries that are built on the GLib event loop include [[GStreamer]] and the [[asynchronous I/O]] methods of [[GnomeVFS]], but [[GTK+]] remains the most visible client library.  Events from the [[windowing system]] (in [[X Window System|X]], read off the X [[Unix domain socket|socket]]) are translated by [[GDK]] into GTK+ events and emitted as GLib signals on the application's widget objects.
+
+===Core Foundation run loops===
+Exactly one CFRunLoop is allowed per thread, and arbitrarily many sources and observers can be attached. Sources then communicate with observers through the run loop, with it organising queueing and dispatch of messages.
+
+The CFRunLoop is abstracted in [[Cocoa (API)|Cocoa]] as an NSRunLoop, which allows any message (equivalent to a function call in non-[[Reflection (computer science)|reflective]] runtimes) to be queued for dispatch to any object.
+
+===Report Program Generator (RPG) language===
+[[IBM RPG]] was designed to operate with a main loop or '''program cycle''' consisting of 
+# input (originally from punch cards)
+# process (calculation section)
+# output (printed "report" or file)
+and was only later adapted to use more conventional programmer directed loop handling.
+
+==References==
+<references/>
+
+==See also==
+* [[Message passing]]
+* [[Inter-process communication]]
+* [[Asynchronous I/O]]
+* The ''game loop'' in [[Game programming]]
+
+==External links==
+* [http://www.microsoft.com/msj/0795/dilascia/dilascia.aspx Meandering Through the Maze of MFC Message and Command Routing]
+* [http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/windowing/windowprocedures/windowprocedurereference/windowprocedurefunctions/windowproc.asp WindowProc (MSDN)]
+[[Category:Control flow]]
+[[Category:Events (computing)]]
+
+[[de:Ereignisschleife]]
+[[ja:メインループ]]
+[[pt:Laço de eventos]]
+[[sv:Slinga (programmering)]]</body> </html>

@@ -1,0 +1,16 @@
+<html> <head> <title>Expression index</title></head><body>{{Multiple issues|context =October 2009|unreferenced =January 2007|orphan =January 2007}}
+
+An '''expression index''' is a [[Relational database management system|database]] [[Index (database)|index]] that is built on a generic expression, rather than on a list of [[Column(database)|column]]s. This allows indexes to be defined for common query conditions that depend on data in a table, but are not actually stored in that table.
+
+A common use for an expression index is to support case-insensitive searching or constraints. For example, if a web site wants to make user names case-insensitive, but still preserve the case as originally entered by the user, a [[unique index]] can be created on the upper- or lower-case representation of the user name:
+
+:<code>CREATE UNIQUE INDEX site_user__user_name_lower ON site_user( lower( user_name ) );</code>
+
+That will create a unique index on "lower(user_name)". Any queries that search on "lower(user_name)" could then make use of that index:
+
+:<code>SELECT user_id FROM site_user WHERE lower(user_name) = lower('Decibel');</code>
+
+[[Category:Database management systems]]
+[[Category:PostgreSQL]]
+
+[[ja:式インデックス]]</body> </html>

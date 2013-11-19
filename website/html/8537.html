@@ -1,0 +1,65 @@
+<html> <head> <title>Cross-zone scripting</title></head><body>{{nofootnotes|date=October 2010}}
+{{unreferenced|date=October 2010}}
+'''Cross-zone scripting''' is a [[browser exploit]] taking advantage of a [[vulnerability (computer science)|vulnerability]] within a '''[[zone]]'''-based security solution. The attack allows content (scripts) in unprivileged zones to be executed with the permissions of a privileged zone - i.e. a [[privilege escalation]] within the '''client''' (web browser) executing the script. The vulnerability could be: 
+* a web browser '''bug''' which under some conditions allows content (scripts) in one zone to be executed with the permissions of a higher privileged zone.
+* a web browser '''configuration error'''; unsafe sites listed in privileged zones.
+* a [[cross-site scripting]] vulnerability within a privileged zone
+
+A common attack scenario involves two steps. The first step is to use a cross-zone scripting vulnerability to get scripts executed within a privileged zone. To complete the attack, then perform malicious actions on the computer using insecure ActiveX components.
+
+This type of vulnerability has been exploited to silently install various [[malware]] (such as [[spyware]], remote control software, [[Computer worm|worms]] and such) onto computers browsing a malicious web page. 
+
+== Origins of the zone concept ==
+[[Internet Explorer 4]] introduced a security [[zone]] concept into [[Internet Explorer]]. However, this is a generic issue which is not Internet Explorer specific; some other browsers also implicitly implement the '''Local Computer''' zone{{Fact|date=February 2007}}.
+
+There are four well known zones in Internet Explorer:
+* '''Internet'''. The default zone. Everything which does not belong to other zones.
+* '''Local intranet'''. 
+* '''Trusted sites'''. Usually used to list trusted sites which are allowed to execute with minimal security permissions (e.g. run unsafe and unsigned [[ActiveX]] objects).
+* '''Restricted sites'''.
+These zones are explained in detail by
+[http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q174360 Q174360: How to use security zones in Internet Explorer].
+
+There is also an additional hidden zone:
+* '''Local Computer''' zone (or ''My Computer'' zone). This zone is particularly interesting because it can access files on the local computer. Historically this zone has been extremely insecure, but in recent versions Internet Explorer (for Windows XP) steps have been taken to reduce risks associated with zone. 
+
+'''Local intranet''', '''Trusted sites''' and '''Local Computer''' are usually configured to be privileged zones. Most cross-zone scripting attacks are designed to jump from '''Internet''' zone to a privileged zone.
+
+== Cross-zone scripting examples ==
+=== Cross-zone scripting into Local Computer Zone ===
+This type of exploits attempts to execute code in the security context of Local Computer Zone. 
+
+The following HTML is used to illustrate a naive (non-working) attempt of exploitation:
+
+<pre>
+<nowiki><HTML>
+<IMG SRC="attack.gif">
+<SCRIPT SRC="file://C:\Documents and Settings\Administrator\
+         Local Settings\Temporary Internet Files\attack.gif">
+</HTML>
+</nowiki></pre>
+
+Explanation: the HTML code attempts to get '''attack.gif''' loaded into the cache by using an IMG SRC reference. Then a SCRIPT SRC tag is used to attempt executing the script from the '''Local Computer Zone''' by addressing the local file in cache.
+
+=== Cross-zone scripting into Local Intranet Zone ===
+Consider this scenario
+* an attacker could (somehow) know of a [[cross-site scripting]] vulnerability in on '''<nowiki>http://intranet.example.com/xss.php</nowiki>''' 
+* a lot of '''<nowiki>http://intranet.example.com</nowiki>''' users regularly visit '''<nowiki>http://www.example.com/</nowiki>''', where anyone can add ''Cool links''.
+* Attacker adds a ''Cool link'' to: 
+<pre><nowiki>http://intranet.example.com/xss.php?<script>alert()</script></nowiki></pre>
+
+A computer which considers intranet.example.com a part of ''Local Intranet'' zone will now successfully be cross zone scripted.
+
+=== Cross-zone scripting into Trusted Sites Zone ===
+A well known example is the [http://secunia.com/advisories/11830/?show_all_related=1 %2f] bug in [[Internet Explorer 6]]. It was discovered that the following URL
+<pre>
+http://windowsupdate.microsoft.com%2f.example.com/
+</pre>
+executed with "Trusted Sites" permission if '''windowsupdate.microsoft.com''' was listed as a trusted site.
+
+== External links ==
+* [http://secunia.com/advisories/11830/?show_all_related=1 Secunia SA11830 Internet Explorer Security Zone Bypass and Address Bar Spoofing] An vulnerability in (Internet Explorer) reported by ''bitlance winter'' which allows cross-zone scripting into '''Trusted Sites''')
+* [http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q174360 Q174360: How to use security zones in Internet Explorer]. Microsoft article explaining the Zone concept and how to configure it
+
+[[Category:Web security exploits]]
+[[Category:System administration]]</body> </html>

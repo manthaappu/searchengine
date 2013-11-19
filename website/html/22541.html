@@ -1,0 +1,93 @@
+<html> <head> <title>Logical Volume Manager (Linux)</title></head><body>{{moreref|date=June 2010}}
+[[Image:LVM1.svg|frame|Linux Logical Volume Manager (LVM) v1]]
+'''LVM''' is a [[logical volume management|logical volume manager]] for the [[Linux kernel]]; it manages disk drives and similar mass-storage devices, in particular large ones.  The term "volume" refers to a disk drive or partition thereof. It was originally written in 1998 by [[Heinz Mauelshagen]], who based its design on that of the LVM in [[HP-UX]].
+
+The abbreviation "LVM" can also refer to the [[Logical Volume Management]] available in [[HP-UX]], [[IBM AIX]] and [[OS/2]] operating systems.
+
+The installers for the [[ArchLinux|Arch Linux]], [[Debian]], [[Fedora (operating system)|Fedora]], [[Gentoo Linux|Gentoo]], [[Mandriva]], [[MontaVista#MontaVista_Linux|MontaVista Linux]], [[openSUSE]], [[SUSE Linux Enterprise Desktop|SLED]], [[Slackware]], [[SUSE Linux Enterprise Server|SLES]], and [[Ubuntu (operating system)|Ubuntu]] distributions are LVM-aware and can install a bootable system with a [[Root file system|root filesystem]] on a [[logical volume]].
+
+== Common uses ==
+
+LVM is suitable for: 
+
+* Managing large hard disk farms by letting you add disks, replace disks, copy and share contents from one disk to another without disrupting service.
+* On small systems (like a desktop at home), instead of having to estimate at installation time how big a partition might need to be in the future, LVM allows you to resize your disk partitions easily as needed.
+* Making backups by taking "snapshots."
+* Creating single [[logical volume]]s of multiple physical volumes or entire hard disks (somewhat similar to [[Standard RAID levels#RAID 0|RAID 0]], but more similar to [[JBOD]]), allowing for dynamic volume resizing.
+
+One can think of LVM as a thin software layer on top of the hard disks and partitions, which creates an illusion of continuity and ease-of-use for managing hard-drive replacement, repartitioning, and backups.
+
+== Features ==
+
+The LVM can:
+
+* Resize [[volume group]]s online by absorbing new [[physical volume]]s (PV) or ejecting existing ones.  
+* Resize logical volumes (LV) online by concatenating [[Extent (file systems)|extents]] onto them or truncating extents from them.
+* Create read-only [[snapshot (computer storage)|snapshots]] of logical volumes (LVM1).
+* Create read-write [[snapshot (computer storage)|snapshots]] of logical volumes (LVM2).
+* Stripe whole or parts of logical volumes across multiple PVs, in a fashion similar to [[Standard RAID levels#RAID 0|RAID 0]].
+* Mirror whole or parts of logical volumes, in a fashion similar to [[Standard RAID levels#RAID 1|RAID 1]].
+* Move online logical volumes between PVs.
+* Split or merge volume groups ''in situ'' (as long as no logical volumes span the split).  This can be useful when migrating whole logical volumes to or from offline storage.
+
+The LVM will also work in a shared-storage [[computer cluster|cluster]] (where disks holding the PVs are shared between multiple host computers), but requires an additional daemon to propagate state changes between cluster nodes.
+
+LVM does not:
+
+* Provide [[parity bit|parity]]-based redundancy across LVs, as with [[Standard RAID levels|RAID levels]] 3 through 6. This functionality is instead provided by the Linux [[Mdadm|multiple disk subsystem]], which can be used as LVM physical volumes.
+
+== Implementation ==
+
+LVM keeps a metadata header at the start of every [[physical volume]], each of which is uniquely identified by a [[Universally Unique Identifier|UUID]].  Each PV's header is a complete copy of the entire volume group's layout, including the UUIDs of all other PV, the UUIDs of all logical volumes and an allocation map of [[physical extent|PEs]] to [[logical extent|LEs]].  This simplifies data recovery in the event of PV loss.
+
+In the 2.6-series of the Linux Operating System, the LVM is implemented in terms of the [[device mapper]], a simple block-level scheme for creating virtual block devices and mapping their contents onto other block devices.  This minimizes the amount of relatively hard-to-debug kernel code needed to implement the LVM.  It also allows its I/O redirection services to be shared with other volume managers (such as [[Enterprise Volume Management System|EVMS]]).  Any LVM-specific code is pushed out into its user-space tools, which merely manipulate these mappings and reconstruct their state from on-disk metadata upon each invocation.
+
+To bring a volume group online, the "vgchange" tool:
+
+# Searches for PVs in all available block devices.
+# Parses the metadata header in each PV found.
+# Computes the layouts of all visible volume groups.
+# Loops over each logical volume in the volume group to be brought online and:
+## Checks if the logical volume to be brought online has all its PVs visible.
+## Creates a new, empty device mapping.
+## Maps it (with the "linear" target) onto the data areas of the PVs the logical volume belongs to.
+
+To move an online logical volume between PVs on the same Volume Group, use the "pvmove" tool:
+
+# Creates a new, empty device mapping for the destination.
+# Applies the "mirror" target to the original and destination maps.  The kernel will start the mirror in "degraded" mode and begin copying data from the original to the destination to bring it into sync.
+# Replaces the original mapping with the destination when the mirror comes into sync, then destroys the original.
+ 
+These device mapper operations take place transparently, without applications or filesystems being aware that their underlying storage is moving.
+
+=== Caveats ===
+Until Linux kernel 2.6.31<ref>{{Cite web|url = http://bugzilla.kernel.org/show_bug.cgi?id=9554|title = Bug 9554 -  write barriers over device mapper are not supported|date = 2009-07-01|accessdate = 2010-01-24}}</ref>, [[write barrier]]s were not supported. This means that the guarantee against filesystem corruption offered by [[journaled file system]]s like [[ext3]] and [[XFS]] is negated under some circumstances.<ref>{{Cite web|url = http://lwn.net/Articles/283161|title = Barriers and journaling filesystems|date = 2008-05-22|accessdate = 2008-05-28|publisher = [[LWN]]}}</ref> Many Linux distributions, with the notable exception of [[SUSE_Linux_distributions|SUSE]] and [[Fedora_(operating_system)|Fedora]], turn off protective barriers by default anyway, to prevent performance degradation.
+
+==See also==
+*[[Logical volume management]]
+*[[Snapshot (computer storage)]]
+*[[Hot copy]]
+
+== References ==
+{{reflist|2}}
+{{refbegin|2}}
+* {{cite web|title = LVM HOWTO|first = AJ|last = Lewis|publisher = [[Linux Documentation Project]]|date = 2006-11-27|accessdate = 2008-03-04|url = http://tldp.org/HOWTO/LVM-HOWTO}}.
+* {{US patent reference|number = 5129088|y = 1992|m = 7|d = 7|inventor = Auslander, et al.|title = Data Processing Method to Create Virtual Disks from Non-Contiguous Groups of Logically Contiguous Addressable Blocks of Direct Access Storage Device}} (fundamental patent).
+{{refend}}
+
+== External links ==
+*[http://sourceware.org/lvm2/ LVM2 Resource Page]
+*[http://www.debuntu.org/how-to-install-ubuntu-over-lvm-filesystem How to install Ubuntu over LVM Filesystem - debuntu.org]
+*[http://www.markus-gattol.name/ws/lvm.html All about LVM on one page] - a page covering LVM, starting with theory and ending with many practical examples about its usage.
+*[http://ext2read.sourceforge.net Ext2read] A windows application to read/copy ext2/ext3/ext4 files residing in LVM partition.
+
+[[Category:Computer storage]]
+[[Category:Linux kernel features]]
+
+[[de:Logical Volume Manager]]
+[[es:LVM]]
+[[fr:LVM]]
+[[it:Gestore_logico_dei_volumi]]
+[[ru:LVM]]
+[[fi:Looginen taltiohallinta]]
+[[zh:邏輯捲軸管理員]]</body> </html>

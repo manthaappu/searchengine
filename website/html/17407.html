@@ -1,0 +1,84 @@
+<html> <head> <title>ICL 2900 Series</title></head><body>[[Image:ICL 2966 mainframe.jpg|thumb|An ICL 2966 Model 39]]
+The '''ICL 2900 Series''' was a range of [[mainframe computer|mainframe]] [[computer]] systems announced by the UK manufacturer [[International Computers Limited|ICL]] on 9 October 1974. The company had started development, under the name "New Range" immediately on its formation in 1968. The range was not designed to be compatible with any previous machines produced by the company, or with any competitor's machines: rather, it was conceived as a ''synthetic option'' combining the best ideas available from a variety of sources. 
+
+In marketing terms, the 2900 Series was superseded by [[ICL Series 39|Series 39]] in the mid-1980s; however, Series 39 was essentially a new set of machines implementing the 2900 Series architecture, as were subsequent ICL machines branded "Trimetra".
+
+== Origins ==
+
+When [[International Computers Limited|ICL]] was formed in 1968 as a result of the merger of
+[[International Computers and Tabulators]] (ICT) with English Electric Leo Marconi, the company
+considered a number of options for its future product line. These included enhancements to either ICT's [[ICT 1900|1900 Series]] or the [[English Electric System 4]],
+and a development based on J. K. Illiffe's Basic Language Machine. The option finally selected was the so called ''Synthetic Option'': a new design starting with a clean sheet of paper.
+
+As the name implies, the design was influenced from many sources. These included ICL's own earlier machines. The design of [[Burroughs]] mainframes was influential, although ICL rejected the concept of optimising the design for one high-level language. The [[MULTICS]] system provided other ideas, notably in the area of protection. However, the biggest single outside influence was probably the [[MU5]] machine developed at [[Manchester University]].
+
+[[File:ICL 7561 terminal.jpg|thumb|An ICL 7561 terminal, used as an operator console]]
+
+== Architectural concepts ==
+=== The Virtual Machine ===
+
+The 2900 Series architecture uses the concept of a Virtual Machine as the set of resources available to a program. The concept of a "Virtual Machine" in the 2900 Series architecture should not be confused with [[Virtual machine|the way the term is used in other environments]]. Because each program runs in its own Virtual Machine, the concept may be likened to a [[Process (computing)|process]] in other operating systems, while the 2900 Series process is more like a [[Thread (computer science)|thread]].
+
+The most obvious resource in a Virtual Machine is the virtual store (memory). Other resources include peripherals, files, network connections, and so on.
+
+Within a virtual machine, code can run at different layers of protection, called access levels (or ACR levels, after the Access Control Register which controls the mechanism). The most privileged levels of operating system code (the kernel) operate in the same virtual machine as the user application, as do intermediate levels such as the subsystems to implement filestore access and networking. System calls thus involve a change of protection level, but not an expensive call to invoke code in a different virtual machine. Every code module executes at a particular access level, and can invoke the functions offered by lower-level code, but cannot make direct access to memory or other resources at that level. The architecture thus offers a built-in encapsulation mechanism to ensure system integrity.
+
+Segments of memory can be shared between virtual machines. There are two kinds of shared memory: public segments used by the operating system (which are present in all virtual machines), and global segments used for application-level shared data: this mechanism is used only when there is an application requirement for two virtual machines to communicate. For example, global memory segments are used for database lock tables. Hardware semaphore instructions are available to synchronise access to such segments. A minor curiosity is that two virtual machines sharing a global segment will use different virtual addresses for the same memory locations, which means that virtual addresses cannot safely be passed from one VM to another.
+
+=== Addressing mechanisms ===
+
+The 2900 architecture supports a [[hardware stack]], providing an efficient vehicle for executing high-level language programs, especially those allowing recursive function calls. This was a forward-looking decision at the time, since it was expected that the dominant programming languages would initially be [[COBOL]] and [[FORTRAN]]. The architecture provides built-in mechanisms for making procedure calls using the stack, and special purpose registers for addressing the top of the stack and the base of the current stack frame.
+
+Off-stack data is typically addressed via a descriptor. This is a 64-bit structure containing a 32-bit virtual address, plus 32 bits of control information. The control information identifies whether the area being addressed is code or data; in the case of data, the size of the items addressed (1, 8, 32, 64, or 128 bits); a flag to indicate whether hardware array-bound-checking is required; and various other refinements.
+
+The 32-bit virtual address comprises a 14-bit segment number and an 18-bit displacement within the segment.
+
+Technically the order code is not part of the 2900 architecture: this fact has been exploited to emulate other machines by microcoding their instruction sets. In practice, however, all machines in the 2900 series implement a common order code or instruction set, known as the PLI (Primitive Level Interface). This is designed primarily as a target for high-level language compilers. 
+
+There are a number of registers, each designed for a special purpose. An accumulator register (ACC) is available for general-purpose use, and may be 32, 64, or 128 bits in size. The B register is used for indexing into arrays; the LNB register points to the base of the current stack frame; the DR register is used for holding descriptors for addressing into the heap, and so on.
+
+Data formats recognized by the PLI instructions include 32-bit unsigned integers; 32-bit and 64-bit twos-complement integers; 32-bit, 64-bit and 128-bit floating point; and 32-bit, 64-bit, and 128-bit packed decimal. Conventionally (and strangely to those tutored on C and UNIX) the boolean value true is represented as zero, false as minus one. Strings are held as arrays of 8-bit characters, conventionally encoded in [[EBCDIC]] (though ICL's EBCDIC has minor variations from IBM's version).
+
+Because some of the PLI instructions, notably those for procedure calling (especially system calls) are very powerful, instruction rates on 2900 Series are not always directly comparable with those on competitors' hardware. ICL marketing literature tended to use the concept of "IBM equivalent MIPS", being the [[Million_instructions_per_second#Million_instructions_per_second|MIPS]] rating of an IBM mainframe that achieved the same throughput in application benchmarks. The efficiencies achieved by the 2900 architecture, notably the avoidance of system call overheads, compensated for relatively slow raw hardware performance.
+
+== Implementations ==
+[[Image:2900SeriesModules.jpg|right]]
+
+The first machines announced in the 2900 Series were the 2980 and 2970. The 2980 allowed one or two [[order code processor]]s (OCPs), each operating at up to 3 million instructions per second, with real memory configurable up to 8 megabytes, with a 500 nanosecond access time.
+
+The 2980 was initially the most powerful of ICL's New Range mainframe computers. In addition to the OCPs, it consisted of a store multiple access controller (SMAC) and one or more store access controllers (SAC), a general peripheral controller (GPC), one or more disc file controllers (DFC) and a communications link controller (CLC), together with disc drives (a typical configuration would have eight EDS 200 drives), tape decks, an operating station (OPER), line printers and card readers. It supported the VME/B, VME/K and [[Edinburgh Multiple Access System]] (EMAS) operating systems. A typical 2980 configuration would cost about £2 million.
+
+Unlike the 2980, the 2970 and the subsequent 2960 were microcoded, and thus allowed emulation of instruction sets such as that of the older 1900 Series or the System 4.
+
+A 2900 Series machine was constructed from a number of functional modules, each contained in a separate cabinet. Peripheral devices were connected using ICL's Primitive Interface (Socket/Plug and cable set) to a Port Adapter on the SMAC. Logical addressing was employed and used a group scheme to identify system components in terms of Ports, Trunks and Streams.
+
+A ''Trunk'' was a generic name and a hardware address within a Port to which a peripheral controller would be assigned . A ''Trunk'' was a generic name for a controller for a number of Stream  devices.A ''Stream'' was the generic name for the channel under which individual peripheral devices could be referenced.
+
+The boot process for the 2960 Series is worthy of a special mention: the OCP contained a mini OPER terminal and a cassette deck. At boot, the OCP would perform its Initial Program Load (IPL) from the nominated IPL device . The IPL code provided the means for the OCP to discover the system's hardware configuration, by enquiring down the Stream(s), Trunk(s) and Port(s) to find the default or manually elected boot device for the microcode set and/or Operating System to be booted. This process was called a GROPE or General Reconnaissance Of Peripheral Equipment. The cassette load method also allowed engineering staff to load and execute diagnostic software.
+
+== See also ==
+
+* [[ICL VME|VME]] - the operating system for the ICL 2900 Series, not to be confused with a (later) embedded operating system.
+* [[Content Addressable File Store]] (CAFS)
+
+== References ==
+
+* The ICL 2900 Series. J. K. Buckle. Macmillan Computer Science Series, 1978. ISBN 0-333-21917-1.
+* An Outline of the ICL 2900 Series System Architecture. J. L. Keedy. In ''Computer Structures: Principles and Examples'', ed Daniel P. Siewiorek, C. Gordon Bell, and Allen Newell. Originally published in ''Australian Computer Journal'', vol. 9, no. 2, July 1977, pp. 53–62. Available [http://research.microsoft.com/users/gbell/Computer%5FStructures%5FPrinciples%5Fand%5FExamples/csp0267.htm online]
+
+==External links==
+
+An ICL 2966 machine from around 1982 is in the [[The National Museum of Computing]] at [[Bletchley Park]]. More information can be found at:
+* [http://www.tnmoc.org/large-systems.aspx The Large Systems Gallery]
+Further photos of this machine are available at the following locations:
+* [http://www.cs.bris.ac.uk/25/Bletchley/100_1750.jpg ICL 2966 photo 1]
+* [http://www.cs.bris.ac.uk/25/Bletchley/100_1752.jpg ICL 2966 photo 2]
+* [http://www.cs.bris.ac.uk/25/Bletchley/047.jpg ICL 2966 photo 3]
+The cabinets in the foreground, labelled ED46, ED42, etc, are exchangeable disk drives; the plastic containers on top of the cabinets hold the actual disks. The larger containers holding more platters are  200Mb in capacity, the smaller would typically hold 40MB. The orange colour of the cabinets (officially "burnt tango") was the dominant colour used in ICL's corporate image at the time of the system's release.
+* [http://pink-mouse-productions.com/icl/2900.htm Reflections on the ICL 2900 series] Historical anecdotes (Pink Mouse Productions)
+
+{{ICL hardware|2940}}
+
+{{DEFAULTSORT:ICL 2900 Series}}
+[[Category:Computing platforms]]
+[[Category:ICL mainframe computers|2900]]</body> </html>

@@ -1,0 +1,102 @@
+<html> <head> <title>Transact-SQL</title></head><body>{{Context|date=October 2009}}
+'''Transact-SQL''' ('''T-SQL''') is [[Microsoft]]'s and [[Sybase]]'s proprietary extension to [[SQL]].
+Transact-SQL is central to using SQL Server. All applications that communicate with an instance of SQL Server do so by sending Transact-SQL statements to the server, regardless of the user interface of the application. 
+
+Transact-SQL augments SQL with certain additional features:
+
+* [[Procedural programming|Control-of-flow language]]
+* [[Local variable]]s
+* Various support functions for string processing, date processing, mathematics, etc.
+* Changes to [[Delete (SQL)|DELETE]] and [[update (SQL)|UPDATE]] statements
+These additional features make Transact-SQL [[Turing complete]].
+==Flow control==
+Keywords for flow control in Transact-SQL include <code>BEGIN</code> and <code>END</code>, <code>BREAK</code>, <code>CONTINUE</code>, <code>GOTO</code>, <code>IF</code> and <code>ELSE</code>, <code>RETURN</code>, <code>WAITFOR</code>, and <code>WHILE</code>.
+
+<code>IF</code> and <code>ELSE</code> allow conditional execution. This batch statement will print "It is the weekend" if the current date is a weekend day, or "It is a weekday" if the current date is a weekday.
+
+<source lang="tsql">
+IF DATEPART(dw, GETDATE()) = 7 OR DATEPART(dw, GETDATE()) = 1
+   PRINT 'It is the weekend.'
+ELSE
+   PRINT 'It is weekday.'
+</source>
+ 
+<code>BEGIN</code> and <code>END</code> mark a block of statements. If more than one statement is to be controlled by the conditional in the example above, we can use BEGIN and END like this:
+
+<source lang="tsql">
+IF DATEPART(dw, GETDATE()) = 7 OR DATEPART(dw, GETDATE()) = 1
+BEGIN
+   PRINT 'It is the weekend.'
+   PRINT 'Get some rest!'
+END
+ELSE
+BEGIN
+   PRINT 'It is a weekday.'
+   PRINT 'Get to work!'
+END
+</source>
+
+<code>WAITFOR</code> will wait for a given amount of time, or until a particular time of day. The statement can be used for delays or to block execution until the set time.
+
+<code>RETURN</code> is used to immediately return from a [[stored procedure]] or function.
+
+<code>BREAK</code> ends the enclosing <code>WHILE</code> loop, while <code>CONTINUE</code> causes the next iteration of the loop to execute. An example of a <code>WHILE</code> loop is given below.
+
+<source lang="tsql">
+DECLARE @i nvarchar(50)
+SET @i = 0
+
+WHILE @i < 5
+BEGIN
+   PRINT 'Hello world.'
+   SET @i = @i + 1
+END
+</source>
+
+==Changes to DELETE and UPDATE statements==
+In Transact-SQL, both the DELETE and UPDATE statements allow a FROM clause to be added, which allows joins to be included.
+
+This example deletes all <CODE>users</CODE> who have been flagged with the 'Idle' flag.
+<source lang="tsql">
+DELETE users 
+  FROM users as u
+  JOIN user_flags as f
+    ON u.id=f.id
+ WHERE f.name = 'Idle'
+
+
+UPDATE user_flags 
+SET
+name = 'Caroline King'
+WHERE id=00001
+</source>
+
+==BULK INSERT==
+BULK INSERT is a Transact-SQL statement that implements a bulk data-loading process, inserting multiple rows into a table, reading data from an external sequential file. Use of BULK INSERT results in better performance than processes that issue individual INSERT statements for each row to be added. Additional details are available on [http://msdn2.microsoft.com/en-us/library/ms188365.aspx Microsoft's MSDN page].
+
+==See also==
+*[[Adaptive Server Enterprise|Adaptive Server Enterprise (Sybase)]]
+*[[PL/SQL|PL/SQL (Oracle)]]
+*[[SQL|SQL (ANSI)]]
+*[[Microsoft SQL Server|SQL Server (Microsoft)]]
+
+==External links==
+*[http://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.help.ase_15.0.sqlug/html/sqlug/title.htm Sybase Transact-SQL User's Guide]
+*[http://msdn2.microsoft.com/en-us/library/aa260642(SQL.80).aspx Transact-SQL Reference for SQL Server 2000 (MSDN)]
+*[http://msdn2.microsoft.com/en-us/library/ms189826.aspx Transact-SQL Reference for SQL Server 2005 (MSDN)]
+*[http://msdn.microsoft.com/en-us/library/bb510741(SQL.100).aspx Transact-SQL Reference for SQL Server 2008 (MSDN)]
+
+[[Category:SQL]]
+[[Category:Data-centric programming languages]]
+
+[[cs:Transact-SQL]]
+[[de:Transact SQL]]
+[[fr:Transact-SQL]]
+[[id:Transact-SQL]]
+[[is:Transact-SQL]]
+[[it:Transact-SQL]]
+[[ja:Transact-SQL]]
+[[pl:Transact-SQL]]
+[[pt:Transact-SQL]]
+[[ru:Transact-SQL]]
+[[zh:Transact-SQL]]</body> </html>

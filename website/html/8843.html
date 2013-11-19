@@ -1,0 +1,166 @@
+<html> <head> <title>Cyclone (programming language)</title></head><body>{{Infobox programming language
+ | name                   = Cyclone
+ | logo                   =
+ | caption                =
+ | file ext               =
+ | paradigm               =
+ | released               = {{start date|2006}}
+ | designer               = AT&T Labs
+ | developer              =
+ | latest release version = 1.0
+ | latest release date    = {{start date and age|2006|05|08}}
+ | latest preview version =
+ | latest preview date    = <!-- {{start date and age|YYYY|MM|DD}} -->
+ | typing                 =
+ | implementations        =
+ | dialects               =
+ | influenced by          = [[C (programming language)|C]]
+ | influenced             =
+ | programming language   =
+ | operating system       =
+ | license                =
+ | website                = {{URL|http://cyclone.thelanguage.org}}
+ | wikibooks              =
+}}
+The '''Cyclone''' [[programming language]] is intended to be a safe dialect of the [[C (programming language)|C language]]. Cyclone is designed to avoid [[buffer overflow]]s and other vulnerabilities that are endemic in C programs, without losing the power and convenience of C as a tool for [[system programming]].
+
+Cyclone development was started as a joint project of AT&T Labs Research and [[Greg Morrisett]]'s group at Cornell in 2001. Version 1.0 was released on May 8, 2006.
+
+==Language features==
+Cyclone attempts to avoid some of the common pitfalls of [[C (programming language)|C]], while still maintaining its look and performance. To this end, Cyclone places the following limits on programs:
+* <code>[[NULL]]</code> checks are inserted to prevent [[segmentation fault]]s
+* [[Pointer arithmetic]] is limited
+* Pointers must be initialized before use (this is enforced by [[definite assignment analysis]])
+* [[Dangling pointer]]s are prevented through region analysis and limits on [[Malloc|<code>free()</code>]]
+* Only "safe" casts and unions are allowed
+* [[Control flow|<code>goto</code>]] into scopes is disallowed
+* [[Control flow|<code>switch</code>]] labels in different scopes are disallowed
+* Pointer-returning functions must execute <code>return</code>
+* [[Setjmp/longjmp|<code>setjmp</code>]] and [[Setjmp/longjmp|<code>longjmp</code>]] are not supported
+
+To maintain the tool set that C programmers are used to, Cyclone provides the following extensions:
+* '''Never-<code>NULL</code> pointers''' do not require <code>NULL</code> checks
+* '''"Fat" pointers''' support pointer arithmetic with run-time [[bounds checking]]
+* '''Growable regions''' support a form of safe manual memory management
+* '''[[Garbage collection (computer science)|Garbage collection]]''' for heap-allocated values
+* '''[[Tagged union]]s''' support type-varying arguments
+* '''Injections''' help automate the use of tagged unions for programmers
+* '''[[Polymorphism (computer science)|Polymorphism]]''' replaces some uses of [[void pointer|<code>void *</code>]]
+* '''varargs''' are implemented as fat pointers
+* '''[[Exception handling|Exceptions]]''' replace some uses of <code>setjmp</code> and <code>longjmp</code>
+
+For a better high-level introduction to Cyclone, the reasoning behind Cyclone and the source of these lists, see [http://www.research.att.com/projects/cyclone/papers/cyclone-safety.pdf].
+
+Cyclone looks, in general, much like [[C (programming language)|C]], but it should be viewed as a C-like language.
+
+===Pointer/reference types===
+Cyclone implements three kinds of [[reference (computer science)|reference]] (following C terminology these are called pointers):
+* <code>*</code> (the normal type)
+* <code>@</code> (the never-<code>NULL</code> pointer), and
+* <code>?</code> (the only type with [[pointer arithmetic]] allowed, "fat" pointers).
+The purpose of introducing these new pointer types is to avoid common problems when using pointers. Take for instance a function, called <code>foo</code> that takes a pointer to an int:
+<source lang="C">
+ int foo(int *);
+</source>
+Although the person who wrote the function <code>foo</code> could have inserted <code>NULL</code> checks, let us assume that for performance reasons they did not. Calling <code>foo(NULL);</code> will result in [[undefined behavior]] (typically, although not necessarily, a '''SIGSEGV''' being sent to the application). To avoid such problems, Cyclone introduces the <code>@</code> pointer type, which can never be <code>NULL</code>. Thus, the "safe" version of <code>foo</code> would be:
+<source lang="C">
+ int foo(int @);
+</source>
+This tells the Cyclone compiler that the argument to <code>foo</code> should never be <code>NULL</code>, avoiding the aforementioned undefined behavior. The simple change of <code>*</code> to <code>@</code> saves the programmer from having to write <code>NULL</code> checks and the operating system from having to trap <code>NULL</code> pointer dereferences.  This extra limit, however, can be a rather large stumbling block for most C programmers, who are used to being able to manipulate their pointers directly with arithmetic. Although this is desirable, it can lead to [[buffer overflow]]s and other "off-by-one"-style mistakes. To avoid this, the <code>?</code> pointer type is delimited by a known bound, the size of the array. Although this adds overhead due to the extra information stored about the pointer, it improves safety and security. Take for instance a simple (and naïve) <code>strlen</code> function, written in C:
+<source lang="C">
+ int strlen(const char *s)
+ {
+     int iter = 0;
+     if (s == NULL) return 0;
+     while (s[iter] != '\0') {
+        iter++;
+     }
+     return iter;
+ }
+</source>
+This function assumes that the string being passed in is terminated by NUL (<code>'\0'</code>). However, what would happen if <code>char buf[] = {'h','e','l','l','o','!'};</code> were passed to this string? This is perfectly legal in C, yet would cause <code>strlen</code> to iterate through memory not necessarily associated with the string <code>s</code>. There are functions, such as <code>strnlen</code> which can be used to avoid such problems, but these functions are not standard with every implementation of [[ANSI C]]. The Cyclone version of <code>strlen</code> is not so different from the C version:
+<source lang="C">
+ int strlen(const char ? s)
+ {
+    int iter, n = s.size;
+    if (s == NULL) return 0;
+    for (iter = 0; iter < n; iter++, s++) {
+       if (*s == '\0') return iter;
+    }
+    return n;
+ }
+</source>
+Here, <code>strlen</code> bounds itself by the length of the array passed to it, thus not going over the actual length. Each of the kinds of pointer type can be safely cast to each of the others, and arrays and strings are automatically cast to <code>?</code> by the compiler. (Casting from <code>?</code> to <code>*</code> invokes a [[bounds checking|bounds check]], and casting from <code>?</code> to <code>@</code> invokes both a <code>NULL</code> check and a bounds check. Casting from <code>*</code> or <code>@</code> results in no checks whatsoever; the resulting <code>?</code> pointer has a size of 1.)
+
+===Dangling pointers and region analysis===
+Consider the following code, in C:
+<source lang="C">
+ char *itoa(int i)
+ {
+    char buf[20];
+    sprintf(buf,"%d",i);
+    return buf;
+ }
+</source>
+This returns an object that is allocated on the stack of the function <code>itoa</code>, which is not available after the function returns. While [[GNU Compiler Collection|gcc]] and other compilers will warn about such code, the following will typically compile without warnings:
+<source lang="C">
+ char *itoa(int i)
+ {
+    char buf[20], *z;
+    sprintf(buf,"%d",i);
+    z = buf;
+    return z;
+ }
+</source>
+Cyclone does regional analysis of each segment of code, preventing dangling pointers, such as the one returned from this version of <code>itoa</code>. All of the local variables in a given scope are considered to be part of the same region, separate from the heap or any other local region. Thus, when analyzing <code>itoa</code>, the compiler would see that <code>z</code> is a pointer into the local stack, and would report an error.
+
+===Manual memory management===
+{{Empty section|date=January 2011}}
+
+== Examples ==
+The best example to start with is the classic [[Hello world]] program:
+<source lang="C">
+ #include <stdio.h>
+ #include <core.h>
+ using Core;
+ int main(int argc, string_t ? args)
+ {
+    if (argc <= 1) {
+       printf("Usage: hello-cyclone <name>\n");
+       return 1;
+    }
+    printf("Hello from Cyclone, %s\n", args[1]);
+    return 0;
+ }
+</source>
+
+==See also==
+* [[C (programming language)|C]]
+* [[ML (programming language)|ML]]
+* [[Mythryl]]
+* [[AuroraUX]] an operating system based on OpenSolaris, using Cyclone
+
+==References==
+* [http://cyclone.thelanguage.org/wiki/User%20Manual Cyclone User Manual]
+* [http://www.cs.umd.edu/~mwh/papers/cyclone-cuj.pdf Cyclone: a Type-safe Dialect of C] by Dan Grossman, Michael Hicks, Trevor Jim, and Greg Morrisett - published January 2005
+
+==External links==
+* [http://cyclone.thelanguage.org/ Cyclone Homepage]
+* [http://math.ifi.uzh.ch/fedora/5/i386/SRPMS.gemi/cyclone-1.0-1.src.rpm Cyclone 1.0 source code RPM]
+* [http://cyclone.thelanguage.org/wiki/Download Cyclone - Source code repositories]
+* [http://cyclone.thelanguage.org/wiki/Frequently%20Asked%20Questions Cyclone - FAQ]
+* [http://cyclone.thelanguage.org/wiki/Cyclone%20for%20C%20Programmers Cyclone for C programmers]
+
+Presentations:
+* [http://www.cs.kent.ac.uk/people/staff/rej/morrisett-4.2.03.ppt Cyclone:  A Type-Safe Dialect of C]
+* [http://www.cs.washington.edu/homes/djg/slides/grossman_cyclone_jpl_05.ppt Cyclone: A Memory-Safe C-Level Programming Language]
+
+{{CProLang}}
+
+{{DEFAULTSORT:Cyclone (Programming Language)}}
+[[Category:C programming language family]]
+
+[[ca:Cyclone]]
+[[de:Cyclone]]
+[[pl:Cyclone]]
+[[ru:Cyclone (язык программирования)]]</body> </html>

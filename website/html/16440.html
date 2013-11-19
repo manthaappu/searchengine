@@ -1,0 +1,165 @@
+<html> <head> <title>Heap (data structure)</title></head><body>{{About|the programming data structure|the dynamic memory area|Dynamic memory allocation}}
+[[Image:Max-Heap.svg|thumb|right|240px|Example of a complete binary max-heap]]
+
+In [[computer science]], a '''heap''' is a specialized [[tree data structure|tree]]-based [[data structure]] that satisfies the ''heap property:'' if ''B'' is a [[child node]] of ''A'', then key(''A'') ≥ key(''B''). This implies that an element with the greatest key is always in the root node, and so such a heap is sometimes called a ''max-heap''. (Alternatively, if the comparison is reversed, the smallest element is always in the root node, which results in a ''min-heap''.) The several variants of heaps are the prototypical most efficient implementations  of the [[abstract data type]]  [[priority queue]]s. Priority queues are useful in many applications. In particular, heaps are crucial in several efficient [[graph theory|graph]] [[algorithm]]s.
+
+Heaps are usually implemented in an array, and do not require pointers between elements.
+
+The operations commonly performed with a heap are:
+* ''find-max'' or ''find-min'': find the maximum item of a max-heap or a minimum item of a min-heap, respectively
+* ''delete-max'' or ''delete-min'': removing the root node of a max- or min-heap, respectively
+* ''increase-key'' or ''decrease-key'': updating a key within a max- or min-heap, respectively
+* ''insert'': adding a new key to the heap
+* ''merge'': joining two heaps to form a valid new heap containing all the elements of both.
+
+Heaps are used in the sorting algorithm [[heapsort]].
+
+==Variants==
+
+* [[2-3 heap]]
+* [[Beap]]
+* [[Binary heap]]
+* [[Binomial heap]]
+* [[Brodal queue]]
+* [[D-ary heap]]
+* [[Fibonacci heap]]
+* [[Leftist tree|Leftist heap]]
+* [[Pairing heap]]
+* [[Skew heap]]
+* [[Soft heap]]
+* [[Ternary heap]]
+* [[Treap]]
+
+==Comparison of theoretic bounds for variants==
+
+The following [[Computational complexity theory|time complexities]]<ref>
+Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest (1990): Introduction to algorithms.
+MIT Press / McGraw-Hill.
+</ref> are [[amortized analysis|amortized time complexity]] for entries marked by an asterisk, and worst case time complexities for all other entries. O(f) gives asymptotic upper bound and Θ(f) is asymptotically tight bound (see [[Big O notation]]). Function names assume a [[min-heap]].
+
+{|  class="toccolours" border="1" cellpadding="4" style="border-collapse:collapse"
+|- style="background:#e9e9e9;"|
+! Operation
+! [[Binary heap|Binary]]
+! [[Binomial heap|Binomial]]
+! [[Fibonacci heap|Fibonacci]]
+! [[Pairing heap|Pairing]]<ref name=Iacono>{{citation
+ | last = Iacono | first = John
+ | contribution = Improved upper bounds for pairing heaps
+ | doi = 10.1007/3-540-44985-X_5
+ | pages = 63–77
+ | publisher = Springer-Verlag
+ | series = Lecture Notes in Computer Science
+ | title = Proc. 7th Scandinavian Workshop on Algorithm Theory
+ | volume = 1851
+ | year = 2000}}</ref>
+! [[Brodal queue|Brodal]]
+|-
+| findMin
+|| Θ(''1'')
+|| Θ(log ''n'') or Θ(1)
+|| Θ(1)
+|| Θ(1)
+|| Θ(1)
+|-
+| deleteMin
+|| Θ(log ''n'')
+|| Θ(log ''n'')
+|| O(log ''n'')*
+|| O(log ''n'')*
+|| O(log ''n'')
+|-
+| insert
+|| Θ(log ''n'')
+|| O(log ''n'')
+|| Θ(1)
+|| O(1)*
+|| Θ(1)
+|-
+| decreaseKey
+|| Θ(log ''n'')
+|| Θ(log ''n'')
+|| Θ(1)*
+|| O(log ''n'')*
+|| Θ(1)
+|-
+| merge
+|| Θ(''n'')
+|| O(log ''n'')
+|| Θ(1)
+|| O(0)*
+|| Θ(1)
+|}
+
+Note that a "Brodal queue" is an implementation of a parallel priority queue created by Gerth Stølting Brodal et. all.<ref>{{cite | web|url=http://www.ceid.upatras.gr/faculty/zaro/pub/jou/J9-JPDC-pq.pdf | title=A Parallel Priority Queue with Constant Time Operations}}</ref>
+
+==Heap applications==
+The heap data structure has many applications.
+* [[Heapsort]]: One of the best sorting methods being in-place and with no quadratic worst-case scenarios.
+* [[Selection algorithm]]s: Finding the min, max, both the min and max, median, or even the ''k''-th largest element can be done in linear time (often constant time) using heaps.<ref>{{citation
+ | last = Frederickson | first = Greg N.
+ | contribution = An Optimal Algorithm for Selection in a Min-Heap
+ | doi = 10.1006/inco.1993.1030
+ | pages = 197–214
+ | publisher = Academic Press
+ | title = Information and Computation
+ | volume = 104
+ | issue = 2
+ | year = 1993
+ | url = http://ftp.cs.purdue.edu/research/technical_reports/1991/TR%2091-027.pdf}}</ref>
+
+* [[List of algorithms#Graph algorithms|Graph algorithms]]: By using heaps as internal traversal data structures, run time will be reduced by polynomial order. Examples of such problems are [[Prim's algorithm|Prim's minimal spanning tree algorithm]] and [[Dijkstra's algorithm|Dijkstra's shortest path problem]].
+
+Full and almost full binary heaps may be represented in a very space-efficient way using an [[array data structure|array]] alone. The first (or last) element will contain the root. The next two elements of the array contain its children. The next four contain the four children of the two child nodes, etc. Thus the children of the node at position <code>n</code> would be at positions <code>2n</code> and <code>2n+1</code> in a one-based array, or <code>2n+1</code> and <code>2n+2</code> in a zero-based array. This allows moving up or down the tree by doing simple index computations. Balancing a heap is done by swapping elements which are out of order. As we can build a heap from an array without requiring extra memory (for the nodes, for example), heapsort can be used to sort an array in-place.
+
+One more advantage of heaps over trees in some applications is that construction of heaps can be done in linear time using [[Tarjan's algorithm]].
+
+==Heap implementations==
+* The [[C++]] [[Standard Template Library]] provides the make_heap, push_heap and pop_heap algorithms for heaps (usually implemented as binary heaps), which operate on arbitrary random access [[iterator]]s.  It treats the iterators as a reference to an array, and uses the array-to-heap conversion.
+* The Java 2 platform (since version 1.5) provides the binary heap implementation with class java.util.PriorityQueue<E> in [[Java Collections Framework]].
+* Python has a [http://docs.python.org/library/heapq.html heapq] module that implements a priority queue using a binary heap.
+* [[PHP]] has both maxheap (SplMaxHeap) and minheap (SplMinHeap) as of version 5.3 in the Standard PHP Library.
+* [[Perl]] has implementations of binary, binomial, and Fibonacci heaps in the [http://search.cpan.org/perldoc?Heap Heap] distribution available on [[CPAN]].
+
+==See also==
+* [[Fibonacci heap]]
+* [[Stack (data structure)]]
+* [[Sorting algorithm]]
+
+== References==
+{{Commons category|Heaps}}
+{{Wikibooks|Data Structures|Min and Max Heaps}}
+
+{{Reflist}}
+
+{{CS-Trees}}
+{{Data structures}}
+
+{{DEFAULTSORT:Heap (Data Structure)}}
+[[Category:Heaps (structure)|*]]
+
+[[cs:Halda (datová struktura)]]
+[[da:Hob (datastruktur)]]
+[[de:Heap (Datenstruktur)]]
+[[es:Montículo (informática)]]
+[[fr:Tas (informatique)]]
+[[ko:힙 (자료 구조)]]
+[[is:Hrúga (tölvunarfræði)]]
+[[it:Heap]]
+[[he:ערימה]]
+[[lt:Krūva]]
+[[hu:Kupac (adatszerkezet)]]
+[[ml:ഹീപ് (ഡാറ്റാ സ്ട്രക്‌ച്ചർ)]]
+[[nl:Heap]]
+[[ja:ヒープ]]
+[[no:Heap]]
+[[pl:Kopiec (informatyka)]]
+[[pt:Heap]]
+[[sk:Halda (dátová štruktúra)]]
+[[sl:Kopica]]
+[[fi:Keko (tietorakenne)]]
+[[sv:Heap (datastruktur)]]
+[[th:ฮีป]]
+[[tr:Öbek (bilgisayar bilimi)]]
+[[uk:Купа (структура даних)]]
+[[zh:堆 (数据结构)]]</body> </html>

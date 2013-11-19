@@ -1,0 +1,78 @@
+<html> <head> <title>Coding gain</title></head><body>In [[coding theory]] and related engineering problems, '''coding gain''' is the measure in the difference between the [[signal to noise ratio]] (SNR) levels between the uncoded system and coded system required to reach the same [[bit error rate]] (BER) levels when used with the [[error correcting code]] (ECC).
+
+==Example==
+If the uncoded [[BPSK]] system in [[AWGN]] environment has a [[Bit error rate]] (BER) of <math>10^{-2}</math> at the SNR level 4[[decibel|dB]], and the corresponding coded (''e.g.'', [[BCH]]) system has the same BER at an SNR level of 2.5dB, then we say the ''coding gain'' = 4dB-2.5dB =  1.5dB, due to the code used (in this case BCH).
+
+==Power-limited regime==
+In the ''power-limited regime'' (where the nominal [[spectral efficiency]] <math>\rho \le 2</math> [b/2D or b/s/Hz], ''i.e.'' the domain of binary signaling), the effective coding gain <math>\gamma_{eff}(A)</math> of a signal set <math>A</math> at a given target error probability per bit <math>P_b(E)</math> is defined as the difference in dB between the <math>E_b/N_0</math> required to achieve the target <math>P_b(E)</math> with <math>A</math> and the <math>E_b/N_0</math> required to achieve the target <math>P_b(E)</math> with 2-[[Pulse-amplitude modulation|PAM]] or (2&times;2)-[[Quadrature amplitude modulation|QAM]] (''i.e.'' no coding). The nominal coding gain <math>\gamma_c(A)</math> is defined as
+
+: <math>\gamma_c(A) = {d^2_\min(A) \over 4E_b}.</math>
+
+This definition is normalized so that <math>\gamma_c(A) = 1</math> for 2-PAM or (2&times;2)-QAM. If the average number of nearest neighbors per transmitted bit <math>K_b(A)</math> is equal to one, the effective coding gain <math>\gamma_{eff}(A)</math> is approximately equal to the nominal coding gain <math>\gamma_c(A)</math>. However, if <math>K_b(A)>1</math>, the effective coding gain <math>\gamma_{eff}(A)</math> is less than the nominal coding gain <math>\gamma_c(A)</math> by an amount which depends on the steepness of the <math>P_b(E)</math> ''vs.'' <math>E_b/N_0</math> curve at the target <math>P_b(E)</math>. This curve can be plotted using the [[union bound]] estimate (UBE)
+
+: <math>P_b(E) \approx K_b(A)Q\sqrt(2\gamma_c(A)E_b/N_0),</math>
+
+where <math>Q(\cdot)</math> denotes the [[error function|Gaussian probability of error function]].
+
+For the special case of a binary [[linear block code]] <math>C</math> with parameters <math>(n,k,d)</math>, the nominal spectral efficiency is <math>\rho = 2k/n </math> and the nominal coding gain is ''kd''/''n''.
+
+==Example==
+The table below lists the nominal spectral efficiency, nominal coding gain and effective coding gain at <math>P_b(E) \approx 10^{-5}</math> for [[Reed-Muller code]]s of length <math>n \le 64</math>:
+
+{| class="wikitable"
+ ! Code !! <math>\rho</math> !! <math>\gamma_c</math> !! <math>\gamma_c</math> (dB) !! <math>K_b</math> !! <math>\gamma_{eff}</math> (dB)
+ |-
+ | [8,7,2] || 1.75 || 7/4 || 2.43 || 4 || 2.0
+ |-
+ | [8,4,4] || 1.0 || 2 || 3.01 || 4 || 2.6
+ |-
+ | [16,15,2] || 1.88 || 15/8 || 2.73 || 8 || 2.1
+ |-
+ | [16,11,4] || 1.38 || 11/4 || 4.39 || 13 || 3.7
+ |-
+ | [16,5,8] || 0.63 || 5/2 || 3.98 || 6 || 3.5
+ |-
+ | [32,31,2] || 1.94 || 31/16 || 2.87 || 16 || 2.1
+ |-
+ | [32,26,4] || 1.63 || 13/4 || 5.12 || 48 || 4.0
+ |-
+ | [32,16,8] || 1.00 || 4 || 6.02 || 39 || 4.9
+ |-
+ | [32,6,16] || 0.37 || 3 || 4.77 || 10 || 4.2
+ |-
+ | [64,63,2] || 1.97 || 63/32 || 2.94 || 32 || 1.9
+ |-
+ | [64,57,4] || 1.78 || 57/16 || 5.52 || 183 || 4.0
+ |-
+ | [64,42,8] || 1.31 || 21/4 || 7.20 || 266 || 5.6
+ |-
+ | [64,22,16] || 0.69 || 11/2 || 7.40 || 118 || 6.0
+ |-
+ | [64,7,32] || 0.22 || 7/2 || 5.44 || 18 || 4.6
+ |-
+ |}
+
+==Bandwidth-limited regime==
+In the ''bandwidth-limited regime'' (<math>\rho > 2b/2D</math>, ''i.e.'' the domain of non-binary signaling), the effective coding gain <math>\gamma_{eff}(A)</math> of a signal set <math>A</math> at a given target error rate <math>P_s(E)</math> is defined as the difference in dB between the <math>SNR_{norm}</math> required to achieve the target <math>P_s(E)</math> with <math>A</math> and the <math>SNR_{norm}</math> required to achieve the target <math>P_s(E)</math> with M-[[Pulse-amplitude modulation|PAM]] or (M&times;M)-[[Quadrature amplitude modulation|QAM]] (''i.e.'' no coding). The nominal coding gain <math>\gamma_c(A)</math> is defined as
+
+: <math>\gamma_c(A) = {(2^\rho - 1)d^2_\min (A) \over 6E_s}.</math>
+
+This definition is normalized so that <math>\gamma_c(A) = 1</math> for M-PAM or (M&times;M)-QAM. The UBE becomes
+
+: <math>P_s(E) \approx K_s(A)Q\sqrt(3\gamma_c(A)SNR_{norm}),</math>
+
+where <math>K_s(A)</math> is the average number of nearest neighbors per two dimensions.
+
+==See also==
+[[Channel capacity]]
+
+[[Eb/N0]]
+
+==References==
+
+: [http://ocw.mit.edu MIT OpenCourseWare], 6.451 Principles of Digital Communication II, Lecture Notes sections 5.3, 5.5, 6.3, 6.4
+
+[[Category: Coding theory]]
+[[Category: Error detection and correction]]
+
+[[de:Codegewinn]]</body> </html>

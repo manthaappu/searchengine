@@ -1,0 +1,61 @@
+<html> <head> <title>Confluence (abstract rewriting)</title></head><body>{{Otheruses|Confluence (disambiguation)}}
+In computer science, '''confluence''' is a property of [[rewriting]] systems, describing that terms in this system can be rewritten in more than one way, to yield the same result. This article describes the properties in the most abstract setting of an [[abstract rewriting system]].
+
+== Motivating example ==
+Consider the rules of regular arithmetic. We can think of these rules as forming a rewriting system. Suppose we are given the expression
+: <math> (11 + 9) \times (2 + 4)</math>
+We can rewrite this expression in two ways—either simplifying the first bracket, or the second. Simplifying the first bracket, we have
+: <math> 20 \times (2 + 4) = 20 \times 6 = 120</math>
+Simplifying the second, gives
+: <math> (11 + 9) \times 6 = 20 \times 6 = 120</math>
+We get the same result from rewriting the term in two different ways. This suggests that the rewriting system formed from regular arithmetic is a confluent rewriting system.
+
+== General case and theory ==
+{{Confusing|date=August 2009}}
+
+[[Image:Confluence.png|right|Confluence diagram]]
+
+A rewriting system can be expressed as a directed graph in which nodes represent expressions and edges represent rewrites. So, for example, if the expression <math>a</math> can be rewritten into <math>b</math>, then we say that <math>b</math> is a ''reduct'' of <math>a</math> (alternatively, <math>a</math> ''reduces to'' <math>b</math>, or <math>b</math> is an ''expansion'' of <math>a</math>). This is represented using arrow notation; <math>a \rightarrow b</math> indicates that <math>a</math> reduces to <math>b</math>. Intuitively, this means that the corresponding graph has a directed edge from <math>a</math> to <math>b</math>.
+
+If there is a path between two graph nodes (let's call them <math>c</math> and <math>d</math>), then the intermediate nodes form a ''reduction sequence''. So, for instance, if <math>c \rightarrow c' \rightarrow c'' \rightarrow \cdots \rightarrow d' \rightarrow d</math>, then we can write <math>c \rightarrow^* d</math>, indicating the existence of a reduction sequence from <math>c</math> to <math>d</math>.
+
+With this established, confluence can be defined as follows. Let ''a'', ''b'', ''c'' ∈ ''S'', with ''a'' →* ''b'' and ''a'' →* ''c''. If ''a'' is confluent, there exists a ''d'' ∈ ''S'' with ''b'' →* ''d'' and ''c'' →* ''d''. If every ''a'' ∈ ''S'' is confluent, we say that → is confluent, or has the ''Church-Rosser property''. This property is also sometimes called the ''diamond property'', after the shape of the diagram shown on the right. '''Caution''': other presentations reserve the term ''diamond property'' for a variant of the diagram with single reductions everywhere; that is, whenever ''a'' → ''b'' and ''a'' → ''c'', there must exist a ''d'' such that ''b'' → ''d'' and ''c'' → ''d''. The single-reduction variant is strictly stronger than the multi-reduction one. 
+
+=== Local confluence ===
+
+An element ''a'' ∈ ''S'' is said to be locally (or weakly) confluent if for all ''b'', ''c'' ∈ ''S'' with ''a'' → ''b'' and ''a'' → ''c'' there exists ''d'' ∈ ''S'' with ''b'' →* ''d'' and ''c'' →* ''d''. If every ''a'' ∈ ''S'' is locally confluent, we say that → is locally (or weakly) confluent, or has the ''weak Church-Rosser property''. This is different from confluence in that ''b'' and ''c'' must be reduced from ''a'' in one step. In analogy with this, confluence is sometimes referred to as ''global confluence''. 
+
+We may view →*, which we introduced as a notation for reduction sequences, as a rewriting system in its own right, whose relation is the [[transitive closure]] of ''R''. Since a sequence of reduction sequences is again a reduction sequence (or, equivalently, since forming the transitive closure is [[idempotence#Unary operation|idempotent]]), →** = →*. It follows that → is confluent if and only if →* is locally confluent.
+
+A rewriting system may be locally confluent without being globally confluent. However, [[Newman's lemma]] states that if a locally confluent rewriting system has no infinite reduction sequences (in which case it is said to be ''terminating'' or ''strongly normalizing''), then it is globally confluent.
+
+=== Semi-confluence ===
+
+The definition of local confluence differs from that of global confluence in that only elements reached from a given element in a single rewriting step are considered. By considering one element reached in a single step and another element reached by an arbitrary sequence, we arrive at the intermediate concept of semi-confluence: ''a'' ∈ ''S'' is said to be semi-confluent if for all ''b'', ''c'' ∈ ''S'' with ''a'' → ''b'' and ''a'' →* ''c'' there exists ''d'' ∈ ''S'' with ''b'' →* ''d'' and ''c'' →* ''d''; if every ''a'' ∈ ''S'' is semi-confluent, we say that → is semi-confluent. 
+
+A semi-confluent element need not be confluent, but a semi-confluent rewriting system is necessarily confluent.
+
+=== Strong confluence ===
+
+Strong confluence is another variation on local confluence that allows us to conclude that a rewriting system is globally confluent. An element ''a'' ∈ ''S'' is said to be strongly confluent if for all ''b'', ''c'' ∈ ''S'' with ''a'' → ''b'' and ''a'' → ''c'' there exists ''d'' ∈ ''S'' with ''b'' →* ''d'' and either ''c'' → ''d'' or ''c'' = ''d''; if every ''a'' ∈ ''S'' is strongly confluent, we say that → is strongly confluent. 
+
+A strongly confluent element need not be confluent, but a strongly confluent rewriting system is necessarily confluent.
+
+== See also ==
+* [[critical pair]]
+* [[Church–Rosser theorem]]
+
+== References ==
+* ''Term Rewriting Systems'', Terese, Cambridge Tracts in Theoretical Computer Science, 2003. 
+* ''Term Rewriting and All That'', Franz Baader and Tobias Nipkow, Cambridge University Press, 1998 [http://www.forsoft.de/~nipkow/TRaAT/ (book weblink)]
+
+==External links==
+* {{MathWorld | urlname=Confluent | title=Confluent}}
+
+{{DEFAULTSORT:Confluence (Abstract Rewriting)}}
+[[Category:Rewriting systems]]
+
+[[de:Konfluenz (Informatik)]]
+[[fr:Confluence (informatique)]]
+[[ja:合流性]]
+[[pt:Confluência (sistemas de reescrita de termos)]]</body> </html>

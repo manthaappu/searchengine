@@ -1,0 +1,110 @@
+<html> <head> <title>Time.h</title></head><body>{{Manual|date=August 2009}}
+{{C_Standard_library}} <!-- to edit this template go to [[template:C_Standard_library]] -->
+{{lowercase|title=time.h}}
+The [[C (programming language)|C]] & [[C++ (programming language)|C++]] programming languages, '''time.h''' (ctime is the recommended header file for C++ programs) is a [[header file]] defined in the [[C Standard Library]] to declare [[system time|time and date]] functions that provide standardized access to time/date manipulation and formatting.
+
+==Functions==
+
+;<code>char *'''asctime'''([[const]] [[struct]] tm* ''tmptr'')</code>
+:  Convert <code>tm</code> to a string in the format "Www Mmm dd hh:mm:ss yyyy", where Www is the weekday, Mmm the month in letters, dd the day of the month, hh:mm:ss the time, and yyyy the year. The string is followed by a [[newline]] and a terminating [[null character]], containing a total of 26 characters. The string pointed at is statically allocated and shared by <code>ctime</code> and <code>asctime</code> functions. Each time one of these functions is called the contents of the string is overwritten.
+;<code>clock_t '''clock'''(void)</code>
+:  Return number of clock ticks since process start.
+;<code>char* '''ctime'''([[const]] time_t* ''timer'')</code>
+:  Convert <code>[[time_t]]</code> time value to string in the same format as <code>asctime</code>. The string pointed is statically allocated and shared by <code>ctime</code> and <code>asctime</code> functions. Each time one of these functions is called the content of the string is overwritten. <code>ctime</code> also uses internally the buffer used by <code>gmtime</code> and <code>localtime</code> as return value, so a call to this function will overwrite this.
+;<code>double '''difftime'''([[time_t]] ''timer2'', [[time_t]] ''timer1'')</code>
+:  Returns the difference in seconds between the two times.
+;<code>[[struct]] tm* '''gmtime'''([[const]] time_t* ''timer'')</code>
+:  Convert a <code>[[time_t]]</code> value to a tm structure as UTC time. This structure is statically allocated and shared by <code>gmtime</code>, <code>localtime</code> and <code>ctime</code> functions. Each time one of these functions is called the content of the structure is overwritten.
+;<code>[[struct]] tm* '''gmtime_r'''([[const]] time_t* ''timer'', [[struct]] tm* ''result'')</code>
+:  Convert a <code>[[time_t]]</code> value to a tm structure as UTC time. The time is stored in the tm [[struct]] referred to by ''result''. This function is the [[Thread safety|thread-safe]] version of <code>gmtime</code>.
+;<code>[[struct]] tm* '''localtime'''([[const]] time_t* ''timer'')</code>
+:  Convert a <code>[[time_t]]</code> time value to a tm structure as local time (ie time adjusted for the local time zone and daylight savings). This structure is statically allocated and shared by <code>gmtime</code>, <code>localtime</code> and <code>ctime</code> functions. Each time one of these functions is called the content of the structure is overwritten.
+;<code>[[time_t]] '''mktime'''([[struct]] tm* ''ptm'')</code>
+:  Convert <code>tm</code> to a <code>[[time_t]]</code> time value. Checks the members of the tm structure passed as parameter ''ptm'' adjusting the values if the ones provided are not in the possible range or they are incomplete or mistaken and then translates that structure to a [[time_t]] value that is returned. The original values of ''tm_wday'' and ''tm_yday'' members of ''ptm'' are ignored and filled with the correspondent ones to the calculated date. The range of ''tm_mday'' is not checked until ''tm_mon'' and ''tm_year'' are determined. On error, a -1 value is returned.
+;<code>[[time_t]] '''time'''(time_t* ''timer'')</code>
+:  Get the current time (number of seconds from the [[Unix time|epoch]]) from the system clock. Stores that value in <code>timer</code>. If <code>timer</code> is null, the value is not stored, but it is still returned by the function.
+;<code>[[size t]] '''strftime'''(char* ''s'', [[size t]] ''n'', [[const]] char* ''format'', [[const]] [[struct]] tm* ''tptr'')</code>
+:  Format <code>tm</code> into a date/time string.
+
+;<code>char * '''strptime'''([[const]] char* ''buf'', [[const]] char* ''format'', [[struct]] tm* ''tptr'')</code>
+:  Scan values from <code>buf</code> string into <code>tptr</code> struct. On success it returns pointer to the character following the last character parsed. Otherwise it returns null.
+;<code>time_t '''timegm'''(struct tm *brokentime)</code>
+:  timegm is functionally identical to mktime except it always takes the input values to be Coordinated Universal Time (UTC) regardless of any local time zone setting. Note that timegm is the inverse of gmtime.
+:  '''Portability note:'''  mktime is essentially universally available.  timegm is rather rare.  For the most portable (but non-thread safe) conversion from a UTC broken-down time to a simple time, set the TZ environment variable to UTC, call mktime, then set TZ back.
+
+=== Unix extensions ===
+The [[Single UNIX Specification]] (IEEE 1003.1, formerly POSIX) adds two functions to <code>time.h</code>: <code>'''asctime_r'''</code><ref>[http://www.opengroup.org/onlinepubs/9699919799/functions/asctime.html asctime]. The Open Group Base Specifications Issue 7, IEEE Std 1003.1-2008.</ref> and <code>'''ctime_r'''</code><ref>[http://www.opengroup.org/onlinepubs/9699919799/functions/ctime.html ctime]. The Open Group Base Specifications Issue 7, IEEE Std 1003.1-2008.</ref>. These are [[Reentrant (subroutine)|reentrant]] versions of <code>asctime</code> and <code>ctime</code>. Both functions require the caller to provide a buffer in which to store the textual representation of a moment in time.
+
+Since these functions are not in the C++ standard, they do not belong to the namespace <code>std</code> in that language.
+
+==Constants==
+;<code>CLK_PER_SEC</code>
+:  Constant that defines the number of clock ticks per second. Used by the clock() function.
+;<code>CLOCKS_PER_SEC</code>
+:  An alternative name for CLK_PER_SEC used in its place in some libraries.
+;<code>CLK_TCK</code>
+:  Obsolete macro for CLK_PER_SEC.
+
+==Data types==
+;<code>clock_t</code>
+:  Data type returned by clock().<br>Generally defined as int or long int.
+;<code>[[time_t]]</code>
+:  Data type returned by time().<br>Generally defined as int or long int.
+;<code>[[struct]] tm</code>
+:  A "broken-down" (componentized) calendar representation of time.
+
+===Calendar time===
+Calendar time (also known as "broken-down time") in the C standard library is represented as the <code>[[struct]]</code> <code>tm</code> structure, consisting of the following members:
+{|class="wikitable" width="80%"
+|-
+! width=25%|Member || Description
+|-
+| <code>[[Integer (computer science)|int]] tm_hour</code>  || hour (0 – 23)
+|-
+| <code>int tm_isdst</code> || [[Daylight Saving Time|Daylight saving time]] enabled (> 0), disabled (= 0), or unknown (< 0)
+|-
+| <code>int tm_mday</code>  || day of the month (1 – 31)
+|-
+| <code>int tm_min</code> || minutes (0 – 59)
+|-
+| <code>int tm_mon</code> || month (0 – 11, 0 = January)
+|-
+| <code>int tm_sec</code> || seconds (0 – 60, 60 = Leap second)
+|-
+| <code>int tm_wday</code> || day of the week (0 – 6, 0 = Sunday)
+|-
+| <code>int tm_yday</code> || day of the year (0 – 365)
+|-
+| <code>int tm_year</code> || year since 1900
+|}
+
+==Examples==
+
+This source code snippet prints the current time to the standard output stream.
+<source lang="c">
+#include <stdio.h>
+#include <time.h>
+ 
+int main(void)
+{
+    time_t  timer = time(NULL);
+    printf("ctime is %s\n", ctime(&timer));
+    return 0;
+}
+</source>
+
+==References==
+* {{cite book |date=2001-07-06 |title=The GNU C Library Reference Manual |chapter=Calendar Time |url=http://www.gnu.org/software/libc/manual/html_node/Calendar-Time.html |accessdate=2007-04-03 }}
+* {{man|bd|time.h|SUS|time types}}
+* {{cite book |date=2008-12-09 |title=The Open Group Base Specifications |chapter=gmtime |url=http://www.opengroup.org/onlinepubs/009695399/functions/gmtime.html}}
+<references/>
+
+{{DEFAULTSORT:Time.H}}
+[[Category:C standard library headers]]
+
+[[es:Time.h]]
+[[fr:Time.h]]
+[[ko:Time.h]]
+[[it:Time.h]]
+[[pt:Time.h]]
+[[ru:Time.h]]</body> </html>

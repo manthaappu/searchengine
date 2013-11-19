@@ -1,0 +1,63 @@
+<html> <head> <title>Clipping (computer graphics)</title></head><body>Any procedure which identifies that portion of a picture which is either inside or outside a picture is referred to as a '''clipping algorithm''' or '''clipping'''.
+
+The region against which an object is to be clipped is called clipping window.
+
+==Examples==
+In [[2D computer graphics|2D graphics]] for example, if the user of an image editing program is modifying an image and has "zoomed in" the view to display only the top half of the image, there is no need for the program to spend any [[CPU]] time doing any of the calculations or memory moves needed to display the bottom half. By clipping the bottom half of the image and avoiding these calculations, the program runs faster.
+
+In [[3-D computer graphics|3D graphics]], in a city street scene the computer may have model, texture, and shader data in memory for every building in the city; but since the camera viewing the scene only sees things within, say, a 90° angle, or [[field of view]], the computer does not need to transform, texture, and shade the buildings that are behind the camera, nor those which are far enough to the side that they are off the screen. The clipping algorithm lets the rendering code skip all consideration of those buildings, and the program runs faster.
+
+==Non-triviality==
+Clipping is non-trivial, especially for 3D [[animation]]s: if the objects are built up of [[polygon]]s, a routine is needed that determines for each polygon whether it is visible within the [[viewport]] (i.e. the part of the 3D "world" displayed) or cut off the borders. Special care is needed for the case of polygons intersected by the viewport border as their shape has to be adjusted. 
+
+While the term "clipping" is generally used to mean avoiding the drawing of things outside the camera's [[field of view]], a related technique is [[occlusion culling]], in which polygons ''within'' the field of view are not drawn if they would be occluded by other polygons.  For example, there is no need to render the polygons composing the side of a building facing away from the observer; they are all completely occluded by the front of the building. Hence the software can save significant rendering time by doing a back-face culling pass before deciding which polygons to draw.
+
+The clipping, back-face and occlusion culling optimizations both present interesting problems in scenes with a [[mirror|reflective]] surface visible. For example, problems would ensue if the 3D scene contained a mirror that showed the reflection of a building that had been clipped because the building was behind the camera. To deal with 'true' reflective surfaces (as opposed to the 'fake' reflections of [[environment map]]s), the clipper might do a clipping and rendering pass from the point of view of the mirror, and then the normal clipping pass for the camera.
+
+==Importance of clipping in video games==
+Good clipping strategy is important in the development of [[video games]] in order to maximize the game's [[frame rate]] and visual quality. Despite [[graphics processing unit|GPU chips]] that are faster every year, it remains computationally expensive to [[transformation (mathematics)|transform]], [[texture mapping|texture]], and [[shader|shade]] polygons, especially with the multiple texture and shading passes common today. Hence, [[video game developer|game developer]]s must live within a certain "budget" of polygons that can be drawn each video frame.
+
+To maximize the game's visual quality, developers prefer to establish the highest possible polygon budget; therefore, every optimization of the graphics pipeline benefits the polygon budget and therefore the game. 
+
+In video games, then, clipping is a critically important [[optimization (computer science)|optimization]] that speeds up the rendering of the current scene, and therefore allows the developer to increase the renderer's polygon budget. Programmers often devise clever [[heuristic (computer science)|heuristic]]s to speed up the clipper, as it would be computationally prohibitive to use line casting or [[Ray tracing (graphics)|ray tracing]] to determine with 100% accuracy which polygons are and are not within the camera's [[field of view]]. One of the most popular methods for optimization is the use of [[octree]]s to partition scenes into rendered and non-rendered areas.
+
+The clipping problems introduced by reflective surfaces are generally avoided in games {{As of|2005|lc=on}} by simulating reflections without actually doing all the calculations that would be necessary for accurate reflections.
+
+Due to the use of the term '[[noclip|no clipping]]' to refer to turning off [[collision detection]], the two are often confused.
+
+==Algorithms==
+Several clipping [[algorithm]]s have been devised.
+
+* '''[[Line clipping]] algorithms''':
+** [[Cohen–Sutherland]]
+** [[Liang–Barsky]]
+** [[Line clipping#Fast clipping|Fast-clipping]]
+** [[Line clipping#Cyrus–Beck|Cyrus–Beck]]
+** [[Nicholl–Lee–Nicholl]]
+** [http://www.cin.ufpe.br/~sbgames/proceedings/files/A%20Fast%20Culling%20Algorithm%20for%202D%20and%202.5D%20Side-scrolling%20Games.pdf Fast culling for 2D side-scrolling games]
+
+* '''Circle and B-Splines clipping algorithms''';
+** [http://www.chez.com/pmaillot Patrick-Gilles Maillot's Thesis] on computer Graphics, pages 52 (circle), 53 (B-Splines) and respective algorithms pages 95 and 97.
+
+* '''Polygon clipping algorithms''':
+** [[Sutherland–Hodgman]]
+** [[Weiler–Atherton]]
+** [[Vatti_clipping_algorithm|Vatti]]
+
+* '''Polygon Structures clipping algorithms''':
+** [http://www.chez.com/pmaillot Triangle Strips and Quad-Meshes 3D Homogeneous Clipping (Patrick-Gilles Maillot)]
+
+==See also==
+*[[Bounding volume]]
+
+==References==
+<references />
+
+[[Category:Clipping (computer graphics)|*]]
+[[Category:Computer graphics]]
+
+[[de:Clipping (Computergrafik)]]
+[[fr:Clipping (Infographie)]]
+[[it:Clipping]]
+[[nl:Clipping (afbeelding)]]
+[[ru:Отсечение]]</body> </html>

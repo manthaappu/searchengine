@@ -1,0 +1,82 @@
+<html> <head> <title>Permanent</title></head><body>{{otheruses}}
+In [[linear algebra]], the '''permanent''' of a [[square matrix]] is a function of the matrix similar to the [[determinant]]. The permanent, as well as the determinant, is a polynomial in the entries of the matrix. Both permanent and determinant are special cases of a more general function of a matrix called the [[immanant]].
+
+== Definition ==
+The permanent of an ''n''-by-''n'' matrix ''A'' = (''a''<sub>''i,j''</sub>) is defined as
+
+: <math> \operatorname{perm}(A)=\sum_{\sigma\in S_n}\prod_{i=1}^n a_{i,\sigma(i)}.</math>
+
+The sum here extends over all elements σ of the [[symmetric group]] ''S''<sub>''n''</sub>, i.e. over all [[permutation]]s of the numbers 1, 2, ..., ''n''.
+
+For example (2×2 matrix), 
+
+:<math>\operatorname{perm}\begin{pmatrix}a&b \\ c&d\end{pmatrix}=ad+bc.</math>
+
+The definition of the permanent of ''A'' differs from that of the [[determinant]] of ''A'' in that the [[signature (permutation)|signatures]] of the permutations are not taken into account. If one views the permanent as a map that takes ''n'' vectors as arguments, then it is a [[multilinear map]] and it is symmetric (meaning that any order of the vectors results in the same permanent). A formula similar to [[Expansion by minors|Laplace's]] for the development of a determinant along a row or column is also valid for the permanent; all signs have to be ignored for the permanent.
+
+== Properties and applications ==
+Unlike the determinant, the permanent has no easy geometrical interpretation; it is mainly used in [[combinatorics]] and in treating boson [[Green's functions]] in [[quantum field theory]]. However, it has two [[graph-theoretic]] interpretations: as the sum of weights of [[cycle cover]]s of a [[directed graph]], and as the sum of weights of perfect matchings in a [[bipartite graph]].
+
+===Cycle covers===
+Any square matrix <math>A = (a_{ij})</math> can be viewed as the [[adjacency matrix]] of a directed graph, with <math>a_{ij}</math> representing the weight of the edge from vertex ''i'' to vertex ''j''. 
+A [[Vertex cycle cover|cycle cover]] of a weighted directed graph is a collection of vertex-disjoint [[directed cycle]]s in the graph that covers all nodes in the graph. Thus, each vertex ''i'' in the graph has a unique "successor" <math>\sigma(i)</math> in the cycle cover, and <math>\sigma</math> is a [[permutation]] on <math>\{1,2,\dots,n\}</math> where ''n'' is the number of vertices in the graph. Conversely, any permutation <math>\sigma</math> on <math>\{1,2,\dots,n\}</math> corresponds to a cycle cover in which there is an edge from vertex ''i'' to vertex <math>\sigma(i)</math> for each ''i''.
+ 
+If the weight of a cycle-cover is defined to be the product of the weights of the edges in each cycle, then
+: <math> \operatorname{Weight}(\sigma) = \prod_{i=1}^n a_{i,\sigma(i)}.</math>
+The permanent of an <math>n \times n</math> matrix ''A'' is defined as
+:<math> \operatorname{perm}(A)=\sum_\sigma \prod_{i=1}^{n} a_{i,\sigma(i)}</math>
+where <math>\sigma</math> is a permutation over <math>\{1,2,\dots,n\}</math>. Thus the permanent of ''A'' is equal to the sum of the weights of all cycle-covers of the graph.
+
+===Perfect matchings===
+A square matrix <math>A = (a_{ij})</math> can also be viewed as the [[biadjacency matrix]] of a [[bipartite graph]] which has [[vertex (graph theory)|vertices]] <math>x_1, x_2, \dots, x_n</math> on one side and <math>y_1, y_2, \dots, y_n</math> on the other side, with <math>a_{ij}</math> representing the weight of the edge from vertex <math>x_i</math> to vertex <math>y_j</math>. If the weight of a perfect matching <math>\sigma</math> that matches <math>x_i</math> to <math>y_{\sigma(i)}</math> is defined to be the product of the weights of the edges in the matching, then
+:<math> \operatorname{Weight}(\sigma) = \prod_{i=1}^n a_{i,\sigma(i)}.</math>
+Thus the permanent of ''A'' is equal to the sum of the weights of all perfect matchings of the graph.
+
+=== 0-1 permanents: counting in unweighted graphs ===
+In an unweighted, directed, simple graph, if we set each <math>a_{ij}</math> to be 1 if there is an edge from vertex ''i'' to vertex ''j'', then each nonzero cycle cover has weight 1, and the adjacency matrix has 0-1 entries. Thus the permanent of a 01-matrix is equal to the ''number'' of cycle-covers of an unweighted directed graph.
+
+For an unweighted bipartite graph, if we set ''a''<sub>''i,j''</sub> = 1 if there is an [[graph theory|edge]] between the vertices <math>x_i</math> and <math>y_j</math> and ''a''<sub>''i,j''</sub> = 0 otherwise, then each perfect matching has weight 1. Thus the number of perfect matchings in ''G'' is equal to the permanent of matrix ''A''.<ref name="Kozen">Dexter Kozen. [http://books.google.com/books?id=L_AMnf9UF9QC&pg=PA141&dq=%22permanent+of+a+matrix%22+valiant&as_brr=3&ei=h8BKScClJYOUMtTP6LEO#PPA142,M1 ''The Design and Analysis of Algorithms.''] [[Springer-Verlag]], New York, 1991.
+ISBN 9780387976877;  pp. 141&ndash;142</ref>
+
+== Minimal permanent ==
+For a doubly-stochastic matrix, the matrix <math>a_{ij} =\frac{1}{n}</math>, that is the uniform matrix, has strictly the smallest permanent.
+This was originally conjectured by [[Bartel Leendert van der Waerden|van Der Waeden]], and recently proved [http://planetmath.org/encyclopedia/PermanentConjecture.html].
+
+== Computation ==
+{{main|Computation of the permanent of a matrix|Permanent is sharp-P-complete}}
+The permanent is believed to be more difficult to compute than the determinant. While the determinant can be computed in [[polynomial time]] by [[Gaussian elimination]], Gaussian elimination cannot be used to compute the permanent. Moreover, computing the permanent of a 0-1 matrix (matrix whose entries are 0 or 1) is [[sharp-P-complete|#P-complete]]. Thus, if the permanent can be computed in [[polynomial time]] by any method, then '''[[FP (complexity)|FP]] = [[sharp-P|#P]]''' which is an even stronger statement than [[P = NP problem|P = NP]]. When the entries of ''A'' are nonnegative, however, the permanent can be computed [[approximation algorithm|approximately]] in [[randomized algorithm|probabilistic]] polynomial time, up to an error of ε''M'', where ''M'' is the value of the permanent and ε > 0 is arbitrary.<ref>{{Citation
+|last1= Jerrum | first1= M.
+|author1-link= Mark Jerrum
+|last2=Sinclair | first2= A.
+|author2-link=  Alistair Sinclair
+|last3=Vigoda | first3= E.
+|title=[http://doi.acm.org/10.1145/1008731.1008738 A polynomial-time approximation algorithm for the permanent of a matrix with nonnegative entries]
+|journal= Journal of the ACM
+|year=2004
+|volume= 51|pages=  671–697
+|doi= 10.1145/1008731.1008738
+}}</ref>
+
+==See also==
+*[[Determinant]]
+*[[Bapat–Beg theorem]], an application of permanent in [[order statistics]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://planetmath.org/encyclopedia/Permanent.html Permanent at PlanetMath]
+
+[[Category:Algebra]]
+[[Category:Linear algebra]]
+[[Category:Matrix theory]]
+[[Category:Permutations]]
+
+[[de:Permanente]]
+[[fr:Permanent (mathématiques)]]
+[[ko:퍼머넌트]]
+[[it:Permanente (matematica)]]
+[[he:פרמננטה]]
+[[pl:Permanent]]
+[[ru:Перманент]]
+[[zh:积和式]]</body> </html>

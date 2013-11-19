@@ -1,0 +1,49 @@
+<html> <head> <title>SMA*</title></head><body>{{Technical|date=November 2009}}
+
+{{graph search algorithm}}
+
+The '''Simplified Memory-Bounded Algorithm (SMA*)''' is a variant of [[A* search]] which is memory-bounded<ref>Russell, S. 1992. [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.105.7839&rep=rep1&type=pdf Efficient memory-bounded search methods]. In Proceedings of the 10th European Conference on Artificial intelligence (Vienna, Austria). B. Neumann, Ed. John Wiley & Sons, New York, NY, 1-5.</ref>
+
+Pseudo code:
+<source lang="pascal">
+function SMA-star(problem): path
+  queue: set of nodes, ordered by f-cost;
+begin
+  queue.insert(problem.root-node);
+
+  while True do begin
+    if queue.empty() then return failure;
+    node := queue.begin(); // min-f-cost-node
+    if problem.is-goal(node) then return success;
+    
+    s := next-successor(node)
+    f(s) := max(f(node), g(s) + h(s))
+    if no more successors then
+      update node-s f-cost and those of its ancestors if needed
+    
+    if node.successors ⊆ queue then queue.remove(node);
+    if memory is full then begin
+      badNode := queue.popEnd(); // removes node with highest f-cost out of queue
+      for parent in badNode.parents do begin
+        parent.successors.remove(badNode);
+        if needed then queue.insert(parent); 
+      end;
+    end;
+
+    queue.insert(s);
+  end;
+end;
+</source>
+
+==References==
+{{Reflist}}
+
+{{DEFAULTSORT:Sma*}}
+[[Category:Graph algorithms]]
+[[Category:Routing algorithms]]
+[[Category:Search algorithms]]
+[[Category:Game artificial intelligence]]
+[[Category:Articles with example pseudocode]]
+
+[[de:Simplified Memory-Bounded Algorithm]]
+[[pl:Algorytm SMA*]]</body> </html>

@@ -1,0 +1,216 @@
+<html> <head> <title>Code refactoring</title></head><body>{{Redirect|Refactor|the use of 'refactor' on Wikipedia|Wikipedia:Refactoring talk pages}}
+'''Code refactoring''' is the process of changing a [[computer program]]'s [[source code]] without modifying its external ''[[Functional requirement|functional]]'' behavior in order to improve some of the ''[[Non-functional requirement|nonfunctional]]'' attributes of the software.  Advantages include improved code [[readability]] and reduced [[Cyclomatic complexity|complexity]] to improve the [[maintainability]] of the source code, as well as a more expressive internal [[Software architecture|architecture]] or [[object model]] to improve [[extensibility]].
+
+{{cquote|''By continuously improving the design of code, we make it easier and easier to work with. This is in sharp contrast to what typically happens: little refactoring and a great deal of attention paid to expediently adding new features. If you get into the hygienic habit of refactoring continuously, you'll find that it is easier to extend and maintain code.''|20px|20px|- Joshua Kerievsky, ''Refactoring to Patterns'' <ref name=kerievsky>{{cite book | last = Kerievsky | first = Joshua | title = Refactoring to Patterns | publisher = Addison Wesley | year = 2004  }}</ref>}}
+
+==Overview==
+Refactoring is usually motivated by noticing a [[code smell]].<ref name=fowler>{{cite book | last = Fowler| first = Martin |title = Refactoring: Improving the design of existing code | publisher = Addison Wesley | year = 1999 }}</ref> For example the method at hand may be very long, or it may be a near duplicate of another nearby method. Once recognized, such problems can be addressed by ''refactoring'' the [[source code]], or transforming it into a new form that behaves the same as before but that no longer "smells".  For a long routine, extract one or more smaller subroutines. Or for duplicate routines, remove the duplication and utilize one shared function in their place. Failure to perform refactoring can result in accumulating [[technical debt]].
+
+There are two general categories of benefits to the activity of refactoring.
+# Maintainability. It is easier to fix bugs because the source code is easy to read and the intent of its author is easy to grasp.<ref name=martin>{{cite book | last = Martin | first = Robert |title = Clean Code | publisher = Prentice Hall | year = 2009}}</ref> This might be achieved by reducing large monolithic routines into a set of individually concise, well-named, single-purpose methods. It might be achieved by moving a method to a more appropriate class, or by removing misleading comments.
+# Extensibility. It is easier to extend the capabilities of the application if it uses recognizable [[design patterns]], and it provides some flexibility where none before may have existed.<ref name=kerievsky/>
+
+Before refactoring a section of code, a solid set of automatic [[unit testing|unit tests]] is needed. The tests should demonstrate in a few seconds that the behavior of the module is correct. The process is then an iterative cycle of making a small [[program transformation]], testing it to ensure correctness, and making another small transformation. If at any point a test fails, you undo your last small change and try again in a different way. Through many small steps the program moves from where it was to where you want it to be. Proponents of [[extreme programming]] and other [[agile software development|agile methodologies]] describe this activity as an integral part of the [[Software development process|software development cycle]].
+
+==List of refactoring techniques==
+Here are some examples of code refactorings. A longer list can be found in Fowler's Refactoring book<ref name=fowler/> and on Fowler's Refactoring Website.<ref>[http://www.refactoring.com/catalog/index.html Refactoring techniques in Fowler's refactoring Website]</ref>
+* Techniques that allow for more [[Abstraction (computer science)|abstraction]]
+** [[Encapsulate Field]] – force code to access the field with getter and setter methods
+** [[Generalize Type]] – create more general types to allow for more code sharing
+** Replace type-checking code with State/Strategy<ref>[http://www.refactoring.com/catalog/replaceTypeCodeWithStateStrategy.html Replace type-checking code with State/Strategy]</ref>
+** Replace conditional with polymorphism<ref>[http://www.refactoring.com/catalog/replaceConditionalWithPolymorphism.html Replace conditional with polymorphism]</ref>
+* Techniques for breaking code apart into more logical pieces
+** Extract Method, to turn part of a larger [[method (computer science)|method]] into a new method. By breaking down code in smaller pieces, it is more easily understandable. This is also applicable to [[Function (programming)|function]]s.
+** [[Extract Class]] moves part of the code from an existing class into a new class.
+* Techniques for improving names and location of code
+** Move Method or Move Field – move to a more appropriate [[Class (computer science)|Class]] or source file
+** [[Rename Method]] or Rename Field – changing the name into a new one that better reveals its purpose
+** [[Pull Up refactoring|Pull Up]] – in [[Object-oriented programming|OOP]], move to a [[Superclass (computer science)|superclass]]
+** [[Push Down]] – in [[Object-oriented programming|OOP]], move to a [[Subclass (computer science)|subclass]]
+
+==Hardware refactoring==
+While the term ''refactoring'' originally referred exclusively to refactoring of software code, in recent years code written in [[hardware description language]]s (HDLs) has also been refactored. The term ''hardware refactoring'' is used as a shorthand term for refactoring of code in hardware description languages. Since HDLs are not considered to be [[programming language]]s by most hardware engineers,<ref>[[Hardware description languages#HDL and programming languages]]</ref> hardware refactoring is to be considered a separate field from traditional code refactoring.
+
+Automated refactoring of analog hardware descriptions (in [[VHDL-AMS]]) has been proposed by Zeng and Huss.<ref>Kaiping Zeng, Sorin A. Huss, "Architecture refinements by code refactoring of behavioral VHDL-AMS models". ISCAS 2006</ref> In their approach, refactoring preserves the simulated behavior of a hardware design. The non-functional measurement that improves is that refactored code can be processed by standard synthesis tools, while the original code cannot.
+Refactoring of digital HDLs, albeit manual refactoring, has also been investigated by [[Synopsys]] [[fellow]] Mike Keating.<ref>M. Keating :"Complexity, Abstraction, and the Challenges of Designing Complex Systems", in DAC'08 tutorial [http://www.dac.com/events/eventdetails.aspx?id=77-130]"Bridging a Verification Gap: C++ to RTL for Practical Design"</ref><ref>M. Keating, P. Bricaud: ''Reuse Methodology Manual for System-on-a-Chip Designs'', Kluwer Academic Publishers, 1999.</ref> His target is to make complex systems easier to understand, which increases
+the designers' productivity.
+
+In the summer of 2008, there was an intense discussion about refactoring of [[VHDL]] code on the news://comp.lang.vhdl [[newsgroup]].<ref>http://newsgroups.derkeiler.com/Archive/Comp/comp.lang.vhdl/2008-06/msg00173.html</ref> The discussion revolved around a specific manual refactoring performed by one engineer, and the question to whether or not automated tools for such refactoring exist. 
+
+As of late 2009, [[Sigasi]] is offering automated tool support for VHDL refactoring.<ref>[http://www.eetimes.com/news/latest/showArticle.jhtml?articleID=222001855 www.eetimes.com/news/latest/showArticle.jhtml?articleID=222001855]</ref>
+
+==History==
+In the past refactoring was avoided in development processes. One example of this is that [[Concurrent_Versions_System#Criticism|CVS]] (created in 1984) does not version the moving or renaming of files and directories.
+
+Although refactoring code has been done informally for years, [[William Opdyke]]'s 1992 Ph.D. dissertation<ref name="opdyke-thesis" /> is the first known paper to specifically examine refactoring,<ref name="etymology">[http://martinfowler.com/bliki/EtymologyOfRefactoring.html Martin Fowler, "MF Bliki: EtymologyOfRefactoring"]</ref> although all the theory and machinery have long been available as [[program transformation]] systems.  All of these resources provide a catalog of common methods for refactoring; a refactoring method has a description of how to apply the [[Scientific method|method]] and [[indicator]]s for when you should (or should not) apply the method.
+
+[[Martin Fowler]]'s book ''Refactoring: Improving the Design of Existing Code''<ref name="fowler"/>  is the canonical reference.
+
+The first known use of the term "refactoring" in the published literature was in a September, 1990 article by William F. Opdyke and Ralph E. Johnson.<ref name="opdyke90">{{cite conference
+  | first = William F.
+  | last = Opdyke
+  | authorlink = William Opdyke
+  | coauthors = Johnson, Ralph E.
+  | title = Refactoring: An Aid in Designing Application Frameworks and Evolving Object-Oriented Systems
+  | booktitle = Proceedings of the Symposium on Object Oriented Programming Emphasizing Practical Applications (SOOPPA)
+  | publisher = ACM
+  | year = 1990
+  | month = September
+}}</ref>
+Opdyke's Ph.D. thesis,<ref name="opdyke-thesis">{{cite paper
+  | first = William F
+  | last = Opdyke
+  | authorlink = William Opdyke
+  | title = Refactoring Object-Oriented Frameworks
+  | version = Ph.D. thesis
+  | publisher = University of Illinois at Urbana-Champaign
+  | year = 1992
+  | month = June
+  | url = ftp://st.cs.uiuc.edu/pub/papers/refactoring/opdyke-thesis.ps.Z
+  | format = compressed Postscript
+  | id = 
+  | accessdate = 2008-02-12
+}}</ref> published in 1992, also used this term.<ref name="etymology" />
+
+The term "factoring" has been used in the [[Forth (programming language)|Forth]] community since at least the early 1980s.  Chapter Six of [[Leo Brodie]]'s book ''[[Thinking Forth]]'' (1984) is dedicated to the subject.
+
+In extreme programming, the Extract Method refactoring technique has essentially the same meaning as factoring in Forth; to break down a "word" (or [[Function (programming)|function]]) into smaller, more easily maintained functions.
+
+== Automated code refactoring ==
+Many software [[text editor|editors]] and [[Integrated development environment|IDEs]] have automated refactoring support. Here is a list of a few of these editors, or so-called [[Refactoring Browser|refactoring browsers]].
+* [[IntelliJ IDEA]] (for [[Java (programming language)|Java]])
+* [[Eclipse (software)|Eclipse's]] [[Java (programming language)|Java]] Development Toolkit (JDT)
+* [[NetBeans]] (for Java)
+** and [http://kenai.com/projects/refactoringng/ RefactoringNG], a Netbeans module for refactoring where you can write [[Source-to-source compiler|transformations]] rules of the program's [[abstract syntax tree]].
+* [[Embarcadero Delphi]]
+* [[Visual Studio]] (for .NET)
+* [[JustCode]] (addon for Visual Studio)
+* [[ReSharper]] (addon for Visual Studio)
+* [[Coderush]] (addon for Visual Studio)
+* [[Visual Assist]] (addon for Visual Studio with refactoring support for VB, VB.NET. C# and C++)
+* [[DMS Software Reengineering Toolkit]] (Implements large-scale refactoring for C, C++, C#, COBOL, Java, PHP and other languages)
+* [[Photran]] a [[Fortran]] plugin for the [[Eclipse (software)|Eclipse IDE]]
+* [[SharpSort]] addin for [[Visual Studio 2008]]
+* [[Sigasi HDT]] (for VHDL)
+* [[XCode]]
+* [[Smalltalk Refactoring Browser]] (for [[Smalltalk]])
+* [[Simplifide]] (for Verilog, VHDL and SystemVerilog)
+
+==See also==
+* [[Code review]]
+* [[Design pattern (computer science)]]
+* [[Obfuscated code]]
+* [[Peer review]]
+* [[Prefactoring]]
+* [[Rewrite (programming)]]
+* [[Separation of concerns]]
+* [[Test-driven development]]
+* [[Unit testing]]
+* [[Code Factoring]]
+* [[Redesign (software)]]
+
+==References==
+{{reflist|colwidth=30em}}
+
+==Further reading==
+*{{cite book
+ | first = Martin
+ | last = Fowler
+ | authorlink = Martin Fowler
+ | year = 1999
+ | title = Refactoring. Improving the Design of Existing Code
+ | publisher = Addison-Wesley
+ | isbn = 0-201-48567-2
+}}
+*{{cite book
+ | first = William C.
+ | last = Wake
+ | authorlink =
+ | year = 2003
+ | title = Refactoring Workbook
+ | publisher = Addison-Wesley
+ | isbn = 0-321-10929-5
+}}
+* Mens, Tom and Tourwé, Tom (2004) [http://doi.ieeecomputersociety.org/10.1109/TSE.2004.1265817 ''A Survey of Software Refactoring''], IEEE Transactions on Software Engineering, February 2004 (vol. 30 no. 2), pp. 126-139
+*{{cite book
+ | first = Michael C
+ | last = Feathers
+ | authorlink =
+ | year = 2004
+ | title = Working Effectively with Legacy Code
+ | publisher = Prentice Hall
+ | isbn = 0-13-117705-2
+}}
+*{{cite book
+ | first = Joshua
+ | last = Kerievsky
+ | authorlink =
+ | year = 2004
+ | title = Refactoring To Patterns
+ | publisher = Addison-Wesley
+ | isbn = 0-321-21335-1
+}}
+*{{cite book
+ | first = Danijel
+ | last = Arsenovski
+ | authorlink =
+ | year = 2008
+ | title = Professional Refactoring in Visual Basic
+ | publisher = Wrox
+ | isbn = 0-47-017979-1
+}}
+*{{cite book
+ | first = Danijel
+ | last = Arsenovski
+ | authorlink =
+ | year = 2009
+ | title = Professional Refactoring in C# and ASP.NET
+ | publisher = Wrox
+ | isbn = 978-0470434529
+}}
+*{{cite book
+ | first = Peter
+ | last = Ritchie
+ | authorlink =
+ | year = 2010
+ | title = Refactoring with Visual Studio 2010
+ | publisher = Packt
+ | isbn = 978-1849680103
+}}
+
+==External links==
+*[http://c2.com/cgi/wiki?WhatIsRefactoring What Is Refactoring?] (c2.com article)
+*[http://www.refactoring.com/ Martin Fowler's homepage about refactoring]
+*[http://www.theserverside.com/articles/article.tss?l=AspectOrientedRefactoringPart1 Aspect-Oriented Refactoring] by [[Ramnivas Laddad]]
+*[http://csdl.computer.org/comp/trans/ts/2004/02/e2toc.htm A Survey of Software Refactoring] by [[Tom Mens]] and [[Tom Tourwé]]
+*[http://www.methodsandtools.com/archive/archive.php?id=4 Refactoring Java Code]
+*[http://industriallogic.com/xp/refactoring/catalog.html Refactoring To Patterns Catalog]
+*[http://www.industriallogic.com/papers/extractboolean.html Extract Boolean Variable from Conditional] (a refactoring pattern not listed in the above catalog)
+*[http://www.testingtv.com/2009/09/24/test-driven-development-with-refactoring/ Test-Driven Development With Refactoring]
+*[http://blog.symprise.net/2009/04/revisiting-fowlers-video-store-refactoring-code-reengineering-abstractions/ Revisiting Fowler’s Video Store: Refactoring Code, Refining Abstractions]
+
+[[Category:Extreme Programming]]
+[[Category:Refactoring]]
+[[Category:Technology neologisms]]
+
+[[ar:إعادة هيكلة الكود]]
+[[ca:Refacció]]
+[[cs:Refaktorování]]
+[[da:Refactoring]]
+[[de:Refactoring]]
+[[es:Refactorización]]
+[[fr:Refactorisation]]
+[[gl:Refactorización]]
+[[ko:리팩토링]]
+[[it:Refactoring]]
+[[lt:Pertvarkymas (programavimas)]]
+[[nl:Refactoren]]
+[[ja:リファクタリング (プログラミング)]]
+[[pl:Refaktoryzacja]]
+[[pt:Refatoração]]
+[[ru:Рефакторинг]]
+[[fi:Refaktorointi]]
+[[sv:Omstrukturering av kod]]
+[[uk:Рефакторинг]]
+[[vi:Cải tiến mã nguồn]]
+[[zh:代码重构]]</body> </html>

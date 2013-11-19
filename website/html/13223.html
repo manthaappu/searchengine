@@ -1,0 +1,124 @@
+<html> <head> <title>Factorization of polynomials</title></head><body>In [[mathematics]] and [[computer algebra]], '''polynomial factorization'''  refers to factoring a polynomial into [[irreducible polynomial]]s over a given [[field (mathematics)|field]].
+
+==Formulation of the question==
+
+Other factorizations, such as [[square-free polynomial|square-free]] factorization exist, but the irreducible factorization, the most common, is the subject of this article.
+
+Factorization depends strongly on the choice of field.  For example, the [[fundamental theorem of algebra]], which states that all polynomials with [[complex number|complex]] coefficients have complex roots, implies that a polynomial with [[integer]] [[coefficient]]s can be completely reduced to [[linear function|linear factor]]s over the complex field '''C'''.
+
+On the other hand, such a polynomial may only be reducible to linear and [[quadratic function|quadratic]] factors over the [[real number|real]] field '''R'''.  Over the [[rational number]] field '''Q''', it is possible that no factorization at all may be possible.  From a more practical vantage point, the fundamental theorem is only an [[existence proof]], and offers little insight into the common problem of actually finding the roots of a given polynomial.
+
+==Factoring over the integers and rationals==
+{{details|Gauss's lemma (polynomial)}}
+It can be shown that factoring over '''Q''' (the rational numbers) can be reduced to factoring over '''Z''' (the integers). This is a specific example of a more general case &mdash; factoring over a [[field of fractions]] can be reduced to factoring over the corresponding [[integral domain]]. This algebraic point goes by the name of [[Gauss's lemma (polynomial)|Gauss's lemma]].
+
+The classic proof, due to [[Carl Friedrich Gauss|Gauss]], first factors a polynomial into its ''content'', a rational number, and its ''primitive part'', a polynomial whose coefficients are pure integers and share no common divisor among them.  Any polynomial with rational coefficients can be factored in this way, using a content composed of the greatest common divisor of the numerators, and the least common multiple of the denominators.  This factorization is unique.
+
+For example,
+
+:<math>
+10x^2 + 5x + 5 = 5 (2x^2 + x + 1) \,
+</math>
+
+and
+
+:<math>
+\frac{1}{3}x^5 + \frac{7}{2} x^2 + 2x + 1 = \frac{1}{6} ( 2x^5 + 21x^2 + 12x + 6)
+</math>
+
+since <math>\mathrm{GCD}(1,7,2,1)=1</math> and <math>\mathrm{LCM}(3,2)=6</math>.
+
+Now, any polynomial with rational coefficients can be split into a content and a primitive polynomial, and in particular the factors of any factorization (over '''Q''') of such a polynomial can also be so split.  Since the content and the primitive polynomials are unique, and since the product of primitive polynomials is itself primitive, the primitive part of the polynomial must factor into the primitive parts of the factors.  In particular, if a polynomial with integer coefficients can be factored at all, it can be factored into integer polynomials.  So factoring a polynomial with rational coefficients can be reduced to finding integer factorizations of its primitive part.
+
+===Kronecker's method===
+
+Since integer polynomials must factor into integer polynomial factors, and evaluating integer polynomials at integer values must produce integers, the integer values of a polynomial can be factored in only a finite number of ways, and produce only a finite number of possible polynomial factors.
+
+For example, consider
+
+:<math>f(x) = x^5 + x^4 + x^2 + x + 2</math>.
+
+If this polynomial factors over '''Z''', then at least one of its factors must be of degree two or less.  We need three values to uniquely fit a second degree polynomial.  We'll use <math>f(0) = 2</math>, <math>f(1) = 6</math> and <math>f(-1) = 2</math>.  Now, 2 can only factor as
+
+:1×2, 2×1, (&minus;1)×(&minus;2), or (&minus;2)×(&minus;1).
+
+Therefore, if a second degree integer polynomial factor exists, it must take one of the values
+
+:1, 2, &minus;1, or &minus;2
+
+at <math>x=0</math>, and likewise at <math>x=-1</math>.  There are eight different ways to factor 6, so there are
+
+:4×4×8 = 128
+
+possible combinations, of which half can be discarded as the negatives of the other half, corresponding to 64 possible second degree integer polynomials which must be checked.  These are the only possible integer polynomial factors of <math>f(x)</math>.  Testing them exhaustively reveals that
+
+:<math>g(x) = x^2+x+1, \,</math>
+
+constructed from <math>g(0)=1</math>, <math>g(1)=3</math> and <math>g(-1)=1</math>, factors <math>f(x)</math>.
+
+(''Van der Waerden'', Sections 5.4 and 5.6)
+
+===LLL algorithm===
+
+The LLL algorithm {{harv|Lenstra|Lenstra|Lovász|1982}}, was the first polynomial time algorithm for factoring rational polynomials, and uses the
+[[Lenstra–Lenstra–Lovász lattice basis reduction algorithm]].
+
+One variation of their algorithm runs as follows: calculate a complex (or ''p''-adic) root α of the polynomial ''P'' to high precision, then use the [[Lenstra–Lenstra–Lovász lattice basis reduction algorithm]] to find an approximate linear relation between 1, α, α<sup>2</sup>, α<sup>3</sup>, ... with integer coefficients, which with luck will be an exact linear relation and a polynomial factor of ''P''.
+
+==Factoring over finite fields==
+See [[Berlekamp's algorithm]] and [[Cantor–Zassenhaus algorithm]].
+
+==Factoring over algebraic extensions==
+
+We can factor a polynomial <math>p(x) \in K[x] </math>, where <math>K</math> is a finite field extension of <math>\mathbb{Q}</math>.  First we eliminate any repeated factors in <math>p(x)</math> by taking greatest common divisors with its derivative.  Next we write <math>L= K[x]/p(x)</math> explicitly as an algebra over <math>\mathbb{Q}</math>.  We next pick a random element <math>\alpha \in L</math>.  By the primitive element theorem, <math>\alpha</math> generates <math>L</math> over <math>\mathbb{Q}</math> with high probability.  If this is the case, we can compute the minimal polynomial, <math>q(y)\in \mathbb{Q}[y]</math> of <math>\alpha</math> over <math>\mathbb{Q}</math>.  Factoring
+
+:<math>q(y) = \prod_{i=1}^{n} q_i(y)</math>
+
+over <math>\mathbb{Q}[y]</math>, we determine that
+
+:<math>L = \mathbb{Q}[\alpha] = \mathbb{Q}[y]/q(y) = \prod_{i=1}^n \mathbb{Q}[y]/q_i(y)</math>
+
+(notice that <math>L</math> is reduced since <math>p(x)</math> is), where <math>\alpha</math> corresponds to the element <math>(y,y,\ldots,y)</math>.  Note that this is the unique decomposition of <math>L</math> as a product fields.  Hence this decomposition is the same as
+
+:<math>\prod_{i=1}^m K[x]/p_i(x)</math>
+
+where
+
+:<math>p(x) = \prod_{i=1}^m p_i(x)</math>
+
+is the factorization of <math>p(x)</math> over <math>K[x]</math>.  By writing <math>x\in L</math> and generators of <math>K</math> as a polynomials in <math>\alpha</math>, we can determine the embeddings of <math>x</math> and <math>K</math> into the components <math>\mathbb{Q}[y]/q_i(y)=K[x]/p_i(x)</math>.  By finding the minimal polynomial of <math>x</math> in this ring, we have computed <math>p_i(x)</math>, and thus factored <math>p(x)</math> over <math>K.</math>
+
+==Bibliography==
+* {{cite journal|title=Quantitative Estimates for Polynomials in One or Several Variables: From Analysis and Number Theory to Symbolic and Massively Parallel Computation
+|author=Bernard Beauzamy, [[Per Enflo]], Paul Wang
+|journal=Mathematics Magazine
+|volume=67
+|issue=4
+|month=October
+|year=1994
+|pages=243–257
+|url=http://www.jstor.org/stable/2690843|ref=harv}} (accessible to readers with undergraduate mathematics)
+*{{Cite book | last1=Cohen | first1=Henri | title=A course in computational algebraic number theory | publisher=[[Springer-Verlag]] | location=Berlin, New York | series=Graduate Texts in Mathematics | isbn=978-3-540-55640-4 | id={{MathSciNet | id = 1228206}} | year=1993 | volume=138 | ref=harv | postscript=<!-- Bot inserted parameter. Either remove it; or change its value to "." for the cite to end in a ".", as necessary. -->}}
+
+*{{cite book
+|author=[[Donald E. Knuth|Knuth, Donald E]]
+|chapter=4.6.2 Factorization of Polynomials
+|title=Seminumerical Algorithms
+|series=The Art of Computer Programming
+|volume=2
+|edition=Third
+|location=Reading, Massachusetts
+|publisher=Addison-Wesley
+|year=1997
+|pages=439–461, 678–691<!--   xiv+762 -->
+|isbn=0-201-89684-2}}
+*{{Cite journal | last1=Lenstra | first1=A. K. | author1-link=A. K. Lenstra | last2=Lenstra  | first2=H. W. | last3=Lovász | first3=László | author3-link=László Lovász | title=Factoring polynomials with rational coefficients | doi=10.1007/BF01457454 | id={{MathSciNet | id = 682664}} | year=1982 | journal=[[Mathematische Annalen]] | issn=0025-5831 | volume=261 | issue=4 | pages=515–534 | ref=harv | postscript=<!-- Bot inserted parameter. Either remove it; or change its value to "." for the cite to end in a ".", as necessary. -->}}
+* [[Bartel Leendert van der Waerden|Van der Waerden]], ''Algebra'' (1970), trans. Blum and Schulenberger, Frederick Ungar.
+
+{{DEFAULTSORT:Factorization Of Polynomials}}
+[[Category:Articles with inconsistent citation formats]]
+[[Category:Polynomials]]
+[[Category:Computer algebra]]
+
+[[de:Faktorisierung von Polynomen]]
+[[sv:Polynomfaktorisering]]</body> </html>

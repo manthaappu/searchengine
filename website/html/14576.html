@@ -1,0 +1,71 @@
+<html> <head> <title>GNSS positioning calculation</title></head><body>{{Merge|Global navigation satellite system|date=March 2010}}
+
+<!--{{nointro}}
+{{context}}-->
+The [[global navigation satellite system]] (GNSS) positioning for receiver's position is derived through the following calculation steps by using its measurements.
+
+==Calculation steps==
+# A [[global navigation satellite system]] (GNSS) receiver measures the apparent transmitting time, <math>\scriptstyle \tilde{t}_i</math>, or "phase", of GNSS signals emitted from four or more GNSS [[satellite]]s (<math>\scriptstyle i=1,2,3,4,..,n</math> ), simultaneously.<ref name="Misra_Enge">Misra, P. and Enge, P.,  Global Positioning System: Signals, Measurements, and Performance, 2nd, Ganga-Jamuna Press, 2006.</ref>
+# GNSS satellites broadcast the messages of satellites' [[ephemeris]], <math>\scriptstyle \boldsymbol{r}_i (t)</math>, and intrinsic clock bias (i.e., clock advance), <math>\scriptstyle\delta t_{\text{clock,sv},i} (t)</math> as the functions of ([[atomic clock|atomic]]) [[standard time]], e.g., [[GPST]].<ref name="IS-GPS">[http://www.navcen.uscg.gov/pdf/IS-GPS-200D.pdf The interface specification of NAVSTAR GLOBAL POSITIONING SYSTEM]</ref>
+# The transmitting time of GNSS signals, <math>\scriptstyle  t_i</math>, is thus derived from the non-[[closed-form]] [[equations]] <math>\scriptstyle \tilde{t}_i = t_i + \delta t_{\text{clock},i} (t_i)</math> and <math>\scriptstyle \delta t_{\text{clock},i} (t_i) = \delta t_{\text{clock,sv},i} (t_i) + \delta t_{\text{orbit-relativ},i} (\boldsymbol{r}_i, \dot{\boldsymbol{r}}_i)</math>, where <math>\scriptstyle \delta t_{\text{orbit-relativ},i} (\boldsymbol{r}_i, \dot{\boldsymbol{r}}_i)</math> is the [[Theory of relativity|relativistic]] clock bias, periodically risen from the satellite's [[orbital eccentricity]] and Earth's [[gravity field]].<ref name="IS-GPS"/>  The satellite's position and velocity are determined by <math>\scriptstyle t_i</math>: <math>\scriptstyle \boldsymbol{r}_i = \boldsymbol{r}_i (t_i)</math> and <math>\scriptstyle \dot{\boldsymbol{r}}_i = \dot{\boldsymbol{r}}_i (t_i)</math>.   <!-- The satellite's position is derived from <math>\scriptstyle \boldsymbol{r}_i = \boldsymbol{r}_i (t_i)</math>. -->
+# In the field of GNSS, "geometric range", <math>\scriptstyle r(\boldsymbol{r}_A, \boldsymbol{r}_B) </math>, is defined as straight range from <math>\scriptstyle\boldsymbol{r}_A</math> to <math>\scriptstyle\boldsymbol{r}_B</math> in [[inertial frame]], e.g., [[Earth Centered Inertial]] (ECI) one, not in [[rotating frame]].<ref name="IS-GPS"/>
+# The receiver's position, <math>\scriptstyle \boldsymbol{r}_{\text{rec}}</math>,  and reception time, <math>\scriptstyle  t_{\text{rec}}</math>,  satisfy the [[light-cone]] equation of <math>\scriptstyle r(\boldsymbol{r}_i, \boldsymbol{r}_{\text{rec}}) / c + (t_i - t_{\text{rec}}) = 0 </math> in [[inertial frame]], where <math>\scriptstyle  c</math> is the [[speed of light]]. The signal [[transit time]] is <math>-(t_i - t_{\text{rec}})</math>.
+# The above is extended to the [[Global navigation satellite system|satellite-navigation]] [[positioning]] [[equation]], <math>\scriptstyle r(\boldsymbol{r}_i, \boldsymbol{r}_{\text{rec}}) / c + (t_i - t_{\text{rec}}) + \delta t_{\text{atmos},i} - \delta t_{\text{meas-err},i} = 0 </math>, where <math>\scriptstyle \delta t_{\text{atmos},i}</math> is [[atmospheric delay]] (= [[ionospheric delay]] + [[tropospheric delay]]) along signal path and <math>\scriptstyle \delta t_{\text{meas-err},i}</math> is the measurement error.
+# The [[Gauss–Newton]] method can be used to solve the [[nonlinear]] [[least-squares problem]] for the solution: <math>\scriptstyle (\hat{\boldsymbol{r}}_{\text{rec}}, \hat{t}_{\text{rec}}) = \underset{(\boldsymbol{r}_{\text{rec}}, t_{\text{rec}}) }{\arg}    \min \sum_{i=1}^n ( \delta t_{\text{meas-err},i}  / \sigma_{\delta t_{\text{meas-err},i} } )^2 </math>.
+<!-- , in order to obtain the solution of the receiver's position, <math>\scriptstyle \boldsymbol{r}_{\text{rec}}</math>, and reception time, <math>\scriptstyle t_{\text{rec}}</math>. -->
+
+==The solution illustrated ==
+
+[[Image:Light cones.svg|thumb|center|alt=|Essentially, the solution, <math>\scriptstyle (\hat{\boldsymbol{r}}_{\text{rec}}, \hat{t}_{\text{rec}}) </math>, is the intersection of [[light cone]]s.]]
+
+==The GPS case ==
+
+* For [[Global Positioning System]] (GPS),<ref name="IS-GPS"/> the non-closed-form equations in step 3 result in <math>\scriptstyle \Delta t_i (t_i, E_i) := t_i + \delta t_{\text{clock},i} (t_i, E_i) - \tilde{t}_i = 0</math> and <math>\scriptstyle \Delta M_i (t_i, E_i) := M_i (t_i) - (E_i - e_i \sin E_i) = 0</math>, in which <math>\scriptstyle E_i</math> is the orbital [[eccentric anomaly]] of satellite <math> i</math>, <math>\scriptstyle M_i</math> is the [[mean anomaly]], <math>\scriptstyle e_i</math> is the [[eccentricity]], and <math>\scriptstyle \delta t_{\text{clock},i} (t_i, E_i) = \delta t_{\text{clock,sv},i} (t_i) + \delta t_{\text{orbit-relativ},i} (E_i)</math>.
+* The above can be solved by using the [[bivariate]] [[Newton-Raphson]] method on <math>\scriptstyle t_i</math> and <math>\scriptstyle E_i</math>. Two times of iteration will be necessary and sufficient in most cases. Its iterative update will be described by using the approximated [[inverse]] of [[Jacobian]] matrix as follows:
+<math>\scriptscriptstyle
+\begin{pmatrix}
+t_i \\
+E_i \\
+\end{pmatrix}
+\leftarrow 
+\begin{pmatrix}
+t_i \\
+E_i \\
+\end{pmatrix}
+- 
+\begin{pmatrix}
+1 && 0 \\
+ \frac{\dot{M}_i (t_i)}{1 - e_i \cos E_i} && \frac{-1}{1 - e_i \cos E_i} \\
+\end{pmatrix}
+\begin{pmatrix}
+\Delta t_i \\
+\Delta M_i \\
+\end{pmatrix}
+</math>
+.
+* Tropospheric delay should not be ignored, while the [[Global Positioning System]] (GPS) specification <ref name="IS-GPS"/> doesn't mention it clearly.
+
+==Note==
+* In the field of GNSS, <math>\scriptstyle \tilde{r}_i = -c (\tilde{t}_i - \tilde{t}_{\text{rec}})</math> is called [[pseudorange]], where <math>\scriptstyle \tilde{t}_{\text{rec}}</math> is a provisional reception time of the receiver. <math>\scriptstyle \delta t_{\text{clock,rec}} = \tilde{t}_{\text{rec}} - t_{\text{rec}}</math> is called receriver's clock bias (i.e., clock advance).<ref name="Misra_Enge"/>
+
+* Standard GNSS receivers output <math>\scriptstyle \tilde{r}_i</math> and <math>\scriptstyle \tilde{t}_{\text{rec}}</math> per an observation [[epoch]].
+
+* The temporal variation in the relativistic clock bias of satellite is linear if its orbit is circular (and thus its velocity is uniform in inertial frame).
+
+* The signal [[transit time]] is expressed as <math>\scriptstyle -(t_i - t_{\text{rec}}) = \tilde{r}_i/c + \delta t_{\text{clock},i} - \delta t_{\text{clock,rec}} </math>, whose right side is [[round-off error|round-off-error]] resistive during calculation.
+
+* The geometric range is calculated as <math>\scriptstyle r(\boldsymbol{r}_i, \boldsymbol{r}_{\text{rec}}) = |  \Omega_{\text{E}} (t_i - t_{\text{rec}}) \boldsymbol{r}_{i,\text{ECEF}} - \boldsymbol{r}_{\text{rec,ECEF}}  | </math>, where the [[ECEF|Earth-centred Earth-fixed]] (ECEF) rotating frame (e.g., [[WGS84]] or [[International Terrestrial Reference Frame|ITRF]]) is used in the right side and <math>\scriptstyle \Omega_{\text{E}} </math> is the Earth rotating matrix with the argument of the signal [[transit time]].<ref name="IS-GPS"/> The matrix can be factorized as <math>\scriptstyle \Omega_{\text{E}} (t_i - t_{\text{rec}})  = \Omega_{\text{E}} (\delta t_{\text{clock,rec}}) \Omega_{\text{E}} (-\tilde{r}_i/c - \delta t_{\text{clock},i}) </math>.
+
+* The line-of-sight unit vector of satellite observed at <math>\scriptstyle \boldsymbol{r}_{\text{rec,ECEF}}</math> is described as: <math>\scriptstyle \boldsymbol{e}_{i, \text{rec,ECEF}} = -\frac{\partial r(\boldsymbol{r}_i, \boldsymbol{r}_{\text{rec}})}{\partial \boldsymbol{r}_{\text{rec,ECEF}}} </math>.
+
+* The [[Global navigation satellite system|satellite-navigation]] [[positioning]] [[equation]] may be expressed by using the [[variables]], <math>\scriptstyle \boldsymbol{r}_{\text{rec,ECEF}} </math> and <math>\scriptstyle \delta t_{\text{clock,rec}} </math>.
+
+* The [[nonlinearity]] of the vertical dependency of [[tropospheric delay]] degrades the convergence efficiency in the [[Gauss–Newton]] iterations.
+
+* The above notation is different from that in the Wikipedia articles, 'Position calculation introduction' and 'Position calculation advanced', of [[Global Positioning System]] (GPS).
+
+==References==
+<references/>
+
+{{DEFAULTSORT:Gnss Positioning Calculation}}
+[[Category:Satellite navigation systems]]</body> </html>

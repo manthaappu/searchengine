@@ -1,0 +1,327 @@
+<html> <head> <title>SHA-1</title></head><body>{{Infobox cryptographic hash function
+| name           = SHA-1
+| image          = 
+| caption        = 
+<!-- General -->
+| designers      = [[National Security Agency]]
+| publish date   = 1993 (SHA-0),<br /> 1995 (SHA-1)
+| series         = (SHA-0), SHA-1, [[SHA-2]], [[SHA-3]]
+| derived from   = 
+| derived to     = 
+| related to     = 
+| certification  = [[Federal Information Processing Standard|FIPS]]
+<!-- Detail -->
+| digest size    = 160 bits
+| structure      = [[Merkle–Damgård construction]]
+| rounds         = 80
+| cryptanalysis  = A 2008 attack by Stéphane Manuel breaks the hash function, as it can produce hash collisions with a complexity of 2<sup>51</sup> operations.<ref>{{Cite journal |author=Stéphane Manuel |title=Classification and Generation of Disturbance Vectors for Collision Attacks against SHA-1 |url=http://eprint.iacr.org/2008/469.pdf }}</ref>
+}}
+In cryptography, '''SHA-1''' is a [[cryptographic hash function]] designed by the [[National Security Agency]] (NSA) and published by the [[National Institute of Standards and Technology|NIST]] as a U.S. [[Federal Information Processing Standard]]. SHA stands for '''[[Secure Hash Algorithm]]'''. The three SHA [[algorithm]]s are structured differently and are distinguished as ''SHA-0'', ''SHA-1'', and ''[[SHA-2]]''. SHA-1 is very similar to SHA-0, but corrects an error in the original SHA hash specification that led to significant weaknesses. The SHA-0 algorithm was not adopted by many applications. SHA-2 on the other hand significantly differs from the SHA-1 hash function.
+
+SHA-1 is the most widely used of the existing SHA hash functions, and is employed in several widely-used security applications and protocols. In 2005, security flaws were identified in SHA-1, namely that a mathematical weakness might exist, indicating that a stronger hash function would be desirable.<ref>[http://www.schneier.com/blog/archives/2005/02/cryptanalysis_o.html Schneier on Security: Cryptanalysis of SHA-1<!-- Bot generated title -->]</ref> Although no successful attacks have yet been reported on the SHA-2 variants, they are algorithmically similar to SHA-1 and so efforts are underway to develop improved alternatives.<ref>[http://www.schneier.com/blog/archives/2005/11/nist_hash_works_4.html Schneier on Security: NIST Hash Workshop Liveblogging (5)<!-- Bot generated title -->]</ref><ref>[http://www.heise-online.co.uk/security/Hash-cracked--/features/75686/2 Hash cracked – heise Security<!-- Bot generated title -->]</ref> A new hash standard, SHA-3, is currently under development — an ongoing [[NIST hash function competition]] is scheduled to end with the selection of a winning function in 2012.
+
+==The SHA-1 hash function==
+[[File:SHA-1.svg|thumbnail|right|300px|One iteration within the SHA-1 compression function:<br>
+A, B, C, D and E are 32-bit [[Word (computing)|words]] of the state;<br>
+''F'' is a nonlinear function that varies;<br>
+[[File:lll.png|left shift]]<sub>''n''</sub> denotes a left bit rotation by ''n'' places;<br>
+''n'' varies for each operation;<br>
+W<sub>t</sub> is the expanded message word of round t;<br>
+K<sub>t</sub> is the round constant of round t;<br>
+[[Image:Boxplus.png|Addition]] denotes addition modulo 2<sup>32</sup>.]]
+
+SHA-1 produces a 160-bit message digest based on principles similar to those used by [[Ron Rivest|Ronald L. Rivest]] of [[Massachusetts Institute of Technology|MIT]] in the design of the [[MD4]] and [[MD5]] message digest algorithms, but has a more conservative design.
+
+The original specification of the algorithm was published in 1993 as the ''Secure Hash Standard'', [[Federal Information Processing Standard|FIPS]] PUB 180, by US government standards agency [[NIST]] (National Institute of Standards and Technology). This version is now often referred to as ''SHA-0''. It was withdrawn by [[NSA]] shortly after publication and was superseded by the revised version, published in 1995 in FIPS PUB 180-1 and commonly referred to as ''SHA-1''. SHA-1 differs from SHA-0 only by a single bitwise rotation in the message schedule of its [[One-way compression function|compression function]]; this was done, according to NSA, to correct a flaw in the original algorithm which reduced its cryptographic security. However, NSA did not provide any further explanation or identify the flaw that was corrected. Weaknesses have subsequently been reported in both SHA-0 and SHA-1. SHA-1 appears to provide greater resistance to attacks, supporting the NSA’s assertion that the change increased the security.
+
+{{-}}
+
+==Comparison of SHA functions==
+In the table below, ''internal state'' means the “internal hash sum” after each compression of a data block.
+{{See|Merkle–Damgård construction}}
+
+{| border=1 class="wikitable"
+! colspan="2" | Algorithm and variant
+!Output size<br />(bits)
+!Internal state<br />size (bits)
+!Block size<br />(bits)
+!Max message<br />size (bits)
+!Word size<br />(bits)
+!Rounds
+!Operations
+![[Hash collision|Collisions]]<br />found?
+|- align="center"
+| colspan="2" | '''SHA-0''' ||rowspan=2| 160 ||rowspan=2| 160 ||rowspan=2| 512 ||rowspan=2| 2<sup>64</sup> − 1 ||rowspan=2| 32 ||rowspan=2| 80 ||rowspan=2| +,and,or,xor,rot || Yes
+|- align="center"
+| colspan="2" | '''SHA-1''' || No <ref>[http://eprint.iacr.org/2008/469.pdf Classification and Generation of Disturbance Vectors for Collision Attacks against SHA-1]</ref>
+|- align="center"
+| rowspan="2" | '''SHA-2''' || ''SHA-256/224'' || 256/224 || 256 || 512 || 2<sup>64</sup> − 1 || 32 || 64 ||rowspan=2| +,and,or,xor,shr,rot ||rowspan=2| No
+|- align="center"
+| ''SHA-512/384'' || 512/384 || 512 || 1024 || 2<sup>128</sup> − 1 || 64 || 80
+|}
+
+==Applications==
+{{details|Cryptographic hash function#Applications}}
+SHA-1 forms part of several widely-used security applications and protocols, including [[Transport Layer Security|TLS]] and [[Secure Sockets Layer|SSL]], [[Pretty Good Privacy|PGP]], [[Secure Shell|SSH]], [[S/MIME]], and [[IPsec]]. Those applications can also use [[MD5]]; both MD5 and SHA-1 are descended from [[MD4]]. SHA-1 hashing is also used in [[distributed revision control]] systems such as [[Git (software)|Git]], [[Mercurial (software)|Mercurial]], and [[Monotone (software)|Monotone]] to identify revisions, and to detect [[data corruption]] or tampering. The algorithm has also been used on [[Nintendo]] console [[Wii]] for signature verification during [[Booting|boot]] but a significant implementation flaw allowed an attacker to bypass the security scheme.<ref>http://debugmo.de/?p=61 Debugmo.de "For verifiying the hash (which is the only thing they verify in the signature), they have chosen to use a function (strncmp) which stops on the first nullbyte – with a positive result. Out of the 160 bits of the SHA1-hash, up to 152 bits are thrown away."</ref>
+
+SHA-1 and SHA-2 are the secure hash algorithms required by law for use in certain [[U.S. Government]] applications, including use within other cryptographic algorithms and protocols, for the protection of sensitive unclassified information. FIPS PUB 180-1 also encouraged adoption and use of SHA-1 by private and commercial organizations. SHA-1 is being retired for most government uses; the U.S. National Institute of Standards and Technology says, "Federal agencies '''''should''''' stop using SHA-1 for...applications that require collision resistance as soon as practical, and must use the [[SHA-2]] family of hash functions for these applications after 2010" (emphasis in original).<ref>National Institute on Standards and Technology Computer Security Resource Center, [http://csrc.nist.gov/groups/ST/hash/policy.html NIST's Policy on Hash Functions], accessed March 29, 2009.</ref>
+
+A prime motivation for the publication of the Secure Hash Algorithm was the [[Digital Signature Algorithm|Digital Signature Standard]], in which it is incorporated.
+
+The SHA hash functions have been used as the basis for the [[SHACAL]] [[block cipher]]s.
+
+==Cryptanalysis and validation==
+For a hash function for which ''L'' is the number of bits in the message digest, finding a message that corresponds to a given message digest can always be done using a brute force search in 2<sup>''L''</sup> evaluations. This is called a [[preimage attack]] and may or may not be practical depending on ''L'' and the particular computing environment. The second criterion, finding two different messages that produce the same message digest, known as a ''collision,'' requires on average only 2<sup>''L''/2</sup> evaluations using a [[birthday attack]]. For the latter reason the strength of a hash function is usually compared to a symmetric cipher of half the message digest length. Thus SHA-1 was originally thought to have 80-bit strength.
+
+Cryptographers have produced collision pairs for SHA-0 and have found algorithms that should produce SHA-1 collisions in far fewer than the originally expected 2<sup>80</sup> evaluations.
+
+In terms of practical security, a major concern about these new attacks is that they might pave the way to more efficient ones. Whether this is the case has yet to be seen, but a migration to stronger hashes is believed to be prudent. Some of the applications that use cryptographic hashes, such as password storage, are only minimally affected by a collision attack. Constructing a password that works for a given account requires a preimage attack, as well as access to the hash of the original password, which may or may not be trivial. Reversing password encryption (e.g. to obtain a password to try against a user's account elsewhere) is not made possible by the attacks. (However, even a secure password hash can't prevent brute-force attacks on [[password strength|weak passwords]].)
+
+In the case of document signing, an attacker could not simply fake a signature from an existing document—the attacker would have to produce a pair of documents, one innocuous and one damaging, and get the private key holder to sign the innocuous document. There are practical circumstances in which this is possible; until the end of 2008, it was possible to create forged [[Transport Layer Security|SSL]] certificates using an [[MD5]] collision.<ref>Alexander Sotirov, Marc Stevens,
+Jacob Appelbaum, Arjen Lenstra, David Molnar, Dag Arne Osvik, Benne de Weger, [http://www.win.tue.nl/hashclash/rogue-ca/ MD5 considered harmful today: Creating a rogue CA certificate], accessed March 29, 2009</ref>
+
+===SHA-0===
+At [[CRYPTO (conference)|CRYPTO]] 98, two French researchers, [[Florent Chabaud]] and [[Antoine Joux]], presented an attack on SHA-0 ([http://fchabaud.free.fr/English/Publications/sha.pdf Chabaud and Joux, 1998]): [[hash collision|collisions]] can be found with complexity 2<sup>61</sup>, fewer than the 2<sup>80</sup> for an ideal hash function of the same size.
+
+In 2004, [[Eli Biham|Biham]] and Chen found near-collisions for SHA-0—two messages that hash to nearly the same value; in this case, 142 out of the 160 bits are equal. They also found full collisions of SHA-0 reduced to 62 out of its 80 rounds.
+
+Subsequently, on 12 August 2004, a collision for the full SHA-0 algorithm was announced by Joux, Carribault, Lemuet, and Jalby. This was done by using a generalization of the Chabaud and Joux attack. Finding the collision had complexity 2<sup>51</sup> and took about 80,000 CPU hours on a [[supercomputer]] with 256 [[Itanium 2]] processors. (Equivalent to 13 days of full-time use of the computer.)
+
+On 17 August 2004, at the Rump Session of CRYPTO 2004, preliminary results were announced by [[Xiaoyun Wang|Wang]], Feng, Lai, and Yu, about an attack on [[MD5]], SHA-0 and other hash functions. The complexity of their attack on SHA-0 is 2<sup>40</sup>, significantly better than the attack by Joux ''et al.'' <ref>[http://www.freedom-to-tinker.com/archives/000664.html Freedom to Tinker » Blog Archive » Report from Crypto 2004<!-- Bot generated title -->]</ref><ref>[http://groups.google.com/groups?selm=fgrieu-05A994.05060218082004%40individual.net Google.com]</ref>
+
+In February 2005, an attack by Xiaoyun Wang, Yiqun Lisa Yin, and Hongbo Yu was announced which could find collisions in SHA-0 in 2<sup>39</sup> operations.<ref name="autogenerated1">[http://www.schneier.com/blog/archives/2005/02/sha1_broken.html Schneier on Security: SHA-1 Broken<!-- Bot generated title -->]</ref><ref>{{zh icon}} [http://www.infosec.sdu.edu.cn/paper/sha0-crypto-author-new.pdf Sdu.edu.cn], [[Shandong University]]</ref>
+
+===SHA-1===
+In light of the results for SHA-0, some experts suggested that plans for the use of SHA-1 in new [[cryptosystem]]s should be reconsidered. After the CRYPTO 2004 results were published, NIST announced that they planned to phase out the use of SHA-1 by 2010 in favor of the SHA-2 variants.<ref>[http://csrc.nist.gov/groups/ST/toolkit/documents/shs/hash_standards_comments.pdf National Institute of Standards and Technology]</ref>
+
+In early 2005, [[Vincent Rijmen|Rijmen]] and [[Elisabeth Oswald|Oswald]] published an attack on a reduced version of SHA-1—53 out of 80 rounds—which finds collisions with a computational effort of fewer than 2<sup>80</sup> operations.<ref>[http://eprint.iacr.org/2005/010 Cryptology ePrint Archive<!-- Bot generated title -->]</ref>
+
+In February 2005, an attack by [[Xiaoyun Wang]], [[Yiqun Lisa Yin]], Bayarjargal, and [[Hongbo Yu]] was announced.<ref name="autogenerated1" /> The attacks can find collisions in the full version of SHA-1, requiring fewer than 2<sup>69</sup> operations. (A [[brute-force search]] would require 2<sup>80</sup> operations.)
+
+The authors write:
+"In particular, our analysis is built upon the original differential attack on SHA-0 [''sic''], the near collision attack on SHA-0, the multiblock collision techniques, as well as the message modification techniques used in the collision search attack on MD5. Breaking SHA-1 would not be possible without these powerful analytical techniques."<ref>[http://theory.csail.mit.edu/~yiqun/shanote.pdf MIT.edu], [[Massachusetts Institute of Technology]]</ref> The authors have presented a collision for 58-round SHA-1, found with 2<sup>33</sup> hash operations.
+The paper with the full attack description was published in August 2005 at the CRYPTO conference.
+
+In an interview, Yin states that, "Roughly, we exploit the following two weaknesses: One is that the file preprocessing step is not complicated enough; another is that certain math operations in the first 20 rounds have unexpected security problems."<ref>[http://news.zdnet.com/2100-1009_22-5598536.html Fixing a hole in security | Tech News on ZDNet<!-- Bot generated title -->]</ref>
+
+On 17 August 2005, an improvement on the SHA-1 attack was announced on behalf of Xiaoyun Wang, [[Andrew Yao]] and [[Frances Yao]] at the CRYPTO 2005 rump session, lowering the complexity required for finding a collision in SHA-1 to 2<sup>63</sup>.<ref>[http://www.schneier.com/blog/archives/2005/08/new_cryptanalyt.html Schneier on Security: New Cryptanalytic Results Against SHA-1<!-- Bot generated title -->]</ref> On 18 December 2007 the details of this result were explained and verified by Martin Cochran.<ref>[http://eprint.iacr.org/2007/474 Notes on the Wang et al. $2^{63}$ SHA-1 Differential Path]</ref>
+
+Christophe De Cannière and Christian Rechberger further improved the attack on SHA-1 in "Finding SHA-1 Characteristics: General Results and Applications,"<ref>{{Cite journal |author=Christophe De Cannière, Christian Rechberger |date=2006-11-15 |title=Finding SHA-1 Characteristics: General Results and Applications |url=http://www.springerlink.com/content/q42205u702p5604u/ }}</ref> receiving the Best Paper Award at [[ASIACRYPT]] 2006. A two-block collision for 64-round SHA-1 was presented, found using unoptimized methods with 2<sup>35</sup> compression function evaluations. As this attack requires the equivalent of about 2<sup>35</sup> evaluations, it is considered to be a significant theoretical break.<ref>{{cite web
+ | url = http://www.iaik.tugraz.at/content/research/krypto/sha1/SHA1Collision_Description.php
+ | title = IAIK Krypto Group – Description of SHA-1 Collision Search Project
+ | accessdate = 2009-06-30
+}}</ref> Their attack was extended further to 73 rounds (of 80) in 2010 by Grechnikov.<ref>{{cite web
+ | url = http://eprint.iacr.org/2010/413
+ | title = Collisions for 72-step and 73-step SHA-1: Improvements in the Method of Characteristics
+ | accessdate = 2010-07-24
+}}</ref> In order to find an actual collision in the full 80 rounds of the hash function, however, massive amounts of computer time are required. To that end, a collision search for SHA-1 using the distributed computing platform [[BOINC]] began August 8, 2007, organized by the [[Graz University of Technology]]. The effort was abandoned May 12, 2009 due to lack of progress.<ref>{{cite web
+ | url = http://boinc.iaik.tugraz.at/sha1_coll_search/
+ | title = SHA-1 Collision Search Graz
+ | accessdate = 2009-06-30
+}}</ref>
+
+At the Rump Session of CRYPTO 2006, Christian Rechberger and Christophe De Cannière claimed to have discovered a collision attack on SHA-1 that would allow an attacker to select at least parts of the message.<ref>[http://www.heise-online.co.uk/security/SHA-1-hash-function-under-pressure--/news/77244 SHA-1 hash function under pressure – heise Security<!-- Bot generated title -->]</ref><ref>[http://www.iacr.org/conferences/crypto2006/rumpsched.html Crypto 2006 Rump Schedule<!-- Bot generated title -->]</ref>
+
+Cameron McDonald, Philip Hawkes and Josef Pieprzyk presented a hash collision attack with claimed complexity 2<sup>52</sup> at the Rump session of Eurocrypt 2009.<ref>[http://eurocrypt2009rump.cr.yp.to/837a0a8086fa6ca714249409ddfae43d.pdf SHA-1 collisions now 2^52 ]</ref> However, the accompanying paper, "Differential Path for SHA-1 with complexity [[Big O notation|''O'']](2<sup>52</sup>)" has been withdrawn due to the authors' discovery that their estimate was incorrect.<ref>[http://eprint.iacr.org/2009/259 International Association for Cryptologic Research]</ref>
+
+===Official validation===
+{{Main|CMVP}}
+Implementations of all FIPS-approved security functions can be officially validated through the [[CMVP|CMVP program]], jointly run by the [[National Institute of Standards and Technology]] (NIST) and the [[Communications Security Establishment]] (CSE). For informal verification, a package to generate a high number of test vectors is made available for download on the NIST site; the resulting verification however does not replace in any way the formal CMVP validation, which is required by law for certain applications.
+
+{{As of|2006|alt=As of October 2006}}, there are more than 500 validated implementations of SHA-1, with fewer than ten of them capable of handling messages with a length in bits not a multiple of eight (see [http://csrc.nist.gov/groups/STM/cavp/documents/shs/shaval.htm SHS Validation List]).
+
+==Examples and pseudocode==
+===Example hashes===
+{{Main|Examples of SHA digests}}
+The following is an example of SHA-1 digests. [[ASCII]] encoding is assumed for all messages.
+
+ SHA1("[[The quick brown fox jumps over the lazy dog]]")
+ = 2fd4e1c6 7a2d28fc ed849ee1 bb76e739 1b93eb12
+
+Even a small change in the message will, with overwhelming probability, result in a completely different hash due to the [[avalanche effect]]. For example, changing <code>dog</code> to <code>cog</code> produces a hash with different values for 81 of the 160 bits:
+
+ SHA1("The quick brown fox jumps over the lazy '''c'''og")
+ = de9f2c7f d25e1b3a fad3e85a 0bd17d9b 100db4b3
+
+===SHA-1 pseudocode===
+[[Pseudocode]] for the SHA-1 algorithm follows:
+
+ <span style="color: green;">''Note 1: All variables are unsigned 32 bits and wrap modulo 2<sup>32</sup> when calculating''</span>
+ <span style="color: green;">''Note 2: All constants in this pseudo code are in <u>big endian</u>.''</span> 
+         <span style="color: green;">''Within each word, the most significant byte is stored in the leftmost byte position''</span>
+ 
+ <span style="color: green;">''Initialize variables:''</span>
+ h0 = 0x67452301
+ h1 = 0xEFCDAB89
+ h2 = 0x98BADCFE
+ h3 = 0x10325476
+ h4 = 0xC3D2E1F0
+ 
+ <span style="color: green;">''Pre-processing:''</span>
+ append the bit '1' to the message
+ append 0 ≤ k < 512 bits '0', so that the resulting message length (in ''bits'')
+    is [[modular arithmetic|congruent]] to 448 ≡ −64 (mod 512)
+ append length of message (before pre-processing), in ''bits'', as 64-bit [[Endianness|big-endian]] integer
+ 
+ <span style="color: green;">''Process the message in successive 512-bit chunks:''</span>
+ break message into 512-bit chunks
+ '''for''' each chunk
+     break chunk into sixteen 32-bit big-endian words w[i], 0 ≤ i ≤ 15
+ 
+     <span style="color: green;">''Extend the sixteen 32-bit words into eighty 32-bit words:''</span>
+     '''for''' i '''from''' 16 to 79
+         w[i] = (w[i-3] '''xor''' w[i-8] '''xor''' w[i-14] '''xor''' w[i-16]) '''[[Circular shift|leftrotate]]''' 1
+ 
+     <span style="color: green;">''Initialize hash value for this chunk:''</span>
+     a = h0
+     b = h1
+     c = h2
+     d = h3
+     e = h4
+ 
+     <span style="color: green;">''Main loop:''</span>
+     <ref>http://www.faqs.org/rfcs/rfc3174.html</ref>
+     '''for''' i '''from''' 0 '''to''' 79
+         '''if''' 0 ≤ i ≤ 19 '''then'''
+             f = (b '''and''' c) '''or''' (('''not''' b) '''and''' d)
+             k = 0x5A827999
+         '''else if''' 20 ≤ i ≤ 39
+             f = b '''xor''' c '''xor''' d
+             k = 0x6ED9EBA1
+         '''else if''' 40 ≤ i ≤ 59
+             f = (b '''and''' c) '''or''' (b '''and''' d) '''or''' (c '''and''' d) 
+             k = 0x8F1BBCDC
+         '''else if''' 60 ≤ i ≤ 79
+             f = b '''xor''' c '''xor''' d
+             k = 0xCA62C1D6
+ 
+         temp = (a '''leftrotate''' 5) + f + e + k + w[i]
+         e = d
+         d = c
+         c = b '''leftrotate''' 30
+         b = a
+         a = temp
+ 
+     <span style="color: green;">''Add this chunk's hash to result so far:''</span>
+     h0 = h0 + a
+     h1 = h1 + b 
+     h2 = h2 + c
+     h3 = h3 + d
+     h4 = h4 + e
+ 
+ <span style="color:green;">''Produce the final hash value (big-endian):''</span>
+ digest = hash = h0 '''append''' h1 '''append''' h2 '''append''' h3 '''append''' h4
+
+The constant values used are chosen as [[nothing up my sleeve number]]s: the four round constants <code>k</code> are 2<sup>30</sup> times the square roots of 2, 3, 5 and 10.  The first four starting values for <code>h0</code> through <code>h3</code> are the same as the MD5 algorithm, and the fifth (for <code>h4</code>) is similar.
+
+Instead of the formulation from the original FIPS PUB 180-1 shown, the following equivalent expressions may be used to compute <code>f</code> in the main loop above:
+
+ (0  ≤ i ≤ 19): f = d '''xor''' (b '''and''' (c '''xor''' d))                <span style="color: green;">''(alternative 1)''</span>
+ (0  ≤ i ≤ 19): f = (b '''and''' c) '''xor''' (('''not''' b) '''and''' d)          <span style="color: green;">''(alternative 2)''</span>
+ (0  ≤ i ≤ 19): f = (b '''and''' c) + (('''not''' b) '''and''' d)            <span style="color: green;">''(alternative 3)''</span>
+ (0  ≤ i ≤ 19): f = vec_sel(d, c, b)                       <span style="color: green;">''(alternative 4)''</span>
+  
+ (40 ≤ i ≤ 59): f = (b '''and''' c) '''or''' (d '''and''' (b '''or''' c))          <span style="color: green;">''(alternative 1)''</span>
+ (40 ≤ i ≤ 59): f = (b '''and''' c) '''or''' (d '''and''' (b '''xor''' c))         <span style="color: green;">''(alternative 2)''</span>
+ (40 ≤ i ≤ 59): f = (b '''and''' c) + (d '''and''' (b '''xor''' c))          <span style="color: green;">''(alternative 3)''</span>
+ (40 ≤ i ≤ 59): f = (b '''and''' c) '''xor''' (b '''and''' d) '''xor''' (c '''and''' d)  <span style="color: green;">''(alternative 4)''</span>
+
+Max Locktyukhin has also shown<ref>{{Citation |first1=Max |last1=Locktyukhin |first2=Kathy |last2=Farrel |url=http://software.intel.com/en-us/articles/improving-the-performance-of-the-secure-hash-algorithm-1/ |title=Improving the Performance of the Secure Hash Algorithm (SHA-1) |journal=Intel Software Knowledge Base |publisher=Intel |date=2010-03-31 |accessdate=2010-04-02}}</ref> that for the rounds 32–79 the computation of:
+
+       w[i] = (w[i-3] '''xor''' w[i-8] '''xor''' w[i-14] '''xor''' w[i-16]) '''[[Circular shift|leftrotate]]''' 1
+
+can be replaced with:
+
+       w[i] = (w[i-6] '''xor''' w[i-16] '''xor''' w[i-28] '''xor''' w[i-32]) '''[[Circular shift|leftrotate]]''' 2
+
+This transformation keeps all operands 64-bit aligned and, by removing the dependency of <code>w[i]</code> on <code>w[i-3]</code>, allows efficient SIMD implementation with a vector length of 4 such as [[x86]] [[Streaming SIMD Extensions|SSE]] instructions.
+
+==See also==
+* [[Comparison of cryptographic hash functions]]
+* [[Digital timestamping]]
+* [[FORK-256]]
+* [[Hash collision]]
+* [[Hashcash]]
+* [[International Association for Cryptologic Research]] (IACR)
+* [[RIPEMD-160]]
+* [[Secure Hash Standard]]
+* <tt>[[sha1sum]]</tt>
+* [[Tiger (cryptography)|Tiger]]
+* [[Whirlpool (cryptography)|Whirlpool]]
+
+==References==
+{{refbegin|colwidth=30em}}
+<references/>
+* Florent Chabaud, Antoine Joux: Differential Collisions in SHA-0. [[CRYPTO]] 1998. pp56–71
+* [[Eli Biham]], Rafi Chen, Near-Collisions of SHA-0, Cryptology ePrint Archive, Report 2004/146, 2004 (appeared on CRYPTO 2004), [http://eprint.iacr.org/2004/146/ IACR.org]
+* [[Xiaoyun Wang]], Hongbo Yu and Yiqun Lisa Yin, Efficient Collision Search Attacks on SHA-0, CRYPTO 2005, [http://www.cs.cmu.edu/~dbrumley/srg/spring06/sha-0.pdf CMU.edu]
+* [[Xiaoyun Wang]], Yiqun Lisa Yin and Hongbo Yu, Finding Collisions in the Full SHA-1, Crypto 2005 [http://people.csail.mit.edu/yiqun/SHA1AttackProceedingVersion.pdf MIT.edu]
+* [[Henri Gilbert]], [[Helena Handschuh]]: Security Analysis of SHA-256 and Sisters. [[Selected Areas in Cryptography]] 2003: pp175–193
+* {{cite journal|title=Proposed Revision of Federal Information Processing Standard (FIPS) 180, Secure Hash Standard|journal=Federal Register|date=1994-07-11|first=|last=|coauthors=|volume=59|issue=131|pages=35317–35318|id= |url=http://frwebgate1.access.gpo.gov/cgi-bin/waisgate.cgi?WAISdocID=5963452267+0+0+0&WAISaction=retrieve|format=|accessdate=2007-04-26}}
+{{refend}}
+
+==External links==
+<!-- We suffer from a lot of self promotion here.
+ --- Please do not add a link to your own site. See http://en.wikipedia.org/w/index.php?title=WP:COI
+ --- It will be removed, and you may be blocked without further warning. -->
+
+===Standards: SHA-1, SHA-2===
+* [http://www.eff.org/Privacy/Digital_signature/?f=fips_sha_shs.standard.txt Specifications for a Secure Hash Standard (SHS)] – Draft for proposed SHS (SHA-0)
+* [http://www.eff.org/Privacy/Digital_signature/?f=fips_sha_shs.info.txt Secure Hash Standard (SHS)] – Proposed SHS (SHA-0)
+* [http://csrc.nist.gov/CryptoToolkit/tkhash.html CSRC Cryptographic Toolkit] – Official [[National Institute of Standards and Technology|NIST]] site for the Secure Hash Standard
+** [http://csrc.nist.gov/publications/fips/fips180-2/fips180-2withchangenotice.pdf FIPS 180-2: Secure Hash Standard (SHS)] ([[Portable Document Format|PDF]], 236 kB) – Current version of the Secure Hash Standard (SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512), 1 August 2002, amended 25 February 2004
+* RFC 3174 (with sample C implementation)
+
+===Cryptanalysis===
+* [http://news.zdnet.com/2100-1009_22-5598536.html Interview with Yiqun Lisa Yin concerning the attack on SHA-1]
+* [http://cm.bell-labs.com/who/akl/hash.pdf Lenstra's Summary of impact of the February 2005 cryptanalytic results]
+* [http://www.heise-online.co.uk/security/Hash-cracked--/features/75686 Explanation of the successful attacks on SHA-1] (3 pages, 2006)
+* [http://www.cryptography.com/cnews/hash.html Cryptography Research – Hash Collision Q&A]
+* [http://www.OnlineHashcrack.com Online SHA1 hash crack using Rainbow tables]
+* [http://www.hashproject.eu Hash Project Web Site: software- and hardware-based cryptanalysis of SHA-1]
+
+===Implementations===
+<!-- This section should include only implementations that are commercially or algorithmically significant, such as those widely used in existing technologies and platforms -->
+;[http://directory.fsf.org/project/libgcrypt/ Libgcrypt]: A general purpose cryptographic library based on the code from [[GNU Privacy Guard]].
+;[[OpenSSL]]: The widely used OpenSSL <code>crypto</code> library includes [[free software|free]], [[open source|open-source]] – implementations of SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512
+;[[Crypto++]]: A public domain C++ class library of cryptographic schemes, including implementations of the SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 algorithms.
+;[[Bouncy Castle (cryptography)|Bouncy Castle]]: The Bouncy Castle Library is a free Java and C# class library that contains implementations of the SHA-1, SHA-224, SHA-256, SHA-384 and SHA-512 algorithms as well as other algorithms like [[Whirlpool (cryptography)|Whirlpool]], [[Tiger (hash)|Tiger]], [[RIPEMD]], GOST-3411, [[MD2 (cryptography)|MD2]], [[MD4]] and [[MD5]].
+;[http://jssha.sourceforge.net/ jsSHA]: A cross-browser [[JavaScript]] library for client-side calculation of SHA digests, despite the fact that JavaScript does not natively support the 64-bit operations required for SHA-384 and SHA-512.
+;[http://libtom.org/?page=features&newsitems=5&whatfile=crypt LibTomCrypt]: A portable ISO C cryptographic toolkit, Public Domain.
+;[http://software.intel.com/en-us/articles/improving-the-performance-of-the-secure-hash-algorithm-1/ Intel]: Fast implementation of SHA-1 using Intel Supplemental SSE3 extensions, free for commercial or non-commercial use.
+;[[md5deep]]: A set of programs to compute MD5, SHA-1, SHA-256, Tiger, or Whirlpool cryptographic message digests on an arbitrary number of files. It is used in computer security, system administration and computer forensics communities for purposes of running large numbers of files through any of several different cryptographic digests. It is similar to the [[md5sum]].
+
+{{Crypto navbox|hash}}
+
+{{DEFAULTSORT:Sha-1}}
+[[Category:Cryptographic hash functions]]
+[[Category:Broken hash functions]]
+[[Category:Articles with example pseudocode]]
+[[Category:Checksum algorithms]]
+
+[[bg:SHA]]
+[[ca:Secure Hash Algorithm]]
+[[cs:Secure Hash Algorithm]]
+[[da:SHA]]
+[[de:Secure Hash Algorithm]]
+[[es:Secure Hash Algorithm]]
+[[fr:SHA-1]]
+[[ko:SHA]]
+[[hr:SHA-1]]
+[[it:Secure Hash Algorithm]]
+[[he:SHA]]
+[[lt:SHA]]
+[[nl:SHA-familie]]
+[[ja:SHA]]
+[[no:SHA Sjekksum Funksjoner]]
+[[pl:SHA-1]]
+[[pt:SHA1]]
+[[ru:SHA-1]]
+[[simple:SHA hash functions]]
+[[sk:Secure Hash Algorithm]]
+[[sr:SHA]]
+[[fi:SHA]]
+[[sv:SHA-1]]
+[[tr:SHA-1]]
+[[vi:SHA]]
+[[zh:SHA家族]]</body> </html>

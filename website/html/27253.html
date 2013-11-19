@@ -1,0 +1,80 @@
+<html> <head> <title>Online Presence Ontology</title></head><body>{{Orphan|date=February 2009}}
+{{Primary sources|date=August 2008}}
+{{Cleanup-jargon|date=April 2009}}
+{{Notability|date=April 2009}}
+<!-- [[Image:Opo logo.jpg‎|thumb|150|The OPO logo]] Unclear copyright status.-->
+The '''OPO (Online Presence Ontology)'''  is an [[Ontology (computer science)|ontology]] which aims to model the dynamic aspects of a user’s presence online and to enable exchange of the Online Presence data. The creator of the OPO is [[Milan Stankovic (computer science) | Milan Stankovic]], a young researcher and a member of the [[GOOD OLD AI]] Research Network. OPO is mentioned in W3C Social Web Incubator Group final report<ref>[http://www.w3.org/2005/Incubator/socialweb/XGR-socialweb-20101206/ W3C Social Web Incubator Group Final Report]</ref>  as one of the vocabularies that support the publishing of Social Web data on the Semantic Web, along with [[FOAF]] and [[SIOC]].
+
+==Ontology==
+OPO is a descriptive vocabulary expressed using the [[Resource Description Framework]] (RDF) and the [[Web Ontology Language]] (OWL). As such, it can be used by machines (software) for manipulating with user's OPO data or doing different analysis of user's online activity, for instance by querying it with an [[RDF query language]] (e.g. [[SPARQL]]).
+
+==Ontology Design==
+[[Image:Opo-classes.png|thumb|300px|right|Class diagram of the Online Presence Ontology.]]
+The main concept in OPO is the '''OnlinePresence'''. It represents a placeholder for all the aspects of a user’s presence in the [[online world]]. '''OnlineStatusComponent''' represents an abstract component of the OnlinePresence; its subclasses define different dimensions of a user’s presence in the online world and describe the nature of the Online Presence. The '''Findability''' stands for a user's willingness to let other users find his/her contact details in public listings. The '''Notifiability''' component can be used to declare willingness of a user to receive notifications from applications (on which he/she is logged on), while '''OnlineStatus''' represents the [[Instant messaging|IM]] status, used on IM platforms. OnlineStatus in turn, has its own components that enable more precise descriptions of different statuses used by IM platforms. Those components are: '''Visibility''', '''Activity''', '''Contactability''' , and '''Disturbability'''.
+
+==Implementation==
+Apart from facilitating the integration of online presence data from various sources, OPO can also be beneficial for transferring data from one service to another. A lot of users do copy-paste of their custom messages, for example from [[gTalk]] to [[Facebook]] (and vice versa). Likewise, they tend to upload the same [[Avatar (computing)|avatar]] on different messengers. This manual work is an annoyance that users can easily be relieved from by introducing a meaningful data exchange protocol between services. The first thing needed to accomplish this goal is a semantic representation of the online presence data which would serve as a basis for developing exchange mechanisms along the ideas outlined by the [[Data Portability|Data Portability initiative]].
+
+The domain where OPO can make a significant contribution is the exchange of user's statuses on various IMs. OPO provides a flexible model for representing the semantics of online statuses thus making their descriptions precise and understandable for the IM platform exchanging them.
+
+Currently different IM platforms use different status scales, and when users from different platforms meet in an inter-platform [[Online chat|chat]] (on services like [[Meebo]], [[Digsby]], etc.) their original statuses are often lost. This is because currently, users’ online statuses are exchanged over the [[Extensible Messaging and Presence Protocol|XMPP]] protocol, by mapping them to a semantically very poor status scale used in XMPP. In those mappings the semantics of original statuses is largely reduced. To face this issue OPO allows for precise descriptions of IM status characteristics so that they can be exchanged between platforms with their semantics fully preserved. Thus the OPO serves, in this domain, as a mediator preserving the semantics of online status scales in their exchanges, enabling more precise transfers of data between heterogeneous services.
+
+==Example==
+
+The following OPO data (written in [[Turtle (syntax)|Turtle]] format) describes user 'darthWader' who has posted a new custom message on a [[Twitter]] microblogging service and another user 'luke' who also posted a custom message which is a reply of darthWader's one.
+
+<source lang="text">
+@base <http://online-presence.net/opo/examples#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix opo: <http://online-presence.net/opo/ns#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix sioc: <http://rdfs.org/sioc/ns#>.
+
+:datrhVaderTwitterAccount rdf:type sioc:UserAccount;
+foaf:accountServiceHomepage <http://www.twitter.com/>;
+foaf:accountName "darthVader".
+
+:datrhVaderStatus rdf:type sioc:Post;
+sioc:content "Luke, I am your father.".
+
+:datrhVaderPresence rdf:type opo:OnlinePresence;
+opo:customMessage :datrhVaderStatus;
+opo:startTime "2008-03-01T18:51:19";
+opo:declaredOn :datrhVaderTwitterAccount.
+
+<http://starwars.net/darthVader> opo:declaresOnlinePresence :datrhVaderPresence.
+
+:lukeTwitterAccount rdf:type sioc:UserAccount;
+foaf:accountServiceHomepage <http://www.twitter.com/>;
+foaf:accountName "luke".
+
+:lukeStatus rdf:type sioc:Post;
+sioc:content "No... No! That's not true! That's impossible!";
+sioc:reply_of :darthVaderStatus.
+
+:lukePresence rdf:type opo:OnlinePresence;
+opo:customMessage :lukeStatus;
+opo:startTime "2008-03-01T18:51:49";
+opo:declaredOn :lukeTwitterAccount.
+
+<http://starwars.net/luke> opo:declaresOnlinePresence :lukePresence.
+
+</source>
+
+==OPO and FOAF==
+For deeper understanding of OPO and the notion of online presence itself, a comparison to [[FOAF]] might be useful. It is very important to distinguish the static and more persistent users online properties modeled by FOAF (like name, gender, homepage, etc.) from frequently changing properties addressed by the OPO (like activities, custom message and IM status). The OPO is actually meant for representing dynamic aspects of user's profiles, and it could be said that it complements FOAF in a way. Therefore, it is quite natural that OPO is connected to FOAF through some properties (e.g. agent).
+
+==See also==
+* [[FOAF|FOAF - Friend of a friend]]
+* [[Good Old AI]] Research Network
+
+
+==External links==
+* [http://online-presence.net OPO Project], official website
+* [http://blogs.talis.com/nodalities/2008/08/opo-modelling-dynamic-online-presence.php Interview about OPO with Milan Stankovic on Nodalities Blog]
+
+==References==
+
+ {{Reflist}}
+[[Category:Internet architecture]]
+[[Category:Semantic Web]]</body> </html>

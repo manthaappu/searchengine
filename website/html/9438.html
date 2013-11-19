@@ -1,0 +1,62 @@
+<html> <head> <title>Data validation</title></head><body>In [[computer science]], '''data validation''' is the process of ensuring that a program operates on clean, correct and useful data. It uses routines, often called "[[validation rule]]s" or "check routines", that check for correctness, meaningfulness, and security of data that are input to the system. The rules may be implemented through the automated facilities of a [[data dictionary]], or by the inclusion of explicit [[application program]] validation logic.
+
+For business applications, data validation can be defined through [[declarative programming|declarative]] [[data integrity]] rules, or [[imperative programming|procedure-based]] [[business rules]]<ref>[http://msdn.microsoft.com/en-us/library/aa291820(VS.71).aspx Data Validation, Data Integrity, Designing Distributed Applications with Visual Studio .NET]</ref>. Data that does not conform to these rules must negatively affect business process execution. Therefore, data validation should start with business process definition and set of business rules within this process. Rules can be collected through the requirements capture exercise<ref>Arkady Maydanchik (2007), "Data Quality Assessment", Technics Publications, LLC</ref>.
+
+The simplest data validation verifies that the characters provided come from a valid set. For example, telephone numbers should include the [[numerical digit|digit]]s and possibly the characters <code>+</code>, <code>-</code>, <code>(</code>, and <code>)</code> (plus, minus, and parentheses). A more sophisticated data validation routine would check to see the user had entered a valid country code, i.e., that the number of digits entered matched the convention for the country or area specified.
+
+Incorrect data validation can lead to [[data corruption]] or a [[software security vulnerability|security vulnerability]]. Data validation checks that data are valid, sensible, reasonable, and secure before they are processed.
+
+==Validation methods==
+;Allowed character checks
+: Checks that ascertain that only expected characters are present in a field. For example a numeric field may only allow the digits 0-9, the decimal point and perhaps a minus sign or commas. A text field such as a personal name might disallow characters such as < and >, as they could be evidence of a [[HTML|markup]]-based security attack. An [[e-mail]] address might require exactly one @ sign and various other structural details. [[Regular expression]]s are effective ways of implementing such checks. (See also data type checks below)
+;Batch totals
+: Checks for missing records. Numerical fields may be added together for all records in a batch. The batch total is entered and the computer checks that the total is correct, e.g., add the 'Total Cost' field of a number of transactions together.
+;[[Cardinality]] check
+: Checks that record has a valid number of related records. For example if Contact record classified as a Customer it must have at least one associated Order (Cardinality > 0). If order does not exist for a "customer" record then it must be either changed to "seed" or the order must be created. This type of rule can be complicated by additional conditions. For example if contact record in Payroll database is marked as "former employee", then this record must not have any associated salary payments after the date on which employee left organisation (Cardinality = 0).
+;Check digits
+: Used for numerical data. An extra digit is added to a number which is calculated from the digits. The computer checks this calculation when data are entered, e.g., The [[ISBN]] for a book. The last digit is a check digit calculated [[Modular arithmetic|modulus]] 11.{{Citation needed|date=August 2010}}
+;Consistency checks
+: Checks fields to ensure data in these fields corresponds, e.g., If Title = "Mr.", then Gender = "M".
+;Control totals
+: This is a total done on one or more numeric fields which appears in every record. This is a meaningful total, ''e.g.'', add the total payment for a number of Customers.
+;Cross-system consistency checks
+: Compares data in different systems to ensure it is consistent, e.g., The address for the customer with the same id is the same in both systems. The data may be represented differently in different systems and may need to be transformed to a common format to be compared, e.g., one system may store customer name in a single Name field as 'Doe, John Q', while another in three different fields: First_Name (John), Last_Name (Doe) and Middle_Name (Quality); to compare the two, the validation engine would have to transform data from the second system to match the data from the first, for example, using SQL: Last_Name || ', ' || First_Name || substr(Middle_Name, 1, 1) would convert the data from the second system to look like the data from the first 'Doe, John Q'
+;Data type checks
+: Checks the data type of the input and give an error message if the input data does not match with the chosen data type, e.g., In an input box accepting numeric data, if the letter 'O' was typed instead of the number zero, an error message would appear.
+;File existence check
+: Checks that a file with a specified name exists. This check is essential for programs that use file handling.
+;Format or picture check
+: Checks that the data is in a specified format (template), e.g., dates have to be in the format DD/MM/YYYY.
+: Regular expressions should be considered for this type of validation.
+;Hash totals
+: This is just a batch total done on one or more numeric fields which appears in every record. This is a meaningless total, ''e.g.'', add the Telephone Numbers together for a number of Customers.
+;Limit check
+: Unlike range checks, data is checked for one limit only, upper OR lower, e.g., data should not be greater than 2 (<=2).
+;Logic check
+: Checks that an input does not yield a logical error, e.g., an input value should not be 0 when there will be a number that divides it somewhere in a program.
+;Presence check
+: Checks that important data are actually present and have not been missed out, e.g., customers may be required to have their telephone numbers listed.
+;Range check
+: Checks that the data lie within a specified range of values, e.g., the month of a person's date of birth should lie between 1 and 12.
+;Referential integrity
+: In modern [[Relational database]] values in two tables can be linked through [[foreign key]] and [[primary key]]. If values in the primary key field are not constrained by database internal mechanism<ref>[http://www.techonthenet.com/oracle/foreign_keys/foreign_keys.php Oracle Foreign Keys]</ref>, then they should be validated. Validation of the foreign key field checks that referencing table must always refer to a valid row in the referenced table<ref>[http://msdn.microsoft.com/en-us/library/aa292166(VS.71).aspx Referential Integrity, Designing Distributed Applications with Visual Studio .NET]</ref>.
+;Spelling and grammar check
+: Looks for spelling and grammatical errors.
+;Uniqueness check
+: Checks that each value is unique. This can be applied to several fields (i.e. Address, First Name, Last Name).
+
+==See also==
+*[[Data truncation]]
+
+== External links ==
+* [http://www.contextures.com/xlDataVal01.html Data validation in Microsoft Excel]
+* [http://www.flat-file.net Flat File Checker - data validation tool]
+* [http://blog.anantshri.info/2009/06/08/input_validation_shell_script/ Unix Shell Script based input validation function]
+
+== References ==
+<references />
+
+{{DEFAULTSORT:Data Validation}}
+[[Category:Computer security]]
+
+[[simple:Data validation]]</body> </html>

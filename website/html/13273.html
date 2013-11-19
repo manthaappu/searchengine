@@ -1,0 +1,41 @@
+<html> <head> <title>False sharing</title></head><body>{{Unreferenced|date=April 2010}}
+
+In [[computer science]], '''false sharing''' is a performance degrading usage pattern that can arise in systems with distributed, [[cache coherency|coherent caches]] at the size of the smallest resource block managed by the caching mechanism.  When a system participant attempts to periodically access data that will never be altered by another party, but that data shares a cache block with data that ''is'' altered, the caching protocol may force the first participant to reload the whole unit despite a lack of logical necessity.  The caching system is unaware of activity within this block and forces the first participant to bear the caching system overhead required by true shared access of a resource.
+
+By far the most common usage of this term is in modern [[multiprocessor]] [[CPU cache]]s, where [[Random access memory|memory]] is cached in [[Cache line|lines]] of some small [[power of two]] [[word (computer science)|word]] size (e.g., 64 [[Data structure alignment|aligned]], contiguous [[byte]]s).  If two processors operate on independent data in the same [[memory address]] region storable in a single line, the cache coherency mechanisms in the system may force the whole line across the [[Bus (computing)|bus]] or interconnect with every data write, forcing memory stalls in addition to wasting system [[Bandwidth (computing)|bandwidth]].  False sharing is an inherent artifact of automatically synchronized cache protocols and can also exist in environments such as distributed file system or databases, but current prevalence is limited to RAM caches.
+
+==Example==
+<source lang="cpp">
+struct foo
+{
+  volatile int x;
+  volatile int y;
+};
+
+foo f;
+
+int sum_a()
+{
+  int s = 0;
+  for (int i = 0; i < 1000000; ++i)
+    s += f.x;
+  return s;
+}
+
+void inc_b()
+{
+  for (int i = 0; i < 1000000; ++i)
+    ++f.y;
+}
+</source>
+
+Here, <code>sum_a</code> may need to continually re-read <code>x</code> from main memory (instead of from cache) even though <code>inc_b</code>'s modification of <code>y</code> should be irrelevant.
+
+==Tools==
+* [[Acumem SlowSpotter|Acumem SlowSpotter and ThreadSpotter]], tools which diagnose performance problems related to [[Locality of reference|data locality]], [[CPU Cache|cache utilization]] and [[Thread (computer science)|thread]] interactions.
+
+==References==
+* Bolosky, W. J. and Scott, M. L. 1993. <cite>False sharing and its effect on shared memory performance</cite> In USENIX Symposium on Experiences with Distributed and Multiprocessor Systems - Volume 4 (San Diego, California, September 22–23, 1993). USENIX Association, Berkeley, CA, 3-3.
+
+[[Category:Cache coherency]]
+[[Category:Computer memory]]</body> </html>

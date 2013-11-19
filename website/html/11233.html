@@ -1,0 +1,79 @@
+<html> <head> <title>Dynamic SSL</title></head><body>{{Orphan|date=April 2010}}
+{{Notability|date=March 2010}}
+{{Userspace draft|source=ArticleWizard|date=February 2010}}
+'''Dynamic SSL''' is an endpoint security technology developed by Daniel McCann and Nima Sharifimehr of [[NetSecure Technologies Ltd]].  Dynamic SSL was created to solve the [[endpoint security problem]] in public networks by transparently correcting the implementation flaws in SSL systems that expose sensitive data to interception and tampering.  Dynamic SSL is sometimes referred to as Dynamic TLS.
+
+<!--== Overview ==
+Dynamic SSL is a software process that is meant to correct implementation flaws in SSL/TLS systems, which leave sensitive data open to interception and tampering at the endpoint.
+
+An enhanced version of Dynamic SSL also provides protection against Man-in-the-Middle attacks.-->
+
+==Endpoint vulnerabilities in SSL/TLS systems==
+Most implementations of SSL assume that the client computer is a secure environment for key negotiation, key storage, and encryption.  This is untrue in principle and in practice, as malicious technologies such as [[Spyware]], KeyJacking, and [[Man in the Browser]] have proven to be able to circumvent SSL by obtaining sensitive data prior to encryption<ref>Philip Guhring, "Concepts against Man in the Browser Attack", 2006  http://www2.futureware.at/svn/sourcerer/CAcert/SecureClient.pdf</ref><ref>John Marchesini, S.W.Smith, Meiyuan Zhao, “Keyjacking: risks of the current client-side infrastructure,” Proceedings of the 2nd Annual PKI Research Workshop, 2003. pp. 80-95</ref>.  Furthermore, the reliance on the host PC for PKI certificate validation renders the infrastructure vulnerable to [[man-in-the-middle attack]]s<ref>Serpanos D N, Lipton R J, "Defense Against Man-in-the-Middle Attack in Client-Server Systems with Secure Servers" 2003</ref>.
+<!--The problem is compounded when SSL implementation vulnerabilities are combined with a plaintext protocol such as HTTP, where it is relatively trivial to obtain sensitive data by monitoring the data stream prior to encryption.  This means most web applications, including those entrusted to protect sensitive information, are at risk.-->
+
+===Challenges for public networks===
+Traditional solutions to endpoint security rely on custom protocols or proprietary authentication architectures that are not interoperable with SSL.  In many circumstances, particularly in anonymous or distributed environments where interoperability with SSL is a requirement, synchronization of client and server systems with a proprietary security protocol is simply not feasible.  This is known as the [[Endpoint Security Problem]] in public networks.
+
+In layman's terms, the [[Endpoint Security Problem]] essentially asserts that any anonymous transaction through a web browser must inherently be at risk, and that it cannot be fixed without removing the anonymity of the transaction.  Since virtually all web transactions assume that the client is anonymous at the protocol level<ref>www.ietf.org/rfc/rfc2246.txt</ref>, this means that any proposed third-party solution will essentially break the system.<ref>Note:  SSL client authentication does not solve this problem.  Since all clients in a web session are anonymous until authenticated, the act of authentication is therefore inherently a risky transaction which is subject to endpoint vulnerabilities.</ref>  This is a fundamental vulnerability that undermines the entire web security infrastructure, rendering virtually ever web transaction at risk.
+
+Dynamic SSL solves this fundamental problem by focusing on transparently closing the implementation vulnerabilities rather than on redefining a new protocol.  Therefore, the existing SSL system remains intact as the default secure communication protocol.  However, implementation vulnerabilities are solved to achieve endpoint security.
+
+==Principles of Dynamic SSL==
+The underlying principle in Dynamic SSL is that encryption of sensitive information cannot be performed in an untrusted environment, such as most personal computers, where the security of the encryption process could be compromised. Rather, encryption of sensitive information must be done outside of the personal computer.  Dynamic SSL assumes that the end user's computer is an untrusted environment, and can only be used as the channel to transmit sensitive information.  Dynamic SSL thus guarantees the security of sensitive data by ensuring that it is never present in the insecure environment.
+
+==Implementations==
+Typical implementations involve two core components: a secure environment which hosts the sensitive data to be protected, and a cryptographic proxy, which securely redirects the [[encryption]] of the host process of the insecure environment to a cryptographic provider within the secure environment which hosts the sensitive data.  An optional third component which controls the tokenization process can be inserted at the application layer.  Nothing is required at the server end.
+
+Generally speaking, the only change which is required on the endpoint computer is the replacement of the default [[Transport Layer Security|SSL]] cryptographic provider with a Dynamic SSL cryptographic proxy.  Most operating systems and web browsers support pluggable cryptographic providers, meaning that most implementations will require no changes whatsoever to the application on either end of the system.
+
+Dynamic SSL works by using a tokenization system for sensitive data in conjunction with secure redirection of cryptographic operations to a secure environment.  For example, rather than typing in your [[online banking]] [[password]] into a web browser, you would type in a meaningless token instead.  When the form is submitted, an [[Hypertext Transfer Protocol|HTTP]] request containing the token is generated, and sent to the SSL cryptographic provider for encryption and secure transmission to the remote server.  Instead of the encryption happening on the host PC, which may be compromised, the session is redirected to the secure environment (secure input device, server, etc..) which would contain your real online banking [[password]].  Inside the secure environment, the token within the HTTP request would get swapped out with your real online banking password at the moment of encryption.  The encrypted packet, containing your real online banking password, would then be returned to the SSL system of the host PC for transmission to the remote server.
+
+From the server's perspective, the request appears like any other regular keyed-in request.  The packet was encrypted with the SSL session key negotiated with the client, and so is able to decrypt and process the packet as normal.  It cannot tell the difference between a regular SSL transaction and a Dynamic SSL transaction.
+
+The only difference in the transaction was that the sensitive data was never present on the host PC.  Any malicious attempt to harvest the data from the host PC would be unable to locate the data.
+
+A [http://208.68.104.126/smartswipe/dynamic-ssl/dynamic-ssl-white-paper.html whitepaper] is available which describes the process of Dynamic SSL in further detail.
+<!-- The process is likely best described in an application:
+
+Consider a web browser, where the default SSL cryptographic provider has been replaced with a Dynamic SSL cryptographic proxy.  The actual cryptographic provider is implemented in a remote server which stores a user's health record.
+
+1. When an application requests sensitive data from an input source, a token is generated and input into the location where sensitive data is expected.  
+2. The application sends the sensitive data to the remote server via SSL.
+
+Using this approach, any SSL-enabled system can be transparently retrofitted for endpoint security without changing the application  on the client end or the server end.  
+
+By replacing the default cryptographic provider of the host process with the proxy, Since Dynamic SSL is agnostic to the can transparently retrofit any existing cryptographic system.  
+
+Dynamic SSL is agnostic to both the host process or the secure environment.
+ -->
+
+<!--== Tokenized Encryption ==
+A whitepaper on Dynamic SSL, available on the NetSecure Technologies site, refers to the process as "variable-based encryption".  However, study of the process reveals that it is a tokenization approach.
+Tokenization.  At the moment of encryption, the token is replaced by the real authentication credentials.
+-->
+
+==Strengths and weaknesses==
+Dynamic SSL is the only known approach to endpoint security that requires no changes to existing server systems, and can therefore be used to transparently retrofit existing systems for endpoint security, while retaining the benefits of using a proven standard like SSL.  By offloading cryptographic operations to a secure environment which acts as the point of origin for sensitive data, thereby ensuring the endpoint computer does not have access to said sensitive data, proactive protection from endpoint threats can in theory be achieved.
+
+However, since Dynamic SSL is simply a process that is applied to SSL implementation, rather than a new protocol, it remains vulnerable to protocol vulnerabilities inherent within SSL, namely Man-in-the-Middle attacks<ref>http://www.opera.com/support/kb/view/944/</ref>.  Sharifimehr has proposed a supplementary solution involving Man-in-the-Middle Protection for Dynamic SSL<ref>http://www.smartswipe.ca/images/stories/site/dynamic-ssl-white-paper.pdf</ref>.  His algorithm uses a combination of redundant cert verification and key tagging to prevent Man-in-the-Middle attacks and Keyjacking<!--<ref>John Marchesini, S.W.Smith, Meiyuan Zhao, “Keyjacking: risks of the current client-side infrastructure,” Proceedings of the 2nd Annual PKI Research Workshop, 2003. pp. 80-95</ref>-->.  Most known implementations of Dynamic SSL include Sharifimehr's additional process, described below:
+
+===Man-in-the-Middle protection===
+Known valid root certificates are digitally signed by an independent third party.  When an X509 certificate arrives containing the authentication information for a remote website as part of the SSL authentication phase.  Since the root certificate signatures are redundantly verified in a secure environment against a pre-verified list of valid digital signatures for known valid root certificates, this prevents any compromise via tampering of the certificate authentication chain.  Phony certificates or certification chains can therefore be detected and the session rejected before it begins.
+
+===Keyjacking protection===
+Session and authentication keys are contextually bound to the operations which they are semantically required to perform, and may not be exported.  An encryption key may not be exported and used to decrypt the ciphertext which is encrypted.  In laymans terms, keys are "tagged" to ensure that they can never be exported for use outside of their intended use.
+
+==Commercial applications==
+A consumer product called [http://www.smartswipe.ca SmartSwipe] is the first known commercial application of Dynamic SSL.  It claims to provide security against malware and other client-side attacks while providing universal support for virtually every eCommerce merchant that uses SSL.<ref>http://www.smartswipe.ca/benefits</ref>  It is currently unknown whether other products are using this technology.
+
+==References==
+<!--- See [[Wikipedia:Footnotes]] on how to create references using <ref></ref> tags which will then appear here automatically -->
+{{Reflist}}
+
+==External links==
+* [http://www.dynamic-ssl.com/ www.dynamic-ssl.com]
+* [http://www.smartswipe.ca/images/stories/site/dynamic-ssl-white-paper.pdf Dynamic SSL White Paper]
+
+{{DEFAULTSORT:Dynamic Ssl}}
+[[Category:Computer security]]</body> </html>

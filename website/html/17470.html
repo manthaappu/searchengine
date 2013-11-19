@@ -1,0 +1,340 @@
+<html> <head> <title>IEEE-488</title></head><body>[[Image:IEEE-488-Stecker2.jpg|thumb|right|IEEE-488 stacking connectors]]
+
+'''IEEE-488''' is a short-range digital communications [[computer bus|bus]] specification. It was created for use with [[automated test equipment]] in the late 1960s, and is still in use for that purpose.  IEEE-488 was created as '''HP-IB''' ('''Hewlett-Packard Interface Bus'''), and is commonly called '''GPIB''' ('''General Purpose Interface Bus''').  It has been the subject of [[#Standards|several standards]].
+
+== Characteristics ==
+
+IEEE-488 is an [[8-bit]], electrically [[parallel communication|parallel]] bus.  The bus employs sixteen signal lines — eight used for bi-directional data transfer, three for handshake, and five for bus management — plus eight ground return lines.
+
+Every device on the bus has a unique 5-bit primary [[Physical address|address]], in the range from 0 to 30 (31 total possible addresses).<ref name="NI-488.2">{{Cite book
+|title=NI-488.2 User Manual
+|date=February 2005
+|publisher=National Instruments Corporation
+|id=NI P/N 370428C-01
+|page=A-2
+|chapter=GPIB Addressing
+|quote=The primary address is a number in the range 0 to 30.
+|url=http://www.ni.com/pdf/manuals/370428c.pdf
+|accessdate=2010-02-16
+}}</ref><ref name="Agilent_82350B">{{Cite book
+|title=Agilent 82350B PCI GPIB Interface: Installation and Configuration Guide
+|date=20 July 2009
+|publisher=Agilent Technologies
+|id=Agilent P/N 82350-90004
+|page=26
+|chapter=Table 1-1: 82350 GPIB interface card configuration parameters
+|quote=any address in the range 0 - 30, inclusive, may be used
+|url=http://cp.literature.agilent.com/litweb/pdf/82350-90004.pdf
+|accessdate=2010-02-16
+}}</ref>
+
+The standard allows up to 15 devices to share a single physical bus of up to 20 meters total cable length.  The physical topology can be linear or star (forked).<ref>{{Cite web
+|title=GPIB Instrument Control Tutorial
+|publisher=National Instruments
+|date=24 August 2009
+|quote=connected in either a daisy-chain or star topology
+|url=http://zone.ni.com/devzone/cda/tut/p/id/2761
+|accessdate=2010-02-16
+}}</ref>  Active extenders allow longer buses, with up to 31 devices theoretically possible on a logical bus.
+
+Control and data transfer functions are logically separated; a controller can address one device as a “talker” and one or more devices as “listeners” without having to participate in the data transfer.  It is possible for multiple controllers to share the same bus; but only one can be the "Controller In Charge" at a time.<ref>{{Cite book
+|title=NI-488.2 User Manual
+|date=February 2005
+|publisher=National Instruments Corporation
+|id=NI P/N 370428C-01
+|page=A-1
+|url=http://www.ni.com/pdf/manuals/370428c.pdf
+|accessdate=2010-02-16
+}}</ref>
+
+In the original protocol, transfers use an interlocked, three-wire ''ready–valid–accepted'' [[handshaking|handshake]].<ref>{{Cite book
+|title=NI-488.2 User Manual
+|date=February 2005
+|publisher=National Instruments Corporation
+|id=NI P/N 370428C-01
+|page=A-3
+|chapter=Handshake Lines
+|url=http://www.ni.com/pdf/manuals/370428c.pdf
+|accessdate=2010-02-16
+}}</ref>  The maximum data rate is about one [[bit per second|Mbyte/s]].  The later HS-488 extension relaxes the handshake requirements, allowing up to 8 Mbyte/s.  The slowest participating device determines the speed of the bus.<ref>{{Cite web
+|title=Using HS488 to Improve GPIB System Performance
+|publisher=National Instruments Corporation
+|date=30 March 2009
+|url=http://zone.ni.com/devzone/cda/tut/p/id/4552
+|accessdate=2010-02-16
+}}</ref>
+
+== Connectors ==
+=== IEEE-488 ===
+{{Infobox connector
+|name=IEEE-488
+|pinout_image=[[Image:IEEE-448.svg|300px]]
+|pinout_caption=Female IEEE-488 connector
+|pin1=Data input/output bit.
+|pin1_name=DIO1
+|pin2=Data input/output bit.
+|pin2_name=DIO2
+|pin3=Data input/output bit.
+|pin3_name=DIO3
+|pin4=Data input/output bit.
+|pin4_name=DIO4
+|pin5=End-or-identify.
+|pin5_name=EOI
+|pin6=Data valid.
+|pin6_name=DAV
+|pin7=Not ready for data.
+|pin7_name=NRFD
+|pin8=Not data accepted.
+|pin8_name=NDAC
+|pin9=Interface clear.
+|pin9_name=IFC
+|pin10=Service request.
+|pin10_name=SRQ
+|pin11=Attention.
+|pin11_name=ATN
+|pin12=
+|pin12_name=SHIELD
+|pin13=Data input/output bit.
+|pin13_name=DIO5
+|pin14=Data input/output bit.
+|pin14_name=DIO6
+|pin15=Data input/output bit.
+|pin15_name=DIO7
+|pin16=Data input/output bit.
+|pin16_name=DIO8
+|pin17=Remote enable.
+|pin17_name=REN
+|pin18=(wire twisted with DAV)
+|pin18_name=GND
+|pin19=(wire twisted with NRFD)
+|pin19_name=GND
+|pin20=(wire twisted with NDAC)
+|pin20_name=GND
+|pin21=(wire twisted with IFC)
+|pin21_name=GND
+|pin22=(wire twisted with SRQ)
+|pin22_name=GND
+|pin23=(wire twisted with ATN)
+|pin23_name=GND
+|pin24=
+|pin24_name=Logic ground
+}}
+
+IEEE-488 specifies a 24-pin [[Amphenol]]-designed [[micro ribbon]] connector.  Micro ribbon connectors have a D-shaped metal shell, but are larger than [[D-subminiature]] connectors.  They are sometimes called "Centronics connectors" after the 36-pin [[micro ribbon]] connector [[Centronics]] used for their printers.
+
+One unusual feature of IEEE-488 connectors is they commonly use a "double-headed" design, with male on one side, and female on the other (at both ends of the cable).  This allows stacking connectors for easy [[daisy chain (electrical engineering)|daisy-chaining]].  Mechanical considerations limit the number of stacked connectors to four or fewer, although a possible workaround involving physically supporting the connectors can expand this.
+
+They are held in place by screws, either [[Unified Thread Standard|UTS]] (now largely obsolete) or [[ISO metric screw thread|metric]] M3.5×0.6 [[screw thread|thread]]s.  By convention, metric screws are colored black, as the two threads do not mate.
+
+===IEC-60625===
+
+The IEC-60625 standard prescribes the use of 25-pin [[D-subminiature]] connectors (the same as used for the [[parallel port]] on [[IBM PC compatible|IBM-PC]]s).  This connector did not gain significant market acceptance against the established 24-pin connector.
+
+==Origins==
+
+In the late 1960s, [[Hewlett-Packard|Hewlett-Packard (HP)]]<ref>This part of HP was later spun off as [[Agilent Technologies]].</ref> was manufacturing various automated test and measurement instruments, such as digital [[multimeter]]s and [[logic analyzer]]s.  They developed the ''HP Interface Bus (HP-IB)'' to enable easier interconnection between instruments and controllers (computers and other instruments).
+
+The bus was relatively easy to implement using the technology at the time, using a simple parallel [[electrical bus]] and several individual control lines.  For example, the HP 59501 Power Supply Programmer and HP 59306A Relay Actuator were both relatively simple HP-IB peripherals implemented only in [[Transistor–transistor logic|TTL]] logic, using no microprocessor.
+
+Other manufacturers copied HP-IB, calling their implementation the General Purpose Interface Bus (GPIB), and it became a [[de facto standard]] for automated and industrial instrument control.  As GPIB became popular, it was formalized by various [[standards organization]]s.
+
+==Standards==
+
+In 1975, the [[Institute of Electrical and Electronics Engineers|IEEE]] standardized the bus as ''Standard Digital Interface for Programmable Instrumentation'', '''IEEE-488''' (now IEEE-488.1).  It formalized the mechanical, electrical, and basic protocol parameters of GPIB, but said nothing about the format of commands or data.
+
+In 1987, IEEE introduced ''Standard Codes, Formats, Protocols, and Common Commands'', '''IEEE-488.2''', re-designating the previous specification as '''IEEE-488.1'''.  IEEE-488.2 provided for basic syntax and format conventions, as well as device-independent commands, data structures, error protocols, and the like.  IEEE-488.2 built on -488.1 without superseding it; equipment can conform to -488.1 without following -488.2.
+
+While IEEE-488.1 defined the hardware, and IEEE-488.2 defined the protocol, there was still no standard for instrument-specific commands.  Commands to control the same class of instrument (e.g., multimeters) would vary between manufacturers and even models.
+
+The Air Force<ref>Project Mate in 1985</ref> and later Hewlett-Packard recognized this problem. In 1989, HP developed their TML language<ref>{{cite web
+|title=GPIB 101, A Tutorial of the GPIB Bus
+|publisher=ICS Electronics
+|url=http://www.icselect.com/ab_note.html#anchor338658
+|page=5, paragraph=SCPI Commands
+}}</ref> which was the forerunner to SCPI [[Standard Commands for Programmable Instrumentation]].  SCPI was introduced as an industry standard in 1990.<ref>{{cite web
+|title=History of GPIB
+|publisher=National Instruments
+|url=http://zone.ni.com/devzone/cda/tut/p/id/3419
+|quote=In 1990, the IEEE 488.2 specification included the Standard Commands for Programmable Instrumentation (SCPI) document.
+|accessdate=2010-02-06
+}}</ref>  SCPI added standard generic commands, and a series of instrument classes with corresponding class-specific commands.  SCPI mandated the IEEE-488.2 syntax, but allowed other (non-IEEE-488.1) physical transports.
+
+The [[International Electrotechnical Commission|IEC]] developed their own standards in parallel with the IEEE, with '''IEC-60625-1''' and '''IEC-60625-2''', later replaced by IEC-60488.
+
+[[National Instruments]] introduced a backwards-compatible extension to IEEE-488.1, originally known as '''HS-488'''.  It increased the maximum data rate to 8 [[megabyte|Mbyte]]/s, although the rate decreases as more devices are connected to the bus.  This was incorporated into the standard in 2003 (IEEE-488.1-2003),<ref>{{Cite web
+|title=Upgraded Standard Boosts Speed of IEEE 488 Instrument Buses Eightfold
+|date=6 October 2003
+|publisher=IEEE
+|url=http://standards.ieee.org/announcements/pr_4881upgrade.html
+|accessdate=2010-02-06
+}}
+</ref> over HP's objections.<ref>{{Cite press release
+|title=HP and Other Test and Measurement Companies Urge IEEE to Oppose Revisions of Established IEEE-488 Standard
+|publisher=Hewlett-Packard Company
+|date=December 1997
+|url=http://grouper.ieee.org/groups/imstc8/488/1/hppress12-97.html
+|accessdate=2010-02-16
+}}</ref><ref>{{cite web
+|title=P488.1 Project Home
+|publisher=IEEE
+|url=http://grouper.ieee.org/groups/imstc8/488/1/
+|accessdate=2010-02-16
+}}</ref>
+
+In 2004, the IEEE and IEC combined their respective standards into a "Dual Logo" IEEE/IEC standard '''IEC-60488-1''', ''Standard for Higher Performance Protocol for the Standard Digital Interface for Programmable Instrumentation - Part 1: General'',<ref>{{cite web
+|title=IEC/IEEE Standard for Higher Performance Protocol for the Standard Digital Interface for Programmable Instrumentation - Part 1: General (Adoption of IEEE Std 488.1-2003)
+|publisher=IEEE
+|url=http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?tp=&isnumber=30476&arnumber=1405845&punumber=9646
+|accessdate=2010-02-06
+}}</ref> replaces IEEE-488.1/IEC-60625-1, and '''IEC-60488-2''', ''Part 2: Codes, Formats, Protocols and Common Commands'',<ref>{{cite web
+|title=Standard Digital Interface for Programmable Instrumentation - Part 2: Codes, Formats, Protocols and Common Commands (Adoption of (IEEE Std 488.2-1992)
+|publisher=IEEE
+|url=http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?tp=&isnumber=29721&arnumber=1352831&punumber=9359
+|accessdate=2010-02-06
+}}</ref> replaces IEEE-488.2/IEC-60625-2.<ref>{{cite web
+|title=Replaced or Withdrawn Publications
+|url=http://www.iec.ch/cgi-bin/procgi.pl/www/iecwww.p?header=IEC&search=replaced&wwwprog=sea22.p
+|publisher=IEC
+|accessdate=2010-02-06
+}}</ref>
+
+==Capabilities==
+{| class="wikitable"
+|-
+! Function !! Abbreviation !! Description / Example
+|-
+| Source Handshake || SH || SH1 - complete
+|-
+| Acceptor Handshake|| AH || AH1 - complete
+|-
+| Basic Talker || T || T5 - responds to serial poll; untalks when listen address received; talk only capability<br>T6 - untalks when listen address received; no talk only<br>T7 - no serial poll; untalks when listen address received; talk only capability
+|-
+| Extended Talker || TE || TE0 - no extended talker
+|-
+| Basic Listener || L || L3 - Listen only mode; unlistens if talk address received<br>L4 - Unlistens if talk address received
+|-
+| Extended Listener || LE || LE0 - no extended listener
+|-
+| Service Request || SR || SR0 - no service request capability<br>SR1 - complete
+|-
+| Remote-Local || RL || RL0 - no local lockout<br>RL1 - complete
+|-
+| Parallel Poll || PP || PP0 - does not respond to Parallel Poll
+|-
+| Device Clear || DC || DC1 - complete
+|-
+| Device Trigger || DT || DT0 - no device trigger capability<br>DT1 - complete
+|-
+| Controller || C || C0 - no controller function
+|-
+|  || E || E1 - open collector drive electronics<br>E2 - three state drivers
+|}
+
+==Use as a computer interface==
+{{Refimprove|section|date=February 2010}}
+
+HP's designers did not specifically plan for IEEE-488 to be a peripheral interface for general-purpose computers; the focus was on instrumentation.  But when HP's early [[microcomputer]]s needed an interface for peripherals ([[disk drive]]s, [[tape drive]]s, [[computer printer|printers]], [[plotter]]s, etc.), HP-IB was readily available and easily adapted to the purpose.
+
+HP computer products which used HP-IB included the [[HP series 80]], [[HP 9800 series desktop computers|HP 9800 series]],<ref>{{cite web
+|title=HP 98135A HP-IB Interface 9815
+|url=http://www.hpmuseum.net/display_item.php?hw=463
+|work=HP Computer Museum
+|accessdate=2010-02-06
+}}</ref> the [[HP 2100]] series,<ref>{{cite web
+|title=59310A HP-IB Interface
+|quote=HP-IB interface for HP1000 and HP2000 computers
+|url=http://www.hpmuseum.net/display_item.php?hw=522
+|work=HP Computer Museum
+|accessdate=2010-02-06
+}}</ref> and the [[HP 3000]] series.<ref>{{cite web
+|title=27113A HP-IB Interface
+|quote=CIO HP-IB interface for 3000 Series 900
+|url=http://www.hpmuseum.net/display_item.php?hw=786
+|work=HP Computer Museum
+|accessdate=2010-02-06
+}}</ref>  Some of HP's advanced pocket calculators of the 1980s, such as the [[HP-41]] and [[HP-71B]] series, also had IEEE-488 capabilities, via an optional [[HP-IL]]/HP-IB interface module.
+
+Other manufacturers adopted GPIB for their computers as well, such as with the [[Tektronix 405x]] line.
+
+The [[Commodore PET]] (introduced 1977) range of personal computers connected their peripherals using the IEEE-488 bus, but with a non-standard card edge connector.  Commodore's following 8-bit machines, including the [[Commodore VIC-20|VIC-20]], [[Commodore 64|C-64]], and [[Commodore 128|C-128]], utilized an unrelated, proprietary serial interface, using a round [[DIN connector]], for which they retained the IEEE-488 programming interface and terminology, however.
+
+Eventually, faster, more complete standards such as [[SCSI]] superseded IEEE-488 for peripheral access.
+
+{{Gallery
+|width=175
+|lines=3
+|Image:CBM610 back.jpg|Rear of the [[Commodore CBM-II]] showing [[card edge connector]] IEEE-488 port
+|Image:SFD1001 back.jpg|Rear of the [[Commodore International|Commodore]] SFD 1001 [[floppy disk drive]] with IEEE-488 port
+|Image:Digitaloszilloskop Schnittstellen IMGP1974 WP.jpg|Rear of a [[Tektronix]] TDS 210 digital [[oscilloscope]] with IEEE-488 port
+|Image:Data Acquisition Agilent %282%29.jpg|Rear view of an [[Agilent]] 34970A [[data acquisition]] chassis / [[multimeter]]
+}}
+
+==Advantages and disadvantages==
+{{Unreferenced section|date=February 2010}}
+
+===Advantages===
+
+* Simple hardware interface
+* Ease of connecting multiple device to a single host
+* Allows mixing of slow and fast devices
+* Well-established and mature, widely supported
+
+===Disadvantages===
+* Mechanically bulky connectors and cables
+* Limited speed and expansion
+* Lack of command protocol standards (before SCPI)
+* Implementation options (e.g. end of transmission handling) can complicate interoperability in pre-IEEE-488.2 devices
+* No mandatory galvanic isolation between bus and devices
+* High cost (compared to RS-232/[[USB]]/Firewire/Ethernet)
+* Limited availability (again compared to RS-232/USB/Firewire/Ethernet)
+
+==See also==
+{{Commons category|IEEE 488}}
+* [[Standard Commands for Programmable Instruments]] (SCPI)
+* [[LAN eXtensions for Instrumentation]] (LXI)
+* [[Virtual Instrument Software Architecture]] (VISA)
+* [[HP series 80]]
+* [[Rocky Mountain BASIC]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* {{Cite book|title=IEC-60488-1: Higher performance protocol for the standard digital interface for programmable instrumentation
+|volume=Part 1: General
+|publisher=International Electrotechnical Commission
+|date=15 July 2004
+|url=http://webstore.iec.ch/webstore/webstore.nsf/artnum/032787
+}}
+* {{Cite book|title=IEC-60488-2: Standard digital interface for programmable instrumentation
+|volume=Part 2: Codes, formats, protocols and common commands
+|publisher=International Electrotechnical Commission
+|date=7 May 2004
+|url=http://webstore.iec.ch/webstore/webstore.nsf/ArtNum_PK/32175
+}}
+
+{{Computer-bus}}
+
+{{IEEE standards}}
+
+{{DEFAULTSORT:Ieee-488}}
+[[Category:Computer buses]]
+[[Category:IEEE standards]]
+[[Category:Electronic test equipment]]
+
+[[ca:IEEE-488]]
+[[cs:GPIB]]
+[[de:IEC-625-Bus]]
+[[es:GPIB]]
+[[fa:گذرگاه واسط همه‌منظوره]]
+[[fr:IEEE-488]]
+[[hr:GPIB]]
+[[it:IEEE 488]]
+[[nl:IEEE-488]]
+[[ja:IEEE 488]]
+[[pl:IEEE-488]]
+[[pt:IEEE-488]]
+[[ro:IEEE-488]]
+[[ru:IEEE-488]]
+[[sk:IEEE-488]]
+[[tr:IEEE-488]]</body> </html>

@@ -1,0 +1,23 @@
+<html> <head> <title>Symlink race</title></head><body>{{Unreferenced|date=December 2009}}
+{{Cleanup|date=December 2008}}
+
+A '''symlink race''' is a kind of [[Vulnerability (computer science)|software security vulnerability]] that results from a program creating [[computer file|files]] in an insecure manner. A malicious user can create a [[symbolic link]] to a file not otherwise accessible to him or her. When the [[setuid|privileged]] program creates a file of the same name as the symbolic link, it actually creates the linked-to file instead, possibly inserting content provided by the malicious user.
+
+It is called a "[[race condition|race]]" because in its typical manifestation, the program checks to see if a file by that name already exists, then creates the file. An attacker must create the link in the interval between the check and when the file is created.
+
+==Example==
+In this naive example, the [[Unix]] program <tt>foo</tt> is <tt>[[setuid]]</tt>. Its function is to retrieve information for the [[account (computing)|account]]s specified by the user. For "efficiency", it sorts the requested accounts into a temporary file (<tt>/tmp/foo</tt> naturally) before making the queries.
+
+The directory <tt>/tmp</tt> is world-writable. Malicious user Mallory creates a symbolic link to the file <tt>/.rhosts</tt> named <tt>/tmp/foo</tt>. Then, he invokes <tt>foo</tt> with <tt>+ +</tt> as the requested account. The program creates the (temporary) file <tt>/tmp/foo</tt> (really creating <tt>/.rhosts</tt>) and puts the requested account (<tt>+ +</tt>) in it. It removes the temporary file (merely removing the symbolic link).
+
+Now the <tt>/.rhosts</tt> contains <tt>+ +</tt>, which is the incantation necessary to allow anyone to use <tt>[[rlogin]]</tt> to log into the computer as the [[superuser]].
+
+==Workaround==
+The standard library function ''mkstemp(3)'' can be used to safely create temporary files. For shell scripts, the system utility <tt>mktemp</tt> does the same thing.
+
+{{DEFAULTSORT:Symlink Race}}
+[[Category:Computer security exploits]]
+[[Category:Unix]]
+
+[[de:Symlink-Schwachstelle]]
+[[pl:Symlink race]]</body> </html>

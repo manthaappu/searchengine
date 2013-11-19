@@ -1,0 +1,113 @@
+<html> <head> <title>Cat (programming language)</title></head><body>{{Infobox programming language
+|name = Cat
+|logo = [[Image:cat-logo-160-b.jpg]]
+|paradigm = [[multi-paradigm programming language|multi-paradigm]]: [[functional programming|functional]], [[Stack-oriented programming language|stack-oriented]]
+|year = 2006
+|designer = [http://www.cat-language.com Christopher Diggins]
+|latest release version = 0.10.3
+|latest release date = April 3, 2007
+|typing = [[Static typing|statically typed]] or [[Dynamic typing|dynamically typed]]
+|implementations = [http://code.google.com/p/cat-language/ The Cat Interpreter]
+|license = [[Public domain]]
+|influenced_by = [[Joy (programming language)|Joy]], [[Common Intermediate Language]], [[Java bytecode]], [[Haskell (programming language)|Haskell]], [[Factor (programming language)|Factor]], [[Forth (programming language)|Forth]]
+|influenced = [[Trith (programming language)|Trith]]
+}}
+
+The '''Cat programming language''' is a functional [[stack-oriented programming language]] inspired by the [[Joy programming language]]. Joy and Cat differ from most functional languages (e.g. [[Scheme programming language|Scheme]], [[Haskell programming language|Haskell]]) and language formalisms (e.g. [[lambda calculus]], [[combinatory logic]]) in that they are based on the [[Function composition|composition of functions]] rather than function application.<ref>[http://www.latrobe.edu.au/philosophy/phimvt/joy/j03atm.html Atomic Programs of Joy] by [[Manfred von Thun]]</ref> Cat and Joy both bear more resemblance to combinatorial logic calculi (such as the [[SKI combinator calculus|SKI calculus]] or the [[B,C,K,W system]]) than to the [[lambda calculus]] due to the lack of names.
+
+The Cat language was designed with static typing in mind, and as such there is somewhat less flexibility but more safety than is available in the [[Joy programming language]].
+
+Cat is intended as a multi-purpose language with an emphasis on usage as an intermediate language and as an educational language.
+
+==Semantics==
+Like Joy, programs in Cat are constructed from existing programs using two operations: composition and quotation.<ref>[http://www.latrobe.edu.au/philosophy/phimvt/joy/j02maf.html Mathematical foundations of Joy] by [[Manfred von Thun]]</ref> All Cat programs can be thought of as functions that map from one stack to another. Because Cat has no operations that refer to previous stack states, Cat can be easily implemented using a single mutable shared stack.
+
+Two adjacent terms in Cat imply the composition of functions that generate stacks, so the Cat program <code>f g</code> is equivalent to the mathematical expressions <math>g \circ f</math> and <math>g(f(x))\,\!</math>, where x is the stack input to the expression.
+
+Programs can be quoted using the begin and quotation operators <code>[</code> and <code>]</code>. A quotation has the effect of pushing a function onto the stack without evaluating it. Quotations can be thought of as [[anonymous function]]s.
+
+Because all Cat functions map from one stack to another, what is more informative is the number and type of values that they pop and push onto the shared stack during execution. This is known respectively as the consumption and production of a function. When discussing a Cat function, the consumed values are often called the argument, and the produced values are often called the production.
+
+Literals in the Cat language, are constant generating functions that consume no value, and push a single function.
+
+==Type System==
+The Cat type system is a set of rules which unambiguously determine the configuration of types on the stack at any given point during program execution. The type system also determines the consumption and production of a function. The programmer can provide a type annotation for a function, which resembles a cross between [[Forth (programming language)|Forth]] stack comments and [[Haskell (programming language)|Haskell]] type signatures.
+
+Some example of type annotations are:
+
+ <code>dup : ('a -> 'a 'a)
+ pop : ('a -> )
+ swap : ('a 'b -> 'b 'a)
+ true : ( -> bool)
+ add : (int int -> int)
+ gt : (int int -> bool)
+ apply : ('A ('A -> 'B) -> 'B)
+ if : ('A bool ('A -> 'B) ('A -> 'B) -> 'B)
+ while : ('A ('A -> 'A) ('A -> 'A bool) -> 'A)</code>
+
+The type annotations are incomplete type signatures because they only describe what happens on the top of the stack. To be formal what is missing is a variable to indicate the rest of the stack [http://lambda-the-ultimate.org/node/1831]. This is essentially an implicit stack variable. A stack variable is of a different kind than a type variable since it can refer to zero or more types simultaneously. This is a key to the compact representation of the Cat type rules [http://lambda-the-ultimate.org/node/1899].
+
+An implementation of Cat may choose whether or not to do static type-checking. Type annotations are optional, regardless if a Cat implementation is statically typed. If type annotations are absent in a typed implementation, the types are inferred automatically by the compiler. The type annotations, if present, have to agree with the types inferred by the compiler, if performed by the compiler.
+
+The typing rules, kind system, and operational semantics for Cat are defined in the paper [http://www.cat-language.com/typing_stacks.pdf "Typing Functional Stack-Based Languages"].
+
+==Differences from Joy==
+The Cat semantics differ from Joy primarily in that every function in Cat will always produce the same number and type of results, given the same number and type of arguments. While a function such as `if` can consume and produce a different number of values, depending on the types of the function arguments that are passed to it, the actual values themselves can not influence the types consumed or produced.
+
+For example the following is a valid Joy function:
+
+ <code>DEFINE f == [is monday] ["I like Mondays"] [] ifte.</code>
+
+However the corresponding function in Cat is ill-typed:
+
+ <code>define f { is_monday ["I like Mondays"] [] if }</code>
+
+This is because the `if` function has the following type:
+
+ <code>if : ('A bool ('A -> 'B) ('A -> 'B) -> 'B)</code>
+
+The 'A and 'B in the signature are stack variables. Stack variables are differentiated from type variables in that they start with an upper-case letter, and can represent a set of zero or more types. If we write the types of the arguments to the `if` function in the previous example we would get conflicting values of the stack variable 'B:
+
+ <code>["I like Mondays"] : ( -> string)
+ => 'A == (), 'B == (string)
+ [] : ( -> )
+ => 'A == (), 'B == ()</code>
+
+Because the actual types assigned to the stacks disagree the type rule are violated and a type-check error should be thrown by a compiler or interpreter.
+
+==Implementation==
+The primary Cat implementation is an open-source interpreter for Windows written in C# that does not currently perform type-checking or type-inference. The Cat definition and implementation is public domain. The Cat interpreter binaries and source code are hosted with the [http://code.google.com/p/cat-language/source Google open-source code hosting] service.
+
+==Example==
+Consider a [[Fibonacci number|Fibonacci function]] which in [[Python (programming language)|Python]] can be defined recursively as:
+
+ <code>def fib(n):
+     if n <= 1:
+         return n
+     else:
+         return fib(n-1) + fib(n-2)</code>
+
+A similar implementation of the Fibonacci function in Cat follows:
+
+ <code>define fib {
+   dup 1 <=
+     []
+     [dup 1 - fib swap 2 - fib +]
+   if
+ }</code>
+
+==External links==
+* [http://www.cat-language.com Cat programming language home page]
+* [http://www.cat-language.com/typing_stacks.pdf "Typing Functional Stack-Based Languages"]
+* [http://code.google.com/p/cat-language/ Cat project at Google code hosting]
+
+== References ==
+<references />
+
+[[Category:Concatenative programming languages]]
+[[Category:Stack-oriented programming languages]]
+[[Category:Functional languages]]
+[[Category:Programming languages created in 2006]]
+
+[[fr:Cat (langage)]]
+[[pt:Cat (linguagem de programação)]]</body> </html>

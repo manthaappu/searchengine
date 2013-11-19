@@ -1,0 +1,59 @@
+<html> <head> <title>Garbage (computer science)</title></head><body>'''Garbage''', in the context of [[computer science]], refers to [[object (computer science)|object]]s, [[data]], or other regions of the memory of a computer system (or other system resources), which will not be used in any future computation by the system, or by a program running on it.  As computer systems all have finite amounts of memory, it is frequently necessary to ''deallocate'' garbage and return it to the heap, or memory pool, so the underlying memory can be reused.
+
+== Classification ==
+
+Garbage is generally classified into two types:
+
+; semantic garbage : Semantic garbage is any object or data which will never be accessed by a running program, for any combination of inputs to the program.  
+; syntactic garbage: Syntactic garbage refers to objects or data within a program's memory space that are ''unreachable'' from the program's [[root set]].  
+
+Note that syntactic garbage is a (usually strict) subset of semantic garbage as it is entirely possible for an object to hold a reference to another object without the latter object being used.  Determination of the semantic garbage present in a program is generally [[undecidable]], but there are many algorithms for identifying syntactic garbage.
+
+Objects and/or data which is not garbage is said to be ''live''.
+
+==Eliminating garbage==
+The problem of managing the deallocation of garbage is a well-known one in computer science.  Several approaches are taken:
+
+* Many [[operating systems]] will reclaim the memory and resources used by a process or program when it terminates.  Simple or short-lived programs which are designed to run in such environments can exit and allow the operating system to perform any necessary reclamation.
+* In systems or [[programming language]]s with [[manual memory management]], the programmer must explicitly arrange for memory to be deallocated when it is no longer used.  [[C (programming language)|C]] and [[C++]] are two well-known languages which support this model.
+* [[Garbage collection (computer science)|Garbage collection]] uses various algorithms to automatically analyze the state of a program, identify garbage, and deallocate it without intervention by the programmer.  Many modern programming languages such as [[Java (programming language)|Java]] and [[Haskell (programming language)|Haskell]] provide automated garbage collection.  However, it is not a recent development, as it has also been used in older languages such as [[LISP]].
+* There is ongoing research to [[type theory|type theoretic]] approaches (such as [[region inference]]) to identification and removal of garbage from a program.  Note that no general type-theoretic solution to the problem has been developed.
+
+An example of the automatic removal of semantic garbage, by [[reference counting]] garbage collection, can be produced using the [[Python (programming language)|Python]] command-line [[Interpreter (computing)|interpreter]]:
+<source lang="python">
+>>> class Foo(object):
+...     'This is an empty testing class.'
+...     pass
+... 
+>>> bar = Foo()
+>>> bar
+<__main__.Foo object at 0x54f30>
+>>> del bar
+</source>
+In this session, an object is created, its location in the memory is displayed, and the only reference to the object is then destroyed—there is no way to ever use the object again from this point on, as there are no references to it. This becomes apparent when we try to access the original reference:
+<source lang="python">
+>>> bar
+Traceback (most recent call last):
+  File "<stdin>", line 1, in ?
+NameError: name 'bar' is not defined
+</source>
+As it is impossible to refer to the object, it has become useless: the object is garbage. Since Python uses garbage collection, it automatically deallocates the memory that was used for the object so that it may be used again:
+<source lang="python">
+>>> class Bar(object):
+...     'This is another testing class.'
+...     pass
+... 
+>>> baz = Bar()
+>>> baz
+<__main__.Bar object at 0x54f30>
+</source>
+Note that the <tt>Bar</tt> instance now resides at the memory location <tt>0x54f30</tt>; at the same place as where our previous object, the <tt>Foo</tt> instance, was located. Since the <tt>Foo</tt> instance was destroyed, freeing up the memory used to contain it, the interpreter creates the <tt>Bar</tt> object at the same memory location as before, making good use of the available resources.
+
+==External links==
+* [[Benjamin C. Pierce|Benjamin Pierce]] (editor), ''Advanced Topics in Types and Programming Languages'', MIT Press (2005), ISBN 0-262-16228-8
+* Richard Jones and Rafael Lins, ''Garbage Collection: Algorithms for Automated Dynamic Memory Management'', Wiley and Sons (1996), ISBN 0-471-94148-4
+
+[[Category:Computer data]]
+[[Category:Computer programming]]
+
+[[ja:ごみ (プログラミング)]]</body> </html>

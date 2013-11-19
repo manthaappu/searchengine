@@ -1,0 +1,32 @@
+<html> <head> <title>Heap spraying</title></head><body>In [[computer security]], '''heap spraying''' is a technique used in [[exploit (computer security)|exploits]] to facilitate [[arbitrary code execution]]. The term is also used to describe the part of the [[source code]] of an exploit that implements this technique. In general, code that ''sprays the heap'' attempts to put a certain sequence of bytes at a predetermined location in the [[Random access memory|memory]] of a target [[Process (computing)|process]] by having it allocate (large) blocks on the process' [[Heap (programming)|heap]] and fill the bytes in these blocks with the right values. They commonly take advantage from the fact that these heap blocks will roughly be in the same location every time the heap spray is run. Execution flow can be redirected to the heap sprays via [[buffer overflow]] or [[heap overflow]] flaws.
+
+== History ==
+Heap sprays have been used occasionally in exploits since at least 2001,<ref>[http://research.eeye.com/html/advisories/published/AD20010618.html eEye Digital Security - Research<!-- Bot generated title -->]</ref> but the technique started to see widespread use in exploits for [[web browser]]s in the summer of 2005 after the release of several such exploits which used the technique against wide range of bugs in [[Internet Explorer]].<ref>[http://skypher.com/wiki/index.php?title=Www.edup.tudelft.nl/~bjwever/advisory_iframe.html.php InternetExploiter 1: MSIE IFRAME src&name parameter BoF exploit]</ref><ref>[http://skypher.com/wiki/index.php?title=Www.edup.tudelft.nl/~bjwever/details_msie_ani.html.php InternetExploiter 3: MSIE .ANI file "anih" header BoF exploit]</ref><ref>[http://skypher.com/wiki/index.php?title=Www.edup.tudelft.nl/~bjwever/advisory_msie_R6025.html.php InternetExploiter 2: MSIE DHTML Object handling race condition exploit]</ref><ref>[http://www.frsirt.com/english/advisories/2005/0935 FrSIRT - Microsoft Internet Explorer javaprxy.dll COM Object Vulnerability / Exploit (Security Advisories)<!-- Bot generated title -->]</ref><ref>[http://www.frsirt.com/english/advisories/2005/1450 FrSIRT - Microsoft Internet Explorer "Msdds.dll" Remote Code Execution / Exploit (Security Advisories)<!-- Bot generated title -->]</ref> The heap sprays used in all these exploits were very similar, which showed its versatility and ease of use without need for major modifications between exploits. It proved simple enough to understand and use to allow novice [[Hacker (computer security)|hackers]] to quickly write reliable exploits for many types of [[Vulnerability (computing)|vulnerabilities]] in web browsers and web browser [[plug-in (computing)|plug-ins]]. Many web browser exploits that use heap spraying consist only of a heap spray that is [[Cut, copy, and paste|copy-pasted]] from a previous exploit combined with a small piece of script or [[HTML]] that triggers the vulnerability.
+
+== Implementation ==
+=== JavaScript ===
+Heap sprays for web browsers are commonly implemented in [[JavaScript]] and spray the heap by creating large [[Unicode]] [[String (computer science)|strings]] with the same character repeated many times by starting with a string of one character and [[Concatenation|concatenating]] it with itself over and over. This way, the length of the string can [[exponential growth|grow exponentially]] up to the maximum length allowed by the [[scripting engine]]. When the desired string length is reached [[shellcode]] is put at the end of the string. The heap spraying code makes copies of the long string with shellcode and stores these in an array, up to the point where enough memory has been sprayed to cover the area that the exploit targets. Occasionally, [[VBScript]] is used in Internet Explorer to create strings by using the ''String'' function.
+
+==== ActionScript ====
+In July 2009, exploits were found to be using [[ActionScript]] to spray the heap in [[Adobe Flash]].<ref>[http://roeehay.blogspot.com/2009/08/exploitation-of-cve-2009-1869.html Roee Hay: Exploitation of CVE-2009-1869]</ref><ref>[http://blog.fireeye.com/research/2009/07/actionscript_heap_spray.html FireEye Malware Intelligence Lab: Heap Spraying with Actionscript]</ref>
+
+=== Images ===
+Though it has been proven that heap-spraying can be done through other means, for instance by loading image files into the process,<ref>[http://www.blackhat.com/html/bh-usa-06/bh-usa-06-speakers.html#Sutton Michael Sutton & Greg MacManus: Punk Ode—Hiding Shellcode in Plain Sight]</ref> this has not seen widespread use (as of August 2008).
+
+== Detection and prevention ==
+* The Nozzle project from Microsoft Research aims to detect and prevent heap spraying.<ref>[http://research.microsoft.com/en-us/projects/nozzle/ Nozzle project from Microsoft Research aims to detect and prevent heap spraying]</ref>
+* BuBBle is another countermeasure which could be considered to detect and prevent an attack triggered after spraying the heap <ref>[https://lirias.kuleuven.be/bitstream/123456789/265421/1/fulltext.pdf BuBBle: A Javascript Engine Level Countermeasure against Heap-Spraying Attacks]</ref>
+
+== See also ==
+* [[NOP slide]], a technique which is complementary to heap spraying
+* [[Heap feng shui]], a technique for manipulating heap layout
+* [[JIT spraying]]
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://skypher.com/SkyLined/heap_spray/small_heap_spray_generator.html Small heap spray generator] - a webpage that can be used to generate JavaScript heap sprays.
+
+{{DEFAULTSORT:Heap Spraying}}
+[[Category:Computer security exploits]]</body> </html>

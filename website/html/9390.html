@@ -1,0 +1,42 @@
+<html> <head> <title>Data masking</title></head><body>{{Refimprove|date=July 2009}}
+{{Cleanup|date=September 2009}}
+'''Data masking''' is the process of obscuring (masking) specific data elements within data stores.  It ensures that sensitive data is replaced with realistic but not real data.  The goal is that sensitive customer information is not available outside of the authorized environment. Data masking is typically done while provisioning non-production environments so that copies created to support test and development processes are not exposing sensitive information and thus avoiding risks of [[data breach |leaking]]. Masking algorithms are designed to be repeatable so referential integrity is maintained.
+
+Common business applications require constant patch and upgrade cycles and require that 6-8 copies of the application and data be made for testing. While organizations typically have strict controls on production systems, data security in non-production instances is often left up to trusting the employee, with potentially disastrous results.
+
+Creating test and development copies in an automated process reduces the exposure of sensitive data.  Database layout often changes, it is useful to maintain a list of sensitive columns in a without rewriting application code. Data masking is an effective strategy in reducing the risk of data exposure from inside and outside of an organization and should be considered a best practice for curing non-production databases.
+
+==Requirements==
+Effective data masking requires data to be altered in a way that the actual values cannot be determined or reengineered, functional appearance is maintained, so effective testing is possible. Data can be encrypted and decrypted, relational integrity is maintained, security polices can be established and separation of duties between security and administration  established. Common methods of data masking includes: encryption/decryption, shuffling, masking (i.e. numbers letters), [[substitution]] (i.e. All female names = Julie), [[nulling]] (####) or [[shuffling]] (zip code12345 = 53412).
+
+==Data Masking Techniques==
+===Substitution===
+The Substitution technique replaces the existing data with random values from a pre-prepared dataset. 
+===Shuffling===
+The Shuffling technique uses the existing data as its own substitution dataset and moves the values between rows in such a way that the no values are present in their original rows.
+===Number and Date Variance===
+The Number and Date Variance technique varies the existing values in a specified range in order to obfuscate them. For example, birth date values could be changed within a range of +/- 60 days.
+===Encryption===
+The Encryption technique algorythmically scrambles the data. This usually does not leave the data looking realistic and can sometimes make the data larger.
+===Nulling Out Or Deletion===
+The Nulling Out technique simply removes the sensitive data by deleting it.
+===Masking Out===
+The Masking Out technique sanitizes the data by replacing certain specified characters with mask characters. For example, a credit card number might be masked as 4929 1344 XXXX XXXX.
+===Row-Internal Synchronization===
+If a row in a database table contains denormalized data derived from other columns in that row and those columns are masked then the denormalized data row will need to be rebuilt. This technique is called Row-Internal Synchronization.
+===Table-Internal Synchronization===
+If a database table contains multiple rows containing identical columns and those columns are masked then the denormalized data rows will need to be set to the same value. This technique is called Table-Internal Synchronization.
+===Table-To-Table Synchronization===
+If two tables contain the columns with the same denormalized data values and those columns are masked in one table then the second table will need to be updated with the changes. This technique is called Table-To-Table Synchronization.
+
+==References==
+{{reflist}}
+
+== External links ==
+* [http://www.DataMasker.com/DataMasking_WhatYouNeedToKnow.pdf Data Masking - What You Need To Know Before You Begin]
+
+{{DEFAULTSORT:Data Masking}}
+[[Category:Database management systems]]
+[[Category:Databases]]
+
+[[cs:Maskování dat]]</body> </html>

@@ -1,0 +1,116 @@
+<html> <head> <title>Spirit Parser Framework</title></head><body>The '''Spirit Parser Framework''' is an [[object oriented]] [[Recursive descent parser|recursive descent]] [[parser generator]] framework implemented using template [[metaprogramming]] techniques. [[Expression templates]] allow users to approximate the syntax of [[Extended Backus Naur Form]] (EBNF) completely in [[C++]]. Parser objects are composed through [[operator overloading]] and the result is a backtracking [[LL parser|LL(∞)]] parser that is capable of parsing rather ambiguous grammars.
+
+Spirit can be used for both [[lexing]] and parsing, together or separately.
+
+This framework is part of the [[Boost C++ Libraries | Boost libraries]].
+
+== Operators ==
+
+Because of limitations of the C++ language, the syntax of Spirit has been designed around the operator precedences of C++, while bearing resemblance to both [[Extended Backus Naur Form|EBNF]] and [[regular expressions]].
+
+{|class="wikitable"
+! syntax
+! explanation
+|-
+| x >> y
+| Match x followed by y.
+|-
+| *x
+| Match x repeated zero or more times. (This is representing the [[Kleene star]]; C++ lacks a unary postfix [[Operator (programming)|operator]] *)
+|-
+| x &#124; y
+| Match x.  If x does not match, try to match y.
+|-
+| +x
+| Match x repeated one or more times.
+|-
+| -x
+| Match x zero or one time.
+|-
+| x & y
+| Match x and y.
+|-
+| x - y
+| Match x but not y.
+|-
+| x ^ y
+| Match x or y but not both.
+|-
+| x [ function_expression ]
+| Execute the function/functor returned by function_expression, if x matched.
+|-
+| ( x )
+| Match x  (can be used for priority grouping)
+|-
+| x % y
+| Match one or more repetitions of x, separated by occurrences of y.
+|-
+| ~x
+| Match anything but x  (only with character classes such as ch_p or alnum_p)
+|}
+
+== Example ==
+
+<source lang="cpp">
+#include <boost/spirit.hpp>
+#include <boost/spirit/actor.hpp>
+#include <string>
+#include <iostream>
+
+using namespace std;
+using namespace boost::spirit;
+
+int main()
+{
+    string input;
+    
+    cout << "Input a line.\n";
+    getline(cin, input);
+    
+    cout << "Got '" << input << "'.\n";
+    
+    unsigned count = 0;
+
+ /*  
+    Next line parses the input (input.c_str()),
+        using a parser constructed with the following semantics
+        (identation matches source for clarity):
+
+     Zero or more occurrences of (
+          literal string "cat" ( when matched, increment the counter "count" )
+      or  any character (to move on finding the next occurrence of "cat")
+     )
+ */
+     parse(input.c_str(),
+        *(  str_p("cat") [ increment_a(count) ]
+          | anychar_p
+         ));
+ /*
+     The parser is constructed by the compiler using operator
+     overloading and template matching, so the actual work is
+     done within spirit::parse(), and the expression starting
+     with * only initializes the rule object that the parse
+     function uses.
+  */
+    
+    // last, show results.
+    cout << "The input had " << count
+              << " occurrences of 'cat'\n";
+    return 0;
+}
+</source>
+
+Of course, there are better algorithms suited for string searching,
+but this example gives an idea how to construct rules and attach
+actions to them.
+
+==External links==
+*[http://spirit.sourceforge.net Spirit parser framework SourceForge page]
+*[http://www.boost.org/libs/spirit/index.html Documentation in the Boost project]
+*[http://www.ddj.com/article/printableArticle.jhtml?articleID=184401692&dept_url=/cpp/ Article on Spirit by designer Joel de Guzman in Dr. Dobb's Journal]
+
+{{compu-soft-stub}}
+
+[[Category:Parser generators]]
+
+[[de:Spirit (Parser)]]</body> </html>

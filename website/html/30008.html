@@ -1,0 +1,53 @@
+<html> <head> <title>Privileged password management</title></head><body>{{Unreferenced|date=October 2008}}
+
+'''Privileged password management''' software may be deployed by organizations to secure the passwords for login IDs that have elevated security privileges.  This is most often done by periodically changing every such password to a new, random value.  Since users and automated software processes need these passwords to function, privileged password management systems must also store these passwords and provide various mechanisms to disclose these passwords in a secure and appropriate manner.
+
+Please also see [[Privileged Identity Management]] -- another name for the same
+type of software.
+
+==Examples of privileged passwords==
+There are three main types of privileged passwords.  They are used to authenticate:
+* Local administrator accounts.
+* Service accounts.
+* Connections by one application to another.
+
+===Local administrator accounts and passwords===
+On Unix and Linux systems, the root user is a privileged login account.  On Windows, the equivalent is Administrator.  On SQL databases, the equivalent is sa.  In general, most operating systems, databases, applications and network devices include an administrative login, used to install software, configure the system, manage users, apply patches, etc.  On some systems, different privileged functions are assigned to different users, which means that there are more privileged login accounts, but each of them is less powerful.
+
+===Service accounts and passwords===
+On the Windows operating system, service programs execute in the context of either SYSTEM (very privileged, but has no password), or of a user account.  When services run as a non-SYSTEM user, the service control manager must provide a login ID and password to run the service program -- so service accounts have passwords.  On Unix and Linux systems, init and inetd can launch service programs as non-privileged users without knowing their passwords, so services do not normally have passwords.
+
+===Embedded application accounts and passwords===
+Often, one application needs to be able to connect to another, to access a service.  A common example of this pattern is when a web application must log into a database to retrieve some information.  These inter-application connections normally require a login ID and password and this password.
+
+==Securing privileged passwords==
+A privileged password management system secures privileged passwords by:
+* Periodically changing each password to a new, random value.
+* Storing these values.
+* Protecting the stored values (e.g., using encryption and replicated storage).
+* Providing mechanisms to disclose these passwords to various types of participants in the system:
+** IT administrators.
+** Programs that launch services (e.g., service control manager on Windows).
+** Applications that must connect to other applications.
+
+==Required infrastructure==
+A privileged password management system requires extensive infrastructure:
+* A mechanism to schedule password changes.
+* Connectors to various kinds of systems.
+* Mechanisms to update various participants with new password values.
+* Extensive auditing.
+* Encrypted storage.
+* Authentication for parties that wish to retrieve password values.
+* Access controls / authorization to decide whether password disclosure is appropriate.
+* Replicated storage, to ensure that hardware failure or a site disaster does not lead to loss of data.
+
+==Other kinds of password management==
+There is software to manage other kinds of passwords - typically for end users.  See [[Password management]] to learn about single signon, password wallets, password reset, password synchronization and more.
+
+==External links==
+
+Best practices white papers:
+* [http://privileged-password-manager.hitachi-id.com/docs/privileged-password-management-best-practices.html Best Practices for Managing Privileged Passwords] (from Hitachi ID Systems, Inc.)
+* [http://datacenter.cloakware.com/google/wp-password-management/wp-privileged-password-management.pdf Best Practices Guide to Privileged Password Management] (from Irdeto)
+
+[[Category:Password authentication]]</body> </html>

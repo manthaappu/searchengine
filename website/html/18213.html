@@ -1,0 +1,212 @@
+<html> <head> <title>InfiniteReality</title></head><body>'''InfiniteReality''' refers to a [[3D graphics]] [[hardware architecture]] and a family of [[Video card|graphics system]]s that implemented the aforementioned hardware architecture that was developed and manufactured by [[Silicon Graphics, Inc.|Silicon Graphics]] from 1996 to 2005. The InfiniteReality was positioned as Silicon Graphics' high-end [[Visualization (computer graphics)|visualization]] hardware for their [[MIPS architecture|MIPS]]/[[IRIX]] platform and was used exclusively in their Onyx family of visualization systems, which are sometimes referred to as "graphics supercomputers" or "visualization supercomputers". The InfiniteReality was marketed to and used by large organizations such as companies and universities that are involved in [[computer simulation]], [[digital content creation]], engineering and research.
+
+== InfiniteReality ==
+
+The InfiniteReality was introduced in early 1996 and was used in the Silicon Graphics [[SGI Onyx|Onyx]]. It succeeded the [[RealityEngine]], although the RealityEngine coexisted with the InfiniteReality for some time for the Onyx as an entry-level option for deskside "workstation" configurations.
+
+The InfiniteReality architecture was a third-generation design and is categorized as a sort-middle architecture. It was designed to [[Rendering (computer graphics)|render]] complex scenes in high-quality at 60 frames per second, roughly four or two times the performance of the RealityEngine it replaces. It was designed explicitly for use in conjunction with the [[OpenGL]] [[graphics library]] and implements most of the [[OpenGL pipeline]] in hardware.
+
+The implementation is partitioned into '''Geometry''' (also known as the '''Geometry Engine'''), '''Raster Memory''' (also known as the '''Raster Manager''') and '''Display Generator''' boards, with each board corresponding to each stage of the three major stages in the architecture's pipeline. The board set partitioning scheme is the same as the RealityEngine, as a result of Silicon Graphics wanting the RealityEngine to be easily upgradable to the InfiniteReality. Each pipeline consists of one Geometry Engine board, one, two or four Raster Manager boards and one Display Generator board.<ref name="Paper">John S. Montrym et al. "InfiniteReality: A Real-Time Graphics System". ACM SIGGRAPH.</ref>
+
+The implementation comprises twelve [[Application-specific integrated circuit|ASIC]] designs [[Semiconductor fabrication|fabricated]] in 0.5 and 0.35 micrometre processes with three layers of metal interconnect.<ref name="Paper"/> These ASICs require a 3.3 V power supply. An InfiniteReality pipeline in a maximal configuration contains 251 million transistors. The InfiniteReality was developed by 55 engineers.<ref name="HC"> John Montrym, Brian McClendon. "InfiniteReality Graphics - Power Through Complexity". Advanced Systems Division, Silicon Graphics, Inc.</ref>
+
+Given a system capable enough, such as certain models of the Onyx2 and Onyx 3000, up to 16 InfiniteReality pipelines can be hosted. The pipelines can be operated in three modes: multi-seat, multi-display and multi-pipe. In multi-seat mode, each pipeline can serve up to eight simultaneous users, each with their own separate displays, keyboards and mice. In multi-display mode, multiple outputs drive multiple displays, which is useful for [[virtual reality]]. The multi-pipe mode has two methods of operation. The first method requires a digital multiplexer (DPLEX) daughterboard to be installed in every pipeline, which combines the output of multiple pipelines. The second method uses '''MonsterMode''' software to distribute the data used to render a frame to multiple pipelines.
+
+To interface the pipeline to the system, a Flat Cable Interface (FCI) cable is used to connect the Host Interface Processor ASIC on the Geometry Board to the Ibus on the IO4 board, a part of the host system.
+
+=== Geometry board ===
+
+The Geometry board is responsible for geometry and image processing and is divided into four stages, each stage being implemented by separate device(s). The first stage is the '''Host Interface'''. Due to the InfiniteReality being designed for two very different platforms, the traditional [[shared memory]] [[Bus (computing)|bus]]-based Onyx using the POWERpath-2 bus, and the [[distributed shared memory]] network-based Onyx2 using the [[NUMAlink|NUMAlink2]] interconnect, the InfiniteReality had to have an interface that could provide similar performance on both platforms, which had a large difference in incoming bandwidth (200 MB/s versus 400 MB/s respectively).<ref name="Paper"/>
+
+To this end, a '''Host Interface Processor''', an embedded [[RISC]] core, is used to fetch display list objects using [[direct memory access]] (DMA). The Host Interface Processor is accompanied by 16 MB of [[SDRAM|synchronous dynamic random access memory]] (SDRAM), of which 15 MB is used to [[cache]] display leaf objects. The cache can deliver data to the next stage at over 300 MB/s. The next stage is the '''Geometry Distributor''', which transfers data and instructions from the Host Interface Processor to individual Geometry Engines.
+
+The next stage is performing geometry and image processing. The '''Geometry Engine''' is used for the purpose, with each Geometry board containing up to four working in a [[MIMD|multiple instruction multiple data]] (MIMD) fashion. The Geometry Engine is a semi-custom ASIC with a single instruction multiple data (SIMD) pipeline containing three [[floating-point]] cores, each containing an [[arithmetic logic unit]] (ALU), a multiplier and a 32-bit by 32-entry [[register file]] with two read and two write ports. These cores are provided with a 32-bit by 2,560-entry memory that holds elements of OpenGL [[State (computing)|state]] and provides [[Scratchpad RAM|scratchpad]] storage. Each core also has a '''float-to-fix converter''' to convert floating-point values into [[integer]] form. The Geometry Engine is capable of completing three instructions per cycle, and each Geometry board, with four such devices, can complete 12 instructions per cycle. The Geometry Engine uses a 195-bit microinstruction, which is compressed in order to reduce size and banwidth usage in return for slightly less performance.
+
+The Geometry Engine processor operates at 90 MHz, achieving a maximum theoretical performance of 540 MFLOPS.<ref name="HC"/> As there are four such processors on a GE12-4 or GE14-4 board, the maximum theoretical performance is 2.16 GFLOPS. A 16-pipeline system therefore achieves a maximum theoretical performance of 34.56 GFLOPS.
+
+The fourth stage is the '''Geometry-Raster FIFO''', a [[FIFO|first in first out]] (FIFO) [[Data buffer|buffer]] that merges the outputs of the four Geometry Engines into one, reassembling the outputs in the order they were issued. The FIFO is built from SDRAM and has a capacity of 4 MB,<ref>Mark J. Kilgard. "Realizing OpenGL: Two Implementations of One Architecture". 1997 SIGGRAPH Eurographics Workshop, August 1997.</reF> large enough to store 65,536 [[Vertex (geometry)|vertexes]]. The transformed vertexes are moved from this FIFO to the Raster Manager boards for triangle reassembly and setup  by the Triangle Bus (also known as the Vertex Bus), which has a bandwidth of 400 MB/s.
+
+=== Raster Memory board ===
+
+The function of the Raster Memory board is to perform [[rasterization]]. It also contains the [[texture memory]] and [[framebuffer|raster memory]], which is more commonly known as the [[framebuffer]]. Rasterization is performed in the '''[[Fragment (computer graphics)|Fragment Generator]]''' and the eighty '''Image Engines'''. The Fragment Generator comprises four ASIC designs: the '''Scan Converter''' (SC) ASIC, the '''Texel Address Calculator''' (TA) ASIC, the '''Texture Memory Controller''' (TM) ASIC and the '''Texture Fragment''' (TF) ASIC.<ref name="Paper"/>
+
+The SC ASIC and the TA ASIC perform scan conversion, color and depth interpolation, perspective correct texture coordinate interpolation and level of detail computation on incoming data, and the results are passed to the eight TM ASICs, which are specialized [[memory controller]]s optimized for texel access. Each TM ASIC controls four SDRAMs that make up one-eighth of the texture memory. The SDRAMs used are 16 bits wide and have separate address and data buses. SDRAMs with a capacity of 4 Mb are used by Raster Manager boards with 16 MB of texture memory while 16 Mb SDRAMs are used by Raster Manager boards with 64 MB of texture memory.<ref name="HC"/> The TM ASICs perform texel lookups in its SDRAMs according to the texel addresses issued by the TA ASIC. Texels from the TM ASICs are forwarded to the appropriate TF ASIC, where texture filtering, texture environment combination with interpolated color and fog application is performed. As each SDRAM holds part of the texture memory, all of the 32 SDRAMs must be connected to all of the 80 Image Engines. To achieve this, the TM and TF ASICs implement a two-rank [[omega network]], which reduces the number of individual paths required for the 32 to 80 sort while maintaining the same functionality.
+
+The eighty Image Engines have multiple functions. Firstly, each Image Engine controls a portion of the raster memory, which in the case of the InfiniteReality, is a 1 MB SGRAM organized as 262,144 by 32-bit words.<ref name="Paper"/><ref name="HC"/> Secondly, the following OpenGL per-fragment operations are performed by the Image Engines: pixel ownership test, stencil test, depth buffer test, blending, dithering and logical operation. Lastly, the Image Engines perform anti-aliasing and [[accumulation buffer]] operations. To deliver pixel data for display, each Image Engine has a 2-bit serial bus to the Display Generator board. If one Raster Manager board is present in the pipeline, the Image Engine uses the entire width of the bus, whereas if two or more Raster Manager boards are present, the Image Engine uses half the bus.<ref name="Paper"/> Each serial bus is actually a part of the Video Bus, which has a bandwidth of 1.2 GB/s. Four Image Engine "cores" are contained on an Image Engine ASIC, which contains nearly 488,000 logic gates, comprising 1.95 million transistors, on a 42 mm<sup>2</sup> (6.5 by 6.5 mm) die that was fabricated in a 0.35 micrometre process by [[VLSI Technology]].
+
+The InfiniteReality uses the '''RM6-16''' or '''RM6-64''' Raster Managers. Each pipeline is capable of display resolutions of 2.62, 5.24 or 10.48 million pixels, provided that one, two or four Raster Manager boards respectively are present.<ref name="Report">Onyx2 Reality, Onyx2 InfiniteReality and Onyx2 InfiniteReality2 Technical Report, August 1998. Silicon Graphics, Inc.</ref> The raster memory can be configured to use 256, 512 or 1024 bits per pixel. 320 MB supports a resolution of 2560 by 2048 pixels with each pixel containing 512 bits of information.<ref name="HC"/> In a configuration with four Raster Managers, the texture memory has a bandwidth of 15.36 GB/s, and the raster memory has a bandwidth of 72.8 GB/s.
+
+=== Display Generator board ===
+
+The '''DG4-2''' Display Generator board contains hardware to drive up to two video outputs, which may be expanded to eight video outputs with an optional daughterboard, a configuration known as the '''DG4-8'''. The outputs are independent and each output has hardware for generating video timing, video resizing, [[gamma correction]] and [[digital-to-analog]] conversion. Digital-to-analog conversion is provided by 8-bit digital-to-analog converters that support a pixel clock frequency up to 220 MHz.
+
+Data for the video outputs are provided by four ASICs that de-serialize and de-interleave the 160-bit streams into 10-bit component [[RGBA]], 12-bit component RBGA, L16, Stereo Field Sequential (FS) or color indexes. The hardware also incorporates the [[cursor]] at this stage. A 32,768 [[color index|color index map]] entries are available.
+
+=== Capabilities and performance ===
+
+The InfiniteReality was capable of several advanced capabilities:
+
+* 8 by 8 multi-sampled anti-aliasing<ref name="PG">Remanufactured Silicon Graphics Onyx2 Product Guide, June 1999. Document 1073. Silicon Graphics, Inc.</ref>
+* A maximum color depth of 48-bit RGBA<ref name="PG"/>
+* 16 overlay planes<ref name="PG"/>
+* A 24-bit floating point Z-buffer<ref name="PG"/>
+* Each pixel consists of 256 to 1,048 bits of data
+* Stereo viewing was supported and was [[Quad buffering|quad buffered]]
+
+The InfiniteReality's performance was:
+
+* 11 million non-lighted, depth-buffered, anti-aliased, triangle strips (40 pixels each) per second
+* 8.3 million textured, depth-buffered, anti-aliased, triangle strips (50 pixels each) per second
+* 7+ million lighted, textured and anti-aliased triangles per second
+* 800 million trilinear mip-mapped, textured, 16-bit texel, depth buffered pixels per second
+* 750 million trilinear mip-mapped, textured, 16-bit texel, four by four sub-sample anti-aliased, depth buffered pixels per second
+* 710+ million textured and anti-aliased pixels per second
+* 300 million displayed pixels per second, distributed over one to eight outputs
+
+== InfiniteReality2 ==
+
+InfiniteReality2 is what hinv (an [[IRIX]] utility that lists the hardware present in a system) refers to an InfiniteReality that is used in the Onyx2. The InfiniteReality2 however, was still marketed as the InfiniteReality. It was the second implementation of the InfiniteReality architecture, and was introduced in late 1996. It is identical to the InfiniteReality architecturally, but differs mechanically as the Onyx2's [[SGI Origin 2000|Origin 2000]]-based card cage is different from the Onyx's [[SGI Challenge|Challenge]]-based card cage.
+
+Introduced by the InfiniteReality2 is an interface scheme that is used in rackmount Onyx2 or later systems. Instead of being connected to the host system via a FCI cable, the board set is plugged into the rear of a midplane, which can support two pipelines. The midplane has eleven slots. Slot six to slot eleven are for the first pipeline, which may contain one to four Raster Manager boards. Slot one to four is for the second pipeline, which may contain one or two Raster Manager boards due to the number of slots there are. Because of this, maximally configured Onyx systems use one midplane for each pipeline to avoid restricting half of the 16 pipelines to a maximum of two Raster Manager boards. Slot five contains a Ktown board if the midplane is used in an Origin 2000-based system (Onyx2) or a Ktown2 board if the midplane is used in an Origin 3000-based system (Onyx 3000). The purpose of these boards is to interface the host system's XIO link to the Host Interface Processor ASIC on the Geometry board. These boards have two XIO ports for this purpose, with the top XIO port connected to the right pipeline and the bottom XIO port connected to the left pipeline.
+
+=== Reality ===
+
+The Reality is a cost-reduced version of the InfiniteReality2 intended to provide similar performance. Instead of using the GE14-4 Geometry Engine board and the RM7-16 or RM7-64 Raster Manager boards, the Reality used the '''GE14-2''' Geometry Engine board and the '''RM8-16''' or '''RM8-64''' Raster Manager boards. The GE14-2 has two Geometry Engine Processors, instead of four like the other models. The RM8-16 and RM864 has 16 or 64 MB of texture memory respectively and 40 MB of raster memory. The Reality was also limited by the number of Raster Manager boards it could support, one or two. When maximally configured with two RM8-64 Raster Manager boards, the Reality pipeline has 80 MB of raster memory.
+
+=== InfiniteReality2E ===
+
+The InfiniteReality2E was an upgrade of the InfiniteReality, marketed as the InfiniteReality2, introduced in 1998. It succeeded the InfiniteReality2 board set and was itself succeeded by the InfiniteReality3 in 2000, but was not discontinued until 10 April 2001.
+
+It improves upon the InfiniteReality by replacing the GE14-4 Geometry Engine board with the '''GE16-4''' Geometry Engine board and the RM7-16 or RM7-64 Raster Manager boards with the '''RM9-64''' Raster Manager board. The new Geometry Engine board operated at 112 MHz,<ref name="MHz">Alexander Wolfe. "Siggraph sets the stage for latest graphics". EE Times, 20 July 1998.</ref> improving geometry and image processing performance. The new Raster Manager board operated at 72 MHz,<ref name="MHz"/> improving anti-aliased pixel fill performance.
+
+== InfiniteReality3 ==
+
+InfiniteReality3 was introduced in 2000 along with the [[SGI Origin 3000 and Onyx 3000|Onyx 3000]] to supersede the InfiniteReality2. It was used in the [[SGI Onyx2|Onyx2]] and Onyx 3000 visualization systems. The only improvement over the previous implementation was replacement of the RM9-64 Raster Manager with the '''RM10-256''' Raster Manager, which has 256 MB of texture memory, four times that the of the previous raster manager. When maximally configured with four Raster Managers, the InfiniteReality3 pipeline provides 320 MB of raster memory.
+
+== InfiniteReality4 ==
+
+InfiniteReality4 was introduced in 2002 to succeed the InfiniteReality3. It was used in the Onyx2, Onyx 3000 and Onyx 350. It is the last member of the InfiniteReality family, itself succeeded by the ATI FireGL-based UltimateVision, which was used in the Onyx4. The only improvement over the previous implementation was the replacement of the RM10-256 Raster Manager by the '''RM11-1024''' Raster Manager, which has improved performance, 1 GB of texture memory and 2.5 GB of raster memory, four and thirty-two times that of the previous raster manager, respectively. When maximally configured with four Raster Managers, the InfiniteReality4 pipeline has 10 GB of raster memory. In a maximum configuration with 16 pipelines, the InfiniteReality4 contained 16 GB of texture memory and 160 GB of raster memory.<ref name="3-4">"SGI Onyx 300 with InfiniteReality Family Graphics Datasheet." Silicon Graphics, 3224, 25 October 2002.</ref>
+
+== Comparison ==
+
+The figures presented in the tables are for a minimal 1-pipeline and a maximal 16-pipeline configuration, except for the Reality, which was restricted to single pipe operation.
+
+=== Hardware ===
+
+{|class="wikitable" style="font-size: 90%; text-align: center;"
+|-
+! width="105" | Model
+! width="80"  | Geometry <br /> Engine <br / > board
+! width="125" | Raster Manager <br /> board
+! width="125" | Display Generator <br /> board
+! width="125" | Texture <br /> memory <br /> (MB)
+! width="125" | Raster <br /> memory <br /> (MB)
+! width="80"  | Introduced
+! width="80"  | Discontinued
+|-
+| '''InfiniteReality'''
+| GE12-4
+| RM6-16 or RM6-64
+| DG4-2 or DG4-8
+| 16 to 1,024<ref name="1-2">Onyx2 GroupStation Datasheet, August 1998. Document 1840. Silicon Graphics, Inc.</ref>
+| 80 to 5,120<ref name="1-2"/>
+| ?
+| 1999-09-30
+|-
+| '''InfiniteReality2'''
+| GE14-4
+| RM7-16 or RM7-64
+| DG5-2 or DG5-8
+| 16 to 1,024
+| 80 to 5,120
+| ?
+| ?
+|-
+| '''Reality'''
+| GE14-2
+| RM8-16 or RM8-64
+| DG5-2 or DG5-8
+| 64
+| 40 to 80
+| ?
+| ?
+|-
+| '''InfiniteReality2E'''
+| GE16-4
+| RM9-64
+| DG5-2 or DG5-8
+| 64 to 1,024<ref name="1-2"/>
+| 80 to 5,120<ref name="1-2"/>
+| ?
+| ?
+|-
+| '''InfiniteReality3'''
+| GE16-4
+| RM10-256
+| DG5-2 or DG5-8
+| 256 to 4,096<ref name="3-4"/>
+| 80 to 5,120<ref name="3-4"/>
+| ?
+| 2003-06-27
+|-
+| '''InfiniteReality4'''
+| GE16-4
+| RM11-1024
+| DG5-2 or DG5-8
+| 1,024 to 16,384<ref name="3-4"/>
+| 2,560 to 163,840<ref name="3-4"/>
+| ?
+| ?
+|-
+|}
+
+=== Performance ===
+
+{| class="wikitable" style="font-size: 90%; text-align: center;"
+|-
+! width="105" | Model
+! width="100" | Polygons <br /> (millions per second)
+! width="100" | Pixel fill <br /> (millions of pixels per second)
+! width="100" | Volume rendering <br /> (millions of voxels per second)
+|-
+| '''InfiniteReality'''
+| 10.9
+| ?
+| ?
+|-
+| '''InfiniteReality2'''
+| 10.9
+| ?
+| ?
+|-
+| '''Reality'''
+| 5.5
+| 94 to 188<ref group="note" name="fn_1"/>
+| 100 to 200
+|-
+| '''InfiniteReality2E'''
+| 13.1 to 210<ref name="1-2"/>
+| 192 to 6,100
+| 200 to 6,400
+|-
+| '''InfiniteReality3'''
+| 13.1 to 210
+| 5,600
+| 6,400
+|-
+| '''InfiniteReality4'''
+| 13.1 to 210
+| 10,200<ref group="note" name="fn_2"/>
+| 6,400
+|-
+|}
+;Notes
+{{Reflist|group="note"|refs=
+<ref group="note" name="fn_1"> Anti-aliased, Z-buffered, textured.</ref>
+<ref group="note" name="fn_2"> 8 by 8 sub-sampled anti-aliased, Z-buffered, textured, lit, 40-bit color pixels.</ref>
+}}
+
+== References ==
+{{Reflist}}
+
+[[Category:SGI graphics]]</body> </html>

@@ -1,0 +1,113 @@
+<html> <head> <title>Coupling (computer programming)</title></head><body>{{moreref|date=September 2010}}
+In [[computer science]], '''coupling''' or '''dependency''' is the degree to which each program module relies on each one of the other modules.
+
+Coupling is usually contrasted with [[cohesion (computer science)|cohesion]]. Low coupling often correlates with high cohesion, and vice versa. The [[software metric|software quality metrics]] of coupling and cohesion were invented by [[Larry Constantine]], an original developer of Structured Design<ref>W. Stevens, G. Myers, L. Constantine, "Structured Design", IBM Systems Journal, 13 (2), 115-139, 1974.</ref> who was also an early proponent of these concepts (see also [[Structured Systems Analysis and Design Methodology|SSADM]]). Low coupling is often a sign of a well-structured [[Computer|computer system]] and a good design, and when combined with high cohesion, supports the general goals of high readability and maintainability.
+
+== Types of coupling ==
+[[Image:Coupling sketches cropped 1.svg|thumb|300px|right|upright=2.0|Conceptual model of coupling]]
+Coupling can be "low" (also "loose" and "weak") or "high" (also "tight" and "strong"). Some types of coupling, in order of highest to lowest coupling, are as follows:
+
+;Content coupling (high): Content coupling is when one module modifies or relies on the internal workings of another module (e.g., accessing local data of another module).
+:Therefore changing the way the second module produces data (location, type, timing) will lead to changing the dependent module.
+;Common coupling: Common coupling is when two modules share the same global data (e.g., a global variable).
+:Changing the shared resource implies changing all the modules using it.
+;External coupling: External coupling occurs when two modules share an externally imposed data format, communication protocol, or device interface.
+;Control coupling: Control coupling is one module controlling the flow of another, by passing it information on what to do (e.g., passing a what-to-do flag).
+;Stamp coupling (Data-structured coupling): Stamp coupling is when modules share a composite data structure and use only a part of it, possibly a different part (e.g., passing a whole record to a function that only needs one field of it).
+:This may lead to changing the way a module reads a record because a field that the module doesn't need has been modified.
+;Data coupling: Data coupling is when modules share data through, for example, parameters. Each datum is an elementary piece, and these are the only data shared (e.g., passing an integer to a function that computes a square root).
+;Message coupling (low): This is the loosest type of coupling. It can be achieved by state decentralization(as in objects)and component communication is done via parameters or message passing.(see [[Message passing]]).
+;No coupling: Modules do not communicate at all with one another.
+
+=== Object-oriented programming ===
+;Subclass Coupling: Describes the relationship between a child and its parent. The child is connected to its parent, but the parent isn't connected to the child.
+
+;Temporal coupling: When two actions are bundled together into one module just because they happen to occur at the same time.
+
+== Disadvantages ==
+Tightly coupled systems tend to exhibit the following developmental characteristics, which are often seen as disadvantages:
+
+# A change in one module usually forces a [[ripple effect]] of changes in other modules.
+# Assembly of modules might require more effort and/or time due to the increased inter-module dependency.
+# A particular module might be harder to reuse and/or test because dependent modules must be included.
+
+== Performance issues ==
+Whether loosely or tightly coupled, a system's performance is often reduced by message and parameter creation, transmission, translation and interpretation overhead. See [[event-driven programming]].
+
+;Message Creation Overhead and Performance: Since all messages and parameters must possess particular meanings to be consumed (i.e., result in intended logical flow within the receiver), they must be created with a particular meaning. Creating any sort of message requires overhead in either CPU or memory usage. Creating a single integer value message (which might be a reference to a string, array or data structure) requires less overhead than creating a complicated message such as a SOAP message. Longer messages require more CPU and memory to produce. To optimize runtime performance, message length must be minimized and message meaning must be maximized.
+
+;Message Transmission Overhead and Performance: Since a message must be transmitted in full to retain its complete meaning, message transmission must be optimized. Longer messages require more CPU and memory to transmit and receive. Also, when necessary, receivers must reassemble a message into its original state to completely receive it. Hence, to optimize runtime performance, message length must be minimized and message meaning must be maximized.
+
+;Message Translation Overhead and Performance: Message protocols and messages themselves often contain extra information (i.e., packet, structure, definition and language information). Hence, the receiver often needs to translate a message into a more refined form by removing extra characters and structure information and/or by converting values from one type to another. Any sort of translation increases CPU and/or memory overhead. To optimize runtime performance, message form and content must be reduced and refined to maximize its meaning and reduce translation.
+
+;Message Interpretation Overhead and Performance: All messages must be interpreted by the receiver. Simple messages such as integers might not require additional processing to be interpreted. However, complex messages such as SOAP messages require a parser and a string transformer for them to exhibit intended meanings. To optimize runtime performance, messages must be refined and reduced to minimize interpretation overhead.
+
+== Solutions ==
+One approach to decreasing coupling is [[functional design]], which seeks to limit the responsibilities of modules along functionality, coupling increases between two classes '''''A''''' and '''''B''''' if:
+
+*'''''A''''' has an attribute that refers to (is of type) '''''B'''''.
+*'''''A''''' calls on services of an object '''''B'''''.
+*'''''A''''' has a method that references '''''B''''' (via return type or parameter).
+*'''''A''''' is a subclass of (or implements) class '''''B'''''.
+
+Low coupling refers to a relationship in which one module interacts with another module through a simple and stable interface and does not need to be concerned with the other module's internal implementation (see [[Information Hiding]]).
+
+Systems such as [[CORBA]] or [[Component Object Model|COM]] allow objects to communicate with each other without having to know anything about the other object's implementation. Both of these systems even allow for objects to communicate with objects written in other languages.
+
+== Module coupling ==
+Coupling in Software Engineering<ref name=Pressman>Pressman, Roger S. Ph.D (1982).  Software Engineering - A Practitioner's Approach - Fourth Edition.  ISBN 0-07-052182-4</ref> describes a version of metrics associated with this concept.
+
+For data and control flow coupling:
+
+* '''d<sub>i</sub>''': number of input data parameters
+* '''c<sub>i</sub>''': number of input control parameters
+* '''d<sub>o</sub>''': number of output data parameters
+* '''c<sub>o</sub>''': number of output control parameters
+
+For global coupling:
+
+* '''g<sub>d</sub>''': number of global variables used as data
+* '''g<sub>c</sub>''': number of global variables used as control
+
+For environmental coupling:
+
+* '''w''': number of modules called (fan-out)
+* '''r''': number of modules calling the module under consideration (fan-in)
+
+<math>\mathrm{Coupling}(C) = 1 - \frac{1}{d_{i} + 2\times c_{i} + d_{o} + 2\times c_{o} + g_{d} + 2\times g_{c} + w + r}</math>
+
+<code>Coupling(C)</code> makes the value larger the more coupled the module is. This number ranges from approximately 0.67 (low coupling) to 1.0 (highly coupled)
+
+For example, if a module has only a single input and output data parameter 
+
+<math>C = 1 - \frac{1}{1+0+1+0+0+0+1+0} = 1 - \frac{1}{3} = 0.67</math>
+
+If a module has 5 input and output data parameters, an equal number of control parameters, and accesses 10 items of global data, with a fan-in of 3 and a fan-out of 4,
+
+<math>C = 1 - \frac{1}{5 + 2\times 5 + 5 + 2\times 5 + 10 + 0 + 3 + 4} = 0.98</math>
+
+==See also==
+* [[Cohesion (computer science)]]
+* [[Dependency hell]]
+* [[Efferent coupling]]
+* [[Inversion of control]]
+* [[List of object-oriented programming terms]]
+* [[Loose coupling]]
+* [[Make (software)]]
+* [[Static code analysis]]
+
+== References ==
+<references/>
+
+{{DEFAULTSORT:Coupling (Computer Science)}}
+[[Category:Object-oriented programming]]
+[[Category:Software architecture]]
+[[Category:Software metrics]]
+
+[[de:Kopplung (Softwareentwicklung)]]
+[[fr:Couplage (informatique)]]
+[[it:Dipendenza (informatica)]]
+[[mt:Coupling]]
+[[ja:結合度]]
+[[pl:Zależność oprogramowania]]
+[[ru:Связанность (программирование)]]</body> </html>

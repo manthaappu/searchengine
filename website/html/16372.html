@@ -1,0 +1,418 @@
+<html> <head> <title>Haskell 98 features</title></head><body>This article describes the features in [[Haskell (programming language)|'''Haskell98''']].
+
+
+== Examples ==
+
+=== Factorial ===
+A simple example that is often used to demonstrate the syntax of [[functional language]]s is the [[factorial]] function for non-negative integers, shown in Haskell:
+
+<source lang="haskell">
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial n | n > 0 = n * factorial (n-1)
+</source>
+
+Or in one line:
+ 
+<source lang="haskell">
+factorial n = if n > 0 then n * factorial (n-1) else 1
+</source>
+
+This describes the factorial as a recursive function, with one terminating base case. It is similar to the descriptions of factorials found in mathematics textbooks. Much of Haskell code is similar to standard [[mathematical notation]] in facility and syntax.
+
+The first line of the factorial function describes the ''type'' of this function; while it is optional, it is considered to be good style<ref>HaskellWiki: [http://www.haskell.org/haskellwiki/Type_signatures_as_good_style Type signatures as good style]</ref> to include it. It can be read as ''the function factorial'' (<tt>factorial</tt>) ''has type'' (<tt>::</tt>) ''from integer to integer'' (<tt>Integer -> Integer</tt>). That is, it takes an integer as an argument, and returns another integer. The type of a definition is inferred automatically if the programmer didn't supply a type annotation.
+
+The second line relies on [[pattern matching]], an important feature of Haskell. Note that parameters of a function are not in parentheses but separated by spaces. When the function's argument is 0 (zero) it will return the integer 1 (one). For all other cases the third line is tried. This is the [[recursion]], and executes the function again until the base case is reached. 
+
+A [[guard (computing)|guard]] protects the third line from negative numbers for which a factorial is undefined. Without the guard this function would, if called with a negative number, recurse through all negative numbers without ever reaching the base case of 0. As it is, the pattern matching is not complete: if a negative integer is passed to the factorial function as an argument, the program will fail with a runtime error. A final case could check for this error condition and print an appropriate error message instead.
+
+Using the <tt>product</tt> function from the Prelude, a number of small functions analogous to [[C (programming language)|C]]'s [[C standard library|standard library]], and using the Haskell syntax for arithmetic sequences, the factorial function can be expressed in Haskell as follows:
+
+<source lang="haskell">
+factorial n = product [1..n]
+</source>
+
+Here <tt><nowiki>[1..n]</nowiki></tt> denotes the arithmetic sequence {{nowrap|1, 2, …, ''n''}} in list form. Using the Prelude function <tt>enumFromTo</tt>, the expression <tt><nowiki>[1..n]</nowiki></tt> can be written as <tt>enumFromTo 1 n</tt>, allowing the factorial function to be expressed as
+ 
+<source lang="haskell">
+factorial n = product (enumFromTo 1 n)
+</source>
+
+which, using the [[function composition operator]] (expressed as a dot in Haskell) to compose the product function with the [[currying|curried]] enumeration function can be rewritten in [[point-free programming|point-free style]]:<ref>HaskellWiki: [http://haskell.org/haskellwiki/Pointfree Pointfree]</ref>
+
+<source lang="haskell">
+factorial = product . enumFromTo 1
+</source>
+
+In the Hugs interpreter, one often needs to define the function and use it on the same line separated by a <tt>where</tt> or <tt>let</tt>..<tt>in</tt>. For example, to test the above examples and see the output <tt>120</tt>:
+
+<source lang="haskell">
+let { factorial n | n > 0 = n * factorial (n-1); factorial _ = 1 } in factorial 5
+</source>
+
+or
+
+<source lang="haskell">
+factorial 5 where factorial = product . enumFromTo 1
+</source>
+
+The GHCi interpreter doesn't have this restriction and function definitions can be entered on one line and referenced later.
+
+=== More complex examples ===
+In the Haskell source immediately below, "::" can be read as "has type"; "a —> b" can be read as "is a function from a to b". (Thus the Haskell "calc :: String —> [Float]" can be read as "<tt>calc</tt> has type of function from Strings to lists of Floats".)
+In the second line "calc = ... " the equals sign can be read as "can be"; thus multiple lines with "calc = ... " can be read as multiple possible values for <tt>calc</tt>, depending on the circumstance detailed in each line.
+
+A simple [[Reverse Polish notation]] calculator expressed with the [[higher-order function]] <code>[[foldl]]</code> whose argument ''f'' is defined in a ''where'' clause using [[pattern matching]] and the [[type class]] ''Read'': 
+
+<source lang="haskell">
+calc :: String -> [Float]
+calc = foldl f [] . words
+  where 
+    f (x:y:zs) "+" = (y + x):zs
+    f (x:y:zs) "-" = (y - x):zs
+    f (x:y:zs) "*" = (y * x):zs
+    f (x:y:zs) "/" = (y / x):zs
+    f xs y = read y : xs
+</source>
+
+The empty list is the initial state, and ''f'' [[Interpreter (computing)|interpret]]s one word at a time, either matching two numbers from the head of the list and pushing the result back in, or parsing the word as a [[floating-point number]] and prepending it to the list.
+
+The following definition produces the list of [[Fibonacci numbers]] in linear time:
+
+<source lang="haskell">
+fibs = 0 : 1 : zipWith (+) fibs (tail fibs)
+</source>
+
+The infinite list is produced by [[corecursion]] — the latter values of the list are computed on demand starting from the initial two items 0 and 1. This kind of a definition relies on [[lazy evaluation]], an important feature of Haskell programming. For an example of how the evaluation evolves, the following illustrates the values of ''fibs'' and ''tail fibs'' after the computation of six items and shows how ''zipWith (+)'' has produced four items and proceeds to produce the next item:
+
+ fibs         = 0 : 1 : 1 : 2 : 3 : 5 : ...
+                +   +   +   +   +   +
+ tail fibs    = 1 : 1 : 2 : 3 : 5 : ...
+                =   =   =   =   =   =
+ zipWith ...  = 1 : 2 : 3 : 5 : '''8''' : ...
+ fibs = 0 : 1 : 1 : 2 : 3 : 5 : '''8''' : ...
+
+The same function, written using GHC's [[parallel list comprehension]] syntax (GHC extensions must be enabled using a special command-line flag '-fglasgow-exts'; see GHC's manual for more):
+
+<source lang="haskell">
+fibs = 0 : 1 : [ a+b | a <- fibs | b <- tail fibs ]
+</source>
+
+The factorial we saw previously can be written as a sequence of functions:
+
+<source lang="haskell">
+factorial n = (foldr (.) id [\x -> x*k | k <- [1..n]]) 1
+</source>
+
+A remarkably concise function that returns the list of [[Hamming numbers]] in order:
+
+<source lang="haskell">
+hamming = 1 : map (2*) hamming `merge` 
+               map (3*) hamming `merge` map (5*) hamming
+     where merge (x:xs) (y:ys) 
+            | x < y = x : xs `merge` (y:ys)
+            | x > y = y : (x:xs) `merge` ys
+            | otherwise = x : xs `merge` ys
+</source>
+
+Like the various <code>fibs</code> solutions displayed above, this uses corecursion to produce a list of numbers on demand,
+starting from the base case of 1 and building new items based on the preceding part of the list.
+
+In this case the producer <code>merge</code> is defined in a <code>where</code> clause and used as an operator by enclosing it in back-quotes.
+<!-- Apart from the different application syntax, operators are like functions whose name consists of symbols instead of letters.
+Each vertical bar <code>|</code> starts a guard clause with a guard before the equals sign and the corresponding definition after the equals sign.
+-->
+The branches of the guards define how <code>merge</code> merges two ascending lists into one ascending list without duplicate items.
+
+== Syntax ==
+
+=== Layout ===
+
+Haskell allows indentation to be used to indicate the beginning of a
+new declaration.  For example, in a ''where'' clause:
+
+<source lang="haskell">
+product xs = prod xs 1
+  where
+    prod []     a = a
+    prod (x:xs) a = prod xs (a*x)
+</source>
+
+The two equations for the nested function <tt>prod</tt> are aligned
+vertically, which allows the semi-colon separator to be omitted.  In
+Haskell, indentation can be used in several syntactic constructs,
+including <tt>do</tt>, <tt>let</tt>, <tt>case</tt>, <tt>class</tt>,
+and <tt>instance</tt>.
+
+The use of indentation to indicate program structure
+originates in [[Peter_J._Landin|Landin]]'s [[ISWIM]] language, where it was called the
+[[off-side rule]].  This was later adopted by [[Miranda_(programming_language)|Miranda]], and Haskell
+adopted a similar (but rather more complicated) version of Miranda's
+off-side rule, which it called "layout".  Other languages to adopt whitespace-sensitive syntax 
+include [[Python (programming language)|Python]] and [[F Sharp (programming language)|F#]].
+
+The use of layout in Haskell is optional.  For example, the function <tt>product</tt> above can also be written:
+
+<source lang="haskell">
+product xs = prod xs 1
+  where { prod [] a = a; prod (x:xs) a = prod xs (a*x) }
+</source>
+
+The explicit open brace after the <tt>where</tt> keyword indicates
+that the programmer has opted to use explicit semi-colons to separate
+declarations, and that the declaration-list will be terminated by an
+explicit closing brace.  One reason for wanting support for explicit
+delimiters is that it makes automatic generation of Haskell source
+code easier.
+
+Haskell's layout rule has been criticised for its complexity.  In
+particular, the definition states that if the parser encounters a
+parse error during processing of a layout section, then it should try
+inserting a close brace (the "parse error" rule).  Implementing this
+rule in a traditional [[parsing]]/[[Lexical_analysis|lexical-analysis]] combination requires
+two-way cooperation between the parser and lexical analyser, whereas
+in most languages these two phases can be considered independently.
+
+=== Function calls ===
+
+Applying a function <tt>f</tt> to a value <tt>x</tt> is expressed as simply <tt>f x</tt>. 
+
+Haskell distinguishes function calls from infix operators syntactically, but not semantically. Function names which are composed of punctuation characters can be used as operators, as can other function names if surrounded with backticks; and operators can be used in prefix notation if surrounded with parentheses.
+
+This example shows the ways that functions can be called:
+
+<source lang="haskell">
+  add a b = a + b
+
+  ten1 = 5 + 5
+  ten2 = (+) 5 5
+  ten3 = add 5 5
+  ten4 = 5 `add` 5
+</source>
+
+Functions which are defined as taking several parameters can always be partially applied. Binary operators can be partially applied using ''section'' notation:
+
+<source lang="haskell">
+  ten5 = (+ 5) 5
+  ten6 = (5 +) 5
+  
+  addfive = (5 +)
+  ten7 = addfive 5
+</source>
+
+=== List comprehensions ===
+See [[List_comprehension#Overview]] for the Haskell example.
+
+
+=== Pattern matching ===
+
+[[Pattern matching]] is used to match on the different constructors of algebraic data types. Here are some functions, each using pattern matching on each of the types above:
+
+<source lang="haskell">
+-- This type signature says that empty takes a list containing any type, and returns a Bool
+empty :: [a] -> Bool
+empty (x:xs) = False
+empty [] = True
+
+-- Will return a value from a Maybe a, given a default value in case a Nothing is encountered
+fromMaybe :: a -> Maybe a -> a
+fromMaybe x (Just y) = y
+fromMaybe x Nothing  = x
+
+isRight :: Either a b -> Bool
+isRight (Right _) = True
+isRight (Left _)  = False
+
+getName :: Person -> String
+getName (Person name _ _) = name
+
+getSex :: Person -> Sex
+getSex (Person _ sex _) = sex
+
+getAge :: Person -> Int
+getAge (Person _ _ age) = age
+</source>
+
+Using the above functions, along with the [[Map (higher-order function)|<code>map</code>]] function, we can apply them to each element of a list, to see their results:
+
+<source lang="haskell">
+
+map empty [[1,2,3],[],[2],[1..]]
+-- returns [False,True,False,False]
+
+map (fromMaybe 0) [Just 2,Nothing,Just 109238, Nothing]
+-- returns [2,0,109238,0]
+
+map isRight [Left "hello", Right 6, Right 23, Left "world"]
+-- returns [False, True, True, False]
+
+map getName [Person "Sarah" Female 20, Person "Alex" Male 20, tom]
+-- returns ["Sarah", "Alex", "Tom"], using the definition for tom above
+
+</source>
+
+* Abstract Types
+
+* Lists
+
+=== Tuples ===
+
+Tuples in haskell can be used to hold a fixed number of elements. They are used to group pieces of data of differing types:
+
+<source lang="haskell">
+account :: (String, Integer, Double) -- The type of a three-tuple, representing a name, balance, interest rate
+account = ("John Smith",102894,5.25)
+</source>
+
+Tuples are commonly used in the zip* functions to place adjacent elements in separate lists together in tuples (zip4 to zip7 are provided in the Data.List module):
+
+<source lang="haskell">
+-- The definition of the zip function. Other zip* functions are defined similarly
+zip :: [x] -> [y] -> [(x,y)]
+zip (x:xs) (y:ys) = (x,y) : zip xs ys
+zip _      _      = []
+
+zip [1..5] "hello"
+-- returns [(1,'h'),(2,'e'),(3,'l'),(4,'l'),(5,'o')]
+-- and has type [(Integer, Char)]
+
+zip3 [1..5] "hello" [False, True, False, False, True]
+-- returns [(1,'h',False),(2,'e',True),(3,'l',False),(4,'l',False),(5,'o',True)]
+-- and has type [(Integer,Char,Bool)]
+
+</source>
+
+In the GHC compiler, tuples are defined with sizes from 2 elements up to 62 elements.
+
+* Records
+
+== Namespaces ==
+In the [[#More_complex_examples]] section above, <tt>calc</tt> is used in two senses, showing that there is a Haskell type class namespace and also a namespace for values:
+#a Haskell [[type class]] for <tt>calc</tt>. The [[Domain of a function|domain]] and [[Range (mathematics)|range]] can be explicitly denoted in a Haskell type class.
+#a Haskell value, formula, or expression for <tt>calc</tt>.
+
+== Typeclasses and polymorphism ==
+
+=== Algebraic data types ===
+{{Expand section|date=December 2009}}
+
+[[Algebraic data types]] are used extensively in Haskell. Some examples of these are the built in list, <code>Maybe</code> and <code>Either</code> types:
+
+<source lang="haskell">
+-- A list of a's ([a]) is either an a consed (:) onto another list of a's, or an empty list ([])
+data [a] = a : [a] | []
+-- Something of type Maybe a is either Just something, or Nothing
+data Maybe a = Just a | Nothing
+-- Something of type Either atype btype is either a Left atype, or a Right btype
+data Either a b = Left a | Right b
+</source>
+
+Users of the language can also define their own [[abstract data type]]s. An example of an ADT used to represent a person's name, sex and age might look like:
+
+<source lang="haskell">
+data Sex = Male | Female
+data Person = Person String Sex Int -- Notice that Person is both a constructor and a type
+
+-- An example of creating something of type Person
+tom :: Person
+tom = Person "Tom" Male 27
+</source>
+
+
+=== Type system ===
+
+{{Expand section|date=December 2009}}
+
+* [[Type class]]es
+* Type defaulting
+* Overloaded Literals
+* Higher Kinded Polymorphism
+* Multi-Parameter Type Classes
+* Functional Dependencies
+
+== Monads and input/output ==
+{{Expand section|date=December 2009}}
+
+* [[Monad (functional programming)|Overview of the monad framework]]
+* Applications
+
+** Monadic IO
+** Do-notation
+** References
+** Exceptions
+
+=== ST monad ===
+
+The ST monad allows programmers to write imperative algorithms in Haskell, using mutable variables (STRef's) and mutable arrays (STArrays and STUArrays). The advantage of the ST monad is that it allows programmers to write code that has internal side effects, such as destructively updating mutable variables and arrays, while containing these effects inside the monad. The result of this is that functions written using the ST monad appear completely pure to the rest of the program. This allows programmers to produce imperative code where it may be impractical to write functional code, while still keeping all the safety that pure code provides.
+
+Here is an example program (taken from the Haskell wiki page on the [http://haskell.org/haskellwiki/Monad/ST ST monad]) that takes a list of numbers, and sums them, using a mutable variable:
+
+<source lang="haskell">
+import Control.Monad.ST
+import Data.STRef
+import Control.Monad
+
+sumST :: Num a => [a] -> a
+sumST xs = runST $ do            -- runST takes stateful ST code and makes it pure.
+    summed <- newSTRef 0         -- Create an STRef (a mutable variable)
+
+    forM_ xs $ \x -> do          -- For each element of the argument list xs ..
+        modifySTRef summed (+x)  -- add it to what we have in n.
+
+    readSTRef summed             -- read the value of n, which will be returned by the runST above.
+</source>
+
+=== STM monad ===
+{{main|Concurrent Haskell}}
+The STM monad is an implementation of [[Software Transactional Memory]] in Haskell. It is implemented in the GHC compiler, and allows for mutable variables to be modified in [[Database_transaction|transactions]].
+
+
+=== Arrows ===
+* Applicative Functors
+* Arrows
+
+As Haskell is a pure functional language, functions cannot have side effects. Being non-strict, it also does not have a well-defined evaluation order. This is a challenge for real programs, which among other things need to interact with an environment. Haskell solves this with ''[[monad (functional programming)|monadic types]]'' that leverage the type system to ensure the proper sequencing of imperative constructs. The typical example is I/O, but monads are useful for many other purposes, including mutable state, concurrency and transactional memory, exception handling, and error propagation.
+
+Haskell provides a special syntax for monadic expressions, so that side-effecting programs can be written in a style similar to current imperative programming languages; no knowledge of the [[Monad (category theory)|mathematics behind monadic I/O]] is required for this. The following program reads a name from the command line and outputs a greeting message:
+
+<source lang="haskell">
+main = do putStrLn "What's your name?"
+          name <- getLine
+          putStr ("Hello, " ++ name ++ "!\n")
+</source>
+
+The do-notation eases working with monads. This do-expression is equivalent to, but (arguably) easier to write and understand than, the [[desugared|de-sugared]] version employing the monadic operators directly:
+
+<source lang="haskell">
+main = putStrLn "What's your name?" >> getLine >>= \ name -> putStr ("Hello, " ++ name ++ "!\n")
+</source>
+
+: ''See also [[wikibooks:Transwiki:List of hello world programs#Haskell]] for another example that prints text.''
+
+== Concurrency ==
+
+The Haskell language definition itself does not include either
+[[Concurrency (computer science)|concurrency]] or [[Parallel computing|parallelism]], although GHC supports both.
+
+{{main|Concurrent Haskell}}
+
+[[Concurrent Haskell]] is an extension to Haskell that provides
+support for threads and synchronization.<ref>Simon Peyton Jones, Andrew Gordon, and Sigbjorn Finne. [http://www.haskell.org/ghc/docs/papers/concurrent-haskell.ps.gz Concurrent Haskell]. ''ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (PoPL).'' 1996. (Some sections are out of date with respect to the current implementation.)</ref> GHC's
+implementation of Concurrent Haskell is based on multiplexing
+lightweight Haskell threads onto a few heavyweight OS
+threads,<ref name="marlow2009">[http://www.haskell.org/~simonmar/papers/multicore-ghc.pdf Runtime Support for Multicore Haskell] (Simon Marlow, Simon Peyton Jones, Satnam Singh) ICFP '09: Proceeding of the 14th ACM SIGPLAN international conference on Functional programming, Edinburgh, Scotland, August 2009</ref> so that Concurrent Haskell programs run in
+parallel on a [[Symmetric multiprocessing|multiprocessor]].  The runtime can support millions of simultaneous threads.<ref name="dons-multicore">http://donsbot.wordpress.com/2009/09/05/defun-2009-multicore-programming-in-haskell-now/</ref>
+
+The GHC implementation employs a dynamic pool of OS threads, allowing
+a Haskell thread to make a blocking system call without
+blocking other running Haskell threads.<ref name="marlow2004">[http://www.haskell.org/~simonmar/papers/conc-ffi.pdf Extending the Haskell Foreign Function Interface with Concurrency] (Simon Marlow, Simon Peyton Jones, Wolfgang Thaller) Proceedings of the ACM SIGPLAN workshop on Haskell, pages 57--68, Snowbird, Utah, USA, September 2004</ref>  Hence the
+lightweight Haskell threads have the characteristics of heavyweight OS
+threads, and the programmer is unaware of the implementation details.
+
+Recently, Concurrent Haskell has been extended with support for [[Software transactional memory|Software Transactional Memory]] (STM), which is a concurrency abstraction in which compound operations on shared data are performed atomically, as transactions.<ref name="stm">Tim Harris, Simon Marlow, Simon Peyton Jones, Maurice Herlihy "[http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.67.3686&rep=rep1&type=pdf Composable memory transactions]" ''Proceedings of the tenth ACM SIGPLAN symposium on Principles and practice of parallel programming'', 2005</ref> GHC's STM implementation is the only STM implementation to date to provide a static compile-time guarantee preventing non-transactional operations from being performed within a transaction.  The Haskell STM library also provides two operations not found in other STMs: <tt>retry</tt> and <tt>orElse</tt>, which together allow blocking operations to be defined in a [[Software_transactional_memory#Composable_operations|modular and composable fashion]].
+
+== References ==
+<references />
+
+[[Category:Haskell_programming_language_family]]
+[[Category:Articles_with_example_Haskell_code]]</body> </html>

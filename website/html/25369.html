@@ -1,0 +1,40 @@
+<html> <head> <title>Multiple granularity locking</title></head><body>{{Unreferenced|date=December 2009}}
+In [[computer science]], '''multiple granularity locking''' (MGL), sometimes called the '''John Rayner locking method''', is a locking method used in [[database management system]]s (DBMS) and [[relational database]]s. 
+
+In MGL, locks are set on objects that contain other objects.  MGL exploits the hierarchical nature of the ''contains'' relationship.  For example, a database may have files, which contain pages, which further contain records.  This can be thought of as a [[tree (data structure)|tree]] of objects, where each node contains its children.  A [[lock (computer science)|lock]] locks a [[node (computer science)|node]] and its descendants.
+
+Multiple granularity locking is usually used with non-strict [[two-phase locking]] to guarantee [[serializability]].  MGL uses [[lock escalation]] to determine granularity lock on a node and its ancestors.
+
+==Lock Modes==
+In addition to shared (S) locks and exclusive (X) locks from other locking schemes, like strict two-phase locking, MGL also uses ''intention shared'' and ''intention exclusive'' locks.  IS locks conflict with X locks, while IX locks conflict with S and X locks.  The null lock (NL) is compatible with everything.
+
+To lock a node in S (or X), MGL has the transaction locks all of its ancestors with IS (or IX), so if a transaction locks a node in S (or X), no other transaction can access its ancestors in X (or S and X).
+
+MGL locking modes are compatible with each other as defined in the following matrix.
+{| class="wikitable"
+|-
+! Mode || NL || IS || IX || S || SIX || X
+|-
+! NL
+| {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}}
+|-
+! IS
+| {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{No}}
+|-
+! IX
+| {{Yes}} || {{Yes}} || {{Yes}} || {{No}} || {{No}} || {{No}}
+|-
+! S
+| {{Yes}} || {{Yes}} || {{No}} || {{Yes}} || {{No}} || {{No}}
+|-
+! SIX
+| {{Yes}} || {{Yes}} || {{No}} || {{No}} || {{No}} || {{No}}
+|-
+! X
+| {{Yes}} || {{No}} || {{No}} || {{No}} || {{No}} || {{No}}
+|}
+
+{{DEFAULTSORT:Multiple Granularity Locking}}
+[[Category:Concurrency control]]
+
+[[ja:複数粒度ロック]]</body> </html>

@@ -1,0 +1,130 @@
+<html> <head> <title>VDPAU</title></head><body>{{Infobox software
+| name                   = VDPAU
+| logo                   = <!-- [[File: ]] -->
+| screenshot             = <!-- [[File: ]] -->
+| caption                = 
+| collapsible            = 
+| author                 = [[NVIDIA]]
+| developer              = 
+| released               = <!-- {{start date|YYYY|MM|DD}} -->
+| discontinued           = 
+| latest release version = 0.4<ref>http://lists.freedesktop.org/archives/xorg-announce/2010-January/001245.html</ref>
+| latest release date    = {{start date and age|2010|01|28}}
+| latest preview version = 
+| latest preview date    = <!-- {{start date and age|YYYY|MM|DD}} -->
+| frequently updated     = 
+| programming language   = 
+| operating system       = [[Linux]], [[FreeBSD]], [[Solaris (operating system)|Solaris]]
+| platform               = 
+| size                   = 
+| language               = 
+| status                 = 
+| genre                  = [[Library (computing)|Library]]
+| license                = 
+| website                = http://http.download.nvidia.com/XFree86/vdpau/doxygen/html/
+}}
+'''VDPAU''' ('''Video Decode and Presentation API for Unix''') is an [[open source]] [[Library (computing)|library]] (''libvdpau'') and [[Application programming interface|API]] originally designed by [[NVIDIA]] for its [[GeForce 8 series]] and later [[GPU]] hardware,<ref>[http://lists.freedesktop.org/archives/xorg-announce/2009-September/001036.html Announcing libvdpau 0.2]</ref><ref name="phoronix.com">[http://www.phoronix.com/scan.php?page=news_item&px=NzU0MA NVIDIA Releases Standalone VDPAU Library]</ref> targeted at the [[X Window System]] on [[Unix]]-based [[operating system]]s (including [[Linux]], [[FreeBSD]], and [[Solaris (operating system)|Solaris]]).<ref name ='vdpau_dxva'>{{cite web
+| url         = http://www.phoronix.com/scan.php?page=article&item=nvidia_180_vdpau&num=1
+| title       = NVIDIA Driver Brings PureVideo Features To Linux
+| accessdate  = 2009-03-13
+| author      = [[Michael Larabel]]
+| date        = 2008-11-14
+| work        = [[Phoronix]]
+}}</ref><ref>{{cite web
+| url         = http://www.phoronix.com/scan.php?page=article&item=nvidia_vdpau&num=1
+| title       = NVIDIA VDPAU Benchmarks
+| accessdate  = 2009-03-13
+| author      = [[Michael Larabel]]
+| date        = 2008-11-14
+| work        = [[Phoronix]]
+}}</ref><ref>[http://http.download.nvidia.com/XFree86/vdpau/doxygen/html/index.html VDPAU (Video Decode and Presentation API for Unix)]</ref> This VDPAU API allows video programs to offload portions of the [[video decoding]] process and [[video post-processing]] to the [[graphics processing unit|GPU]] video-hardware. 
+
+Currently, the portions capable of being offloaded by VDPAU onto the GPU are [[motion compensation]] (mo comp), [[inverse discrete cosine transform]] (iDCT), [[Variable-length code|VLD (Variable-Length Decoding)]] and [[Deblocking filter (video)|Deblocking]] for [[MPEG-1#Part_2:_Video|MPEG-1]], [[H.262/MPEG-2 Part 2|MPEG-2]], [[MPEG-4 Part 2|MPEG-4 ASP (MPEG-4 Part 2)]], [[H.264/MPEG-4 AVC]] and [[VC-1]], [[WMV3]]/[[WMV9]] encoded videos.<ref name='vdpau_dxva'/> Which specific codecs of these that can be offloaded to the GPU depends on the generation version of the GPU hardware, specifically to also decode MPEG-4 ASP (MPEG-4 Part 2), Xvid / OpenDivX (DivX 4), and DivX 5 formats, a GeForce 200M (2xxM) Series (the eleventh generation of [[NVIDIA]]'s [[GeForce]] [[graphics processing unit]]s) or newer GPU hardware is required.<ref>[http://www.phoronix.com/scan.php?page=news_item&px=NzUxMQ NVIDIA 190.32 Beta Brings New VDPAU Features]</ref>
+
+VDPAU can be described as the X Window System equivalent of the [[Microsoft]]'s [[DirectX Video Acceleration|DxVA (DirectX Video Acceleration) API]] for [[Microsoft Windows|Windows]].<ref name='vdpau_dxva'/>
+
+== Device drivers and hardware supporting VDPAU ==
+Each hardware video [[GPU]] capable of VDPAU video acceleration requires a [[X11]] software [[device driver]] to enable these features. Currently only second generation of [[PureVideo HD]] bit-stream processor in some of NVIDIA's [[GeForce 8 series]] and later graphics cards hardware that has support since the Beta device driver version 180.06.<ref name='vdpau_dxva'/> Unsupported hardware from the GeForce 8 series includes the 8800GTS 320/640MB editions and the 8800GTX. Later cards based on the G9x series cores e.g. the 8400GS and the 8800GTS 512mb (G92 core) are supported. Nvidia currently has no plans to introduce support for the unsupported hardware.<ref>http://www.nvnews.net/vbulletin/showthread.php?t=123095</ref> All supported graphic devices are listed in [[Nvidia PureVideo]].
+
+[[S3 Graphics]] added support for VDPAU to the Linux drivers of its  [[S3 Graphics Chrome 400|Chrome 400]] [[video card]]s since version 14.02.17 of its device driver for Linux, it supports the S3 Chrome 430 GT, S3 Chrome 440 GTX, S3 Chrome 530 GT and the S3 Chrome 540 GTX hardware.<ref>http://drivers.s3graphics.com/en/download/drivers/chrome4x-Linux/RN_Linux_EN.txt</ref>
+
+[[Intel]] and [[ATI]] currently offer no support for VDPAU. Nvidia hopes these GPU designers will support the open source VDPAU library and provide drivers with VDPAU acceleration by mentioning example names of hardware specific drivers for Intel and ATI: libvdpau_intel.so and libvdpau_ati.so.<ref>[http://http.download.nvidia.com/XFree86/vdpau/doxygen/html/group__api__winsys__x11.html#Driver NVIDIA's driver for X11-oriented VDPAU]</ref> Intel has mentioned that they are considering VDPAU support.<ref>[http://www.phoronix.com/scan.php?page=news_item&px=NzA0Nw Intel Considering VDPAU Support For X.Org Driver]</ref>
+
+== Software supporting VDPAU ==
+* [[Boxee]]<ref>[http://blog.boxee.tv/2009/06/23/boxee-for-windows-moving-up-to-the-major-leagues/]</ref>
+* [[GStreamer]]<ref name="Fluendo Codec Pack">[http://www.phoronix.com/scan.php?page=news_item&px=ODEwMw Fluendo's New Codecs Support VDPAU, VA-API]</ref>
+* [[MPlayer]]
+* [[MythTV]]<ref>{{cite web
+| url         = http://www.phoronix.com/scan.php?page=news_item&px=Njg4Ng
+| title       = MythTV Adds Support For NVIDIA VDPAU
+| accessdate  = 2009-03-13
+| author      = [[Michael Larabel]]
+| date        = 2008-11-29
+| work        = [[Phoronix]]
+}}</ref>
+* [[XBMC Media Center]]<ref name="xbmc.org">[http://xbmc.org/forum/showthread.php?t=45525 XBMC for Linux VDPAU support (ongoing development in an separate SVN branch)]</ref><ref name="ReferenceA">[http://xbmc.org/trac/changeset/17698 XBMC SVN Development Tree - Trac Changeset 17698]</ref><ref>[http://www.phoronix.com/scan.php?page=news_item&px=NzE2Mg XBMC Receives Mainline Support For VDPAU]</ref>
+* [[XBMC Live]] (Linux Live CD/USB operating-system)<ref name="xbmc.org"/><ref name="ReferenceA"/><ref>[http://www.phoronix.com/scan.php?page=news_item&px=NzE2Mg XBMC Receives Mainline Support For VDPAU]</ref>
+* [[Xine]]<ref>{{cite web
+| url         = http://www.phoronix.com/scan.php?page=news_item&px=Njk0MA
+| title       = Xine Picks Up Support For NVIDIA's VDPAU
+| accessdate  = 2009-03-13
+| author      = [[Michael Larabel]]
+| date        = 2008-12-17
+| work        = [[Phoronix]]
+}}</ref><ref>[http://hg.debian.org/hg/xine-lib/xine-lib-1.2/rev/9b68f6efb713 xine-lib-1.2 hg development tree, changeset 9b68f6efb713]</ref>
+* [[Media Lovin' Toolkit|MLT]]<ref>{{cite web
+| url         = http://sourceforge.net/news/?group_id=96039&id=279508
+| title       = VDPAU for MLT 0.4.11 GIT version
+| accessdate  = 2009-11-30
+| author      = ddennedy
+| date        = 2009-11-30
+| work        = [[MLT]]
+}}</ref>
+* [[Adobe Flash]] 10.2 Beta ''Stage Video'' (32bit only presently)  <ref>[http://www.reddit.com/r/linux/comments/eeh52/]</ref>
+
+VDPAU can also be used as a [[backend]] for the [[vaAPI|Video Acceleration API (VA API)]] which itself covers a subset of VDPAU's capabilities; so any software that supports VA API also partly supports VDPAU (e.g. [[VLC media player]]).<ref name='vdpau_vaapi'>{{cite web
+| url         = http://www.phoronix.com/scan.php?page=article&item=xorg_vdpau_vaapi
+| title       = A NVIDIA VDPAU Back-End For Intel's VA-API
+| accessdate  = 2009-03-13
+| author      = [[Michael Larabel]]
+| date        = 2009-02-03
+| work        = [[Phoronix]]
+}}</ref>
+
+== libvdpau standalone VDPAU library ==
+The libvdpau standalone VDPAU library is distributed by NVIDIA independently of their proprietary Linux graphics driver in an effort to help the adoption of VDPAU by those outside of NVIDIA. This open source library package contains a wrapper library and a debugging library allowing other manufacturers to implement VDPAU support into their device drivers.<ref name="phoronix.com"/><ref>[http://lists.freedesktop.org/archives/xorg-announce/2009-September/001036.html libvdpau 0.2 release announcement published on x.org devel mailing-list]</ref><ref>[http://www.phoronix.com/scan.php?page=news_item&px=NzYzNg NVIDIA Proposes VDPAU For DRI2 Patches]</ref><ref>[http://lists.x.org/archives/xorg-devel/2009-October/003056.html Add VDPAU drivers to the server's DRI2 implementation (PULL request on xorg-devel mailing list)]</ref>
+
+== See also ==
+* [[Nvidia PureVideo]] – the bit-stream technology from [[NVIDIA]] used in their graphics chips to accelerate video decoding with VDPAU.
+* [[DirectX Video Acceleration|DirectX Video Acceleration (DXVA)]] – the VDPAU equivalent API for [[Microsoft Windows]] operating-system.
+* [[Video Acceleration API|Video Acceleration API (VA API)]] – an alternative video acceleration API for Linux/UNIX operating-system.
+* [[X-Video Motion Compensation|X-Video Motion Compensation (XvMC) API]] – alternative and oldest video acceleration API for Linux/UNIX operating-system.
+* [[X-Video Bitstream Acceleration|X-Video Bitstream Acceleration (XvBA)]] – [[AMD]]'s competing API for Linux/UNIX operating-system.
+* [[Video Decode Acceleration Framework]] is [[Apple Inc.]]'s API for hardware-accelerated decoding of H.264 on [[Mac OS X]]
+* [[VideoToolBox]] is an undocumented API from [[Apple Inc.]] for hardware-accelerated decoding on [[Apple TV]] and [[Mac OS X]] 10.5 or later.<ref>http://www.tuaw.com/2011/01/20/xbmc-for-ios-and-atv2-now-available/ XBMC for iOS and Apple TV now available</ref>
+* [[OpenVideo Decode|OpenVideo Decode (OVD)]] – an new open cross-platform video acceleration API from [[AMD]].<ref>http://developer.amd.com/gpu/AMDAPPSDK/assets/OpenVideo_Decode_API.PDF OpenVideo Decode (OVD) API</ref>
+
+== References ==
+{{reflist|2}}
+
+== External links==
+* [http://http.download.nvidia.com/XFree86/vdpau/doxygen/html/index.html VDPAU (Video Decode and Presentation API for Unix) by NVIDIA]
+* [http://www.phoronix.com/scan.php?page=article&item=nvidia_vdpau&num=1 NVIDIA VDPAU Benchmarks]
+* [http://www.phoronix.com/scan.php?page=article&item=xorg_vdpau_vaapi&num=1 A NVIDIA VDPAU Back-End For Intel's VA-API]
+* [http://www.mythtv.org/wiki/VDPAU VDPAU usage and support in MythTV]
+
+{{NVIDIA}}
+{{XWinSys}}
+{{VideoProcessing}}
+
+[[Category:Application programming interfaces]]
+[[Category:Nvidia]]
+[[Category:Video acceleration]]
+[[Category:Video processing]]
+[[Category:X Window extensions]]
+[[Category:Freedesktop.org]]
+
+[[de:Video Decode and Presentation API for Unix]]
+[[es:VDPAU]]
+[[fr:VDPAU]]
+[[zh:VDPAU]]</body> </html>

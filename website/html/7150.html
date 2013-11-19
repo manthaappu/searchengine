@@ -1,0 +1,520 @@
+<html> <head> <title>Comparison of C Sharp and Visual Basic .NET</title></head><body>{{Correct title|title=Comparison of C# and Visual Basic .NET|reason=hash}}
+{{ProgLangCompare}}
+
+[[C Sharp (programming language)|C#]] and [[Visual Basic .Net|Visual Basic]] are the two primary languages used to program on the [[.NET Framework]].
+
+==Language Compatibility==
+
+[[C Sharp (programming language)|C#]] shares syntax similarities with [[Java (programming language)|Java]]. Both C# and Visual Basic .NET share structural similarities with other modern high level languages such as Java and [[C++]]. However the differences between Java and .NET are numerous, as can be seen in [[Comparison of Java and C Sharp]].
+
+==Runtime multi-language support==
+One of the main goals of .NET has been its multi-language support. The intent of the design was that all of the various [[Microsoft]] languages should have the same level of access to all [[Operating system|OS]] features, should be able to expose the same level of power and [[usability]], and simplify calling from a module in one language to that written in another language.
+
+In implementation, all .NET programming languages share the same runtime engine, uniform [[Abstract syntax tree]], and [[Common Intermediate Language]]. Additionally all .NET languages have access to platform features including garbage collection, cross language inheritance, [[exception handling]], and [[debugging]]. This allows the same output binary to be produced from any .NET programming language.
+
+==Development environment==
+Visual Studio provides minor differences in the development environment for C# and VB.Net. With each subsequent release of Visual Studio, the differences between development environments for these languages have been reduced. For instance early versions of Visual Studio had poor support for [[Intellisense]] in C# compared to Visual Basic .NET, and did not offer background compilation for C#<ref name="advbasics">{{cite web | url = http://msdn.microsoft.com/msdnmag/issues/05/06/AdvancedBasics/ | title = Scaling Up: The Very Busy Background Compiler | author = Matthew Gertz | publisher = [[MSDN Magazine]] | accessdate = 2008-12-16}}</ref>. Currently, the main differences in the development environments are additional features for Visual Basic .NET that originated in VB6, including:
+
+* The default namespace is hidden (but can be disabled)
+* Certain project files are hidden (the user can show them)
+* The auto-generated <code>My.*</code> namespaces contain many commonly-used shortcuts brought over from VB6, such as methods for operating on the registry and application configuration file'''''
+
+Background compilation is a feature of the Visual Studio [[Integrated development environment|IDE]] whereby code is compiled as it is written by the programmer with the purpose of identifying compilation errors without requiring the solution to be built. This feature has been available for Visual Basic since .NET 1.1 and was present in early versions of Visual Studio for Visual Basic .NET. However, background compilation is a relatively new concept for Visual C# and is available with service pack 1 for Visual Studio 2008 Standard Edition and above. A distinct disadvantage for C# is that the Error List panel does not update until the solution is rebuilt. Refactoring large projects in C# is made more difficult by the need to frequently rebuild the solution order to highlight compilation errors<ref name="freepatentsonline.com">{{cite web | url = http://www.freepatentsonline.com/6804682.html | title =   System and methodology providing compiler-assisted refactoring }}</ref>. Such is not the case with Visual Basic because the Error List panel is synchronised with the background compiler.
+
+Background Compilation is less demanding on system resources and results in faster build cycles<ref name="freepatentsonline.com"/>. This is a particular advantage with large projects and can significantly reduce the time required to start debugging the IDE<ref name="freepatentsonline.com"/>.
+
+==Language features==
+The bulk of the differences between C# and VB.NET from a technical perspective are [[syntactic sugar]]. That is, most of the features are in both languages, but some things are easier to do in one language than another. Many of the differences between the two languages are actually centered around the [[Integrated development environment|IDE]].
+
+===Features of Visual Basic .NET not found in C#===
+* Variables can be declared using the <code>WithEvents</code> construct. This construct is available so that a programmer may select an object from the ''Class Name'' drop down list and then select a method from the ''Declarations'' drop down list to have the [[Method signature]] automatically inserted
+* Auto-wireup of events, VB.NET has the <code>Handles</code> syntax for events
+* [[Marshalling]] an object for multiple actions using an unqualified dot reference. This is done using the <code>With ... End With</code> structure
+* <code>[[Is functions|IsNumeric]]</code> evaluates whether a string can be cast into a numeric value (the equivalent for C# requires using <code>int.TryParse</code>)
+* XML Literals<ref name="csharpxml">{{cite web | url = http://www.infoq.com/news/2007/03/CSharp-XML | title = Does C# Need VB9's XML Literals? | author = Jonathan Allen | accessdate = 2009-01-13}}</ref>
+* Inline date declarations by using <code>#1/1/2000#</code> syntax (M/dd/yyyy).
+* <code>Module</code> (although C#'s sealed static classes with additional semantics, but each field has to individually be declared as static)
+* Members of <code>Module</code>s imported to the current file, can be access with no preceeding container accessor (See [http://msdn.microsoft.com/en-us/library/microsoft.visualbasic.dateandtime.now.aspx <code>Now]</code> for example)
+* The [http://msdn.microsoft.com/en-us/library/5btzf5yk.aspx <code>My</code>] namespace
+* Visual Studio's design-time experience is more responsive in the VB.NET language
+* COM components and interoperability is more powerful in VB.NET as the Object type is bound at runtime<ref name="early-binding">{{cite web | url =http://visualbasic.about.com/od/usingvbnet/a/earlybind.htm | title = Early vs. Late Binding}}</ref>
+* Namespaces can be imported in project level, so they don't have to be imported to each individual file, like C#
+* Root namespace, in VB.NET projects, you can set the assembly root namespace which the whole project is wrapped with it, and you don't have to declare the namespace for each container.
+
+===Features of C# not found in Visual Basic .NET===
+* Allows blocks of unsafe code (like C++/CLI) via the <code>unsafe</code> keyword.
+* Partial Interfaces
+* Iterators and the <code>yield</code> keyword
+* Multi-line comments (note that the Visual Studio IDE supports multi-line commenting for Visual Basic .NET)
+* Static classes (Classes which cannot contain any non-static members, although VB's Modules are essentially sealed static classes with additional semantics)
+* Can use <code>checked</code> and <code>unchecked</code> contexts for fine-grained control of overflow/underflow checking
+
+===Other characteristics of Visual Basic .NET not applicable to C#===
+* Conversion of Boolean value True to Integer may yield -1 or 1 depending on the conversion used
+* Assigning and comparing variables uses the same token, <code>=</code>. Whereas C# has separate tokens, <code>==</code> for comparison and <code>=</code> to assign a value
+* VB.NET is not case-sensitive.
+* Type checking is less strict by default. If the default is left in place, It will auto convert type without notifying programmer, for example:
+<source lang="vb">
+Dim i As Integer = "1" 'Compiler automatically converts String to Integer
+Dim j As String = 1 'Compiler automatically converts Integer to String
+If i = j Then 'Compiler does cast and compare between i and j
+    MessageBox.Show("Avoid using, but this message will appear!")
+End If
+</source>
+It should be noted that although the default is for '<code>Option Strict</code>' is off, it is recommended by Microsoft<ref>MSDN: [http://msdn.microsoft.com/en-us/library/zcd4xwzs.aspx Option Strict Statement]</ref> and widely considered to be a good to turn '<code>Option Strict</code>' "on", due to the fact it increases application performance, and eliminates the chance of naming errors and other programming mistakes.<ref>GetDotNetCode.com:{{cite web | url=http://www.getdotnetcode.com/gdncstore/free/Articles/OPTION%20STRICT%20ON.htm | title = Option Strict On}}</ref>
+* <code>Val()</code> function which also parses a null value while converting into double (In c# <code>Convert.ToDouble()</code> is used to convert any object into double type value, but which throws exception in case of a null value)
+* CInt, CStr, CByte, CDbl, CBool, CByte, CDate, CLng, CCur, CObj and a wide variety of converting functions built in the language
+
+===Other characteristics of C# not applicable to Visual Basic .NET===
+* By default, numeric operations are not checked. This results in slightly faster code, at the risk that numeric overflows will not be detected. However, the programmer can place arithmetic operations into a checked context to activate overflow checking. (It can be done in Visual Basic by checking an option)
+* Addition and string concatenation use the same token, +. Visual Basic .NET, however, has separate tokens, + for addition and & for concatenation, although + can be used for concatenation as well.
+* In Visual Basic .NET property methods may take parameters
+* C# is case-sensitive.
+
+==Syntax comparisons==
+Visual Basic .NET terminates a block of code with <code>End ''BlockName''</code> statements (or <code>Next</code> statements, for a [[for loop]]) which are more familiar for programmers with experience using [[T-SQL]]. In C#, the braces, <code>{}</code>, are use to delimit blocks, which is more familiar to programmers with experience in other widely-deployed languages such as [[C++]] and [[Java (programming language)|Java]]. Additionally, in C# if a block consists of only a single statement, the braces may be omitted.
+
+C# is case sensitive while Visual Basic .NET is not. Thus in C# it is possible to have two variables with the same name, for example <code>variable1</code> and <code>Variable1</code>. Visual Studio will correct the case of variables as they are typed in VB.NET. In many cases however, [[case sensitivity]] can be useful. C# programmers typically capitalize type names and leave member and variable names lowercase. This allows, for example, fairly natural naming of method arguments: <code>public int CalculateOrders(Customer customer)</code>. Of course, this can cause problems for those converting C# code to a case-insensitive language, such as Visual Basic, or to those unaccustomed to reading a case sensitive language.
+
+===Keywords===
+Visual Basic is not case sensitive, which means any combinations of upper and lower cases in keywords are acceptable. However Visual Studio automatically converts all Visual Basic keywords to the default capitalised forms, e.g. "Public", "If". 
+
+C# is case sensitive and all C# keywords are in lower cases.
+
+Visual Basic and C# share most keywords, with the difference being the ''default'' (Remember Visual Basic is not case sensitive) Visual Basic keywords are the capitalised versions of the C# keywords, e.g. "Public" vs "public", "If" vs "if".
+
+A few keywords have very different versions in Visual Basic and C#:
+* <code>Friend</code> vs <code>internal</code> - access modifiers allowing inter-class but intra-assembly reference
+* <code>Me</code> vs <code>this</code>  - a self-reference to the current object instance
+* <code>MustInherit</code> vs <code>abstract</code>  - prevents a class from being directly instantiated, and forces consumers to create object references to only derived classes
+* <code>MustOverride</code> vs <code>abstract</code> - for forcing derived classes to override this method
+* <code>MyBase</code> vs <code>base</code>  - for referring to the base class from which the current class is derived
+* <code>NotInheritable</code> vs <code>sealed</code>  - for declaring classes that may not be inherited
+* <code>NotOverridable</code> vs <code>sealed</code>  - for declaring methods that may not be overridden by derived classes
+* <code>Overridable</code> vs <code>virtual</code> - declares a method as being able to be overridden in derived classes
+* <code>Shared</code> vs <code>static</code> - for declaring methods that do not require an explicit instance of an object
+
+Some C# keywords such as <code>sealed</code> represent different things when applied to methods as opposed to when they are applied to class definitions. VB.NET, on the other hand, uses different keywords for different contexts.
+
+{{examplefarm}}
+
+===Comments===
+
+{|
+|-
+! [[C Sharp (programming language)|C#]]
+! [[Visual Basic .NET]]
+|-
+|<source lang="csharp">
+//Single line comment 
+
+/*Multi-line comment
+  line 2
+  line 3*/
+
+///XML single line comment
+
+/**XML multi-line comment
+   line 2
+   line 3*/
+</source>
+|<source lang="vbnet">
+'Single line comment
+</source>
+
+Multi-line comment not available
+
+<source lang="vbnet">
+'''XML single line comment
+</source>
+
+XML multi-line comment not available
+|}
+
+===Conditionals===
+
+{|
+|[[C Sharp (programming language)|C#]]
+|[[Visual Basic .NET]]
+|-
+|
+<source lang=csharp>
+if (condition)
+{ 
+    // condition is true  
+}
+</source>
+|
+<source lang=vbnet>
+If condition Then 
+    ' condition is true
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (condition)
+{ 
+    // condition is true 
+}
+else
+{ 
+    // condition is false 
+}
+</source>
+|
+<source lang=vbnet>
+If condition Then 
+    ' condition is true
+Else
+    ' condition is false
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (condition)
+{ 
+    // condition is true 
+}
+else if (othercondition)
+{ 
+    // condition is false and othercondition is true
+}
+</source>
+|
+<source lang=vbnet>
+If condition Then 
+    ' condition is true
+ElseIf othercondition Then
+    ' condition is false and othercondition is true
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (condition)
+{ 
+    // condition is true 
+}
+else if (othercondition)
+{ 
+    // condition is false and othercondition is true
+}
+else
+{ 
+    // condition and othercondition are false 
+}
+</source>
+|
+<source lang=vbnet>
+If condition Then 
+    ' condition is true
+ElseIf othercondition Then
+    ' condition is false and othercondition is true
+Else
+    ' condition and othercondition false
+End If
+</source>
+|}
+
+===Loops===
+
+{|
+|[[C Sharp (programming language)|C#]]
+|[[Visual Basic .NET]]
+|-
+|
+<source lang=csharp>
+for (int i = 0; i <= number - 1; i++) 
+{
+    // loop from zero up to one less than number
+}
+</source>
+|
+<source lang=vbnet>
+For i = 0 To number - 1
+    ' loop from zero up to one less than number
+Next i
+</source>
+|-
+|
+<source lang=csharp>
+for (int i = number; i >= 0; i--)
+{
+    // loops from number down to zero
+}
+</source>
+| 
+<source lang=vbnet>
+For i = number To 0 Step -1
+    ' loops from number down to zero
+Next i
+</source>
+|-
+|
+<source lang=csharp>
+break; //breaks out of a loop
+</source>
+| 
+<source lang=vbnet>
+Exit For 'breaks out of a for loop
+</source>
+<source lang=vbnet>
+Exit While 'breaks out of a while loop
+</source>
+<source lang=vbnet>
+Exit Do 'breaks out of a do loop
+</source>
+|}
+
+===Comparers===
+====Primitive types====
+{|
+|[[C Sharp (programming language)|C#]]
+|[[Visual Basic .NET]]
+|-
+|
+<source lang=csharp>
+if (a == b)   
+{
+    // equal
+}  
+</source>
+|
+<source lang=vbnet>
+If a = b Then
+    ' equal
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (a != b)
+{
+    // not equal
+}
+</source>
+Or:
+<source lang=csharp>
+if (!(a == b))
+{
+    // not equal
+}
+</source>
+| 
+<source lang=vbnet>
+If a <> b Then
+    ' not equal
+End If
+</source>
+Or:
+<source lang=vbnet>
+If Not a = b Then
+    ' not equal
+End If
+</source>
+|
+|-
+|
+<source lang=csharp>
+if (a == b && c == d || e == f)
+{
+    // multiple comparisons
+}
+</source>
+| 
+<source lang=vbnet>
+If a = b And c = d Or e = f Then
+    ' multiple comparisons
+End If
+</source>
+|
+|-
+|
+<source lang=csharp>
+if (a == b && c == d || e == f)
+{
+    // short-circuiting comparisons
+}
+</source>
+|
+<source lang=vbnet>
+If a = b AndAlso c = d OrElse (e = f) Then
+    ' short-circuiting comparisons
+End If
+</source>
+|-
+|
+|}
+
+====Object types====
+
+{|
+|[[C Sharp (programming language)|C#]]
+|[[Visual Basic .NET]]
+|-
+|
+<source lang=csharp>
+if (Object.ReferenceEquals(a, b))   
+{
+    // variables refer to the same instance
+}  
+</source>
+|
+<source lang=vbnet>
+If a Is b Then
+    ' variables refer to the same instance
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (!Object.ReferenceEquals(a, b))   
+{
+    // variables do not refer to the same instance
+}  
+</source>
+|
+<source lang=vbnet>
+If a IsNot b Then
+    ' variables do not refer to the same instance
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (a.Equals(b))   
+{
+    // instances are equivalent
+}  
+</source>
+|
+<source lang=vbnet>
+If a = b Then
+    ' instances are equivalent
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if ( ! a.Equals(b))
+{
+    // not equivalent
+}
+</source>
+| 
+<source lang=vbnet>
+If a <> b Then
+    ' not equivalent
+End If
+</source>
+|-
+|
+<source lang=csharp>
+var type = typeof(int);
+</source>
+|
+<source lang=vbnet>
+Dim type = GetType(Integer)
+</source>
+|-
+|
+<source lang=csharp>
+if (a is b)
+{
+    // types of a and b are compatible
+}
+</source>
+|
+<source lang=vbnet>
+If TypeOf a Is b Then
+    ' types of a and b are compatible
+End If
+</source>
+|-
+|
+<source lang=csharp>
+if (!(a is b))
+{
+    // types of a and b are not compatible
+}
+</source>
+|
+<source lang=vbnet>
+If Not TypeOf a Is b Then
+    ' types of a and b are not compatible
+End If
+</source>
+|}
+Note: these examples for equivalence tests assume neither the variable "a" nor the variable "b" is a Null reference (''Nothing'' in Visual Basic.NET). If "a" were null, the C# evaluation of the .equals method would throw a NullReferenceException, whereas the VB.NET = operator would return true if both were null, or false if only one was null (and evaluate the equals method if neither were null). They also assume that the .equals method and the = operator are implemented for the class type in question.
+Omitted for clarity, the exact transliteration would be:
+
+C#
+<source lang=csharp>
+if(object.equals(a,b))
+</source>
+VB.NET
+<source lang=vbnet>
+If a = b Then
+</source>
+
+// converting from Gregorian to Persian date
+Persia.Calendar.ConvertToPersian(DateTime dateTime);
+Persia.Calendar.ConvertToPersian(int year, int month, int day, Persia.DateType.Gerigorian);
+ 
+// converting from Islamic to Persian date
+Persia.Calendar.ConvertToPersian(Persia.MoonDate moonDate); 
+Persia.Calendar.ConvertToPersian(int year, int month, int day, Persia.DateType.Islamic);
+
+==Adoption and community support==
+Both C# and VB.NET have high adoption rates, and very active developer communities and [[Microsoft]] fully supports both communities.  Most [[.NET Framework]] developers use C# as their primary language.<ref name="telerikwatch"/>  C# has an advantage in terms of the level of community activity on the Internet and there are more books available for C#.
+
+Examples of community and industry adoption include:
+*A 2007 [[Forrester Research]] poll revealed that 59% of .NET developers used ''only'' [[VB.NET]] to create software.<ref name="forrester">{{cite web | url = http://www.linux-watch.com/news/NS5656359853.html | title = Mono brings Visual Basic programs to Linux | publisher = [[Linux-Watch]] | accessdate = 2010-03-25}}</ref>
+*[[Visual Basic Express]] is the most popular download of all the [[Visual Studio Express]] downloads.<ref name="VSMagNov2007" />
+*An original C# language designer, Scott Wiltamuth, stated in a March 2010 blog that the "most reliable numbers we have... show roughly equal adoption" for VB.NET and C#.<ref name="Wiltamuth">{{cite web | url = http://blogs.msdn.com/scottwil/archive/2010/03/09/vb-and-c-coevolution.aspx | title = VB and C# Coevolution | publisher = [[MSDN]] | accessdate = 2010-03-27}}</ref>
+*According to a survey conducted by [[Visual Studio]] Magazine "41 percent said they used C#, 34 percent programmed in VB.NET, while 25 percent responded with 'other.'"<ref name="VSMagNov2007">{{cite web | url = http://visualstudiomagazine.com/columns/article.aspx?editorialsid=2333 | title = C#'s Exploding Mindshare | author = Patrick Meader | publisher = [[Visual Studio]] Magazine, November 2007 | accessdate = 2008-12-16}}</ref>
+* [[Stephen Wiley]], marketing product manager at [[Apress]] has reported "C# titles outsell VB.NET title books handily, by somewhere between a 2–1 and 3–1 margin."<ref name="VSMagNov2007" />
+* [[MSDN Blogs]], the blogging site for Microsoft employees, has 27,500 posts that discuss C#, while only 8,880 mention VB.Net (as of November 15, 2007)
+* [[Google Groups]], a [[Usenet]] search engine, returns 36,900 hits for "VB .Net", and 65,700 for C#
+* [[Telerik]] Survey 2008 suggested that C# (63%) had surpassed VB.NET (34%) as the primary programming language.<ref name="telerikwatch">{{cite web | url = http://telerikwatch.com/2008/04/survey-says-c-more-popular-than-vb.html | title = Survey Says: C# more popular than VB | author = Todd Anglin | publisher = [[Telerik]] | accessdate = 2008-12-16}}</ref>
+* [[Telerik]] Survey 2009 suggested that C# (69%) further strengthens its dominance over VB.NET (30%) as the primary programming language.<ref name="telerikwatch"/>
+* TIOBE Programming Community Index for July 2010 show that C# finally surpassed Visual Basic<ref name="tiobe">{{cite web | url = http://www.tiobe.com/index.php/content/paperinfo/tpci/index.html | title = C# is rated higher than Visual Basic for the first time in history}}</ref>
+
+==Other languages==
+=== C++/CLI (formerly Managed C++)===
+[[C++/CLI]] (a replacement for [[Managed Extensions for C++]]) does not have the adoption rate of C# or VB.NET, but does have a significant following. C++/CLI syntactically, stylistically, and culturally is closest to C#. However, C++/CLI stays closer to its C++ roots than C# does. C++/CLI directly supports pointers, destructors, and other [[Unsafe programming language|unsafe]] program concepts which are not supported or limited in the other languages. It allows the direct use of both .NET code and standard C++ code. C++/CLI is used for porting native/legacy C++ applications into the .NET framework, or cases where the programmer wants to take more control of the code; but this control comes at a significant cost of ease of use and readability. Many of the automated tools that come with Visual Studio have reduced functionality when interacting with C++ code. This is because reflection cannot provide as much information about the code as it can for C# and VB.net
+
+===J#===
+[[J sharp|J#]] runs a distant fourth in terms of adoption. J# is a language primarily designed to ease the transition of Java applications to the .NET framework; it allows developers to leave much of their Java or J++ code unchanged while still running it in the .NET framework, thus allowing them to migrate small pieces of it into another .NET language, such as C#, individually. J# does not receive the same level of updates as the other languages, and does not have the same level of community support. For example, Visual Studio 2005 Team System supports automatic generation of Unit Tests in C#, VB.Net, and C++, but excludes J#. J# has been discontinued and is not included in Visual Studio 2008 or newer versions, since the existing J# feature set largely meets customer needs and usage of J# is declining.
+
+===Additional .NET languages===
+{{Main|List of CLI languages}}
+
+All .NET languages compile down to [[Common Intermediate Language]] (CIL), which contains rich metadata and is functionally and logically equivalent to the original .NET language code. For these reasons, while it is possible to code directly in CIL, it is rarely done. The equivalency of CIL to .NET language code permits tools such as [[.NET Reflector]] to transform a .NET assembly into source code that is nearly identical to the original source. [[Obfuscated code|Code obfuscators]] are often used to guard against this, and operate by directly modifying the CIL of an assembly in order to make it difficult or impossible to de-compile to a higher level .NET language.
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://msdn.microsoft.com/en-us/library/czz35az4(v=VS.100).aspx Microsoft Visual Studio Language Equivalents 2003-2010]
+*[http://msdn2.microsoft.com/en-us/library/522xhsa3(vs.80).aspx Microsoft VSTO Programming with Visual Basic Versus C#]
+*[http://www.codeproject.com/dotnet/vbnet_c__difference.asp CodeProject VB vs C#]
+*[http://www.harding.edu/USER/fmccown/WWW/vbnet_csharp_comparison.html Syntactical differences between C# and VB.NET]
+*[http://www.developerfusion.com/tools/convert/csharp-to-vb/ Free online C# to VB.NET code converter]
+*[http://www.developerfusion.com/tools/convert/vb-to-csharp/ Free online VB.NET to C# code converter]
+*[http://www.all4dotnet.com/convertcode.aspx Free online .Net code converter - VB.NET to/from C#]
+*[http://blog.gadodia.net/extension-methods-in-vbnet-and-c/ Extension Method Handling - C# vs VB.NET]
+
+{{DotNET}}
+
+{{DEFAULTSORT:Comparison Of C Sharp And Visual Basic .Net}}
+[[Category:Articles with example BASIC code]]
+[[Category:Articles with example C Sharp code]]
+[[Category:Programming language comparisons]]
+[[Category:.NET framework]]
+[[Category:BASIC programming language family]]
+
+[[fa:مقایسه سی‌شارپ و ویژوال بیسیک دات‌نت]]
+[[ko:비주얼 베이직 닷넷과 C 샤프의 비교]]</body> </html>

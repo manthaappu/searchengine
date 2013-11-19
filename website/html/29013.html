@@ -1,0 +1,91 @@
+<html> <head> <title>Petriscript</title></head><body>{{Orphan|date=February 2009}}
+'''PetriScript''' is a modelling language for [[Petri Nets]], designed by [http://lip6.fr/Alexandre.Hamez Alexandre Hamez] and [http://www-src.lip6.fr/~Xavier.Renault Xavier Renault].
+
+The [[CPN-AMI]] platform provides many tools to work on [[Petri net]] such as verifying or model-checking tools. It was easily possible to graphically design simple Petri nets with [http://www-src.lip6.fr/logiciels/mars/MACAO Macao], but various works made internally at [http://www.lip6.fr LIP6] reveal that it was needed to automate such task.
+
+Therefore PetriScript has been designed to provide some facilities in modelling places-transition and coloured Petri nets within the CPN-AMI platform.
+
+Its main purpose is to automate modelling operations on Petri nets such as merging, creating, and connecting nodes. Thus, it supports almost everything needed like macros, loops control, lists, string and arithmetic expressions,...,  and avoids to the maximum the intervention of the user. Its syntax is more or less  Ada-like.
+
+For example, the following script produces a FIFO with 3 sections:
+
+ define(FIFO_SIZE,3)
+ define(FIFO_BASE_X,100)
+ define(FIFO_BASE_Y,100)
+ define(FIFO_STEP,120)
+ int $wave := 0;
+ for $wave in 1..FIFO_SIZE loop
+ 	create place "Slot_" & '$wave' (x FIFO_BASE_X + FIFO_STEP * $wave,
+ 		y FIFO_BASE_Y);
+ 	create place "Empty_" & '$wave' (x FIFO_BASE_X + FIFO_STEP * $wave,
+ 		y FIFO_BASE_Y + 100, marking "1");
+ end loop;
+ for $wave in 1..FIFO_SIZE+1 loop
+ 	create transition "t" & '$wave -1' & "_to_" & '$wave' (x FIFO_BASE_X + FIFO_STEP * $wave - FIFO_STEP / 2,
+ 		y FIFO_BASE_Y + 50);
+ 	if $wave < FIFO_SIZE+1 then
+ 		connect "1" transition "t" &'$wave -1' & "_to_" & '$wave' to  place "Slot_" & '$wave';
+ 		connect "1" place "Empty_" & '$wave' to transition "t" &'$wave -1' & "_to_" & '$wave';
+ 	end if;
+ 	if $wave > 1 then
+ 		connect "1" transition "t" &'$wave -1' & "_to_" & '$wave' to  place "Empty_" & '$wave - 1';
+ 		connect "1" place "Slot_" & '$wave - 1' to transition "t" &'$wave -1' & "_to_" & '$wave';
+ 	end if;
+ end loop;
+ set transition "t0_to_1" to (name "FIFO_Start");
+ set transition "t" &  'FIFO_SIZE' & "_to_" & 'FIFO_SIZE + 1' to (name "FIFO_End");
+
+Which produces the following graph:
+[[Image:Petriscript_fifo.png|400px]]
+
+Here is another example that shows the power of PetriScript:
+
+ define(X,250)
+ define(Y,350)
+ define(radius,50)
+ define(R,150)
+ 
+ define(SECTIONS,15)
+ 
+ define(INNER_ANGLE,360/SECTIONS)
+ define(OUTTER_ANGLE,360/(2*SECTIONS))
+ 
+ int $i := 0;
+ int $j := 0;
+ 
+ for $i in 1.. SECTIONS loop
+ 	create place "F" & '$i' ( x X, y Y, r radius, t $i * INNER_ANGLE);
+ 	create place "Section_" & '$i' ( x X, y Y,  r R, t $i * INNER_ANGLE);
+ 	create transition "t" & '$i' & "_to_" & '$i mod SECTIONS + 1' ( x X, y Y, r R, t $i * INNER_ANGLE + OUTTER_ANGLE);
+ end loop;
+ 
+ 
+ for $i in 1.. SECTIONS loop
+ 	connect place "Section_" & '$i'  to transition "t"&'$i' & "_to_" & '$i mod SECTIONS + 1';
+ 
+ 	connect transition "t" & '$i' & "_to_" & '$i mod SECTIONS + 1' to place "Section_" & '$i mod SECTIONS + 1';
+ 
+ 	if $i /= 1 then
+ 		connect place "F" & '$i'  to transition "t" & '$i-1' & "_to_" & '$i';
+ 	else
+ 		connect place "F1"  to transition "t" & 'SECTIONS' & "_to_" & '1';
+ 	end if;
+ 	
+ 	connect transition "t" &'$i mod SECTIONS + 1' & "_to_" & '($i+1) mod SECTIONS + 1' to place "F" & '$i';
+ 
+ end loop;
+ 
+ for $i in 1.. SECTIONS loop
+ 	if $i mod 3 = 0 then
+ 		set place "Section_" & '$i' to marking "1";
+ 	else
+ 		set place "F" & '$i' to marking "1";
+ 	end if;
+ end loop;
+
+Which produces the following graph:
+[[Image:trains.png|400px]]
+
+A full documentation is available [http://www-src.lip6.fr/logiciels/mars/CPNAMI/MANUAL_SERV/PetriScript_Reference_Manual.pdf here]
+
+[[Category:Specification languages]]</body> </html>

@@ -1,0 +1,78 @@
+<html> <head> <title>Thue (programming language)</title></head><body>'''Thue''' ({{pronEng|ˈtuːeɪ}} "TOO-ay") is an [[esoteric programming language]] invented by [[John Colagioia]] in early 2000. It is a meta-language that can be used to define or recognize Type-0 languages from the [[Chomsky hierarchy]]. Because it is able to define languages of such complexity, it is also [[Turing completeness|Turing-complete]] itself. Thue is based on a [[Nondeterministic algorithm|nondeterministic]] [[String rewriting|string rewriting system]] called [[semi-Thue grammar]], which itself is named after (and possibly created by{{Citation needed|date=February 2010}}) the [[Norway|Norwegian]] [[mathematician]] [[Axel Thue]]; inspiration is also taken from the [[Grue (monster)|grue]]. The author describes it as follows: "Thue represents one of the simplest possible ways to construe [[constraint programming|constraint-based programming]]. It is to the constraint-based paradigm what languages like [[OISC]] are to the imperative paradigm; in other words, it's a [[Turing tarpit|tar pit]]."
+
+==Production rules==
+A Thue program starts with a rulebase, which is a series of substitution rules, each of this form:
+
+ ''lhs'' ::= ''rhs''
+
+The rulebase terminates with a lone production symbol on a line:
+
+ ::=
+
+The initial state is a series of symbols which follow the rulebase. 
+
+Thue consumes the initial symbols and substitutes the result of the rules for each of the initial state's symbols.
+
+Thue terminates when lhs cannot be found in a resultant state.
+
+==Notes==
+*'''''::=''''' is pronounced ''can be''.
+*''lhs'' is "left hand side".
+*''rhs'' is "right hand side".
+*'''"''::=''"''' can never be the lhs.
+*":::" is an input stream.
+*"~" is the output stream.
+
+* Semi-Thue systems are isomorphic to [[unrestricted grammar]]s.
+
+==Calling Thue==
+When invoked with 'd' (debug), print the state.
+When invoked with 'l' (left side), apply the rules left-to-right.
+When invoked with 'r' (right side),
+apply the rules right-to-left.
+The last 'l' or 'r' overrides the previous switches.
+
+==Sample programs==
+
+Here's the traditional "Hello World!" in Thue:
+
+ a::=~Hello World!
+ ::=
+ a
+
+The following Thue program performs an increment of a binary number entered as the initial state surrounded by "_" characters, in this case the number 1111111111:
+
+ 1_::=1++
+ 0_::=1
+ 
+ 01++::=10
+ 11++::=1++0
+ 
+ _0::=_
+ _1++::=10
+ 
+ ::=
+ 
+ _1111111111_
+
+The following sample program is to demonstrate Thue's nondeterminism (and to show an example of an infinite loop, besides). The program outputs bits in an undefined (and quite possibly random) sequence.
+
+ b::=~0
+ b::=~1
+ ac::=abc
+ ::=
+ abc
+
+==External links==
+*[http://catseye.tc/projects/thue/ The Thue Programming Language]
+*[http://catseye.tc/projects/thue/doc/thue.txt Thue FAQ]
+*[http://esoteric.voxelperfect.net/wiki/Thue Thue at the Esolang wiki]
+*[http://scienceblogs.com/goodmath/2006/08/friday_pathological_programmin_2.php Blog post on Thue]
+*[http://web.archive.org/web/20031210145310/http://cyberspace.org/~lament/thue.html Javascript Thue interpreter]
+
+[[Category:Esoteric programming languages]]
+
+{{compu-lang-stub}}
+
+[[fr:Thue (langage)]]
+[[pt:Thue]]</body> </html>

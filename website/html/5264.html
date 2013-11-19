@@ -1,0 +1,2482 @@
+<html> <head> <title>C Sharp syntax</title></head><body>{{Correct title|title=C# syntax|reason=hash}}
+: ''Main article: [[C Sharp (programming language)]]''
+
+This article describes the [[syntax (programming languages)|syntax]] of the [[C Sharp (programming language)|C#]] [[programming language]]. The features described are compatible with [[.NET Framework]] and [[Mono (software)|Mono]].
+
+==Basics==
+===Identifier===
+An [[identifier#Identifiers in computer languages|identifier]] is the name of an element in the [[source code|code]]. There are certain standard [[naming conventions (programming)|naming conventions]] to follow when selecting names for elements.
+
+An identifier can:
+* start with a "_". 
+* contain both [[capital letter|upper case and lower case]] Unicode letters. Case is significant.
+
+An identifier cannot:
+* start with a numeral.
+* start with a symbol, unless it is a keyword (check ''[[#Keywords|Keywords]]'').
+* have more than 511 [[character (computing)|chars]].
+
+=====Keywords=====
+[[keyword (computer programming)|Keywords]] are predefined reserved words with special syntactic meaning. The language has two types of keyword &mdash; contextual and reserved.  The reserved keywords such as ''false'' or ''byte'' may only be used as keywords.  The contextual keywords such as ''where'' or ''from'' are only treated as keywords in certain situations.<ref>{{citation |url=http://books.google.co.uk/books?id=nn6wbI45XDAC&pg=PA32 |title=C# 3.0: The Complete Reference |author=Herbert Schildt}}</ref> If an identifier is needed which would be the same as a reserved keyword, it may be prefixed by the [[@]] character to distinguish it.  This facilitates reuse of [[.NET Framework|.NET]] code written in other languages.<ref>{{citation |url=http://books.google.co.uk/books?id=euV7e2f-RzsC&pg=PA55 |title=C# for programmers |author=Harvey M. Deitel, Paul J. Deitel}}</ref>
+
+{| align="center" class="wikitable"
+! colspan="4"| '''C# keywords, reserved words'''
+|-
+| width=25%|abstract
+| width=25%|as
+| width=25%|base
+|bool
+|-
+|break
+|by <sup>2</sup>
+|byte
+|case
+|-
+|catch
+|char
+|checked
+|class
+|-
+|const
+|continue
+|decimal
+|default
+|-
+|delegate
+|do
+|double
+|descending <sup>2</sup>
+|-
+|explicit
+|event
+|extern
+|else
+|-
+|enum
+|false
+|finally
+|fixed
+|-
+|float
+|for
+|foreach
+|from <sup>2</sup>
+|-
+|goto
+|group <sup>2</sup>
+|if
+|implicit
+|-
+|in
+|int
+|interface
+|internal
+|-
+|into <sup>2</sup>
+|is
+|lock
+|long
+|-
+|new
+|null
+|namespace
+|object
+|-
+|operator
+|out
+|override
+|orderby <sup>2</sup>
+|-
+|params
+|private
+|protected
+|public
+|-
+|readonly
+|ref
+|return
+|switch
+|-
+|struct
+|sbyte
+|sealed
+|short
+|-
+|sizeof
+|stackalloc
+|static
+|string
+|-
+|select <sup>2</sup>
+|this
+|throw
+|true
+|-
+|try
+|typeof
+|uint
+|ulong
+|-
+|unchecked
+|unsafe
+|ushort
+|using
+|-
+|var <sup>2</sup>
+|virtual
+|volatile
+|void
+|-
+|while
+|where <sup>2</sup>
+|yield <sup>1</sup>
+| 
+|-
+|colspan="4"|<small><sup>1, 2</sup> These are not actually keywords, thus (unlike actual keywords) it is possible to define variables and types using these names, but they act like keywords in certain new language constructs introduced in C# 2.0<sup>(1)</sup> and 3.0<sup>(2)</sup>.</small>
+|}
+
+Using a keyword as an identifier:
+
+<source lang="csharp">
+string @out; // @out is an ordinary identifier, distinct from the 'out' keyword, 
+             //which retains its special meaning
+</source>
+
+===Literals===
+
+{| class="wikitable"
+|-
+!colspan="2"|Integers
+|-
+![[hexadecimal]]
+|<tt>0xF5, 0x[0..9, A..F, a..f]+</tt>
+|-
+![[decimal]]
+|<tt>245, [0..9]+</tt>
+|-
+!colspan="2"|[[Floating-point]] values
+|-
+!float
+|<tt>23.5F, 23.5f; 1.72E3F, 1.72E3f, 1.72e3F, 1.72e3f</tt>
+|-
+!double
+|<tt>23.5, 23.5D, 23.5d; 1.72E3, 1.72E3D, ...</tt>
+|-
+!colspan="2"|Dates
+|-
+!date
+|<tt>not possible</tt>
+|-
+!colspan="2"|Characters
+|-
+!char
+|<tt>'a', 'Z', '\u0231'</tt>
+|-
+!colspan="2"|Strings
+|-
+!String
+|<tt>"Hello, world"</tt><br><tt>"C:\\Windows\\"</tt>, <tt>@"C:\Windows\"</tt>
+|-
+!colspan="2"|Characters escapes in strings
+|-
+![[Unicode]] character
+|<tt>\u</tt> followed by the hexadecimal unicode code point
+|-
+![[Tab]]
+|<tt>\t</tt>
+|-
+![[Backspace]]
+|<tt>\b</tt>
+|-
+![[Carriage return]]
+|<tt>\r</tt>
+|-
+![[Form feed]]
+|<tt>\f</tt>
+|-
+![[Backslash]]
+|<tt>\\</tt>
+|-
+![[Single quote]]
+|<tt>\'</tt>
+|-
+![[Double quote]]
+|<tt>\"</tt>
+|-
+![[Line feed]]
+|<tt>\n</tt>
+|}
+
+===Variables===
+[[variable (programming)|Variables]] are identifiers associated with values.  They are declared by writing the variable's type and name, and are optionally initialized in the same statement by assigning a value.
+
+'''Declare'''
+<source lang="csharp">
+int MyInt;         // Declaring an uninitialized variable called 'MyInt', of type 'int'
+</source>
+
+'''Initialize'''
+<source lang="csharp">
+int MyInt;        // Declaring an uninitialized variable
+MyInt = 35;       // Initializing the variable
+</source>
+
+'''Declare & initialize'''
+<source lang="csharp">
+int MyInt = 35;   // Declaring and initializing the variable at the same time
+</source>
+Multiple variables of the same type can be declared and initialized in one statement.
+
+<source lang="csharp">
+int a, b;         // Declaring multiple variable of the same type
+
+int a = 2, b = 3; // Declaring and initializing multiple variables of the same type
+</source>
+
+====Type inference====
+:''This is a feature of [[C Sharp 3.0|C# 3.0]].''
+
+C# 3.0 introduced type inference, allowing the type specifier of a variable declaration to be replaced by the keyword ''var'', if its actual type can be statically determined from the initializer.  This reduces repetition, especially for types with multiple generic [[#Type-parameters|type-parameters]], and adheres more closely to the [[DRY]] principle.
+<source lang="csharp">
+var MyChars = new char[] {'A', 'Ö'}; // or char[] MyChars = new char[] {'A', 'Ö'};
+
+var MyNums = new List<int>();  // or List<int> MyNums = new List<int>();
+</source>
+
+'''See also'''
+* [[Type inference]]
+
+===Constants===
+
+Constants are values that are immutable and can not change.
+====<code>const</code>====
+When declaring a local variable or a field with the <code>const</code> keyword as a prefix the value must be given when it is declared. After that it is locked and cannot change. They can either be declared in the context as a field or a local variable. Constants are implicitly static.
+
+<source lang="csharp">
+const double PI = 3.14;
+</source>
+
+This shows all the uses of the keyword.
+<source lang="csharp">
+class Foo
+{
+    const double x = 3;
+
+    Foo()
+    {
+
+        const int y = 2;
+    }
+}
+</source>
+
+====<code>readonly</code>====
+
+The <code>readonly</code> keyword does a similar thing to fields. Like fields marked as <code>const</code> they cannot change once initialized. The difference is that you can choose to initialize them in a constructor. This only works on fields. Read-only fields can either be members of an instance or static class members.
+
+<source lang="csharp">
+class Foo
+{
+    readonly int value;
+    readonly int value2 = 3;
+    readonly StringBuilder sb;
+    
+    Foo()
+    {
+        value = 2;
+        sb = new StringBuilder();
+    }
+}
+</source>
+
+===Code blocks===
+
+The operators <code>{ ... }</code> are used to signify a code block and a new scope. Class members and the body of a method are examples of what can live inside these braces in various contexts.
+
+Inside of method bodies you can use the braces to create new scopes like so:
+
+<source lang="csharp">
+
+void doSomething()
+{
+    int a;
+
+    {
+        int b;
+        a = 1;
+    }
+
+    a = 2;
+    b = 3; //Will fail because the variable is declared in an inner scope.
+}
+
+</source>
+
+==Program structure==
+A C# application consists of classes and their members. Classes and other types exist in namespaces but can also be nested inside other classes.
+
+===<code>Main</code> method===
+Whether it is a console or a graphical interface application, the program must have an entrypoint of some sort. The entrypoint of the C# application is the <code>Main</code> method. There can only be one, and it is a static method in a class. The method usually returns <code>void</code> and is passed command-line arguments as an array of strings.
+<source lang="csharp">
+
+static void Main(string[] args)
+{
+}
+
+</source>
+A Main-method is also allowed to return an integer value if specified.
+
+<source lang="csharp">
+
+static int Main(string[] args)
+{
+    return 0;
+}
+
+</source>
+
+===Namespaces===
+Namespaces are a part of a type name and they are used to group and/or distinguish named entities from other ones.
+
+<source lang="csharp">
+System.IO.DirectoryInfo //DirectoryInfo is in the System.IO-namespace
+</source>
+
+A namespace is defined like this:
+
+<source lang="csharp">
+
+namespace FooNamespace
+{
+    //Members
+}
+
+</source>
+
+===<code>using</code> statement===
+
+The <code>using</code> statement loads a specific namespace from a referenced assembly. It is usually placed in the top (or header) of a code file but it can be placed elsewhere if wanted, e.g. inside classes.
+<source lang="csharp">
+
+using System;
+using System.Collections;
+
+</source>
+
+You can also use the statement to define another name for an existing namespace or type. This is sometimes useful when names are too long and less readable.
+<source lang="csharp">
+
+using Net = System.Net;
+using DirInfo = System.IO.DirectoryInfo;
+
+</source>
+
+==Operators==
+
+{| class="wikitable"
+|-
+!width="200"|Operator category
+!width="300"|Operators
+|-
+|Arithmetic
+|<code><nowiki>+    -    *    /    %</nowiki></code>
+|-
+|Logical (boolean and bitwise)
+|<code><nowiki>&    |    ^    !    ~    &&    ||</nowiki></code>
+|-
+|String concatenation
+|<code><nowiki>+</nowiki></code>
+|-
+|Increment, decrement
+|<code><nowiki>++    --</nowiki></code>
+|-
+|Shift
+|<code><nowiki><<    >></nowiki></code>
+|-
+|Relational
+|<code><nowiki>==    !=    <    >    <=    >=</nowiki></code>
+|-
+|Assignment
+|<code><nowiki>=    +=    -=    *=    /=    %=    &=    |=    ^=    <<=    >>=</nowiki></code>
+|-
+|Member access
+|<code>.</code>
+|-
+|Indexing
+|<code><nowiki>[   ]</nowiki></code>
+|-
+|Cast
+|<code>(   )</code>
+|-
+|Conditional
+|<code>?   :</code>
+|-
+|Delegate concatenation and removal
+|<code>+    - </code>
+|-
+|Object creation
+|<code>new</code>
+|-
+| Type information
+|<code>as    is    sizeof    typeof  </code>
+|-
+|Overflow exception control
+|<code>checked    unchecked</code>
+|-
+|Indirection and Address
+|<code>*    ->    []    &</code>
+|}
+
+===Operator overloading===
+Some of the existing operators can be overloaded by writing an overload method.
+
+<source lang="csharp">
+
+public static Foo operator+(Foo foo, Bar bar)
+{
+    return new Foo(foo.Value + bar.Value);
+}
+
+</source>
+
+These are the overloadable operators:
+
+{| class="wikitable"
+|-
+!width="300"|Operators
+!width="400"|
+|-
+|<code><nowiki>+ - ! ~ ++ -- true false</nowiki></code>
+|''Unary operators''
+|-
+|<code><nowiki>+ - * / % & | ^ << >></nowiki></code>
+|''Binary operators''
+|-
+|<code><nowiki>== != < > <= >=</nowiki></code>
+|''Comparison operators'',  must be overloaded in pairs
+|-
+|}
+
+* ''Assignment operators'' (<code>+=, *=</code> etc.) are combinations of a binary operator and the assignment operator (<code>=</code>) and will be evaluated using the ordinary operators, which can be overloaded.
+* ''Cast operators'' (<code>(  )</code>) cannot be overloaded, but you can define conversion operators.
+* ''Array indexing'' (<code>[  ]</code>) operator is not overloadable, but you can define new indexers.
+
+'''See also'''
+* [[Operator overloading]]
+
+===Conversion operators===
+The cast operator is not overloadable but you can write a conversion operator method which lives in the target class. Conversion methods can define two varieties of operators, implicit and explicit conversion operators. The implicit operator will cast without specifying with the cast operator (<code>(   )</code>) and the explicit operator requires it to be used.
+
+'''Implicit conversion operator'''</br>
+<source lang="csharp">
+class Foo
+{
+    public int Value;
+    public static implicit operator Foo(int value)
+    {
+        return new Foo(value)
+    }
+}
+//Implicit conversion
+Foo foo = 2;
+</source>
+
+'''Explicit conversion operator'''</br>
+<source lang="csharp">
+class Foo
+{
+    public int Value;
+    public static explicit operator Foo(int value)
+    {
+        return new Foo(value)
+    }
+}
+//Explicit conversion
+Foo foo = (Foo)2;
+</source>
+
+====<code>as</code> operator====
+The <code>as</code> operator will attempt to do a silent cast to a given type. If it succeeds it will return the object as the new type, if it fails it will return a null reference.
+
+<source lang="csharp">
+Stream stream = File.Open(@"C:\Temp\data.dat");
+FileStream fstream = stream as FileStream; //Will return an object.
+
+String str = stream as String; //Will fail and return null.
+
+</source>
+
+===Null coalesce operator===
+
+The following 
+<source lang="csharp">
+return ifNotNullValue ?? otherwiseValue; 
+</source>
+Is shorthand for
+<source lang="csharp">
+return ifNotNullValue != null ? ifNotNullValue : otherwiseValue; 
+</source>
+Meaning that if the content of variable <code>ifNotNullValue</code> is not null, that content will be returned, otherwise the content of variable <code>otherwiseValue</code> is returned.
+
+One can also have nullable scalar types such as
+<source lang="csharp">
+int? i = null;
+</source>
+(Both new in [[C Sharp 2.0]].)
+
+==Control structures==
+C# inherits most of the control structures of C/C++ and also adds new ones like the <code>foreach</code> statement.
+
+===Conditional structures===
+These structures controls the flow of the program through given conditions.
+
+====<code>if</code> statement====
+The <code>if</code> statement is entered when the given condition is true. Single-line case statements do not require block braces although it is mostly preferred by convention.
+
+Simple one-line statement:
+<source lang="csharp">
+if (i == 3) ... ;
+</source>
+
+Multi-line with else-block (without any braces):
+<source lang="csharp">
+if (i == 2)
+    ...
+else
+    ...
+</source>
+
+Recommended coding conventions for an if-statement.
+<source lang="csharp">
+if (i == 3)
+{
+    ...
+}
+else if (i == 2)
+{
+    ...
+}
+else
+{
+    ...
+}
+</source>
+
+====<code>switch</code> statement====
+
+The <code>switch</code> construct serves as a filter for different values. Each value leads to a "case". It is not allowed to fall through cases and therefore the use of the keyword <code>break</code> is required to end a case. Many cases may lead to the same code though. The default case handles all the other cases not handled by the construct. 
+<source lang="csharp">
+switch (ch)
+{
+    case 'A':
+        ...
+        break;
+
+    case 'B':
+    case 'C':
+         ...
+         break;
+    default:
+        ...
+        break;
+}
+</source>
+
+===Iteration structures===
+Iteration statements are statements that are repeatedly executed when a given condition is evaluated as true.
+
+====<code>while</code> loop====
+<source lang="csharp">
+while (i == true)
+{
+    ...
+}
+</source>
+
+====<code>do ... while</code> loop====
+<source lang="csharp">
+do
+{
+    ...
+}
+while (i == true);
+</source>
+
+====<code>for</code> loop====
+
+The <code>for</code> loop consists of three parts: ''declaration'', ''condition'' and ''increment''. Any of them can be left out as they are optional. 
+<source lang="csharp">
+for (int i = 0; i < 10; i++)
+{
+    ...
+}
+</source>
+
+Is equivalent to this code represented with a <code>while</code> statement.
+<source lang="csharp">
+{
+    int i = 0;
+    while (i < 10)
+    {
+        // ...
+        i++;
+    }
+}
+</source>
+
+====<code>foreach</code> loop====
+
+The <code>foreach</code> statement is derived from the <code>for</code> statement and makes use of a certain pattern described in C#'s language specification in order to obtain and use an enumerator of elements to iterate over.
+
+Each item in the given collection will be returned and reachable in the context of the code block. When the block has been executed the next item will be returned until there are no items remaining.
+
+<source lang="csharp">
+foreach (int i in intList)
+{
+    ...
+}
+</source>
+
+===Jump statements===
+
+Jump statements are inherited from C/C++ and ultimately assembly languages through it. They simply represent the jump-instructions of an assembly language that controls the flow of a program.
+====Labels and <code>goto</code> statement====
+Labels are given points in code that can be jumped to by using the <code>goto</code> statement.
+
+<source lang="csharp">
+start:
+    ...
+    goto start;
+</source>
+
+The <code>goto</code> statement can be used in <code>switch</code> statements to jump from one case to another or to fall through from one case to the next.
+
+<source lang="csharp">
+switch(n)
+{
+    case 1:
+        Console.WriteLine("Case 1");
+        break;
+    case 2:
+        Console.WriteLine("Case 2");
+        goto case 1;
+    case 3:
+        Console.WriteLine("Case 3");
+    case 4: // Compilation will fail here as cases cannot fall through in C#.
+        Console.WriteLine("Case 4");
+        goto default; // This is the correct way to fall through to the next case.
+    default:
+        Console.WriteLine("Default");
+}
+</source>
+
+====<code>break</code> statement====
+The <code>break</code> statement breaks out of the closest loop or <code>switch</code> statement. Execution continues in the statement after the terminated statement, if any. 
+
+<source lang="csharp">
+int e = 10;
+for (int i=0; i < e; i++)
+{
+    while (true)
+    {
+        break;
+    }
+    // Will break to this point.
+}
+</source>
+
+====<code>continue</code> statement====
+The <code>continue</code> statement discontinues the current iteration of the current control statement and begins the next iteration.
+
+<source lang="csharp">
+int ch;
+while ((ch = GetChar()) >= 0)
+{
+    if (ch == ' ')
+        continue;    // Skips the rest of the while-loop
+
+    // Rest of the while-loop
+    ...
+}
+</source>
+
+The <code>while</code> loop in the code above reads characters by calling <code>GetChar()</code>, skipping the statements in the body of the loop if the characters are spaces.
+
+===Exception handling===
+
+C# has a neat way of handling runtime exceptions that is inherited from Java and C/C++ through it. 
+
+The base class library has a class called <code>System.Exception</code> from which all exceptions are derived. An <code>Exception</code>-object contains all the information about a specific exception and also the inner exceptions that were caused.
+The programmer may define their own exceptions by deriving from the <code>Exception</code> class.
+
+An exception can be thrown this way:
+
+<source lang="csharp">
+
+    throw new NotImplementedException();
+
+</source>
+====<code>try</code> ... <code>catch</code> ... <code>finally</code> statements====
+Exceptions are managed within <code>try</code> ... <code>catch</code> blocks.
+
+<source lang="csharp">
+try
+{
+    // Statements which may throw exceptions
+    ...
+}
+catch (Exception ex)
+{
+    // Exception caught and handled here
+    ...
+}
+finally
+{
+    // Statements always executed after the try/catch blocks
+    ...
+}
+</source>
+
+The statements within the <code>try</code> block are executed, and if any of them throws an exception, execution of the block is discontinued and the exception is handled by the <code>catch</code> block. There may be multiple <code>catch</code> blocks, in which case the first block with an exception variable whose type matches the type of the thrown exception is executed.
+
+If no <code>catch</code> block matches the type of the thrown exception, the execution of the outer block (or method) containing the <code>try</code> ... <code>catch</code> statement is discontinued, and the exception is passed up and outside the containing block (or method). The exception is propagated upwards through the [[call stack]] until a matching <code>catch</code> block is found within one of the currently active methods. If the exception propagates all the way up to the top-most <code>Main()</code> method without a matching <code>catch</code> block being found, the entire program is terminated and a textual description of the exception is written to the standard output stream.
+
+The statements within the <code>finally</code> block are always executed after the <code>try</code> and <code>catch</code> blocks, whether or not an exception was thrown. Such blocks are useful for providing clean-up code that is guaranteed to always be executed.
+
+The <code>catch</code> and <code>finally</code> blocks are optional, but at least one or the other must be present following the <code>try</code> block.
+
+==Types==
+C# is a strongly-typed language like C++. That means that every variable and constant get a fixed type when they are being declared. There are two kinds of types: ''value types'' and ''reference types''.
+
+===Value types===
+Instances of value types reside on the stack, i.e. they are bound to their variables. If you declare a variable for a value type the memory gets allocated directly. If the variable gets out of scope the object is destroyed with it.
+
+====Structures====
+Structures are more commonly known as ''structs''. Structs are user-defined value types that are declared using the <code>struct</code> keyword. They are very similar to classes but are more suitable for lightweight types. Some important syntactical differences between a <code>class</code> and a <code>struct</code> are presented later in this article. 
+
+<source lang="csharp">
+struct Foo
+{
+    ...
+}
+</source>
+
+The primitive data types are all structs.
+
+=====Pre-defined types=====
+These are the primitive datatypes.
+
+{| class="wikitable"
+|-
+!colspan="6"|Primitive Types
+|-
+! Type Name
+! [[Base Class Library|BCL]] Equivalent
+! Value
+! Range
+! Size 
+! Default Value
+|-
+| <code>sbyte</code>
+| <code>System.SByte</code>
+| integer
+| −128 through +127
+| 8-bit (1-byte)
+| <code>0</code>
+|-
+| <code>short</code>
+| <code>System.Int16</code>
+| integer
+| −32,768 through +32,767
+| 16-bit (2-byte)
+| <code>0</code>
+|-
+| <code>int</code>
+| <code>System.Int32</code>
+| integer
+| −2,147,483,648 through +2,147,483,647
+| 32-bit (4-byte)
+| <code>0</code>
+|-
+| <code>long</code>
+| <code>System.Int64</code>
+| integer
+| −9,223,372,036,854,775,808 through<br/> +9,223,372,036,854,775,807
+| 64-bit (8-byte)
+| <code>0</code>
+|-
+| <code>byte</code>
+| <code>System.Byte</code>
+| unsigned integer
+| 0 through 255
+| 8-bit (1-byte)
+| <code>0</code>
+|-
+| <code>ushort</code>
+| <code>System.UInt16</code>
+| unsigned integer
+| 0 through 65,535
+| 16-bit (2-byte)
+| <code>0</code>
+|-
+| <code>uint</code>
+| <code>System.UInt32</code>
+| unsigned integer
+| 0 through 4,294,967,295
+| 32-bit (4-byte)
+| <code>0</code>
+|-
+| <code>ulong</code>
+| <code>System.UInt64</code>
+| unsigned integer
+| 0 through 18,446,744,073,709,551,615
+| 64-bit (8-byte)
+| <code>0</code>
+|-
+| <code>decimal</code>
+| <code>System.Decimal</code>
+| signed decimal number
+| −7.9228162514264337593543950335 through<br/> +7.9228162514264337593543950335 <!--IS THIS CORRECT?-->
+| 128-bit (16-byte)
+| <code>0.0</code>
+|-
+| <code>float</code>
+| <code>System.Single</code>
+| floating point number
+| ±1.401298E−45 through ±3.402823E+38
+| 32-bit (4-byte)
+| <code>0.0</code>
+|-
+| <code>double</code>
+| <code>System.Double</code>
+| floating point number
+| ±4.94065645841246E−324 through<br/> ±1.79769313486232E+308
+| 64-bit (8-byte)
+| <code>0.0</code>
+|-
+| <code>bool</code>
+| <code>System.Boolean</code>
+| Boolean
+| <code>true</code> or <code>false</code>
+| 8-bit (1-byte)
+| <code>false</code>
+|-
+| <code>char</code>
+| <code>System.Char</code>
+| single Unicode character
+| <code>'\u0000'</code> through <code>'\uFFFF'</code>
+| 16-bit (2-byte)
+| <code>'\u0000'</code>
+|}
+
+'''Note:''' <code>string</code> (<code>System.String</code>) is not a struct and is not a primitive type.
+
+====Enumerations====
+Enumerated types (<code>enums</code>) are named values representing integer values.
+
+<source lang="csharp">
+enum Season
+{
+    Winter = 0,
+    Spring = 1,
+    Summer = 2,
+    Autumn = 3,
+    Fall = Autumn    //Autumn is called Fall in American English.
+}
+</source>
+
+<code>enum</code> instances are declared as ordinary variables and are initialized by default to zero. They can be assigned or initialized to the named values defined by the enumeration type.
+
+<source lang="csharp">
+Season season;
+season = Season.Spring;
+</source>
+
+<code>enum</code> types variables are basically integer values. That means that addition and subtraction between variables of the same type is allowed without any specific cast but multiplication and division is somewhat more risky and requires it explicitly. Casts are also required to and from integer types. It will however throw an exception if the value is not allowed.
+
+<source lang="csharp">
+season = (Season)2;  //2 to an enum-value of type Season.
+season = season + 1; //Adds 1 to the value.
+season = season + season2; //Adding the values of two variables.
+int value = (int)season; //Casting enum-value to integer value. 
+
+season++; //Season.Spring (1) becomes Season.Summer (2).
+season--; //Season.Summer (2) becomes Season.Spring (1).
+
+</source>
+Values can be combined using the bitwise-OR operator, ''|''.
+<source lang="csharp">
+Color myColors = Color.Green | Color.Yellow | Color.Blue;
+
+</source>
+
+'''See also'''
+* [[Enumeration (programming)]]
+
+===Reference types===
+Variables created for reference types are typed managed references. When the constructor is called an object is created on the heap and a reference is assigned to the variable. When a variable of an object gets out of scope the reference is broken and when there are no references left the object gets marked as garbage. The garbage collector will then soon collect and destroy it.
+
+A reference variable is <code>null</code> when it does not reference any object.
+
+====Arrays====
+
+An [[array (programming)|array]] type is a reference type that refers to a space containing one or more elements of a certain type. All array types derive from a common base class, <code>System.Array</code>. Each element is referenced by its index just like in C++ and Java.
+
+An array in C# is what would be called a [[dynamic array]] in C++.
+
+<source lang="csharp">
+int[] numbers = new int[5];
+numbers[0] = 2;
+numbers[1] = 5;
+int x = numbers[0];
+</source>
+=====Initializers=====
+Array initializers provide convenient syntax for initialization of arrays.
+
+<source lang="csharp">
+//Long syntax
+int[] numbers = new int[5]{ 20, 1, 42, 15, 34 };
+//Short syntax
+int[] numbers2 = { 20, 1, 42, 15, 34 };
+</source>
+=====Multi-dimensional arrays=====
+
+Arrays can have more than one dimension, for example 2 dimensions to represent a grid.
+
+<source lang="csharp">
+int[,] numbers = new int[3, 3];
+number[1,2] = 2;
+
+int[,] numbers2 = new int[3, 3] { {2, 3, 2}, {1, 2, 6}, {2, 4, 5} };
+</source>
+
+'''See also'''
+* [[Jagged array]]
+
+====Classes====
+
+Classes are self-describing user-defined reference types. Essentially all types in the .NET Framework are classes, including structs and enums, that are compiler generated classes.
+
+=====<code>String</code> class=====
+The <code>System.String</code> class, or simply <code>string</code>, represents an immutable sequence of unicode characters (<code>char</code>).
+
+Actions performed on a string will always return a new string.
+
+<source lang="csharp">
+    string text = "Hello World!";
+    string substr = text.Substring(0, 5);
+    string[] parts = text.Split(new char[]{ ' ' });
+</source>
+
+The <code>System.StringBuilder</code> class can be used when a mutable "string" is wanted.
+
+<source lang="csharp">
+    StringBuilder sb = new StringBuilder();
+    sb.Append('H');
+    sb.Append("el");
+    sb.AppendLine("lo!");
+</source>
+
+====Interface====
+Interfaces are data structures that contain member definitions and not actual implementation. They are useful when you want to define a contract between members in different types that have different implementations. You can declare definitions for methods, properties, and indexers. These must be implemented by a class as public members.
+
+<source lang="csharp">
+interface IBinaryOperation
+{
+    double A { get; set; }
+    double B { get; set; }
+
+    double GetResult(double a, double b);
+}
+</source>
+
+====Delegates====
+C# provides type-safe object-oriented function pointers in the form of ''delegates''. <source lang="csharp">
+
+class Program
+{
+    //Delegate type
+    delegate int Operation(int a, int b);
+
+    static int Add(int i1, int i2)
+    {
+        return i1 + i2;
+    }   
+
+    static int Sub(int i1, int i2)
+    {
+        return i1 - i2;
+    }  
+
+    static void Main()
+    {
+        //Instantiate the delegate and assign the method to it.
+        Operation op = Add;
+
+        //Call the method that the delegate points to.
+        int result1 = op(2, 3);  //5
+
+        op = Sub;
+        int result2 = op(10, 2); //8
+    }
+}
+</source>  
+
+Initializing  the delegate with an anonymous method. <source lang="csharp">  addition = delegate(int a, int b){ return a + b; };  </source>
+
+'''See also'''
+* [[Delegate (.NET)]]
+
+====Events====
+''Events'' are [[pointer (programming)|pointers]] that can point to multiple methods. More exactly they bind method pointers to one identifier. This can therefore be seen as an extension to [[delegate (.NET)|delegates]]. They are typically used as triggers in UI development. The form used in [[C Sharp (programming language)|C#]] and the rest of the [[Common Language Infrastructure]] is based on that in the classic [[Visual Basic]].
+
+<source lang="csharp">
+delegate void MouseEventHandler(object sender, MouseEventArgs e);
+
+public class Button : System.Windows.Controls.Control
+{
+    event MouseEventHandler OnClick;
+
+    /* Imaginary trigger function */
+    void click()
+    {
+        this.OnClick(this, new MouseEventArgs(data));
+    }
+}
+</source>
+
+An event requires an accompanied ''event handler'' that is made from a special delegate that in a platform specific library like in [[Windows Presentation Foundation]] and [[Windows Forms]] usually takes two parameters: ''sender'' and the ''event arguments''. The type of the event argument-object derive from the EventArgs class that is a part of the CLI base library.
+
+Once declared in its class the only way of invoking the event is from inside of the owner. A listener method may be implemented outside to be triggered when the event is fired.
+
+<source lang="csharp">
+public class MainWindow : System.Windows.Controls.Window
+{
+    private Button button1;
+
+    public MainWindow()
+    {
+        button1 = new Button();
+        button1.Text = "Click me!";
+
+        /* Subscribe to the event */
+        button1.ClickEvent += button1_OnClick;
+
+        /* Alternate syntax that is considered old: 
+           button1.MouseClick += new MouseEventHandler(button1_OnClick); */
+    }
+
+    protected void button1_OnClick(object sender, MouseEventArgs e)
+    {
+        MessageBox.Show("Clicked!");
+    }
+}
+
+</source>
+
+'''See also'''
+* [[Event-driven programming]]
+
+====Nullable types====
+:''This is a feature of [[C Sharp 2.0]].''
+
+Nullable types were introduced in C Sharp 2.0 firstly to enable value types to be ''null'' when working with a database.
+
+<source lang="csharp">
+
+int? n = 2;
+n = null;
+
+Console.WriteLine(n.HasValue);
+
+</source>
+
+In reality this is the same as using the <code>Nullable<T></code> struct.
+
+<source lang="csharp">
+
+Nullable<int> n = 2;
+n = null;
+
+Console.WriteLine(n.HasValue);
+
+</source>
+
+====Pointers====
+C# has and allows pointers to value types (primitives, enums and structs) in unsafe context: methods and codeblock marked <code>unsafe</code>. These are syntactically the same as pointers in C and C++. However, runtime-checking is disabled inside <code>unsafe</code> blocks.
+
+<source lang="csharp">
+static void Main(string[] args)
+{
+    unsafe
+    {
+        int a = 2;
+        int* b = &a;
+
+        Console.WriteLine("Address of a: {0}. Value: {1}", (int)&a, a);
+        Console.WriteLine("Address of b: {0}. Value: {1}.  Value of *b: {2}", (int)&b, (int)b, *b);
+
+        //Will output something like:
+        //Address of a: 71953600. Value: 2
+        //Address of b: 71953596. Value: 71953600.  Value of *b: 2
+    }
+}
+</source>
+
+Structs are required only to be pure structs with no members of a managed reference type, e.g. a string or any other class.
+
+<source lang="csharp">
+public struct MyStruct
+{
+    public char Character;
+    public int Integer;
+}
+
+public struct MyContainerStruct
+{
+    public byte Byte;
+    public MyStruct MyStruct;
+}
+
+</source>
+
+In use:
+
+<source lang="csharp">
+
+MyContainerStruct x;
+MyContainerStruct* ptr = &x;
+
+byte value = ptr->Byte;
+</source>
+
+
+'''See also'''
+* [[Pointer (programming)]]
+
+====Dynamic====
+:''This is a feature of [[C Sharp 4.0]] and [[.NET Framework 4.0]].''
+Type <code>dynamic</code> is a feature that enables dynamic runtime lookup to C# in a static manner. Dynamic is a static "type" which exists at runtime.
+
+<source lang="csharp">
+dynamic x = new Foo();
+x.DoSomething();  //Will compile and resolved at runtime. An exception will be cast if invalid.
+
+</source>
+
+===Boxing and unboxing===
+''Boxing'' is the operation of converting a value of a value type into a value of a corresponding reference type.<ref name="insidecsharpp2ch4">[[#Archer|Archer]], Part 2, Chapter 4:The Type System</ref>  Boxing in C# is implicit.
+
+''Unboxing'' is the operation of converting a value of a reference type (previously boxed) into a value of a value type.<ref name="insidecsharpp2ch4" /> Unboxing in C# requires an explicit type cast.
+
+Example:
+<source lang="csharp">
+int foo = 42;         // Value type.
+object bar = foo;     // foo is boxed to bar.
+int foo2 = (int)bar;  // Unboxed back to value type.
+</source>
+
+==Object-oriented programming (OOP)==
+C# has direct support for [[object-oriented programming]].
+
+===Objects===
+An object is created with the type as a template and is called an ''instance'' of that particular type.
+
+In C# objects are either references or values. No further syntactical distinction is made between those in code.
+
+====<code>object</code> class====
+All types, even value types in their boxed form, implicitly inherit from the <code>System.Object</code> class which is the ultimate base class of all objects. The class contains the most common methods shared by all objects. Some of these are <code>virtual</code> and can be overridden.
+
+Classes inherit <code>System.Object</code> either directly or indirectly through another base class.
+
+'''Members'''</br>
+Some of the members of the <code>Object</code> class:
+
+* <code>Equals</code> - Supports comparisons between objects.
+
+* <code>Finalize</code> - Performs cleanup operations before an object is automatically reclaimed. (Default destructor)
+
+* <code>GetHashCode</code> - Gets the number corresponding to the value of the object to support the use of a hash table.
+
+* <code>GetType</code> - Gets the Type of the current instance.
+
+* <code>ToString</code> - Creates a human-readable text string that describes an instance of the class. Usually it returns the name of the type.
+
+===Classes===
+Classes are fundamentals of an object-oriented language such as C#. They serve as a template for objects. They contain members that store and manipulate data in real-life-like way. 
+
+'''See also'''
+* [[Class (computer science)]]
+* [[Structure (computer science)]]
+
+====Differences between classes and structs====
+Although classes and structures are similar in both the way they are declared and how they are used, there are some significant differences. Classes are reference types and structs value types. A structure is allocated on the stack when it is declared and the variable is bound to its address. It directly contains the value. Classes are different because the memory is allocated as objects on the heap. Variables are rather managed pointers on the stack which point to the objects. They are references.
+
+Structures require some more than classes. For example, you need to explicitly create a default constructor which takes no arguments to initialize the struct and its members. The compiler will create a default one for classes. All fields and properties of a struct must have been initialized before an instance is created. Structs do not have finalizers and cannot inherit from another class like classes do. However, they inherit from <code>System.ValueType</code>, that inherits from <code>System.Object</code>. Structs are more suitable for smaller constructs of data.
+
+This is a short summary of the differences:
+{|class="wikitable"
+|-
+!
+!Default constructor
+!Finalizer
+!Member initialization
+!Inheritance
+|-
+!Classes
+|not required ''(auto generated)''
+|yes
+|not required
+|yes (if base class is not <code>sealed</code>)
+|-
+!Structs
+|required ''(not auto generated)''
+|no
+|required
+|not supported
+|-
+|}
+
+====Declaration====
+
+A class is declared like this:
+<source lang="csharp">
+class Foo
+{
+    //Member declarations
+}
+</source>
+
+=====Partial class=====
+:''This is a feature of [[C Sharp 2.0]].''
+
+A partial class is a class declaration whose code is divided into separate files. The different parts of a partial class must be marked with keyword <code>partial</code>.
+
+<source lang="csharp">
+
+//File1.cs
+partial class Foo
+{
+    ...
+}
+
+//File2.cs
+partial class Foo
+{
+    ...
+}
+</source>
+
+====Initialization====
+Before you can use the members of the class you need to initialize the variable with a reference to an object. To create it you call the appropriate constructor using the <code>new</code> keyword. It has the same name as the class.
+
+<source lang="csharp">
+Foo foo = new Foo();
+</source>
+
+For ''structs'' it is optional to explicitly call a constructor because the default one is called automatically. You just need to declare it and it gets initialized with standard values.
+
+=====Object initializers=====
+
+:''This is a feature of [[C Sharp 3.0]].''
+Provides a more convenient way of initializing public fields and properties of an object. Constructor calls are optional when there is a default constructor.
+
+<source lang="csharp">
+Person person = new Person {
+    Name = "John Doe",
+    Age = 39
+};
+
+//Equal to
+Person person = new Person();
+person.Name = "John Doe";
+person.Age = 39;
+
+</source>
+
+=====Collection initializers=====
+:''This is a feature of [[C Sharp 3.0]].''
+Collection initializers give an array-like syntax for initializing collections. The compiler will simply generate calls to the Add-method. This works for classes that implement the interface <code>ICollection</code>.
+<source lang="csharp">
+List<int> list = new List<int> {2, 5, 6, 6 };
+
+//Equal to
+List<int> list = new List<int>();
+list.Add(2);
+list.Add(5);
+list.Add(6);
+list.Add(6);
+</source>
+
+====Accessing members====
+Members of both instances and static classes are accessed with the <code>.</code> operator.
+
+'''Accessing an instance member'''</br>
+Instance members can be accessed through the name of a variable.
+
+<source lang="csharp">
+string foo = "Hello";
+string fooUpper = foo.ToUpper();
+</source>
+
+'''Accessing a static class member'''</br>
+Static members are accessed by using the name of the class or any other type.
+
+<source lang="csharp">
+int r = String.Compare(foo, fooUpper);
+</source>
+
+'''Accessing a member through a pointer'''</br>
+In ''unsafe code'', members of a value (struct type) referenced by a pointer are accessed with the <code>-></code> operator just like in C and C++.
+
+<source lang="csharp">
+POINT p;
+p.X = 2;
+p.Y = 6;
+POINT* ptr = &p;
+ptr->Y = 4;
+</source>
+
+====Modifiers====
+Modifiers are keywords used to modify declarations of types and type members. Most notably there is a sub-group containing the access modifiers.
+
+* '''<code>abstract</code>''' - Specifies that a class only serves as a base class. It must be implemented in an inheriting class.
+* '''<code>const</code>''' - Specifies that a variable is a constant value that has to be initialized when it gets declared.
+* '''<code>event</code>''' - Declare an event.
+* '''<code>extern</code>''' - Specify that a method signature without a body uses a DLL-import.
+* '''<code>override</code>''' - Specify that a method or property declaration is an override of a virtual member or an implementation of a member of an abstract class.
+* '''<code>readonly</code>''' - Declare a field that can only be assigned values as part of the declaration or in a constructor in the same class.
+* '''<code>sealed</code>''' - Specifies that a class cannot be inherited.
+* '''<code>static</code>''' - Specifies that a member belongs to the class and not to a specific instance. (see section ''static'')
+* '''<code>unsafe</code>''' - Specifies an unsafe context, which allows the use of pointers.
+* '''<code>virtual</code>''' - Specifies that a method or property declaration can be overridden by a derived class.
+* '''<code>volatile</code>''' - Specifies a field which may be modified by an external process and prevents an optimizing compiler from modifying the use of the field.
+
+=====Access modifiers=====
+The ''access modifiers'', or ''inheritance modifiers'', set the accessibility of classes, methods, and other members. Something marked <code>public</code> can be reached from anywhere. <code>private</code> members can only be accessed from inside of the class they are declared in and will be hidden when inherited. Members with the <code>protected</code> modifier will be ''private,'' but accessible when inherited. <code>internal</code> classes and members will only be accessible from the inside of the declaring assembly.
+
+Classes and structs are implicitly <code>internal</code> and members are implicitly <code>private</code> if they do not have an access modifier.
+
+<source lang="csharp">
+public class Foo
+{
+    public int Do()
+    {
+        return 0;
+    }
+
+    public class Bar
+    {
+
+    }
+}
+</source>
+
+{| class="wikitable"
+!
+!Unnested types
+!Members (incl. Nested types)
+|-
+!<code>public</code>
+|yes
+|yes
+|-
+!<code>private</code>
+|no
+|yes (default)
+|-
+!<code>protected</code>
+|no
+|yes
+|-
+!<code>internal</code>
+|yes (default)
+|yes
+|-
+!<code>protected internal</code>
+|no
+|yes
+|-
+|}
+
+=====<code>static</code>=====
+The <code>static</code> modifier states that a member belongs to the class and not to a specific object. Classes marked static are only allowed to contain static members. Static members are sometimes referred to as ''class members'' since they apply to the class as a whole and not to its instances.
+
+<source lang="csharp">
+public class Foo
+{
+    public static void Something()
+    {
+        ...
+    }
+}
+//Calling the class method.
+Foo.Something();
+</source>
+
+====Constructors====
+A constructor is a special method that is called when an object is going to be initialized. Its purpose is to initialize the members of the object. The main differences between constructors and 
+ordinary methods are that constructors are named after the class and do not return anything. They may take parameters as any method.
+
+<source lang="csharp">
+class Foo
+{
+    Foo()
+    {
+        ...
+    }
+}
+</source>
+
+Constructors can be <code>public</code>, <code>private</code>, or <code>internal</code>.
+
+'''See also'''
+* [[Constructor (computer science)]]
+
+====Destructor====
+The destructor is called when the object is being collected by the garbage collector to perform some manual clean-up. There is a default destructor method called <code>finalize</code> that can be overridden by declaring your own.
+
+The syntax is similar to the one of constructors. The difference is that the name is preceded by a ~ and it cannot contain any parameters. There cannot be more than one destructor.
+
+<source lang="csharp">
+class Foo
+{
+    ...
+
+    ~Foo()
+    {
+        ...
+    }
+}
+</source>
+
+Finalizers are always <code>private</code>.
+
+'''See also'''
+* [[Destructor (computer science)]]
+
+====Methods====
+Like in C and C++ there are functions that group reusable code. The main difference is that functions just like in Java have to reside inside of a class. A function is therefore called a ''method''. A method has a return value, a name and usually some parameters initialized when it is called with some arguments. It can either belong to an instance of a class or be a static member.
+
+<source lang="csharp">
+class Foo
+{
+    int Bar(int a, int b)
+    {
+        return a % b;
+    }
+}
+</source>
+
+A method is called using <code>.</code> notation on a specific variable, or as in the case of static methods, the name of a type.
+
+<source lang="csharp">
+Foo foo = new Foo();
+int r = foo.Bar(7, 2)
+
+Console.WriteLine(r);
+</source>
+
+'''See also'''
+* [[Method (computer science)]]
+
+=====<code>ref</code> and <code>out</code> parameters=====
+
+One can explicitly make arguments be passed by reference when calling a method with parameters preceded by keywords <code>ref</code> or <code>out</code>. These managed pointers come in handy when passing value type variables that you want to be modified inside the method by reference. The main difference between the two is that an <code>out</code> parameter must have been assigned within the method by the time the method returns, while ref need not assign a value.
+<source lang="csharp">
+void PassRef(ref int x)
+{
+    if(x == 2) x = 10;
+}
+int Z;
+PassRef(ref Z);
+
+void PassOut(out int x)
+{
+    x = 2;
+}
+int Q;
+PassOut(out Q);
+
+</source>
+
+=====Optional parameters=====
+:''This is a feature of [[C Sharp 4.0]].''
+C# 4.0 introduces optional parameters with default values as seen in C++. For example:
+
+<source lang="csharp">
+void Increment(ref int x, int dx = 1)
+{
+  x += dx;
+}
+
+int x = 0;
+Increment(ref x);    // dx takes the default value of 1
+Increment(ref x, 2); // dx takes the value 2
+</source>
+
+In addition, to complement optional parameters, it is possible to explicitly specify parameter names in method calls, allowing to selectively pass any given subset of optional parameters for a method. The only restriction is that named parameters must be placed after the unnamed parameters. Parameter names can be specified for both optional and required parameters, and can be used to improve readability or arbitrarily reorder arguments in a call. For example:
+
+<source lang="csharp">
+Stream OpenFile(string name, FileMode mode = FileMode.Open, 
+FileAccess access = FileAccess.Read) { ... }
+
+OpenFile("file.txt"); // use default values for both "mode" and "access" 
+OpenFile("file.txt", mode: FileMode.Create); // use default value for "access"
+OpenFile("file.txt", access: FileAccess.Read); // use default value for "mode"
+OpenFile(name: "file.txt", access: FileAccess.Read, mode: FileMode.Create); 
+// name all parameters for extra readability, 
+// and use order different from method declaration
+</source>
+
+Optional parameters make interoperating with COM easier. Previously, C# had to pass in every parameter in the method of the COM component, even those that are optional. For example:
+
+<source lang="csharp">
+object fileName = "Test.docx";
+object missing = System.Reflection.Missing.Value;
+
+doc.SaveAs(ref fileName,
+    ref missing, ref missing, ref missing,
+    ref missing, ref missing, ref missing,
+    ref missing, ref missing, ref missing,
+    ref missing, ref missing, ref missing,
+    ref missing, ref missing, ref missing);
+console.writeline("File saved successfully");
+</source>
+
+With support for optional parameters, the code can be shortened as
+<source lang="csharp">
+doc.SaveAs(ref fileName);
+</source>
+
+=====<code>extern</code>=====
+A feature of C# is the ability to call native code. A method signature is simply declared without a body and is marked as <code>extern</code>. The <code>DllImport</code> attribute also needs to be added to reference the desired DLL file.
+
+<source lang="csharp">
+[DllImport("win32.dll")]
+static extern double Pow(double a, double b);
+</source>
+
+====Fields====
+Fields, or class variables, can be declared inside the class body to store data. It is considered good practice to keep a field private and declare a property to access it.
+
+<source lang="csharp">
+class Foo
+{
+    double foo;
+}
+</source>
+
+Fields can be initialized directly when declared.
+
+<source lang="csharp">
+class Foo
+{
+    double foo = 2.3;
+}
+</source>
+
+'''Modifiers for fields:'''
+
+* <code>static</code> - Makes the field a static member.
+* <code>readonly</code> - Allows the field to be initialized only once in a constructor.
+* <code>const</code> - Makes the field a constant.
+* <code>public</code> - Makes the field public.
+* <code>private</code> - Makes the field private (default).
+* <code>protected</code> - Makes the field protected.
+
+====Properties====
+Properties bring field-like syntax and combine them with the power of methods. A property can have two accessors: <code>get</code> and <code>set</code>.
+
+<source lang="csharp">
+class Person
+{
+    string name;
+
+    string Name
+    {
+        get { return name; }
+        set { name = value; }
+    }
+}
+
+//Using a property
+Person person = new Person();
+person.Name = "Robert";
+</source>
+
+'''Modifiers for properties:'''
+
+* <code>static</code> - Makes the property a static member.
+
+* <code>public</code> - Makes the property public.
+* <code>private</code> - Makes the property private (default).
+* <code>protected</code> - Makes the property protected.
+
+'''Modifiers for property accessors:'''
+
+* <code>public</code> - Makes the accessor public.
+* <code>private</code> - Makes the accessor private.
+* <code>protected</code> - Makes the accessor protected.
+
+The default modifiers for the accessors are inherited from the property. Note that the accessor's modifiers can only be equal or more restrictive than the property's modifier.
+
+=====Automatic properties=====
+
+:''This is a feature of [[C Sharp 3.0]].''
+A feature of C# 3.0 is auto-implemented properties. You define accessors without bodies and the compiler will generate a backing field and the necessary code for the accessors.
+
+<source lang="csharp">
+double Width
+{
+    get;
+    private set;
+}
+</source>
+
+====Indexers====
+Indexers add array-like indexing capabilities to objects. They are implemented in a way similar to properties.
+<source lang="csharp">
+class IntList
+{
+   int[] items;
+
+   int this[int index]
+   {
+        get { return this.items[index]; }
+        set { this.items[index] = value; }
+    }
+}
+
+//Using an indexer
+IntList list = new IntList();
+list[2] = 2;
+</source>
+
+====Inheritance====
+Classes in C# may only inherit from one class. A class may derive from any class that is not marked as <code>sealed</code>.
+
+<source lang="csharp">
+class A
+{
+
+}
+
+class B : A
+{
+
+}
+</source>
+
+'''See also'''
+* [[Inheritance (computer science)]]
+
+=====<code>virtual</code>=====
+Methods marked <code>virtual</code> provide an implementation, but it can be overridden by the inheritors by using the <code>override</code> keyword.
+
+The implementation is chosen by the actual type of the object and not the type of the variable.
+
+<source lang="csharp">
+class Operation
+{
+    public virtual int Do()
+    {
+        return 0;
+    }
+}
+
+class NewOperation : Operation
+{
+    public override int Do()
+    {
+        return 1;
+    }
+}
+</source>
+
+=====<code>new</code>=====
+When overloading a non-virtual method with another signature, the keyword <code>new</code> may be used. The used method will be chosen by the type of the variable instead of the actual type of the object.
+
+<source lang="csharp">
+class Operation
+{
+    public int Do()
+    {
+        return 0;
+    }
+}
+
+class NewOperation : Operation
+{
+    public new double Do()
+    {
+        return 4.0;
+    }
+}
+</source>
+
+This demonstrates the case:
+
+<source lang="csharp">
+NewOperation operation = new NewOperation;
+
+// Will call "double Do()" in NewOperation
+double d = operation.Do(); 
+
+Operation operation_ = operation;
+
+// Will call "int Do()" in Operation
+int i = operation_.Do(); 
+
+</source>
+
+=====<code>abstract</code>=====
+Abstract classes are classes that only serve as templates and you can not initialize an object of that type. Otherwise it is just like an ordinary class.
+
+There may be abstract members too. Abstract members are members of abstract classes that do not have any implementation. They must be overridden by the class that inherits the member.
+
+<source lang="csharp">
+abstract class Mammal
+{
+    public abstract void Walk();
+}
+
+class Human : Mammal
+{
+    public override void Walk()
+    {
+
+    }
+
+    ...
+}
+</source>
+
+=====<code>sealed</code>=====
+The <code>sealed</code> modifier can be combined with the others as an optional modifier for classes to make them uninheritable.
+
+<source lang="csharp">
+internal sealed class _FOO
+{
+
+}
+</source>
+
+===Interfaces===
+Interfaces are data structures that contain member definitions and not actual implementation. They are useful when you want to define a contract between members in different types that have different implementations. You can declare definitions for methods, properties, and indexers. An interface can either be implicitly or explicitly implemented.
+
+<source lang="csharp">
+interface IBinaryOperation
+{
+    double A { get; set; }
+    double B { get; set; }
+
+    double GetResult(double a, double b);
+}
+</source>
+
+====Implementing an interface====
+An interface is implemented by a class or extended by another interface in the same way you derive a class from another class using the <code>:</code> notation.
+
+'''Implicit implementation'''
+
+When implicitly implementing an interface the members of the interface has to be <code>public</code>.
+
+<source lang="csharp">
+public class Adder : IBinaryOperation
+{
+    public double A { get; set; }
+    public double B { get; set; }
+
+    public double GetResult()
+    {
+        return A + B;
+    }
+}
+
+public class Multiplier : IBinaryOperation
+{
+    public double A { get; set; }
+    public double B { get; set; }
+
+    public double GetResult()
+    {
+        return A * B;
+    }
+}
+</source>
+
+In use:
+
+<source lang="csharp">
+IBinaryOperation op = null;
+double result;
+
+// Adder implements the interface IBinaryOperation.
+
+op = new Adder();
+op.A = 2;
+op.B = 3;
+
+result = op.GetResult(); //5
+
+
+// Multiplier also implements the interface.
+
+op = new Multiplier();
+op.A = 5;
+op.B = 4;
+
+result = op.GetResult(); //20
+</source>
+
+
+'''Explicit implementation'''
+
+You can also explicitly implement members. The members of the interface that are implemented by a class is the only accessible when the object is handled as the interface type.
+
+<source lang="csharp">
+public class Adder : IBinaryOperation
+{
+    double IBinaryOperation.A { get; set; }
+    double IBinaryOperation.B { get; set; }
+
+    double IBinaryOperation.GetResult()
+    {
+        return A + B;
+    }
+}
+</source>
+
+In use:
+
+<source lang="csharp">
+Adder add = new Adder();
+
+// These members are not accessible.
+
+// add.A = 2;
+// add.B = 3;
+
+// double result = add.GetResult();
+
+//Cast to the interface type to access them.
+
+IBinaryOperation add2 = add;
+add2.A = 2;
+add2.B = 3;
+
+double result = add2.GetResult();
+</source>
+
+'''Note:''' The properties in the class that extends <code>IBinaryOperation</code> are auto-implemented by the compiler. Both get a backingfield.
+
+'''Extending multiple interfaces'''
+
+Interfaces and classes are allowed to extend multiple interfaces.
+
+<source lang="csharp">
+class MyClass : IInterfaceA, IInterfaceB
+{
+    ...
+}
+</source>
+
+Here is a interface that extends two interfaces. 
+
+<source lang="csharp">
+interface IInterfaceC : IInterfaceA, IInterfaceB
+{
+    ...
+}
+</source>
+
+====Interfaces vs . Abstract classes ====
+Interfaces and abstract classes are similar. The following describes some important differences:
+* An abstract class may have member variables as well as non-abstract methods or properties. An interface cannot.
+* A class or abstract class can only inherit from one class or abstract class.
+* A class or abstract class may implement one or more interfaces.
+* An interface can only extend other interfaces.
+* An abstract class may have non-public methods and properties (also abstract ones). An interface can only have public members.
+* An abstract class may have constants, static methods and static members. An interface cannot.
+* An abstract class may have constructors. An interface cannot.
+
+==Generics==
+:''This is a feature of [[C Sharp 2.0]] and [[.NET Framework 2.0]].''
+
+[[generic programming|Generics]], or parameterized types, or [[polymorphism in object-oriented programming#Parametric Polymorphism|parametric polymorphism]] is a .NET 2.0 feature supported by C#. Unlike C++ templates, .NET parameterized types are instantiated at runtime rather than by the compiler; hence they can be cross-language whereas C++ templates cannot. They support some features not supported directly by C++ templates such as type constraints on generic parameters by use of interfaces. On the other hand, C# does not support non-type generic parameters. Unlike generics in Java, .NET generics use [[reification (computer science)|reification]] to make parameterized types first-class objects in the [[Common Language Infrastructure]] (CLI) Virtual Machine, which allows for optimizations and preservation of the type information.<ref>{{cite web
+ |url=http://msdn.microsoft.com/en-us/library/ms379564.aspx
+ |title=An Introduction to C# Generics
+ |month=January
+ |year=2005
+ |publisher=[[Microsoft]]
+ |accessdate=June 18, 2009
+}}</ref>
+
+'''See also'''
+* [[Generic programming]]
+
+===Using Generics===
+====Generic classes====
+Classes and structs can be generic.
+
+<source lang="csharp">
+public class List<T>
+{
+    ...
+    public void Add(T item)
+    {
+         ...
+    }
+}
+
+List<int> list = new List<int>();
+list.Add(6);
+list.Add(2);
+</source>
+
+====Generic interfaces====
+<source lang="csharp">
+interface IEnumerable<T>
+{
+    ...
+}
+</source>
+====Generic delegates====
+
+<source lang="csharp">
+delegate R Func<T1, T2, R>(T1 a1, T2 a2);
+</source>
+
+====Generic methods====
+
+<source lang="csharp">
+public static T[] CombineArrays<T>(T[] a, T[] b)
+{
+    T[] newArray = new T[a.Length + b.Length];
+    a.CopyTo(newArray, 0);
+    b.CopyTo(newArray, a.Length);
+    return newArray;
+}
+
+string[] a = new string[] { "a", "b", "c" };
+string[] b = new string[] { "1", "2", "3" };
+string[] c = CombineArrays(a, b);
+
+double[] da = new double[] { 1.2, 2.17, 3.141592 };
+double[] db = new double[] { 4.44, 5.6, 6.02 };
+double[] dc = CombineArrays(da, db);
+
+//c is a string array containing { "a", "b", "c", "1", "2", "3"}
+//dc is a double array containing { 1.2, 2.17, 3.141592, 4.44, 5.6, 6.02}
+</source>
+
+===Type-parameters===
+Type-parameters are names used in place of concrete types when defining a new generic. They may be associated with classes or methods by placing the type parameter in angle brackets < >. When instantiating (or calling) a generic, you can then substitute a concrete type for the type-parameter you gave in its declaration. Type parameters may be constrained by use of the ''where'' keyword and a constraint specification, any of the six comma separated constraints may be used:
+
+{| class="wikitable" border="1"
+|-
+! Constraint
+! Explanation
+|-
+| where T : struct
+| type parameter must be a value type
+|-
+| where T : class
+| type parameter must be a reference type
+|-
+| where T : new()
+| type parameter must have a constructor with no parameters (must appear last)
+|-
+| where T : <base_class>
+| type parameter must inherit from <base_class>
+|-
+| where T : <interface>
+| type parameter must be, or must implement this interface
+|-
+| where T : U
+| naked type parameter constraint
+|}
+
+====Covariance and contravariance====
+:''This is a feature of [[C Sharp 4.0]] and [[.NET Framework 4.0]].''
+
+[[Generic programming|Generic]] interfaces and delegates can have their type parameters marked as [[Covariance and contravariance (computer science)|covariant]] or [[Covariance and contravariance (computer science)|contravariant]], using keywords <code>out</code> and <code>in</code>, respectively. These declarations are then respected for type conversions, both implicit and explicit, and both compile-time and run-time. For example, the existing interface <code>IEnumerable<T></code> has been redefined as follows:
+
+<source lang="csharp">
+interface IEnumerable<out T>
+{
+  IEnumerator<T> GetEnumerator();
+}
+</source>
+
+Therefore, any class that implements <code>IEnumerable<Derived></code> for some class <code>Derived</code> is also considered to be compatible with <code>IEnumerable<Base></code> for all classes and interfaces <code>Base</code> that <code>Derived</code> extends, directly, or indirectly. In practice, it makes it possible to write code such as:
+
+<source lang="csharp">
+void PrintAll(IEnumerable<object> objects)
+{
+  foreach (object o in objects)
+  {
+    System.Console.WriteLine(o);
+  }
+}
+
+IEnumerable<string> strings = new List<string>();
+PrintAll(strings); // IEnumerable<string> is implicitly converted to IEnumerable<object>
+</source>
+
+For contravariance, the existing interface <code>IComparer<T></code> has been redefined as follows:
+<source lang="csharp">
+public interface IComparer<in T>
+{
+    int Compare(T x, T y);
+}
+</source>
+Therefore, any class that implements <code>IComparer<Base></code> for some class <code>Base</code> is also considered to be compatible with <code>IComparer<Derived></code> for all classes and interfaces <code>Derived</code> that are extended from <code>Base</code>. It makes it possible to write code such as:
+<source lang="csharp">
+IComparer<object> objectComparer = GetComparer();
+IComparer<string> stringComparer = objectComparer;
+</source>
+
+'''See also'''
+* [[Covariance and contravariance]]
+
+==Enumerators==
+
+An ''enumerator'' is an iterator.
+Enumerators are typically obtained by calling the <code>GetEnumerator()</code> method of an object implementing the <code>IEnumerable</code> interface. Container classes typically implement this interface. However, the [[foreach]] statement in [[C Sharp (programming language)|C#]] can operate on any object providing such a method, even if it doesn't implement <code>IEnumerable</code>. Both interfaces were expanded into [[generic programming|generic]] versions in [[.NET Framework#.NET Framework 2.0|.NET 2.0]].
+
+The following shows a simple use of iterators in C# 2.0:
+<source lang="csharp">
+// explicit version
+IEnumerator<MyType> iter = list.GetEnumerator();
+while (iter.MoveNext())
+    Console.WriteLine(iter.Current);
+
+// implicit version
+foreach (MyType value in list)
+    Console.WriteLine(value);
+</source>
+===Generator functionality===
+:''This is a feature of [[C Sharp 2.0]].''
+The .NET 2.0 Framework allowed C# to introduce an [[iterator]] that provides [[generator (computer science)|generator]] functionality, using a <code>yield return</code> construct similar to <code>yield</code> in [[Python syntax and semantics#Generators|Python]].<ref>{{cite web 
+|url=http://msdn.microsoft.com/en-us/library/9k7k7cf0(VS.80).aspx
+|title=yield
+|work=C# Language Reference
+|publisher=[[Microsoft]]
+|accessdate=2009-04-26}}</ref> With a <code>yield return</code>, the function automatically keeps its state during the iteration.
+
+<source lang="csharp">
+// Method that takes an iterable input (possibly an array)
+// and returns all even numbers.
+public static IEnumerable<int> GetEven(IEnumerable<int> numbers)
+{
+    foreach (int i in numbers)
+    {
+        if (i % 2 == 0) 
+            yield return i;
+    }
+}
+</source>
+
+==LINQ==
+:''This is a feature of [[C Sharp 3.0]] and [[.NET Framework 3.0]].''
+{{Main|LINQ}}
+
+LINQ, short for Language Integrated Queries, is a .NET Framework feature which simplifies the handling of data. Mainly it adds support that allows you to query arrays, collections, and databases. It also introduces binders, which makes it easier to access to databases and their data.
+===Query syntax===
+
+The LINQ query syntax was introduced in C# 3.0 and lets you write [[SQL]]-like queries in C#.
+
+<source lang="csharp">
+
+var list = new List<int>{ 2, 7, 1, 3, 9 };
+
+var result = from i in list
+               where i > 1
+               select i;
+
+</source>
+
+The statements are compiled into method calls, whereby almost only the names of the methods are specified. Which methods are ultimately used is determined by normal overload resolution. Thus, the end result of the translation is affected by what symbols are in scope. 
+
+What differs from SQL is that the from-statement comes first and not last as in SQL. This is because it seems more natural writing like this in C# and supports Intellisense.
+
+==Anonymous methods==
+
+Anonymous methods, or in their present form more commonly referred to as "lambda expressions", is a feature which allows you to write inline closure-like functions in your code.
+
+There are various ways to create anonymous methods. Prior to C# 3.0 there was limited support by using delegates.
+
+'''See also'''
+* [[Anonymous function]]
+* [[Closure (computer science)]]
+
+===Anonymous delegates===
+:''This is a feature of [[C Sharp 2.0]].''
+
+Anonymous delegates are functions pointers that are holding anonymous methods. The purpose is to make it simpler to use delegates by simplifying the process of assigning the function. Instead of declaring a separate method in code the programmer can use the syntax to write the code inline and the compiler will then generate an anonymous function for it. 
+
+<source lang="csharp">
+Func<int, int> f = delegate(int x) { return x * 2; };
+</source>
+
+===Lambda expressions===
+:''This is a feature of [[C Sharp 3.0]].''
+Lambda expressions provide a simple syntax for inline functions that are similar to closures. Functions with parameters infer the type of the parameters if other is not explicitly specified.
+
+<source lang="csharp">
+// [arguments] => [method-body]
+
+//With parameters
+n => n == 2
+(a, b) => a + b
+(a, b) => { a++; return a + b; }
+
+//With explicitly typed parameters
+(int a, int b) => a + b
+
+//No parameters
+() => return 0
+
+//Assigning lambda to delegate
+Func<int, int, int> f = (a, b) => a + b;
+</source>
+Multi-statement lambdas have bodies enclosed by brackets and inside of them code can be written like in standard methods.
+<source lang="csharp">
+
+(a, b) => { a++; return a + b; }
+
+</source>
+Lambda expressions can be passed as arguments directly in method calls similar to anonymous delegates but with a more aesthetic syntax.
+
+<source lang="csharp">
+var list = stringList.Where(n => n.Length > 2);
+</source>
+
+Lambda expressions are essentially compiler-generated methods that are passed via delegates. These methods are reserved for the compiler only and can not be used in any other context.
+
+==Anonymous types==
+:''This is a feature of [[C Sharp 3.0]].''
+Anonymous types are nameless classes that are generated by the compiler. They are only consumable and yet very useful in a scenario like where you have a LINQ query which returns an object on <code>select<code> and you just want to return some specific values. Then you can define a anonymous type containing auto-generated read-only fields for the values. 
+
+When instantiating another anonymous type declaration with the same signature the type is automatically inferred by the compiler.
+
+<source lang="csharp">
+var carl = new { Name = "Carl", Age = 35 }; //Name of the type is only known by the compiler.
+var mary = new { Name = "Mary", Age = 22 }; //Same type as the expression above
+
+</source>
+
+==Extension methods==
+
+:''This is a feature of [[C Sharp 3.0]].''
+Extension methods are a form of syntactic sugar providing the illusion of adding new methods to the existing class outside its definition. In practice, an extension method is a static method that is callable as if it were an instance method; the receiver of the call is bound to the first parameter of the method, decorated with keyword <code>this</code>:
+
+<source lang="csharp">
+public static class StringExtensions
+{
+    public static string Left(this string s, int n)
+    {
+        return s.Substring(0, n);
+    }
+}
+ 
+string s = "foo";
+s.Left(3); // same as StringExtensions.Left(s, 3);
+</source>
+
+'''See also'''
+* [[Decorator pattern]]
+
+==Miscellaneous==
+===Closure Blocks===
+
+C# implements [[Resource Acquisition Is Initialization#Closure Blocks|closure blocks]] by means of the [http://msdn.microsoft.com/en-us/library/yh598w02.aspx <code>using</code> statement]. The <code>using</code> statement accepts an expression which results in an object implementing <code>IDisposable</code>, and the compiler generates code that guarantees the object's disposal when the scope of the <code>using</code>-statement is exited. The <code>using</code> statement is [[syntactic sugar]], but it is much more readable than the equivalent pure C# code.
+
+<source lang="csharp">
+
+public void Foo()
+{
+    using (var bar = File.Open("Foo.txt"))
+    {
+        // do some work
+        throw new Exception();
+        // bar will still get properly disposed.
+    }
+}
+
+</source>
+
+===Thread synchronization===
+
+C# provides the [http://msdn.microsoft.com/en-us/library/c5kehkcz.aspx <code>lock</code> statement], which is yet another example of beneficial syntactic sugar. It works by marking a block of code as a [[critical section]] by mutual exclusion of access to a provided object. Like the <code>using</code> statement, it works by the compiler generating a <code>try</code> ... </code>finally</code> block in its place.
+
+<source lang="csharp">
+
+private static StreamWriter _writer;
+
+public void ConcurrentMethod()
+{
+    lock (_writer)
+    {
+        _writer.WriteLine("Line 1.");
+        _writer.WriteLine("Followed by line 2.");
+    }
+}
+
+</source>
+
+===Attributes===
+
+Attributes are entities of data that is stored as metadata in the compiled assembly. An attribute can be added to types and members like properties and methods. Attributes [http://www.knowdotnet.com/articles/attributes.html can be used for] better maintenance of preprocessor directives.
+
+<source lang="csharp">
+
+[CompilerGenerated]
+public class $AnonymousType$120
+{   
+    [CompilerGenerated]
+    public string Name { get; set; }
+}
+
+</source>
+
+The .NET Framework comes with predefined attributes that can be used. Some of them serve an important role at runtime while some are just for syntactic decoration in code like <code>CompilerGenerated</code>. It does only mark that it is a compiler-generated element. Programmer-defined attributes can also be created.
+
+An attribute is essentially a class which inherits from the <code>System.Attribute</code> class. By convention, attribute classes end with "Attribute" in their name. This will not be required when using it.
+
+<source lang="csharp">
+
+public class EdibleAttribute : Attribute
+{
+    public Edible() : base()
+    {
+
+    }
+
+    public Edible(bool isNotPoisonous)
+    {
+        this.IsPoisonous = !isNotPoisonous;
+    }
+
+    public bool IsPoisonous { get; set; }
+}
+
+</source>
+
+Showing the attribute in use using the optional constructor parameters.
+
+<source lang="csharp">
+
+[Edible(true)]
+public class Peach : Fruit
+{
+   //Members if any
+}
+</source>
+
+===Preprocessor===
+C# features "preprocessor directives"<ref>{{cite web
+ |url=http://msdn.microsoft.com/en-us/library/ed8yd1ha.aspx
+ |title=C# Preprocessor Directives
+ |work=C# Language Reference
+ |publisher=[[Microsoft]]
+ |accessdate=June 18, 2009
+}}</ref> (though it does not have an actual preprocessor) based on the [[C preprocessor]] that allow programmers to define [[symbol]]s, but not macros. Conditionals such as <code>#if</code>, <code>#endif</code>, and <code>#else</code> are also provided. Directives such as <code>#region</code> give hints to editors for [[code folding]].
+
+===Code comments===
+C# utilizes a double forward [[slash (punctuation)|slash]] (<code>//</code>) to indicate the rest of the line is a comment.
+
+<source lang="csharp">
+public class Foo
+{
+    // a comment
+    public static void Bar(int firstParam) {}  //Also a comment
+}
+</source>
+
+Multi-line comments can be indicated by a starting forward slash/asterisk (<code>/*</code>) and ending asterisk/forward slash (<code>*/</code>).  
+
+<source lang="csharp">
+public class Foo
+{
+    /* A Multi-Line
+       comment  */
+    public static void Bar(int firstParam) {}  
+}
+</source>
+
+===XML documentation system===
+C#'s documentation system is similar to Java's [[Javadoc]], but based on [[Extensible Markup Language|XML]].  Two methods of documentation are currently supported by the C# [[compiler]].  
+
+Single-line documentation comments, such as those commonly found in [[Microsoft Visual Studio|Visual Studio]] generated code, are indicated on a line beginning with <code>///<code>.
+
+<source lang="csharp">
+public class Foo
+{
+    /// <summary>A summary of the method.</summary>
+    /// <param name="firstParam">A description of the parameter.</param>
+    /// <remarks>Remarks about the method.</remarks>
+    public static void Bar(int firstParam) {}
+}
+</source>
+
+Multi-line documentation comments, while defined in the version 1.0 language specification, were not supported until the [[.NET Framework|.NET]] 1.1 release.<ref>{{cite web
+ |url=http://blogs.msdn.com/ansonh/archive/2006/09/11/750056.aspx
+ |title=C# XML documentation comments FAQ
+ |first=Anson
+ |last=Horton
+ |date=2006-09-11
+ |accessdate=2007-12-11
+}}</ref>  These comments are designated by a starting forward slash/asterisk/asterisk (<code>/**</code>) and ending asterisk/forward slash (<code>*/<code>).<ref name="Delimiters for Documentation Tags">{{cite web
+ |url=http://msdn.microsoft.com/en-us/library/5fz4y783(VS.71).aspx
+ |title=Delimiters for Documentation Tags
+ |date=January 1, 1970 GMT
+ |work=C# Programmer's Reference
+ |publisher=[[Microsoft]]
+ |accessdate=June 18, 2009
+}}</ref>
+
+<source lang="csharp">
+public class Foo
+{
+    /** <summary>A summary of the method.</summary>
+     *  <param name="firstParam">A description of the parameter.</param>
+     *  <remarks>Remarks about the method.</remarks> */
+    public static void Bar(int firstParam) {}
+}
+</source>
+
+Note there are some stringent criteria regarding white space and XML documentation when using the forward slash/asterisk/asterisk (<code>/**</code>) technique.
+
+This code block: 
+<source lang="csharp">
+/**
+ * <summary>
+ * A summary of the method.</summary>*/
+</source>
+
+produces a different XML comment than this code block:<ref name="Delimiters for Documentation Tags"/>
+<source lang="csharp">
+/**
+ * <summary>
+   A summary of the method.</summary>*/
+</source>
+
+Syntax for documentation comments and their [[XML]] markup is defined in a non-normative annex of the [[Ecma International|ECMA]] C# standard. The same standard also defines rules for processing of such comments, and their transformation to a plain [[XML]] document with precise rules for mapping of [[Common Language Infrastructure]] (CLI) identifiers to their related documentation elements. This allows any C# [[integrated development environment]] (IDE) or other development tool to find documentation for any symbol in the code in a certain well-defined way.
+
+==Future features==
+This section presents features of the planned 5th version of the C# specification. 
+
+===Asynchronous programming syntax===
+C# will have native language support for asynchrony. As .NET Framework 4 there is a task library that
+makes it easier to write parallel and multi-threaded applications through tasks. This has made it easier writing concurrent code but it has yet been proven a bit hard from the perspective of the ordinary programmer.
+
+The next version of C# will introduce a new syntax that makes it easier writing asynchronous. Introducing ''asynchronous methods'' and the <code>await</code> keyword.
+
+<source lang="csharp">
+    public async Task<int> SumPageSizesAsync(IList<Uri> uris) 
+    {
+        int total = 0;
+        foreach (var uri in uris) {
+            statusText.Text = string.Format("Found {0} bytes ...", total);
+            var data = await new WebClient().DownloadDataTaskAsync(uri);
+            total += data.Length;
+        }
+        statusText.Text = string.Format("Found {0} bytes total", total);
+        return total;
+    }
+</source>
+
+==Dialects==
+===Spec#===
+
+{{Main|Spec Sharp}}
+Spec# is a dialect of C# that is developed in parallel with the standard implementation from Microsoft. It extends C# with specification language features and is a possible future feature to the C# language. It also adds syntax for the code contracts API that was introduced in [[.NET Framework#.NET Framework 4.0|.NET Framework 4.0]]. Spec# is being developed by [[Microsoft Research]].
+
+This sample shows two of the basic structures that are used when adding contracts to your code.
+<source lang="csharp">
+    static void Main(string![] args)
+        requires args.Length > 0
+    {
+        foreach(string arg in args)
+        {
+            Console.WriteLine(arg);
+        }
+    }
+</source>
+
+* '''!''' is used to make a reference type non-nullable, e.g. you cannot set the value to null. This in contrast of nullable types which allow value types to be set as ''null''.
+
+* '''requires''' indicates a condition that must be followed in the code. In this case the length of args is not allowed to be zero or less.
+
+===== Non-nullable types =====
+
+Spec# extends C# with non-nullable types that simply checks so the variables of nullable types that has been set as non-nullable are not <code>null</code>. If is <code>null</code> then an exception will be thrown.
+
+<source lang="csharp">
+   string! input
+</source>
+In use:
+
+<source lang="csharp">
+   public Test(string! input)
+   {
+      ...
+   }
+</source>
+
+===== Preconditions =====
+Preconditions are checked before a method is executed.
+<source lang="csharp">
+   public Test(int i)
+      requires i > 0;
+   {
+      this.i = i;
+   }
+</source>
+===== Postconditions =====
+Postconditions are conditions that are ensured to be correct when a method has been executed.
+
+<source lang="csharp">
+   public void Increment()
+      ensures i > 0;
+   {
+      i++;
+   }
+</source>
+
+===== Checked exceptions =====
+
+Spec# adds checked exceptions like those in Java.
+<source lang="csharp">
+    public void DoSomething()
+        throws SomeException; //SomeException : ICheckedException
+    { 
+
+        ... 
+
+    }
+</source>
+
+==See also==
+* [[C Sharp (programming language)]]
+* [[Visual C Sharp]]
+* [[.NET Framework]]
+* [[Mono (software)]]
+
+==References==
+{{Reflist}}
+# <cite id="Archer">{{cite book | title=Inside C#| last=Archer| first=Tom| year=2001| publisher=Microsoft Press| isbn=0-7356-1288-9}}</cite>
+# <cite id="Spec#">[http://bartdesmet.net/blogs/bart/archive/2005/08/09/3438.aspx Bart de Smet on Spec#]</cite>
+
+==External links==
+*[http://www.microsoft.com/net/ Microsoft .NET Framework]
+*[http://en.csharp-online.net/CSharp_Language_Specification C# Language Specification (hyperlinked)]
+*[http://www.mono-project.com/ Mono project]
+
+{{DEFAULTSORT:C Sharp Syntax}}
+[[Category:C Sharp programming language family]]
+
+[[tr:C Sharp sözdizimi]]</body> </html>

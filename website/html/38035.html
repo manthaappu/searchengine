@@ -1,0 +1,46 @@
+<html> <head> <title>Traffic policing</title></head><body>{{about|the process used in communications networks|the aspect of law enforcement work|Highway patrol}}
+'''Traffic policing''' is the process of monitoring [[network traffic]] for compliance with a [[traffic contract]] and taking steps to enforce that contract. Traffic sources which are aware of a traffic contract may apply [[traffic shaping]] to ensure their output stays within the contract and is thus not discarded. Traffic exceeding a traffic contract may be discarded immediately, marked as non-compliant, or left as-is, depending on administrative policy and the characteristics of the excess traffic.
+
+== Effect ==
+The recipient of traffic that has been ''policed'' will observe [[packet loss]] distributed throughout periods when incoming traffic exceeded the contract. If the source does not limit its sending rate (for example, through a [[#Impact on Congestion-Controlled Sources|feedback mechanism]]), this will continue, and may appear to the recipient as if [[link errors]] or some other disruption is causing random packet loss.
+
+The received traffic, which has experienced policing en route, will typically comply with the contract, although [[jitter]] may be introduced by elements in the network downstream of the policer. 
+
+=== Impact on Congestion-Controlled Sources ===
+Sources with feedback-based [[congestion control]] mechanisms (for example [[Transmission Control Protocol|TCP]]) typically adapt rapidly to static policing, converging on a rate just below the policed sustained rate. Co-operative policing mechanisms, such as packet-based discard<ref>Design and applications of ATM LAN/WAN adapters. Bonjour, D.; De Hauteclocque, G.; Le Moal, J. ATM, 1998. ICATM-98., IEEE International Conference, 22-24 Jun 1998 Page(s):191 - 198 Digital Object Identifier 10.1109/ICATM.1998.688177</ref> facilitate more rapid convergence, higher stability and more efficient resource sharing.
+
+As a result, it may be hard for endpoints to distinguish TCP traffic that has been merely policed from TCP traffic that has been [[traffic shaping|shaped]].
+
+=== Impact on Self-limiting Sources ===
+
+Self-limiting sources without feedback may suffer severe degradation due to policing depending on the nature of the [[application (software)|application]].  
+
+Where [[cell relay|cell]]-level dropping is enforced (as opposed to that achieved through packet-based policing) the impact is particularly severe on longer packets. Since cells are typically much shorter than the maximum packet size, conventional policers discard cells which do not respect packet boundaries, and hence the total amount of traffic dropped will typically be distributed throughout a number of packets. Almost all known [[cell reassembly|packet reassembly]] mechanisms will respond to a missing cell by dropping the packet entirely, and consequently a very large number of packet losses can result from moderately exceeding the policed contract.
+
+== Implementation ==
+
+Traffic policing elements comprise a ''meter'' and a ''dropper''.<ref>[http://tools.ietf.org/html/rfc2475#section-2.3.3.1 IETF RFC 2475] "An Architecture for Differentiated Services" section 2.3.3 - definitions of meter, dropper and marker</ref>  They may also optionally include a ''marker''. The meter measures the traffic and determines whether or not it exceeds the contract (for example by [[Generic cell rate algorithm|GCRA]]). Where it exceeds the contract, some policy determines if any given [[Protocol data unit|PDU]] is dropped, or if marking is implemented, if and how it is to be marked. Marking can comprise setting a congestion flag (such as [[Explicit Congestion Notification|ECN]] flag or [[Cell Loss Priority|CLP]] bit) or setting a traffic aggregate indication (such as [[Differentiated Services]] Code Point).
+
+Traffic policing requires maintenance of numerical statistics and measures for each policed traffic flow, but it does not require implementation or management of significant volumes of packet buffer. Consequently it is significantly less complex to implement than ''traffic shaping''.
+
+== Connection-Oriented Networks and Connection Admission Control ==
+Policing can be imposed at every node in an [[Asynchronous Transfer Mode|ATM]] network. Sources are required to ensure their traffic complies with the contract in force if they wish to avoid policing, and may implement traffic shaping to achieve this optimally.
+
+[[Connection-oriented]] networks (for example ATM systems) perform [[connection admission control]] based on traffic contracts.
+An application that wishes to use a [[connection-oriented]] network to transport traffic must first request a connection (through signalling, for example [[Q.2931]]), which involves informing the network about the characteristics of the traffic and the [[quality of service]] (QoS) required by the application.<ref>Ferguson P., Huston G., Quality of Service: Delivering QoS on the Internet and in Corporate Networks, John Wiley & Sons, Inc., 1998. ISBN 0-471-24358-2.</ref> This information is stored in a traffic contract. If the connection request is accepted, the application is permitted to use the network to transport traffic.
+
+This function protects the network resources from malicious connections and enforces the compliance of every connection to its negotiated traffic contract. The network can also discard non-conformant traffic in the network (using [[Priority Control]]). Traffic policing in ATM networks is known as [[Usage Parameter Control]] (UPC) and [[Network Parameter Control]] (NPC).<ref>Hiroshi Saito, Teletraffic Technologies in ATM Networks, Artech House, 1993. ISBN 0-89006-622-1.</ref>
+
+== See also ==
+* [[Broadband Networks]]
+* [[Network Parameter Control]] (NPC)
+* [[Teletraffic engineering in broadband networks]]
+* [[Usage Parameter Control]] (UPC)
+
+==References==
+{{reflist}}
+
+{{DEFAULTSORT:Traffic Policing}}
+[[Category:Teletraffic]]
+[[Category:Communication engineering]]
+[[Category:Network performance]]</body> </html>

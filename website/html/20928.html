@@ -1,0 +1,117 @@
+<html> <head> <title>LDraw</title></head><body>[[Image:Lego CAD Racecar.JPG|thumb|right|A racecar "created" with LDraw]]
+'''LDraw''' is a popular system of [[free software]] tools for modeling [[Lego]] creations in 3D on a computer.  The LDraw '''file format''' and original program were written by [[James Jessiman]]. He also modeled many of the original parts in the '''parts library''' that is central to the programs and is under continuous maintenance and extension by the LDraw community. In 1997, Jessiman died.<ref>{{cite web|url=http://www.ldraw.org/article/222|title=Memorial|publisher=Ldraw|quote=On July 25, 1997, James Jessiman passed away.|accessdate=2010-02-04}}</ref>  Since then, a variety of programs have been written that use the LDraw parts library, and file format. LDraw models are frequently rendered in [[POV-Ray]], a free 3D [[Ray tracing (graphics)|ray tracer]].
+
+==LDraw file format==
+The LDraw format can divide a model into steps so that the building instructions can be incorporated into the design, and also allows for steps that rotate the camera and even move parts around in an elementary fashion. It also allows for models to be incorporated in the construction of larger models to make design easier. This also makes the file format very disk space saving: instead of specifying the polygons of every single stud of a specific brick for example, a shared stud file is included multiple times with transformation applied.
+
+Parts, models, sub-models and polygons are all treated the same and are not specific to Lego models (only the parts library is). The format could be used to store any type of 3D model. Some have created bricks of other building systems for use with LDraw.
+
+LDraw files specifying basic single parts or sub-primitives usually have the extension ''.dat'', Lego models consisting of multiple bricks have the extension ''.ldr'', models consisting of multiple parts and sub-models are called ''*.mpd''.
+
+The file format uses plain text data.
+
+===Example Part===
+<source lang="text">0 Brick  2 x  2
+0 Name: 3003.dat
+0 Author: James Jessiman
+0 !LDRAW_ORG Part UPDATE 2002-03
+0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt
+
+0 BFC CERTIFY CCW
+
+0 !HISTORY 2001-10-26 [PTadmin] Official Update 2001-01
+0 !HISTORY 2002-05-07 [unknown] BFC Certification
+0 !HISTORY 2002-06-11 [PTadmin] Official Update 2002-03
+0 !HISTORY 2007-05-07 [PTadmin] Header formatted for Contributor Agreement
+0 !HISTORY 2008-07-01 [PTadmin] Official Update 2008-01
+
+1 16 0 4 0 1 0 0 0 -5 0 0 0 1 stud4.dat
+
+0 BFC INVERTNEXT
+1 16 0 24 0 16 0 0 0 -20 0 0 0 16 box5.dat
+
+4 16 20 24 20 16 24 16 -16 24 16 -20 24 20
+4 16 -20 24 20 -16 24 16 -16 24 -16 -20 24 -20
+4 16 -20 24 -20 -16 24 -16 16 24 -16 20 24 -20
+4 16 20 24 -20 16 24 -16 16 24 16 20 24 20
+
+1 16 0 24 0 20 0 0 0 -24 0 0 0 20 box5.dat
+
+1 16 10 0 10 1 0 0 0 1 0 0 0 1 stud.dat
+1 16 -10 0 10 1 0 0 0 1 0 0 0 1 stud.dat
+1 16 10 0 -10 1 0 0 0 1 0 0 0 1 stud.dat
+1 16 -10 0 -10 1 0 0 0 1 0 0 0 1 stud.dat
+0</source>
+
+The above code defines the basic 2x2 brick. It consist of a five sided box (''box5.dat'', outside) and an inverted five sided box (inside), the connection between those two, consisting of 4 quads (the four lines starting with ''4''), the four studs on top of it (''stud.dat'') and the long hollow stud in the inside (''stud4.dat'').
+
+All lines in an LDraw file are either empty or start with a ''command number'', where 0 means no command (though over time, some lines staring with 0 followed by specific text in CAPITALS also got a meaning as meta commands). The command 1 for example includes a subfile. It specifies the file's path and a transformation matrix that should be applied to it, as well as it's color (where ''16'' means "use the color that was used when including the current file"). Command 4 specifies a four sided polygon. There are also commands that define 2D lines. Such lines give the parts a clear contour even in non-shaded orthographic renderings (see the MLCad picture below).
+
+===Example Model===
+The following code specifies a simple pyramid model with three layers made of 2 x 4 bricks (brick # 3001) with changing color and a 2 x 2 brick on top.
+<source lang="text">0 Pyramid
+0 Name: pyramid.dat
+0 Author: James Jessiman
+
+ 1 1 -40 -24 60 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 1 40 -24 60 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 1 60 -24 0 0 0 1 0 1 0 -1 0 0 3001.dat
+ 1 1 40 -24 -60 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 1 -40 -24 -60 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 1 -60 -24 0 0 0 1 0 1 0 -1 0 0 3001.dat
+0 STEP
+ 1 4 -20 -48 40 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 4 40 -48 20 0 0 1 0 1 0 -1 0 0 3001.dat
+ 1 4 20 -48 -40 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 4 -40 -48 -20 0 0 1 0 1 0 -1 0 0 3001.dat
+0 STEP
+ 1 14 0 -72 20 1 0 0 0 1 0 0 0 1 3001.dat
+ 1 14 0 -72 -20 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+ 1 0 0 -96 0 1 0 0 0 1 0 0 0 1 3003.dat
+0 STEP
+0</source>
+
+==External links==
+*{{official|http://www.ldraw.org/}}
+*[http://www.ldraw.org/Article292.html#filestandards The LDraw file format standards]
+
+===Modeling===
+[[Image:Mlcad.jpg|250px|thumb|MLCad]]
+[[Image:Bricksmith.png|250px|thumb|Bricksmith for [[Mac OS X]]]]
+It is possible, but difficult, to generate a Lego creation solely by entering the piece "part numbers" and their positions.  Usually, the following tools will be used to put them together.
+*[http://www.lm-software.com/mlcad/ MLCad], an [[orthographic projection (geometry)|orthographic]] editor for [[Microsoft Windows]] with wizards for generating [[minifig]]s, hoses, belts, and springs.
+*[http://www.leocad.org/ LeoCAD], an editor with a [[Perspective (graphical)|perspective]] camera.  It is available for Microsoft Windows and Linux.
+*[http://www.ldraw.org ldraw and ledit] are the original [[DOS]] programs that were written by James Jessiman, the originator of the standard.  They have not been updated since 1997, and are considered obsolete.
+*[http://folk.uio.no/fredrigl/technic/ldraw-mode/ LDraw-mode] is an [[Emacs]] major mode for editing LDraw files as text.
+*[http://bricksmith.sourceforge.net/ Bricksmith] An [[open source]] editor for [[Apple Inc.|Apple]] [[Macintosh]] computers.
+
+===Viewing===
+*[http://www.hassings.dk/l3/l3lab.html L3Lab], a fast [[orthographic projection (geometry)|orthographic]] viewer for LDraw files, available for [[Microsoft Windows]] and [[Mac OS X]].
+*[http://ldlite.sourceforge.net/ LDLite], a slower [[Perspective (graphical)|perspective]] viewer for LDraw files that boasts specular reflection and cutaway viewing.  It runs in Microsoft Windows.
+*[http://ldview.sourceforge.net/ LDView], an [[OpenGL]]-accelerated program similar to LDLite, for Microsoft Windows, [[Linux]], and [[Mac OS]].
+*[http://ldglite.sourceforge.net/ Ldglite], an [[open-source]], OpenGL viewer similar to LDLite, for Microsoft Windows, Linux, and Mac OS.
+
+===Converting===
+*[http://www.el-lutzo.de/lego/l2p.html L2P] and [http://www.hassings.dk/l3/l3p.html L3P], two similarly-named but independent programs that convert LDraw files to files that can be rendered with [[POV-Ray]].  Both of these programs use Lutz Uhlmann's [http://www.el-lutzo.de/lego/lgeo.html LGEO library], which contains LDraw parts hand-converted to POV-Ray [[Constructive solid geometry|CSG]]s for better-looking parts.  They run under [[DOS]] and [[Command Prompt (Windows)]], L3P also runs under [[Linux]] and [[Mac OS X]].
+*[http://www.joern-thiemann.de/tools/ldraw2lws/ LDraw2LWS] is a [[Microsoft Windows]] program that converts LDraw files to [[LightWave 3D|Lightwave]] Objects and Scenes.
+*[http://www.ldraw.org/Downloads-req-viewdownloaddetails-lid-100.html LdrDat2Dxf, LdrDat2Obj] is a pair of [[Microsoft Windows]] programs that converts LDraw files into DXF, OBJ formats respectively.
+{{Lego}}
+
+==Further reading==
+{{refbegin}}
+* {{cite book|title=Virtual LEGO|isbn=978-1-886411-94-4}}
+* {{cite book|title=LEGO Software Power Tools|isbn=978-1-931836-76-0}}
+{{refend}}
+
+==References==
+{{Reflist}}
+
+[[Category:Lego]]
+[[Category:3D graphics software]]
+
+[[de:LDraw]]
+[[it:LDraw]]
+[[nl:LDraw]]
+[[pt:LDraw]]
+[[sv:LDraw]]</body> </html>

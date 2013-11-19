@@ -1,0 +1,217 @@
+<html> <head> <title>SOCKS</title></head><body>{{About|the internet protocol|other uses|Socks (disambiguation)}}
+{{pp-semi|small=yes}}
+
+'''SOCKS''' is an [[Internet]] [[Protocol (computing)|protocol]] that facilitates the routing of [[Packet (information technology)|network packets]] between [[client–server]] applications via a [[proxy server]]. SOCKS performs at Layer 5 of the [[OSI model]]—the [[session layer]] (an intermediate layer between the [[presentation layer]] and the [[transport layer]]). Port 1080 is the [[registered port]] designated for the SOCKS server.
+
+The SOCKS5 protocol was originally a security protocol that made [[Firewall (computing)|firewalls]] and other security products easier to administer. It was approved by the [[Internet Engineering Task Force|IETF]] in 1996. The protocol was developed in collaboration with [[Aventail Corporation]], which markets the technology outside of Asia.<ref>[http://news.cnet.com/Cyberspace-from-outer-space/2100-1001_3-244725.html CNET: Cyberspace from outer space]</ref>
+
+== History ==
+
+The protocol was originally developed by David Koblas, a system administrator of [[MIPS Computer Systems]]. After MIPS was taken over by [[Silicon Graphics]] in 1992, Koblas presented a paper on SOCKS at that year's Usenix Security Symposium and SOCKS became publicly available.<ref>Darmohray, Tina. "[http://www.usenix.org/publications/login/2005-02/pdfs/firewalls.pdf Firewalls and fairy tales]". ;LOGIN:. Vol 30, no. 1.</ref> The protocol was extended to version 4 by Ying-Da Lee of [[NEC]].
+
+The SOCKS reference architecture and client are owned by [[Permeo Technologies]]<ref>{{wayback|url=http://www.socks.permeo.com/}}</ref> a spin-off from [[NEC]]. ([[Blue Coat Systems]] bought out ''Permeo Technologies'').<ref>{{Cite web|url=http://www.bluecoat.com/news/releases/2006/010306_permeo.html |title=News Release from |publisher=Bluecoat |date=2009-06-14 |accessdate=2009-06-19}}</ref><ref>[http://www.infosecurityproductsguide.com/hot2006/PermeoTechnologies.html Article from] Mohammad Asif infosecurityproductsguide.com</ref>
+
+== Comparison ==
+{{Unreferenced section|date=March 2010}}
+
+The SOCKS and HTTP proxy protocol do to a large extent solve the same problem. SOCKS is usually used to create a raw [[Transmission Control Protocol|TCP]] connection, and the HTTP proxy protocol can do the same with the CONNECT method. In both cases a TCP connection is created from the client to the proxy server, and the IP address and port to which the client requests a connection is communicated over the connection. In both cases the proxy server can grant, reject, redirect and alter connection requests as it likes. HTTP proxies are traditionally more HTTP protocol aware and do more high level filtering (even though that usually only applies to GET and POST methods, not CONNECT). SOCKS proxies can also forward UDP traffic and work in reverse: HTTP proxies cannot.
+
+SOCKS uses a handshake protocol to inform the proxy software about the connection that the client is trying to make and may be used for any form of [[Transmission Control Protocol|TCP]] or [[User Datagram Protocol|UDP]] socket connection, whereas an [[HTTP]] proxy analyzes the [[List of HTTP headers|HTTP headers]] sent through it in order to infer the address of the server and therefore may only be used for HTTP traffic. The following examples demonstrate the difference between the SOCKS and HTTP proxy protocols:
+
+=== SOCKS ===
+
+Bill wishes to communicate with Jane over the internet, but a firewall exists on his network between them and Bill is not authorized to communicate through it himself. Therefore, he connects to the SOCKS proxy on his network and sends to it information about the connection he wishes to make to Jane. The SOCKS proxy opens a connection through the firewall and facilitates the communication between Bill and Jane. For more information on the technical specifics of the SOCKS protocol, see the sections below.
+
+=== HTTP ===
+
+Bill wishes to download a web page from Jane, who runs a web server. Bill cannot directly connect to Jane's server, as a firewall has been put in place on his network. In order to communicate with the server, Bill connects to his network's HTTP proxy. His internet browser communicates with the proxy in exactly the same way it would with the target server—it sends a standard HTTP request header. The HTTP proxy reads the request and looks for the Host header. It then connects to the server specified in the header and transmits any data the server replies with back to Bill.
+
+== Protocol ==
+{{Technical|section|date=September 2010}}
+
+=== SOCKS 4 ===
+
+A typical SOCKS 4 connection request looks like this (one [[byte]] each):
+
+Client to SOCKS Server:
+*field 1: SOCKS version number, 1 byte, must be 0x04 for this version
+*field 2: command code, 1 byte:
+**0x01 = establish a TCP/IP stream connection
+**0x02 = establish a TCP/IP port binding
+*field 3: network byte order port number, 2 bytes
+*field 4: network byte order IP address, 4 bytes
+*field 5: the user ID string, variable length, terminated with a null (0x00)
+
+Server to SOCKS client:
+*field 1: null byte
+*field 2: status, 1 byte:
+**0x5a = request granted
+**0x5b = request rejected or failed
+**0x5c = request failed because client is not running [[identd]] (or not reachable from the server)
+**0x5d = request failed because client's identd could not confirm the user ID string in the request
+*field 3: 2 arbitrary bytes, that should be ignored
+*field 4: 4 arbitrary bytes, that should be ignored
+
+This is a SOCKS 4 request to connect Fred to 66.102.7.99:80, the server replies with an "OK".
+
+*Client: 0x04 | 0x01 | 0x00 0x50 | 0x42 0x66 0x07 0x63 | 0x46 0x72 0x65 0x64 0x00
+**The last field is 'Fred' in [[ASCII]], followed by a null byte.
+*Server: 0x00 | 0x5a | 0xXX 0xXX | 0xXX 0xXX 0xXX 0xXX
+**0xXX can be any byte value.  The Socks 4 protocol specifies the values of these bytes should be ignored.
+
+From this point on any data sent from the SOCKS client to the SOCKS server will be relayed to 66.102.7.99 and vice versa.
+
+The command field can be 0x01 for "connect" or 0x02 for "bind". "bind" allows incoming connections for protocols like active [[File Transfer Protocol|FTP]].
+
+=== SOCKS 4a ===
+
+'''SOCKS 4a''' is a simple extension to SOCKS 4 protocol that allows a client that cannot resolve the destination host's domain name to specify it.
+
+The client should set the first three bytes of DSTIP to NULL and the last byte to a non-zero value. (This corresponds to IP address 0.0.0.x, with x nonzero, an inadmissible destination address and thus should never occur if the client can resolve the domain name.) Following the NULL byte terminating USERID, the client must send the destination domain name and terminate it with another NULL byte. This is used for both "connect" and "bind" requests.
+
+Client to SOCKS server:
+*field 1: SOCKS version number, 1 byte, must be 0x04 for this version
+*field 2: command code, 1 byte:
+**0x01 = establish a TCP/IP stream connection
+**0x02 = establish a TCP/IP port binding
+*field 3: network byte order port number, 2 bytes
+*field 4: deliberate invalid IP address, 4 bytes, first three must be 0x00 and the last one must not be 0x00
+*field 5: the user ID string, variable length, terminated with a null (0x00)
+*field 6: the domain name of the host we want to contact, variable length, terminated with a null (0x00)
+
+Server to SOCKS client:
+*field 1: null byte
+*field 2: status, 1 byte:
+**0x5a = request granted
+**0x5b = request rejected or failed
+**0x5c = request failed because client is not running identd (or not reachable from the server)
+**0x5d = request failed because client's identd could not confirm the user ID string in the request
+*field 3: network byte order port number, 2 bytes
+*field 4: network byte order IP address, 4 bytes
+
+A server using protocol 4A must check the DSTIP in the request [[packet (information technology)|packet]]. If it represents address 0.0.0.x with nonzero x, the server must read in the domain name that the client sends in the packet. The server should resolve the [[domain name]] and make connection to the destination host if it can.
+
+=== SOCKS 5 ===
+
+The SOCKS 5 protocol is an extension of the SOCKS 4 protocol that is defined in RFC 1928. It offers more choices of authentication, adds support for [[IPv6]] and [[User Datagram Protocol|UDP]] that can be used for [[DNS lookup]]s. The initial handshake now consists of the following:
+*Client connects and sends a greeting which includes a list of authentication methods supported.
+*Server chooses one (or sends a failure response if none of the offered methods are acceptable).
+*Several messages may now pass between the client and the server depending on the authentication method chosen.
+*Client sends a connection request similar to SOCKS 4.
+*Server responds similar to SOCKS 4.
+
+The authentication methods supported are numbered as follows:
+*0x00: No authentication
+*0x01: [[GSSAPI]] <ref>{{Cite web|url=http://tools.ietf.org/html/rfc1961|title=RFC 1961|publisher=Tools.ietf.org|date=|accessdate=2009-06-19}}</ref>
+*0x02: Username/Password <ref>{{Cite web|url=http://tools.ietf.org/html/rfc1929 |title=RFC 1929|publisher=Tools.ietf.org|date=|accessdate=2009-06-19}}</ref>
+*0x03-0x7F: methods assigned by [[Internet Assigned Numbers Authority|IANA]]<ref>[http://www.iana.org/assignments/socks-methods IANA.org]</ref>
+*0x80-0xFE: methods reserved for private use
+
+The initial greeting from the client is
+*field 1: SOCKS version number (must be 0x05 for this version)
+*field 2: number of authentication methods supported, 1 byte
+*field 3: authentication methods, variable length, 1 byte per method supported
+
+The server's choice is communicated:
+*field 1: SOCKS version, 1 byte (0x05 for this version)
+*field 2: chosen authentication method, 1 byte, or 0xFF if no acceptable methods were offered
+
+The subsequent authentication is method-dependent. Username and password authentication (method 0x02) is described in RFC 1929:
+
+For username/password authentication the client's authentication request is
+*field 1: version number, 1 byte (must be 0x01)
+*field 2: username length, 1 byte
+*field 3: username
+*field 4: password length, 1 byte
+*field 5: password
+
+Server response for username/password authentication:
+*field 1: version, 1 byte
+*field 2: status code, 1 byte.
+**0x00 = success
+**any other value = failure, connection must be closed
+
+The client's connection request is
+*field 1: SOCKS version number, 1 byte (must be 0x05 for this version)
+*field 2: command code, 1 byte:
+**0x01 = establish a TCP/IP stream connection
+**0x02 = establish a TCP/IP port binding
+**0x03 = associate a UDP port
+*field 3: reserved, must be 0x00
+*field 4: address type, 1 byte:
+**0x01 = IPv4 address
+**0x03 = Domain name
+**0x04 = IPv6 address
+*field 5: destination address of
+**4 bytes for IPv4 address
+**1 byte of name length followed by the name for Domain name
+**16 bytes for IPv6 address
+*field 6: port number in a [[network byte order]], 2 bytes
+
+Server response:
+*field 1: SOCKS protocol version, 1 byte (0x05 for this version)
+*field 2: status, 1 byte:
+**0x00 = request granted
+**0x01 = general failure
+**0x02 = connection not allowed by ruleset
+**0x03 = network unreachable
+**0x04 = host unreachable
+**0x05 = connection refused by destination host
+**0x06 = [[Time to live|TTL]] expired
+**0x07 = command not supported / protocol error
+**0x08 = address type not supported
+*field 3: reserved, must be 0x00
+*field 4: address type, 1 byte:
+**0x01 = IPv4 address
+**0x03 = Domain name
+**0x04 = IPv6 address
+*field 5: destination address of
+**4 bytes for IPv4 address
+**1 byte of name length followed by the name for Domain name
+**16 bytes for IPv6 address
+*field 6: network byte order port number, 2 bytes
+
+== Compatibility ==
+
+Client programs must be modified in order to connect through SOCKS. Instead of addressing the target host directly they must address the SOCKS proxy and ask it to connect to the target host.
+
+There are client programs that "socksify",<ref>{{Cite web|url=http://mindprod.com/jgloss/socksify.html|title=SOCKSIFY : Java Glossary|publisher=Mindprod.com|date=1996-2008|accessdate=2008-10-23}}</ref> which allows adaptation of any networked software to connect to external networks via SOCKS.<ref>http://coderrr.wordpress.com/2009/07/29/how-to-force-flash-or-any-program-to-use-a-socks-proxy-using-transocks-and-iptables-in-linux/</ref>
+
+== Software ==
+
+* [[OpenSSH]] allows dynamic creation of tunnels, specified via a subset of the SOCKS protocol, supporting the CONNECT command.
+* [[PuTTY]] is a Win32 SSH client that supports local creation of SOCKS (dynamic) tunnels through remote SSH servers.
+* [[Sun Java System Web Proxy Server]] is a caching proxy server running on Solaris, Linux and Windows servers that supports HTTPS, NSAPI I/O filters, dynamic reconfiguration, SOCKSv5 and [[reverse proxy]].
+* [[Delegate (networking)|DeleGate]] is a multi-purpose application level gateway and proxy server which runs on multiple platforms. Beside SOCKS it also supports HTTP(S), FTP, NNTP, SMTP, POP, IMAP, LDAP, Telnet, DNS and many more.
+* [[WinGate]] is a multi-protocol proxy server and SOCKS server for Microsoft Windows.
+
+== References ==
+
+{{Reflist|2}}
+
+== External links ==
+* [http://www.tools.ietf.org/html/draft-ietf-aft-socks-chap Draft-ietf-aft-socks-chap], Challenge-Handshake Authentication Protocol for SOCKS V5
+* RFC 3089: A SOCKS-based IPv6/IPv4 Gateway Mechanism
+* RFC 1961: GSS-API Authentication Method for SOCKS Version 5
+* RFC 1929: Username/Password Authentication for SOCKS V5
+* RFC 1928: SOCKS Protocol Version 5
+* [http://ftp.icm.edu.pl/packages/socks/socks4/SOCKS4.protocol SOCKS: A protocol for TCP proxy across firewalls],  SOCKS Protocol Version 4 ([[NEC]])
+
+{{DEFAULTSORT:Socks}}
+[[Category:Internet protocols]]
+[[Category:Internet privacy]]
+[[Category:Session layer protocols]]
+
+[[de:SOCKS]]
+[[es:SOCKS]]
+[[fr:SOCKS]]
+[[ko:SOCKS]]
+[[it:SOCKS]]
+[[lv:SOCKS]]
+[[nl:SOCKS]]
+[[ja:SOCKS]]
+[[pl:SOCKS]]
+[[pt:SOCKS]]
+[[ru:SOCKS]]
+[[simple:SOCKS]]
+[[zh:SOCKS]]</body> </html>

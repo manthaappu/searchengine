@@ -1,0 +1,29 @@
+<html> <head> <title>Fork-exec</title></head><body>{{No footnotes|date=September 2010}}
+'''Fork-exec''' is a commonly used technique in [[Unix]] whereby an executing [[Process (computing)|process]] spawns a new program.  <tt>[[Fork (operating system)|fork()]]</tt> is the name of the [[system call]] that the [[parent process]] uses to "divide" itself ("fork" into two identical processes).  After calling <tt>fork()</tt>, the created [[child process]] is actually an exact copy of the parent - which would probably be of limited use - so it replaces itself with another process using the system call <tt>[[Exec (operating system)|exec()]]</tt>.
+
+When a process forks, a complete copy of the executing program is made into the new process.  This new process (which is a child of the parent) has a new [[process identifier]] (PID).  The <tt>fork()</tt> function returns the child's PID to the parent, while it returns 0 to the child, in order to allow the two identical processes to distinguish one another.
+
+The parent process can either continue execution or wait for the child process to complete. The child, after discovering that it is the child, replaces itself completely with another program, so that the code and [[address space]] of the original program are lost.
+
+If the parent chooses to wait for the child to die, then the parent will receive the exit code of the program that the child executed. Otherwise, the parent can ignore the child process and continue executing as it normally would; to prevent the child becoming a [[Zombie process|zombie]] it should [[Wait (operating system)|wait]] on children at intervals or on [[SIGCHLD]].
+
+When the child process calls <tt>exec()</tt>, all data in the original program is lost, and replaced with a running copy of the new program. This is known as [[Overlay (operating system)|overlaying]]. Although all data is replaced, the [[file descriptor]]s that were open in the parent are closed only if the program has explicitly marked them ''close-on-exec''. This allows for the common practice of the parent creating a [[Pipeline (Unix)|pipe]] prior to calling <tt>fork()</tt> and using it to communicate with the executed program.
+
+[[Windows]] does not support the fork-exec technique as it does not allow to fork a process. The <tt>[[spawn (computing)|spawn()]]</tt> family of functions declared in [[process.h]] can replace it in cases where the call to <tt>fork()</tt> is followed directly by <tt>exec()</tt>.
+
+==See also==
+*[[fork (operating system)|fork]]
+*[[exec (operating system)|exec]]
+*[[spawn (computing)|spawn]]
+
+==References==
+*[http://www.cim.mcgill.ca/~franco/OpSys-304-427/messages/node91.html File descriptors across fork(2)/exec(2) paper in Mcgill University]
+*[http://www-h.eng.cam.ac.uk/help/tpl/unix/fork.html fork page in the Engineering Department of Cambridge University]
+*"Advanced Programming in the UNIX Environment", W.Richard Stevens, Addison-Wesley ISBN 0-201-56317-7
+*"Unix Power Tools", J Peek, T O'Reilly, M Loukides, O'Reilly, ISBN 1-56592-260-3
+
+{{DEFAULTSORT:Fork-Exec}}
+[[Category:POSIX standards]]
+
+
+{{Unix-stub}}</body> </html>

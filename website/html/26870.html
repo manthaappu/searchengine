@@ -1,0 +1,25 @@
+<html> <head> <title>OCSP Stapling</title></head><body>'''OCSP Stapling''' is an adjunct to the [[Online Certificate Status Protocol]] for checking the revocation status of [[X.509]] [[digital certificate|digital certificates]].  It allows the presenter of a certificate to bear the resource cost involved in providing OCSP responses, instead of the issuing [[Certificate Authority]].
+
+== Motivation ==
+
+[[OCSP]] has several advantages over older [[Certificate Revocation List]] approaches, however it can introduce a significant penalty for certificate authorities who are now required to provide responses to every client of a given certificate in real time.  When the certificate is issued to a legitimate high traffic web site, for instance, this can result in enormous volumes of OCSP traffic, all of which serves to indicate that the certificate is valid and can be trusted.
+
+OCSP checking also creates a privacy concern for some users, since it requires the client to contact a third party (albeit a party trusted by the client software) to confirm certificate validity.  A way to verify validity without disclosing browsing behaviour would be desirable for this group of users.
+
+== Solution ==
+
+'''OCSP Stapling''' resolves both problems in a fashion reminiscent of the [[Kerberos|Kerberos Ticket]].  In a stapling scenario, the certificate owner queries the OCSP server themselves at regular intervals, obtaining a [[cryptographic signature|signed]] [[timestamp|time-stamped]] response.  When the site's visitors attempt to connect to the site, this response is included ("stapled") with the [[Transport Layer Security|SSL/TLS Handshake]].  It may appear that allowing the site operator to control verification responses introduces an opportunity for fraud.  Since the response is signed by the certificate authority, not the certificate holder, though, and since lack of a valid stapled response will just cause the client to ask the OCSP server directly, there is actually no increased risk with this approach.
+
+As a result, clients continue to have verifiable assurance from the certificate authority that the certificate is presently valid (or was quite recently), but no longer need to individually contact the OCSP server.  This means that the brunt of the resource burden is now placed back on the certificate holder.  It also means that the client software no longer needs to disclose users' browsing habits to any third party.
+
+== Deployment ==
+
+OCSP Stapling is described in [http://www.ietf.org/rfc/rfc4366.txt RFC 4366], section 3.6, but has not seen broad deployment to date, however this is changing.  The [[OpenSSL]] project included support in their 0.9.8g release with the assistance of a grant from the [[Mozilla Foundation]].
+
+== References ==
+
+<references/>
+
+[[Category:Cryptographic protocols]]
+[[Category:Internet standards]]
+[[Category:Internet protocols]]</body> </html>

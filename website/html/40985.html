@@ -1,0 +1,70 @@
+<html> <head> <title>ZRTP</title></head><body>'''ZRTP''' is a cryptographic [[key-agreement protocol]] to negotiate the [[Key (cryptography)|keys]] for [[encryption]] between two end points in a [[Voice over Internet Protocol]] (VoIP) phone telephony call based on the [[Real-time Transport Protocol]].  It uses [[Diffie-Hellman key exchange]] and the [[Secure Real-time Transport Protocol]] (SRTP) for encryption.  ZRTP was developed by [[Phil Zimmermann]], with help from [[Zooko Wilcox-O'Hearn]] and Colin Plumb and was submitted to the [[Internet Engineering Task Force]] (IETF) by [[Phil Zimmermann]], [[Jon Callas]] and Alan Johnston on March 5, 2006.<ref name=zrtp>{{cite web
+|url=http://tools.ietf.org/html/draft-zimmermann-avt-zrtp
+|title=Internet-Draft. ZRTP: Media Path Key Agreement for Unicast Secure RTP
+|accessdate=2010-06-17
+|last=Zimmermann
+|first=Phil
+|date=2010-06-17
+}}</ref>
+
+==Overview==
+ZRTP is described in the [[Internet Draft]] as a ''"key agreement protocol which performs Diffie-Hellman key exchange during call setup in-band in the Real-time Transport Protocol (RTP) media stream which has been established using some other signaling protocol such as [[Session Initiation Protocol]] (SIP).  This generates a shared secret which is then used to generate keys and salt for a Secure RTP (SRTP) session."''  One of ZRTP's features is that it does not rely on SIP signaling for the key management, or on any servers at all.  It supports [[opportunistic encryption]] by auto-sensing if the other VoIP client supports ZRTP.
+
+This protocol does not require prior shared secrets or rely on a [[Public key infrastructure]] (PKI) or on certification authorities, in fact ephemeral Diffie-Hellman keys are generated on each session establishment: this allows to bypass the complexity of creating and maintaining a trusted third-party.
+
+These keys will contribute to the generation of the session secret, from which the session key and parameters for SRTP sessions will come, along with previously shared secrets (if some): this gives protection against [[Man-in-the-middle attack|man-in-the-middle (MiTM) attacks]], assuming the attacker was not present in the first session between the two endpoints.
+
+To ensure that the attacker is indeed not present in the first session (when no shared secrets exist), the [[Short Authentication String]] method is used: the communicating parties verbally cross-check a shared value displayed at both endpoints. If the values don't match, a [[man-in-the-middle attack]] is indicated. (In late 2006, [[National Security Agency|NSA]] developed an experimental voice analysis and synthesis system to defeat this protection,<ref>[[National Security Agency academic publications|Cryptologic Quarterly]], Volume 26, Number 4</ref> but this class of attacks not believed to be a serious risk to the protocol's security.<ref name=zrtp>{{cite web
+|url=http://tools.ietf.org/html/draft-zimmermann-avt-zrtp
+|title=Internet-Draft. ZRTP: Media Path Key Agreement for Unicast Secure RTP
+|accessdate=2010-06-17
+|last=Zimmermann
+|first=Phil
+|date=2010-06-17
+|p=201
+}}</ref>)
+
+
+ZRTP can be used with any signaling protocol, including SIP, [[H.323]], [[Jingle (protocol)|Jingle]], and [[distributed hash table]] systems. ZRTP is independent of the signaling layer, because all its key negotiations occur via the RTP media stream.
+
+ZRTP/S, a ZRTP protocol extension, can run on any kind of legacy telephony networks including GSM, UMTS, ISDN, PSTN, SATCOM, UHF/VHF radio, because it is a narrow-band bitstream-oriented protocol and performs all key negotiations inside the bitstream between two endpoints.
+
+The origin of the name of ZRTP is not specified in the protocol specification.<ref name=zrtp/>
+
+==Authentication==
+The [[Diffie-Hellman key exchange]] by itself does not provide protection against a [[man-in-the-middle attack]] (MitM). To authenticate the key exchange, ZRTP uses a ''Short Authentication String'' (SAS), which is essentially a [[Cryptographic hash function|cryptographic hash]] of the two Diffie-Hellman values. The SAS value is rendered to both ZRTP endpoints. To carry out authentication, this SAS value is read aloud to the communication partner over the voice connection. If the values on both ends do not match a man-in-middle attack is indicated.  If they do match, a high probability exists that a man-in-the-middle is not present.  The use of hash commitment in the DH exchange constrains the attacker to only one guess to generate the correct SAS in the attack, which means the SAS may be quite short.  A 16-bit SAS, for example, provides the attacker only one chance out of 65536 of not being detected.
+
+ZRTP provides a second layer of authentication against a MitM attack, based on a form of key continuity. It does this by caching some hashed key information for use in the next call, to be mixed in with the next call's DH shared secret, giving it key continuity properties analogous to [[Secure Shell|SSH]].  If the MitM is not present in the first call, he is locked out of subsequent calls.  Thus, even if the SAS is never used, most MitM attacks are stopped, because they weren't present in the first call.
+<!--Speculative news:
+ZRTP provides yet a third layer of protection against a MitM attack. The IETF plans to add integrity protection to the delivery of [[Session Initiation Protocol]] (SIP) information,{{Citation needed|date=February 2010}} and that integrity protection will rely on a [[Public key infrastructure|PKI]]. When this eventually deploys, ZRTP can take advantage of this. See the ZRTP Internet Draft on how ZRTP can leverage an integrity-protected SIP layer to provide integrity protection for ZRTP's Diffie-Hellman exchange in the media layer. This protects against a MitM attack, without requiring the users to verbally compare the SAS. However, no VoIP clients yet offer a fully implemented SIP stack that provides end-to-end integrity protection for the delivery of SIP information. Thus, real-world implementations of ZRTP endpoints will continue to depend on SAS authentication for quite some time. Even after there is widespread availability of SIP products that offer integrity protection, many users will still be faced with the fact that the signaling path may be controlled by institutions that do not have the best interests of the end user in mind. In those cases, ZRTP's built-in SAS authentication will remain the gold standard for the prudent user.
+-->
+
+==Free ZRTP implementation==
+* [[SFLphone]] has ZRTP support integrated and is available under  [[GNU General Public License]].
+* [[Twinkle (software)|Twinkle]] uses GNU ccRTP and GNU ZRTP to implement the ZRTP support. All these packages are available under the [[GNU General Public License]]. 
+* [[SIP Communicator]] supports ZRTP through the ZRTP4J lib. Full support is available in the release candidates and is also scheduled for inclusion in the final 1.0 release.
+* [[FreeSWITCH]] currently has basic support for ZRTP through the libzrtp SDK.
+
+==Operating Environment==
+* ZRTP protocol has been implemented and used on the following platforms: [[Windows]], [[Linux]], [[Mac_OS_X]], [[iPhone]], [[Symbian]], [[Blackberry]], [[Android (operating system)|Android]].
+* ZRTP protocol has been implemented in the following languages: [[C_language]], [[C++]], [[Java]]
+* ZRTP protocol has been used successfully on the following transport media: WiFi, UMTS, EDGE, GPRS, Satellite IP modem, GSM CSD, ISDN
+
+==See also==
+* [[Opportunistic encryption]]
+* [[Pretty Good Privacy]]
+* [[Secure telephone]]
+* [[Zfone]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://www.zrtp.org/ zrtp.org ZORG] opensource ZRTP protocol implementation in c++ and Java optimized for mobile phones under  [[GNU General Public License]]
+* [http://zfoneproject.com/zrtp_ietf.html The Zfone Project - ZRTP Specification]
+
+[[Category:Cryptographic protocols]]
+
+[[es:ZRTP]]
+[[fr:ZRTP]]
+[[ru:ZRTP]]</body> </html>

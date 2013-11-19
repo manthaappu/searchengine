@@ -1,0 +1,90 @@
+<html> <head> <title>Chebyshev center</title></head><body>The '''Chebyshev center''' of a bounded set <math>Q</math> having non-empty interior is the center of the minimal radius ball enclosing the entire set <math>Q</math>. 
+
+In the field of [[parameter estimation]], the Chebyshev center approach tries to find an estimator <math> \hat x </math> for <math> x </math> given the feasibility set <math> Q </math>, such that <math>\hat x</math> minimizes the worst possible estimation error for x (e.g. best worst case). 
+
+== Mathematical representation ==
+There exist several alternative representations for the Chebyshev center.
+Consider the set <math>Q</math> and denote its Chebyshev center by <math>\hat{x}</math>. <math>\hat{x}</math> can be computed by solving:
+
+: <math> \min_{{{\hat x}},r} \left\{ {r:\left\| {{{\hat x}} - {{x}}} \right\|^2 \leq r,  \forall {x} \in {Q}} \right\} </math>
+
+or alternatively by solving:
+
+:<math> \arg\min_{\hat{x}} \max_{x \in Q} \left\| x - \hat x \right\|^2. </math>
+
+Some important optimization properties of the Chebyshev Center are:
+* The Chebyshev center is unique.
+* The Chebyshev center is feasible.
+
+Despite these properties, finding the Chebyshev center may be a hard numerical optimization problem. For example, in the second representation above, the inner maximization is non-convex.
+
+== Relaxed Chebyshev center ==
+Let us consider the case in which the set <math>Q</math> can be represented as the intersection of <math>k</math> ellipsoids. 
+
+: <math> \min_{\hat x} \max_{{x}} \left\{ {\left\| {{{\hat x}} - {{x}}} \right\|^2 :f_i ({{x}}) \le 0,0 \le i \le k} \right\} </math>
+with
+: <math> f_i ({{x}}) = {{x}}^{{T}} {{Q}}_{{i}} {{x}} + 2{{g}}_{{i}}^{{T}} {{x}} + d_i  \le 0,0 \le i \le k  </math> .
+
+By introducing an additional matrix variable <math>\Delta = x x^T </math>, we can write the inner maximization problem of the Chebyshev center as:
+
+: <math> \text{min}_{\hat x} \text{max}_{(\Delta ,{{x}}) \in {G}} \left\{ {\left\| {{{\hat x}}} \right\|^2  - 2{{\hat x}}^{{T}} {{x}} + Tr(\Delta )} \right\} </math>
+with 
+: <math> { G} = \left\{ {(\Delta ,{{x}}):{\rm{f}}_i (\Delta ,{{x}}) \le 0,0 \le i \le k,\Delta  = {{xx}}^{{T}} } \right\} </math>
+: <math> f_i (\Delta ,{{x}}) = Tr({{Q}}_{{i}} \Delta ) + 2{{g}}_{{i}}^{{T}} {{x}} + d_i </math> .
+
+Relaxing our demand on <math>\Delta</math> by demanding <math> \Delta \leq xx^T </math> and changing the order of the min max to max min (see the references for more details), the optimization problem can be formulated as:
+
+: <math> RCC = \max_{(\Delta ,{{x}}) \in {T}} \left\{ { - \left\| {{x}} \right\|^2  + Tr(\Delta )} \right\} </math> 
+with 
+: <math> {T} = \left\{ {(\Delta ,{{x}}):{\rm{f}}_i (\Delta ,{{x}}) \le 0,0 \le i \le k,\Delta  \le {{xx}}^{{T}} } \right\} </math> .
+
+This last '''convex''' optimization problem is known as the '''relaxed Chebyshev center''' (RCC).
+The RCC has the following important properties:
+* The RCC is an upper bound for the exact Chebyshev Center.
+* The RCC is unique.
+* The RCC is feasible.
+
+== Constrained least squares ==
+With a few simple mathematical tricks, it can be shown that the well-known constrained [[least squares]] (CLS) problem is a relaxed version of the Chebyshev center.
+
+The original CLS problem can be formulated as:
+: <math> {{\hat x}}_{{{CLS}}}  = \arg \min _{{{x}} \in {C}} \left\| {{{y}} - {{Ax}}} \right\|^2 </math>
+with 
+: <math> { C} = \left\{ {{{x}}:f_i ({{x}}) = {{x}}^{{T}} {{Q}}_{{i}} {{x}} + 2{{g}}_{{i}}^{{T}} {{x}} + d_i  \le 0,1 \le i \le k} \right\} 
+</math>
+: <math>  {{Q}}_i  \ge 0,{{g}}_i  \in { R}^m ,d_i  \in { R}.  </math>
+
+It can be shown that this problem is equivalent to the following optimization problem:
+: <math> \max _{(\Delta ,{{x}}) \in {V}} \left\{ { - \left\| {{x}} \right\|^2  + Tr(\Delta )} \right\} </math> 
+with
+: <math> { V} = \left\{ \begin{array}{c}
+ (\Delta ,{{x}}):{{x}} \in { C}{\rm{ }} \\ 
+ Tr({{A}}^{{T}} {{A}}\Delta ) - {{2y}}^{{T}} {{A}}^{{T}} {{x}} + \left\| {{y}} \right\|^2  - \rho  \le 0,{\rm{   }}\Delta  \ge {{xx}}^{{T}}  \\ 
+ \end{array} \right\}.</math>
+
+One can see that this problem is a relaxation of the Chebyshev center (though different than the RCC described above).
+
+== RCC vs. CLS ==
+A solution set <math> (x,\Delta) </math> for the RCC is also a solution for the CLS, and thus <math> T \in V </math>.
+This means that the CLS estimate is the solution of a looser relaxation than that of the RCC.
+Hence the '''CLS is an upper bound for the RCC''', which is an upper bound for the real Chebyshev center.
+
+== Modeling constraints ==
+Since both the RCC and CLS are based upon relaxation of the real feasibility set <math>Q</math>, the form in which <math>Q</math> is defined affects its relaxed versions. This of course affects the quality of the RCC and CLS estimators.
+As a simple example consider the linear box constraints: 
+: <math> l \leq a^T x \leq u </math> 
+which can alternatively be written as
+: <math> (a^T x - l)(a^T x - u) \leq 0. </math>
+It turns out that the first representation results with an upper bound estimator for the second one, hence using it may dramatically decrease the quality of the calculated estimator.
+
+This simple example shows us that great care should be given to the formulation of constraints when relaxation of the feasibility region is used.
+
+== References ==
+
+* Y. C. Eldar, A. Beck, and M. Teboulle, [http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4471880 "A Minimax Chebyshev Estimator for Bounded Error Estimation,"] IEEE Trans. Signal Processing, 56(4): 1388-1397 (2007).
+* A. Beck and Y. C. Eldar, [http://dx.doi.org/10.1137/060656784 "Regularization in Regression with Bounded Noise: A Chebyshev Center Approach,"] SIAM J. Matrix Anal. Appl. 29 (2): 606-625 (2007).
+* Stephen Boyd and Lieven Vandenberghe, ''[http://www.stanford.edu/~boyd/cvxbook/ Convex Optimization,]'' Cambridge University Press, 2004.
+
+[[Category:Estimation theory]]
+[[Category:Geometry]]
+[[Category:Mathematical optimization]]</body> </html>

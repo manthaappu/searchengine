@@ -1,0 +1,164 @@
+<html> <head> <title>TomSym</title></head><body>{{Infobox Software
+| name                   = TomSym 
+| developer              = [http://tomsym.com/ Tomlab Optimization Inc.]
+| latest_release_version = 7.4
+| latest_release_date    = {{release date|2010|03|24}}
+| operating_system       = [http://tomopt.com/tomlab/about/ TOMLAB - OS Support]
+| genre                  = [[List of numerical analysis software|Technical computing]]
+| license                = [[Proprietary software|Proprietary]]
+| website                = [http://tomsym.com/ TomSym product page]
+}}
+
+The '''TomSym'''<ref>{{cite book | title = User's Manual for TOMLAB | first = Per | last = Rutquist | coauthors = M. M. Edvall | date = Nov 2008 | url = http://tomopt.com/docs/TOMLAB.pdf | location = 1260 SE Bishop Blvd Ste E, Pullman, WA 99163, USA | publisher = Tomlab Optimization Inc.}}</ref> [[MATLAB]] symbolic modeling engine is a platform for modeling applied optimization and optimal control problems.
+
+== Description ==
+
+TomSym is complete [[computer model|modeling]] environment in Matlab with support for most built-in mathematical [[Operation (mathematics)|operators]] in Matlab. It is a combined [[Mathematical model|modeling]], [[Code generation (compiler)|compilation]] and interface to the [[TOMLAB]] solvers. The [[Matrix (mathematics)|matrix derivative]] of a matrix function is a fourth rank [[tensor]] - that is, a matrix each of whose entries is a matrix. Rather than using four-dimensional matrices to represent this, TomSym continues to work in two dimensions. This makes it possible to take advantage of the very efficient handling of [[Sparse matrix|sparse]] matrices in Matlab, which is not available for higher-dimensional matrices.
+
+TomSym has a variety of functions, among them:
+
+* Ability to transform expressions and generate analytical first and second order [[derivative]]s, including sparsity patterns.
+* Interfaced and compatible with [[Automatic differentiation|MAD]], i.e. MAD can be used when symbolic modeling is not suitable.
+* Numerical differentiation can be used to parts of the model.
+* Functionality for plotting and computing a variety of information for the solution to the problem.
+* Support for if, then, else statements.
+* Ability to analyze [[P-code machine|p-coded]] Matlab files.
+* Automated code simplification for generated models, for example.
+** [[Multiplication]] by 1 or the [[identity matrix]] is eliminated: 1*A = A
+** [[Addition]]/[[subtraction]] of 0 is eliminated: 0+A = A
+** All-same matrices are reduced to [[Scalar (mathematics)|scalars]]: [3;3;3]+x = 3+x
+** Scalars are moved to the left in addition/subtraction: A-y = -y+A
+** Inverse operations cancel: sqrt(x)^2 = x
+
+== Modeling ==
+
+The TomSym symbolic source transformation makes it possible to define any the set of decision variables (both [[Continuous function|continuous]] and [[integer]]) and any type of constraint as well as scalars and [[Constant (mathematics)|constant]] parameters. 
+
+=== Linear programming ===
+
+An example [[linear programming]] problem would look like this:
+
+<source lang="matlab">
+ c = [-7; -5];
+ A = [ 1 2
+         4 1 ];
+ b_U = [ 6; 12 ];
+ x_L = [ 0; 0 ];
+
+ toms 2x1 x
+
+ solution = ezsolve(c'*x, {A*x<=b_U, x_L<=x});
+</source>
+
+=== Mixed-integer nonlinear programming ===
+
+A MINLP problem is defined just like a linear programming problem. This example also shows how to convert the model into a general TOMLAB problem.
+
+<source lang="matlab">
+ Name='minlp1Demo - Kocis/Grossman.';
+
+ toms 2x1 x
+ toms 3x1 integer y
+
+ objective = [2 3 1.5 2 -0.5]*[x;y];
+
+ constraints = { ...
+    x(1) >= 0, ...
+    x(2) >= 1e-8, ...
+    x <= 1e8, ...
+    0 <= y <=1, ...
+    [1 0 1 0 0]*[x;y] <= 1.6, ...
+    1.333*x(2) + y(2) <= 3, ...
+    [-1 -1 1]*y <= 0, ...
+    x(1)^2+y(1) == 1.25, ...
+    sqrt(x(2)^3)+1.5*y(2) == 3, ...
+ };
+
+ guess = struct('x',ones(size(x)),'y',ones(size(y)));
+ options = struct;
+ options.name = Name;
+ Prob = sym2prob('minlp',objective,constraints,guess,options);
+
+ Prob.DUNDEE.optPar(20) = 1;
+ Result = tomRun('minlpBB',Prob,2);
+</source>
+
+=== Multi-index modeling ===
+
+tomSym makes it possible to build models with two or more variable indices in MATLAB<ref>[http://tomsym.com/examples/tomsym_airlinehub.html "Airline Hub Location", ''TOMSYM Home Page''] April, 2009.</ref>. The following example creates a variable 'flow' with four indices. The variable is then used to create a constraint over two of the indices and to sum the multiplication with a two-dimensional matrix.
+
+<source lang="matlab">
+
+% Create the indices used in model
+i = tomArrayIdx('i',1:6);
+j = tomArrayIdx('j',1:6);
+k = tomArrayIdx('k',1:6);
+l = tomArrayIdx('l',1:6);
+
+% Create an integer variable of full length
+flow = tom('flow',6^4,1,'int');
+
+% Convert the variable to a matrix with four indices.
+flow = tomArray(flow,[6,6,6,6]);
+
+% Create a constraint valid for all i and j
+cons = {sum(sum(flow(i,j,k,l),k),l) == 1};
+
+% Create a scalar based on multi-index multiplications
+distance = tomArray([   0   945   605   4667   4749    4394;...
+    945     0   866   3726   3806    3448;...
+    605   866     0   4471   4541    4152;...
+    4667  3726  4471      0    109     415;...
+    4749  3806  4541    109      0     431;...
+    4394  3448  4152    415    431       0]);
+
+sumtotal = sum(vec((distance(i,k)+distance(l,j)+...
+    distance(k,l)*.8).*flow(i,j,k,l)));
+</source>
+
+=== Automatic and numerical differentiation ===
+
+For functions that cannot be interpreted by tomSym it is possible to use either [[automatic differentiation]] or numerical differentiation. In the following example a simple problem is solved using the two methods.
+
+<source lang="matlab">
+toms x1 x2
+alpha = 100;
+
+% USE MAD (AUTOMATIC DIFFERENTIATION) FOR ONE FUNCTION
+%
+% Create a wrapper function. In this case we use sin, but it could be any
+% MAD supported function.
+
+y = wrap(struct('fun','sin','n',1,'sz1',1,'sz2',1,'JFuns','MAD'),x1/x2);
+f = alpha*(x2-x1^2)^2 + (1-x1)^2 + y;
+
+% Setup and solve the problem
+c = -x1^2 - x2;
+con = {-1000 <= c <= 0
+    -10 <= x1 <= 2
+    -10 <= x2 <= 2};
+
+x0 = {x1 == -1.2
+    x2 == 1};
+
+solution1 = ezsolve(f,con,x0);
+
+% USE NUMERICAL DIFFERENTIATION FOR ONE FUNCTIONS
+% Create a new wrapper function. In this case we use sin, but it could be
+% any function since we use numerical derivatives.
+
+y = wrap(struct('fun','sin','n',1,'sz1',1,'sz2',1,'JFuns','FDJac'),x1/x2);
+f = alpha*(x2-x1^2)^2 + (1-x1)^2 + y;
+
+solution2 = ezsolve(f,con,x0);
+</source>
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://tomsym.com/ TomSym Home Page].
+
+{{DEFAULTSORT:Tomsym}}
+[[Category:Numerical software]]
+[[Category:Mathematical optimization software]]</body> </html>

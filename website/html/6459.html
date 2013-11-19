@@ -1,0 +1,105 @@
+<html> <head> <title>Client honeypot</title></head><body>[[Honeypot (computing)|Honeypots]] are security devices whose value lie in being probed and compromised. Traditional honeypots are servers (or devices that expose server services) that wait passively to be attacked. '''Client Honeypots''' are active security devices in search of malicious servers that attack clients. The client honeypot poses as a client and interacts with the server to examine whether an attack has occurred. Often the focus of client honeypots is on web browsers, but any client that interacts with servers can be part of a client honeypot (for example ftp, ssh, email, etc.).
+
+There are several terms that are used to describe client honeypots. Besides client honeypot, which is the generic classification, honeyclient is the other term that is generally used and accepted. However, there is a subtlety here, as "honeyclient" is actually a homograph that could also refer to the first open source client honeypot implementation (see below), although this should be clear from the context.
+
+== Architecture ==
+A client honeypot is composed of three components. The first component, a queuer, is responsible for creating a list of servers for the client to visit. This list can be created, for example, through crawling. The second component is the client itself, which is able to make a requests to servers identified by the queuer. After the interaction with the server has taken place, the third component, an analysis engine, is responsible for determining whether an attack has taken place on the client honeypot.
+
+In addition to these components, client honeypots are usually equipped with some sort of containment strategy to prevent successful attacks from spreading beyond the client honeypot. This is usually achieved through the use of firewalls and virtual machine sandboxes.
+
+Analogous to traditional server honeypots, client honeypots are mainly classified by their interaction level: high or low; which denotes the level of functional interaction the server can utilize on the client honeypot. In addition to this there are also newly hybrid approaches which denotes the usage of both high and low interaction detection techniques. 
+
+== High interaction ==
+High interaction client honeypots are fully functional systems comparable to real systems with real clients. As such, no functional limitations (besides the containment strategy) exist on high interaction client honeypots. Attacks on high interaction client honeypots are detected via inspection of the state of the system after a server has been interacted with. The detection of changes to the client honeypot may indicate the occurrence of an attack against that has exploited a vulnerability of the client. An example of such a change is the presence of a new or altered file.
+
+High interaction client honeypots are very effective at detecting unknown attacks on clients. However, the tradeoff for this accuracy is a performance hit from the amount of system state that has to be monitored to make an attack assessment. Also, this detection mechanism is prone to various forms of evasion by the exploit. For example, an attack could delay the exploit from immediately triggering (time bombs) or could trigger upon a particular set of conditions or actions ([[Logic Bomb|logic bombs]]). Since no immediate, detectable state change occurred, the client honeypot is likely to incorrectly classify the server as safe even though it did successfully perform its attack on the client. Finally, if the client honeypots are running in virtual machines, then an exploit may try to detect the presence of the virtual environment and cease from triggering or behave differently.
+
+=== Capture-HPC ===
+Capture {{ref|capture}} is a high interaction client honeypot developed by researchers at Victoria University of Wellington, NZ. Capture differs from existing client honeypots in various ways. First, it is designed to be fast. State changes are being detected using an event based model allowing to react to state changes as they occur. Second, Capture is designed to be scalable. A central Capture server is able to control numerous clients across a network. Third, Capture is supposed to be a framework that allows to utilize different clients. The intitial version of Capture supports Internet Explorer, but the current version supports all major browsers (Internet Explorer, Firefox, Opera, Safari) as well as other HTTP aware client applications, such as office applications and media players.
+
+=== HoneyClient ===
+HoneyClient {{ref|honeyclient}} is a web browser based (IE/FireFox) high interaction client honeypot designed by Kathy Wang in 2004 and subsequently developed at [[MITRE]]. It was the first open source client honeypot and is a mix of Perl, C++, and Ruby. HoneyClient is state-based and detects attacks on Windows clients by monitoring files, process events, and registry entries. It has integrated the Capture-HPC real-time integrity checker to perform this detection. HoneyClient also contains a crawler, so it can be seeded with a list of initial URLs from which to start and can then continue to traverse web sites in search of client-side malware.
+
+=== HoneyMonkey ===
+HoneyMonkey {{ref|honeymonkey}} is a web browser based (IE) high interaction client honeypot implemented by Microsoft in 2005. It is not available for download. HoneyMonkey is state based and detects attacks on clients by monitoring files, registry, and processes. A unique characteristic of HoneyMonkey is its layered approach to interacting with servers in order to identify zero-day exploits. HoneyMonkey initially crawls the web with a vulnerable configuration. Once an attack has been identified, the server is reexamined with a fully patched configuration. If the attack is still detected, one can conclude that the attack utilizes an exploit for which no patch has been publicly released yet and therefore is quite dangerous.
+
+=== SHELIA ===
+Shelia {{ref|shelia}} is a high interaction client honeypot developed by Joan Robert Rocaspana at Vrije Universiteit Amsterdam. It integrates with an email reader and processes each email it receives (URLs & attachments). Depending on the type of URL or attachment received, it opens a different client application (e.g. browser, office application, etc.) It monitors whether executable instructions are executed in data area of memory (which would indicate a buffer overflow exploit has been triggered). With such an approach, SHELIA is not only able to detect exploits, but is able to actually ward off exploits from triggering.
+
+=== UW Spycrawler ===
+The Spycrawler {{ref|spycrawler}} developed at the University of Washington is yet another browser based (Mozilla) high interaction client honeypot developed by Moshchuk et al. in 2005. This client honeypot is not available for download. The Spycrawler is state based and detects attacks on clients by monitoring files, processes, registry, and browser crashes. Spycrawlers detection mechanism is event based. Further, it increases the passage of time of the virtual machine the Spycrawler is operating in to overcome (or rather reduce the impact) of time bombs.
+
+=== Web Exploit Finder ===
+WEF {{ref|stuttgart}} is an implementation of an automatic drive-by-download – detection in a virtualized environment, developed by Thomas Müller, Benjamin Mack and Mehmet Arziman, three students from the Hochschule der Medien (HdM), Stuttgart during the summer term in 2006. WEF can be used as an active HoneyNet with a complete virtualization architecture underneath for rollbacks of compromised virtualized machines.
+
+== Low interaction ==
+Low interaction client honeypots differ from high interaction client honeypots in that they do not utilize an entire real system, but rather use lightweight or simulated clients to interact with the server. (in the browser world, they are similar to web crawlers). Responses from servers are examined directly to assess whether an attack has taken place. This could be done, for example, by examining the response for the presence of malicious strings.
+
+Low interaction client honeypots are easier to deploy and operate than high interaction client honeypots and also perform better. However, they are likely to have a lower detection rate since attacks have to be known to the client honeypot in order for it to detect them; new attacks are likely to go unnoticed. They also suffer from the problem of evasion by exploits, which may be exacerbated due to their simplicity, thus making it easier for an exploit to detect the presence of the client honeypot. 
+
+=== HoneyC ===
+HoneyC {{ref|honeyc}} is a low interaction client honeypot developed at Victoria University of Wellington by Christian Seifert in 2006. HoneyC is a platform independent open source framework written in Ruby. It currently concentrates driving a web browser simulator to interact with servers. Malicious servers are detected by statically examining the web server’s response for malicious strings through the usage of Snort signatures.
+
+=== Monkey-Spider ===
+Monkey-Spider {{ref|monkeyspider}} is a low-interaction client honeypot initially developed at the University of Mannheim by Ali Ikinci. Monkey-Spider is a crawler based client honeypot initially utilizing anti-virus solutions to detect malware. It is claimed to be fast and expandable with other detection mechanisms. The work has started as a diploma thesis and is continued and released as Free Software under the [[GPL]].
+
+=== PhoneyC ===
+PhoneyC {{ref|phoneyc}} is a low-interaction client developed by Jose Nazario. PhoneyC mimics legitimate web browsers and can understand dynamic content by de-obfuscating malicious content for detection. Furthermore, PhoneyC emulates specific vulnerabilities to pinpoint the attack vector. PhoneyC is a modular framework that enables the study of malicious HTTP pages and understands modern vulnerabilities and attacker techniques.                                     
+
+=== SpyBye ===
+SpyBye {{ref|spybye}} is a low interaction client honeypot developed by Niels Provos. SpyBye allows a web master to determine whether a web site is malicious by a set of heuristics and scanning of content against the ClamAV engine.
+
+== Hybrid Client Honeypots ==
+Hybrid client honeypots combine both low and high interaction client honeypots to gain from the advantages of both approaches.
+
+=== HoneySpider ===
+The HoneySpider {{ref|honeyspider}} network is a hybrid client honeypot developed as a joint venture between [[CERT Polska|NASK/CERT Polska]] , [http://www.govcert.nl/ GOVCERT.NL] and [http://www.surfnet.nl/ SURFnet]. The projects goal is to develop a complete client honeypot system, based on existing client honeypot solutions and a crawler specially for the bulk processing of URLs.
+
+== Literature ==
+* Jan Göbel, Andreas Dewald, ''Client-Honeypots: Exploring Malicious Websites'', Oldenbourg Verlag 2010, ISBN: [http://www.oldenbourg-verlag.de/wissenschaftsverlag/client-honeypots/9783486705263 978-3-486-70526-3], [http://www.amazon.de/Client-Honeypots-Exploring-Jan-Gerrit-G%C3%B6bel/dp/3486705261/ This book at Amazon]
+
+== Papers ==
+* M. Egele, P. Wurzinger, C. Kruegel, and E. Kirda, ''Defending Browsers against Drive-by Downloads: Mitigating Heap-spraying Code Injection Attacks,'' Secure Systems Lab, 2009, p. Available from http://www.iseclab.org/papers/driveby.pdf; accessed on 15 May 2009.
+* Feinstein, Ben. Caffeine Monkey: Automated Collection, Detection and Analysis of JavaScript. BlackHat USA. Las Vegas, 2007.
+* Ikinci, A, Holz, T., Freiling, F.C. : ''Monkey-Spider: Detecting Malicious Websites with Low-Interaction Honeyclients''.  [http://pi1.informatik.uni-mannheim.de/filepool/publications/monkey-spider.pdf Sicherheit 2008: 407-421],
+* Moshchuk, A., Bragin, T., Gribble, S.D. and Levy, H.M. ''A Crawler-based Study of Spyware on the Web''. In 13th Annual Network and Distributed System Security Symposium (NDSS). San Diego, 2006. The Internet Society.
+* Provos, N., Holz, T. ''Virtual Honeypots: From Botnet Tracking to Intrusion Detection''. Addison-Wesley. Boston, 2007.
+* Provos, N., Mavrommatis, P., Abu Rajab, M., Monrose, F. ''All Your iFRAMEs Point to Us''. Google Technical Report. Google, Inc., 2008.
+* Provos, N., McNamee, D., Mavrommatis, P., Wang, K., Modadugu, N. ''The Ghost In The Browser: Analysis of Web-based Malware''. Proceedings of the 2007 HotBots. Cambridge, April 2007. USENIX.
+* Seifert, C., Endicott-Popovsky, B., Frincke, D., Komisarczuk, P., Muschevici, R. and Welch, I., Justifying the Need for Forensically Ready Protocols: A Case Study of Identifying Malicious Web Servers Using Client Honeypots. in 4th Annual IFIP WG 11.9 International Conference on Digital Forensics, Kyoto, 2008.
+* Seifert, C. Know Your Enemy: Behind The Scenes Of Malicious Web Servers. The Honeynet Project. 2007.
+* Seifert, C., Komisarczuk, P. and Welch, I. ''Application of divide-and-conquer algorithm paradigm to improve the detection speed of high interaction client honeypots''. 23rd Annual ACM Symposium on Applied Computing. Ceara, Brazil, 2008.
+* Seifert, C., Steenson, R., Holz, T., Yuan, B., Davis, M. A. ''Know Your Enemy: Malicious Web Servers''. The Honeynet Project. 2007. (available at http://www.honeynet.org/papers/mws/index.html)
+* Seifert, C., Welch, I. and Komisarczuk, P. ''HoneyC: The Low-Interaction Client Honeypot''. Proceedings of the 2007 NZCSRCS. Waikato University, Hamilton, New Zealand. April 2007.
+* C. Seifert, V. Delwadia, P. Komisarczuk, D. Stirling, and I. Welch, ''Measurement Study on Malicious Web Servers in the.nz Domain,'' in 14th Australasian Conference on Information Security and Privacy (ACISP), Brisbane, 2009.
+* C. Seifert, P. Komisarczuk, and I. Welch, ''True Positive Cost Curve: A Cost-Based Evaluation Method for High-Interaction Client Honeypots,'' in SECURWARE, Athens, 2009.
+* C. Seifert, P. Komisarczuk, and I. Welch, ''Identification of Malicious Web Pages with Static Heuristics,'' in Austalasian Telecommunication Networks and Applications Conference, Adelaide, 2008.
+* Stuurman, Thijs, Verduin, Alex. Honeyclients - Low interaction detection method. Technical Report. University of Amsterdam. February 2008.
+* Wang, Y.-M., Beck, D., Jiang, X., Roussev, R., Verbowski, C., Chen, S. and King, S. ''Automated Web Patrol with Strider HoneyMonkeys: Finding Web Sites That Exploit Browser Vulnerabilities''. In 13th Annual Network and Distributed System Security Symposium (NDSS). San Diego, 2006. The Internet Society.
+* Zhuge, Jianwei, Holz, Thorsten, Guo, Jinpeng, Han, Xinhui, Zou, Wei. ''Studying Malicious Websites and the Underground Economy on the Chinese Web''. Proceedings of the 2008 Workshop on the Economics of Information Security. Hanover, June 2008.
+
+== Presentations ==
+* [http://securitylabs.websense.com/images/alerts/rsa_2008_honeyclient_preso.mov Presentation by Websense on their Honeyclient infrastructure and the next generation of Honeyclients they are currently working; April 2008 at RSA-2008]
+* [http://www.honeynet.org The Honeynet Project]
+* [http://www.devtarget.org/downloads/kes-2-2006-wolfgarten-honeypots.pdf Virtuelle Leimrouten (in German)]
+* [http://www.secguru.com/link/client_honeypots_its_not_only_the_network_video Video of Michael Davis' Client Honeypot Presentation at HITB 2006]
+* [http://www.archive.org/details/Recon2005_Kathy_Wang Video of Kathy Wang's Presentation of HoneyClient at Recon 2005]
+* [http://dewy.fem.tu-ilmenau.de/CCC/22C3/video/mp4/22C3-871-en-honeymonkeys.mp4 Video of Wolfgarten's presentation at CCC conference]
+
+== Sites ==
+* {{note|capture}} https://projects.honeynet.org/capture-hpc
+* {{note|danford}} http://handlers.dshield.org/rdanford/pub/2nd_generation_honeyclients.ppt
+* {{note|honeyc}} https://projects.honeynet.org/honeyc
+* {{note|honeyclient}} http://www.honeyclient.org/trac
+* {{note|honeyspider}} http://www.honeyspider.net
+* {{note|monkeyspider}} http://monkeyspider.sourceforge.net/
+* {{note|phoneyc}} http://code.google.com/p/phoneyc/
+* {{note|shelia}} http://www.cs.vu.nl/~herbertb/misc/shelia/
+* {{note|spybye}} http://www.spybye.org/
+* {{note|stuttgart}} http://www.xnos.org/security/overview.html
+* {{note|mwcollectd}} http://code.mwcollect.org/
+* {{note|nz-honeynet}} http://nz-honeynet.org
+[[Category:Computer security]]
+
+[[pl:Kliencki honeypot]]
+[[ru:Client honeypot]]</body> </html>

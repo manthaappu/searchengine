@@ -1,0 +1,119 @@
+<html> <head> <title>Gnome sort</title></head><body>{{refimprove|date=August 2010}}
+{{Infobox Algorithm
+|class=[[Sorting algorithm]]
+|image=
+|data=[[Array data structure|Array]]
+|time=<math>O(n^2)</math>
+|best-time=<math>O(n)</math>
+|average-time= <math>O(n^2)</math>
+|space= <math>O(1)</math> auxiliary
+|optimal= No
+}}
+'''Gnome sort''', originally proposed by Hamid Sarbazi-Azad in 2000 and called [http://sina.sharif.edu/~azad/stupid-sort.PDF Stupid sort], and then later on described by Dick Grune and named "Gnome sort",<ref>http://www.cs.vu.nl/~dick/gnomesort.html</ref> is a [[sorting algorithm]] which is similar to [[insertion sort]], except that moving an element to its proper place is accomplished by a series of swaps, as in [[bubble sort]]. 
+
+It is conceptually simple, requiring no nested loops. The running time is  [[Big O notation|O]](''n''²), but tends towards O(''n'') if the list is initially almost sorted.<ref>{{cite web |
+url=http://www.itl.nist.gov/div897/sqg/dads/HTML/gnomeSort.html |
+title=gnome sort|
+work=Dictionary of Algorithms and Data Structures |
+publisher=U.S. National Institute of Standards and Technology|
+author=Paul E. Black|
+accessdate=2010-01-20
+}}</ref> In practice the algorithm can run as fast as [[Insertion sort]]. The average runtime is <math>O(n^2)</math> <ref>{{cite web |
+url=http://stackoverflow.com/questions/2066541/what-is-the-average-big--complexity-of-gnome-sort |
+title=What is the Average Big-O Complexity of Gnome sort?|
+work=StackOverflow
+}}</ref>.
+
+The algorithm always finds the first place where two adjacent elements are in the wrong order, and swaps them. It takes advantage of the fact that performing a swap can introduce a new out-of-order adjacent pair only right before or after the two swapped elements. It does not assume that elements forward of the current position are sorted, so it only needs to check the position directly before the swapped elements. 
+
+== Description ==
+Here is [[pseudocode]] for the gnome sort using a [[Array_data_type#Index_origin|zero-based array]]:
+
+<code>
+ procedure gnomeSort(a[])
+     pos := 1
+     while pos < length(a)
+         if (a[pos] >= a[pos-1])
+             pos := pos + 1
+         else
+             swap a[pos] and a[pos-1]
+             if (pos > 1)
+                 pos := pos - 1
+             else
+                 pos := pos + 1
+         end if
+     end while
+ end procedure
+</code>
+
+===Example===
+Given an unsorted array, a = [5, 3, 2, 4], the gnome sort would take the following
+steps during the while loop. The "current position" is highlighted in '''bold''':
+
+{|    class="wikitable"
+|-
+! Current array
+! Action to take
+|-
+|    [5, '''3''', 2, 4]
+|    a[pos] < a[pos-1], swap:
+|-
+|    [3, '''5''', 2, 4]
+|    a[pos] >= a[pos-1], increment pos:
+|-
+|    [3, 5, '''2''', 4]
+|    a[pos] < a[pos-1], swap and pos > 1, decrement pos:
+|-
+|    [3, '''2''', 5, 4]
+|    a[pos] < a[pos-1], swap:
+|-
+|    [2, '''3''', 5, 4]
+|    a[pos] >= a[pos-1], increment pos:
+|-
+|    [2, 3, '''5''', 4]
+|    a[pos] >= a[pos-1], increment pos:
+|-
+|    [2, 3, 5, '''4''']
+|    a[pos] < a[pos-1], swap and pos > 1, decrement pos:
+|-
+|    [2, 3, '''4''', 5]
+|    a[pos] >= a[pos-1], increment pos:
+|-
+|    [2, 3, 4, '''5''']
+|    a[pos] >= a[pos-1], increment pos:
+|-
+|    [2, 3, 4, 5]
+|    pos == length(a), finished.
+|-
+|}
+
+==Optimization==
+The gnome sort may be optimized by introducing a variable to store the position before
+traversing back toward the beginning of the list. This would allow the "gnome" to [[teleport]]
+back to his previous position after moving a flower pot. With this optimization, the gnome
+sort would become a variant of the [[insertion sort]].
+
+==References==
+<references/>
+
+==External links==
+{{wikibooks|Algorithm implementation|Sorting/Gnome_sort|Gnome sort}}
+* [http://www.cs.vu.nl/~dick/gnomesort.html Gnome sort]
+
+{{sorting}}
+
+[[Category:Sorting algorithms]]
+[[Category:Comparison sorts]]
+[[Category:Stable sorts]]
+
+[[de:Gnomesort]]
+[[es:Gnome sort]]
+[[fa:مرتب‌سازی گورزاد]]
+[[it:Gnome sort]]
+[[hu:Kertitörpe-rendezés]]
+[[ja:ノームソート]]
+[[pl:Sortowanie gnoma]]
+[[pt:Gnome sort]]
+[[ru:Гномья сортировка]]
+[[tr:Cüce sıralaması]]
+[[uk:Сортування гнома]]</body> </html>

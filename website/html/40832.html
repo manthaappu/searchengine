@@ -1,0 +1,28 @@
+<html> <head> <title>YAK (cryptography)</title></head><body>The '''YAK''' is a public-key authenticated [[key agreement]] protocol<ref>F. Hao, [http://sites.google.com/site/haofeng662/YAK-short-final.pdf On Robust Key Agreement Based on Public Key Authentication]. ''Proceedings of the 14th International Conference on Financial Cryptography and Data Security, Tenerife, Spain, LNCS 6052, pp. 383-390, Jan, 2010.</ref>. It is considered the simplest among the related protocols, including [[MQV]], HMQV, [[Station-to-Station protocol]], [[Secure Sockets Layer | SSL]]/[[Transport Layer Security | TLS]] etc. The authentication is based on public key pairs. As with other protocols, YAK normally requires a [[Public Key Infrastructure]] to distribute authentic public keys to the communicating parties. The author suggests that YAK may be unencumbered by patent.
+
+==Description==
+
+Two parties, Alice and Bob, agree on a group <math>G</math> with generator <math>g</math> of prime order <math>q</math> in
+which the discrete log problem is hard. Typically a [[Schnorr group]] is used. In general, YAK can use any prime order group
+that is suitable for public key cryptography, including [[Elliptic curve cryptography]]. Let <math>g^a</math> be Alice's long-term public key and <math>g^b</math> be Bob's. The protocol executes in one round.
+
+'''One round''': Alice selects <math>x \in_R [0, q-1]</math> and sends out <math>g^x</math> together with a [[Zero-knowledge proof]] (using for example [[Schnorr signature]]) for the proof of the exponent <math>x</math>. Similarly, Bob selects <math>y \in_R [0, q-1]</math> and sends out <math>g^{y}</math> together with a [[Zero-knowledge proof]] for the proof of the exponent <math>y</math>.
+
+The above communication can be completed in one round as neither party depends on the other. When it finishes, Alice and Bob verify the received [[Zero-knowledge proofs]]. Alice then computes <math>K = (g^{y} g^{b}) ^ {x + a}= g^{(x + a) (y + b)}</math>. Similarly, Bob computes <math>K = (g^{x} g^{a}) ^ {y + b} = g^{(x + a) (y + b)}</math>. With the same keying material <math>K</math>, Alice and Bob can derive a session key using a [[Cryptographic hash function]]: <math>\kappa = H(K)</math>.
+
+==Security properties==
+
+Given that the underlying [[Non-interactive zero-knowledge proof | zero knowledge proof]] primitive is secure, the YAK protocol is proved to fulfill the following properties.
+
+# '''Private key security''' - An attacker cannot learn the user's static private key even if he is able to learn all session specific secrets in any compromised session.
+# '''Full forward secrecy''' - Session keys that were securely established in the past uncorrupted sessions will remain incomputable in the future even when both users' static private keys are disclosed.
+# '''Session key security''' - An attacker cannot compute the session key if he impersonates a user but has no access to the user's private key.
+
+==References==
+
+<references/>
+
+==External links==
+* [http://eprint.iacr.org/2010/136.pdf On Robust Key Agreement Based on Public Key Authentication (Full Paper)]
+
+[[Category:Cryptography]] [[Category:Cryptographic protocols]]</body> </html>

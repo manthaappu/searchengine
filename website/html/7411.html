@@ -1,0 +1,317 @@
+<html> <head> <title>Computational fluid dynamics</title></head><body>{{Multiple issues
+|weasel=November 2010
+|refimprove = June 2008}}
+{{Computational physics}}
+
+'''Computational Fluid Dynamics (CFD)''' is a branch of [[fluid mechanics]] that uses [[numerical methods]] and [[algorithms]] to solve and analyze problems that involve fluid flows. Computers are used to perform the calculations required to simulate the interaction of liquids and gases with surfaces defined by [[boundary conditions]]. With high-speed [[supercomputer]]s, better solutions can be achieved. Ongoing research, however, yield software that improves the accuracy and speed of complex simulation scenarios such as transonic or [[turbulence|turbulent]] flows. Initial validation of such software is performed using a [[wind tunnel]] with the final validation coming in [[flight test]]s.
+
+==Background and history==
+[[Image:CFD Shuttle.jpg|thumb|right|A computer simulation of high velocity air flow around the [[Space Shuttle]] during re-entry.]]
+[[Image:X-43A (Hyper - X) Mach 7 computational fluid dynamic (CFD).jpg|thumb|right|A simulation of the [[Hyper-X]] scramjet vehicle in operation at [[Mach number|Mach]]-7]] The fundamental basis of almost all CFD problems are the [[Navier–Stokes equations]], which define any single-phase fluid flow.  These equations can be simplified by removing terms describing viscosity to yield the [[Euler equations (fluid dynamics)|Euler equations]].  Further simplification, by removing terms describing vorticity yields the [[full potential equation]]s.  Finally, these equations can be linearized to yield the [[linearized potential equations]].
+
+Historically, methods were first developed to solve the Linearized Potential equations.  Two-dimensional methods, using conformal transformations of the flow about a [[Cylinder (geometry)|cylinder]] to the flow about an [[airfoil]] were developed in the 1930s.<ref>{{cite book|last=Milne-Thomson|first=L.M.|title=Theoretical Aerodynamics|year=1973|publisher=Dover Publications|isbn=048661980X}}</ref> The computer power available paced development of [[Three-dimensional space|three-dimensional]] methods.  The first paper on a practical three-dimensional method to solve the linearized potential equations was published by John Hess and [[A.M.O. Smith]] of [[Douglas Aircraft]] in 1967.<ref>{{cite journal|last=Hess|first=J.L.|coauthors=A.M.O. Smith|year=1967|title=Calculation of Potential Flow About Arbitrary Bodies|journal=Progress in Aeronautics Sciences|volume=8|pages=1–138|doi=10.1016/0376-0421(67)90003-6|url=http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6V3V-4811PYT-33&_user=10&_coverDate=12%2F31%2F1967&_alid=1339703692&_rdoc=1&_fmt=high&_orig=search&_cdi=5740&_docanchor=&view=c&_ct=176&_acct=C000050221&_version=1&_urlVersion=0&_userid=10&md5=2939d59a5c94a28fcc51ab6d6cec0305}}</ref> This method discretized the surface of the geometry with panels, giving rise to this class of programs being called Panel Methods.  Their method itself was simplified, in that it did not include lifting flows and hence was mainly applied to ship hulls and aircraft fuselages.  The first lifting Panel Code (A230) was described in a paper written by Paul Rubbert and Gary Saaris of Boeing Aircraft in 1968.  In time, more advanced three-dimensional Panel Codes were developed at [[Boeing]] (PANAIR, A502), [[Lockheed Corporation|Lockheed]] (Quadpan), [[Douglas Aircraft Company|Douglas]] (HESS), [[McDonnell Aircraft]] (MACAERO), [[NASA]] (PMARC) and Analytical Methods (WBAERO, USAERO and VSAERO).  Some (PANAIR, HESS and MACAERO) were higher order codes, using higher order distributions of surface singularities, while others (Quadpan, PMARC, USAERO and VSAERO) used single singularities on each surface panel.  The advantage of the lower order codes was that they ran much faster on the computers of the time.  Today, VSAERO has grown to be a multi-order code and is the most widely used program of this class. It has been used in the development of many [[submarine]]s, surface [[ship]]s, [[automobile]]s, [[helicopter]]s , [[aircraft]], and more recently [[wind turbines]].  Its sister code, USAERO is an unsteady panel method that has also been used for modeling such things as high speed trains and racing [[yacht]]s.  The NASA PMARC code from an early version of VSAERO and a derivative of PMARC, named CMARC, is also commercially available.
+
+In the two-dimensional realm, a number of Panel Codes have been developed for airfoil analysis and design.  The codes typically have a [[boundary layer]] analysis included, so that viscous effects can be modeled.  Professor [[Richard Eppler]] of the [[University of Stuttgart]] developed the [[PROFIL]] code, partly with NASA funding, which became available in the early 1980s.  This was soon followed by [[MIT]] Professor Mark Drela's [[XFOIL]] code. Both PROFIL and XFOIL incorporate two-dimensional panel codes, with coupled boundary layer codes for airfoil analysis work.  PROFIL uses a [[conformal transformation]] method for inverse airfoil design, while XFOIL has both a conformal transformation and an inverse panel method for airfoil design.  Both codes are used.
+
+An intermediate step between Panel Codes and Full Potential codes were codes that used the Transonic Small Disturbance equations.  In particular, the three-dimensional WIBCO code, developed by Charlie Boppe of [[Grumman Aircraft]] in the early 1980s has seen heavy use.
+
+Developers turned to Full Potential codes, as panel methods could not calculate the non-linear flow present at [[transonic]] speeds.  The first description of a means of using the Full Potential equations was published by Earll Murman and [[Julian Cole]] of Boeing in 1970. Frances Bauer, [[Paul Garabedian]] and [[David Korn (computer scientist)|David Korn]] of the Courant Institute at [[New York University]] (NYU) wrote a series of two-dimensional Full Potential airfoil codes that were widely used, the most important being named Program H.  A further growth of Program H was developed by Bob Melnik and his group at [[Grumman Aerospace]] as Grumfoil.  [[Antony Jameson]], originally at Grumman Aircraft and the Courant Institute of NYU, worked with David Caughey to develop the important three-dimensional Full Potential code FLO22 in 1975.  Many Full Potential codes emerged after this, culminating in Boeing's Tranair (A633) code, which still sees heavy use.
+
+The next step was the Euler equations, which promised to provide more accurate solutions of transonic flows.  The methodology used by Jameson in his three-dimensional FLO57 code (1981) was used by others to produce such programs as Lockheed's TEAM program and IAI/Analytical Methods' MGAERO program.  MGAERO is unique in being a structured [[cartesian coordinate system|cartesian]] mesh code, while most other such codes use structured body-fitted grids (with the exception of NASA's highly successful CART3D code, Lockheed's SPLITFLOW code and [[Georgia Institute of Technology|Georgia Tech]]'s NASCART-GT).<ref>{{cite web|url=http://www.ae.gatech.edu/people/sruffin/nascart/|title=NASCART|publisher=Daniel Guggenheim School of Aerospace Engineering|accessdate=2007-07-28}}</ref> [[Antony Jameson]] also developed the three-dimensional AIRPLANE code (1985) which made use of unstructured tetrahedral grids.
+
+In the two-dimensional realm, Mark Drela and Michael Giles, then graduate students at MIT, developed the ISES Euler program (actually a suite of programs) for airfoil design and analysis.  This code first became available in 1986 and has been further developed to design, analyze and optimize single or multi-element airfoils, as the MSES program.  MSES sees wide use throughout the world.  A derivative of MSES, for the design and analysis of airfoils in a cascade, is MISES, developed by Harold "Guppy" Youngren while he was a graduate student at MIT.
+
+The Navier–Stokes equations were the ultimate target of developers.  Two-dimensional codes, such as NASA Ames' ARC2D code first emerged.  A number of three-dimensional codes were developed (ARC3D, [[Overflow (software)|OVERFLOW]], CFL3D are three successful NASA contributions), leading to numerous commercial packages.
+
+==Methodology==
+In all of these approaches the same basic procedure is followed.
+* During [[preprocessor (CAE)|preprocessing]]
+** The [[geometry]] (physical bounds) of the problem is defined.
+** The [[volume]] occupied by the fluid is divided into discrete cells (the mesh). The mesh may be uniform or non uniform.
+** The physical modeling is defined – for example, the equations of motions + [[enthalpy]] + radiation + species conservation
+** Boundary conditions are defined. This involves specifying the fluid behaviour and properties at the boundaries of the problem. For transient problems, the initial conditions are also defined.
+* The [[computer simulation|simulation]] is started and the equations are solved iteratively as a steady-state or transient.
+* Finally a postprocessor is used for the analysis and visualization of the resulting solution.
+
+===Discretization methods===
+
+The stability of the chosen discretization is generally established numerically rather than analytically as with simple linear problems.  Special care must also be taken to ensure that the discretization handles discontinuous solutions gracefully.  The [[Euler equations (fluid dynamics)|Euler equations]] and [[Navier–Stokes equations]] both admit shocks, and contact surfaces.
+
+Some of the discretization methods being used are:
+
+==== Finite Volume Method ====
+
+{{Main|Finite volume method}}
+
+The finite volume method (FVM) is a common approach used in CFD codes.{{Citation needed|date=November 2010}}  The governing equations are solved over discrete control volumes. Finite volume methods recast the governing partial differential equations (typically the Navier-Stokes equations) in a conservative form, and then discretize the new equation. This guarantees the conservation of fluxes through a particular control volume. Though the overall solution will be conservative in nature, there is no guarantee that it is the actual solution.{{Citation needed|date=November 2010}}  The finite volume equation yields governing equations in the form,
+:<math>\frac{\partial}{\partial t}\iiint Q\, dV + \iint F\, d\mathbf{A} = 0,</math>
+where <math>Q</math> is the vector of conserved variables, <math>F</math> is the vector of fluxes (see [[Euler equations (fluid dynamics)|Euler equations]] or [[Navier–Stokes equations]]), <math>V</math> is the volume of the control volume element, and <math>\mathbf{A}</math> is the surface area of the control volume element.
+
+==== Finite Element Method ====
+
+{{Main|Finite element method}}
+
+The finite element method (FEM) is used in structural analysis of solids, but is also applicable to fluids.  However, the FEM formulation requires special care to ensure a conservative solution. The FEM formulation has been adapted for use with fluid dynamics governing equations.{{Citation needed|date=November 2010}} Although FEM must be carefully formulated to be conservative, it is much more stable than the finite volume approach<ref>{{cite journal
+| title=k-version of finite element method in gas dynamics: higher-order global differentiability numerical solutions
+| last1=Surana
+| first1=K.A.
+| last2=Allu
+| first2=S.
+| last3=Tenpas
+| first3=P.W.
+| last4=Reddy
+| first4=J.N.
+| journal=International Journal for Numerical Methods in Engineering
+| volume=69
+| issue=6
+| pages=1109–1157
+| year=2007
+| doi=10.1002/nme.1801
+| month=February}}</ref>  However, FEM can require more memory than FVM.<ref>{{cite book
+| author=Huebner, K. H., Thornton, E. A., and Byron, T. D.
+| title=The Finite Element Method for Engineers
+| edition=Third
+| publisher=Wiley Interscience
+| year=1995}}</ref>
+
+In this method, a weighted residual equation is formed:
+
+:<math>R_i = \iiint W_i Q \, dV^e</math>
+
+where <math>R_i</math> is the equation residual at an element vertex <math>i</math>, <math>Q</math> is the conservation equation expressed on an element basis, <math>W_i</math> is the weight factor, and <math>V^{e}</math> is the volume of the element.
+
+==== Finite Difference Method ====
+
+{{Main|Finite difference method}}
+
+The finite difference method (FDM) has historical importance{{Citation needed|date=November 2010}} and is simple to program.  It is currently only used in few specialized codes.{{Citation needed|date=November 2010}} Modern finite difference codes make use of an embedded boundary for handling complex geometries, making these codes highly efficient and accurate.{{Citation needed|date=November 2010}} Other ways to handle geometries include use of overlapping grids, where the solution is interpolated across each grid.
+:<math> 
+\frac{\partial Q}{\partial t}+
+\frac{\partial F}{\partial x}+
+\frac{\partial G}{\partial y}+
+\frac{\partial H}{\partial z}=0
+</math>
+where <math>Q</math> is the vector of conserved variables, and <math>F</math>, <math>G</math>, and <math>H</math> are the fluxes in the <math>x</math>, <math>y</math>, and <math>z</math> directions respectively.
+
+==== Boundary Element Method ====
+
+{{Main|Boundary element method}}
+
+In the boundary element method, the boundary occupied by the fluid is divided into a surface mesh.
+
+==== High Resolution Discretization Schemes ====
+
+{{Main|High-resolution scheme}}
+
+High-resolution schemes are used where shocks or discontinuities are present. Capturing sharp changes in the solution requires the use of second or higher-order numerical schemes that do not introduce spurious oscillations. This usually necessitates the application of [[flux limiters]] to ensure that the solution is [[total variation diminishing]].{{Citation needed|date=November 2010}}
+
+===Turbulence models===
+{{Expand section|
+* Models should be listed in some order (increasing cost, increasing accuracy, alphabetically...)
+* Add the [[One-dimensional turbulence]] model (and its predecessor [[Linear eddy model]])
+|date=November 2010}}
+
+In studying turbulent flows, the objective is to obtain a theory or a model that can yield quantities of interest, such as velocities.  For turbulent flow, the range of length scales and complexity of phenomena make most approaches impossible.  The primary approach in this case is to create numerical models to calculate the properties of interest.  A selection of some commonly-used computational models for turbulent flows are presented in this section.
+
+The chief difficulty in modeling turbulent flows comes from the wide range of length and time scales associated with turbulent flow.  As a result, turbulence models can be classified based on the range of these length and time scales that are modeled and the range of length and time scales that are resolved.  The more turbulent scales that are resolved, the finer the resolution of the simulation, and therefore the higher the computational cost.  If a majority or all of the turbulent scales are modeled, the computational cost is very low, but the tradeoff comes in the form of decreased accuracy.
+
+In addition to the wide range of length and time scales and the associated computational cost, the governing equations of fluid dynamics contain a [[Nonlinear system|non-linear]] convection term and a non-linear and non-local pressure gradient term.  These nonlinear equations must be solved numerically with the appropriate boundary and initial conditions.
+
+====Direct numerical simulation====
+{{main|Direct numerical simulation}}
+
+[[Direct numerical simulation]] (DNS) resolves the entire range of turbulent length scales.  This marginalizes the effect of models, but is extremely expensive.  The computational cost is proportional to <math>Re^{3}</math>.<ref name="Pope_2000">{{cite book|title=Turbulent Flows|author=Pope, S. B.|publisher=Cambridge University Press|year=2000|isbn=978-0521598866}}</ref> DNS is intractable for flows with complex geometries or flow configurations.
+
+====Large eddy simulation====
+{{main|Large eddy simulation}}
+
+[[Image:LESPremixedFlame.jpg|thumb|right|250px|Volume rendering of a non-premixed swirl flame as simulated by LES.]]
+[[Large eddy simulation]] (LES) is a technique in which the smallest scales of the flow are removed through a filtering operation, and their effect modeled using subgrid scale models.  This allows the largest and most important scales of the turbulence to be resolved, while greatly reducing the computational cost incurred by the smallest scales. This method requires greater computational resources than RANS methods, but is far cheaper than DNS.
+
+====Detached eddy simulation====
+{{main|Detached eddy simulation}}
+
+[[Detached eddy simulation]]s (DES) is a modification of a RANS model in which the model switches to a subgrid scale formulation in regions fine enough for LES calculations. Regions near solid boundaries and where the turbulent length scale is less than the maximum grid dimension are assigned the RANS mode of solution. As the turbulent length scale exceeds the grid dimension, the regions are solved using the LES mode. Therefore the grid resolution for DES is not as demanding as pure LES, thereby considerably cutting down the cost of the computation. Though DES was initially formulated for the Spalart-Allmaras model (Spalart et al., 1997), it can be implemented with other RANS models (Strelets, 2001), by appropriately modifying the length scale which is explicitly or implicitly involved in the RANS model. So while Spalart-Allmaras model based DES acts as LES with a wall model, DES based on other models (like two equation models) behave as a hybrid RANS-LES model. Grid generation is more complicated than for a simple RANS or LES case due to the RANS-LES switch. DES is a non-zonal approach and provides a single smooth velocity field across the RANS and the LES regions of the solutions.
+
+==== Reynolds-averaged Navier–Stokes ====
+{{main|Reynolds-averaged Navier–Stokes equations}}
+
+[[Reynolds-averaged Navier–Stokes equations|Reynolds-averaged Navier-Stokes]] (RANS) equations are the oldest approach to turbulence modeling. An ensemble version of the governing equations is solved, which introduces new ''apparent stresses'' known as [[Reynolds stresses]]. This adds a second order tensor of unknowns for which various models can provide different levels of closure. It is a common misconception that the RANS equations do not apply to flows with a time-varying mean flow because these equations are 'time-averaged'. In fact, statistically unsteady (or non-stationary) flows can equally be treated. This is sometimes referred to as URANS. There is nothing inherent in Reynolds averaging to preclude this, but the turbulence models used to close the equations are valid only as long as the time over which these changes in the mean occur is large compared to the time scales of the turbulent motion containing most of the energy.
+
+RANS models can be divided into two broad approaches:
+
+; [[Boussinesq approximation|Boussinesq hypothesis]]: This method involves using an algebraic equation for the Reynolds stresses which include determining the turbulent viscosity, and depending on the level of sophistication of the model, solving transport equations for determining the turbulent kinetic energy and dissipation. Models include k-ε (Spalding {{Citation needed|date=November 2010}}), Mixing Length Model (Prandtl {{Citation needed|date=November 2010}}) and Zero Equation (Chen {{Citation needed|date=November 2010}}). The models available in this approach are often referred to by the number of transport equations associated with the method.  For example, the Mixing Length model is a "Zero Equation" model because no transport equations are solved; the <math>k-\epsilon</math> is a "Two Equation" model because two transport equations (one for <math>k</math> and one for <math>\epsilon</math>) are solved.
+; [[Reynolds stress model]] (RSM): This approach attempts to actually solve transport equations for the Reynolds stresses. This means introduction of several transport equations for all the Reynolds stresses and hence this approach is much more costly in CPU effort.{{Citation needed|date=November 2010}}
+
+====Coherent vortex simulation====
+
+The coherent vortex simulation approach decomposes the turbulent flow field into a coherent part, consisting of organized vortical motion, and the incoherent part, which is the random background flow.<ref name="Farge_2001">{{cite journal
+|title=Coherent Vortex Simulation (CVS), A Semi-Deterministic Turbulence Model Using Wavelets
+|author1=Farge, Marie
+|author2=Schneider, Kai
+|journal=Flow, Turbulence and Combustion
+|volume=66
+|issue=4
+|pages=393–426
+|doi=10.1023/A:1013512726409}}</ref>  This decomposition is done using [[wavelet]] filtering.  The approach has much in common with LES, since it uses decomposition and resolves only the filtered portion, but different in that it does not use a linear, low-pass filter.  Instead, the filtering operation is based on wavelets, and the filter can be adapted as the flow field evolves.  Farge and Schneider tested the CVS method with two flow configurations and showed that the coherent portion of the flow exhibited the <math>-\frac{5}{3}</math> energy spectrum exhibited by the total flow, and corresponded to coherent structures ([[vortex stretching|vortex tubes]]), while the incoherent parts of the flow composed homogeneous background noise, which exhibited no organized structures.  Goldstein and Oleg<ref name="Goldstein_2004">{{cite journal
+|author1=Goldstein, Daniel
+|author2=Vasilyev, Oleg
+|title=Stochastic coherent adaptive large eddy simulation method
+|journal=Physics of Fluids A
+|year=1994
+|volume=24
+|page=2497
+|doi=10.1063/1.1736671}}</ref> applied the CVS model to large eddy simulation, but did not assume that the wavelet filter completely eliminated all coherent motions from the subfilter scales.  By employing both LES and CVS filtering, they showed that the SFS dissipation was dominated by the SFS flow field's coherent portion.
+
+====PDF methods====
+
+Probability density function (PDF) methods for turbulence, first introduced by Lundgren,<ref name="Lundgren_1969">{{cite journal
+|title=Model equation for nonhomogeneous turbulence
+|author=Lundgren, T.S.
+|journal=Physics of Fluids A
+|volume=12
+|issue=3
+|year=1969
+|pages=485–497
+|doi=10.1063/1.1692511}}</ref> are based on tracking the one-point [[probability density function]] of the velocity, <math>f_{V}(\boldsymbol{v};\boldsymbol{x},t) d\boldsymbol{v}</math>, which gives the probability of the velocity at point <math>\boldsymbol{x}</math> being between <math>\boldsymbol{v}</math> and <math>\boldsymbol{v}+d\boldsymbol{v}</math>.  This approach is analogous to the [[kinetic theory]] of gases, in which the macroscopic properties of a gas are described by a large number of particles.  PDF methods are unique in that they can be applied in the framework of a number of different turbulence models; the main differences occur in the form of the PDF transport equation.  For example, in the context of [[large eddy simulation]], the PDF becomes the filtered PDF.<ref name="Colucci_1998">{{cite journal
+|title=Filtered density function for large eddy simulation of turbulent reacting flows
+|author1=Colucci, P. J.
+|author2=Jaberi, F. A
+|author3=Givi, P.
+|author4=Pope, S. B.
+|journal=Physics of Fluids A
+|year=1998
+|volume=10
+|issue=2
+|pages=499–515
+|doi=10.1063/1.869537}}</ref>  PDF methods can also be used to describe chemical reactions,<ref name="Fox_2003">{{cite book
+|author=Fox, Rodney
+|title=Computational models for turbulent reacting flows
+|year=2003
+|publisher=Cambridge University Press
+|isbn=978-0-521-65049-6}}</ref><ref name="Pope_1985">{{cite journal
+|title=PDF methods for turbulent reactive flows
+|author=Pope, S. B.
+|journal=Progress in Energy and Combustion Science
+|year=1985
+|volume=11
+|pages=119–192}}</ref> and are particularly useful for simulating chemically reacting flows because the chemical source term is closed and does not require a model.  The PDF is commonly tracked by using Lagrangian particle methods; when combined with large eddy simulation, this leads to a [[Langevin equation]] for subfiler particle evolution.
+
+====Vortex method====
+The Vortex method is a grid-free technique for the simulation of turbulent flows. It uses vortices as the computational elements, mimicking the physical structures in turbulence. Vortex methods were developed as a grid-free methodology that would not be limited by the fundamental smoothing effects associated with grid-based methods. To be practical, however, vortex methods require means for rapidly computing velocities from the vortex elements – in other words they require the solution to a particular form of the [[N-body problem]] (in which the motion of N objects is tied to their mutual influences). A breakthrough came in the late 1980s with the development of the [[Fast Multipole Method]] (FMM), an algorithm by V. Rokhlin (Yale) and L. Greengard (Courant Institute) that has been heralded{{by whom|date=November 2010}} as one of the top ten advances in numerical science of the 20th century. This breakthrough paved the way to practical computation of the velocities from the vortex elements and is the basis of successful algorithms.
+
+Software based on the Vortex method offer a new means for solving tough fluid dynamics problems with minimal user intervention.{{Citation needed|date=November 2010}}  All that is required is specification of problem geometry and setting of boundary and initial conditions. Among the significant advantages of this modern technology;
+* It is practically grid-free, thus eliminating numerous iterations associated with RANS and LES.
+* All problems are treated identically. No modeling or calibration inputs are required.
+* Time-series simulations, which are crucial for correct analysis of acoustics, are possible.
+* The small scale and large scale are accurately simulated at the same time.
+
+====Vorticity Confinement method====
+
+{{Main|Vorticity confinement}}
+
+The [[Vorticity confinement]] (VC) method is an Eulerian technique used in the simulation of turbulent wakes. It uses a solitary-wave like approach to produce stable solution with no numerical spreading. VC can capture the small scale features to over as few as 2 grid cells. Within these features, a nonlinear difference equation is solved as opposed to the [[finite difference equation]]. VC is similar to [[shock capturing methods]], where conservation laws are satisfied, so that the essential integral quantities are accurately computed.
+
+===Two phase flow===
+
+The modeling of [[two-phase flow]] is still under development. Different methods have been proposed {{by whom|date=November 2010}}. The [[Volume of fluid method]] has received a lot of attention lately,{{by whom|date=November 2010}} for problems that do not have dispersed particles,{{Citation needed|date=November 2010}} but the [[Level set method]] and [[front tracking]] are also valuable approaches {{Whom?|date=November 2010}}. Most of these methods are either good in maintaining a sharp interface or at conserving mass {{Whom?|date=November 2010}}.  This is crucial since the evaluation of the density, viscosity and surface tension is based on the values averaged over the interface.{{Citation needed|date=November 2010}} Lagrangian multiphase models, which are used for dispersed media, are based on solving the Lagrangian equation of motion for the dispersed phase.{{Citation needed|date=November 2010}}
+
+===Solution algorithms===
+
+Discretization in space produces a system of [[ordinary differential equations]] for unsteady problems and algebraic equations for steady problems. Implicit or semi-implicit methods are generally used to integrate the ordinary differential equations, producing a system of (usually) nonlinear algebraic equations.  Applying a [[Newton's method#Nonlinear systems of equations|Newton]] or [[Fixed point iteration|Picard]] iteration produces a system of linear equations which is nonsymmetric in the presence of advection and indefinite in the presence of incompressibility. Such systems, particularly in 3D, are frequently too large for direct solvers, so iterative methods are used, either stationary methods such as [[Successive over-relaxation|successive overrelaxation]] or [[Krylov subspace]] methods. Krylov methods such as [[Generalized minimal residual method|GMRES]], typically used with [[Preconditioner|preconditioning]], operate by minimizing the residual over successive subspaces generated by the preconditioned operator.
+
+[[Multigrid method|Multigrid]] is especially popular {{editorializing?|date=November 2010}}, both as a solver and as a preconditioner, due to its asymptotically optimal performance on many problems. Traditional{{Whom?|date=November 2010}} solvers and preconditioners are effective at reducing high-frequency components of the residual, but low-frequency components typically require many iterations to reduce. By operating on multiple scales, multigrid reduces all components of the residual by similar factors, leading to a mesh-independent number of iterations.{{Citation needed|date=November 2010}}
+
+For indefinite systems, preconditioners such as [[incomplete LU factorization]], [[Additive Schwarz method|additive Schwarz]], and [[Multigrid method|multigrid]] perform poorly or fail entirely, so the problem structure must be used for effective preconditioning.<ref>{{cite journal
+| author=Benzi, Golub, Liesen
+| title=Numerical solution of saddle-point problems
+| journal=Acta Numerica
+| year=2005
+| doi=10.1017/S0962492904000212}}</ref>  The traditional{{Whom?|date=November 2010}} methods commonly used in CFD are the [[SIMPLE algorithm|SIMPLE]] and Uzawa algorithms which exhibit mesh-dependent convergence rates, but recent advances based on block LU factorization combined with multigrid for the resulting definite systems have led to preconditioners that deliver mesh-independent convergence rates.<ref>{{cite journal
+| author=Elman et al.
+| title=A taxonomy and comparison of parallel block multi-level preconditioners for the incompressible Navier–Stokes equations
+| journal=Journal of Computational Physics
+| volume=227
+| issue=3
+| month=January
+| year=2008
+| doi=10.1016/j.jcp.2007.09.026}}</ref>
+
+== See also ==
+* [[Blade element theory]]
+* [[Finite element analysis]]
+* [[Immersed boundary method]]
+* [[List of finite element software packages]]
+* [[Multidisciplinary design optimization]]
+* [[Turbulence modeling]]
+* [[Visualization (graphic)|Visualization]]
+* [[Wind tunnel]]
+
+==Notes==
+{{reflist}}
+
+== References ==
+*{{Citation
+  | last = Anderson
+  | first = John D.
+  | title = Computational Fluid Dynamics: The Basics With Applications
+  | publisher = McGraw-Hill Science
+  | series = Science/Engineering/Math
+  | year = 1995
+  | isbn = 0070016852  }}
+*{{Citation
+  | last = Patankar
+  | first = Suhas
+  | title = Numerical Heat Transfer and Fluid Flow
+  | publisher = Taylor & Francis
+  | series = Hemisphere Series on Computational Methods in Mechanics and Thermal Science
+  | year = 1980
+  | isbn = 0891165223  }}
+*{{Cite journal
+  | last =Shah
+  | first =Tasneem M.
+  | authorlink =Tasneem M. Shah
+  | coauthors =Sadaf Siddiq, Zafar U. Koreshi
+  | title =An analysis and comparison of tube natural frequency modes with fluctuating force frequency from the thermal cross-flow fluid in 300 MWe PWR.
+  | journal = International Journal of Engineering and Technology
+  | volume = 9
+  | issue =9
+  | pages =201–205
+  | publisher =
+  | location =
+  | date =
+  | url =http://docs.google.com/viewer?a=v&q=cache:4gQM2Vj9itIJ:www.ijens.org/1936091%2520IJET.pdf+tasneem+M.+Shah&hl=en&gl=us&pid=bl&srcid=ADGEESg-lxYkvf5xfu4Nv6UfF-xgO2yzh2O6wa7EzNVurfVgtXdi_bkvvSAijrk7DvwDqWJE9Ke-trzYKGEM5GCvi5w-qmbo5nvDaGt4kv-mBr-XL6in2xo0WRyHVX3o4roKLkcZgTAk&sig=AHIEtbQ4XElNn3nmOsUXoM0JdkNeY9cMxg
+  | issn =
+  | doi =
+  | id =
+  | accessdate = }}
+
+==External links==
+* [http://www.societyofrobots.com/mechanics_FEA.shtml CFD Tutorial] Many examples and images, with references to robotic fish.
+* [http://www.cfd-online.com/Wiki/Main_Page CFD-Wiki]
+* ''Course:'' [http://www.mathematik.uni-dortmund.de/~kuzmin/cfdintro/cfd.html Introduction to CFD] – Dmitri Kuzmin ([[Dortmund University of Technology]])
+
+{{DEFAULTSORT:Computational Fluid Dynamics}}
+[[Category:Computational fluid dynamics| ]]
+
+[[ar:ديناميكا موائع حسابية]]
+[[bs:Računarska dinamika fluida]]
+[[de:Numerische Strömungsmechanik]]
+[[es:Mecánica de fluidos computacional]]
+[[fa:دینامیک محاسباتی سیالات]]
+[[fr:Mécanique des fluides numérique]]
+[[ko:전산 유체 역학]]
+[[hi:गणकीय तरल यांत्रिकी]]
+[[hr:Računalna dinamika fluida]]
+[[id:Dinamika fluida komputasi]]
+[[it:Fluidodinamica computazionale]]
+[[kn:ಗಣಕಯಂತ್ರೀಯ ದ್ರವ ಚಲನಶಾಸ್ತ್ರ]]
+[[nl:Numerieke stromingsleer]]
+[[ja:数値流体力学]]
+[[pl:Obliczeniowa mechanika płynów]]
+[[pt:Fluidodinâmica computacional]]
+[[ru:Вычислительная гидродинамика]]
+[[sv:Computational fluid dynamics]]
+[[th:Computational fluid dynamics]]
+[[tr:Hesaplamalı akışkanlar dinamiği]]
+[[zh:计算流体力学]]</body> </html>

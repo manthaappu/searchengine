@@ -1,0 +1,88 @@
+<html> <head> <title>MVEL</title></head><body>{{Infobox software
+| name                   = MVEL
+| logo                   = [[Image:Mvel logo.png]]
+| screenshot             =
+| caption                =
+| developer              = Mike Brock and  Various Contributors
+| latest_release_version = 2.0.18
+| latest_release_date    = {{release_date|2010|09|17}}
+| operating_system       = [[Cross-platform]]
+| programming_language   = [[Java (programming language)|Java]]
+| genre                  = [[Expression Language|Expression Language (EL)]]
+| license                = [[Apache License]]
+| website                = http://mvel.codehaus.org/
+}}
+'''MVFLEX Expression Language''' (MVEL) is a hybrid dynamic/statically typed, embeddable [[Expression Language]] and [[Run-time system|runtime]] for the [[Java_Platform#Platform|Java Platform]].  Originally started as a utility language for an application framework, the project is now developed completely independently.
+
+MVEL is typically used for exposing basic logic to end-users and programmers through configuration such as [[XML]] files or [[Java annotations|annotations]].  It may also be used to parse simple [[JavaBean]] expressions.
+
+The runtime allows MVEL expressions to be executed either interpretively, or through a pre-compilation process with support for runtime [[bytecode]] generation to remove overhead.
+
+Since MVEL is meant to augment Java-based software, it borrows most of its syntax directly from the Java programming language with some minor differences and additional capabilities. For example: as a side effect of MVEL's typing model, which treats class and method references as regular variables, it is possible to use both class and function pointers (but only for static methods).
+
+<source lang="java">
+     millis = System.currentTimeMillis;
+
+     // get millis
+     time = millis();
+</source>
+
+MVEL also allows collections to be represented as folds (or projections) in a [[Lisp (programming language)|Lisp]]-like syntax.
+
+<source lang="java">
+    namesOfParents = (parent.name in (children in employees));
+</source>
+
+==Hello world example==
+<source lang="java">
+     System.out.println("Hello, world!");
+</source>
+
+MVEL relies on Java namespaces and classes, but does not possess the ability to declare namespaces or classes.
+
+==Quicksort Example==
+Here is an example of the [[Quicksort]] algorithm implemented in MVEL 2.0, demonstrating the scripting capabilities of the language.
+
+<source lang="javascript">
+import java.util.*;
+
+// the main quicksort algorithm
+def quicksort(list) {
+    if (list.size() <= 1) {
+         list;
+    }
+    else {
+         pivot = list[0];
+         concat(quicksort(($ in list if $ < pivot)), pivot, quicksort(($ in list if $ > pivot)));
+    }
+}
+
+// define method to concatenate lists.
+def concat(list1, pivot, list2) {
+    concatList = new ArrayList(list1);
+    concatList.add(pivot);
+    concatList.addAll(list2);
+    concatList;
+}
+
+// create a list to sort
+list = [5,2,4,1,18,10,15,1,0];
+
+// sort it!
+quicksort(list);
+</source>
+
+==See also==
+{{Portal|Free software}}
+* [[Java (programming language)|Java]]
+* [[OGNL]]
+* [[Expression Language]]
+
+==External links==
+* [http://mvel.codehaus.org/Language+Guide MVEL Language Guide]
+
+{{DEFAULTSORT:Mvel}}
+[[Category:Scripting languages]]
+[[Category:Free software programmed in Java]]
+
+{{Prog-lang-stub}}</body> </html>

@@ -1,0 +1,95 @@
+<html> <head> <title>Stream X-Machine</title></head><body>The '''Stream X-machine''' ('''SXM''') is a model of computation introduced by Gilbert Laycock in his 1993 PhD thesis, ''The Theory and Practice of Specification Based Software Testing''.<ref
+  name="Lay93">Gilbert Laycock (1993)
+  ''The Theory and Practice of Specification Based Software Testing''.
+  PhD Thesis, University of Sheffield, Dept of Computer Science.
+  [http://www.mcs.le.ac.uk/people/gtl1/PhDabstract.html Abstract]</ref>
+Based on [[Samuel Eilenberg]]'s [[X-machine]], an extended [[finite state machine]] for processing data of the type ''X'',<ref  name="Eil74">Samuel Eilenberg (1974)
+  ''Automata, Languages and Machines, Vol. A''.
+  London: Academic Press.</ref>  the Stream X-Machine is a kind of [[X-machine]] for processing a memory data type ''Mem'' with associated input and output streams ''In''* and ''Out''*, that is, where ''X'' = ''Out''* × ''Mem'' × ''In''*.  The transitions of a Stream X-Machine are labelled by functions of the form φ: ''Mem'' × ''In'' → ''Out'' × ''Mem'', that is, which compute an output value and update the memory, from the current memory and an input value.
+
+Although the general [[X-machine]] had been identified in the 1980s as a potentially useful formal model for specifying software systems,<ref name="Hol88">
+M. Holcombe (1988) 'X-machines as a basis for dynamic system specification'. ''Software Engineering Journal'' '''3''' ''(2)'', pp. 69-76.</ref> it was not until the emergence of the Stream X-Machine that this idea could be fully exploited.  Florentin Ipate and Mike Holcombe went on to develop a theory of ''complete'' [[functional testing]],<ref
+  name="HolIp98">Mike Holcombe and Florentin Ipate (1998)
+  ''Correct systems - building a business process solution''.
+  Applied Computing Series.
+  Berlin: Springer-Verlag.</ref> in which complex software systems with hundreds of thousands of states and millions of transitions could be decomposed into separate SXMs that could be tested exhaustively, with a guaranteed proof of correct integration.<ref name="IpHol97">F. Ipate and W. M. L. Holcombe (1997) 'An integration testing method which is proved to find all faults'. ''Int. J. Comp. Math.'', '''63''', pp. 159-178.</ref>
+
+Because of the intuitive interpretation of Stream X-Machines as "processing agents with inputs and outputs", they have attracted increasing interest, because of their utility in modelling real-world phenomena.  The SXM model has important applications in fields as diverse as [[computational biology]], [[software testing]] and [[Computational economics|agent-based computational economics]].
+
+== The Stream X-Machine ==
+
+A Stream X-Machine (SXM) is an extended [[finite state machine]] with auxiliary memory, inputs and outputs.  It is a variant of the general [[X-machine]], in which the fundamental data type ''X'' = ''Out''* × ''Mem'' × ''In''*, that is, a tuple consisting of an output stream,  the memory and an input stream. A SXM separates the ''control flow'' of a system from the ''processing'' carried out by the system.  The control is modelled by a [[finite state machine]] (known as the ''associated automaton'') whose transitions are labelled with processing functions chosen from a set Φ (known as the ''type'' of the machine), which act upon the fundamental data type.
+
+Each processing function in Φ is a partial function, and can be considered to have the type φ: ''Mem'' × ''In'' → ''Out'' × ''Mem'', where ''Mem'' is the memory type, and ''In'' and ''Out'' are respectively the input and output types.  In any given state, a transition is ''enabled'' if the domain of the associated function φ<sub>i</sub> includes the next input value and the current memory state.  If (at most) one transition is enabled in a given state, the machine is ''deterministic''.  Crossing a transition is equivalent to applying the associated function φ<sub>i</sub>, which consumes one input, possibly modifies the memory and produces one output.  Each recognised path through the machine therefore generates a list φ<sub>1</sub> ... φ<sub>n</sub> of functions, and the SXM composes these functions together to generate a relation on the fundamental data type |φ<sub>1</sub> ... φ<sub>n</sub>|: ''X'' → ''X''.
+
+=== Relationship to X-machines ===
+
+The Stream X-Machine is a variant of [[X-machine]] in which the fundamental data type ''X'' = ''Out''* × ''Mem'' × ''In''*.  In the original [[X-machine]], the φ<sub>i</sub> are general ''relations'' on ''X''.  In the Stream X-Machine, these are usually restricted to ''functions''; however the SXM is still only deterministic if (at most) one transition is enabled in each state.
+
+A general [[X-machine]] handles input and output using a prior encoding function α: ''Y'' → ''X'' for input, and a posterior decoding function β: ''X'' → ''Z'' for output, where ''Y'' and ''Z'' are respectively the input and output types.  In a Stream X-Machine, these types are streams:
+
+  ''Y'' = ''In''*
+  ''Z'' = ''Out''*
+
+and the encoding and decoding functions are defined as:
+
+  α(''ins'') = (<>, ''mem''<sub>0</sub>, ''ins'')
+  β(''outs'', ''mem''<sub>n</sub>, <>) = ''outs''
+
+where ''ins: In''*, ''outs: Out''* and ''mem''<sub>i</sub>: ''Mem''.  In other words, the machine is initialized with the whole of the input stream; and the decoded result is the whole of the output stream, provided the input stream is eventually consumed (otherwise the result is undefined).
+
+Each processing function in a SXM is given the abbreviated type φ<sub>SXM</sub>: ''Mem'' × ''In'' → ''Out'' × ''Mem''.  This can be mapped onto a general [[X-machine]] relation of the type φ: X → X if we treat this as computing:
+
+  φ(''outs'', ''mem''<sub>i</sub>, ''in'' :: ''ins'') = (''outs'' :: ''out'', ''mem''<sub>i+1</sub>, ''ins'')
+
+where <code>::</code> denotes concatenation of an element and a sequence.  In other words, the relation extracts the head of the input stream, modifies memory and appends a value to the tail of the output stream.
+
+=== Processing and Testable Properties ===
+
+Because of the above equivalence, attention may focus on the way a Stream X-Machine processes inputs into outputs, using an auxiliary memory.  Given an initial memory state ''mem''<sub>0</sub> and an input stream ''ins'', the machine executes in a step-wise fashion, consuming one input at a time, and generating one output at a time.  Provided that (at least) one recognised path ''path'' = φ<sub>1</sub> ... φ<sub>n</sub> exists leading to a state in which the input has been consumed, the machine yields a final memory state ''mem''<sub>n</sub> and an output stream ''outs''.  In general, we can think of this as the relation computed by all recognised paths:  | ''path'' | : ''In''* → ''Out''*. This is often called the ''behaviour'' of the Stream X-Machine.
+
+The behaviour is deterministic, if (at most) one transition is enabled in each state.  This property, and the ability to control how the machine behaves in a step-wise fashion in response to inputs and memory, makes it an ideal model for the specification of software systems.  If the specification and implementation are both assumed to be Stream X-Machines, then the implementation may be tested for conformance to the specification machine, by observing the inputs and outputs at each step.  Laycock first highlighted the utility of single-step processing with observations for testing purposes.<ref name="Lay93" />
+
+Holcombe and Ipate developed this into a practical theory of software testing<ref name="HolIp98" /> which was fully compositional, scaling up to very large systems.<ref name="IpHol98">F. Ipate and M. Holcombe (1998) 'A method for refining and testing generalised machine specifications'. ''Int. J. Comp. Math.'' '''68''', pp. 197-219.</ref>  A proof of correct integration<ref name="IpHol97" /> guarantees that  testing each component and each integration layer separately corresponds to testing the whole system.  This divide-and-conquer approach makes ''exhaustive'' testing feasible for large systems.
+
+The testing method is described in a separate article on the [[X-Machine Testing|Stream X-Machine testing methodology]].
+
+== Applications ==
+Stream X-Machines have been used in a number of different application areas.
+
+=== Cell Biology ===
+{{Empty section|date=January 2009}}
+
+=== Social Insect Behaviour ===
+{{Empty section|date=January 2009}}
+
+=== Software Systems ===
+{{Empty section|date=January 2009}}
+
+=== Hardware Systems ===
+{{Empty section|date=January 2009}}
+
+=== Computational Economics ===
+{{Empty section|date=January 2009}}
+
+==See also==
+
+* [[X-machine]]s, a general description of the X-machine model, including a simple example.
+
+* [[X-Machine Testing|The Stream X-Machine Testing Methodology]], a ''complete functional testing'' technique. Using this methodology, it is possible to identify a ''finite'' set of tests that exhaustively determine whether an implementation matches its specification. The technique overcomes formal undecidability limitations by insisting that users apply carefully specified ''design for test'' principles during implementation.
+
+* [[Communicating X-Machine|Communicating Stream X-Machines (CSXMs)]], a concurrent version of the SXM model, with applications in fields ranging from social insects to economics.
+
+==External links==
+* [http://www.dcs.shef.ac.uk/~ajhs/motive/ The MOTIVE project], using SXM techniques to generate test sets for object-oriented software.
+* [http://www.dcs.shef.ac.uk/~stc/eurace/ The EURACE project], an application of CSXM techniques to agent-based computational economics.
+* [http://www.x-machines.net x-machines.net], a site describing the background to X-machine research.
+* [http://www.dcs.shef.ac.uk/~wmlh/ Mike (Prof. W.M.L.) Holcombe]'s web page at [[Sheffield University]].
+
+== References ==
+
+<references/>
+
+[[Category:Theory of computation]]
+[[Category:Computational models]]
+[[Category:Software testing]]</body> </html>

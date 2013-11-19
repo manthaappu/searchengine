@@ -1,0 +1,41 @@
+<html> <head> <title>CAN Kingdom</title></head><body>'''CAN Kingdom''' is a communications protocol running on top of '''[[Controller Area Network | CAN]]'''. It is designed as a [[fieldbus]]. Unlike other CAN high level protocols, it makes no attempt to follow the [[OSI model]]. The network is mostly distributed, as the nodes may run autonomously except that a "King" or master controller is needed to configure the network.
+
+A major design philosophy behind CAN Kingdom is that the system designer is fully aware of the capabilities of the nodes. A node designer, on the other hand, needs to know nothing about the other nodes: a node merely provides services to the network, and it is up to the system designer to activate a node's services or not through runtime configuration.
+
+==Terminology==
+In order to make network terminology friendly to non systems designers, CAN Kingdom uses lay-friendly names.
+
+*Page : a CAN data payload
+*Envelope : a CAN identifier
+*Letter : a CAN frame
+*Form : a specification for fixed format data presented in a page
+*Document : a set of forms or pages (depending on context)
+*Folder : maps a single document to a set of envelopes
+*City/Mayor : a node and its controller
+*Capital/King : the single master controlling node
+*City Founder : the (human) module designer
+*Kingdom Founder : the (human) network designer
+
+==Capabilities==
+CAN Kingdom provides the following capabilities over bare CAN.
+
+* The King configures which nodes will receive and transmit which messages.
+* It provides an infrastructure for transmitting fixed format data that runs over a single CAN packet payload length. In CAN Kingdom parlance this is known as "document pagination".
+* It allows point to point transfer of data streams, through the "Block Transfer" mechanism.
+* It allows runtime mapping of CAN identifiers with an optional second level of indirection. The first level, from CAN identifier to "folder" must be mapped by the King. The second level, "folder" to "document", can optionally be fixed by the node designer.
+* It provides a mechanism for clock synchronization.
+* It provides a specification for packed bit fields.
+* It provides event driven, "daisy chain", and synchronous messaging.
+* It provides a mechanism to set message filters.
+
+
+
+Because messages can be remapped at runtime, a system designer can configure the system to coexist with nodes on the system which may be using a different high level protocol like [[CANopen]] or [[DeviceNet]].
+
+==See also==
+* [[Controller Area Network]]
+* [[CANopen]]
+* [[DeviceNet]]
+
+[[Category:Network protocols]]
+[[Category:Automation]]</body> </html>

@@ -1,0 +1,229 @@
+<html> <head> <title>Paraconsistent logic</title></head><body>A '''paraconsistent logic''' is a [[logical system]] that attempts to deal with [[contradiction]]s in a discriminating way. Alternatively, paraconsistent logic is the subfield of [[logic]] that is concerned with studying and developing paraconsistent (or “inconsistency-tolerant”) systems of logic.
+
+Inconsistency-tolerant logics have been discussed since at least 1910 (and arguably much earlier, for example in the writings of [[Aristotle]]); however, the term ''paraconsistent'' (“beside the consistent”) was not coined until 1976, by the [[Peru]]vian [[philosopher]] [[Francisco Miró Quesada]].<ref>Priest (2002), p. 288 and §3.3.</ref>
+
+==Definition==
+In [[classical logic]] (as well as [[intuitionistic logic]] and most other logics), contradictions [[Entailment|entail]] everything. This curious feature, known as the [[principle of explosion]] or ''ex contradictione sequitur quodlibet'' ([[Latin]], “from a contradiction, anything follows”), can be expressed formally as
+
+{| border=1 align=center cellpadding=4
+|-
+| <math>P \land\neg P</math>
+| Premise
+|-
+| <math>P\,</math>
+| conjunctive elimination
+|-
+| <math>P \lor A</math>
+| weakening
+|- 
+| <math>\neg P\,</math>
+| conjunctive elimination
+|-
+| <math>A\,</math>
+| disjunctive syllogism
+|}
+
+Which means: if ''P'' and its negation ¬''P'' are both assumed to be true, then ''P'' is assumed to be true, from which it follows that at least one of the claims ''P'' and some other (arbitrary) claim ''A'' is true. However, if we know that either ''P'' or ''A'' is true, and also that ''P'' is not true (that ¬''P'' is true) we can conclude that ''A'', which could be  anything, is true. Thus if a [[theory]] contains a single inconsistency, it is [[trivialism|trivial]]—that is, it has every sentence as a theorem. The characteristic or defining feature of a paraconsistent logic is that it rejects the principle of explosion. As a result, paraconsistent logics, unlike classical and other logics, can be used to formalize inconsistent but non-trivial theories.
+
+==Paraconsistent logics are propositionally weaker than classical logic==
+Paraconsistent logics are [[propositional calculus|propositionally]] ''weaker'' than [[classical logic]]; that is, they deem ''fewer'' propositional inferences valid.  The point is that a paraconsistent logic can never be a propositional extension of classical logic, that is, propositionally validate everything that classical logic does.  In that sense, then, paraconsistent logic is more conservative or cautious than classical logic. It is due to such conservativeness that paraconsistent languages can be more ''expressive'' than their classical counterparts including the hierarchy of [[metalanguage]]s due to [[Tarski]] et al.  According to Feferman [1984]: ''“…natural language abounds with directly or indirectly self-referential yet apparently harmless expressions—all of which are excluded from the Tarskian framework.”''  This expressive limitation can be overcome in paraconsistent logic.
+
+== Motivation ==
+The primary motivation for paraconsistent logic is the conviction that it ought to be possible to reason with inconsistent [[information]] in a controlled and discriminating way. The principle of explosion precludes this, and so must be abandoned. In non-paraconsistent logics, there is only one inconsistent theory: the trivial theory that has every sentence as a theorem. Paraconsistent logic makes it possible to distinguish between inconsistent theories and to reason with them. Sometimes it is possible to revise a theory to make it consistent. In other cases (e.g., large [[software]] systems) it is currently impossible to attain consistency.
+
+Some philosophers take a more radical approach, holding that some contradictions are ''true'', and thus a theory’s being inconsistent is not always an indication that it is incorrect. This view, known as [[dialetheism]], is motivated by several considerations, most notably an inclination to take certain [[paradox]]es such as the [[liar paradox|Liar]] and [[Russell’s paradox]] at face value. Not all advocates of paraconsistent logic are dialetheists. On the other hand, being a dialetheist rationally commits one to some form of paraconsistent logic, on pain of otherwise having to accept everything as true (i.e. [[trivialism]]).
+
+== Tradeoff ==
+
+Paraconsistency does not come for free: it involves a tradeoff. In particular, abandoning the principle of explosion requires one to abandon at least one of the following four very intuitive principles:<ref>See the article on the [[principle of explosion]] for more on this.</ref>
+{| border=1 align=center cellpadding=4
+|[[Disjunction introduction]]
+|<math>A \vdash A \lor B</math>
+|-
+|[[Disjunctive syllogism]]
+|<math>A \lor B, \neg A \vdash B</math>
+|-
+|[[Transitive relation|Transitivity]] or “[[Cut rule|cut]]”
+|<math> \Gamma \vdash A; A \vdash B \Rightarrow \Gamma \vdash B</math>
+|}
+
+Though each of these principles has been challenged, the most popular approach among logicians is to reject disjunctive syllogism. If one is a [[dialetheist]], it makes perfect sense that disjunctive syllogism should fail. The idea behind this syllogism is that, if ''¬ A'', then ''A'' is excluded, so the only way ''A ∨ B'' could be true would be if ''B'' were true. However, if ''A'' and ''¬ A'' can both be true at the same time, then this reasoning fails.
+
+Another approach is to reject disjunction introduction but keep disjunctive syllogism, transitivity. The disjunction (A ∨ B) is defined as ¬ (¬A ∧ ¬B). In this approach all of the rules of [[natural deduction]] hold, except for proof by contradiction and disjunction introduction; moreover, <math>A \vdash B</math> does not mean necessarily that <math>\vdash A \Rightarrow B</math>, which is also a difference from natural deduction.<ref name="Hewitt 2008b">Hewitt (2008b)</ref> Also, the following usual Boolean properties hold:  [[excluded middle]] and (for conjunction and disjunction) [[associativity]], [[commutativity]], [[distributivity]], [[De Morgan’s laws]], and [[idempotence]].  Furthermore, by defining the implication (A → B) as ¬ (A ∧ ¬B),  there is a [[Deduction theorem#Paraconsistent_deduction_theorem|Two-Way Deduction Theorem]]  allowing implications to be easily proved.   [[Carl Hewitt]] favours this approach, claiming that having the usual Boolean properties, Natural Deduction, and Deduction Theorem are huge advantages in [[software engineering]]<ref name="Hewitt 2008a">Hewitt (2008a)</ref><ref name="Hewitt 2008b" />.
+
+Yet another approach is to do both simultaneously. In many systems of [[relevant logic]], as well as [[linear logic]], there are two separate disjunctive connectives. One allows disjunction introduction, and one allows disjunctive syllogism.  Of course, this has the disadvantages entailed by separate disjunctive connectives including confusion between them and complexity in relating them.
+
+The three principles below, when taken together, also entail explosion, so at least one must be abandoned:
+
+{| border=1 align=center cellpadding=4
+|[[Reductio ad absurdum]]
+|<math>A \to (B \wedge \neg B) \vdash \neg A</math>
+|-
+|[[Rule of weakening]]
+|<math>A \vdash B \to A</math>
+|-
+|[[Double negation elimination]]
+|<math>\neg \neg A \vdash A</math>
+|}
+
+Both reductio ad absurdum and the rule of weakening have been challenged in this respect, but without much success. Double negation elimination is challenged, but for unrelated reasons. By removing it alone, while upholding the other two one may still be able to prove all negative propositions from a contradiction.
+
+== A simple paraconsistent logic ==
+
+Perhaps the most well-known system of paraconsistent logic is the simple system known as LP (“[[Logic of Paradox]]”), first proposed by the [[Argentina|Argentinian]] logician [[F. G. Asenjo]] in 1966 and later popularized by [[Graham Priest|Priest]] and others.<ref>Priest (2002), p. 306.</ref>
+
+One way of presenting the semantics for LP is to replace the usual [[function (mathematics)|functional]] valuation with a [[relation (mathematics)|relational]] one.<ref>LP is also commonly presented as a [[many-valued logic]] with three truth values (''true'', ''false'', and ''both'').</ref>  The binary relation <math>V\,</math> relates a [[wff|formula]] to a [[truth value]]: <math>V(A,1)\,</math> means that <math>A\,</math> is true, and <math>V(A,0)\,</math> means that <math>A\,</math> is false. A formula must be assigned ''at least'' one truth value, but there is no requirement that it be assigned ''at most'' one truth value. The semantic clauses for [[negation]] and [[disjunction]] are given as follows:
+* <math>V( \neg A,1) \Leftrightarrow V(A,0)</math>
+* <math>V( \neg A,0) \Leftrightarrow V(A,1)</math>
+* <math>V(A \lor B,1) \Leftrightarrow V(A,1) \ or \ V(B,1)</math>
+* <math>V(A \lor B,0) \Leftrightarrow V(A,0) \ and \ V(B,0)</math>
+(The other [[logical connective]]s are defined in terms of negation and disjunction as usual.)
+Or to put the same point less symbolically:
+* ''not A'' is true [[if and only if]] ''A'' is false
+* ''not A'' is false if and only if ''A'' is true
+* ''A or B'' is true if and only if ''A'' is true or ''B'' is true
+* ''A or B'' is false if and only if ''A'' is false and ''B'' is false
+(Semantic) logical consequence is then defined as truth-preservation: 
+:  <math>\Gamma\vDash A</math> if and only if <math>A\,</math> is true whenever every element of <math>\Gamma\,</math> is true.
+Now consider a valuation <math>V\,</math> such that <math>V(A,1)\,</math> and <math>V(A,0)\,</math> but it is not the case that <math>V(B,0)\,</math>. It is easy to check that this valuation constitutes a [[counterexample]] to both explosion and disjunctive syllogism. However, it is also a counterexample to [[modus ponens]] for the [[material conditional]] of LP. For this reason, proponents of LP usually advocate expanding the system to include a stronger conditional connective that is not definable in terms of negation and disjunction.<ref>See, for example, Priest (2002), §5.</ref>
+
+As one can verify, LP preserves most other inference patterns that one would expect to be valid, such as [[De Morgan’s laws]] and the usual [[Natural deduction|introduction and elimination rules]] for negation, [[Logical conjunction|conjunction]], and disjunction. Surprisingly, the [[logical truth]]s (or [[Tautology (logic)|tautologies]]) of LP are precisely those of classical propositional logic.<ref>See Priest (2002), p. 310.</ref>  (LP and classical logic differ only in the ''[[inference]]s'' they deem valid.)  Relaxing the requirement that every formula be either true or false yields the weaker paraconsistent logic commonly known as FDE (“[[First-Degree Entailment]]”). Unlike LP, FDE contains no logical truths.
+
+It must be emphasized that LP is but one of ''many'' paraconsistent logics that have been proposed.<ref>Surveys of various approaches to paraconsistent logic can be found in Bremer (2005) and Priest (2002), and a large family of paraconsistent logics is developed in detail in Carnielli, Congilio and  Marcos (2007).</ref> It is presented here merely as an illustration of how a paraconsistent logic can work.
+
+== Relation to other logics ==
+
+One important type of paraconsistent logic is [[relevance logic]]. A logic is ''relevant'' [[iff]] it satisfies the following condition:
+
+: if ''A'' → ''B'' is a theorem, then ''A'' and ''B'' share a [[logical constant|non-logical constant]].
+
+It follows that a relevance logic cannot have (''p'' ∧ ¬''p'') → ''q'' as a theorem, and thus (on reasonable assumptions) cannot validate the inference from {''p'', ¬''p''} to ''q''.
+
+Paraconsistent logic has significant overlap with [[many-valued logic]]; however, not all paraconsistent logics are many-valued (and, of course, not all many-valued logics are paraconsistent).
+
+[[Intuitionistic logic]] allows ''A'' ∨ ¬''A'' not to be equivalent to true, while paraconsistent logic allows ''A'' ∧ ¬''A'' not to be equivalent to false. Thus it seems natural to regard paraconsistent logic as the “[[duality (mathematics)|dual]]” of intuitionistic logic. However, intuitionistic logic is a specific logical system whereas paraconsistent logic encompasses a large class of systems. Accordingly, the dual notion to paraconsistency is called [[paracomplete logic|paracompleteness]], and the “dual” of intuitionistic logic (a specific paracomplete logic) is a specific paraconsistent system called ''anti-intuitionistic'' or ''dual-intuitionistic logic'' (sometimes referred to as ''Brazilian logic'', for historical reasons).<ref>See Aoyama (2004).</ref>  The duality between the two systems is best seen within a [[sequent calculus]] framework. While in intuitionistic logic the sequent
+
+: <math>\vdash A \lor \neg A</math>
+
+is not derivable, in dual-intuitionistic logic
+
+: <math>A \land \neg A \vdash</math>
+
+is not derivable. Similarly, in intuitionistic logic the sequent
+
+: <math>\neg \neg A \vdash A</math>
+
+is not derivable, while in dual-intuitionistic logic
+
+: <math>A \vdash \neg \neg A</math>
+
+is not derivable. Dual-intuitionistic logic contains a connective # known as ''pseudo-difference'' which is the dual of intuitionistic implication.   Very loosely, {{nowrap|1=''A'' # ''B''}} can be read as “''A'' but not ''B''”. However, # is not [[truth-functional]] as one might expect a ‘but not’ operator to be; similarly, the intuitionistic implication operator cannot be treated like "{{nowrap|1=¬ (''A'' ∧ ¬''B'')}}".  Dual-intuitionistic logic also features a basic connective ⊤ which is the dual of intuitionistic ⊥: negation may be defined as {{nowrap|1=¬''A'' = (⊤ # ''A'')}}
+
+A full account of the duality between paraconsistent and intuitionistic logic, including an explanation on why dual-intuitionistic and  paraconsistent logics do not coincide, can be found in Brunner and Carnielli (2005).
+
+== Applications ==
+
+Paraconsistent logic has been applied as a means of managing inconsistency in numerous domains, including:<ref name="See Bremer">Most of these are discussed in Bremer (2005) and Priest (2002).</ref>
+* [[Semantics]]. Paraconsistent logic has been proposed as means of providing a simple and intuitive formal account of [[truth]] that does not fall prey to paradoxes such as [[Liar paradox|the Liar]]. However, such systems must also avoid [[Curry’s paradox]], which is much more difficult as it does not essentially involve negation.
+* [[Set theory]] and the [[foundations of mathematics]] (see [[paraconsistent mathematics]]). Some believe{{Who|date=September 2008}} that paraconsistent logic has significant ramifications with respect to the significance of [[Russell’s paradox]] and [[Gödel’s incompleteness theorems]]{{Dubious|Incompleteness theorem|date=November 2008}}.
+* [[Epistemology]] and [[belief revision]]. Paraconsistent logic has been proposed as a means of reasoning with and revising inconsistent theories and belief systems.
+* [[Knowledge management]] and [[artificial intelligence]]. Some [[computer scientist]]s have utilized paraconsistent logic as a means of coping gracefully with inconsistent information.<ref>See, for example, the articles in Bertossi et al. (2004).</ref>
+* [[Deontic logic]] and [[metaethics]]. Paraconsistent logic has been proposed as a means of dealing with ethical and other normative conflicts.
+* [[Software engineering]]. Paraconsistent logic has been proposed as a means for dealing with the pervasive inconsistencies among the [[documentation]], [[use cases]], and [[Source code|code]] of large [[software systems]].<ref name="Hewitt 2008a"/><ref name="Hewitt 2008b"/>
+* [[Electronics]] design routinely uses a [[four valued logic]], with “hi-impedance (z)” and “don’t care (x)” playing similar roles to “don’t know” and “both true and false” respectively, in addition to True and False.  This logic was developed independently of Philosophical logics.
+
+== Criticism ==
+
+Some philosophers have argued against paraconsistent logic on the ground that the counterintuitiveness of giving up any of the three principles above outweighs any counterintuitiveness that the principle of explosion might have.
+
+Others, such as [[David Lewis (philosopher)|David Lewis]], have objected to paraconsistent logic on the ground that it is simply impossible for a statement and its negation to be jointly true.<ref>See Lewis (1982).</ref>  A related objection is that “negation” in paraconsistent logic is not really ''[[negation]]''; it is merely a [[Square of opposition|subcontrary]]-forming operator.<ref>See Slater (1995), Béziau (2000).</ref>
+
+== Alternatives ==
+
+Approaches exist that allow for resolution of inconsistent beliefs without violating any of the intuitive logical principles. Most such systems use [[multi-valued logic]] with [[Bayesian inference]] and the [[Dempster-Shafer theory]], allowing that no non-tautological belief is completely (100%) irrefutable because it must be based upon incomplete, abstracted, interpreted, likely unconfirmed, potentially uninformed, and possibly incorrect knowledge (of course, this very assumption, if non-tautological, entails its own refutability, if by "refutable" we mean "not completely [100%] irrefutable"). These systems effectively give up several logical principles in practice without rejecting them in theory.
+
+== Notable figures ==
+Notable figures in the history and/or modern development of paraconsistent logic include:
+
+* [[Alan Ross Anderson]] ([[USA]], 1925–1973). One of the founders of [[relevance logic]], a kind of paraconsistent logic.
+* [[F. G. Asenjo]] ([[Argentina]])
+* [[Diderik Batens]] ([[Belgium]])
+* [[Nuel Belnap]] ([[USA]], b. 1930). Worked with Anderson on relevance logic.
+* [[Jean-Yves Béziau]] ([[France]]/[[Switzerland]], b. 1965). Has written extensively on the general structural features and philosophical foundations of paraconsistent logics.
+* [[Ross Brady]] ([[Australia]])
+* [[Bryson Brown]] ([[Canada]])
+* [[Walter Carnielli]] ([[Brazil]]). The developer of the  ''possible-translations semantics'',  a new semantics which makes  paraconsistent  logics applicable and  philosophically  understood.
+* [[Newton da Costa]] ([[Brazil]], b. 1929). One of the first to develop formal systems of paraconsistent logic.
+* [[Itala M. L. D’Ottaviano]] ([[Brazil]])
+* [[J. Michael Dunn]] ([[USA]]). An important figure in relevance logic.
+* [[Stanisław Jaśkowski]] ([[Poland]]). One of the first to develop formal systems of paraconsistent logic.
+* [[R. E. Jennings]] ([[Canada]])
+* [[David Kellogg Lewis]] (USA, 1941–2001). Articulate critic of paraconsistent logic.
+* [[Jan Łukasiewicz]] ([[Poland]], 1878–1956)
+* [[Robert K. Meyer]] ([[USA]]/[[Australia]])
+* [[Chris Mortensen (philosopher)|Chris Mortensen]] ([[Australia]]). Has written extensively on [[paraconsistent mathematics]].
+* [[Lorenzo Peña]] ([[Spain]], b. 1944). Has developed an original line of paraconsistent logic, gradualistic logic (also known as ''transitive logic'', TL), akin to [[Fuzzy Logic]].
+* [[Val Plumwood]] [formerly Routley] ([[Australia]], b. 1939). Frequent collaborator with Sylvan.
+* [[Graham Priest]] ([[Australia]]). Perhaps the most prominent advocate of paraconsistent logic in the world today.
+* [[Francisco Miró Quesada]] ([[Peru]]). Coined the term ''paraconsistent logic''.
+* [[Peter Schotch]] ([[Canada]])
+* [[B. H. Slater]] ([[Australia]]). Another articulate critic of paraconsistent logic.
+* [[Richard Sylvan]] [formerly Routley] ([[New Zealand]]/[[Australia]], 1935–1996). Important figure in relevance logic and a frequent collaborator with Plumwood and Priest.
+* [[Nicolai A. Vasiliev]] ([[Russia]], 1880–1940). First to construct logic tolerant to contradiction (1910).
+
+==See also==
+{{Portal|Logic}}
+*[[Deviant logic]]
+*[[Formal logic]]
+*[[Probability logic]]
+*[[Synthetic logic]]
+*[[Table of logic symbols]]
+
+== Notes ==
+<references/>
+
+==Resources==
+* [http://www.amazon.com/dp/1904987737/   ''Handbook of Paraconsistency''] ([[Jean-Yves Béziau]],  [[Walter Carnielli]] and  [[Dov Gabbay]], eds).  London: King's College, 2007.  ISBN 978-1-904987-73-4
+* {{cite journal | author=Aoyama, Hiroshi | title= LK, LJ, Dual Intuitionistic Logic, and Quantum Logic | journal=Notre Dame Journal of Formal Logic | year=2004 | volume=45 | issue= 4 | pages= 193–213 | url=  | doi=10.1305/ndjfl/1099238445}}
+* {{cite book | last=Bertossi | first=Leopoldo et al., eds. | authorlink= | coauthors= | editor=| others= | title=Inconsistency Tolerance | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition= | date= | year=2004 | month= | publisher=Springer | location=Berlin | language= | isbn=3-540-24260-0 | pages= | chapter= | chapterurl= }}
+* {{cite journal | author=Brunner, Andreas and  Carnielli, Walter | title=  Anti-intuitionism and paraconsistency | journal= Journal of Applied Logic | year=2005 | volume=3 | issue= 1 |
+ pages= 161–184 | url=  | doi=10.1016/j.jal.2004.07.016}}
+* {{cite book | last=Béziau | first=Jean-Yves | authorlink= | coauthors= | editor=In D. Batens et al. (eds.) | others= | title=Frontiers of Paraconsistent Logic | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition= | date= | year=2000 | month= | publisher=Research Studies Press | location=Baldock | language= | isbn=0-86380-253-2 | pages=95–111 | chapter=What is Paraconsistent Logic? | chapterurl= }}
+* {{cite book | last=Bremer | first=Manuel | authorlink= | coauthors= | editor= | others= | title=An Introduction to Paraconsistent Logics | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition= | date= | year=2005 | month= | publisher=Peter Lang | location=Frankfurt | language= | isbn=3-631-53413-2 | pages= | chapter= | chapterurl= }}
+* {{cite book | last=Brown | first=Bryson | authorlink= | coauthors= | editor=In Dale Jacquette (ed.) | others= | title=A Companion to Philosophical Logic | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition= | date= | year=2002 | month= | publisher=Blackwell Publishers | location=Malden, Massachusetts | language= | isbn=0-631-21671-5  | pages=628–650 | chapter=On Paraconsistency. | chapterurl= }}
+* {{cite book | last=Carnielli | first=Walter| authorlink= | coauthors= Coniglio, Marcelo E. and  Marcos,  J, | editor=In [[Dov Gabbay|D. Gabbay]] and F. Guenthner (eds.) | others= | title=Handbook of Philosophical Logic, Volume 14 | origdate= | origyear= | origmonth= | url= |format= | accessdate= | edition=2nd | date= | year=2007 | month= | publisher=[[Kluwer Academic Publishers]] | location=The Netherlands | language= | isbn=1-4020-63237 | pages=1–93 | chapter=Logics of Formal Inconsistency, |
+chapterurl= }}
+* {{cite book|author=Feferman, Solomon | year=1984 | chapter=Toward Useful Type-Free Theories, I |title=Journal of Symbolic Logic | url=http://links.jstor.org/sici?sici=0022-4812(198403)49%3A1%3C75%3ATUTTI%3E2.0.CO;2-D}}
+* {{cite web | author=Hewitt, Carl (2008a) | title=Large-scale Organizational Computing requires Unstratified Reflection and Strong Paraconsistency | format= | work=[http://www.springerlink.com/content/tl0638746601/?p=26df887cb7264f41b9167fe5a4e13073&pi=0 Coordination, Organizations, Institutions, and Norms in Agent Systems III]}} Jaime Sichman, Pablo Noriega, Julian Padget and Sascha Ossowski (ed.). Springer-Verlag. 2008.
+* {{cite web | author=Hewitt, Carl (2008b) | title=Common sense for concurrency and inconsistency tolerance using Direct Logic<sup>TM</sup> and the Actor model| format= |url=http://arxiv.org/abs/0812.4852}} ArXiv. 0812.4852.
+* {{cite book | last=Lewis | first=David | authorlink= | coauthors= | editor= | others= | title=Papers in Philosophical Logic | origdate= | origyear=1982 | origmonth= | url= | format= | accessdate= | edition= | date= | year=1998 | month= | publisher=Cambridge University Press | location=Cambridge | language= | isbn=0-521-58788-3 | pages=97–110 | chapter=Logic for Equivocators | chapterurl= }}
+* {{cite journal | last=Peña | first=Lorenzo | authorlink=Lorenzo Peña | title=Graham Priest's 'Dialetheism': Is it altogether true? | origyear=1996 | url=http://lp.jurid.net/articles/logica/dialethe.htm |
+uri=http://hdl.handle.net/10261/9714 | accessdate=2009-05-03 | 
+journal= Sorites | year=1996 | volume=7 | pages= 28–56 | issn=1135-1349 }}
+* {{cite book | last=Priest | first=Graham | authorlink= | coauthors= | editor=In [[Dov Gabbay|D. Gabbay]] and F. Guenthner (eds.) | others= | title=Handbook of Philosophical Logic, Volume 6 | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition=2nd | date= | year=2002 | month= | publisher=[[Kluwer Academic Publishers]] | location=The Netherlands | language= | isbn=1-4020-0583-0  | pages=287–393 | chapter=Paraconsistent Logic. | chapterurl= }}
+* {{cite web | author=Priest, Graham and Tanaka, Koji| year=1996, 2009| title=Paraconsistent Logic | format= | publisher=[[Stanford Encyclopedia of Philosophy]] |work=(First published Tue Sep 24, 1996; substantive revision Fri Mar 20, 2009) | url=http://plato.stanford.edu/entries/logic-paraconsistent/ | accessdate= June 17, 2010}}
+* {{cite journal | author=Slater, B. H. | title= Paraconsistent Logics? | journal=Journal of Philosophical Logic | year=1995 | volume=24 | issue= | pages= 451–454 | url=  | doi=10.1007/BF01048355}}
+* {{cite book | last=Woods | first=John | authorlink= | coauthors= | editor= | others= | title=Paradox and Paraconsistency: Conflict Resolution in the Abstract Sciences | origdate= | origyear= | origmonth= | url= | format= | accessdate= | edition= | date= | year=2003 | month= | publisher=[[Cambridge University Press]] | location=Cambridge | language= | isbn=0-521-00934-0 | pages= | chapter= | chapterurl= }}
+
+==External links==
+* [http://plato.stanford.edu/entries/logic-paraconsistent/ Stanford Encyclopedia of Philosophy “Paraconsistent Logic”]
+* [http://plato.stanford.edu/entries/mathematics-inconsistent/ Stanford Encyclopedia of Philosophy “Inconsistent Mathematics”]
+
+{{Logic}}
+
+[[Category:Systems of formal logic]]
+[[Category:Philosophical logic]]
+[[Category:Non-classical logic]]
+[[Category:Paraconsistent logic]]
+
+[[ca:Lògica paraconsistent]]
+[[de:Parakonsistente Logik]]
+[[es:Lógica paraconsistente]]
+[[eo:Kontraŭdirtolera logiko]]
+[[nl:Paraconsistente logica]]
+[[ja:矛盾許容論理]]
+[[pl:Logika parakonsystentna]]
+[[pt:Lógica paraconsistente]]
+[[fi:Parakonsistentti logiikka]]
+[[sv:Parakonsistent logik]]
+[[zh:次协调逻辑]]</body> </html>

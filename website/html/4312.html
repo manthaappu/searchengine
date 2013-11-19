@@ -1,0 +1,59 @@
+<html> <head> <title>Bootstrapping (computing)</title></head><body>In computing, '''bootstrapping''' (from an old expression "[[:wikt:pull oneself up by one's bootstraps|to pull oneself up by one's bootstraps]]") is a technique by which a simple computer program activates a more complicated system of programs. In the start up process of a [[computer system]], a small program (such as [[BIOS]]) initializes and tests that the [[computer hardware|hardware]], [[peripherals]] and [[external memory]] devices are connected. It then loads a program from one of them and passes control to it, thus allowing the loading of larger programs (such as an [[operating system]]). A different use of the term bootstrapping is to use a [[compiler]] to compile itself, by first writing a small part of a compiler of a new [[programming language]] in an existing language to compile more programs of the new compiler written in the new language. This solves the "[[chicken and egg]]" causality dilemma.
+
+== Booting ==
+{{main|booting}}
+
+Bootstrapping was shortened to [[booting]], or the process of starting up any computer, which is the most common meaning for non-technical computer users.  The [[verb]] "boot" is similarly derived.
+
+A "bootstrap" most commonly refers to the simple program itself that actually begins the initialization of the computer's operating system, like [[GRUB]], [[Linux Loader|LILO]] or [[NTLDR]]. Modern [[personal computer]]s have the ability of using their [[network interface card]] (NIC) for bootstrapping; on [[IA-32]] ([[x86]]) and [[IA-64]] ([[Itanium]]) this method is implemented by [[Preboot Execution Environment|PXE]] and [[Etherboot]].
+
+The computer is regarded as starting in a "blank slate" condition - either its main memory is blank, or else its content is suspect due to a prior crash. Although magnetic core memory retains its state with the power off, there would still exist the problem of loading into it the very first program. A special start program could be very large, and given the modern affordability of read-only memory chips, could constitute the entire program to be run (as in embedded systems), but such an arrangement is inflexible. The bootstrap part would be a short simple piece of code that loads the main code. 
+
+===Example===
+The precise workings of a computer's bootstrap sequence are utterly dependent on the precise features of its hardware. This example avoids the detailed complexity of actual computers in favour of the simplicities of the AMI computer, a simulated computer used for teaching purposes at [[Auckland University]]. It is a decimal-based computer with a thousand words of five-digit memory, having two-digit operation codes with a three-digit address field. Its only input device is a paper-tape like reader that delivers five digits at a time. On starting, its memory is cleared to all zeroes, the next-instruction address register is set to zero, and the instruction register is loaded with the special value 17000. Clearing memory and registers to zero is a simple action for hardware, a facility that will likely find other use, but the arbitrary value would have to be held in special-purpose memory. It is none other than the operation code for "Read", to address zero. The computer's designer could have chosen 00 to be the operation code for "Read", except that other considerations lead to it being preferred as the operation code for "Stop".
+
+Previously, a paper tape has been prepared with the sequence 17001,17002,12000 (commas added for legibility), and is notionally, in the paper tape reader, ready. Action proceeds as follows:
+
+17000 is executed, causing 17001 to be read from tape and placed in address 000.
+
+Because the next instruction address (IA) is 000, the word at memory address 000 is loaded into the instruction register (IR) and IA is incremented, giving the value 001. This is the standard machine code instruction cycle: load the word at IA into IR, increment IA, decode and execute the instruction in IR. Because the (just placed) content of address 000 is 17001, the next word of input is read and placed at address 001, thus it holds 17002.
+
+IA = 001, so the (just placed) value 17002 is loaded to IR and IA incremented. On execution, the 12000 is read from the input and placed at address 002.
+
+IA = 002, so the (just placed) value 12000 is loaded to IR and IA incremented. The operation code 12 is the "Jump" instruction, and although IA had been incremented to 003 after the instruction had been loaded, its action is to change IA to 000 ready for the next instruction cycle.
+
+So at this point, three instructions have been loaded into memory and now the tempo changes; no longer is the input like a carpet unrolled before you as you walk on it. The current state:
+ Address Content  Purpose
+     000   17001  Read a word from the input into the following memory location.
+     001   17002  Execute what was just read above.
+     002   12000  Go back and do it again.
+''This is the bootstrap loader''. The content of memory 001 is irrelevant as it will be overwritten by the first instruction. With IA = 002, the 12000 instruction begins its operation. Further input is now in pairs: a read instruction to some address, followed by the word that the read instruction will read and place in that address. Supposing you wished to load something to address 900, 901, etc. the pairs would be 17900,word,17901,word, etc. though they could be loaded in any order. When the sequence is complete, the last pair would be followed by 12900 (instead of a read) so as to start execution at address 900 (or wherever was desired), changing the tempo again. The most usual follower of the bootstrap program would be a [[Loader_%28computing%29|"loader"]], that is a program that is able to read consecutive words of input and place them at consecutive addresses from some specified starting point, thus halving the amount of input required.
+
+Thus the bootstrap sequence begins with a very simple hardware state, plus arrangements that cause something to be read into memory ''and executed''. That something is the bootstrap loader, which is capable of loading an arbitrary program into an arbitrary part of memory, and then starting it. Note the changes in tempo along the way. The initial state is half-way through the hardware's instruction cycle, as if the instruction had been read into the instruction register but before it is executed. This is followed by the execution of a program that is not in memory except that its instructions are read (from specially-prepared input) into memory just before they are executed, then that simple program is executed, that (due to carefully-prepared input) places a program somewhere in memory, that finally is executed.
+
+== Software bootstrapping ==<!-- This section is linked from [[Kermit (protocol)]] -->
+Bootstrapping can also refer to the development of successively more complex, faster programming environments. The simplest environment will be, perhaps, a very basic text editor (e.g., [[ed (UNIX)|ed]]) and an [[Assembly language#Assembler|assembler]] program. Using these tools, one can write a more complex text editor, and a simple compiler for a higher-level language and so on, until one can have a [[graphical user interface|graphical]] [[integrated development environment|IDE]] and an extremely [[high-level programming language]].
+
+Historically, bootstrapping also refers to early computer program development which has been obviated by [[emulator|emulation]] software now executed in pre-existing computers.  Bootstrapping in program development began during the 1950s when each program was constructed on paper in decimal code or in binary code, bit by bit (1s and 0s), because there was no high-level computer language, no [[compiler]], no assembler, and no [[Linker (computing)|linker]].  A tiny assembler program was hand-coded for a new computer (for example the [[IBM 650]]) which converted a few instructions into binary or decimal code: A1. This simple assembler program was then rewritten in its just-defined [[assembly language]] but with extensions that would enable the use of some additional mnemonics for more complex operation codes.  The enhanced assembler's source program was then assembled by its predecessor's executable (A1) into binary or decimal code to give A2, and the cycle repeated (now with those enhancements available), until the entire instruction set was coded, branch addresses were automatically calculated, and other conveniences (such as conditional assembly, macros, optimisations, etc.) established.  This was how the early assembly program SOAP (Symbolic Optimal Assembly Program) was developed.  Compilers, linkers, loaders, and utilities were then coded in assembly language, further continuing the bootstrapping process of developing complex software systems by using simpler software.
+
+== Compiler bootstrapping ==
+{{main|Bootstrapping (compilers)}}
+
+In [[compiler]] design, a bootstrap or bootstrapping compiler is a compiler that is written in the source language, or a subset of the language, that it compiles. Examples include [[GNU Compiler Collection|gcc]], [[Glasgow Haskell Compiler|GHC]], [[OCaml]], [[BASIC]], [[PL/I]] and more recently the [[Mono (software)|Mono C# compiler]].
+
+== References ==
+<references/>
+
+
+[[Category:Software architecture]]
+
+{{Operating System}}
+
+[[cs:Bootstrapping]]
+[[de:Bootstrapping (Informatik)]]
+[[es:Bootstrapping (informática)]]
+[[et:Alglaadur]]
+[[he:Bootstrapping]]
+[[nl:Bootstrap]]
+[[sk:Münchhausenova metóda]]
+[[sr:Бутстраповање (рачунарство)]]</body> </html>

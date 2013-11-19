@@ -1,0 +1,51 @@
+<html> <head> <title>Cpuinfo falsification</title></head><body>{{Orphan|date=February 2009}}
+{{lowercase}}
+
+'''cpuinfo falsification''' is a [[Lowest common denominator (computers)|lowest common denominator]] technique that can be used on [[GNU]] operating systems to provide backwards compatible behaviour of the compiler and software tools. This technique is typically used on [[IBM compatible]] computers using [[80x86]] series processors, but can be used on other architectures, where applicable.
+
+== Background ==
+
+On [[GNU]] based [[operating system]]s, some software tools, such as the [[compiler]] and package building tools, detect [[CPU]] specific extensions that are incompatible with existing machines. This may cause incompatibility issues during compilation or operation of [[software]] on computers being utilized as [[backward compatible]] replacements.
+
+=== The cpuinfo falsification project ===
+
+The '''cpuinfo falsification project''' provides an assortment of patches to the [[GNU operating system]] to provide [[i386]] compatible behaviour of the compiler and software tools without the need for explicit [[cross compilation]].
+
+==== setarch ====
+
+The Unix [[setarch]] command provides the facility to generate falsified generic architecture information for system building. However, this does not currently work on [[GNU]] based [[operating system]]s:
+
+ # The setarch utility does not work at this time
+ setarch i386
+ uname -m
+ i686       <--- It's not working.
+
+==== uname_hack ====
+
+The '''uname_hack''' kernel module causes generic architecture information to be provided by the kernel.
+
+==== uname ====
+
+The [[uname]] utility is fixed by loading the [[uname hack]] module. This provides falsified processor information for "[[Lowest common denominator (computers)|lowest common denominator]]" compatibility. 
+
+ uname -m
+ i686     <--- This is no good
+ insmod uname_hack.ko
+ uname -m
+ i386     <--- This will work just fine on a Pentium
+
+=== /proc/cpuinfo ===
+
+The /proc/cpuinfo file is patched by using a [[bindmount]] to overlay a file containing falsified [[CPU]] related information:
+
+ if [ -e /etc/cpuinfo] ; then
+   mount—bind /etc/cpuinfo /proc/cpuinfo
+ fi 
+
+{{GNU}}
+
+[[Category:Compiler optimizations]]
+
+{{Compu-prog-stub}}
+{{linux-stub}}
+{{free-software-stub}}</body> </html>

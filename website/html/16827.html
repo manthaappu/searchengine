@@ -1,0 +1,54 @@
+<html> <head> <title>Hit-or-miss transform</title></head><body>In [[mathematical morphology]], '''hit-or-miss transform''' is an operation that detects a given configuration (or pattern) in a [[binary image]], using the morphological [[erosion (morphology)|erosion]] operator and a pair of [[disjoint]] [[structuring element]]s. The result of the hit-or-miss transform is the set of positions, where the first structuring element fits in the foreground of the input image, and the second structuring element misses it completely. 
+
+== Mathematical definition ==
+
+In binary morphology, an image is viewed as a [[subset]] of an [[Euclidean space]] <math>\mathbb{R}^d</math> or the integer grid <math>\mathbb{Z}^d</math>, for some dimension ''d''. Let us denote this space or grid by ''E''. 
+
+A structuring element is a simple, pre-defined shape, represented as a binary image, used to probe another binary image, in morphological operations such as [[erosion (morphology)|erosion]], [[dilation (morphology)|dilation]], [[opening (morphology)|opening]], and [[closing (morphology)|closing]].
+
+Let <math>C</math> and <math>D</math> be two structuring elements satisfying <math>C\cap D=\emptyset</math>. The pair (''C'',''D'') is sometimes called ''composite structuring element''. The hit-or-miss transform of a given image ''A'' by ''B''=(''C'',''D'') is given by:
+
+::<math>A\odot B=(A\ominus C)\cap(A^c\ominus D)</math>,
+
+where <math>A^c</math> is the [[set complement]] of ''A''.
+
+That is, a point ''x'' in ''E'' belongs to the hit-or-miss transform output if ''C'' translated to ''x'' fits in ''A'', and ''D'' translated to ''x'' misses ''A'' (fits the background of ''A'').
+
+== Some applications ==
+
+===Thinning===
+
+Let <math>E=Z^2</math>, and consider the eight composite structuring elements, composed by: 
+
+:<math>C_1=\{(0,0),(-1,-1),(0,-1),(1,-1)\}</math> and <math>D_1=\{(-1,1),(0,1),(1,1)\}</math>
+:<math>C_2=\{(-1,0),(0,0),(-1,-1),(0,-1),\}</math> and <math>D_2=\{(0,1),(1,1),(1,0)\}</math>
+and the three rotations of each by <math>90^o</math>, <math>180^o</math>, and <math>270^o</math>. The corresponding composite structuring elements are denoted <math>B_1,\ldots,B_8</math>. 
+
+For any ''i'' between 1 and 8, and any binary image ''X'', define
+::<math>X\otimes B_i=X\setminus (X\odot B_i)</math>,
+where <math>\setminus</math> denotes the [[set minus|set-theoretical difference]].
+
+The thinning of an image ''A'' is obtained by cyclically iterating until convergence:
+
+:<math>A\otimes B_1\otimes B_2\otimes\ldots\otimes B_8\otimes B_1\otimes B_2\otimes\ldots</math>.
+
+===Other applications===
+
+* '''[[Pattern detection]]'''. By definition, the hit-or-miss transform indicates the positions where a certain pattern (characterized by the composite structuring element ''B'') occurs in the input image. 
+
+* '''[[Pruning (morphology)|Pruning]]'''. The hit-or-miss transform can be used to identify the end-points of a line to allow this line to be shrunk from each end to remove unwanted branches.
+
+* Computing the '''[[Euler number (topology)|Euler number]]'''.
+
+==Bibliography==
+* ''An Introduction to Morphological Image Processing'' by Edward R. Dougherty, ISBN 0-8194-0845-X (1992)
+
+==External links==
+* Mathematica  [http://reference.wolfram.com/mathematica/ref/HitMissTransform.html HitMissTransform] function and application examples.
+
+
+
+[[Category:Mathematical morphology]]
+[[Category:Digital geometry]]
+
+[[nl:Hit-or-miss-transformatie]]</body> </html>

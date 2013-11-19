@@ -1,0 +1,124 @@
+<html> <head> <title>ReiserFS</title></head><body>{{About|ReiserFS version 3|version 4|Reiser4}}
+
+{{Mergefrom|Namesys|date=September 2008}}
+
+{{Infobox Filesystem 
+ |name = ReiserFS
+ |full_name = ReiserFS
+ |developer = [[Namesys]]
+ |introduction_os = [[Linux]] 2.4.1
+ |introduction_date = 2001
+ |OS = Linux
+ |partition_id = <tt>Apple_UNIX_SVR2</tt> ([[Apple Partition Map]])<br><tt>0x83</tt> ([[Master boot record|MBR]])<br><tt>[[Basic Data Partition|EBD0A0A2-B9E5-4433-87C0-68B6B72699C7]]</tt> ([[GUID Partition Table|GPT]])
+ |directory_struct = [[B+ tree]]
+ |file_struct = [[bit array|Bitmap]] [http://namesys.com/X0reiserfs.html#nodelayout]
+ |bad_blocks_struct =
+ |max_filename_size = 4032 bytes, limited to 255 by Linux VFS
+ |max_files_no = 2<sup>32</sup>-3 (~4 billion) [http://namesys.com/faq.html#reiserfsspecs]
+ |max_volume_size = 16 [[tebibyte|TiB]] [http://namesys.com/faq.html#reiserfsspecs]
+ |max_file_size = 1 [[exbibyte|EiB]] (8 [[tebibyte|TiB]] on 32 bit systems) [http://namesys.com/faq.html#reiserfsspecs]
+ |filename_character_set = All bytes except [[Null character|NULL]] and <code>'/'</code>
+ |dates_recorded = modification (mtime), metadata change (ctime), access (atime)
+ |date_range = December 14, 1901 - January 18, 2038
+ |date_resolution = 1s
+ |forks_streams = Extended attributes
+ |attributes =
+ |file_system_permissions = Unix permissions, [[Access control list|ACL]]s and arbitrary security attributes
+ |compression = No
+ |encryption = No
+ |
+}}
+
+'''ReiserFS''' is a general-purpose, [[journaling file system|journaled computer file system]] designed and implemented by a team at [[Namesys]] led by [[Hans Reiser]]. ReiserFS is currently supported on [[Linux]]. Introduced in version 2.4.1 of the [[Linux kernel]], it was the first journaling file system to be included in the standard kernel. ReiserFS is the default file system on the [[Elive]], [[Xandros]], [[Linspire]], [[GoboLinux]], and [[YOPER|Yoper]] [[Linux distribution]]s. ReiserFS was the default file system in [[Novell]]'s SUSE Linux Enterprise until Novell decided to move to [[ext3]] on October 12, 2006 for future releases.
+<ref name=shankland1>{{cite news |first=Stephen |last=Shankland |title=Novell makes file storage software shift |url=http://news.com.com/Novell+makes+file-storage+software+shift/2100-1016_3-6125509.html |work=Business Tech |publisher=cnet |date=2006-10-12}}.</ref>
+
+Namesys considers ReiserFS (now occasionally referred to as Reiser3) stable and feature-complete and, with the exception of security updates and critical bug fixes, has thus ceased development on it to concentrate on its successor, [[Reiser4]].
+
+==Features==
+At the time of its introduction, ReiserFS offered features that had not been available in existing Linux file systems:
+* [[Metadata]]-only [[journaling file system|journaling]] (also block journaling, since Linux 2.6.8), its most-publicized advantage over what was the stock Linux file system at the time, [[ext2]].
+* Online resizing (growth only), with or without an underlying volume manager such as [[Logical Volume Manager (Linux)|LVM]]. Since then, Namesys has also provided tools to resize (both grow and shrink) ReiserFS file systems offline.
+* [[Tail packing]], a scheme to reduce [[Fragmentation (computer)#Internal fragmentation|internal fragmentation]]. Tail packing, however, can have a significant performance impact. Reiser4 may have improved this by packing tails where it does not hurt performance.<ref>{{cite web |url=http://www.namesys.com/v4/v4.html#BLOBs |title=Reiser4 is released! |accessdate=2006-07-15 |last=Reiser |first=Hans}}</ref>
+
+==Performance==
+Compared with [[ext2]] and [[ext3]] in version 2.4 of the Linux kernel, when dealing with files under 4 [[KiB]] and with tail packing enabled, ReiserFS may be faster. This was said to be of great benefit in [[Usenet]] news spools, HTTP caches, mail delivery systems and other applications where performance with small files is critical.  However, in practice news spools use a feature called cycbuf, which holds articles in one large file; fast HTTP caches and several [[revision control]] systems use similar approach, nullifying these performance advantages.  For email servers, reiserfs was problematic due to semantic problems explained below.  Also, ReiserFS had a problem with very fast filesystem aging when compared to other filesystems - in several usage scenarios filesystem performance lowered dramatically with time.
+
+Before Linux 2.6.33 <ref>{{cite web|url=http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=8ebc423238341b52912c7295b045a32477b33f0 |title=kill-the-BKL |publisher=git.kernel.org}}</ref>, ReiserFS heavily used the [[Giant lock|big kernel lock]] (BKL) &mdash; a global kernel-wide lock &mdash; which does not scale very well<ref name=mahoney-proposal>{{cite web |author = Jeff Mahoney |url=http://article.gmane.org/gmane.linux.suse.opensuse.devel/4312 | date = 2006 9 14 | title = Proposal: Change in default fs for releases >= 10.2 | accessdate = 2009 8 23 | publisher = gmane.org }}. Also see the  [http://thread.gmane.org/gmane.linux.suse.opensuse.devel/4312 discussion thread stored at gmane.org]</ref>
+for systems with multiple cores, as the critical code parts are only ever executed by one core at a time.
+
+==Criticism==
+Some directory operations (including <tt>unlink</tt>(2)) are not [[Synchronization|synchronous]] on ReiserFS, which can result in data corruption with applications relying heavily on file-based locks (such as [[mail transfer agent]]s [[qmail]]<ref>Daniel Robbins (2001), [http://www-128.ibm.com/developerworks/library/l-fs2.html#h21367 "Advanced file system implementor's guide"]. Retrieved 5. July 2006</ref> and [[Postfix (software)|Postfix]]<ref>Matthias Andree (2001), [[Linux kernel mailing list|LKML]] post on [http://www.ussg.iu.edu/hypermail/linux/kernel/0107.3/0358.html Postfix synchronity assumptions]. Retrieved 15. July 2006</ref>)  if the machine halts before it has synchronized the disk.<ref>[http://archives.neohapsis.com/archives/postfix/2001-05/1749.html NEOHAPSIS - Peace of Mind Through Integrity and Insight<!-- Bot generated title -->]</ref>
+
+There are no programs to specifically [[defragmentation|defragment]] a ReiserFS file system, although tools have been written to automatically copy the contents of fragmented files hoping that more contiguous blocks of free space can be found. However, a "repacker" tool was planned for the next Reiser4 file system to deal with file fragmentation.<ref>Hans Reiser, [http://www.namesys.com/v4/v4.html#repacker Reiser4 design, repacker]. Retrieved 5. July 2006</ref>
+
+====fsck====
+The tree rebuild process of ReiserFS's [[fsck]] has attracted much criticism: If the file system becomes so badly corrupted that its internal tree is unusable, performing a tree rebuild operation may further corrupt existing files or introduce new entries with unexpected contents,<ref>[http://www.uwsg.iu.edu/hypermail/linux/kernel/0506.3/0219.html Theodore Ts'o LKML post]. Retrieved 5. July 2006</ref> but this action is not part of normal operation or a normal file system check and has to be explicitly initiated and confirmed by the administrator.
+
+ReiserFS v3 images should not be stored on a ReiserFS v3 [[Partition (computing)|partition]] (e.g. backups or [[disk image]]s for emulators) without transforming them (e.g., by compressing or encrypting) in order to avoid confusing the rebuild. Reformatting an existing ReiserFS v3 partition can also leave behind data that could confuse the rebuild operation and make files from the old system reappear. This also allows malicious users to intentionally store files that will confuse the rebuilder. As the metadata is always in a consistent state after a file system check, ''corruption'' here means that contents of files are merged in unexpected ways with the contained file system's metadata. The ReiserFS successor, Reiser4, fixes this problem.
+
+====Earlier issues====
+ReiserFS in versions of the Linux kernel before 2.4.16 were considered unstable by Namesys and not recommended for production use, especially in conjunction with [[Network File System (protocol)|NFS]].<ref>[http://namesys.com/download.html ReiserFS download page], see warning. Retrieved 5. July 2006</ref>
+
+Early implementations of ReiserFS (prior to that in Linux 2.6.2) were also susceptible to out-of-order write hazards. But the current journaling implementation in ReiserFS is now on par with that of [[ext3]]'s "ordered" journaling level.
+
+==== Novell / SuSE move away from ReiserFS to ext3 ====
+
+Jeff Mahoney of SuSE wrote a post on Sep 14 2006 proposing to move from ReiserFS to [[ext3]] for the default installation file system.<ref name=mahoney-proposal/> Some reasons he mentioned were scalability, "performance problems with [[extended attributes]] and [[access control list|ACL]]s", "a small and shrinking development community", and that "[[Reiser4]] is not an incremental update and requires a reformat, which is unreasonable for most people."<ref name=mahoney-proposal/> On October 4 he wrote a response comment on a blog in order to clear up some issues.<ref name=mahoney-comment29/> He wrote that his proposal for the switch was unrelated to Reiser's "legal troubles" (i.e. Hans Reiser [[Hans Reiser|murdering his wife, and his subsequent conviction]])<ref>{{cite web | url = cbs5.com/topstories/local_story_256204954.html | archiveurl = http://web.archive.org/web/20061106173127/cbs5.com/topstories/local_story_256204954.html| title = Oakland Police Search Home Of Missing Woman's Ex | publisher = cbs5.com / archive.org | author = CBS 5 / AP / BCN | archivedate = 2006 11 06 | date = 2006 9 14 | accessdate = 2009 8 23 }}</ref> Mahoney wrote he "was concerned that people would make a connection where none existed" and that "the timing is entirely coincidental and the motivation is unrelated."<ref name=mahoney-comment29>{{cite web| url = http://linux.wordpress.com/2006/09/27/suse-102-ditching-reiserfs-as-it-default-fs/#comment-28534 | archiveurl = http://web.archive.org/web/20061109162537/http://linux.wordpress.com/2006/09/27/suse-102-ditching-reiserfs-as-it-default-fs/#comment-28534
+| date = 2006 10 4 | archivedate = 2006 11 09 | accessdate = 2009 8 23 | title = SUSE 10.2 Ditching ReiserFS as its’ default FS? (comment 29) | author = comment by Jeff Mahoney | publisher = linux.wordpress.com / archive.org }}</ref>
+
+On Oct 12, 2006, [[Novell]] similarly announced that [[SUSE Linux distributions#SUSE Linux Enterprise|SuSE Linux Enterprise]] would switch from ReiserFS to ext3.<ref name=shankland1/>
+
+==Design==
+ReiserFS stores file metadata ("stat items"), [[directory (file systems)|directory]] entries ("directory items"), [[inode]] block lists ("indirect items"), and tails of [[computer file|files]] ("direct items") in a single, combined [[B+ tree]] keyed by a universal object ID. Disk blocks allocated to nodes of the tree are "formatted internal blocks".  Blocks for leaf nodes (in which items are packed end-to-end) are "formatted leaf blocks".  All other blocks are "unformatted blocks" containing file contents.  Directory items with too many entries or indirect items which are too long to fit into a node spill over into the right leaf neighbour. Block allocation is tracked by [[free space bitmap]]s in fixed locations.
+
+By contrast, [[ext2]] and other Berkeley [[Berkeley Fast File System|FFS]]-like file systems of that time simply used a fixed formula for computing inode locations, hence limiting the number of files they may contain.<ref>{{cite conference |author=Mingming Cao, [[Theodore Y. Ts'o]], Badari Pulavarty, [[Suparna Bhattacharya]] |date=2005-07-26 |title=State of the Art: Where we are with the Ext3 file system |publisher=IBM Linux Technology Center |booktitle=2005 Linux Symposium |location=Ottawa, Canada |url=http://ext2.sourceforge.net/2005-ols/paper-html/node40.html |accessdate=2007-03-08 }}</ref> Most such file systems also store directories as simple lists of entries, which makes directory lookups and updates [[linear time]] operations and degrades performance on very large directories. The single [[B+ tree]] design in ReiserFS avoids both of these problems due to better scalability properties.
+
+==See also==
+*[[Comparison of file systems]]
+*[[Namesys]]
+*[[Reiser4]]
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://web.archive.org/web/20071024001500/http://www.namesys.com/ Namesys web site] (archived version from 2007 October)
+*[https://ftp.kernel.org/pub/linux/utils/fs/reiserfs/ reiserfsprogs], new $HOME
+*Theodore Ts'o [http://www.linuxmafia.com/faq/Filesystems/reiserfs.html critiques] the ReiserFS block journaling implementation
+*[http://tzukanov.narod.ru/convertfs convertfs], a utility which performs in-place conversion between any two file systems with sparse file support
+*An overview of the ReiserFS [http://p-nand-q.com/download/rfstool/reiserfs_docs.html on-disk format]
+*Florian Buchholz's [http://www.cerias.purdue.edu/homes/florian/reiser/reiserfs.php The structure of the Reiser file system], a very detailed description of the ReiserFS disk structures.
+*[http://forums.gentoo.org/viewtopic-p-3081971.html Gentoo Forum Link] - Discussion on ReiserFS fragmentation, including a script for measuring fragmentation and defragmenting files.
+*[http://web.archive.org/web/20071024001500/http://www.namesys.com/whitepaper.html Reiser4 Future Vision]
+*Windows utilities to access ReiserFS: [http://p-nand-q.com/e/reiserfs.html RFSTOOL], [http://yareg.akucom.de/ YAReG - Yet Another R(eiser)FStool GUI], [http://www.acc.umu.se/~bosse/ rfsd - ReiserDriver].
+
+{{Filesystem}}
+
+{{DEFAULTSORT:Reiserfs}}
+
+[[Category:2001 software]]
+[[Category:Computer file systems]]
+[[Category:Disk file systems]]
+[[Category:Linux file systems]]
+
+[[bg:ReiserFS]]
+[[cs:ReiserFS]]
+[[da:ReiserFS]]
+[[de:Reiser File System]]
+[[es:ReiserFS]]
+[[eo:ReiserFS]]
+[[eu:ReiserFS]]
+[[fr:ReiserFS]]
+[[gl:ReiserFS]]
+[[it:ReiserFS]]
+[[lt:ReiserFS]]
+[[nl:Reiser FS]]
+[[ja:ReiserFS]]
+[[no:ReiserFS]]
+[[pl:ReiserFS]]
+[[pt:ReiserFS]]
+[[ru:ReiserFS]]
+[[sv:ReiserFS]]
+[[tr:ReiserFS]]
+[[uk:ReiserFS]]
+[[zh:ReiserFS]]</body> </html>

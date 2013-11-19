@@ -1,0 +1,233 @@
+<html> <head> <title>Digest access authentication</title></head><body>{{HTTP}}
+'''Digest access authentication''' is one of the agreed methods a [[web server]] can use to negotiate credentials with a web user's [[Web browser|browser]].  It uses [[encryption]] to send the [[password]] over the network which is safer than the [[Basic access authentication]] that sends [[plaintext]]. 
+
+Technically digest authentication is an application of [[MD5]] [[cryptographic hash]]ing with usage of [[Cryptographic nonce|nonce]] values to discourage [[cryptanalysis]]. It uses the [[HTTP]] protocol.
+
+== Overview ==
+
+Digest access authentication was originally specified by RFC 2069 (''An Extension to HTTP: Digest Access Authentication''). RFC 2069 specifies roughly a traditional digest authentication scheme with security maintained by a server-generated [[Cryptographic nonce|nonce]] value. The authentication response is formed as follows (where HA1, HA2, A1, A2 are names of string variables):
+
+:<math>\mathrm{HA1} = \mathrm{MD5}\Big(\mathrm{A1}\Big) = \mathrm{MD5}\Big( \mathrm{username} : \mathrm{realm} : \mathrm{password} \Big)</math>
+:<math>\mathrm{HA2} = \mathrm{MD5}\Big(\mathrm{A2}\Big) = \mathrm{MD5}\Big( \mathrm{method} : \mathrm{digestURI} \Big)</math>
+:<math>\mathrm{response} = \mathrm{MD5}\Big( \mathrm{HA1} : \mathrm{nonce} : \mathrm{HA2} \Big) </math>
+
+RFC 2069 was later replaced by RFC 2617 (''HTTP Authentication: Basic and Digest Access Authentication'').  RFC 2617 introduced a number of optional security enhancements to digest authentication; "quality of protection" (qop), nonce counter incremented by client, and a client-generated random nonce.  These enhancements are designed to protect against, for example, [[chosen-plaintext attack]] [[cryptanalysis]]. 
+
+:<math>\mathrm{HA1} = \mathrm{MD5}\Big(\mathrm{A1}\Big) = \mathrm{MD5}\Big( \mathrm{username} : \mathrm{realm} : \mathrm{password} \Big)</math>
+
+If the qop directive's value is "auth" or is unspecified, then HA2 is
+
+:<math>\mathrm{HA2} = \mathrm{MD5}\Big(\mathrm{A2}\Big) = \mathrm{MD5}\Big( \mathrm{method} : \mathrm{digestURI} \Big)</math>
+
+If the qop directive's value is "auth-int" , then HA2 is
+
+:<math>\mathrm{HA2} = \mathrm{MD5}\Big(\mathrm{A2}\Big) = \mathrm{MD5}\Big( \mathrm{method} : \mathrm{digestURI} : \mathrm {MD5}(entityBody)\Big)</math>
+
+If the qop directive's value is "auth" or "auth-int" , then compute the response as follows:
+
+:<math>\mathrm{response} = \mathrm{MD5}\Big( \mathrm{HA1} : \mathrm{nonce} : \mathrm{nonceCount} : \mathrm{clientNonce} : \mathrm{qop} : \mathrm{HA2} \Big)</math>
+
+If the qop directive is unspecified, then compute the response as follows:
+
+:<math>\mathrm{response} = \mathrm{MD5}\Big( \mathrm{HA1} : \mathrm{nonce} : \mathrm{HA2} \Big) </math>
+
+The above shows that when qop is not specified, the simpler RFC 2069 standard is followed.
+
+== Impact of MD5 security on digest authentication ==
+
+The MD5 calculations used in HTTP digest authentication is intended to be "[[one-way function|one way]]", meaning that it should be difficult to determine the original input when only the output is known.  If the password itself is too simple, however, then it may be possible to test all possible inputs and find a matching output (a [[brute-force attack]]) – perhaps aided by a dictionary or suitable look-up list.
+
+The HTTP scheme was designed at [[CERN]] in 1993 and does not incorporate subsequent improvements in authentication systems, such as the development of keyed-hash message authentication code ([[HMAC]]). Although the [[cryptography|cryptographic]] construction that is used is based on the [[MD5]] hash function, [[collision attack]]s were in 2004 generally believed to not affect applications where the plaintext (i.e. password) is not known.<ref name="CryptoRes-2004">{{cite web
+  | title = Hash Collision Q&A
+  | url = http://www.cryptography.com/cnews/hash.html
+  | date = (date unidentified)
+  | publisher = [[Cryptography Research]]
+  | accessdate = 2010-07-02
+  | archiveurl = http://web.archive.org/web/20040901184053/http://www.cryptography.com/cnews/hash.html
+  | archivedate = 2004-09-01
+}} ''NOTE: Specific information not given; needs quote from exact version of this page originally cited.''</ref>{{fact|date=June 2010}}
+However, claims in 2006 (Kim, Biryukov2, Preneel, Hong, [http://eprint.iacr.org/2006/187.pdf "On the Security of HMAC and NMAC Based on HAVAL MD4 MD5 SHA-0 and SHA-1"]) cause some doubt over other MD5 applications as well. So far, however, MD5 collision attacks have not been shown to pose a threat to digest authentication, and the RFC 2617 allows servers to implement mechanisms to detect some collision and replay attacks.
+
+== HTTP digest authentication considerations ==
+
+=== Advantages ===
+
+HTTP digest authentication is designed to be more secure than traditional digest authentication schemes; e.g., "significantly stronger than (e.g.) [[CRAM-MD5]] ..." ([http://www.ietf.org/rfc/rfc2617.txt RFC2617]).
+
+Some of the security strengths of HTTP digest authentication are:
+
+* The password is not used directly in the digest, but rather HA1 = MD5(username:realm:password). This allows some implementations (e.g. [[JBoss]] [http://wiki.jboss.org/wiki/Wiki.jsp?page=DIGESTAuth DIGESTAuth]) to store HA1 rather than the [[cleartext]] password.
+* Client [[Cryptographic_nonce|nonce]] was introduced in RFC2617, which allows the client to prevent [[chosen plaintext]] attacks (which otherwise makes e.g. [[rainbow table]]s a threat to digest authentication schemes).
+* Server nonce is allowed to contain timestamps. Therefore the server may inspect nonce attributes submitted by clients, to prevent replay attacks. 
+* Server is also allowed to maintain a list of recently issued or used server nonce values to prevent reuse.
+
+=== Disadvantages ===
+
+Digest access authentication is intended as a security trade-off. It is intended to replace unencrypted HTTP [[basic access authentication]]. It is not, however, intended to replace strong authentication protocols, such as [[Public-key cryptography|public-key]] or [[Kerberos (protocol)|Kerberos]] authentication.  
+
+In terms of security, there are several drawbacks with digest access authentication:
+* Many of the security options in RFC 2617 are optional. If quality-of-protection (qop) is not specified by the server, the client will operate in a security-reduced legacy RFC 2069 mode.
+* Digest access authentication is vulnerable to a [[Man-in-the-middle attack|man-in-the-middle (MitM) attack]]. For example, a MitM attacker could tell clients to use basic access authentication or legacy RFC2069 digest access authentication mode. To extend this further, digest access authentication provides no mechanism for clients to verify the server's identity.
+* Some servers require passwords to be stored using reversible encryption. However, it is possible to instead store the digested value of the username, realm, and password.<ref name="rfc2617-s4.13">http://tools.ietf.org/html/rfc2617#section-4.13</ref>
+
+=== Alternative authentication protocols ===
+
+Some strong authentication protocols for web-based applications include:
+* [[Public key]] authentication (usually implemented with [[HTTPS]] / [[Secure Sockets Layer|SSL]] client certificates).
+* [[Kerberos (protocol)|Kerberos]] or [[SPNEGO]] authentication, primarily employed by [[Microsoft IIS]] running configured for "[[Integrated Windows Authentication]]".
+* [[Secure Remote Password protocol]] (preferably within the [[HTTPS]] / [[Transport Layer Security|TLS]] layer).
+
+Weak cleartext protocols are also often in use:
+* [[Basic access authentication]] scheme 
+* [[HTTP+HTML form-based authentication]] 
+These weak cleartext protocols used together with HTTPS network encryption resolve many of the threats that digest access authentication is designed to prevent.
+
+== Example with explanation ==
+
+The following example was originally given in RFC 2617 and is expanded here to show the full text expected for each request and response.  Note that only the "auth" (authentication) quality of protection code is covered – at the time of writing, only the [[Opera (web browser)|Opera]] and [[Konqueror]] [[web browser]]s are known to support "auth-int" (authentication with integrity protection).  Although the specification mentions HTTP version 1.1, the scheme can be successfully added to a version 1.0 server, as shown here.
+
+This typical transaction consists of the following steps.
+
+* The client asks for a page that requires authentication but does not provide a [[username]] and password.   Typically this is because the user simply entered the address or followed a [[hyperlink|link]] to the page.
+* The server responds with the [[HTTP_401#4xx_Client_Error|401]] "client-error" response code, providing the authentication realm and a randomly-generated, single-use value called a [[cryptographic nonce|nonce]].
+* At this point, the client will present the authentication realm (typically a description of the computer or system being accessed) to the user and prompt for a username and password.  The user may decide to cancel at this point.
+* Once a username and password have been supplied, the client re-sends the same request but adds an authentication header that includes the response code.
+* In this example, the server accepts the authentication and the page is returned.  If the username is invalid and/or the password is incorrect, the server might return the "401" response code and the client would prompt the user again.
+
+Note: A client may already have the required username and password without needing to prompt the user, e.g. if they have previously been stored by a web browser.
+
+----
+
+; Client request (no authentication):
+
+ GET /dir/index.html HTTP/1.0
+ Host: localhost
+
+(followed by a [[Newline|new line]], in the form of a [[carriage return]] followed by a [[line feed]]).{{fact|date=July 2010}}
+
+; Server response:
+
+ HTTP/1.0 401 Unauthorized
+ Server: HTTPd/0.9
+ Date: Sun, 10 Apr 2005 20:26:47 GMT
+ WWW-Authenticate: Digest realm="testrealm@host.com",
+                         qop="auth,auth-int",
+                         nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+                         opaque="5ccc069c403ebaf9f0171e9517f40e41"
+ Content-Type: text/html
+ Content-Length: 311
+ 
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+ <HTML>
+   <HEAD>
+     <TITLE>Error</TITLE>
+     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   </HEAD>
+   <nowiki><BODY><H1>401 Unauthorized.</H1></BODY></nowiki>
+ </HTML>
+
+; Client request (username "Mufasa", password "Circle Of Life"):
+
+ GET /dir/index.html HTTP/1.0
+ Host: localhost
+ Authorization: Digest username="Mufasa",
+                      realm="testrealm@host.com",
+                      nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+                      uri="/dir/index.html",
+                      qop=auth,
+                      nc=00000001,
+                      cnonce="0a4f113b",
+                      response="6629fae49393a05397450978507c4ef1",
+                      opaque="5ccc069c403ebaf9f0171e9517f40e41"
+
+(followed by a blank line, as before).
+
+; Server response:
+
+ HTTP/1.0 200 OK
+ Server: HTTPd/0.9
+ Date: Sun, 10 Apr 2005 20:27:03 GMT
+ Content-Type: text/html
+ Content-Length: 7984
+
+(followed by a blank line and HTML text of the restricted page).
+
+----
+
+The "response" value is calculated in three steps, as follows.  Where values are combined, they are [[delimiter|delimited]] by [[colon (punctuation)|colon]] symbols.
+
+# The MD5 hash of the combined username, authentication realm and password is calculated.  The result is referred to as HA1.
+# The MD5 hash of the combined method and digest [[Uniform Resource Identifier|URI]] is calculated, e.g. of <code>"GET"</code> and <code>"/dir/index.html"</code>.  The result is referred to as HA2.
+# The MD5 hash of the combined HA1 result, server nonce (nonce), request counter (nc), client nonce (cnonce), quality of protection code (qop) and HA2 result is calculated.  The result is the "response" value provided by the client.
+
+Since the server has the same information as the client, the response can be checked by performing the same calculation.  In the example given above the result is formed as follows, where <code>MD5()</code> represents a function used to calculate an MD5 hash, backslashes represent a continuation and the quotes shown are not used in the calculation.
+
+Completing the example given in RFC 2617 gives the following results for each step.
+
+    HA1 = MD5( "Mufasa:testrealm@host.com:Circle Of Life" )
+        = 939e7578ed9e3c518a452acee763bce9
+ 
+    HA2 = MD5( "GET:/dir/index.html" )
+        = 39aff3a2bab6126f332b942af96d3366
+ 
+    Response = MD5( "939e7578ed9e3c518a452acee763bce9:\
+                     dcd98b7102dd2f0e8b11d0f600bfb0c093:\
+                     00000001:0a4f113b:auth:\
+                     39aff3a2bab6126f332b942af96d3366" )
+             = 6629fae49393a05397450978507c4ef1
+
+At this point the client may make another request, reusing the server nonce value (the server only issues a new nonce for each "401" response) but providing a new client nonce (cnonce).  For subsequent requests, the hexadecimal request counter (nc) must be greater than the last value it used – otherwise an attacker could simply "[[replay attack|replay]]" an old request with the same credentials.  It is up to the server to ensure that the counter increases for each of the nonce values that it has issued, rejecting any bad requests appropriately.  Obviously changing the method, URI and/or counter value will result in a different response value.
+
+The server should remember nonce values that it has recently generated.  It may also remember when each nonce value was issued, expiring them after a certain amount of time.  If an expired value is used, the server should respond with the "401" status code and add <code>stale=TRUE</code> to the authentication header, indicating that the client should re-send with the new nonce provided, without prompting the user for another username and password.
+
+The server does not need to keep any expired nonce values – it can simply assume that any unrecognised values have expired.  It is also possible for the server to only allow each nonce value to be returned once, although this forces the client to repeat every request.  Note that expiring a server nonce immediately will not work, as the client would never get a chance to use it.
+
+== SIP digest authentication ==
+
+[[Session Initiation Protocol|SIP]] uses basically the same digest authentication algorithm. It is specified by RFC 3261.
+
+== Browser implementation ==
+
+Most browsers have substantially implemented the spec, some barring certain features such as auth-int checking or the MD5-sess algorithm. If the server requires that these optional features be handled, clients may not be able to authenticate (though note mod_auth_digest for Apache does not fully implement RFC 2617 either).
+
+* [[Amaya (web browser)|Amaya]]
+* [[Gecko (layout engine)|Gecko]]-based: (not including auth-int: [https://bugzilla.mozilla.org/show_bug.cgi?id=168942])
+** [[Mozilla Application Suite]]
+** [[Mozilla Firefox]]
+** [[Netscape (version 7)|Netscape 7+]]
+* [[ICab|iCab 3.0.3+]]
+* [[KHTML]]- and [[WebKit]]-based: (not including auth-int [http://www.vsecurity.com/download/papers/HTTPDigestIntegrity.pdf])
+** [[ICab|iCab 4]]
+** [[Konqueror]]
+** [[Google Chrome]]
+** [[Safari (web browser)|Safari]]
+* [[Tasman (layout engine)|Tasman]]-based:
+** [[Internet Explorer for Mac]]
+* [[Trident (layout engine)|Trident]]-based:
+** [[Internet Explorer 7|Internet Explorer 7+]] <ref>http://httpd.apache.org/docs/2.2/mod/mod_auth_digest.html#msie</ref> (not including auth-int)
+* [[Presto (layout engine)|Presto]]-based:
+** [[Opera (web browser)|Opera]]
+** [[Opera Mobile]]
+** [[Opera Mini]]
+** [[Nintendo DS Browser]]
+** [[Nokia 770]] Browser
+** [[mylo (Sony)|Sony Mylo 1]]'s Browser
+** [[Wii]] [[Internet Channel]] Browser
+
+== See also ==
+* [[AKA (security)]]
+* [[Basic access authentication]]
+
+== References ==
+{{reflist}}
+
+== External links ==
+* RFC 2617
+* RFC 2069 (obsolete)
+
+[[Category:Cryptographic protocols]]
+[[Category:HTTP]]
+[[Category:Request for Comments]]
+
+[[ja:Digest認証]]</body> </html>

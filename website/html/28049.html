@@ -1,0 +1,130 @@
+<html> <head> <title>PDB (Palm OS)</title></head><body>'''Definition 1''': '''PDB''' is a container format for record [[database]]s in [[Palm OS]], [[Garnet OS]] and [[Access Linux Platform]]. Its structure is similar to [[PRC (Palm OS)|PRC]] resource databases<ref name = "rhodes">N. Rhodes, J. McKeehan. Palm OS Programming, Second Edition, O'Reilly, 2001, ISBN 1-56592-856-3</ref>. The PalmDOC [[eBook]] format is a special version of the PDB format<ref>MobileRead Wiki: [http://wiki.mobileread.com/wiki/PalmDOC Specification of the PalmDOC format]</ref>.
+'''Definition 2''': '''PDB''' is the abbreviation of protein 3D structure database "[[Protein Data bank]]". It also refer to the file format of record of the data base.
+
+== Structure of PDB file ==
+A PDB file contains a PDB header, PDB record headers and [[Record (computer science)|records]]<ref name = "hotpaw">Paul J. Lucas (1998) [http://www.hotpaw.com/rhn/palm/pdb.txt PDB (Pilot Database) file format.] Accessed on 20090308</ref><ref name = "microfirst">Microfirst Software. [http://membres.lycos.fr/microfirst/palm/pdb.html The Pilot Record Database Format] Accessed on 20090308</ref>.
+{| class="wikitable" border="1"
+|-
+| PDB Header
+|-
+| PDB Record Header
+|-
+| PDB Records
+|}
+
+=== PDB Header ===
+The PDB header is located at the beginning of the file and contains meta-information on the file <ref name = "hotpaw"/>:
+{| class="wikitable" border="1"
+|-
+! Offset
+! Name
+! Type
+! Size
+|-
+| 0x00
+| name
+| char
+| 32 Bytes
+|-
+| 0x20
+| file attributes
+| integer
+| 2 Bytes
+|-
+| 0x22
+| version
+| integer
+| 2 Bytes
+|-
+| 0x24
+| creation time
+| Macintosh time
+| 4 Bytes
+|-
+| 0x28
+| modification time
+| Macintosh time
+| 4 Bytes
+|-
+| 0x2c
+| backup time
+| Macintosh time
+| 4 Bytes
+|-
+| 0x30
+| modification number
+| integer
+| 4 Bytes
+|-
+| 0x34
+| app_info
+| integer
+| 4 Bytes
+|-
+| 0x38
+| sort_info
+| integer
+| 4 Bytes
+|-
+| 0x3c
+| type
+| integer
+| 4 Bytes
+|-
+| 0x40
+| creator
+| integer
+| 4 Bytes
+|-
+| 0x44
+| unique_id_seed
+| integer
+| 4 Bytes
+|-
+| 0x48
+| next_record_list
+| integer
+| 4 Bytes
+|-
+| 0x4c
+| num_records
+| integer
+| 2 Bytes
+|}
+
+=== PDB Record Header ===
+For every record, there is an eight byte record header, containing<ref name = "hotpaw"/>:
+{| class="wikitable" border="1"
+|-
+! name
+! type
+! size
+! notes
+|-
+| offset
+| integer
+| 4 bytes
+| Byte number in the PDB file (counting from zero), where the record is located
+|-
+| attributes
+| byte
+| 1 byte
+| Attributes of the record (delete/dirty/busy/secret/category)
+|-
+| UniqueID
+| integer
+| 3 bytes
+| Always 0
+|}
+
+=== PDB Records ===
+Now the records themselves follow. The usual order is AppInfoArea, SortInfoArea and records, sequentially<ref name = "microfirst"/>.
+
+== See also ==
+* [[PRC (Palm OS)|PRC format]]
+
+== References ==
+{{reflist}}
+
+[[Category:Computer file formats]]
+[[Category:Palm OS]]</body> </html>

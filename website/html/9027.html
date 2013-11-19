@@ -1,0 +1,84 @@
+<html> <head> <title>DMZ (computing)</title></head><body>{{No footnotes|date=April 2010}}
+In [[computer security]], a '''DMZ''', or '''demilitarized zone''' is a physical or logical [[subnetwork]] that contains and exposes an organization's external services to a larger untrusted network, usually the Internet. The term is normally referred to as a '''DMZ''' by information technology professionals. It is sometimes referred to as a '''perimeter network'''. The purpose of a DMZ is to add an additional layer of security to an organization's [[local area network]] (LAN); an external attacker only has access to equipment in the DMZ, rather than any other part of the network.
+
+==Rationale==
+In a [[Computer network|network]], the [[Host (network)|hosts]] most vulnerable to attack are those that provide services to users outside of the [[local area network]],  such as [[e-mail]], [[World Wide Web|web]] and [[Domain Name System]] (DNS) servers. Because of the increased potential of these hosts being compromised, they are placed into their own sub-network in order to protect the rest of the network if an intruder were to succeed in attacking them.
+
+Hosts in the DMZ have limited connectivity to specific hosts in the internal network, though communication with other hosts in the DMZ and to the external network is allowed. This allows hosts in the DMZ to provide services to both the internal and external network, while an intervening firewall controls the traffic between the DMZ servers and the internal network clients.
+
+A DMZ configuration typically provides security from external attacks, but it typically has no bearing on internal attacks such as sniffing communication via a [[packet analyzer]] or spoofing such as [[e-mail spoofing]].
+
+==Services in the DMZ==
+
+Any service that is being provided to users on the external network can be placed in the DMZ. The most common of these services are:
+* [[web server]]s
+* [[mail server]]s
+* [[FTP server]]s
+* [[VoIP]] servers
+* [[DNS server]]s
+
+===Web servers===
+Web servers that communicate with an internal database require access to a [[database server]], which may not be publicly accessible and may contain sensitive information. The web servers can communicate with database servers either directly or through an [[application firewall]] for security reasons.
+
+===E-mail servers===
+[[E-mail]] messages and particularly the user database are confidential information, so they are typically stored on servers that cannot be accessed from the Internet (at least not in an insecure manner), but can be accessed from the [[SMTP]] servers that are exposed to the Internet. 
+
+The mail server inside the DMZ passes incoming mail to the secured/internal mail servers. It also handles outgoing mail.
+
+===Proxy servers===
+For security, legal compliance and monitoring reasons, in a business environment, some enterprises install a [[proxy server]] within the DMZ. This has the following consequences:
+* Obliges the internal users (usually employees) to use the proxy to get Internet access.
+* Allows the company to reduce Internet access bandwidth requirements because some of the web content may be cached by the proxy server.
+* Simplifies the recording and monitoring of user activities and block content violating acceptable use policies.
+
+===Reverse proxy servers===
+A [[reverse proxy]] server provides the same service as a proxy server, but the other way around. Instead of providing a service to internal users, it provides indirect access to internal resources from an external network (usually the Internet).
+A back office application access, such as an email system, can be provided to external users (to read emails while outside the company) but the remote user does not have direct access to his email server. Only the reverse proxy server can physically access the internal email server. This is an extra layer of security, which is particularly recommended when internal resources need to be accessed from the outside. Usually such a reverse proxy mechanism is provided by using an [[application layer firewall]] as they focus on the specific shape of the traffic rather than controlling access to specific [[TCP and UDP port]]s as a [[packet filter firewall]] does.
+
+==Architecture==
+There are many different ways to design a network with a DMZ. Two of the most basic methods are with a single [[firewall (networking)|firewall]], also known as the three legged model, and with dual firewalls. These architectures can be expanded to create very complex architectures depending on the network requirements.
+
+===Single firewall===
+A single firewall with at least 3 network interfaces can be used to create a network architecture containing a DMZ. The external network is formed from the [[ISP]] to the firewall on the first network interface, the internal network is formed from the second network interface, and the DMZ is formed from the third network interface. The firewall becomes a single point of failure for the network and must be able to handle all of the traffic going to the DMZ as well as the internal network.
+The zones are usually marked with colors -for example, purple for LAN, green for DMZ, red for Internet (with often another color used for wireless zones).
+
+[[Image:DMZ network diagram 1 firewall.svg|410px|Diagram of a typical network employing DMZ using a three-legged firewall]]
+
+===Dual firewalls===
+A more secure approach is to use two firewalls to create a DMZ. The first firewall (also called the "front-end" firewall) must be configured to allow traffic destined to the DMZ only. The second firewall (also called "back-end" firewall) allows only traffic from the DMZ to the internal network. The first firewall handles a much larger amount of traffic than the second firewall.
+
+Some recommend that the two firewalls be provided by two different vendors. If an attacker manages to break through the first firewall, it will take more time to break through the second one if it is made by a different vendor. (This architecture is, of course, more costly.)  The practice of using different firewalls from different vendors is sometimes described as either "[[Defense in Depth (computing)|defense in depth]]" or (from an opposing viewpoint) "[[security through obscurity]]".
+
+[[Image:DMZ network diagram 2 firewall.svg|410px|Diagram of a typical network employing DMZ using dual firewalls]]
+
+==DMZ host==
+Some home [[router]]s refer to a '''DMZ host'''. A home router DMZ host is a host on the internal network that has all ports exposed, except those ports  otherwise forwarded.
+By definition this is not a true DMZ (Demilitarized Zone), since it alone does not separate the host from the internal network. That is, the DMZ host is able to connect to hosts on the internal network, whereas hosts within a real DMZ are prevented from connecting with the internal network by a firewall that separates them, unless the firewall permits the connection. A firewall may allow this if a host on the internal network first requests a connection to the host within the DMZ.
+The DMZ host provides none of the security advantages that a [[subnetwork|subnet]] provides and is often used as an easy method of forwarding all ports to another firewall / [[network address translation|NAT]] device.
+
+==See also==
+*[[Bastion host]]
+
+==References==
+*[http://articles.techrepublic.com.com/5100-22_11-5756029.html SolutionBase: Strengthen network defenses by using a DMZ] by Deb Shinder at [[TechRepublic]].
+*Eric Maiwald. Network Security: A Beginner's Guide. Second Edition. McGraw-Hill/Osborne, 2003.
+*Internet Firewalls: Frequently Asked Questions, compiled by Matt Curtin, Marcus Ranum and Paul Robertson
+{{Reflist}}
+
+{{DEFAULTSORT:Dmz (Computing)}}
+[[Category:Computer network security]]
+
+[[de:Demilitarized Zone]]
+[[et:Demilitariseeritud tsoon (informaatika)]]
+[[es:Zona desmilitarizada (informática)]]
+[[fr:Zone démilitarisée (informatique)]]
+[[ko:비무장지대 (컴퓨터)]]
+[[it:Demilitarized zone]]
+[[nl:DMZ (informatica)]]
+[[ja:非武装地帯 (コンピュータセキュリティ)]]
+[[pl:Demilitarized Zone]]
+[[pt:DMZ]]
+[[ru:DMZ (компьютерные сети)]]
+[[fi:Demilitarisoitu alue (tietotekniikka)]]
+[[sv:DMZ (Internet)]]
+[[tr:DMZ]]</body> </html>

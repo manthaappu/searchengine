@@ -1,0 +1,47 @@
+<html> <head> <title>Watermarking attack</title></head><body>{{Use ymd dates|date=September 2010}}
+In cryptography, a '''watermarking attack''' is an attack on [[disk encryption]] methods where the presence of a specially crafted piece of data (e.g., a [[decoy]] file) can be detected by an attacker without knowing the encryption [[key (cryptography)|key]].
+
+==Problem description==
+Disk encryption suites generally operate on data in 512-byte [[cylinder-head-sector|sector]]s which are individually encrypted and decrypted. These 512-byte sectors alone can use any [[block cipher mode of operation]] (typically [[Cipher Block Chaining|CBC]]), but since arbitrary sectors in the middle of the disk need to be accessible individually, they cannot depend on the contents of their preceding/succeeding sectors. Thus, with CBC, each sector has to have its own [[initialization vector]] (IV). If these IVs are predictable by an attacker (and the filesystem reliably starts file content at the same offset to the start of each sector, and files are likely to be largely contiguous), then there is a [[chosen plaintext attack]] which can reveal the existence of encrypted data, as follows. A special plaintext file is created and encrypted with the encryption method under attack, such that the first ciphertext block following the IV in two or more different (perhaps adjacent) sectors is identical. Doing this requires that plaintext block 1 [[XOR]] IV 1 is identical to plaintext block 2 XOR IV 2, thus that plaintext block 1 XOR plaintext block 2 is identical to IV 1 XOR IV 2. The ciphertext block patterns generated in this way can give away the existence of the file, without any need for the disk to be decrypted first. 
+
+The problem is analogous to that of using block ciphers in the [[block cipher modes of operation#Electronic codebook (ECB)|electronic codebook (ECB)]] mode, but instead of whole blocks, only the first block in different sectors are identical.
+
+This weakness affected many [[disk encryption]] programs, including older versions of [[BestCrypt]]<ref name="bestcrypt-iv-flaw">
+{{cite paper
+| author = Chiriliuc, Adal
+| title = BestCrypt IV generation flaw
+| date = 2003-10-23
+| url = http://adal.chiriliuc.com/bc_iv_flaw.php
+| accessdate = 2006-08-23
+}}</ref>
+as well as the now-deprecated [[cryptoloop]].<ref>{{cite web
+| last = Saarinen
+| first = Markku-Juhani O.
+| title = Linux for the Information Smuggler
+| date = 2004-02-19
+| publisher = Helsinki University of Technology
+| url = http://mareichelt.de/pub/notmine/diskenc.pdf
+| format = [[PDF]]
+| accessdate = 2006-10-01
+}}</ref>
+
+The problem can be relatively easily eliminated by making the IVs unpredictable with, for example, [[ESSIV]].<ref>{{cite web
+  | last = Fruhwirth
+  | first = Clemens
+  | title = Linux hard disk encryption settings
+  | url = http://clemens.endorphin.org/LinuxHDEncSettings
+  | accessdate = 2006-01-02 }}</ref> Alternatively, one can use modes of operation specifically designed for disk encryption (see [[disk encryption theory]]).
+
+==See also==
+* [[Disk encryption theory]]
+* [[Initialization vector]]
+* [[Block cipher modes of operation]]
+* [[Watermark]]
+
+==Notes and references==
+<references />
+
+[[Category:Cryptographic attacks]]
+[[Category:Disk encryption]]
+
+[[de:Wasserzeichenangriff]]</body> </html>

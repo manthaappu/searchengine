@@ -1,0 +1,326 @@
+<html> <head> <title>Variational Bayesian methods</title></head><body>'''Variational Bayesian''' methods, also called ''ensemble learning'', are a family of techniques for approximating [[intractable]] [[integral]]s arising in [[Bayesian inference]] and [[machine learning]].  They are typically used in complex [[statistical model]]s consisting of observed variables (usually termed "data") as well as unknown [[parameter]]s and [[latent variable]]s, with various sorts of relationships among the three types of [[random variable]]s, as might be described by a [[graphical model]].  As is typical in Bayesian inference, the parameters and latent variables are grouped together as "unobserved variables". Variational Bayesian methods can provide an analytical approximation to the [[posterior probability]] of the unobserved variables, and also to derive a [[lower bound]] for the [[marginal likelihood]] (i.e. "evidence"{{clarify|date=October 2010}}) of several models (i.e. the [[marginal probability]] of the data given the model, with marginalization performed over unobserved variables), with a view to performing [[model selection]].{{clarify|date=October 2010}} It is an alternative to [[Monte Carlo sampling]] methods for taking a fully Bayesian approach to [[statistical inference]] over complex [[probability distribution|distributions]] that are difficult to directly evaluate or [[sample (statistics)|sample]] from.
+
+Variational Bayes can be seen as an extension of the EM ([[expectation-maximization]]) algorithm from [[maximum a posteriori estimation]] (MAP estimation) of the single most probable value of each parameter to fully Bayesian estimation which computes(an approximation to) the entire [[posterior distribution]] of the parameters and latent variables.
+
+==Mathematical derivation==
+In [[variational]] inference, the posterior distribution over a set of unobserved variables <math>\mathbf{Z} = \{Z_1 \dots Z_n\}</math> given some data <math>\mathbf{X}</math> is approximated
+by a variational distribution, <math>Q(\mathbf{Z})</math>:
+:<math>P(\mathbf{Z}|\mathbf{X}) \approx Q(\mathbf{Z}).</math>
+
+The distribution <math>Q(\mathbf{Z})</math> is restricted to belong to a family of distributions of simpler
+form than <math>P(\mathbf{Z}|\mathbf{X})</math>, selected with the intention of making <math>Q(\mathbf{Z})</math> similar to the true posterior, <math>P(\mathbf{Z}|\mathbf{X})</math>. The lack of similarity is measured in terms of
+a dissimilarity function <math>d(Q; P)</math> and hence inference is performed by selecting the distribution
+<math>Q(\mathbf{Z})</math> that minimizes <math>d(Q; P)</math>. One choice of dissimilarity function that makes this minimization tractable is the [[Kullback-Leibler divergence]] (KL divergence) of ''P'' from ''Q'', defined as
+
+:<math>D_{\mathrm{KL}}(Q || P) = \sum_\mathbf{Z}  Q(\mathbf{Z}) \log \frac{Q(\mathbf{Z})}{P(\mathbf{Z}|\mathbf{X})}.</math>
+
+The [[logarithm|log]] [[marginal likelihood|evidence]]{{clarify|date=October 2010}} can be written as{{clarify|date=October 2010}}
+
+:{|
+|-
+|<math>\log P(\mathbf{X})\!</math>
+|<math>= D_{\mathrm{KL}}(Q||P) - \sum_\mathbf{Z} Q(\mathbf{Z}) \log \frac{Q(\mathbf{Z})}{P(\mathbf{Z},\mathbf{X})}</math>
+|-
+|
+|<math>= D_{\mathrm{KL}}(Q||P) + \mathcal{L}(Q)</math>.
+|}
+
+As the log evidence is fixed with respect to <math>Q</math>, maximising the final term <math>\mathcal{L}(Q)</math> minimizes the KL divergence of <math>P</math> from <math>Q</math>.  By appropriate choice of <math>Q</math>, <math>\mathcal{L}(Q)</math> becomes tractable to compute and to maximize. Hence we have both an analytical approximation <math>Q</math> for the posterior <math>P(\mathbf{Z}|\mathbf{X})</math>, and a lower bound <math>\mathcal{L}(Q)</math> for the evidence <math>\log P(\mathbf{X})</math>.
+
+==In practice==
+The variational distribution <math>Q(\mathbf{Z})</math> is usually assumed to factorize over some [[partition of a set|partition]] of the latent variables, i.e. for some partition of the latent variables <math>\mathbf{Z}</math> into <math>\mathbf{Z}_1 \dots \mathbf{Z}_M</math>,
+
+:<math>Q(\mathbf{Z}) = \prod_{i=1}^M q_i(\mathbf{Z}_i|\mathbf{X})</math>
+
+It can be shown using the [[calculus of variations]] (hence the name "variational Bayes") that the "best" distribution <math>q_j^{*}</math> for each of the factors <math>q_j</math> (in terms of the distribution minimizing the KL divergence, as described above) can be expressed as:
+
+:<math>q_j^{*}(\mathbf{Z}_j|\mathbf{X}) = \frac{e^{\operatorname{E}_{i \neq j} [\ln p(\mathbf{Z}, \mathbf{X})]}}{\int e^{\operatorname{E}_{i \neq j} [\ln p(\mathbf{Z}, \mathbf{X})]}\, d\mathbf{Z}_j}</math>
+
+where <math>\operatorname{E}_{i \neq j} [\ln p(\mathbf{Z}, \mathbf{X})]</math> is the [[expected value|expectation]] of the [[joint probability]] of the data and latent variables, taken over all variables not in the partition.
+
+In practice, we usually work in terms of logarithms, i.e.:
+
+:<math>\ln q_j^{*}(\mathbf{Z}_j|\mathbf{X}) = \operatorname{E}_{i \neq j} [\ln p(\mathbf{Z}, \mathbf{X})] + \text{const.}</math>
+
+The constant in the above expression is related to the [[normalizing constant]] (the denominator in the expression above for <math>q_j^{*}</math>) and is usually reinstated by inspection, as the rest of the expression can usually be recognized as being a known type of distribution (e.g. [[Gaussian distribution|Gaussian]], [[gamma distribution|gamma]], etc.).
+
+Using the properties of expectations, the expression <math>\operatorname{E}_{i \neq j} [\ln p(\mathbf{Z}, \mathbf{X})]</math> can usually be simplified into a function of the fixed [[hyperparameter]]s of the [[prior distribution]]s over the latent variables and of expectations (and sometimes higher [[moment (mathematics)|moment]]s such as the [[variance]]) of latent variables not in the current partition (i.e. latent variables not included in <math>\mathbf{Z}_j</math>). This creates circular dependencies between the parameters of the distributions over variables in one partition and the expectations of variables in the other partitions.  This naturally suggests an [[iterative]] algorithm, much like EM (the [[expectation-maximization]] algorithm), in which the expectations (and possibly higher moments) of the latent variables are initialized in some fashion (perhaps randomly), and then the parameters of each distribution are computed in turn using the current values of the expectations, after which the expectation of the newly computed distribution is set appropriately according to the computed parameters. An algorithm of this sort is guaranteed to [[limit of a sequence|converge]].<ref>S. Boyd and L. Vandenberghe, ''Convex Optimization'', 2004</ref> Furthermore, if the distributions in question are part of the [[exponential family]], which is usually the case, convergence will be to a [[global maximum]], since the exponential family is [[convex function|convex]].<ref>Christopher Bishop, ''Pattern Recognition and Machine Learning'', 2006</ref>
+
+In other words, for each of the partitions of variables, by simplifying the expression for the distribution over the partition's variables and examining the distribution's functional dependency on the variables in question, the family of the distribution can usually be determined (which in turn determines the value of the constant).  The formula for the distribution's parameters will be expressed in terms of the prior distributions' hyperparameters (which are known constants), but also in terms of expectations of functions of variables in other partitions.  Usually these expectations can be simplified into functions of expectations of the variables themselves (i.e. the [[mean]]s); sometimes expectations of squared variables (which can be related to the [[variance]] of the variables), or expectations of higher powers (i.e. higher [[moment (mathematics)|moment]]s) also appear. In most cases, the other variables' distributions will be from known families, and the formulas for the relevant expectations can be looked up. However, those formulas depend on those distributions' parameters, which depend in turn on the expectations about other variables. The result is that the formulas for the parameters of each variable's distributions can be expressed as a series of equations with mutual, [[nonlinear]] dependencies among the variables. Usually, it is not possible to solve this system of equations directly. However, as described above, the dependencies suggest a simple iterative algorithm, which in most cases is guaranteed to converge. An example will make this process clearer.
+
+==A Simple Example==
+Imagine a simple Bayesian model consisting of a single node with a [[Gaussian distribution]], with unknown [[mean]] and [[precision (statistics)|precision]] (or equivalently, an unknown [[variance]], since the precision is the reciprocal of the variance).<ref>Based on Chapter 10 of ''Pattern Recognition and Machine Learning'' by [[Christopher M. Bishop]]</ref>
+
+We place [[conjugate prior]] distributions on the unknown mean and variance, i.e. the mean also follows a Gaussian distribution while the precision follows a [[gamma distribution]].  In other words:
+
+:<math>
+\begin{array}{lcl}
+\mu & \sim & \mathcal{N}(\mu_0, (\lambda_0 \tau)^{-1}) \\
+\tau & \sim & \text{Gam}(a_0, b_0) \\
+\{x_1, \dots, x_N\} & \sim & \mathcal{N}(\mu, \tau^{-1}) \\
+N &=& \text{number of data points}
+\end{array}
+</math>
+
+We are given <math>N</math> data points <math>\mathbf{X} = \{x_1, \dots, x_N\}</math> and our goal is to infer the [[posterior distribution]] <math>q(\mu,\tau)</math> of the parameters <math>\mu</math> and <math>\tau</math>.
+
+The [[hyperparameter]]s <math>\mu_0</math>, <math>\lambda_0</math>, <math>a_0</math> and <math>b_0</math> are fixed, given values.  They can be set to small positive numbers to give broad prior distributions indicating ignorance about the prior distributions of <math>\mu</math> and <math>\tau</math>.
+
+The joint probability of all variables can be rewritten as
+
+:<math>p(\mathbf{X},\mu,\tau) = p(\mathbf{X}|\mu,\tau) p(\mu|\tau) p(\tau)</math>
+
+where the individual factors are
+
+:<math>
+\begin{array}{lcl}
+p(\mathbf{X}|\mu,\tau) & = & \prod_{n=1}^N \mathcal{N}(x_n|\mu,\tau^{-1}) \\
+p(\mu|\tau) & = & \mathcal{N}(\mu|\mu_0, (\lambda_0 \tau)^{-1}) \\
+p(\tau) & = & \text{Gam}(\tau|a_0, b_0)
+\end{array}
+</math>
+
+where
+
+:<math>
+\begin{array}{lcl}
+\mathcal{N}(x|\mu,\sigma^2) & = & \frac{1}{\sqrt{2\pi\sigma^2}} e^\frac{(x-\mu)^2}{2\sigma^2} \\
+\text{Gam}(\tau|a,b) & = & \frac{1}{\Gamma(a)} b^a \tau^{a-1} e^{-b \tau}
+\end{array}
+</math>
+
+Assume that <math>q(\mu,\tau) = q(\mu)q(\tau)</math>, i.e. that the posterior distribution factorizes into independent factors for <math>\mu</math> and <math>\tau</math>.  This type of assumption underlies the variational Bayesian method.  The true posterior distribution does not in fact factor this way (in fact, in this simple case, it is known to be a [[Gaussian-gamma distribution]]), and hence the result we obtain will be an approximation.
+
+Then
+
+:<math>
+\begin{array}{lcl}
+\ln q_\mu^*(\mu) &=& \operatorname{E}_{\tau}[\ln p(\mathbf{X}|\mu,\tau) + \ln p(\mu|\tau)] + \text{const.} \\
+                    &=& - \frac{\operatorname{E}[\tau]}{2} \{ \lambda_0(\mu-\mu_0)^2 + \sum_{n=1}^N (x_n-\mu)^2 \} + \text{const.}
+\end{array}
+</math>
+
+Note that the term <math>\operatorname{E}_{\tau}[\ln p(\tau)]</math> will be a function solely of <math>a_0</math> and <math>b_0</math> and hence is constant with respect to <math>\mu</math>; thus it has been absorbed into the constant term at the end. By expanding the squares inside of the braces, separating out and grouping the terms involving <math>\mu</math> and <math>\mu^2</math> and [[completing the square]] over <math>\mu</math>, we see that <math>q_\mu^*(\mu)</math> is a [[Gaussian distribution]] <math>\mathcal{N}(\mu|\mu_N,\lambda_N^{-1})</math> where we have defined:
+
+:<math>
+\begin{array}{lcl}
+\mu_N &=& \frac{\lambda_0 \mu_0 + N \bar{x}}{\lambda_0 + N} \\
+\lambda_N &=& (\lambda_0 + N) \operatorname{E}[\tau]
+\end{array}
+</math>
+
+Similarly,
+
+:<math>
+\begin{array}{lcl}
+\ln q_\tau^*(\tau) &=& \operatorname{E}_{\mu}[\ln p(\mathbf{X}|\mu,\tau) + \ln p(\mu|\tau)] + \ln p(\tau) + \text{const.} \\
+                    &=& (a_0 - 1) \ln \tau - b_0 \tau + \frac{N}{2} \ln \tau - \frac{\tau}{2} \operatorname{E}_\mu [\sum_{n=1}^N (x_n-\mu)^2 + \lambda_0(\mu - \mu_0)^2] + \text{const.}
+\end{array}
+</math>
+
+Exponentiating both sides, we can see that <math>q_\tau^*(\tau)</math> is a [[gamma distribution]] <math>\text{Gam}(\tau|a_N, b_N)</math> where we have defined
+
+:<math>
+\begin{array}{lcl}
+a_N &=& a_0 + \frac{N+1}{2} \\
+b_N &=& b_0 + \frac{1}{2} \operatorname{E}_\mu [\sum_{n=1}^N (x_n-\mu)^2 + \lambda_0(\mu - \mu_0)^2]
+ \end{array}
+</math>
+
+In each case, the parameters for the distribution over one of the variables depend on expectations taken with respect to the other variable. The formulas for the expectations of moments of the Gaussian and gamma distributions are well-known, but depend on the parameters. Hence the formulas for each distribution's parameters depend on the  other distribution's parameters. This naturally suggests an [[expectation-maximization algorithm|EM]]-like algorithm where we first initialize the parameters to some values (perhaps the values of the hyperparameters of the corresponding prior distributions) and iterate, computing new values for each set of parameters using the current values of the other parameters.  This is guaranteed to converge to a local maximum, and since both posterior distributions are in the [[exponential family]], this local maximum will be a [[global maximum]].
+
+Note also that the posterior distributions have the same form as the corresponding prior distributions.  We did ''not'' assume this; the only assumption we made was that the distributions factorize, and the form of the distributions followed naturally.  It turns out (see below) that the fact that the posterior distributions have the same form as the prior distributions is not a coincidence, but a general result whenever the prior distributions are members of the [[exponential family]], which is the case for most of the standard distributions.
+
+==A More Complex Example==
+Imagine a Bayesian [[Gaussian mixture model]] described as follows:
+
+:<math>
+\begin{array}{lcl}
+\mathbf{\pi} & \sim & \text{SymDir}(K, \alpha_0) \\
+\mathbf{\Lambda}_{i=1 \dots K} & \sim & \mathcal{W}(\mathbf{W}_0, \nu_0) \\
+\mathbf{\mu}_{i=1 \dots K} & \sim & \mathcal{N}(\mathbf{\mu}_0, (\beta_0 \mathbf{\Lambda}_i)^{-1}) \\
+\mathbf{z}[i = 1 \dots N] & \sim & \text{Mult}(1, \mathbf{\pi}) \\
+\mathbf{x}_{i=1 \dots N} & \sim & \mathcal{N}(\mathbf{\mu}_{z_i}, {\mathbf{\Lambda}_{z_i}}^{-1}) \\
+K &=& \text{number of mixing components} \\
+N &=& \text{number of data points}
+\end{array}
+</math>
+
+Note:
+*SymDir() is the symmetric [[Dirichlet distribution]] of dimension <math>K</math>, with the hyperparameter for each component set to <math>\alpha_0</math>.  The Dirichlet distribution is the [[conjugate prior]] of the [[categorical distribution]] or [[multinomial distribution]].
+*<math>\mathcal{W}()</math> is the [[Wishart distribution]], which is the conjugate prior of the [[precision matrix]] (inverse [[covariance matrix]]) for a [[multivariate Gaussian distribution]].
+*Mult() is a [[multinomial distribution]] over a single observation.  The state space  is a "one-of-K" representation, i.e. a <math>K</math>-dimensional vector in which one of the elements is 1 (specifying the identity of the observation) and all other elements are 0.
+*<math>\mathcal{N}()</math> is the [[Gaussian distribution]], in this case specifically the [[multivariate Gaussian distribution]].
+
+The interpretation of the above variables is as follows:
+*<math>\mathbf{X} = \{\mathbf{x}_1, \dots, \mathbf{x}_N\}</math> is the set of <math>N</math> data points, each of which is a <math>K</math>-dimensional vector distributed according to a [[multivariate Gaussian distribution]].
+*<math>\mathbf{Z} = \{\mathbf{z}_1, \dots, \mathbf{z}_N\}</math> is a set of latent variables, one per data point, specifying which mixture component the corresponding data point belongs to, using a "one-of-K" vector representation with components <math>z_{nk}</math> for <math>k = 1 \dots K</math>, as described above.
+*<math>\mathbf{\pi}</math> is the mixing proportions for the <math>K</math> mixture components.
+*<math>\mathbf{\mu}_{i=1 \dots K}</math> and <math>\mathbf{\Lambda}_{i=1 \dots K}</math> specify the parameters ([[mean]] and [[precision (statistics)|precision]]) associated with each mixture component.
+
+The joint probability of all variables can be rewritten as
+
+:<math>p(\mathbf{X},\mathbf{Z},\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda}) = p(\mathbf{X}|\mathbf{Z},\mathbf{\mu},\mathbf{\Lambda}) p(\mathbf{Z}|\mathbf{\pi}) p(\mathbf{\pi}) p(\mathbf{\mu}|\mathbf{\Lambda}) p(\mathbf{\Lambda})</math>
+
+where the individual factors are
+
+:<math>
+\begin{array}{lcl}
+p(\mathbf{X}|\mathbf{Z},\mathbf{\mu},\mathbf{\Lambda}) & = & \prod_{n=1}^N \prod_{k=1}^K \mathcal{N}(\mathbf{x}_n|\mathbf{\mu}_k,\mathbf{\Lambda}_k^{-1})^{z_{nk}} \\
+p(\mathbf{Z}|\mathbf{\pi}) & = & \prod_{n=1}^N \prod_{k=1}^K \pi_k^{z_{nk}} \\
+p(\mathbf{\pi}) & = & \frac{\Gamma(K\alpha_0)}{\Gamma(\alpha_0)^K} \prod_{k=1}^K \pi_k^{\alpha_0-1} \\
+p(\mathbf{\mu}|\mathbf{\Lambda}) & = & \mathcal{N}(\mathbf{\mu}_k|\mathbf{m}_0,(\beta_0 \mathbf{\Lambda}_k)^{-1}) \\
+p(\mathbf{\Lambda}) & = & \mathcal{W}(\mathbf{\Lambda}_k|\mathbf{W}_0, \nu_0)
+\end{array}
+</math>
+
+where
+
+:<math>
+\begin{array}{lcl}
+\mathcal{N}(\mathbf{x}|\mathbf{\mu},\mathbf{\Sigma}) & = & \frac{1}{(2\pi)^{D/2}} \frac{1}{|\mathbf{\Sigma}|^{1/2}} \exp \{-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T \mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu}) \} \\
+\mathcal{W}(\mathbf{\Lambda}|\mathbf{W},\nu) & = & B(\mathbf{W},\nu) |\mathbf{\Lambda}|^{(\nu-D-1)/2} \exp \left(-\frac{1}{2} \text{Tr}(\mathbf{W}^{-1}\mathbf{\Lambda}) \right) \\
+B(\mathbf{W},\nu) & = & |\mathbf{W}|^{-\nu/2} (2^{\nu D/2} \pi^{D(D-1)/4} \prod_{i=1}^{D} \Gamma(\frac{\nu + 1 - i}{2}))^{-1} \\
+D & = & \text{dimensionality of each data point}
+\end{array}
+</math>
+
+Assume that <math>q(\mathbf{Z},\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda}) = q(\mathbf{Z})q(\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda})</math>.
+
+Then
+
+:<math>
+\begin{array}{lcl}
+\ln q^*(\mathbf{Z}) &=& \operatorname{E}_{\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda}}[\ln p(\mathbf{X},\mathbf{Z},\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda})] + \text{const.} \\
+                    &=& \operatorname{E}_{\mathbf{\pi}}[\ln p(\mathbf{Z}|\mathbf{\pi})] + \operatorname{E}_{\mathbf{\mu},\mathbf{\Lambda}}[\ln p(\mathbf{X}|\mathbf{Z},\mathbf{\mu},\mathbf{\Lambda})] + \text{const.} \\
+                    &=& \sum_{n=1}^N \sum_{k=1}^K z_{nk} \ln \rho_{nk} + \text{const.}
+\end{array}
+</math>
+
+where we have defined
+
+:<math>\ln \rho_{nk} = \operatorname{E}[\ln \pi_k] + \frac{1}{2} \operatorname{E}[\ln |\mathbf{\Lambda}_k|] - \frac{D}{2} \ln(2\pi) - \frac{1}{2} \operatorname{E}_{\mathbf{\mu}_k,\mathbf{\Lambda}_k} [(\mathbf{x}_n - \mathbf{\mu}_k)^T \mathbf{\Lambda}_k (\mathbf{x}_n - \mathbf{\mu}_k)]</math>
+
+Exponentiating both sides of the formula for <math>\ln q^*(\mathbf{Z})</math> yields
+
+:<math>q^*(\mathbf{Z}) \propto \prod_{n=1}^N \prod_{k=1}^K \rho_{nk}^{z_{nk}}</math>
+
+Requiring that this be normalized ends up requiring that the <math>\rho_{nk}</math> sum to 1 over all values of <math>k</math>, yielding
+
+:<math>q^*(\mathbf{Z}) = \prod_{n=1}^N \prod_{k=1}^K r_{nk}^{z_{nk}}</math>
+
+where
+
+:<math>r_{nk} = \frac{\rho_{nk}}{\sum_{j=1}^K \rho_{nj}}</math>
+
+In other words, <math>q^*(\mathbf{Z})</math> is a product of single-observation [[multinomial distribution]]s, and factors over each individual <math>\mathbf{z}_n</math>, which is distributed as a single-observation multinomial distribution with parameters <math>r_{nk}</math> for <math>k = 1 \dots K</math>.
+
+Furthermore, we note that
+
+:<math>\operatorname{E}[z_{nk}] = r_{nk}</math>
+
+which is a standard result for categorical distributions.
+
+Now, considering the factor <math>q(\mathbf{\pi},\mathbf{\mu},\mathbf{\Lambda})</math>, note that it automatically factors into <math>q(\mathbf{\pi}) \prod_{k=1}^K q(\mathbf{\mu}_k,\mathbf{\Lambda}_k)</math> due to the structure of the graphical model defining our Gaussian mixture model, which is specified above.
+
+Then,
+
+:<math>
+\begin{array}{lcl}
+\ln q^*(\mathbf{\pi}) &=& \ln p(\mathbf{\pi}) + \operatorname{E}_{\mathbf{Z}}[\ln p(\mathbf{Z}|\mathbf{\pi})] + \text{const.} \\
+                    &=& (\alpha_0 - 1) \sum_{k=1}^K \ln \pi_k + \sum_{n=1}^N \sum_{k=1}^K r_{nk} \ln \pi_k + \text{const.}
+\end{array}
+</math>
+
+Taking the exponential of both sides, we recognize <math>q^*(\mathbf{\pi})</math> as a [[Dirichlet distribution]]
+
+:<math>q^*(\mathbf{\pi}) \sim \text{Dir}(\mathbf{\alpha})</math>
+
+where
+
+:<math>\alpha_k = \alpha_0 + N_k</math>
+
+where
+
+:<math>N_k = \sum_{n=1}^N r_{nk}</math>
+
+Finally
+
+:<math>\ln q^*(\mathbf{\mu}_k,\mathbf{\Lambda}_k) = \ln p(\mathbf{\mu}_k,\mathbf{\Lambda}_k) + \sum_{n=1}^N \operatorname{E}[z_{nk}] \ln \mathcal{N}(\mathbf{x}_n|\mathbf{\mu}_k,\mathbf{\Lambda}_k^{-1}) + \text{const.}</math>
+
+Grouping and reading off terms involving <math>\mathbf{\mu}_k</math> and <math>\mathbf{\Lambda}_k</math>, the result is a [[Gaussian-Wishart distribution]] given by
+
+:<math>q^*(\mathbf{\mu}_k,\mathbf{\Lambda}_k) = \mathcal{N}(\mathbf{\mu}_k|\mathbf{m}_k,(\beta_k \mathbf{\Lambda}_k)^{-1}) \mathcal{W}(\mathbf{\Lambda}_k|\mathbf{W}_k,\nu_k)</math>
+
+given the definitions
+
+:<math>
+\begin{array}{lcl}
+\beta_k             &=& \beta_0 + N_k \\
+\mathbf{m}_k        &=& \frac{1}{\beta_k} (\beta_0 \mathbf{m}_0 + N_k {\bar \mathbf{x}}_k) \\
+\mathbf{W}_k^{-1}   &=& \mathbf{W}_0^{-1} + N_k \mathbf{S}_k + \frac{\beta_0 N_k}{\beta_0 + N_k} ({\bar \mathbf{x}}_k - \mathbf{m}_0)({\bar \mathbf{x}}_k - \mathbf{m}_0)^T \\
+\nu_k               &=& \nu_0 + N_k \\
+N_k                 &=& \sum_{n=1}^N r_{nk} \\
+{\bar \mathbf{x}}_k &=& \frac{1}{N_k} \sum_{n=1}^N r_{nk} \mathbf{x}_n \\
+\mathbf{S}_k        &=& \sum_{n=1}^N (\mathbf{x}_n - {\bar \mathbf{x}}_k) (\mathbf{x}_n - {\bar \mathbf{x}}_k)^T
+\end{array}
+</math>
+
+Finally, notice that these functions require the values of <math>r_{nk}</math>, which make use of <math>\rho_{nk}</math>, which is defined in turn based on <math>\operatorname{E}[\ln \pi_k]</math>, <math>\operatorname{E}[\ln |\mathbf{\Lambda}_k|]</math>, and <math>\operatorname{E}_{\mathbf{\mu}_k,\mathbf{\Lambda}_k} [(\mathbf{x}_n - \mathbf{\mu}_k)^T \mathbf{\Lambda}_k (\mathbf{x}_n - \mathbf{\mu}_k)]</math>.  Now that we have determined the distributions over which these expectations are taken, we can derive formulas for them:
+
+:<math>
+\begin{array}{lclcl}
+\operatorname{E}_{\mathbf{\mu}_k,\mathbf{\Lambda}_k}  [(\mathbf{x}_n - \mathbf{\mu}_k)^T \mathbf{\Lambda}_k (\mathbf{x}_n - \mathbf{\mu}_k)] &&&=& D\beta_k^{-1} + \nu_k (\mathbf{x}_n - \mathbf{m}_k)^T \mathbf{W}_k (\mathbf{x}_n - \mathbf{m}_k) \\
+\ln {\tilde{\Lambda}}_k &\equiv& \operatorname{E}[\ln |\mathbf{\Lambda}_k|] &=& \sum_{i=1}^D \psi (\frac{\nu_k + 1 - i}{2}) + D \ln 2 + \ln |\mathbf{\Lambda}_k| \\
+\ln {\tilde{\pi}}_k &\equiv& \operatorname{E}[\ln |\pi_k|] &=& \psi(\alpha_k) - \psi(\sum{i=1}^K \alpha_i)
+\end{array}
+</math>
+
+These results lead to
+
+:<math>r_{nk} \propto {\tilde{\pi}}_k {\tilde{\Lambda}}_k^{1/2} \exp \{ - \frac{D}{2 \beta_k} - \frac{\nu_k}{2} (\mathbf{x}_n - \mathbf{m}_k)^T \mathbf{W}_k (\mathbf{x}_n - \mathbf{m}_k) \}</math>
+
+These can be converted from proportional to absolute values by normalizing over <math>k</math> so that the corresponding values sum to 1.
+
+Note that:
+
+#The update equations for the parameters <math>\beta_k</math>, <math>\mathbf{m}_k</math>, <math>\mathbf{W}_k</math> and <math>\nu_k</math> of the variables <math>\mathbf{\mu}_k</math> and <math>\mathbf{\Lambda}_k</math> depend on the statistics <math>N_k</math>, <math>{\bar \mathbf{x}}_k</math>, and <math>\mathbf{S}_k</math>, and these statistics in turn depend on <math>r_{nk}</math>.
+#The update equations for the parameters <math>\alpha_{1 \dots K}</math> of the variable <math>\mathbf{\pi}</math> depend on the statistic <math>N_k</math>, which depends in turn on <math>r_{nk}</math>.
+#The update equation for <math>r_{nk}</math> has a direct circular dependence on <math>\beta_k</math>, <math>\mathbf{m}_k</math>, <math>\mathbf{W}_k</math> and <math>\nu_k</math> as well as an indirect circular dependence on <math>\mathbf{W}_k</math>, <math>\nu_k</math> and <math>\alpha_{1 \dots K}</math> through <math>{\tilde{\pi}}_k</math> and <math>{\tilde{\Lambda}}_k</math>.
+
+This suggests an iterative procedure that alternates between two steps:
+
+#An E-step that computes the value of <math>r_{nk}</math> using the current values of all the other parameters.
+#An M-step that uses the new value of <math>r_{nk}</math> to compute new values of all the other parameters.
+
+Note that these steps correspond closely with the standard EM algorithm to derive a [[maximum likelihood]] or [[maximum a posteriori]] (MAP) solution for the parameters of a [[Gaussian mixture model]].  The responsibilities <math>r_{nk}</math> in the E step correspond closely to the [[posterior probability|posterior probabilities]] of the latent variables given the data, i.e. <math>p(\mathbf{Z}|\mathbf{X})</math>; the computation of the statistics <math>N_k</math>, <math>{\bar \mathbf{x}}_k</math>, and <math>\mathbf{S}_k</math> corresponds closely to the computation of corresponding "soft-count" statistics over the data; and the use of those statistics to compute new values of the parameters corresponds closely to the use of soft counts to compute new parameter values in normal EM over a Gaussian mixture model.
+
+==Exponential-family distributions==
+Note that in the previous example, once the distribution over unobserved variables was assumed to factorize into distributions over the "parameters" and distributions over the "latent data", the derived "best" distribution for each variable was in the same family as the corresponding prior distribution over the variable.  This is a general result that holds true for all prior distributions derived from the [[exponential family]].
+
+==See also==
+* [[Variational message passing]]: a modular algorithm for variational Bayesian inference.
+* [[Expectation-maximization algorithm]]: a related approach which corresponds to a special case of variational Bayesian inference.
+
+{{More footnotes|date=September 2010}}
+
+==Notes==
+{{reflist}}
+
+==References==
+* {{Cite book
+  | last1 = Bishop   | first1 = Christopher M.
+  | title = Pattern Recognition and Machine Learning
+  | year = 2006
+  | publisher = Springer
+  | ref = CITEREFBishop2006
+  | isbn = 0-387-31073-8
+  }}
+
+==External links==
+* [http://www.gatsby.ucl.ac.uk/vbayes/ Variational-Bayes Repository] A repository of papers, software, and links related to the use of variational methods for approximate Bayesian learning 
+* [http://www.inference.phy.cam.ac.uk/mackay/itila/ The on-line textbook: Information Theory, Inference, and Learning Algorithms], by [[David J.C. MacKay]] provides an introduction to variational methods (p. 422).
+* [http://www.cse.buffalo.edu/faculty/mbeal/thesis/index.html Variational Algorithms for Approximate Bayesian Inference], by M. J. Beal includes comparisons of EM to Variational Bayesian EM and derivations of several models including Variational Bayesian HMMs.
+
+{{DEFAULTSORT:Variational Bayesian Methods}}
+[[Category:Bayesian statistics]]</body> </html>

@@ -1,0 +1,129 @@
+<html> <head> <title>Discrete element method</title></head><body>A '''discrete element method (DEM)''', also called a '''distinct element method''' is any of family of [[numerical analysis|numerical]] methods for computing the motion of a large number of particles of micrometre-scale size and above. Though DEM is very closely related to [[molecular dynamics]], the method is generally distinguished by its inclusion of rotational degrees-of-freedom as well as stateful contact and often complicated geometries (including polyhedra). With advances in computing power and numerical algorithms for nearest neighbor sorting, it has become possible to numerically simulate millions of particles on a single processor. Today DEM is becoming widely accepted as an effective method of addressing engineering problems in granular and discontinuous materials, especially in granular flows, powder mechanics, and rock mechanics.
+
+The various branches of the DEM family are the [[distinct element method]] proposed by [[Peter A. Cundall|Cundall]] in 1971, the [[generalized discrete element method]] proposed by [[Grant Hocking|Hocking]], [[John R. Williams|Williams]] and [[Graham Mustoe|Mustoe]] in 1985, the [[Discontinuous Deformation Analysis|discontinuous deformation analysis]] (DDA) proposed by [[Gen-hua Shi|Shi]] in 1988 and the finite-discrete element method concurrently developed by several groups (e.g., [[Ante Munjiza|Munjiza]] and [[Roger Owen|Owen]]). The general method was originally developed by Cundall in 1971 to problems in rock mechanics. The theoretical basis of the method was established by Sir Isaac Newton in 1697<!-- 1967 is INCORRECT! --~~~~Aclariont Sept 25, 2009 (assumed a typo for now)-->. Williams, Hocking, and Mustoe in 1985 showed that DEM could be viewed as a generalized finite element method. Its application to geomechanics problems is described in the book ''Numerical Modeling in Rock Mechanics'', by Pande, G., Beer, G. and Williams, J.R.. The 1st, 2nd and 3rd International Conferences on Discrete Element Methods have been a common point for researchers to publish advances in the method and its applications. Journal articles reviewing the state of the art have been published by Williams, [[Nenad Bicanic|Bicanic]], and [[Bobet]] et al. (see below).  A comprehensive treatment of the combined Finite Element-Discrete Element Method is contained in the book ''The Combined Finite-Discrete Element Method'' by [[Ante Munjiza|Munjiza]].
+
+Discrete element methods are relatively computationally intensive, which limits either the length of a simulation or the number of particles. Several DEM codes, as do molecular dynamics codes, take advantage of parallel processing capabilities (shared or distributed systems) to scale up the number of particles or length of the simulation. An alternative to treating all particles separately is to average the physics across many particles and thereby treat the material as a [[Continuum mechanics|continuum]].  In the case of [[solid]]-like granular behavior as in [[soil mechanics]], the continuum approach usually treats the material as [[Elasticity (physics)|elastic]] or [[Plasticity (physics)|elasto-plastic]] and models it with the [[finite element method]] or a [[Meshfree methods|mesh free method]].  In the case of liquid-like or gas-like granular flow, the continuum approach may treat the material as a [[fluid]] and use [[computational fluid dynamics]]. Drawbacks to [[homogenization]] of the granular scale physics, however, are well-documented and should be considered carefully before attempting to use a continuum approach.
+
+==Applications==
+
+The fundamental assumption of the method is that the material consists of separate, discrete particles. These particles may have different shapes and properties. Some examples are:
+* [[liquid]]s and [[solution]]s, for instance of [[sugar]] or [[protein]]s;
+* [[bulk material]]s in [[storage silo]]s, like [[cereal]];
+* [[granular matter]], like [[sand]];
+* [[Powder (substance)|powders]], like [[toner]].
+* Blocky or jointed rock masses
+
+Typical industries using DEM are: 
+* Agriculture and food handling
+* Chemical
+* Civil Engineering
+* Oil and gas
+* Mining
+* Mineral processing
+* Pharmaceutical
+* [[Powder metallurgy]]
+
+==Outline of the method==
+
+A DEM-simulation is started by first generating a model, which results in spatially orienting all particles and assigning an initial [[velocity]]. The forces which act on each particle are computed from the initial data and the relevant physical laws and contact models. Generally, a simulation consists of three parts: the initialization, explicit time-stepping, and post-processing. The time-stepping usually requires a nearest neighbor sorting step to reduce the number of possible contact pairs and decrease the computational requirements; this is often only performed periodically.
+
+The following forces may have to be considered in macroscopic simulations:
+* [[friction]], when two particles touch each other;
+* [[contact plasticity]], or recoil, when two particles collide;
+* [[gravity]], the force of attraction between particles due to their mass, which is only relevant in astronomical simulations.
+* attractive potentials, such as [[cohesion]], [[adhesion]], [[liquid bridging]], [[electrostatic attraction]]. Note that, because of the overhead from determining nearest neighbor pairs, exact resolution of long-range, compared with particle size, forces can increase computational cost or require specialized algorithms to resolve these interactions.
+
+On a molecular level, we may consider
+* the [[Coulomb force]], the [[electrostatic]] attraction or repulsion of particles carrying [[electric charge]];
+* [[Pauli exclusion principle|Pauli repulsion]], when two atoms approach each other closely;
+* [[van der Waals force]].
+
+All these forces are added up to find the total force acting on each particle. An [[numerical ordinary differential equations|integration method]] is employed to compute the change in the position and the velocity of each particle during a certain time step from [[Newton's laws of motion]]. Then, the new positions are used to compute the forces during the next step, and this [[program loop|loop]] is repeated until the simulation ends.
+
+Typical integration methods used in a discrete element method are:
+* the [[Verlet integration|Verlet algorithm]],
+* [[velocity Verlet]],
+* [[symplectic integrator]]s,
+* the [[leapfrog method]].
+
+==Long-range forces==
+
+When long-range forces (typically gravity or the Coulomb force) are taken into account, then the interaction between each pair of particles needs to be computed. The number of interactions, and with it the cost of the computation, [[quadratic growth|increases quadratically]] with the number of particles. This is not acceptable for simulations with large number of particles. A possible way to avoid this problem is to combine some particles, which are far away from the particle under consideration, into one pseudoparticle. Consider as an example the interaction between a star and a distant [[galaxy]]: The error arising from combining all the stars in the distant galaxy into one point mass is negligible. So-called tree algorithms are used to decide which particles can be combined into one pseudoparticle. These algorithms arrange all particles in a tree, a [[quadtree]] in the two-dimensional case and an [[octree]] in the three-dimensional case.
+
+However, simulations in molecular dynamics divide the space in which the simulation take place into cells. Particles leaving through one side of a cell are simply inserted at the other side (periodic [[boundary condition]]s); the same goes for the forces. The force is no longer taken into account after the so-called cut-off distance (usually half the length of a cell), so that a particle is not influenced by the mirror image of the same particle in the other side of the cell. One can now increase the number of particles by simply copying the cells.
+
+Algorithms to deal with long-range force include:
+* [[Barnes&ndash;Hut simulation]],
+* the [[fast multipole method]].
+
+==Combined finite-discrete element method ==
+
+Following the work by Munjiza and Owen's earlier work, the combined-discrete element method
+has been further developed to various irregular and deformable particles in many applications
+including pharmaceutical tableting <ref>R W Lewis, D T Gethin, X-S Yang, R. Rowe, A Combined Finite-Discrete Element Method for Simulating Pharmaceutical Powder Tableting, Int. J. Num. Method in Engineering, 62, 853&ndash;869 (2005)</ref>, packaging and flow simulations <ref>D T Gethin, X-S Yang and R W Lewis; A Two Dimensional Combined Discrete and Finite Element Scheme for Simulating the Flow and Compaction of Systems Comprising Irregular Particulates, Computer Methods in Applied Mechanics and Engineering, 195, 2006, 5552&ndash;5565 (2006)</ref>, and concrete and impact analysis <ref>
+I. M. May, Y. Chen, D. R. J. Owen, Y.T. Feng and P. J. Thiele: Reinforced concrete beams under drop-weight impact loads, Computers and Concrete, 3 (2&ndash;3): 79&ndash;90 (2006).</ref>, and many other applications.
+
+==Advantages and limitations==
+Advantages
+* DEM can be used to simulate a wide variety of granular flow and rock mechanics situations. Several research groups have independently developed simulation software that agrees well with experimental findings in a wide range of engineering applications, including adhesive powders, granular flow, and jointed rock masses.
+* DEM allows a more detailed study of the micro-dynamics of powder flows than is often possible using physical experiments. For example, the force networks formed in a granular media can be visualized using DEM. Such measurements are nearly impossible in experiments with small and many particles.
+
+Disadvantages
+* The maximum number of particles, and duration of a virtual simulation is limited by computational power. Typical flows contain billions of particles, but contemporary DEM simulations on large cluster computing resources have only recently been able to approach this scale for sufficiently long time (simulated time, not actual program execution time).
+
+==References==
+{{Reflist}}
+
+==Bibliography==
+* P.A. Cundall, O.D.L. Strack, A discrete numerical model for granular assemblies. ''Geotechnique,'' '''29''':47&ndash;65, 1979.
+* Williams, J.R., Hocking, G., and Mustoe, G.G.W., “The Theoretical Basis of the Discrete Element Method,” NUMETA 1985, Numerical Methods of Engineering, Theory and Applications, A.A. Balkema, Rotterdam, January 1985
+* Shi, G, Discontinuous deformation analysis &ndash; A new numerical model for the statics and dynamics of deformable block structures, 16pp. In ''1st U.S. Conf. on Discrete Element Methods'', Golden. CSM Press: Golden, CO, 1989.
+* Williams, J.R. and Pentland, A.P., "Superquadric and Modal Dynamics for Discrete Elements in Concurrent Design," National Science Foundation Sponsored 1st U.S. Conference of Discrete Element Methods, Golden, CO, October 19&ndash;20, 1989.
+* Pande, G., Beer, G. and Williams, J.R., ''Numerical Modeling in Rock Mechanics'', John Wiley and Sons, 1990.
+* Kawaguchi, T., Tanaka, T. and Tsuji, Y., [http://www-mupf.mech.eng.osaka-u.ac.jp/paper_pdf/PT98,v96,129 ''Numerical simulation of two-dimensional fluidized beds using the discrete element method (comparison between the two- and three-dimensional models)''] ''Powder Technology,'' '''96'''(2):129&ndash;138, 1998.
+* Griebel, Knapek, Zumbusch, Caglar: ''Numerische Simulation in der Molekulardynamik''. Springer, 2004. ISBN 3-540-41856-3.
+* Bicanic, Ninad, ''Discrete Element Methods'' in Stein, de Borst, Hughes ''Encyclopedia of Computational Mechanics, Vol. 1''. Wiley, 2004. ISBN 0-470-84699-2.
+* 2nd International Conference on Discrete Element Methods, Editors Williams, J.R. and Mustoe, G.G.W.,  IESL Press, 1992 ISBN 0-918062-88-8
+* Williams, J.R. and O’Connor, R., ''Discrete Element Simulation and the Contact Problem,'' [[Archives of Computational Methods in Engineering]], Vol. 6, 4, 279&ndash;304, 1999
+* Ante Munjiza, ''The Combined Finite-Discrete Element Method'' Wiley, 2004, ISBN 0-470-84199-0
+* A. Bobet, A. Fakhimi, S. Johnson, J. Morris, F. Tonon, and M. Ronald Yeung (2009) "Numerical Models in Discontinuous Media: Review of Advances for Rock Mechanics Applications", J. Geotech. and Geoenvir. Engrg., 135 (11) pp. 1547&ndash;1561
+
+==Software==
+
+Open source and non-commercial software:
+
+* BALL & TRUBAL (1979&ndash;1980) distinct element method (FORTRAN code), originally written by P.Cundall and currently maintained by Colin Thornton.
+* [[LAMMPS]] is a very fast parallel open-source molecular dynamics package with GPU support also allowing DEM simulations. [http://lammps.sandia.gov/ LAMMPS Website], [http://lammps.sandia.gov/movies.html#dem Examples ].
+* [http://www.liggghts.com/ LIGGGHTS] is a code based on LAMMPS with more DEM features such as wall import from CAD, a moving mesh feature and granular heat transfer. [http://www.liggghts.com/ LIGGGHTS Website]
+* [http://geo.hmg.inpg.fr/frederic/Research_project_Discrete_Element_Software.html SDEC] Spherical Discrete Element Code.
+* [http://www.launchpad.net/yade/ Yade] Yet Another Dynamic Engine (historically related to SDEC), modular and extensible toolkit of DEM algorithms written in c++. Tight integration with Python gives flexibility to simulation description, real-time control and post-processing, and allows introspection of all internal data. Can run in parallel on shared-memory machines using [[OpenMP]].
+* [http://www.lmgc.univ-montp2.fr/~dubois/LMGC90/index.html LMGC90] Open platform for modelling interaction problems between elements including multi-physics aspects based on an hybrid or extended FEM &ndash; DEM discretization, using various numerical strategies as MD or NSCD.
+*[https://launchpad.net/esys-particle/ ESyS-Particle] ESyS-Particle is a high-performance computing implementation of the Discrete Element Method released under the Open Software License v3.0. To date, development focus is on geoscientific applications including granular flow, rock breakage and earthquake nucleation. ESyS-Particle includes a Python scripting interface providing flexibility for simulation setup and real-time data analysis. The DEM computing engine is written in C++ and parallelised using MPI, permitting simulations of more than 1 million particles on clusters or high-end workstations.
+*[http://www.itm.uni-stuttgart.de/research/pasimodo/pasimodo_en.php Pasimodo] PASIMODO is a program package for particle-based simulation methods. The main field of application is the simulation of granular media, such as sand, gravel, granulates in chemical engineering and others. Moreover it can be used for the simulation of many other Lagrangian methods, e.g. fluid simulation with Smoothed-Particle-Hydrodynamics.
+*[http://simap.grenoble-inp.fr/groupes-de-recherche/animations-discrete-element-method-219246.kjsp dp3D] (discrete powder 3D), DEM code oriented toward materials science applications (powder compaction, powder sintering, ...).
+
+Commercially available DEM software packages include PFC3D, EDEM and Passage/DEM:
+*[http://www.chutemaven.com Chute Maven (Hustrulid Technologies Inc.)] Spherical Discrete Element Modeling in 3 Dimensions. Directly reads in AutoCad dxf files and interfaces with SolidWorks.
+*[http://www.itascacg.com/pfc3d/ PFC (2D & 3D)] Particle Flow Code.
+*[http://www.dem-solutions.com EDEM (DEM Solutions Ltd.)] General-purpose DEM simulation with CAD import of particle and machine geometry, GUI-based model set-up, extensive post-processing tools, progammable API, couples with CFD, FEA and MBD software.
+*[http://www.applieddem.com Bulk Flow Analyst (Applied DEM)] General-purpose 3D DEM tool for mechanical engineering applications.  Imports DXF files and integrates with AutoCAD and SolidWorks.
+*[http://www.overlandconveyor.com/software/dem.html Chute Analyst (Overland Conveyor Company)] 3D DEM tool for transfer chute engineering applications.  Imports DXF files and integrates with AutoCAD.
+*[http://www.igc.ethz.ch/gromos/ GROMOS 96]	
+*[http://www.rockfield.co.uk/elfen.htm ELFEN]
+*[http://cee.mit.edu/index.pl?id=2393&isa=Category&op=show MIMES] a variety of particle shapes can be used in 2D
+*[http://www.technalysis.com/dem_software.aspx  PASSAGE/DEM] (PASSAGE/DEM Software is for predicting the flow particles under a wide variety of forces.)
+*[http://www.simpartik.com SimPARTIK] DEM and SPH simulation package from Fraunhofer IWM
+*[http://www.itascacg.com/udec UDEC] and [http://www.itascacg.com/3dec 3DEC]  Two- and three-dimensional simulation of the response of discontinuous media (such as jointed rock) that is subject to either static or dynamic loading.
+*[http://www.biomolecular-modeling.com/Products.html Ascalaph] [[Molecular dynamics]] with fourth order [[symplectic integrator]].
+
+== See also ==
+*[[Movable Cellular Automata]]
+*[[Finite element method]]
+
+{{DEFAULTSORT:Discrete Element Method}}
+[[Category:Numerical differential equations]]
+
+[[de:Discrete Element Method]]
+[[ja:個別要素法]]
+[[pl:Metoda elementów dyskretnych]]
+[[ru:Метод дискретного элемента]]</body> </html>

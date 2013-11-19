@@ -1,0 +1,127 @@
+<html> <head> <title>EPROM</title></head><body>[[Image:Eprom.jpg|thumb|250px|An EPROM. The small quartz window admits UV light for erasure.]]
+{{Memory types}}
+
+An '''EPROM''' (rarely EROM), or '''erasable programmable [[read only memory]]''', is a type of memory [[integrated circuit|chip]] that retains its data when its power supply is switched off.  In other words, it is [[non-volatile]].  It is an array of [[floating-gate transistor]]s individually programmed by an electronic device that supplies higher voltages than those normally used in digital circuits.  Once programmed, an EPROM can be erased by exposing it to strong [[ultraviolet]] light from a mercury-vapor light source. EPROMs are easily recognizable by the transparent [[fused quartz]] window in the top of the package, through which the [[silicon]] chip is visible, and which permits exposure to [[UV light]] during erasing.
+
+==Operation==
+Development of the EPROM memory cell started with investigation of faulty integrated circuits where the gate connections of transistors had broken. Stored charge on these isolated gates changed their properties. The EPROM was invented by [[Dov Frohman]] of [[Intel]] in 1971, who was awarded US patent 3660189 in 1972.  [[Image:Floating gate transistor.png|thumb|A cross-section of a floating-gate transistor]] <!-- not quite the picture I want -->
+ 
+Each storage location of an EPROM consists of a single [[field-effect transistor]]. Each field-effect transistor consists of a channel in the semiconductor body of the device. Source and drain contacts are made to regions at the end of the channel. An insulating layer of oxide is grown over the channel, then a conductive (silicon or aluminum) gate electrode is deposited, and a further thick layer of oxide is deposited over the gate electrode. The [[floating gate]] electrode has no connections to other parts of the integrated circuit and is completely insulated by the surrounding layers of oxide. A control gate electrode is deposited and further oxide covers it. <ref>  Chih-Tang Sah ,'' Fundamentals of solid-state electronics '' World Scientific, 1991 ISBN 9810206372, page 639 </ref>  
+
+To retrieve data from the EPROM, the address represented by the values at the address pins of the EPROM is decoded and used to connect one word (usually an 8-bit byte) of storage to the output buffer amplifiers. Each bit of the word is a 1 or 0, depending on the storage transistor being switched on or off, conducting or non-conducting. 
+
+The switching state of the field-effect transistor is controlled by the voltage on the control gate of the transistor. Presence of a voltage on this gate creates a conductive channel in the transistor, switching it on. In effect, the stored charge on the floating gate allows the threshold voltage of the transistor to be programmed. 
+
+Storing data in the memory requires selecting a given address and applying a higher voltage to the transistors.  This creates an avalanche discharge of electrons, which have enough energy to pass through the insulating oxide layer and accumulate on the gate electrode. When the high voltage is removed, the electrons are trapped on the electrode. <ref>Vojin G. Oklobdzija, ''Digital Design and Fabrication'', CRC Press, 2008 ISBN 0849386020, page 5-14 through 5-17 </ref> Because of the high insulation value of the silicon oxide surrounding the gate, the stored charge cannot readily leak away and the data can be retained for decades. 
+
+Unlike [[EEPROM]]s, the programming process is not electrically reversible. To erase the data stored in the array of transistors, ultraviolet light is directed onto the [[Die_(integrated_circuit)|die]]. Photons of the UV light create ionization within the silicon oxide, which allow the stored charge on the floating gate to dissipate. Since the whole memory array is exposed, all the memory is erased at the same time. The process takes several minutes for UV lamps of convenient sizes; sunlight would erase a chip in weeks, and indoor [[fluorescent lamp|fluorescent lighting]] over several years. <ref> John E. Ayers ,''Digital integrated circuits: analysis and design'', CRC Press, 2004 , ISBN 084931951X, page 591 </ref> Generally the EPROMs must be removed from equipment to be erased, since it's not usually practical to build in a UV lamp to erase parts in-circuit.
+
+==Details==
+As the quartz window is expensive to make, [[Programmable read-only memory|OTP]] (one-time programmable) chips were introduced; here, the die is mounted in an opaque package so it cannot be erased after programming - this also eliminates the need to test the erase function, further reducing cost. OTP versions of both EPROMs and EPROM-based microcontrollers are manufactured. However, OTP EPROM (whether separate or part of a larger chip) is being increasingly replaced by [[EEPROM]] for small amounts where the cell cost isn't too important and [[flash memory|flash]] for larger amounts.
+
+A programmed EPROM retains its data for about ten to twenty years <ref> * [[Paul Horowitz]] and Winfield Hill, ''The Art of Electronics 2nd Ed. '' Cambridge University Press, Cambridge, 1989 ISBN 0521370957 page 817 </ref> and can be read an unlimited number of times. The erasing window must be kept covered with an opaque label to prevent accidental erasure by sunlight. Old PC [[BIOS]] chips were often EPROMs, and the erasing window was often covered with a label containing the BIOS publisher's name, the [[BIOS]] revision, and a copyright notice. The practice of covering the BIOS chip with a label is still commonly seen as of today, even though current BIOS chips are actually EEPROMs or NOR flashes, with no erase windows.
+
+Erasure of the EPROM begins to occur with wavelengths shorter than 400 [[Nanometre|nm]]. Exposure time for sunlight of 1 week or 3 years for room fluorescent lighting may cause erasure. The recommended erasure procedure is exposure to UV light at 253.7 nm of at least 15 W-sec/cm2 for 20 to 30 minutes, with the lamp at a distance of about 1 inch.
+
+Erasure can also be accomplished with [[X-ray]]s:
+:"Erasure, however, has to be accomplished by non-electrical methods, since the gate electrode is not accessible electrically. Shining ultraviolet light on any part of an unpackaged device causes a photocurrent to flow from the floating gate back to the silicon substrate, thereby discharging the gate to its initial, uncharged condition. This method of erasure allows complete testing and correction of a complex memory array before the package is finally sealed. Once the package is sealed, information can still be erased by exposing it to X radiation in excess of 5*10<sup>4</sup> [[Rad (unit)|rad]]s, a dose which is easily attained with commercial X-ray generators." (5*10<sup>4</sup> [[Rad (unit)|rad]] = 500 [[Joule|J]]/kg)<ref>May 10, 1971 issue of [[Electronics (magazine)|Electronics Magazine]] in an article written by Dov Frohman</ref>
+"In other words, to erase your EPROM you would first have to X-ray it and then put it in an oven at about 600 degrees Celsius (to anneal semiconductor alterations caused by the x-rays). The effects of this process on the reliability of the part would have required extensive testing so they decided on the window instead."<ref name="jmargolin_com-eprom">{{cite web|title=eprom|url=http://www.jmargolin.com/patents/eprom.htm}} 090508 jmargolin.com</ref> (any temperature between 450 - 1410 °C should work).
+
+EPROMs had a limited but large number of erase cycles; the silicon dioxide around the gates would accumulate damage from each cycle, making the chip unreliable after several thousand cycles. EPROM programming is slow compared to other forms of memory. Because higher-density parts have little exposed oxide between the layers of interconnects and gate, ultraviolet erasing becomes less practical for very large memories. Even dust inside the package can prevent some cells from being erased. <ref> Sah 1991 page 640 </ref>
+
+==Application==
+For large volumes of parts (thousands of pieces or more), mask-programmed ROMs are the lowest cost devices to produce. However, these require many weeks lead time to make, since the artwork for an IC mask layer must be altered to store data on the ROMs. Initially, it was thought that the EPROM would be too expensive for mass production use and that it would be confined to development only. It was soon found that small-volume production was economical with EPROM parts, particularly when the advantage of rapid upgrades of firmware was considered. 
+
+Some [[microcontrollers]], from before the era of [[EEPROM]]s and [[flash memory]], use an on-chip EPROM to store their program. Such microcontrollers include some versions of the [[Intel 8048]], the [[Freescale 68HC11]], and the "C" versions of the [[PIC microcontroller]]. Like EPROM chips, such microcontrollers came in windowed (expensive) versions that were useful for debugging and program development. The same chip came in (somewhat cheaper) opaque OTP packages for production.  Leaving the die of such a chip exposed to light can also change behavior in unexpected ways when moving from a windowed part used for development to a non-windowed part for production.
+
+==EPROM sizes and types==
+EPROMs come in several sizes both in physical packaging as well and storage capacity. While parts of the same type number from different manufacturers are compatible as long as they're only being read, there are subtle differences in the programming process.
+
+Most EPROMS could be identified by the programmer through "signature mode" by forcing 12V on pin A9 and reading out two bytes of data. However, as this was not universal, programmer software also would allow manual setting of the manufacturer and device type of the chip to ensure proper programming.<ref name = "Silicon Signature"> {{Cite book | editor = U.S. International Trade Commission | title = Certain EPROM, EEPROM, Flash Memory and Flash Microcontroller Semiconductor Devices and Products Containing Same, Inv. 337-TA-395 | publisher = Diane Publishing | date = October 1998 | pages = 51–72 | url = http://books.google.com/books?id=fkd0fwh9N2UC&pg=PA51 | isbn = 1428957219}} The details of SEEQ's Silicon Signature method of a device programmer reading an EPROM's ID.</ref>
+
+{| class="wikitable" style="text-align:center"
+|-
+! EPROM Type !! Size — [[bit]]s !! Size — [[byte]]s !! Length ([[hexadecimal|hex]]) !! Last address ([[hexadecimal|hex]])
+|-
+| 1702, 1702A || 2 [[Kbit]] || 256 || 100 || 000FF
+|-
+| 2704 || 4 Kbit || 512 || 200 || 001FF
+|-
+| 2708 || 8 Kbit || 1 [[Kilobyte|KB]] || 400 || 003FF
+|-
+| 2716, 27C16 || 16 Kbit || 2 KB || 800 || 007FF
+|-
+| 2732, 27C32 || 32 Kbit || 4 KB || 1000 || 00FFF
+|-
+| 2764, 27C64 || 64 Kbit || 8 KB || 2000 || 01FFF
+|-
+| 27128, 27C128 || 128 Kbit || 16 KB || 4000 || 03FFF
+|-
+| 27256, 27C256 || 256 Kbit || 32 KB || 8000 || 07FFF
+|-
+| 27512, 27C512 || 512 Kbit || 64 KB || 10000 || 0FFFF
+|-
+| 27C010, 27C100 || 1 [[Megabit|Mbit]] || 128 KB || 20000 || 1FFFF
+|-
+| 27C020 || 2 Mbit || 256 KB || 40000 || 3FFFF
+|-
+| 27C040, 27C400 || 4 Mbit || 512 KB || 80000 || 7FFFF
+|-
+| 27C080 || 8 Mbit || 1 [[Megabyte|MB]] || 100000 || FFFFF
+|-
+| 27C160 || 16 Mbit || 2 MB || 200000 || 1FFFFF
+|-
+| 27C320 || 32 Mbit || 4 MB || 400000 || 3FFFFF
+|}
+
+<ref>NOTE: 1702 EPROMs were [[PMOS logic|PMOS]], 27x series EPROMs containing a C in the name are [[CMOS]] based, without the C are [[NMOS logic|NMOS]]</ref>
+
+==Gallery==
+<gallery>
+image:EPROMdie.jpg|Close up of a EPROM die
+image:Eprom32k.jpg|A 32KB (256Kbit) EPROM
+image:Eprom60x.jpg|EPROM. 60x closeup
+image:D8749.png|This [[Intel 8048|8749]] [[Microcontroller]] stores its program in internal EPROM
+</gallery>
+
+==See also==
+* [[Programmable read-only memory]]
+* [[EEPROM]]
+* [[Flash memory]]
+* [[Intel HEX]] - File format
+* [[SREC (file format)|SREC]] - File format
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://www.progshop.com/shop/electronic/eprom-programming.html Detailed information about EPROMs types and EPROM programming]
+
+[[Category:Non-volatile memory]]
+[[Category:Integrated circuits]]
+[[Category:Computer memory]]
+
+[[ar:ذاكرة القراءة فقط القابلة للبرمجة والمسح]]
+[[bg:EPROM]]
+[[ca:EPROM]]
+[[cs:EPROM]]
+[[da:EPROM]]
+[[de:Erasable Programmable Read-Only Memory]]
+[[es:Memoria EPROM]]
+[[eu:EPROM]]
+[[fr:Erasable Programmable Read Only Memory]]
+[[gl:EPROM]]
+[[ko:EPROM]]
+[[hr:EPROM]]
+[[it:EPROM]]
+[[he:EPROM]]
+[[nl:Erasable programmable read-only memory]]
+[[ja:EPROM]]
+[[pl:EPROM]]
+[[pt:EPROM]]
+[[ro:EPROM]]
+[[sq:EPROM]]
+[[sk:EPROM]]
+[[fi:EPROM]]
+[[tr:EPROM]]
+[[zh:EPROM]]</body> </html>

@@ -1,0 +1,220 @@
+<html> <head> <title>Java Virtual Machine</title></head><body>A '''Java Virtual Machine''' ('''JVM''') enables a set of computer software programs and data structures to use a [[virtual machine]] model for the execution of other computer programs and [[scripting language|scripts]]. The model used by a JVM accepts a form of computer [[intermediate language]] commonly referred to as [[Java bytecode]]. This language conceptually represents the instruction set of a [[stack-oriented programming language|stack-oriented]], [[capability architecture]]. [[Sun Microsystems]] states there are over 4.5 billion JVM-enabled devices.<ref>http://www.java.com/en/about/ Learn about Java Technology</ref>
+
+==Overview==
+A JVM can also implement programming languages other than Java. For example, [[Ada (programming language)|Ada]] source code can be compiled to Java bytecode, which may then be executed by a JVM. JVMs can also be released by other companies besides Sun (the developer of Java) &mdash; JVMs using the "Java" trademark may be developed by other companies as long as they adhere to the JVM specification published by Sun and to related contractual obligations.
+
+Java was conceived with the concept of WORA: "[[write once, run anywhere]]". This is done using the Java Virtual Machine. The JVM is the environment in which java programs execute. It is software that is implemented on non-virtual hardware and on standard [[operating system]]s.
+
+JVM is a crucial component of the [[Java (software platform)|Java platform]], and because JVMs are available for many hardware and software [[platform (computing)|platforms]], Java can be both [[middleware]] and a platform in its own right,{{Clarify|date=December 2009}} hence the trademark [[write once, run anywhere]]. The use of the same bytecode for all platforms allows Java to be described as "compile once, run anywhere", as opposed to "write once, compile anywhere", which describes cross-platform [[compiled language]]s. A JVM also enables such features as [[automated exception handling]], which provides "root-cause" debugging information for every software error ([[exception handling|exception]]), independent of the source code.
+
+A JVM is distributed along with a [[Java Class Library|set of standard class libraries]] that implement the Java [[application programming interface]] (API). Appropriate APIs bundled together form the Java Runtime Environment (JRE).
+
+== Execution environment ==
+Programs intended to run on a JVM must be compiled into a standardized portable binary format, which typically comes in the form of [[class (file format)|.class]] files. A program may consist of many classes in different files. For easier distribution of large programs, multiple class files may be packaged together in a [[jar (file format)|.jar]] file (short for Java archive).
+
+The Java application launcher, <code>java</code>, offers a standard way of executing Java code. Compare <code>javaw</code>.<ref>
+{{cite web
+| url         = http://publib.boulder.ibm.com/infocenter/realtime/v2r0/index.jsp?topic=/com.ibm.rt.doc.20/user/java.html
+| title       = The java and javaw commands
+| year        = 2010
+| publisher   = IBM
+| accessdate  = 2011-01-16
+| quote       = The javaw command is identical to java, except that javaw has no associated console window.
+}}
+</ref>
+
+The JVM [[run-time system|runtime]] executes <tt>.class</tt> or <tt>.jar</tt> files, [[emulator|emulating]] the JVM [[instruction set]] by [[interpreter (computing)|interpreting]] it, or using a [[just-in-time compilation|just-in-time compiler]] (JIT) such as Sun's [[HotSpot (Java)|HotSpot]]. JIT compiling, not interpreting, is used in most JVMs today to achieve greater speed. There are also [[AOT compiler|ahead-of-time compilers]] that enable developers to precompile class files into native code for particular platforms.
+
+Like most virtual machines, the Java Virtual Machine has a [[stack machine|stack]]-based architecture akin to a microcontroller/microprocessor.  However, the JVM also has low-level support for Java-like classes and methods, which amounts to a highly idiosyncratic{{clarify|date=October 2010}} [[Java Memory Model|memory model]] and capability-based architecture.
+
+==JVM languages==
+{| class="wikitable" align="left"
+|+Versions of non-JVM languages
+!Language!!On JVM
+|-
+|[[Erlang (programming language)|Erlang]]||[[Erjang]]
+|-
+|[[JavaScript]]||[[Rhino (JavaScript engine)|Rhino]]
+|-
+|[[PHP]] ||[[Resin Server|Resin]]
+|-
+|[[Python (programming language)|Python]]||[[Jython]]
+|-
+|[[REXX]]||[[NetRexx]]<ref>1996, possibly the first new language specifically designed to run on the JVM)</ref>
+|-
+|[[Ruby (programming language)|Ruby]]||[[JRuby]]
+|-
+|[[Tcl]] ||[[Tcl/Java#Jacl|Jacl]]
+|}
+{| class="wikitable" align="right"
+|+Languages designed expressly for JVM
+|-
+|[[MIDletPascal]]
+|-
+|[[Lisp (programming language)|Lisp]]||[[Clojure]]
+|-
+|[[Groovy (programming language)|Groovy]]
+|-
+|[[Scala (programming language)|Scala]]
+|}
+{{See also|Da Vinci Machine|List of JVM languages}}
+Although the JVM was primarily aimed at running compiled Java programs, many other languages can now run on top of it.<ref>{{cite web|url = http://www.is-research.de/info/vmlanguages/|title = Languages for the Java VM|last = Tolksdorf|first = Robert|year = 2005|accessdate = 2008-06-08}}</ref>
+The JVM has currently no built-in support for [[type system#Dynamic typing|dynamically typed languages]]: the existing [[Java bytecode|JVM instruction set]] is [[type system#Static typing|statically typed]],<ref>{{cite web | url=http://headius.blogspot.com/2007/01/invokedynamic-actually-useful.html | title=InvokeDynamic: Actually Useful? | date=2007-01-03 |last=Nutter|first=Charles | accessdate=2008-01-25}}</ref> although the JVM can be used to implement interpreters for dynamic languages.  The JVM has a limited support for [[hotswapping#Software|dynamically modifying]] existing classes and methods; this currently only works in a [[Java Platform Debugger Architecture|debugging environment]], where new classes and methods can be added dynamically.
+Built-in support for dynamic languages is currently planned for [[Java_version_history#Java SE 7.0|Java 7]].<ref>{{cite web | url = http://www.infoworld.com/article/08/01/31/davinci-machine_1.html | title=Sun's Da Vinci Machine broadens JVM coverage | last = Krill | first=Paul | date=2008-01-31 | accessdate=2008-02-06}}</ref>
+
+== Bytecode verifier ==
+
+A basic philosophy of Java is that it is inherently "safe" from the standpoint that no user program can "crash" the host machine or otherwise interfere inappropriately with other operations on the host machine, and that it is possible to protect certain methods and data structures belonging to "trusted" code from access or corruption by "untrusted" code executing within the same JVM. Furthermore, common programmer errors that often lead to data corruption or unpredictable behavior such as accessing off the end of an array or using an uninitialized pointer are not allowed to occur. Several features of Java combine to provide this safety, including the class model, the garbage-collected [[JVM#Heap|heap]], and the verifier.
+
+The JVM ''verifies'' all bytecode before it is executed. This verification consists primarily of three types of checks:
+
+* Branches are always to valid locations
+* Data is always initialized and references are always type-safe
+* Access to "private" or "package private" data and methods is rigidly controlled.
+
+The first two of these checks take place primarily during the "verification" step that occurs when a class is loaded and made eligible for use. The third is primarily performed dynamically, when data items or methods of a class are first accessed by another class.
+
+The verifier permits only some bytecode sequences in valid programs, e.g. a [[branch (computer science)|jump (branch) instruction]] can only target an instruction within the same [[Method (computer programming)|method]]. Furthermore, the verifier ensures that any given instruction operates on a fixed stack location,<ref>{{cite web | title=The Verification process | url=http://java.sun.com/docs/books/jvms/second_edition/html/ClassFile.doc.html#9766 | work=The Java Virtual Machine Specification | publisher=Sun Microsystems | year=1999 | accessdate=2009-05-31}}</ref> allowing the JIT compiler to transform stack accesses into fixed register accesses. Because of this, that the JVM is a stack architecture does not imply a speed penalty for emulation on [[register machine|register-based architectures]] when using a JIT compiler. In the face of the code-verified JVM architecture, it makes no difference to a JIT compiler whether it gets named imaginary registers or imaginary stack positions that must be allocated to the target architecture's registers. In fact, code verification makes the JVM different from a classic stack architecture whose efficient emulation with a JIT compiler is more complicated and typically carried out by a slower interpreter.
+
+Code verification also ensures that arbitrary bit patterns cannot get used as an address. [[Memory protection]] is achieved without the need for a [[memory management unit]] (MMU). Thus, JVM is an efficient way of getting memory protection on simple architectures that lack an MMU. This is analogous to [[managed code]] in Microsoft's .NET [[Common Language Runtime]], and conceptually similar to [[capability architecture]]s such as the [[Plessey 250]], and IBM [[System/38]].
+
+== Bytecode instructions ==
+{{Main|Java bytecode}}
+
+The JVM has [[instruction (computer science)|instructions]] for the following groups of tasks:
+
+* Load and store
+* [[Arithmetic]]
+* [[Type conversion]]
+* [[dynamic memory allocation|Object creation and manipulation]]
+* [[stack (data structure)|Operand stack management (push / pop)]]
+* [[branch (computer science)|Control transfer (branching)]]
+* [[subroutine|Method invocation and return]]
+* [[exception handling|Throwing exceptions]]
+* [[monitor (synchronization)|Monitor-based concurrency]]
+
+The aim is binary compatibility. Each particular host [[operating system]] needs its own implementation of the JVM and runtime. These JVMs interpret the bytecode semantically the same way, but the actual implementation may be different. More complex than just emulating bytecode is compatibly and efficiently implementing the [[Java Class Library|Java core API]] that must be mapped to each host operating system.
+
+== Secure execution of remote code ==
+
+A virtual machine architecture allows very fine-grained control over the actions that code within the machine is permitted to take. This is designed to allow safe execution of untrusted code from remote sources, a model used by [[Java applet]]s. Applets run within a VM incorporated into a user's browser, executing code downloaded from a remote [[HTTP]] server. The remote code runs in a restricted "[[sandbox (security)|sandbox]]", which is designed to protect the user from misbehaving or malicious code. Publishers can purchase a certificate with which to [[digital signature|digitally sign]] applets as "safe", giving them permission to ask the user to break out of the sandbox and access the local file system, [[clipboard (software)|clipboard]] or network.
+
+== C to bytecode compilers ==
+
+From the point of view of a [[compiler]], the Java Virtual Machine is just another processor with an instruction set, [[Java bytecode]], for which code can be generated. The JVM was originally designed to execute programs written in the Java language. However, the JVM provides an execution environment in the form of a bytecode instruction set and a runtime system that is general enough that it can be used as the target for [[compiler]]s of other [[programming language|languages]].
+
+Because of its close association with the Java language, the JVM performs the strict runtime checks mandated by the Java specification. That requires [[C (programming language)|C]] to bytecode compilers to provide their own "lax machine abstraction", for instance producing compiled code that uses a Java array to represent main memory (so pointers can be compiled to integers), and linking the C library to a centralized Java class that emulates system calls. Most or all of the compilers listed below use a similar approach.
+
+Several C to bytecode compilers exist:
+* [http://nestedvm.ibex.org/ NestedVM] translates C to MIPS machine language first before converting to Java bytecode.
+* [http://cibyl.googlecode.com Cybil] works similarly to NestedVM but targets J2ME devices.
+* [http://da.vidr.cc/projects/lljvm/ LLJVM] compiles C to [[LLVM]] IR, which is then translated to JVM bytecode.
+* [http://www.novosoft-us.com/solutions/product_c2j.shtml C2J] is also GCC-based, but it produces intermediary Java source code before generating bytecode.<ref>http://tech.novosoft-us.com/product_c2j_faq.jsp</ref> Supports the full ANSI C runtime.
+* [http://objectmix.com/compilers/37664-ampc-version-1-6-2-released-c-java-class-files-compiler.html Axiomatic Multi-Platform C] supports full ANSI C 1989, SWT, and J2ME CDC 1.1 for mobile devices.
+* [http://www.itee.uq.edu.au/~cristina/uqbt.html#gcc-jvm Java Backend for GCC], possibly the oldest project of its kind, was developed at The University of Queensland in 1999.
+* [http://sourceforge.net/projects/javum/ Javum] is an attempt to port the full GNU environment to the JVM, and includes one of the above compilers packaged with additional utilities.
+* [http://sourceforge.net/projects/egcs-jvm/ egcs-jvm] appears to be an inactive project.
+
+Compilers targeting Java bytecode have been written for other programming languages, including [[Ada (programming language)|Ada]] and [[COBOL]].
+
+== Licensing ==
+
+Starting with [[Java Platform, Standard Edition|J2SE]] 5.0, changes to the JVM specification have been developed under the [[Java Community Process]] as JSR 924.<ref>[http://www.jcp.org/en/jsr/detail?id=924 JSR 924], specifies changes to the JVM specification starting with J2SE 5.0</ref> {{As of|2006}}, changes to specification to support changes proposed to the [[class (file format)|class file format]] (JSR 202<ref>[http://www.jcp.org/en/jsr/detail?id=202 JSR 202], specifies a number of changes to the class file format</ref>) are being done as a maintenance release of JSR 924. The specification for the JVM is published in book form,<ref>''[http://java.sun.com/docs/books/vmspec/ The Java Virtual Machine Specification]'' (the [http://java.sun.com/docs/books/vmspec/html/VMSpecTOC.doc.html first] and [http://java.sun.com/docs/books/vmspec/2nd-edition/html/VMSpecTOC.doc.html second] editions are also available online)</ref> known as "blue book". The preface states:
+{{quote|We intend that this specification should sufficiently document the Java Virtual Machine to make possible compatible clean-room implementations. Sun provides tests that verify the proper operation of implementations of the Java Virtual Machine.}}
+
+Sun's JVM is called [[HotSpot]]. [[clean room design|Clean-room]] Java implementations include [[Kaffe]], [[IBM J9]] and [[Dalvik (software)|Dalvik]]. Sun retains control over the Java trademark, which it uses to certify implementation suites as fully compatible with Sun's specification.
+
+== Heap ==
+
+The ''Java Virtual Machine heap'' is the area of memory used by the JVM (and specifically [[HotSpot]]) for [[dynamic memory allocation]].<ref name="hotspotfaq">{{cite web
+| url=http://java.sun.com/docs/hotspot/gc1.4.2/faq.html
+| title=Frequently Asked Questions about Garbage Collection in the Hotspot Java Virtual Machine
+| date=6 February 2003
+| publisher=[[Sun Microsystems]]
+| accessdate=7 February 2009}}</ref> The [[heap (data structure)|heap]] is split up into "generations":
+* The ''young generation'' stores short-lived [[object (computer science)|objects]] that are created and immediately [[garbage collection (computer science)|garbage collected]].
+* Objects that persist longer are moved to the ''old generation'' (also called the ''tenured generation'').
+* The ''permanent generation'' (or ''permgen'') is used for [[class (file format)|class]] definitions and associated metadata.<ref name="permgen">{{cite web
+| url=http://blogs.sun.com/jonthecollector/entry/presenting_the_permanent_generation
+| title=Presenting the Permanent Generation
+| date=28 November 2006
+| last=Masamitsu|first=Jon
+| accessdate=7 February 2009}}</ref><ref>{{cite web
+| url=http://blog.headius.com/2008/09/first-taste-of-invokedynamic.html
+| title=A First Taste of InvokeDynamic
+| date=11 September 2008
+| last=Nutter|first=Charles
+| accessdate=7 February 2009}}</ref>
+
+Originally there was no permanent generation, and objects and classes were stored together in the same area. But as class unloading occurs much more rarely than objects are collected, moving class structures to a specific area allows significant performance improvements.<ref name=permgen/>
+
+== See also ==
+
+{{Portal|Java}}
+
+* [[List of Java virtual machines]]
+* [[Comparison of application virtual machines]]
+* [[Automated Exception Handling]]
+* [[Java performance]]
+* [[List of JVM languages]]
+* [[Java processor]]
+
+== Notes ==
+
+{{Reflist}}
+{{Reflist|2}}
+
+==References==
+
+{{Refbegin}}
+* ''[http://java.sun.com/docs/books/vmspec/2nd-edition/jvms-clarify.html Clarifications and Amendments to the Java Virtual Machine Specification, Second Edition]'' includes list of changes to be made to support J2SE 5.0 and JSR 45
+* [http://www.jcp.org/en/jsr/detail?id=45 JSR 45], specifies changes to the class file format to support source-level debugging of languages such as [[JavaServer Pages]] (JSP) and [[SQLJ]] that are translated to Java
+{{Refend}}
+
+==External links==
+* [http://java.sun.com/docs/books/vmspec/ The Java Virtual Machine Specification]
+* {{dmoz|Computers/Programming/Languages/Java/Implementations|Java implementations}}
+* [http://www.computerworld.com/action/article.do?command=viewArticleBasic&articleId=9067358 Sun to build virtual machine for iPhone - ComputerWorld]
+* [http://java.com/en/download/inc/windows_new_xpi.jsp Java Virtual Machine Download Link]
+* [http://igormaznitsa.com/projects/mjvm/index.html JVM implementation in pure Java]
+
+{{Java Virtual Machine}}
+{{Java (Sun)}}
+{{Sun Microsystems}}
+
+<!-- Categories -->
+[[Category:Cross-platform software]]
+[[Category:Java platform|Virtual machine]]
+[[Category:Java platform software]]
+[[Category:Java programming language|Virtual machine]]
+[[Category:Java specification requests|Virtual machine]]
+[[Category:Java virtual machine]]
+[[Category:Stack-based virtual machines]]
+
+<!-- Interwikis -->
+[[ar:آلة جافا الافتراضية]]
+[[bs:Java Virtualna Mašina]]
+[[ca:Màquina Virtual Java]]
+[[cs:Java Virtual Machine]]
+[[de:Java Virtual Machine]]
+[[es:Máquina virtual Java]]
+[[fa:ماشین مجازی جاوا]]
+[[fr:Machine virtuelle Java]]
+[[ko:자바 가상 머신]]
+[[hi:जावा आभासी मशीन]]
+[[hr:Java (virtualni stroj)]]
+[[it:Macchina virtuale Java]]
+[[he:Java Virtual Machine]]
+[[hu:Java virtuális gép]]
+[[ml:ജാവ വിർച്ച്വൽ മെഷീൻ]]
+[[nl:Java Virtual Machine]]
+[[ja:Java仮想マシン]]
+[[pl:Wirtualna maszyna Javy]]
+[[pt:Máquina virtual Java]]
+[[ru:Java Virtual Machine]]
+[[sq:Java Virtual Machine]]
+[[simple:Java Virtual Machine]]
+[[sh:Java (virtualni stroj)]]
+[[sv:Java Virtual Machine]]
+[[uk:Віртуальна машина Java]]
+[[zh:Java虚拟机]]</body> </html>

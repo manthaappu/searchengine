@@ -1,0 +1,137 @@
+<html> <head> <title>Load (computing)</title></head><body>{{refimprove|date=November 2010}}
+In  [[UNIX]] [[computing]], the system '''load''' is a measure of the amount of work that a computer system performs.  The '''load average''' represents the average system load over a period of time.  It conventionally appears in the form of three numbers which represent the system load during the last '''one'''-, '''five'''-, and '''fifteen'''-minute periods.
+
+== Unix-style load calculation ==
+All Unix and Unix-like systems generate a [[Software metric|metric]] of three "load average" numbers in the [[kernel (computer science)|kernel]]. Users can easily query the current result from a [[Unix shell]] by running the <tt>[[uptime]]</tt> command:
+
+ $ uptime
+  14:34:03 up 10:43,  4 users,  load average: 0.06, 0.11, 0.09
+
+The [[W (Unix)|<tt>w</tt>]] and [[Top (Unix)|<tt>top</tt>]] commands show the same three load average numbers, as do a range of [[graphical user interface]] utilities. In [[Linux]], they can also be accessed by reading the <code>/proc/loadavg</code> file.
+
+An idle computer has a load number of 0 and each [[process (computing)|process]] using or waiting for [[Central processing unit|CPU]] (the ''ready queue'' or [[run queue]]) increments the load number by 1.  Most UNIX systems count only processes in the ''running'' (on CPU) or ''runnable'' (waiting for CPU) [[Process states | states]].  However, Linux also includes processes in [[uninterruptible sleep]] states (usually waiting for [[Hard disk|disk]] activity), which can lead to markedly different results if many processes remain blocked in [[Input/output|I/O]] due to a busy or stalled I/O system. This, for example, includes processes blocking due to an [[Network File System (protocol)|NFS]] server failure or to slow [[Data storage device|media]] (e.g., [[Universal Serial Bus|USB]] 1.x storage devices). Such circumstances can result in an elevated load average, which does not reflect an actual increase in CPU use (but still gives an idea on how long users have to wait).
+
+Systems calculate the load ''average'' as the [[Moving average (technical analysis)#Exponential moving average | exponentially damped/weighted moving average]] of the load ''number''. The three values of load average refer to the past one, five, and fifteen minutes of system operation.
+
+For single-CPU systems that are CPU-bound, one can think of load average as a percentage of system utilization during the respective time period. For systems with multiple CPUs, one must divide the number by the number of processors in order to get a comparable percentage.
+
+For example, one can interpret a load average of "1.73 0.50 7.98" on a single-CPU system as:
+
+* during the last minute, the CPU was overloaded by 73% (1 CPU with 1.73 runnable processes, so that 0.73 processes had to wait for a turn)
+* during the last 5 minutes, the CPU was underloaded 50% (no processes had to wait for a turn)
+* during the last 15 minutes, the CPU was overloaded 698% (1 CPU with 7.98 runnable processes, so that 6.98 processes had to wait for a turn)
+
+This means that this CPU could have handled all of the work scheduled for the last minute if it were 1.73 times as fast, or if there were two (the [[Ceiling_function|ceiling]] of 1.73) times as many CPUs, but that over the last five minutes it was twice as fast as necessary to prevent runnable processes from waiting their turn.
+
+In a system with four CPUs, a load average of 3.73 would indicate that there were, on average, 3.73 processes ready to run, and each one could be scheduled into a CPU.
+
+On modern UNIX systems, the treatment of [[Thread (computer science)|threading]] with respect to load averages varies.  Some systems treat threads as processes for the purposes of load average calculation: each thread waiting to run will add 1 to the load.  However, other systems, especially systems implementing so-called [[Thread (computer science)#N:M|N:M threading]], use different strategies, such as counting the process exactly once for the purpose of load (regardless of the number of threads), or counting only threads currently exposed by the user-thread scheduler to the kernel, which may depend on the level of concurrency set on the process.
+
+Many systems generate the load average by sampling the state of the scheduler periodically, rather than recalculating on all pertinent scheduler events.  They adopt this approach for performance reasons, as scheduler events occur frequently, and scheduler efficiency impacts significantly on system efficiency.  As a result, sampling error can lead to load averages inaccurately representing actual system behavior.  This can pose a particular problem for programs that wake up at a fixed interval that aligns with the load-average sampling, in which case a process may be under- or over-represented in the load average numbers.
+
+== CPU load vs CPU utilization ==
+A comparative study of different load indices carried out by Ferrari et al.<ref name="Empirical load">Domenico Ferrari and Songnian Zhou, “[http://www.eecs.berkeley.edu/Pubs/TechRpts/1987/CSD-87-353.pdf An Empirical Investigation of Load Indices For Load Balancing Applications]” Proc. Performance ’87, the 12th Int’l Symp. On Computer Performance Modeling, Measurement, and Evaluation, North Holland Publishers, Amsterdam. The Netherlands 1988. pp. 515-528</ref> reported that CPU load information based upon the CPU queue length does much better in load balancing compared to CPU utilization. The reason CPU queue length did better is probably because, when a host is heavily loaded, its CPU utilization is likely to be close to 100% and it is unable to reflect the exact load level of the utilization. In contrast, CPU queue lengths can directly reflect the amount of load on a CPU. As an example, two systems, one with 3 and the other with 6 processes in the queue, will probably have utilizations close to 100% although they obviously differ.
+
+== CPU Load Computation ==
+On Linux systems, the load-average is not calculated on each clock tick, but driven by a variable value that is based on the HZ frequency setting and tested on each clock tick. (HZ variable is the pulse rate of particular Linux kernel activity. 1HZ is equal to one clock tick; 10ms by default.) Although the HZ value can be configured in some versions of the kernel, it is normally set to 100. The calculation code uses the HZ value to determine the CPU Load calculation frequency. Specifically, the timer.c::calc_load() function will run the algorithm every 5 * HZ, or roughly every five seconds. Following is that function in its entirety:
+
+<source lang="c">
+unsigned long avenrun[3];
+
+static inline void calc_load(unsigned long ticks)
+{
+   unsigned long active_tasks; /* fixed-point */
+   static int count = LOAD_FREQ;
+
+   count -= ticks;
+   if (count < 0) {
+      count += LOAD_FREQ;
+      active_tasks = count_active_tasks();
+      CALC_LOAD(avenrun[0], EXP_1, active_tasks);
+      CALC_LOAD(avenrun[1], EXP_5, active_tasks);
+      CALC_LOAD(avenrun[2], EXP_15, active_tasks);
+   }
+}
+</source>
+
+The avenrun array contains 1-minute, 5-minute and 15-minute average. The CALC_LOAD macro and its associated values are defined in sched.h :
+
+<source lang="c">
+#define FSHIFT   11		/* nr of bits of precision */
+#define FIXED_1  (1<<FSHIFT)	/* 1.0 as fixed-point */
+#define LOAD_FREQ (5*HZ)	/* 5 sec intervals */
+#define EXP_1  1884		/* 1/exp(5sec/1min) as fixed-point */
+#define EXP_5  2014		/* 1/exp(5sec/5min) */
+#define EXP_15 2037		/* 1/exp(5sec/15min) */
+
+#define CALC_LOAD(load,exp,n) \
+   load *= exp; \
+   load += n*(FIXED_1-exp); \
+   load >>= FSHIFT;
+</source>
+
+==Other system performance commands==
+Other commands for assessing system performance include:
+
+* <tt>[[uptime]]</tt> the system reliability and load average
+* [[Top (Unix)|<tt>top</tt>]] for an overall system view
+* [[Htop (Unix)|<tt>htop</tt>]] interactive process viewer
+* <tt>iotop</tt> interactive I/O viewer - [http://guichaz.free.fr/iotop/ iotop homepage]
+* [[Iostat (Unix)|<tt>iostat</tt>]] for storage I/O statistics
+* [[Netstat (Unix)|<tt>netstat</tt>]] for network statistics
+* <tt>[[mpstat]]</tt> for CPU statistics
+* <tt>tload</tt> load average graph for terminal
+* [[Xload (Unix)|<tt>xload</tt>]] load average graph for X
+
+== See also ==
+* [[CPU usage]]
+
+==External links==
+* {{cite web
+| first       = Neil
+| last        = Gunther
+| authorlink  = Neil J. Gunther
+| title       = UNIX Load Average Part 1: How It Works
+| url         = http://www.teamquest.com/resources/gunther/ldavg1.shtml
+| archiveurl  =
+| work        = www.teamquest.com
+| publisher   = TeamQuest
+| location    =
+| format      =
+| doi         =
+| date        =
+| month       =
+| year        =
+| archivedate =
+| accessdate  = 2009-08-12
+| quote       =
+}} (including Linux)
+* {{cite web
+| first       = Ray
+| last        = Walker
+| authorlink  = 
+| title       = Examining Load Average
+| url         = http://www.linuxjournal.com/article/9001
+| archiveurl  =
+| work        = 
+| publisher   = Linux Journal
+| location    =
+| format      =
+| doi         =
+| date        =
+| month       =
+| year        =
+| archivedate =
+| accessdate  = 
+| quote       =
+}}
+
+==References==
+{{reflist}}
+
+[[Category:Operating system technology]]
+
+[[de:Load]]
+[[fr:Load average]]
+[[pt:Load average]]
+[[sv:Load average]]</body> </html>

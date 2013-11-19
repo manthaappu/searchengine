@@ -1,0 +1,38 @@
+<html> <head> <title>Picture Processing Unit</title></head><body>[[Image:Nesppu.jpg|right|thumb|NES PPU (Ricoh RP2C07) in a PAL NES.]]
+The '''PPU (Picture Processing Unit)''', more specifically known as [[Ricoh]] RP2C02 ([[NTSC]] version) / RP2C07 ([[PAL]] version), is the [[microprocessor]] in the [[Nintendo Entertainment System]] responsible for generating video signals from graphic data stored in memory.
+
+The chip is known for its effective use of [[Memory (computers)|memory]], using very little memory to store graphical data. It was rather advanced for its time when the [[Nintendo Entertainment System|Famicom]] (Japanese version of the Nintendo Entertainment System) was released, sporting full [[Sprite (computer graphics)|sprite]] support, movable backgrounds, and many colors on screen at the same time. To compete with other video game systems, like the technically superior [[Sega Master System]], [[Nintendo]] also extended the PPU's technical capabilities through the use of [[Multi-Memory Controller|mappers]], which were placed on the game cartridge. The mappers added more memory or could bank switch data into the PPU's [[address space]], making it possible to create more advanced graphics, using more colors and bigger [[tile set]]s. 
+
+==Key features==
+*2KB external [[RAM]] for graphics information storage
+*256 bytes for [[Sprite (computer graphics)|sprite]] data storage
+*32 bytes for palette storage
+*8 × 8 or 8 × 16 (selectable) sized [[tile]]s
+*Two 4KB [[tile set]]s with space for 256 tiles each
+*Up to 64 sprites (movable objects) on screen simultaneously (only 8 visible per [[scan line]])
+*25 colors simultaneously (although more colors are possible using programming tricks) from a hardware [[Palette (computing)|color palette]] of 64 colors
+*Picture resolution of 256 × 240 pixels (fully visible on PAL, but cropped to 256 × 224 on most [[NTSC]] television sets)
+
+==Technical information==
+The PPU is controlled via eight [[Processor register|registers]] visible in the [[CPU]]'s address space in the addresses $2000 through $2007. All data and information is passed to the PPU through these, except the raw tile data (there are exceptions, as some games had RAM instead of ROM to store the tile data, and the tiles had to be written each time), which is hardwired to the PPU's address space. The PPU uses the tile graphics data together with information stored by the program in the PPU's RAM, such as color and position, to render the final graphical output to the screen. 
+
+The lowest graphical components the PPU operates with are [[tile]]s, which are blocks of 8&times;8 or 8&times;16 pixels. The tiles are stored in a [[Read-only memory|ROM]] chip on the game cartridge. The tiles are the basic building blocks, used to create larger moving objects, or large static backgrounds.
+
+Essentially, the PPU supports two different kinds of objects: movable (sprites) and non-movable (background). Both kind of objects are basically a tile, and moreover a sprite and background object can use the same tile. The difference is that a tile used as a sprite can move around, whereas a tile used as a background cannot. 
+
+Sprite data is stored in a special memory called the "Sprite-RAM" or "SPR-RAM" for short, which is a 256-byte memory built into the PPU core. The data stored here is 4 bytes; the position, color and tile, for each of the 64 sprites. This data is used by the PPU to place the sprite when it [[Rendering (computer graphics)|renders]] the frame. Background objects, however, are stored in a much less exclusive way, which is more like the way characters are stored in [[text mode]] on [[Personal computer|PCs]]. A background is defined by a simple data structure called a nametable, which is essentially a two dimensional array.  The integer value in each array slot corresponds to a tile number, and the index values of this slot correspond to the tile's intended x/y position on screen. The PPU has, without the use of memory mappers, two nametables, so smooth scrolling between backgrounds is possible.
+
+A color palette must be defined in order to show graphics on the screen. It is stored in a separate 32 byte location in RAM, known as "palette-RAM". Each entry here picks a color from the hardware color palette, which are the predefined colors to choose between. 16 colors can be chosen for sprites, and 16 colors for backgrounds. However, bytes 4, 8 and 12 of the sprite palette, and bytes 0, 4, 8, and 12 of the background palette, are not in use by the PPU. Therefore, the number of actually usable colors is reduced to 25 instead of 32. The first byte of the sprite palette also defines the global background color for both sprites and the background.
+
+==See also==
+* [[Nintendo Entertainment System]]
+
+==External links==
+*[http://nesdev.parodius.com/NinTech.txt Technical information about the PPU]
+*[http://nesdev.parodius.com/2C02%20technical%20reference.TXT Very detailed technical information]
+
+[[Category:Graphics chips]]
+[[Category:Nintendo Entertainment System]]
+[[Category:Nintendo hardware]]
+
+[[sv:Picture processing unit]]</body> </html>

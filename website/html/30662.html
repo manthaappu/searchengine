@@ -1,0 +1,378 @@
+<html> <head> <title>QR decomposition</title></head><body>In [[linear algebra]], a '''QR decomposition''' (also called a '''QR factorization''') of a [[matrix (mathematics)|matrix]] is a [[matrix decomposition|decomposition]] of the matrix into an [[orthogonal matrix|orthogonal]] and an [[upper triangular matrix]]. QR decomposition is often used to solve the [[linear least squares (mathematics)|linear least squares]] problem, and is the basis for a particular [[eigenvalue algorithm]], the [[QR algorithm]].
+
+==Definition==
+===Square matrix===
+Any real square matrix ''A'' may be decomposed as
+: <math> A = QR, \, </math>
+where ''Q'' is an [[orthogonal matrix]] (its columns are [[orthogonal]] [[unit vector]]s meaning ''Q''<sup>T</sup>''Q'' = ''I'') and ''R'' is an upper [[triangular matrix]] (also called right triangular matrix). This generalizes to a complex square matrix ''A'' and a [[unitary matrix]] ''Q''. If ''A'' is [[invertible matrix|nonsingular]], then the factorization is unique if we require that the diagonal elements of ''R'' are positive.
+
+===Rectangular matrix===
+More generally, we can factor a complex ''m''&times;''n'' matrix ''A'', with ''m'' ≥ ''n'', as the product of an ''m''&times;''m'' [[unitary matrix]] ''Q'' and an ''m''&times;''n'' upper triangular matrix ''R''.  As the bottom (''m''&minus;''n'') rows of an ''m''&times;''n'' upper triangular matrix consist entirely of zeroes, it is often useful to partition ''R'', or both ''R'' and ''Q''.:
+:<math>
+A = QR = Q \begin{bmatrix} R_1 \\ 0 \end{bmatrix} 
+  =  \begin{bmatrix} Q_1, Q_2 \end{bmatrix} \begin{bmatrix} R_1 \\ 0 \end{bmatrix}
+  = Q_1 R_1,
+</math>
+where ''R''<sub>1</sub> is an ''n''×''n'' upper triangular matrix, ''Q''<sub>1</sub> is ''m''×''n'', ''Q''<sub>2</sub> is ''m''×(''m''&minus;''n''), and ''Q''<sub>1</sub> and ''Q''<sub>2</sub> both have orthogonal columns. 
+
+{{harvtxt|Golub|Van Loan|1996|loc=§5.2}} call ''Q''<sub>1</sub>''R''<sub>1</sub> the ''thin QR factorization'' of ''A''.
+If ''A'' is of full [[matrix rank|rank]] ''n'' and we require that the diagonal elements of ''R''<sub>1</sub> are positive then ''R''<sub>1</sub> and ''Q''<sub>1</sub> are unique, but in general ''Q''<sub>2</sub> is not. ''R''<sub>1</sub> is then equal to the upper triangular factor of the [[Cholesky decomposition]] of ''A''* ''A'' (= ''A''<sup>T</sup>''A'' if ''A'' is real).
+
+===QL, RQ and LQ decompositions===
+Analogously, we can define QL, RQ, and LQ decompositions, with ''L'' being a ''left'' triangular matrix.
+
+==Computing the QR decomposition==
+There are several methods for actually computing the QR decomposition, such as by means of the [[Gram–Schmidt process]], [[Householder transformation]]s, or [[Givens rotation]]s. Each has a number of advantages and disadvantages.
+
+=== Using the Gram-Schmidt process ===
+{{details|Gram-Schmidt#Numerical stability}}
+Consider the [[Gram–Schmidt process]] applied to the columns of the full column rank matrix <math>A=[\mathbf{a}_1, \cdots, \mathbf{a}_n]</math>, with [[inner product]] <math>\langle\mathbf{v},\mathbf{w}\rangle = \mathbf{v}^\top \mathbf{w}</math> (or <math>\langle\mathbf{v},\mathbf{w}\rangle = \mathbf{v}^* \mathbf{w}</math> for the complex case).
+
+Define the projection: 
+:<math>\mathrm{proj}_{\mathbf{e}}\mathbf{a} 
+= \frac{\left\langle\mathbf{e},\mathbf{a}\right\rangle}{\left\langle\mathbf{e},\mathbf{e}\right\rangle}\mathbf{e}
+</math>
+then:
+:<math>
+\begin{align}
+ \mathbf{u}_1 &= \mathbf{a}_1, 
+  & \mathbf{e}_1 &= {\mathbf{u}_1 \over \|\mathbf{u}_1\|} \\
+ \mathbf{u}_2 &= \mathbf{a}_2-\mathrm{proj}_{\mathbf{e}_1}\,\mathbf{a}_2, 
+  & \mathbf{e}_2 &= {\mathbf{u}_2 \over \|\mathbf{u}_2\|} \\
+ \mathbf{u}_3 &= \mathbf{a}_3-\mathrm{proj}_{\mathbf{e}_1}\,\mathbf{a}_3-\mathrm{proj}_{\mathbf{e}_2}\,\mathbf{a}_3, 
+  & \mathbf{e}_3 &= {\mathbf{u}_3 \over \|\mathbf{u}_3\|} \\
+ & \vdots &&\vdots \\
+ \mathbf{u}_k &= \mathbf{a}_k-\sum_{j=1}^{k-1}\mathrm{proj}_{\mathbf{e}_j}\,\mathbf{a}_k,
+  &\mathbf{e}_k &= {\mathbf{u}_k\over\|\mathbf{u}_k\|}
+\end{align}
+</math>
+
+We then rearrange the equations above so that the <math>\mathbf{a}_i</math>s are on the left, using the fact that the <math>\mathbf{e}_i</math> are unit vectors:
+
+:<math>
+\begin{align}
+ \mathbf{a}_1 &= \langle\mathbf{e}_1,\mathbf{a}_1 \rangle \mathbf{e}_1  \\
+ \mathbf{a}_2 &= \langle\mathbf{e}_1,\mathbf{a}_2 \rangle \mathbf{e}_1 
+  + \langle\mathbf{e}_2,\mathbf{a}_2 \rangle \mathbf{e}_2 \\
+ \mathbf{a}_3 &= \langle\mathbf{e}_1,\mathbf{a}_3 \rangle \mathbf{e}_1 
+  + \langle\mathbf{e}_2,\mathbf{a}_3 \rangle \mathbf{e}_2 
+  + \langle\mathbf{e}_3,\mathbf{a}_3 \rangle \mathbf{e}_3 \\
+ &\vdots \\
+ \mathbf{a}_k &= \sum_{j=1}^{k} \langle \mathbf{e}_j, \mathbf{a}_k \rangle \mathbf{e}_j
+\end{align}
+</math>
+where <math>\langle\mathbf{e}_i,\mathbf{a}_i \rangle = \|\mathbf{u}_i\|</math>. This can be written in matrix form:
+:<math> A = Q R </math>
+where:
+:<math>Q = \left[ \mathbf{e}_1, \cdots, \mathbf{e}_n\right] \qquad \text{and} \qquad
+R = \begin{pmatrix} 
+\langle\mathbf{e}_1,\mathbf{a}_1\rangle & \langle\mathbf{e}_1,\mathbf{a}_2\rangle &  \langle\mathbf{e}_1,\mathbf{a}_3\rangle  & \ldots \\
+0                & \langle\mathbf{e}_2,\mathbf{a}_2\rangle                        &  \langle\mathbf{e}_2,\mathbf{a}_3\rangle  & \ldots \\
+0                & 0                                       & \langle\mathbf{e}_3,\mathbf{a}_3\rangle                          & \ldots \\
+\vdots           & \vdots                                  & \vdots                                    & \ddots \end{pmatrix}.</math>
+
+==== Example ====
+Consider the decomposition of 
+: <math>A = 
+\begin{pmatrix}
+12 & -51 & 4 \\
+6 & 167 & -68 \\
+-4 & 24 & -41 
+\end{pmatrix}
+.</math>
+
+Recall that an orthogonal matrix <math>Q</math> has the property
+: <math>
+\begin{matrix}
+ Q^{T}\,Q = I.
+\end{matrix}
+</math>
+
+Then, we can calculate <math>Q</math> by means of Gram-Schmidt as follows:
+: <math>
+U = 
+\begin{pmatrix}
+\mathbf u_1 & \mathbf u_2 & \mathbf u_3
+\end{pmatrix}
+=
+\begin{pmatrix}
+12 & -69 & -58/5 \\
+6  & 158 & 6/5 \\
+-4 &  30 & -33 
+\end{pmatrix};
+</math>
+: <math>
+Q = 
+\begin{pmatrix}
+\frac{\mathbf u_1}{\|\mathbf u_1\|} & 
+\frac{\mathbf u_2}{\|\mathbf u_2\|} & 
+\frac{\mathbf u_3}{\|\mathbf u_3\|}
+\end{pmatrix}
+=
+\begin{pmatrix}
+     6/7    &    -69/175   &   -58/175   \\
+     3/7    &    158/175   &     6/175   \\
+    -2/7    &      6/35    &   -33/35    
+\end{pmatrix}.
+</math>
+
+Thus, we have
+: <math>
+\begin{matrix}
+ Q^{T} A = Q^{T}Q\,R = R; 
+\end{matrix}
+</math>
+: <math>
+\begin{matrix}
+ R = Q^{T}A =
+\end{matrix}
+\begin{pmatrix}
+    14  &  21          &            -14 \\
+     0  & 175          &            -70 \\
+     0  &   0          &             35
+\end{pmatrix}.
+</math>
+
+====Relation to RQ decomposition====
+The RQ decomposition transforms a matrix ''A'' into the product of an upper triangular matrix ''R'' (also known as right-triangular) and an orthogonal matrix ''Q''. The only difference from QR decomposition is the order of these matrices.
+
+QR decomposition is Gram-Schmidt orthogonalization of columns of A, started from the first column.
+
+RQ decomposition is Gram-Schmidt orthogonalization of rows of A, started from the last row.
+
+=== Using Householder reflections ===
+A [[Householder reflection]] (or ''Householder transformation'') is a transformation that takes a vector and reflects it about some [[plane (mathematics)|plane]] or [[hyperplane]]. We can use this operation to calculate the QR factorization of an m-by-n matrix <math>A</math> with m ≥ n.
+
+''Q'' can be used to reflect a vector in such a way that all coordinates but one disappear. 
+
+Let <math>\mathbf{x}</math> be an arbitrary real ''m''-dimensional column vector of <math>A</math> such that ||<math>\mathbf{x}</math>|| = |α| for a scalar α. If the algorithm is implemented using [[floating-point arithmetic]], then α should get the opposite sign as the k-th coordinate of <math>\mathbf{x}</math>, where x<sub>k</sub> is to be the pivot coordinate after which all entries are 0 in matrix ''A'''s final upper triangular form, to avoid [[loss of significance]]. In the complex case, set
+:<math> \alpha = - \mathrm{e}^{\mathrm{i} \arg x_1} \|\mathbf{x}\|</math>
+{{harv|Stoer|Bulirsch|2002|p=225}} and substitute transposition by conjugate transposition in the construction of ''Q'' below.
+
+Then, where <math>\mathbf{e}_1</math> is the vector (1,0,...,0)<sup>T</sup>, ||·|| is the [[Euclidean space#Euclidean structure|Euclidean norm]] and <math>I</math> is an m-by-m identity matrix, set
+: <math>\mathbf{u} = \mathbf{x} - \alpha\mathbf{e}_1,</math> 
+: <math>\mathbf{v} = {\mathbf{u}\over\|\mathbf{u}\|},</math>
+: <math>Q = I - 2 \mathbf{v}\mathbf{v}^T.</math>
+
+Or, if <math>A</math> is complex
+: <math>Q = I - (1+w)\mathbf{v}\mathbf{v}^H</math>, where <math>w = \mathbf{x}^H\mathbf{v}\mathbf{/}\mathbf{v}^H\mathbf{x} </math>
+: where <math>\mathbf{x}^H</math> is the [[conjugate transpose]] (transjugate) of <math>\mathbf{x}</math>
+
+<math>Q</math> is an m-by-m Householder matrix and 
+: <math>Q\mathbf{x} = (\alpha, 0, \cdots, 0)^T.\,</math>
+
+This can be used to gradually transform an ''m''-by-''n'' matrix ''A'' to upper [[triangular]] form. First, we multiply ''A'' with the Householder matrix ''Q''<sub>1</sub> we obtain when we choose the first matrix column for '''x'''. This results in a matrix ''Q''<sub>1</sub>''A'' with zeros in the left column (except for the first row).
+
+:<math>Q_1A = \begin{bmatrix}
+                   \alpha_1&\star&\dots&\star\\
+                      0    &     &     &    \\
+                   \vdots  &     &  A' &    \\
+                      0    &     &     & \end{bmatrix}</math>
+
+This can be repeated for ''A''&prime; (obtained from ''Q''<sub>1</sub>''A'' by deleting the first row and first column), resulting in a Householder matrix ''Q''&prime;<sub>2</sub>. Note that ''Q''&prime;<sub>2</sub> is smaller than ''Q''<sub>1</sub>. Since we want it really to operate on ''Q''<sub>1</sub>''A'' instead of ''A''&prime; we need to expand it to the upper left, filling in a 1, or in general:
+
+:<math>Q_k = \begin{pmatrix}
+                  I_{k-1} & 0\\
+                   0  & Q_k'\end{pmatrix}.</math>
+
+After <math>t</math> iterations of this process, <math>t = \min(m-1, n)</math>, 
+:<math> R = Q_t \cdots Q_2Q_1A</math>
+is a upper triangular matrix. So, with
+:<math> Q = Q_1^T Q_2^T \cdots Q_t^T, </math>
+<math>A = QR</math> is a QR decomposition of <math>A</math>. 
+
+This method has greater [[numerical stability]] than the Gram-Schmidt method above. <!--See the below example, and compare above-->
+
+The following table gives the number of operations in the k-th step of the QR-Decomposition by the Householder transformation, assuming a square matrix with size ''n''.
+{| class="wikitable"
+|-
+! Operation
+! Number of operations in the k-th step
+|-
+| multiplications
+| <math>2(n-k+1)^2</math>
+|-
+| additions
+| <math> (n-k+1)^2+(n-k+1)(n-k)+2 </math>
+|-
+| division
+| <math>1</math>
+|-
+| square root
+| <math>1</math>
+|}
+
+Summing these numbers over the <math>(n-1)</math> steps (for a square matrix of size ''n''), the complexity of the algorithm (in terms of floating point multiplications) is given by
+:<math>\frac{2}{3}n^3+n^2+\frac{1}{3}n-2=O(n^3).</math>
+
+==== Example ====
+Let us calculate the decomposition of 
+: <math>A = \begin{pmatrix}
+12 & -51 & 4 \\
+6 & 167 & -68 \\
+-4 & 24 & -41 \end{pmatrix}.</math>
+
+First, we need to find a reflection that transforms the first column of matrix ''A'', vector <math>\mathbf{a}_1 = (12, 6, -4)^T</math>, to <math>\|\mathbf{a}_1\| \;\mathrm{e}_1 = (14, 0, 0)^T.</math> 
+
+Now, 
+: <math>\mathbf{u} = \mathbf{x} - \alpha\mathbf{e}_1,</math> 
+and 
+: <math>\mathbf{v} = {\mathbf{u}\over\|\mathbf{u}\|}.</math>
+Here, 
+: <math>\alpha = 14</math> and <math>\mathbf{x} = \mathbf{a}_1 = (12, 6, -4)^T</math>
+
+Therefore
+: <math>\mathbf{u} = (-2, 6, -4)^T=({2})(-1, 3, -2)^T</math> and <math>\mathbf{v} = {1 \over \sqrt{14}}(-1, 3, -2)^T</math>, and then
+:<math>Q_1 = I - {2 \over \sqrt{14} \sqrt{14}} \begin{pmatrix} -1 \\ 3 \\ -2 \end{pmatrix}\begin{pmatrix} -1 & 3 & -2 \end{pmatrix}</math>
+:<math> = I - {1 \over 7}\begin{pmatrix}
+1 & -3  & 2 \\
+-3 & 9 & -6 \\
+2  & -6  & 4 
+\end{pmatrix}</math>
+:<math> = \begin{pmatrix}
+6/7 & 3/7   &  -2/7 \\
+3/7  &-2/7  &  6/7 \\
+-2/7 & 6/7  &   3/7 \\
+\end{pmatrix}.</math>
+
+Now observe:
+:<math>Q_1A = \begin{pmatrix}
+14 & 21 & -14 \\
+0 & -49 & -14 \\
+0 & 168 & -77 \end{pmatrix},</math>
+so we already have almost a triangular matrix. We only need to zero the (3, 2) entry.
+
+Take the (1, 1) [[minor (linear algebra)|minor]], and then apply the process again to
+:<math>A' = M_{11} = \begin{pmatrix}
+-49 & -14 \\
+168 & -77 \end{pmatrix}.</math>
+By the same method as above, we obtain the matrix of the Householder transformation
+:<math>Q_2 = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & -7/25 & 24/25 \\
+0 & 24/25 & 7/25 \end{pmatrix}</math>
+after performing a direct sum with 1 to make sure the next step in the process works properly.
+
+Now, we find
+:<math>Q=Q_1^T Q_2^T=\begin{pmatrix}
+6/7 & -69/175 & 58/175\\
+3/7 & 158/175 & -6/175 \\
+-2/7 & 6/35 & 33/35
+\end{pmatrix} </math>
+:<math>R=Q_2Q_1A=Q^T A=\begin{pmatrix}
+14 & 21 & -14 \\
+0 & 175 & -70 \\
+0 & 0 & 35
+\end{pmatrix}.</math>
+The matrix ''Q'' is orthogonal and ''R'' is upper triangular, so ''A'' = ''QR'' is the required QR-decomposition.
+
+=== Using Givens rotations ===
+''QR'' decompositions can also be computed with a series of [[Givens rotation]]s.  Each rotation zeros an element in the subdiagonal of the matrix, forming the ''R'' matrix.  The concatenation of all the Givens rotations forms the orthogonal ''Q'' matrix.
+
+In practice, Givens rotations are not actually performed by building a whole matrix and doing a matrix multiplication.  A Givens rotation procedure is used instead which does the equivalent of the sparse Givens matrix multiplication, without the extra work of handling the sparse elements.  The Givens rotation procedure is useful in situations where only a relatively few off diagonal elements need to be zeroed, and is more easily parallelized than Householder transformations.
+
+==== Example ====
+Let us calculate the decomposition of 
+: <math>A = \begin{pmatrix}
+12 & -51 & 4 \\
+6 & 167 & -68 \\
+-4 & 24 & -41 \end{pmatrix}.</math>
+
+First, we need to form a rotation matrix that will zero the lowermost left element, <math>\mathbf{a}_{31} = -4</math>.  We form this matrix using the [[Givens rotation]] method, and call the matrix <math>G_1</math>.  We will first rotate the vector <math>(6,-4)</math>, to point along the ''X'' axis.  This vector has an angle <math>\theta = \arctan\left({-4 \over 6}\right)</math>.  We create the orthogonal Givens rotation matrix, <math>G_1</math>:
+
+:<math>G_1 = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & \cos(\theta) & \sin(\theta) \\
+0 & -\sin(\theta) & \cos(\theta)
+\end{pmatrix}</math>
+:<math>\approx \begin{pmatrix}
+1 & 0 & 0 \\
+0 & 0.83205 & -0.55470 \\
+0 & 0.55470 & 0.83205
+\end{pmatrix}</math>
+
+And the result of <math>G_1A</math> now has a zero in the <math>\mathbf{a}_{31}</math> element.
+:<math>G_1A \approx \begin{pmatrix}
+12 & -51 & 4 \\
+7.21110 & 125.6396 & -33.83671 \\
+0 & 112.6041 & -71.83368
+\end{pmatrix}</math>
+
+We can similarly form Givens matrices <math>G_2</math> and <math>G_3</math>, which will zero the sub-diagonal elements <math>a_{21}</math> and <math>a_{32}</math>, forming a triangular matrix <math>R</math>.  The orthogonal matrix <math>Q^T</math> is formed from the concatenation of all the Givens matrices <math>Q^T = G_3G_2G_1</math>.  Thus, we have <math>
+G_3G_2G_1A= Q^TA = R</math>, and the ''QR'' decomposition is <math>A = QR</math>.
+
+==Connection to a determinant or a product of eigenvalues==
+We can use QR decomposition to find the absolute value of the [[determinant]] of a square matrix. Suppose a matrix is decomposed as <math>A=QR</math>. Then we have
+:<math>\det(A)=\det(Q)\cdot\det(R).</math>
+Since ''Q'' is unitary, <math>|\det(Q)|=1</math>. Thus, 
+:<math>|\det(A)|=|\det(R)|=\Big|\prod_{i} r_{ii}\Big|,</math>
+where <math>r_{ii}</math> are the entries on the diagonal of ''R''.
+
+Furthermore, because the determinant equals the product of the eigenvalues, we have 
+:<math>\Big|\prod_{i} r_{ii}\Big|=\Big|\prod_{i} \lambda_{i}\Big|,</math>
+where <math>\lambda_{i}</math> are eigenvalues of <math>A</math>.
+
+We can extend the above properties to non-square complex matrix <math>A</math> 
+by introducing the definition of QR-decomposition for non-square complex matrix
+and replacing eigenvalues with singular values.
+
+Suppose a QR decomposition for a non-square matrix ''A'':
+:<math>A = Q \begin{pmatrix}R\\O\end{pmatrix}, \qquad Q^*Q = I,</math>
+where <math>O</math> is a zero matrix and  <math>Q</math> is an unitary matrix.
+
+From the properties of [[Singular value decomposition|SVD]] and determinant of matrix, we have
+:<math>\Big|\prod_{i} r_{ii}\Big| = \prod_{i} \sigma_{i},</math>
+where <math>\sigma_{i}</math> are singular values of <math>A</math>.
+
+Note that the singular values of <math>A</math> and <math>R</math> are identical, although the complex eigenvalues of them may be different.
+However, if ''A'' is square, it holds that
+:<math>
+{\prod_{i} \sigma_{i}} = \Big|{\prod_{i} \lambda_{i}}\Big|.
+</math>
+
+In conclusion, QR decomposition can be used efficiently to calculate a product of eigenvalues or singular values of matrix.
+
+==Column pivoting==
+{{Expand section|date=December 2009}}
+QR decomposition with column pivoting introduces a [[permutation matrix]] ''P'':
+:<math>A P = Q R \quad \iff A = Q R P^T </math>
+Column pivoting is useful when ''A'' is (nearly) [[rank deficient]], or is suspected of being so. It can also improve numerical accuracy. ''P'' is usually chosen so that the diagonal elements of ''R'' are non-increasing: 
+<math>|r_{11}| \ge |r_{22}| \ge \ldots \ge |r_{nn}|</math>. This can be used to find the (numerical) rank of ''A'' at lower computational cost than a [[singular value decomposition]], forming the basis of so-called ''rank-revealing'' QR algorithms.
+
+==See also==
+* [[Polar decomposition]]
+* [[Eigenvalue decomposition]]
+* [[Spectral decomposition]]
+* [[Matrix decomposition]]
+* [[Zappa-Szép product#Examples|Zappa-Szép product]]
+
+==References==
+* {{Citation | last1=Golub | first1=Gene H. | author1-link=Gene H. Golub | last2=Van Loan | first2=Charles F. | author2-link=Charles F. Van Loan | title=Matrix Computations | publisher=Johns Hopkins | edition=3rd | isbn=978-0-8018-5414-9 | year=1996}}.
+* {{citation | first1=Roger A. | last1=Horn | first2=Charles R. | last2=Johnson | year=1985 | title=Matrix Analysis | publisher=Cambridge University Press | isbn=0-521-38632-2 }}. Section 2.8.
+* {{citation | first1=Josef | last1=Stoer | first2=Roland | last2=Bulirsch | year=2002 | title=Introduction to Numerical Analysis | edition=3rd | publisher=Springer | isbn=0-387-95452-X }}.
+
+==External links==
+*[http://www.bluebit.gr/matrix-calculator/ Online Matrix Calculator] Performs QR decomposition of matrices.
+*[http://netlib.org/lapack/lug/node39.html LAPACK users manual] gives details of subroutines to calculate the QR decomposition
+*[http://documents.wolfram.com/mathematica/functions/QRDecomposition Mathematica users manual] gives details and examples of routines to calculate QR decomposition
+*[http://www.alglib.net/ ALGLIB] includes a partial port of the LAPACK to C++, C#, Delphi, etc.
+
+{{Numerical linear algebra}}
+
+[[Category:Matrix decompositions]]
+[[Category:Numerical linear algebra]]
+
+[[cs:QR rozklad]]
+[[de:QR-Zerlegung]]
+[[es:Factorización QR]]
+[[eo:QR-faktorigo]]
+[[fr:Décomposition QR]]
+[[ko:QR 분해]]
+[[it:Decomposizione QR]]
+[[ja:QR分解]]
+[[ro:Descompunerea QR]]
+[[ru:QR-разложение]]
+[[fi:QR-hajotelma]]
+[[sv:QR-faktorisering]]
+[[uk:QR розклад матриці]]
+[[zh:QR分解]]</body> </html>

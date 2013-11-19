@@ -1,0 +1,128 @@
+<html> <head> <title>Process capability index</title></head><body>In [[process improvement]] efforts, the '''process capability index''' or '''process capability ratio''' is a statistical measure of [[process capability]]: The ability of a process to produce output within [[Specification (technical standard)|specification]] limits.<ref>{{Cite web|url=http://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm|title=What is Process Capability?|accessdate=2008-06-22|work=[http://www.itl.nist.gov/div898/handbook/index.htm NIST/Sematech Engineering Statistics Handbook]|publisher=[[National Institute of Standards and Technology]]}}</ref>  The concept of process capability only holds meaning for processes that are in a state of [[statistical control]].  Process capability indices measure how much [[Common-cause and special-cause|"natural variation"]] a process experiences relative to its specification limits and allows different processes to be compared with respect to how well an organization controls them.
+
+If the upper and lower [[Specification (technical standard)|specification]] limits of the process are USL and LSL, the target process mean is T, the estimated mean of the process is <MATH>\hat{\mu}</MATH> and the estimated variability of the process (expressed as a [[standard deviation]]) is <MATH>\hat{\sigma}</MATH>, then commonly-accepted process capability indices include:
+
+{| class="wikitable"
+ ! Index
+ ! Description
+|-
+| <MATH>\hat{C}_p = \frac{USL - LSL} {6 \hat{\sigma}}</MATH>
+| Estimates what the process would be capable of producing if the process could be centered.  Assumes process output is approximately normally distributed.
+|-
+| <MATH>\hat{C}_{p,lower} = {\hat{\mu} - LSL \over 3 \hat{\sigma}}</MATH>
+| Estimates process capability for specifications that consist of a lower limit only (for example, strength).  Assumes process output is approximately normally distributed.
+|-
+| <MATH>\hat{C}_{p,upper} = {USL - \hat{\mu} \over 3 \hat{\sigma}}</MATH>
+| Estimates process capability for specifications that consist of an upper limit only (for example, concentration).  Assumes process output is approximately normally distributed.
+|-
+| <MATH>\hat{C}_{pk} = \min \Bigg[ {USL - \hat{\mu} \over 3 \hat{\sigma}}, { \hat{\mu} - LSL \over 3 \hat{\sigma}} \Bigg]</MATH>
+| Estimates what the process is capable of producing if the process target is centered between the specification limits.  If the process mean is not centered, <MATH>\hat{C}_p</MATH> overestimates process capability. <MATH>\hat{C}_{pk} < 0</MATH> if the process mean falls outside of the specification limits.  Assumes process output is approximately normally distributed.
+|-
+| <MATH>\hat{C}_{pm} = \frac{ \hat{C}_p } { \sqrt{ 1 + \left ( \frac{\hat{\mu} - T} {\hat{\sigma}} \right )^2 } }</MATH>
+| Estimates process capability around a target, T.  <MATH>\hat{C}_{pm}</MATH> is always greater than zero.  Assumes process output is approximately normally distributed.  <MATH>\hat{C}_{pm}</MATH> is also known as the [[Taguchi methods|Taguchi]] capability index.<ref>{{Cite news| last = Boyles | first = Russell | year = 1991 | title = The Taguchi Capability Index | periodical = Journal of Quality Technology | publication-place = [[Milwaukee, Wisconsin]] | publisher = [[American Society for Quality|American Society for Quality Control]] | volume = 23 | issue = 1 | pages = 17 – 26 | url = http://www.asq.org/pub/jqt/ | issn = 0022-4065 | oclc = 1800135 | postscript = <!--None-->}}</ref>
+|-
+| <MATH>\hat{C}_{pkm} = \frac{ \hat{C}_{pk} } { \sqrt{ 1 + \left ( \frac{\hat{\mu} - T} {\hat{\sigma}} \right )^2 } }</MATH>
+| Estimates process capability around a target, T, and accounts for an off-center process mean.  Assumes process output is approximately normally distributed.
+|}
+
+<MATH>\hat{\sigma}</MATH> is estimated using the [[Unbiased estimation of standard deviation|sample standard deviation]].
+
+==Recommended values==
+Process capability indices are constructed to express more desirable capability with increasingly higher values.  Values near or below zero indicate processes operating off target (<MATH>\hat{\mu}</MATH> far from T) or with high variation.
+
+Fixing values for minimum "acceptable" process capability targets is a matter of personal opinion, and what consensus exists varies by industry, facility, and the process under consideration.  For example, in the automotive industry, the AIAG sets forth guidelines in the [[Production Part Approval Process]], 4th edition for recommended C<SUB>pk</SUB> minimum values for critical-to-quality process characteristics.  However, these criteria are debatable and several processes may not be evaluated for capability just because they have not properly been assessed.
+
+Since the process capability is a function of the specification, the Process Capability Index is only as good as the specification . For instance, if the specification came from an engineering guideline without considering the function and criticality of the part, a discussion around process capability is useless, and would have more benefits if focused on what are the real risks of having a part borderline out of specification. The loss function of [[Taguchi methods|Taguchi]] better illustrates this concept.
+
+At least one academic expert recommends<ref>{{Cite book| last = Montgomery | first = Douglas | title = Introduction to Statistical Quality Control | publisher = John Wiley & Sons, Inc. | date = 2004 | location = [[New York, New York]] | url = http://www.eas.asu.edu/~masmlab/montgomery/ | isbn = 9780471656319 | oclc = 56729567 | page = 776}}</ref> the following:
+
+{| class="wikitable"
+ ! Situation
+ ! Recommended minimum process capability for two-sided specifications
+ ! Recommended minimum process capability for one-sided specification
+|-
+| Existing process
+| 1.33
+| 1.25
+|-
+| New process
+| 1.50
+| 1.45
+|-
+| Safety or critical parameter for existing process
+| 1.50
+| 1.45
+|-
+| Safety or critical parameter for new process
+| 1.67
+| 1.60
+|-
+| [[Six Sigma]] quality process
+| 2.00
+| 2.00
+|}
+
+It should be noted though that where a process produces a characteristic with a capability index greater than 2.5, the unnecessary precision may be expensive<ref>{{Cite book| author=Booker, J. M.; Raines, M.; Swift, K. G. | title=Designing Capable and Reliable Products | date=2001 | publisher=[[Butterworth-Heinemann]] | location=[[Oxford]] | isbn=9780750650762 | oclc=47030836}}</ref>.
+
+==Relationship to measures of process fallout==
+The mapping from process capability indices, such as C<SUB>pk</SUB>, to measures of process fallout is straightforward.  Process fallout quantifies how many defects a process produces and is measured by [[Defects per million opportunities|DPMO]] or [[Parts-per notation|PPM]].  Process yield is, of course, the complement of process fallout and is approximately equal to the area under the [[probability density function]] <MATH>\Phi(\sigma) = \frac{1}{\sqrt{2\pi}} \int_{-\sigma}^\sigma e^{-t^2/2} \, dt</MATH> if the process output is approximately [[normally distributed]].
+
+In the short term ("short sigma"), the relationships are:
+{| class="wikitable"
+|-
+! C<SUB>pk
+! Sigma level (σ)
+! Area under the [[probability density function]] <MATH>\Phi(\sigma)</MATH>
+! Process yield
+! Process fallout (in terms of DPMO/PPM)
+|-
+| 0.33 || 1 || 0.6826894921 || 68.27% || 317311
+|-
+| 0.67 || 2 || 0.9544997361 || 95.45% || 45500
+|-
+| 1.00 || 3 || 0.9973002039 || 99.73% || 2700
+|-
+| 1.33 || 4 || 0.9999366575 || 99.99% || 63
+|-
+| 1.67 || 5 || 0.9999994267 || 99.9999% || 1
+|-
+| 2.00 || 6 || 0.9999999980 || 99.9999998% || 0.002
+|}
+In the long term, processes can shift or drift significantly (most [[control chart]]s are only sensitive to changes of 1.5σ or greater in process output), so process capability indices are not applicable as they require [[statistical control]].
+
+==Example==
+Consider a quality characteristic with target of 100.00 [[Micrometre|μm]] and upper and lower specification limits of 106.00 μm and 94.00 μm respectively.  If, after carefully monitoring the process for a while, it appears that the process is in control and producing output predictably (as depicted in the [[run chart]] below), we can meaningfully estimate its mean and standard deviation.
+[[File:ProcessCapabilityExample.svg]]
+
+If <MATH>\hat{\mu}</MATH> and <MATH>\hat{\sigma}</MATH> are estimated to be 98.94 μm and 1.03 μm, respectively, then
+{| class="wikitable"
+ ! Index
+|-
+| <MATH>\hat{C}_p = \frac{USL - LSL} {6 \hat{\sigma}} = \frac{106.00 - 94.00} {6 \times 1.03} = 1.94</MATH>
+|-
+| <MATH>\hat{C}_{pk} = \min \Bigg[ {USL - \hat{\mu} \over 3 \hat{\sigma}}, { \hat{\mu} - LSL \over 3 \hat{\sigma}} \Bigg] = \min \Bigg[ {106.00 - 98.94 \over 3 \times 1.03}, { 98.94 - 94 \over 3 \times 1.03} \Bigg] = 1.60</MATH>
+|-
+| <MATH>\hat{C}_{pm} = \frac{ \hat{C}_p } { \sqrt{ 1 + \left ( \frac{\hat{\mu} - T} {\hat{\sigma}} \right )^2 } } = \frac{ 1.94 } { \sqrt{ 1 + \left ( \frac{98.94 - 100.00} {1.03} \right )^2 } } = 1.35</MATH>
+|-
+| <MATH>\hat{C}_{pkm} = \frac{ \hat{C}_{pk} } { \sqrt{ 1 + \left ( \frac{\hat{\mu} - T} {\hat{\sigma}} \right )^2 } } = \frac{ 1.60 } { \sqrt{ 1 + \left ( \frac{98.94 - 100.00} {1.03} \right )^2 } } = 1.11</MATH>
+|}
+
+The fact that the process is running about 1σ below its target is reflected in the markedly different values for C<SUB>p</SUB>, C<SUB>pk</SUB>, C<SUB>pm</SUB>, and C<SUB>pkm</SUB>.
+
+==References==
+{{Reflist}}
+
+==See also==
+*[[Process performance index]]
+
+{{DEFAULTSORT:Process Capability Index}}
+[[Category:Index numbers]]
+[[Category:Process management]]
+[[Category:Quality control]]
+
+[[cs:Index způsobilosti procesu]]
+[[de:Prozessfähigkeitsindex]]
+[[es:Índice de capacidad del proceso]]
+[[ko:공정능력지수]]
+[[ja:工程能力指数]]
+[[sv:Kapabilitetsindex]]</body> </html>

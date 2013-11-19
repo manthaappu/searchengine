@@ -1,0 +1,129 @@
+<html> <head> <title>Address space layout randomization</title></head><body>{{Original research|date=October 2008}}
+{{Refimprove|date=October 2008}}
+
+'''Address space layout randomization''' ('''ASLR''') is a [[Computer insecurity|computer security]] technique which involves randomly arranging the positions of key data areas, usually including the base of the [[executable]] and position of [[Library (computer science)|libraries]], [[Dynamic memory allocation|heap]], and [[Stack-based memory allocation|stack]], in a [[Process (computer science)|process]]'s [[address space]].
+
+== Benefits ==
+Address space randomization hinders some types of security attacks by making it more difficult for an attacker to predict target addresses.  For example, attackers trying to execute [[return-to-libc attack]]s must locate the code to be executed, while other attackers trying to execute [[shellcode]] injected on the stack have to find the stack first.  In both cases, the related memory addresses are obscured from the attackers. These values have to be guessed, and a mistaken guess is not usually recoverable due to the application crashing.
+
+=== Effectiveness ===
+Address space layout randomization relies on the low chance of an attacker guessing where randomly-placed areas are located. Security is increased by increasing the search space.  Thus, address space randomization is more effective when more [[Information entropy|entropy]] is present in the random offsets.  Entropy is increased by either raising the amount of [[virtual memory|virtual memory area]] space over which the randomization occurs or reducing the period over which the randomization occurs. The period is typically implemented as small as possible, so most systems must increase VMA space randomization.
+
+To defeat the randomization, attackers must successfully guess the positions of all areas they wish to attack.  For data areas such as stack and heap, where custom code or useful data can be loaded, more than one state can be attacked by using [[NOP slide]]s for code or repeated copies of data. This allows an attack to succeed if the area is randomized to one of a handful of values.  In contrast, code areas such as library base and main executable need to be discovered exactly.  Often these areas are mixed, for example [[stack frame]]s are injected onto the stack and a library is returned into.
+
+To begin, let us declare the following variables:
+
+:<math>E_s = \mbox{entropy bits of stack top}\,</math>
+:<math>E_m = \mbox{entropy bits of mmap() base}\,</math>
+:<math>E_x = \mbox{entropy bits of main executable base}\,</math>
+:<math>E_h = \mbox{entropy bits of heap base}\,</math>
+:<math>A_s = \mbox{attacked bits per attempt of stack entropy}\,</math>
+:<math>A_m = \mbox{attacked bits per attempt of mmap() base entropy}\,</math>
+:<math>A_x = \mbox{attacked bits per attempt of main executable entropy}\,</math>
+:<math>A_h = \mbox{attacked bits per attempt of heap base entropy}\,</math>
+:<math>\alpha = \mbox{attempts made}\,</math>
+:<math>N = E_s-A_s + E_m-A_m + E_x-A_x + E_h-A_h\,</math>
+
+To calculate the probability of an attacker succeeding, we have to assume a number of attempts <math>\alpha</math> carried out without being interrupted by a signature-based IPS, law enforcement, or other factor; in the case of brute forcing, the daemon cannot be restarted.  We also have to figure out how many bits are relevant and how many are being attacked in each attempt, leaving however many bits the attacker has to defeat.
+
+The following formulas represent the probability of success for a given set of <math>\alpha\,</math> attempts on <math>N</math> bits of entropy.
+
+:<math>g \left ( \alpha\, \right ) = \mbox{isolated guessing; address space is re-randomized after each attempt}\,</math>
+:<math>g \left ( \alpha\, \right ) = 1 - { \left ( 1 - {2^{-N}} \right ) ^ \alpha\,} : 0 \le \, \alpha\,</math>
+
+:<math>b \left ( \alpha\, \right ) = \mbox{systematic brute forcing on copies of the program with the same address space}</math>
+:<math>b \left ( \alpha\, \right ) = \frac{\alpha\,}{{2^N}} : 0 \le \, \alpha\, \le \, {2^N}</math>
+
+In many systems, <math>2^N</math> can be in the thousands or millions; on {{as of | 2009 | alt = modern}} [[64-bit]] systems, these numbers typically reach the millions at least. For 32-bit systems at 2004 computer speeds which have 16 bits for address randomization, Shacham and co-workers state "… 16 bits of address randomization can be defeated by a [[brute force attack]] within minutes."<ref>On the Effectiveness of Address-Space Randomization,Shacham, H. and Page, M. and Pfaff, B. and Goh, E.J. and Modadugu, N. and Boneh, D,Proceedings of the 11th ACM conference on Computer and communications security,pp 298--307, 2004</ref>  It should be noted that the authors' statement depends on the ability to attack the same application multiple times without any delay.  Proper implementations of ASLR, like that included in [[grsecurity]], provide several methods to make such brute force attacks infeasible.  One method involves preventing an executable from executing for a configurable amount of time if it has crashed a certain number of times.
+
+Some systems implement ''Library Load Order Randomization'', a form of ASLR which randomizes the order in which libraries are loaded.  This supplies very little entropy.  An approximation of the number of bits of entropy supplied per needed library is shown below; this does not yet account for varied library sizes, so the actual entropy gained is really somewhat higher.  Note that attackers usually need only one library; the math is more complex with multiple libraries, and shown below as well.  Note that the case of an attacker using only one library is a simplification of the more complex formula for <math>l = 1</math>.
+
+:<math> l = \mbox{number of libraries loaded}</math>
+:<math> \beta\, = \mbox{number of libraries used by the attacker}</math>
+
+:<math>E_m = \log_2 \left (l \right ) : \beta\, = 1, l \ge \, 1</math>
+:<math>E_m = \sum_{i=l}^{l - \left ( \beta\, - 1 \right )} \log_2 \left (i \right ) : \beta\, \ge \, 1, l \ge \, 1</math>
+
+These values tend to be low even for large values of <math>l</math>, most importantly since attackers typically can use only the [[C standard library]] and thus one can often assume that <math>\beta\, = 1</math>.  Interestingly, however, even for a small number of libraries there are a few bits of entropy gained here; it is thus potentially interesting to combine library load order randomization with VMA address randomization to gain a few extra bits of entropy.  Note that these extra bits of entropy will not apply to other mmap() segments, only libraries.
+
+==== Reducing entropy ====
+Attackers may make use of several methods to reduce the entropy present in a randomized address space, ranging from simple information leaks to attacking multiple bits of entropy per attack (such as by [[heap spraying]]).  There is little that can be done about this.
+
+It is possible to leak information about memory layout using [[format string vulnerability|format string vulnerabilities]].  Format string functions such as [[printf]]() use a [[variable argument list]] to do their job; format specifiers describe what the argument list looks like.  Because of the way arguments are typically passed, each format specifier moves closer to the top of the stack frame.  Eventually, the return pointer and stack frame pointer can be extracted, revealing the address of a vulnerable library and the address of a known stack frame; this can completely eliminate library and stack randomization as an obstacle to an attacker.
+
+One can also decrease entropy in the stack or heap.  The stack typically must be aligned to 16 bytes, and so this is the smallest possible randomization interval; while the heap must be page-aligned, typically 4096 bytes.  When attempting an attack, it is possible to align duplicate attacks with these intervals; a [[NOP slide]] may be used with shellcode injection, and the string '/bin/sh' can be replaced with '////////bin/sh' for an arbitrary number of slashes when attempting to return to ''system()''.  The number of bits removed is exactly <math>log_2 \left (n \right )</math> for <math>n</math> intervals attacked.
+
+Such decreases are limited due to the amount of data in the stack or heap.  The stack, for example, is typically limited to 8 [[Megabyte|MB]]<ref name=Prefix2>{{BDprefix|p=b}}</ref> and grows to much less; this allows for at most 19 bits, although a more conservative estimate would be around 8–10 bits corresponding to 4–16 [[Kilobyte|KB]]<ref name=Prefix2>{{BDprefix|p=b}}</ref> of stack stuffing.  The heap on the other hand is limited by the behavior of the memory allocator; in the case of [[glibc]], allocations above 128 KB are created using [[mmap]](), limiting attackers to 5 bits of reduction.  This is also a limiting factor when brute forcing; although the number of attacks to perform can be reduced, the size of the attacks is increased enough that the behavior could in some circumstances become analogous to [[intrusion detection systems]].
+
+== History ==
+The [[PaX]] project first coined the term "ASLR".  It published the first design and implementation of ASLR in July, 2001.  This remains the most complete implementation, providing also kernel stack randomization from October 2002 onward.  It also continues to provide the most entropy for each randomized layout compared to other implementations.<ref>Comparison of PaX to ExecShield and W^X</ref>
+
+== Implementations ==
+Several mainstream, general-purpose operating systems implement ASLR.
+
+=== OpenBSD ===
+[[OpenBSD]] became the first mainstream operating systems to support ASLR (and to activate it by default).<ref>{{cite web
+|url=http://www.openbsd.org/papers/ven05-deraadt/index.html
+|title=Exploit Mitigation Techniques (updated to include random malloc and mmap)  at OpenCON 2005
+|author=Theo De Raadt
+|year=2005
+|accessdate=26 August 2009}}</ref>
+
+=== Linux ===
+[[Linux]] has enabled a weak<ref>http://www.tomshardware.com/reviews/pwn2own-mac-hack,2254-4.html</ref> form of ASLR by default since kernel version 2.6.12 (released June 2005). The [[PaX]] and [[ExecShield]] patchsets to the Linux kernel provide more complete implementations. Various Linux distributions including ''[[Adamantix]]'', ''[[Alpine Linux]]'', ''[[Hardened Gentoo]]'', and ''[[Hardened Linux From Scratch]]'' come with PaX's implementation of ASLR by default.
+
+The [[Exec Shield]] patch for Linux supplies 19 bits of stack entropy on a period of 16 bytes; and 8 bits of mmap() base randomization on a period of 1 page of 4096 bytes.  This places the stack base in an area 8 MB wide containing 524 288 possible positions; and the mmap() base in an area 1 MB wide containing 256 possible positions.
+
+[[Position-independent_code#Position-independent_executables|Position-independent executable (PIE)]] feature implements random base address for the main executable binary since 2003.  It provides the same address randomness to the main executable as being used for the shared libraries.  The PIE feature is in use only for the network facing daemons – the PIE feature cannot be used together with the [[prelink]] feature for the same executable.
+
+The [[prelink]] tool implements randomization at prelink time rather than runtime, because by design prelink aims to handle relocating libraries before the dynamic linker has to, which allows the relocation to occur once for many runs of the program. As a result, real address space randomization would defeat the purpose of prelinking.
+
+=== Microsoft Windows ===
+Microsoft's [[Windows Vista]] (released January 2007), [[Windows Server 2008]], [[Windows 7]], and [[Windows Server 2008 R2]] have ASLR enabled by default, although only for those executables and [[dynamic link library|dynamic link libraries]] specifically linked to be ASLR-enabled.<ref>http://msdn.microsoft.com/en-us/library/bb430720.aspx</ref> This did not include [[Internet Explorer 7]] on Windows Vista prior to Service Pack 1; ASLR and [[Data Execution Prevention|DEP]] are both disabled for application compatibility purposes.<ref>{{cite web
+|url=http://blogs.msdn.com/sdl/archive/2008/12/18/ms08-078-and-the-sdl.aspx
+|title=MS08-078 and the SDL 
+|date=December 18, 2008
+|accessdate=2009-03-21
+|work=The Security Development Lifecycle
+|publisher=Microsoft
+}}</ref> Newer versions, including [[Internet Explorer 8]] (released March 2009), enable these protections. A registry setting is available to forcibly enable or disable ASLR for all executables and libraries, found at "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\MoveImages".<ref>Windows Internals: Including Windows Server 2008 and Windows Vista, Fifth Edition (PRO-Developer) ISBN 978-0-735-62530-3</ref>
+
+The locations of the [[Dynamic memory allocation|heap]], [[Call stack|stack]], Process Environment Block, and [[Win32 Thread Information Block|Thread Environment Block]] are also randomized. A security whitepaper from Symantec noted that ASLR in 32-bit Windows Vista may not be as robust as expected, and Microsoft has acknowledged a weakness in its implementation.<ref>{{cite web |url=http://www.symantec.com/avcenter/reference/Address_Space_Layout_Randomization.pdf |format=PDF |title=An Analysis of Address Space Layout Randomization on Windows Vista |author=Ollie Whitehouse |month=February |year=2007}}</ref>
+
+Host-based [[Intrusion prevention system]]s such as ''WehnTrust''<ref>[http://www.codeplex.com/wehntrust WehnTrust]</ref> and ''Ozone''<ref>[http://www.securityarchitects.com/products.html Security Architects' Ozone]</ref> also offer ASLR for [[Windows XP]] and [[Windows Server 2003]] operating systems; however complete details of their implementation are not available.<ref>[http://seclab.cs.sunysb.edu/seclab/pubs/acsac06.pdf Address-Space Randomization for Windows Systems]</ref>
+
+=== Mac OS X ===
+Apple introduced randomization of some library offsets in [[Mac OS X v10.5]] (released October 2007).<ref>[http://www.apple.com/macosx/security/#sixtyfour Apple - Mac OS X - Security - Keeps safe from viruses and malware]</ref> Their implementation does not provide complete protection against attacks which ASLR is designed to defeat.<ref>[http://securosis.com/2007/10/29/quick-leopard-update/ Quick Leopard Update | securosis.com]</ref><ref>[http://www.matasano.com/log/981/a-roundup-of-leopard-security-features/ Matasano Chargen » A Roundup Of Leopard Security Features]</ref><ref>[http://www.matasano.com/log/986/what-weve-since-learned-about-leopard-security-features/ Matasano Chargen » What We’ve Since Learned About Leopard Security Features]</ref><ref>[http://dvlabs.tippingpoint.com/blog/2007/11/07/leopard-aslr TippingPoint | DVLabs | New Leopard Security Features - Part I: ASLR]</ref>
+
+==See also==
+* [[Buffer overflow]]
+* [[Stack buffer overflow]]
+* [[Stack-smashing protection]]
+* [[NX bit]] 
+* [[Information entropy]]
+* [[heap spraying|Heap Spray]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://pax.grsecurity.net/docs/aslr.txt PaX documentation on ASLR]
+*[http://grsecurity.net/PaX-presentation_files/frame.htm Comparison of PaX to ExecShield and W^X]
+*[http://blogs.msdn.com/michael_howard/archive/2006/05/26/608315.aspx ASLR for Windows Vista beta 2]
+*[http://www.wehnus.com ASLR for Windows 2000/XP/2003 (WehnTrust)]
+*[http://www.phrack.org/issues.html?issue=59&id=9#article Bypassing PaX ASLR protection]
+*[http://portal.acm.org/citation.cfm?id=1030124&dl=ACM&coll=&CFID=15151515&CFTOKEN=6184618 On the effectiveness of address space layout randomization]
+*[http://www.eweek.com/article2/0,1895,1969505,00.asp Microsoft Finds (Random) Way to Secure Vista]
+*[http://www.eweek.com/article2/0,1895,2071746,00.asp Windows Vista Randomization Gets OEM Thumbs Up]
+*[http://www.winitor.net/en/pestudio.html Test Applications (or libraries) for their ASLR and DEP support.]
+
+{{DEFAULTSORT:Address Space Layout Randomization}}
+[[Category:Operating system security]]
+[[Category:Memory management algorithms]]
+
+[[de:Address Space Layout Randomization]]
+[[fr:Address space layout randomization]]
+[[hy:Հասցեի տարածքի դասավորության պատահականացում]]
+[[it:ASLR]]
+[[ja:アドレス空間配置のランダム化]]
+[[ru:Address Space Layout Randomization]]</body> </html>

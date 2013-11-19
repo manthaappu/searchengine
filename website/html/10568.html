@@ -1,0 +1,34 @@
+<html> <head> <title>Direct Anonymous Attestation</title></head><body>The '''Direct Anonymous Attestation''' (DAA) is a cryptographic protocol which enables the remote authentication of a trusted platform whilst preserving the user's privacy. The protocol has been adopted by the [[Trusted Computing Group]] (TCG) in the latest version of its [[Trusted Platform Module]] (TPM) specification<ref>[https://www.trustedcomputinggroup.org/specs/TPM TPM Specification]</ref> as a result of privacy concerns (see also [[Trusted computing#Loss of anonymity|Loss of Internet anonymity]]).
+
+== Historical perspective ==
+
+In principle the privacy issue could be resolved using any standard signature scheme (or [[Public-key cryptography|public key encryption]]) and a single key pair. Manufacturers would embed the private key into every TPM produced and the public key would be published as a certificate. Signatures produced by the TPM must have originated from the private key, by the nature of the technology, and since all TPMs use the same private key they are indistinguishable ensuring the user's privacy. This rather naive solution relies upon the assumption that there exists a ''global secret''. One only needs to look at the precedent of [[Content Scramble System]] (CSS), an encryption system for [[DVD]]s, to see that this assumption is fundamentally flawed. Furthermore this approach fails to realize a secondary goal: the ability to detect rogue TPMs. A rogue TPM is a TPM that has been compromised and had its secrets extracted.
+
+The solution first adopted by the TCG (TPM specification v1.1) required a trusted third-party, namely a ''privacy certificate agency'' (privacy CA). Each TPM has an embedded [[RSA]] key pair called an Endorsement Key (EK) which the privacy CA is assumed to know. In order to attest the TPM generates a second RSA key pair called an Attestation Identity Key (AIK). It sends AIK, signed by EK, to the privacy CA who checks its validity and issues a certificate for the AIK. The host/TPM is now able to authenticate itself with respect to the certificate. This approach permits two possibilities to detecting rogue TPMs: firstly the privacy CA should maintain a list of TPMs identified by their EK known to be rogue and reject requests from them, secondly if a privacy CA receives too many requests from a particular TPM it may reject them and blacklist the TPMs EK. The number of permitted requests should be subject to a risk management exercise. This solution is problematic since the privacy CA must take part in every transaction and thus must provide high availability whilst remaining secure. Furthermore privacy requirements may be violated if the privacy CA and verifier collude. Although the latter issue can probably be resolved using blind signatures, the first remains.
+
+== Overview ==
+The DAA protocol is based on three entities and two different steps. The entities are the TPM platform, the DAA Issuer and the DAA verifier. The issuer is charged to verify the TPM platform during the Join step and to issue DAA credential to the platform.  The platform uses the DAA credential with the verifier during the Sign step. Through a [[zero-knowledge proof]] the verifier can verify the credential without attempting to violate the platform's privacy. The protocol also supports a blacklisting capability so that verifiers can identify attestations from TPM's that have been compromised.
+
+== Privacy properties ==
+The protocol allows differing degrees of privacy. Interactions are always anonymous, but the user/verifier may negotiate as to whether the verifier is able to link transactions. This would allow user profiling and/or the rejection of requests originating from a host which has made too many requests.
+
+==See also==
+* [[Cryptographic protocol]]
+* [[Digital credential]]
+* [[Trusted platform module]]
+* [[Privacy enhancing technologies]]
+
+==References==
+<references/>
+
+==External links==
+* E. Brickell, J. Camenisch, and L. Chen: ''Direct anonymous attestation''. In Proceedings of 11th ACM Conference on Computer and Communications Security, ACM Press, 2004. ([http://www.zurich.ibm.com/~jca/papers/brcach04.pdf PDF])
+* E. Brickell, J. Camenisch, and L. Chen: ''Direct anonymous attestation'' . ([http://eprint.iacr.org/2004/205.pdf])
+* [http://www.ma.rhul.ac.uk/techreports/2005/RHUL-MA-2005-13.pdf ''Interdomain User Authentication and Privacy''] by Andreas Pashalidis - section 6 provides a useful introduction to DAA
+* [http://www.zurich.ibm.com/security/idemix/ ''IBM idemix (identity mixer)''] an 'anonymous credential system' under development by IBM
+* Heiko Stamer - [http://www.theory.informatik.uni-kassel.de/~stamer/KryptoTag_Bochum.pdf  Implementing Direct Anonymous Attestation for the TPM Emulator Project ]
+
+[[Category:Cryptography]]
+[[Category:Internet privacy]]
+
+[[it:Direct Anonymous Attestation]]</body> </html>

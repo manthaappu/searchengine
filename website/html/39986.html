@@ -1,0 +1,158 @@
+<html> <head> <title>Website Parse Template</title></head><body>{{POV|date=February 2010}}
+{{Notability|date=May 2008}}
+{{Infobox file format
+| name = Website Parse Template
+| icon = 
+| logo = 
+| extension = .icdl
+| mime = 
+| type code = 
+| uniform type = 
+| magic = 
+| owner = [http://www.omfica.org/ OMFICA]
+| genre = Website Parse Template
+| container for = [[ICDL Crawling]]<!--, [http://www.omfica.org/editor/index.php WPT Editor]-->
+| extended from = [[XML]]
+| extended to = 
+| standard = 
+| url = [http://www.omfica.org/npo_website_template.php WPT]
+}}
+
+'''Website Parse Template (WPT)''' is an [[XML]] based open format which provides [[HTML]] structure description of [[website]] pages. WPT format allows [[web crawlers]] to generate [[Semantic Web|Semantic Web’s]] [[Resource Description Framework|RDFs]] for [[web pages]]. WPT is compatible with existing [[Semantic Web]] concepts defined by [[W3C]] ([[Resource Description Framework|RDF]] and [[Web Ontology Language|OWL]]) and [[Universal Networking Language|UNL]] specifications. 
+
+== WPT Syntax ==
+[[Image:ICDL Visual Representation.png|335px|thumb|Website Parse Template's Visual Representation]]
+Website Parse Template consists of following sections:<br />
+* '''''[[Ontology_(information_science)|Ontology]]''''', where [[Web publisher|publisher]] defines concepts and relations which are used in the [[website]]. 
+* '''''[[Template (software engineering)|Templates]]''''', where [[Web publisher|publisher]] provides templates for groups of [[web pages]] which are similar by their content category and structure. Publisher provides the [[HTML element|HTML elements’]] XPath or TagIDs and links with [[website]] Ontology concepts. 
+* '''''[[URLs]]''''', where [[Web publisher|publisher]] provides URL [[Regular expression|Patterns]] which collect the group of [[web pages]] linking them to "Parse Template". In the [[URLs]] section publisher can separate form URLs the part as a concept and link to website [[Ontology]]. 
+
+Website Parse Template begins with opening <''icdl''> tag and ends with closing </''icdl''> tag. Single Website Parse Template is referred to the same [[Web host|host]], while single host may have several Website Parse Templates describing its [[HTML]] structure. It is required to specify the host for Website Parse Template at the beginning in <''icdl''> tag:
+
+<source lang="xml">
+<icdl host="http://music.yahoo.com"> 
+. . . . . . . . . . . . . . . . . . .
+</icdl>
+</source>
+
+=== WPT Ontology ===
+
+[[Ontology_(information_science)|Ontology]] section contains enumeration and definition of all [[concepts]] used in [[website]]. Listed concepts must be enclosed within <''ontology''> </''ontology''> [[Tag (metadata)|tags]]. It is required to specify the ontology name (any rational [[String (computer science)|string]]) and indicate supported [[Formal language|language]] ("''icdl:ontology''", "''[[Web Ontology Language|owl]]''" or "''[[Universal Networking Language|unl:uws]]''") which is used to specify the concepts.
+
+'''Example 1. Concepts used in [[Yahoo! Music]] for "artist" object'''
+<source lang="xml">
+<ontology name="general" language="icdl:ontology">  
+     <concept name="Qbye Music">
+          <inherit concept="person"></inherit>
+          <has object="name"></has>
+          <has object="album"></has>
+          <has object="track"></has>
+          <has object="image"></has>
+          <has object="bio"></has>
+          <has object="video"></has>
+          <has object="id"></has>
+          <has object="fullname"></has>
+     </concept>
+     <concept name="Logo"></concept>
+     <concept name="Menu"></concept>
+     <concept name="Advertisement"> </concept>
+</ontology>
+</source>
+
+Each concept’s definition should start with <''concept''> tag and ends with </''concept''> tag. <''inherit''> tag shows [[Inheritance (computer science)|inheritance]] relations and <''has''> tag shows attributable relations between two [[concepts]]. Either of defined concepts has default attribute - [[object identifier]] ('''id''') to be used by [[web crawlers]] to co-ordinate the same object's attributes used in different [[web page|pages]] of the same [[website]].
+
+Website Parse Template foresees several predefined concepts that are general for all kind of [[websites]]:
+
+“'''''Menu'''''” - [[navigation bar]]/menu<br />
+“'''''Logo'''''” - [[design]] element/[[logo]]<br />
+“'''''Content'''''” - element that contains main [[Web content|textual content]] of the [[Web page|page]]<br />
+“'''''Advertisement'''''” – [[advertisement]]/[[Web banner|banner]]<br />
+“'''''External Link'''''” – element that contains [[Hyperlink|external links]]<br />
+<br />
+
+=== WPT Templates ===
+
+Templates section contains number of templates for groups of similarly structured web pages. Either of those templates refers to a single group of similarly structured [[web pages]]. [[HTML element|HTML elements’]] [[XPath]] references or [[HTML tag|TagIDs]] are used for linking structured [[Web content|content]] with defined [[concepts]]. The template description starts with opening <''template''> [[Tag (metadata)|tags]] and ends with closing </''template''> tag. In <''template''> tag it is required to specify template name and language used for templates description. As a template name can be chosen any string, but for the language it is necessary to indicate supported [[Formal language|language]] type, e.g. "''icdl:template''", "''[[Resource Description Framework|rdf]]''" or "''[[Universal Networking Language|unl:expression]]''". 
+
+'''Example 2. Simple template for single artist page on [[Yahoo! Music]]'''
+<source lang="xml">
+<template name="Artist page on Yahoo! Music" language="icdl:template">
+     <html_tag tagid="yent-uhdr" content="Menu"/>
+     <html_tag xpath="/html/body/div[2]/div/div/div[3]/div/a/span" content="Logo"/>
+     <html_tag xpath="/html/body/div/div" content="Advertisement"/>
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/div/h1" content="artist.name"/>
+     <html_tag tagid="art_img" content="artist.image"/>
+     <html_tag tagid="biography" content="artist.bio" reference="Artist Bio"/>
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/table/tbody/tr[22]" content="artist.album"/>
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/table/tbody/tr[10]" content="artist.track"/>
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/table/tbody/tr[13]" content="artist.video"/>
+</template>
+</source>
+
+The [[web page]] may contain structured repeatable content (<repeatable block>) included in one main [[HTML element]] (<container>) that are specified as follows: 
+
+'''Example 3. Repeatable content representation'''
+<source lang="xml">
+<template name="Artist page on Yahoo! Music" language="icdl:template">
+    . . . . . . . . . . . . . . . 
+     <container container_xpath="/html/body/div[3]/table/tbody/tr[10]/td/table"> 
+         <repeatable_block block_xpath="/html/body/div[3]/table/tbody/tr[10]/td/table/tbody/tr/td[4]">
+         <html_tag xpath="/html/body/div[3]/table/tbody/tr[10]/td/table/tbody/tr/td[4]" content="artist.track"/>
+         </repeatable_block>
+     </container>
+    . . . . . . . . . . . . . . .
+</template>
+</source> 
+
+In case of specified complex [[HTML element]] is already described by another template the <reference> tag can be used to point to that template block. It makes possible to create hierarchic relations between WPT templates so that [[web crawlers]] can use specified [[Reference|reference(s)]] to identify the same object in different pages of a given [[website]].
+
+'''Example 4. [[Hierarchical model|Hierarchic relations]] between WPT Templates'''
+<source lang="xml">
+<template name="Artist page on Yahoo! Music" language="icdl:template">
+     . . . . . . . . . . . . . . .
+     <html_tag tagid="biography" content="artist.bio" reference="Artist Bio"/>
+     . . . . . . . . . . . . . . .
+</template>
+<template name="Artist Bio" language="icdl:template">
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/div/h1" content="artist.name"/>
+     <html_tag tagid="art_img" content="artist.image"/>
+     <html_tag xpath="/html/body/div[3]/table/tbody/tr/td[2]/table/tbody/tr/td" content="artist.bio"/>
+</template>
+</source>
+
+=== URLs section ===
+
+This section defines the [[URLs]]/URL patterns that are corresponding to groups of similarly structured web pages described in Templates section. In accordance with Templates section URLs section also may consist of several blocks and either of those blocks should start with <''urls''> tag and ends with </''urls''> tag. 
+
+'''Example 5. URLs/URL patterns''' 
+<source lang="xml">
+<urls name="Artist page on Yahoo! Music" template="Artist page on Yahoo! Music">
+     <url url="http://music.yahoo.com/ar-8206256---Amy-Winehouse"/>
+     <url url="http://music.yahoo.com/ar-([artist.id[0-9]*])---(artist.full name[[A-Z,a-z,-,0-9]*])"/>
+</urls>
+</source>
+
+As a [[URLs]] block name can be chosen any string, but for the template it is necessary to indicate certain template name described in previous section. The URL pattern provided in ''Example 5'' also include the represented real [[URL]]. [[Regular Expressions|RegExp]] specifications are used for URL patterns descriptions. The concepts necessary for URL pattern definition (such as "id" and "fullname") are to be defined previously in Ontology section.
+
+== See also ==
+* [[ICDL Crawling]] 
+* [[Open Market For Internet Content Accessibility]]
+* [[Semantic Web]]
+* [[World Wide Web Consortium]]
+* [[Resource Description Framework|RDF]]
+* [[Web Ontology Language|OWL]]
+* [[Regular Expressions]]
+* [[Universal Networking Language]]
+
+== External links ==
+* [http://www.omfica.org OMFICA]
+{{Internet search}}
+
+
+[[Category:World Wide Web]]
+[[Category:Knowledge representation]]
+[[Category:Web development]]
+[[Category:Bibliography file formats]]
+
+* [http://binhgiang.sourceforge.net/site/products.jsp VDER - Web Data Extractor Software]
+{{Web Crawler}}</body> </html>

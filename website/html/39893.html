@@ -1,0 +1,83 @@
+<html> <head> <title>Wear leveling</title></head><body>{{Refimprove|date=July 2008}}
+'''Wear leveling''' (also written '''wear levelling''') is a technique<ref name="Fundamental Patent">{{US patent|6850443}} Wear leveling techniques for flash EEPROM systems.</ref> for prolonging the [[service life]] of some kinds of erasable [[computer storage]] media, such as [[Flash memory]] used in [[solid-state drive]]s and [[USB Flash drive]]s. There are a few wear leveling mechanisms used in Flash memory systems, each with varying levels of longevity enhancement.<ref name=Spansion>{{cite web|last=Perdue|first=Ken|title=Wear Leveling Application Note|url=http://www.eettaiwan.com/STATIC/PDF/200808/EETOL_2008IIC_Spansion_AN_13.pdf|publisher=[[Spansion]]|accessdate=12 August 2010|date=2010-04-30}}</ref><ref name=Corsair>{{cite web|title=USB Flash Wear-leveling and Life Span|url=http://www.corsairmemory.com/_faq/FAQ_flash_drive_wear_leveling.pdf|publisher=[[Corsair]]|accessdate=12 August 2010|date=June 2007}}</ref>
+
+The term ''preemptive wear leveling (PWL)''<ref>{{cite web |url=http://www.wdc.com/en/products/products.asp?driveid=285 |title=Western Digital AV Hard Drive Product Information |date= |work= |publisher=Western Digital |accessdate=2010-06-01}} </ref> has been used by [[Western Digital]] to describe their preservation technique used on audio-video [[hard disk]]s, but hard disk drives are not generally wear-leveled devices in the context of this article.
+
+==Rationale==
+[[EEPROM]] and flash memory media have individually erasable segments, each of which can be put through a limited number of erase cycles before becoming unreliable. This is usually around 1000 cycles{{Citation needed|date=February 2010}} but many flash devices have one block with a specially extended life of 100,000+ cycles that can be used by the [[Flash memory controller]] to track wear and movement of data across segments. Erasable [[optical disc|optical media]] such as [[CD-RW]] and [[DVD-RW]] are rated at up to 1,000 cycles (100,000 cycles for [[DVD-RAM]] media).
+
+Wear leveling attempts to work around these limitations by arranging data so that erasures and re-writes are distributed evenly across the medium. In this way, no single erase block prematurely fails due to a high concentration of write cycles. In flash memory, a single block on the chip is designed for longer life than the others so that the memory controller can store operational data with less chance of its corruption.<ref name=Corsair/>
+
+Conventional [[file system]]s such as [[File Allocation Table|FAT]], [[Unix File System|UFS]], [[Hierarchical File System|HFS]], [[ext2]], and [[NTFS]] were originally designed for magnetic disks and as such rewrite many of their data structures (such as their directories) repeatedly to the same area.  Some file systems aggravate the problem by tracking last-access times, which can lead to file [[metadata]] being constantly rewritten in-place.
+
+== Types ==
+There are three basic types of wear leveling mechanisms used in Flash memory storage devices:<ref name=Spansion/>
+* '''No wear leveling'''
+* '''Dynamic wear leveling'''
+* '''Static wear leveling'''
+
+A Flash memory storage system with '''no wear leveling''' will not last very long if it is writing data to the flash. Without wear leveling, the Flash controller must permanently assign the logical addresses from the [[Operating system|Operating System]] (OS) to the physical addresses of the Flash memory. This means that every write to a previously written block must first be read, erased, modified, and re-written to the same location. This is very time consuming and highly written locations will wear out quickly with other locations even being completely unused. Once a few blocks reach their end of life the drive is no longer operable.<ref name=Spansion/>
+
+The first type of real leveling is called '''dynamic wear leveling''' and it uses a map to link Logical Block Addresses (LBAs) from the OS to the physical Flash memory. Each time the OS writes replacement data, the map is updated so the original physical block is marked as ''invalid'' data, and a new block is linked to that map entry. Each time a block of data is re-written to the Flash memory it is written to a new location. However, blocks that never get replacement data sit with no additional wear on the Flash memory. The name comes from only the dynamic data is being recycled. The drive may last longer than one with no wear leveling, but there are blocks still remaining as active that will go unused when the drive is no longer operable.<ref name=Spansion/><ref name=Corsair/>
+
+The other type of wear leveling is called '''static wear leveling''' which also uses a map to link the LBA to physical memory addresses. Static wear leveling works the same as dynamic wear leveling except the static blocks that do not change are periodically moved so that these low usage cells are able to be used by other data. This rotational effect enables the SSD to operate until most of the blocks are near their end of life.<ref name=Spansion/><ref name=Corsair/>
+
+<br />
+{| class="wikitable sortable"
+|+ Comparison between Static and Dynamic wear leveling<ref name=Corsair/>
+|-
+! Item
+! Static
+! Dynamic
+|-
+| [[Endurance]]
+| Longer life expectancy
+| Shorter life expectancy
+|-
+| Performance
+| Slower
+| Faster
+|-
+| Design Complexity
+| More complex
+| Less complex
+|-
+| Typical Use
+| SSDs<ref name=Spansion/>
+| USB Flash Drives
+|}
+
+== Techniques ==
+
+There are several techniques for extending the life of the media:  
+
+* A checksum or [[Error detection and correction|error-correcting]] code can be kept for block or sector in order to detect errors or correct errors.
+* A pool of reserve space can also be kept.  When a block or sector does fail, future reads and writes to it can be redirected to a replacement in that pool.
+* Blocks or sectors on the media can be tracked in a [[Cache algorithms|least recently used]] queue of some sort.  The data structures for the queue itself must either be stored off-device or in such a way that the space it uses is itself wear-leveled or, in the case of flash memory, in a block with a specially extended life.
+
+[[Msystems|M-Systems']] product [[DiskOnChip]] used a software driver named [[Flash_file_system#TrueFFS|TrueFFS]] which performed wear-leveling of [[NAND flash]] chips and made them appear to OS like a conventional disk drive. On most contemporary flash memory devices, such as [[CompactFlash]] and [[Secure Digital card|Secure Digital]] cards, these techniques are implemented in hardware by a built-in [[microcontroller]].  On such devices, wear leveling is [[Transparency (computing)|transparent]] and most conventional file systems can be used as-is on them.
+
+Wear leveling can also be implemented in software by special-purpose file systems such as [[JFFS2]] and [[YAFFS]] on flash media or [[Universal Disk Format|UDF]] on optical media.  All three are [[log-structured file system]]s in that they treat their media as circular logs and write to them in sequential passes.  File systems which implement [[Copy-on-write]] strategies, such as [[ZFS]], also implement a form of wear leveling.
+
+== See also ==
+* [[Flash file system]]
+* [[Write amplification]]
+
+== References ==
+
+<references />
+
+== External links ==
+*[http://www.bitmicro.com/press_resources_flash_ssd.php Flash SSD wear-leveling and error-correction description by BiTMICRO.]
+
+{{Template:Solid-state Drive}}
+
+[[Category:Computer memory]]
+[[Category:Non-volatile memory]]
+[[Category:Flash file systems]]
+[[Category:Solid-state computer storage]]
+
+[[de:Wear-Leveling]]
+[[fr:Wear levelling]]
+[[ja:ウェアレベリング]]
+[[pl:Równoważenie zużycia]]</body> </html>

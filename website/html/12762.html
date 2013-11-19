@@ -1,0 +1,330 @@
+<html> <head> <title>Exchangeable image file format</title></head><body>{{About|a format for storing metadata in image files|information about filename and directory structures of digital cameras|Design rule for Camera File system}}
+
+'''Exchangeable image file format''' ('''Exif''') is a specification for the [[image]] [[file format]] used by [[digital camera]]s and [[Image scanner|scanners]]. The specification uses the existing [[JPEG]], [[Tagged_Image_File_Format|TIFF]] Rev. 6.0, and [[Resource Interchange File Format|RIFF]] [[WAV]] file formats, with the addition of specific [[Metadata (computing)|metadata]] tags.  It is not supported in [[JPEG 2000]], [[Portable Network Graphics|PNG]], or [[GIF]].
+
+== Background ==
+Exif was created by the [[Japan Electronic Industries Development Association]] (JEIDA). Version 2.1 of the specification is dated June 12, 1998, and the latest, version 2.3 dated April 2010, was jointly formulated by [[Japan Electronics and Information Technology Industries Association|JEITA]] and [[Camera & Imaging Products Association|CIPA]]. Though the specification is not currently maintained by any industry or [[standardization|standards]] organization, its use by camera manufacturers is nearly universal.
+
+The metadata tags defined in the Exif standard cover a broad spectrum:
+* Date and time information.  Digital cameras will record the current date and time and save this in the metadata.  
+* Camera settings.  This includes static information such as the camera model and make, and information that varies with each image such as orientation (rotation), [[aperture]], [[shutter speed]], [[focal length]], [[metering mode]], and [[ISO speed]] information.
+* A [[thumbnail]] for previewing the picture on the camera's LCD screen, in file managers, or in photo manipulation software.
+* Descriptions and copyright information.
+
+== Technical ==
+The Exif tag structure is borrowed from TIFF files. On several image specific properties, there is a large overlap between the tags defined in the [[Tagged Image File Format|TIFF]], Exif, [[Tag Image File Format / Electronic Photography|TIFF/EP]], and [[Design rule for Camera File system|DCF]] standards. For descriptive metadata, there is an overlap between Exif and [[IPTC Information Interchange Model]] info, which also can be embedded in a JPEG file.
+
+When Exif is employed for [[JPEG]] files, the Exif data is stored in one of JPEG's defined utility ''Application Segments'', the APP1 (segment marker 0xFFE1), which in effect holds an entire TIFF file within. When Exif is employed in [[TIFF]] files (also when used as "an embedded TIFF file" mentioned earlier), the TIFF Private Tag 0x8769 defines a sub-Image File Directory (IFD) that holds the Exif specified TIFF Tags. In addition, Exif also defines a [[Global Positioning System]] sub-IFD using the TIFF Private Tag 0x8825, holding location information, and an "Interoperability IFD" specified within the Exif sub-IFD, using the Exif tag 0xA005.
+
+== Geolocation ==
+{{See also|Geotagging}}
+
+The Exif format has standard tags for location information. Currently, a few cameras and some higher-end mobile phones have a built-in GPS receiver and store the location information in the Exif header when the picture is taken. Some other cameras have a separate GPS receiver that fits into the flash connector or [[hot shoe]]. Recorded GPS data can also be added to any digital photograph on a computer, either by correlating the time stamps of the photographs with a [[GPS tracking|GPS record]] from a hand-held GPS receiver or manually using a map or mapping software. The process of adding geographic information to a photograph is known as [[Geocoded photo|geocoding]]. Photo sharing communities like [[Panoramio]], [[locr]] or [[Flickr]] equally allow their users to upload geocoded pictures or to add geolocation information online. 
+
+Most of [[Nokia]]'s Nseries mobile phones (such as the [[Nokia N95|N95]]) are equipped with a GPS receiver, and using Location Tagger<ref>{{cite web | url=http://betalabs.nokia.com/betas/view/location-tagger | title=Nokia Location Tagger for S60 | accessdate=2009-07-22 }}</ref>, a piece of software from [[Nokia Beta Labs]]. All captured images  are tagged with corresponding GPS coordinates when a GPS signal is available. The second generation of [[iphone|iPhone]] (known as the iPhone 3G) by [[Apple Inc.]] is also equipped with a GPS receiver, and uses the receiver to geotag photographs taken with the device. Subsequent generations (the iPhone 3GS and the iPhone 4) also support this feature. The first generation iPhone is not equipped with GPS, and uses a service provided by [[Skyhook_Wireless|Skyhook]] to triangulate and approximate the location at which the picture was taken using nearby cellular phone towers and [[WiFi]] hot-spot signal strength data.  The Skyhook service provides approximate GPS location information which is then added to the Exif data associated with the picture. Also mobile phones with the [[Android_(operating_system)|Android]] operating system as well as [[BlackBerry]] smartphones with a camera and builtin GPS or Bluetooth GPS addons can geotag images with the included camera application.
+
+==Program support==
+Exif data is embedded within the image file itself.  While many recent [[Graphics software|image manipulation programs]] recognize and preserve Exif data when writing to a modified image, this is not the case for most older programs. Many image gallery programs also recognise Exif data and optionally display it alongside the images.
+
+Software libraries, such as libexif<ref>{{cite web | url=http://libexif.sourceforge.net/ | title=The libexif C EXIF for C | accessdate=2009-11-08 }}</ref> for C and Exiv2<ref>{{cite web | url=http://www.exiv2.org/ | title=Exiv2 Image Metadata Library | publisher=Andreas Huggel | accessdate=2009-02-12}}</ref> for C++, or Image::ExifTool<ref>{{cite web | url=http://owl.phy.queensu.ca/~phil/exiftool/ | title=Image::ExifTool Perl library | publisher=Phil Harvey | accessdate=2009-02-12}}</ref> for Perl, parse Exif data from files and read/write Exif tag values.
+
+==Problems==
+Apart from not being a maintained standard, the Exif format has a number of drawbacks, mostly relating to its use of legacy file structures.
+
+* The derivation of Exif from the [[Tagged Image File Format|TIFF]] file structure using offset pointers in the files means that data can be spread anywhere within a file, which means that software is likely to corrupt any pointers or corresponding data that it doesn't decode/encode. For this reason most image editors damage or remove the Exif metadata to some extent upon saving.<ref>{{cite web | author= | title=TIFF Revision 6.0 | url=http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf | publisher=Adobe | date=1992-06-03 | accessdate=2009-04-07}}</ref>
+
+* The standard defines a MakerNote tag, which allows camera manufacturers to place any custom format metadata in the file. This is used increasingly by camera manufacturers to store myriad camera settings not listed in the Exif standard, such as shooting modes, post-processing settings, serial number, focusing modes, etc.  As this tag format is proprietary and manufacturer-specific, it can be prohibitively difficult to retrieve this information from an image (or properly preserve it when rewriting an image).  Some manufacturers encrypt portions of the information; for example, Nikon encrypts the detailed lens data in their newer MakerNote data versions.<ref>{{cite web | author= | title=Nikon Tags: Nikon LensData01 Tags | url=http://owl.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#LensData01 | publisher=Phil Harvey | date=2008-01-25 | accessdate=2008-01-28}}</ref>
+
+* The standard only allows [[Tagged Image File Format|TIFF]] or [[JPEG]] files — there is no provision for a "raw" file type which would be a direct data dump from the sensor device. This has caused camera manufacturers to invent many proprietary, incompatible "raw" file formats.  To solve this problem, Adobe developed the [[Digital Negative (file format)|DNG]] format (a TIFF-based raw file format), in hopes that manufacturers would standardize on a single, raw file format.
+
+* The Exif standard specifically states that color depth is always 24 bits.<ref>(JEITA CP-3451) Section 4.4.3: Pixel Composition and Sampling</ref> However, many modern cameras, such as the [[Nikon D70]] which captures 36 bits of color per pixel, can capture significantly more. Since Exif/DCF files cannot represent this color depth, many manufacturers have developed proprietary, non-compatible [[Raw image format]]s.
+
+* Some digital cameras can also capture video. The Exif standard has no provision for video files.
+
+* Exif is very often used in images created by scanners, however the standard makes no provisions for any scanner-specific information.
+
+* Photo manipulation software sometimes fails to update the embedded thumbnail after an editing operation, possibly causing the user to inadvertently publish compromising information.<ref>{{cite web | author= Maximillian Dornseif | title=EXIF Thumbnail in JPEG images | url=http://blogs.23.nu/disLEXia/stories/5751 | publisher=disLEXia 3000 blog | date=2004-12-17 | accessdate=2008-01-28}}</ref>
+
+* Exif metadata is restricted in size to 64 kB in [[JPEG]] images because according to the specification this information must be contained within a single [[JPEG]] APP1 segment. Although the [[#FlashPix extensions|FlashPix extensions]] allow information to span multiple [[JPEG]] APP2 segments, these extensions are not commonly used.  This has prompted some camera manufacturers to develop non-standard techniques for storing the large preview images used by some digital cameras for [[Liquid crystal display|LCD]] review. These non-standard extensions are commonly lost if a user re-saves the image using image editor software, possibly rendering the image incompatible with the original camera that created it.
+
+* There is no way to record time-zone information along with the time, thus rendering the stored time ambiguous.
+
+* There is no field to record readouts of a camera's [[accelerometers]] or [[inertial navigation system]]. Such data could help to establish the relationship between the image sensor’s XYZ coordinate system and the gravity [[Euclidean vector|vector]] (i.e., which way is down in this image). It could also establish relative camera positions or orientations in a sequence of photos.
+
+* Since the Exif tag contains information about the photo, it can pose a privacy issue. For example, a photo taken with a GPS-enabled camera can reveal the exact location it was taken, which is undesirable in some situations. By removing the Exif tag with software such as [[ExifTool]] before publishing, the photographer can avoid possible problems.
+
+== Related standards ==
+
+[http://www.metadataworkinggroup.org/ Metadata Working Group] was formed by a consortium of companies in 2006 (according to their web page) or 2007 (as stated in their own press release). It released its first document on 24 September, 2008<ref>{{cite web | author= | title=Guidelines for Handling Image Metadata | url=http://www.metadataworkinggroup.org/specs/ | publisher=Metadata Working group | date=2008-09-24 | accessdate=2008-12-28}}</ref>, giving recommendations concerning the use of Exif, [[IPTC Information Interchange Model|IPTC]] and [[Extensible Metadata Platform|XMP]] metadata in images.
+
+[[Extensible Metadata Platform]] (XMP) was created by [[Adobe Systems]] to be a better metadata format for photography and image processing. However, it is generally unsupported in cameras.
+
+==Viewing and editing Exif data==
+<!-- Deleted image removed: [[Image:Eog EXIF.png|thumb|250px|right|[[Eye of GNOME|Eye of Gnome]] [[screenshot]] showing Exif data of an image on a Linux system]] -->
+
+In the original release of Windows XP, a subset of the Exif information may be viewed by right clicking on an [[image file]] and clicking properties; from the properties dialog click the Summary tab and then the Advanced button.  However, this can damage certain Exif headers if changes are applied.<ref>{{cite web | author= | title=Nikon also warn about Windows XP | url=http://www.dpreview.com/news/0112/01121402nikonxpwarnings.asp | publisher=Digital Photography Review | date=2001-12-14 | accessdate=2008-01-28}}</ref> As of the release of Service Pack 3, Windows XP still shows evidence of corrupting Exif tags when modifying JPG file properties via the file properties window.<ref>{{cite web | author= | title=Should XPComment changes affect Exif Byte Order and File Mod Time? | url=http://www.webcitation.org/5nfrK96yR | publisher= | date=2010-02-15 | accessdate=2010-02-19}}</ref>
+
+In Windows Mobile (Pocket PC), freeware XnView Pocket can display the Exif data.
+
+On [[Mac OS X]] 10.4 and above, this information may be viewed in the Finder by doing Get Info on a file and expanding the More Info section.
+
+On [[Unix]] systems using the [[GNOME]] [[desktop environment]], a subset of Exif data can be seen by right clicking the file in the [[Nautilus file manager]] and selecting properties. In [[KDE]], it can be seen by right clicking in the [[Dolphin (software)|Dolphin]] file manager, selecting "Properties" and then "Information".{{Citation needed|date=April 2010}} It is also possible to view and edit Exif data in [[digiKam]] photo management program.<ref>{{cite web |url=http://www.digikam.org/drupal/node/148 |title=digiKam has a new Kipi Plugin to edit pictures metadata |publisher=digikam.org |date=2006-10-17 |accessdate=2011-01-05 }}</ref> Most Unix image viewers give the full set of Exif data.
+
+There are many software tools available which allow both viewing and editing of Exif data. The [[Opanda IExif Viewer]] is a free stand-alone application for viewing Exif data and also a plug-in for [[Internet Explorer]] and [[Firefox]] on Windows platforms. [http://www.kiwiczech.net/index.php?menu=353&sub=4 EXIFeditor] is another free application that allows editing of EXIF information. It allows examination of detailed Exif data online by right clicking on an image.<ref>{{cite web | author= | title=Opanda IExif is a professional Exif viewer for your D40, D40x & D60 Pictures | url=http://nikond40blog.blogspot.com/2008/02/opanda-iexif-is-professional-exif.html | publisher=Digital Photography Review | date=2008-02-19 | accessdate=2008-06-02}}</ref> [https://addons.mozilla.org/en-US/firefox/addon/5673 FxIF] and [[Exif Viewer]] are multi-platform extensions for Firefox that display Exif data in the image properties dialog. This feature is native in the web browser [[Opera (web browser)|Opera]], under image properties.
+
+Retrieval of detailed Exif data not usually displayed by other programs can be accomplished using [[ExifTool]] which runs in [[Perl]], and is available for all platforms.
+
+For AmigaOS/MorphOS, [[SView5]] as well as .NET covers a lot of the previously mentioned functionality.
+
+To deal with the privacy problems that Exif may pose to those who share their photographs with others, specialized [[metadata removal tool]]s which can remove Exif exist.<ref>For example [http://www.steelbytes.com/?mid=30 JPEG & PNG Stripper], [http://www.digitalconfidence.com/downloads.html BatchPurifier LITE], [http://www.rlvision.com/exif/about.asp Exif Tag Remover], and [http://www.superutils.com/products/exifcleaner/ ExifCleaner] </ref>
+
+== Example ==
+[[Image:Konqueror Exif data.jpg|thumb|right|[[Konqueror]] screenshot showing Exif data]]
+The following table shows Exif data for a photo made with a typical digital camera. Notice that authorship and copyright information is generally not provided in the camera's output, so it must be filled in during later stages of processing.
+
+{| class="wikitable" style="margin:auto;"
+!Tag
+!Value
+|-
+|Manufacturer
+|CASIO
+|-
+|Model
+|QV-4000
+|-
+|Orientation (rotation)
+|top - left [8 possible values<ref>[http://www.impulseadventure.com/photo/exif-orientation.html JPEG Rotation and EXIF Orientation / Digital Cameras with Orientation Sensors etc.]</ref>]
+|-
+|Software   
+|Ver1.01
+|-
+|Date and Time  
+|2003:08:11 16:45:32
+|-
+|YCbCr Positioning
+|centered
+|-
+|Compression
+|JPEG compression
+|-
+|x-Resolution   
+|72.00
+|-
+|y-Resolution   
+|72.00
+|-
+|Resolution Unit
+|Inch
+|-
+|Exposure Time  
+|1/659 sec.
+|-
+|FNumber    
+|f/4.0
+|-
+|ExposureProgram
+|Normal program
+|-
+|Exif Version   
+|Exif Version 2.1
+|-
+|Date and Time (original)
+|2003:08:11 16:45:32
+|-
+|Date and Time (digitized)
+|2003:08:11 16:45:32
+|-
+|ComponentsConfiguration
+|Y Cb Cr -
+|-
+|Compressed Bits per Pixel
+|4.01
+|-
+|Exposure Bias  
+|0.0
+|-
+|MaxApertureValue 
+|2.00
+|-
+|Metering Mode  
+|Pattern
+|-
+|Flash      
+|Flash did not fire.
+|-
+|Focal Length   
+|20.1 mm
+|-
+|MakerNote 
+|432 bytes unknown data
+|-
+|FlashPixVersion
+|[[FlashPix]] Version 1.0
+|-
+|Color Space
+|sRGB
+|-
+|PixelXDimension
+|2240
+|-
+|PixelYDimension
+|1680
+|-
+|File Source
+|DSC
+|-
+|InteroperabilityIndex
+|R98
+|-
+|InteroperabilityVersion
+|(null)
+|}
+
+==FlashPix extensions==
+The Exif specification also includes a description of FPXR (FlashPix-Ready) information which may be stored in APP2 of [[JPEG]] images using a structure similar to that of a [[FlashPix]] file.<ref>(JEITA CP-3451) Section 4.7.2: Interoperability Structure of APP2 in Compressed Data</ref>  These FlashPix extensions allow meta information to be preserved when converting between FPXR JPEG images and FlashPix images.  FPXR information may be found in images from some models of digital cameras by [[Kodak]] and [[Hewlett-Packard]].  Below is an example of the FPXR information found in a JPEG image from a [[Kodak EasyShare V570]] digital camera:
+
+{| class="wikitable" style="margin:auto;"
+!Tag
+!Value
+|-
+|Code Page
+|1200
+|-
+|Used Extension Numbers
+|1
+|-
+|Extension Name
+|Screen nail
+|-
+|Extension Class ID
+|10000230-6FC0-11D0-BD01-00609719A180
+|-
+|Extension Persistence
+|Invalidated By Modification
+|-
+|Extension Create Date
+|2003:03:29 17:47:50
+|-
+|Extension Modify Date
+|2003:03:29 17:47:50
+|-
+|Creating Application
+|Picoss
+|-
+|Extension Description
+|Presized image for LCD display
+|-
+|Storage-Stream Pathname
+|/.Screen Nail_bd0100609719a180
+|-
+|Screen Nail
+|(124498 bytes of data containing 640x480 JPEG preview image)
+|}
+
+==Exif audio files==
+The Exif specification describes the [[Resource Interchange File Format|RIFF]] file format used for [[WAV]] audio files, and defines a number of tags for storing meta information such as artist, copyright, creation date, and more in these files.<ref>(JEITA CP-3451) Section 5: Exif Audio File Specification</ref>  The following table gives an example of Exif information found in a WAV file written by the [[PENTAX Optio WP|Pentax Optio WP]] digital camera:
+
+{| class="wikitable" style="margin:auto;"
+!Tag
+!Value
+|-
+|Encoding
+|Microsoft PCM
+|-
+|Num Channels
+|1
+|-
+|Sample Rate
+|7872
+|-
+|Avg Bytes Per Sec
+|7872
+|-
+|Bits Per Sample
+|8
+|-
+|Date Created
+|2005:08:08
+|-
+|Exif Version
+|0220
+|-
+|Related Image File
+|IMGP1149.JPG
+|-
+|Time Created
+|16:23:35
+|-
+|Make
+|PENTAX Corporation
+|-
+|Model
+|PENTAX Optio WP
+|-
+|MakerNote
+|(2064 bytes of data)
+|}
+
+==MakerNote data==
+The 'MakerNote' tag contains image information normally in a proprietary binary format. Some of these manufacturer-specific formats have been decoded:
+* OZHiker: Agfa, Canon, Casio, Epson, Fujifilm, Konica/Minolta, Kyocera/Contax, Nikon, Olympus, Panasonic, Pentax/Asahi, Ricoh, Sony <ref>{{cite web | author=Evan Hunter | title=EXIF Makernotes - Reference Information | url=http://ozhiker.com/electronics/pjmt/jpeg_info/makernotes.html | publisher=OZHiker | date= | accessdate=2008-01-29}}</ref>
+* Kamisaka: Canon, Casio, FujiFilm, ISL, KDDI, Konica/Minolta, Mamiya, Nikon, Panasonic, Pentax, Ricoh, Sigma, Sony, WWL<ref>{{cite web | author= | title=Exif MakerNote 解析カイセキ情報 | url=http://homepage3.nifty.com/kamisaka/makernote | publisher=Kamisaka | language={{ja icon}} | accessdate=2008-01-29}}</ref>
+* X3F Info: Sigma/Foveon<ref>{{cite web | author= | title=SIGMA and FOVEON EXIF MakerNote Documentation | url=http://www.x3f.info/technotes/FileDocs/MakerNoteDoc.html  | publisher=x3f.info | accessdate=2008-03-26 |archiveurl = http://web.archive.org/web/20070805234644/http://www.x3f.info/technotes/FileDocs/MakerNoteDoc.html |archivedate = 2007-08-05}}</ref>
+* [[ExifTool]]: Canon, Casio, FujiFilm, GE, HP,  JVC/Victor, Kodak, Leaf, Minolta/Konica-Minolta, Nikon, Olympus/Epson, Panasonic/Leica, Pentax/Asahi, Reconyx, Ricoh, Samsung, Sanyo, Sigma/Foveon, Sony<ref>{{cite web | author= | title=ExifTool Tag Names | url=http://owl.phy.queensu.ca/~phil/exiftool/TagNames | publisher=Phil Harvey | date=2008-01-18 | accessdate=2011-01-24}}</ref>
+* Olypedia: Olympus<ref>{{cite web | author= | title=Olympus Makernotes | url=http://olypedia.de/Olympus_Makernotes | publisher=Olypedia | language=German | accessdate=2008-01-29}}</ref>
+
+==See also==
+
+* [[Comparison of image viewers]] (Exif view/edit functions)
+* [[Design rule for Camera File system]] (DCF)
+* [[Digital photography]]
+* [[eXtensible Metadata Platform]] (XMP)
+* [[Geocoded photo]]
+* [[Image file formats]]
+* [[IPTC Information Interchange Model]]
+* [[Metadata Working Group]] 
+* [[Tag Image File Format / Electronic Photography]] (TIFF/EP)
+
+==References==
+{{reflist|2}}
+{{Refbegin}}
+*{{cite paper | author=Technical Standardization Committee on AV & IT Storage Systems and Equipment | title=Exchangeable Image File Format for Digital Still Cameras (JEITA CP-3451) | version=Version 2.2 | format=.PDF | publisher=Japan Electronics and Information Technology Industries Association | url=http://www.exif.org/Exif2-2.PDF | date=April 2002 | accessdate=2008-01-28}}
+{{Refend}}
+
+==External links==
+* [http://www.cipa.jp/english/hyoujunka/kikaku/pdf/DC-008-2010_E.pdf Exif standard version 2.3]
+* [http://www.cipa.jp/exifprint/contents_e/01exif_e/ExifDCFsummary_E.pdf Exif standard version 2.21]
+* Exif 2.2 Specification as [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf PDF file] or as [http://www.digicamsoft.com/exif22/exif22/html/exif22_1.htm HTML]
+* [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html Exif in the TIFF Tags Directory]
+* [http://www.metadataworkinggroup.org/ Metadata working group]
+{{Graphics file formats}}
+[[Category:Digital photography]]
+[[Category:Graphics file formats]]
+[[Category:Metadata]]
+
+[[ar:صيغة ملف صوري متبادل]]
+[[ca:Exchangeable image file format]]
+[[cs:Exif]]
+[[da:EXIF]]
+[[de:Exchangeable Image File Format]]
+[[es:Exchangeable image file format]]
+[[eo:Exif]]
+[[fa:قالب فایل تصویری تعویض‌پذیر]]
+[[fr:Exchangeable image file format]]
+[[ko:교환 이미지 파일 형식]]
+[[id:Exchangeable Image File]]
+[[it:Exchangeable image file format]]
+[[hu:Exif]]
+[[ml:എക്സിഫ്]]
+[[nl:Exchangeable image file format]]
+[[ja:Exchangeable image file format]]
+[[pl:Exchangeable Image File Format]]
+[[pt:Exif]]
+[[ro:Exif]]
+[[ru:EXIF]]
+[[sk:Exchangeable image file format]]
+[[sl:Exif]]
+[[fi:Exchangeable image file format]]
+[[sv:Exif]]
+[[tr:Değişebilir görüntü dosyası biçimi]]
+[[zh:EXIF]]</body> </html>

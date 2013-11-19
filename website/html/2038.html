@@ -1,0 +1,22 @@
+<html> <head> <title>Any-angle path planning</title></head><body>{{Graph search algorithm}}
+
+'''Any-angle path planning''' algorithms search for paths on a cell decomposition of a continuous [[configuration space]] (such as a two-dimensional terrain).
+
+Consider, for example, a uniform grid with blocked and unblocked cells. Searching the corresponding [[visibility graph]] finds a shortest path from a given start vertex to a given goal vertex but is typically very slow since the number of edges can grow quadratically in the number of vertices. Searching the corresponding [[grid graph]] typically finds suboptimal paths (since, for example, the heading changes of the resulting path are constrained to multiples of 45 degrees on an eight-neighbor grid graph) but is fast since the number of edges grows no faster than linearly in the number of vertices. Optimizing the path after the search typically shortens the path but does not change the topology of the path. It does not find a shortest path, for example, if the path found by the search algorithm passes a blocked cell on the left but the shortest path passes the same blocked cell on the right. Thus, there is an advantage to interleaving the search and the optimization. '''Any-angle path planning''' algorithms propagate information along grid edges (to search fast) without constraining their paths to grid edges (to find short paths). Thus, the heading changes of their paths are not constrained to specific angles, which explains their name.<ref name="A. Nash, K. Daniel 1183">A. Nash, K. Daniel, S. Koenig and A. Felner. Theta*: Any-Angle Path Planning on Grids. In Proceedings of the AAAI Conference on Artificial Intelligence, pages 1177-1183, 2007.</ref>
+
+So far, two main any-angle path planning algorithms have been developed, both based on the heuristic search algorithm [[A*]] <ref>P. Hart, N. Nilsson and B. Raphael, A Formal Basis for the Heuristic Determination of Minimum Cost Paths, IEEE Trans. Syst. Science and Cybernetics, SSC-4(2), 100-107, 1968.</ref>. '''Field D*''' uses interpolation during each vertex expansion,<ref>D. Ferguson and A. Stentz. Field D*: An Interpolation-Based Path Planner and Replanner. Proceedings of the International Symposium on Robotics Research, 2005.</ref> and '''Theta*''' checks for shortcuts during each vertex expansion.<ref name="A. Nash, K. Daniel 1183"/> Both of them find short paths but neither one of them is guaranteed to find shortest paths.
+
+==Applications==
+* [[Robot navigation]]
+* [[Real-time strategy]] games
+
+==References==
+{{reflist}}
+
+==See also==
+* [[Path planning]]
+
+{{DEFAULTSORT:Any-Angle Path Planning}}
+[[Category:Search algorithms]]
+[[Category:Robotics]]
+[[Category:Artificial intelligence]]</body> </html>

@@ -1,0 +1,45 @@
+<html> <head> <title>Schnorr signature</title></head><body>In [[cryptography]], a '''Schnorr signature''' is a [[digital signature]] produced by the Schnorr signature algorithm. Its security  is based on the intractability of certain [[discrete logarithm]] problems. It is considered the simplest digital signature scheme to be provably secure in a [[random oracle]] model. It is efficient and generates short signatures. It is covered by {{US patent|4995082}}, which expired in February 2008.
+
+==Algorithm==
+===Choosing parameters===
+*All users of the signature scheme agree on a [[group (mathematics)|group]] <math>G</math> with generator <math>g</math> of prime order <math>q</math> in which the [[discrete log]] problem is hard.  Typically a [[Schnorr group]] is used.
+*All users agree on a [[cryptographic hash function]] H.
+
+===Key generation===
+*Choose a private key <math>x</math> such that <math>0<x<q</math>.
+*The public key is <math>y</math> where ''y'' = ''g''<sup>x</sup>.
+
+===Signing===
+To sign a message M:
+*Choose a random <math>k</math> such that <math>0<k<q</math>
+*Let <math>r=g^k\,</math>
+*Let <math>e=H(M||r),\,</math> (where || denotes concatenation)
+*Let <math>s=(k-xe) \;\text{mod } q</math>
+
+The signature is the pair <math>(e,s)</math>.  Note that <math>0 \le e < q</math> and <math>0 \le s < q</math>; if a Schnorr group is used and <math>q < 2^{160}</math>, then the signature can fit into 40 bytes.
+
+===Verifying===
+*Let <math>r_v=g^sy^e\,</math>
+*Let <math>e_v=H(M||r_v)\,</math>
+
+If <math>e_v=e</math> then the signature is verified.
+
+Public elements: <math>G,g,q,y,s,e,r</math>.
+Private elements: <math>k,x</math>.
+
+==See also==
+* [[Digital_Signature_Algorithm|DSA]]
+* [[ElGamal signature scheme]]
+
+==References==
+* C.P. Schnorr, Efficient identification and signatures for smart cards, in G. Brassard, ed. Advances in Cryptology—Crypto '89, 239-252, Springer-Verlag, 1990. Lecture Notes in Computer Science, nr 435
+* Claus-Peter Schnorr, Efficient Signature Generation by Smart Cards, J. Cryptology 4(3), pp161&ndash;174 (1991) [http://www.mi.informatik.uni-frankfurt.de/research/papers/schnorr.smartcardsig.1991.ps (PS)].
+* Menezes, Alfred J.  et al. ''Handbook of Applied Cryptography'' CRC Press. 1996. 
+
+{{Crypto navbox | public-key}}
+
+[[Category:Asymmetric-key cryptosystems]]
+
+[[de:Schnorr-Signatur]]
+[[fr:Protocole d'authentification de Schnorr]]
+[[ru:Схема Шнорра]]</body> </html>

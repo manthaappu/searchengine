@@ -1,0 +1,167 @@
+<html> <head> <title>ML (programming language)</title></head><body>{{Infobox programming language
+| name                   = ML
+| logo                   =
+| paradigm               = [[multi-paradigm programming language|multi-paradigm]]: [[imperative programming|imperative]], [[functional programming|functional]]
+| year                   = 1973
+| designer               = [[Robin Milner]] & others at the [[University of Edinburgh]]
+| developer              =
+| latest release version =
+| latest release date    =
+| typing                 = [[static typing|static]], [[strong typing|strong]], [[type inference|inferred]]
+| implementations        =
+| dialects               = [[Standard ML]], [[OCaml]], [[F Sharp programming language|F#]]
+| influenced by          = [[ISWIM]]
+| influenced             = [[Miranda (programming language)|Miranda]], [[Haskell (programming language)|Haskell]], [[Cyclone programming language|Cyclone]], [[Nemerle]], [[C++]], [[Clojure]], [[Felix (programming language)|Felix]], [[Mythryl]]
+| operating system       =
+| license                =
+| website                =
+}}
+'''ML''' is a general-purpose [[functional programming language]] developed by [[Robin Milner]] and others in the early 1970s at the [[University of Edinburgh]],<ref name="Gordon1996">{{cite web | last = Gordon | first = Michael J. C. | authorlink = Michael J. C. Gordon | year=1996 | title = From LCF to HOL: a short history | url = http://www.cl.cam.ac.uk/~mjcg/papers/HolHistory.html | accessdate = 2007-10-11}}</ref> whose syntax is inspired by [[ISWIM]]. Historically, ML stands for ''[[metalanguage]]'': it was conceived to develop proof tactics in the [[LCF theorem prover]] (whose language, ''pplambda'', a combination of the [[first-order predicate calculus]] and the simply typed [[Polymorphism (computer science)|polymorphic]] [[lambda-calculus]], had ML as its metalanguage). It is known for its use of the [[Hindley–Milner type inference algorithm]], which can automatically infer the [[data type|types]] of most [[Expression (programming)|expressions]] without requiring explicit type annotations.
+
+==Overview==
+ML is often referred to as an '''impure''' functional language, because it  encapsulate [[side-effect (computer science)|side-effects]], unlike [[purely functional]] programming languages such as [[Haskell (programming language)|Haskell]].
+
+Features of ML include a call-by-value [[evaluation strategy]], [[first-class function]]s, automatic memory management through [[garbage collection (computer science)|garbage collection]], parametric [[polymorphism (computer science)|polymorphism]], [[Type_system#Static_typing|static typing]], [[type inference]], [[algebraic data types]], [[pattern matching]], and [[exception handling]].
+
+Unlike Haskell, ML uses [[eager evaluation]], which means that all subexpressions are always evaluated. However, lazy evaluation can be achieved through the use of [[Closure (computer science)|closures]]. Thus one can create and use infinite streams as in Haskell, but their expression is comparatively indirect.
+
+Today there are several languages in the ML family; the two major dialects are [[Standard ML]] (SML) and [[Caml]], but others exist, including [[F Sharp (programming language)|F#]]  — a language that Microsoft supports for their .NET platform. Ideas from ML have influenced numerous other languages, like [[Haskell (programming language)|Haskell]], [[Cyclone programming language|Cyclone]] {{Citation needed|date=August 2010}}, and [[Nemerle]].
+
+ML's strengths are mostly applied in language design and manipulation (compilers, analyzers, theorem provers), but it is a general-purpose language also used in bioinformatics, financial systems, and applications including a genealogical database, a peer-to-peer client/server program, etc.
+
+ML uses static scoping rules.
+
+==Examples==
+
+The following examples use the syntax of [[Standard ML]]. The other most widely-used ML dialect, [[OCaml]], differs, in these simple examples, in various insubstantial ways.
+
+===Factorial===
+The [[factorial]] function expressed as pure ML:
+
+<source lang="ocaml">
+fun fac (0 : int) : int = 1
+  | fac (n : int) : int = n * fac (n - 1)
+</source>
+
+This describes the factorial as a recursive function, with a single terminating base case. It is similar to the descriptions of factorials found in mathematics textbooks. Much of ML code is similar to mathematics in facility and syntax.
+
+Part of the definition shown is optional, and describes the ''types'' of this function. The notation E : t can be read as ''expression E has type t''. For instance, the argument n is assigned type ''integer'' (int), and fac (n : int), the result of applying fac to the integer n, also has type integer. The function fac as a whole then has type ''function from integer to integer'' (int -> int). Thanks to [[type inference]], the type annotations can be omitted and will be derived by the compiler. Rewritten without the type annotations, the example looks like:
+
+<source lang="ocaml">
+fun fac 0 = 1
+  | fac n = n * fac (n - 1)
+</source>
+
+The function also relies on [[pattern matching]], an important part of ML programming. Note that parameters of a function are not necessarily in parentheses but separated by spaces. When the function's argument is 0 (zero) it will return the integer 1 (one). For all other cases the second line is tried. This is the [[recursion]], and executes the function again until the base case is reached.
+
+This implementation of the factorial function is not guaranteed to terminate, since a negative argument causes an [[infinite descending chain]] of recursive calls. A more robust implementation would check for a nonnegative argument before recursing, as follows:
+
+<source lang="ocaml">
+fun fact n = let
+  fun fac 0 = 1
+    | fac n = n * fac (n - 1)
+  in
+    if (n < 0) then raise Fail "negative argument"
+    else fac n
+  end
+</source>
+
+The problematic case (when n is negative) demonstrates a use of ML's [[exception]] system.
+
+The function can be improved further by writing its inner loop in a [[tail-recursive]] style, such that the [[stack]] need not grow in proportion to the number of function calls. This is achieved by adding an extra, "accumulator", parameter to the inner function. At last, we arrive at
+
+<source lang="ocaml">
+fun factorial n = let
+  fun fac (0, acc) = acc
+    | fac (n, acc) = fac (n - 1, n*acc)
+  in
+    if (n < 0) then raise Fail "negative argument"
+    else fac (n, 1)
+  end
+</source>
+
+===List Reverse===
+
+The following function "reverses" the elements in a list. More precisely, it returns a new list whose elements are in reverse order compared to the given list.
+
+<source lang="ocaml">
+fun reverse [] = []
+  | reverse (x::xs) = (reverse xs) @ [x]
+</source>
+
+This implementation of reverse, while correct and clear, is inefficient, requiring [[quadratic time]] for execution. The function can be rewritten to execute in [[linear time]] in the following more efficient, though less easy-to-read, style:
+
+<source lang="ocaml">
+fun reverse xs = let
+  fun rev nil acc = acc
+    | rev (hd::tl) acc = rev tl (hd::acc)
+in
+  rev xs nil
+end
+</source>
+
+Notably, this function is an example of [[parametric polymorphism]]. That is, it can consume lists whose elements have any type, and return lists of the same type.
+
+==See also==
+* [[LCF theorem prover]]
+* [[ISWIM]]
+* [[F Sharp programming language|F#]]
+* [[Haskell (programming language)|Haskell]]
+* [[Cyclone programming language|Cyclone]]
+* [[Scala programming language|Scala]]
+* [[Nemerle]]
+
+===Dialects===
+{{See also|Category:ML programming language family}}
+* [[Caml]], a dialect of ML, which became...
+:* [[Objective Caml]], the famous dialect of Caml with support for object-oriented programming
+:* [[Moscow ML]] - a popular implementation of Standard ML descended from Caml light
+* [[Standard ML]], a dialect of ML with a formal semantics
+* [[Alice (programming language)|Alice]]
+* [[F Sharp (programming language)|F#]]
+* [[Rpal]]
+* [[Lazy ML|LML (Lazy ML)]]
+* [[Mythryl]]
+
+== Books ==
+* ''The Definition of Standard ML'', Robin Milner, [[Mads Tofte]], Robert Harper, MIT Press 1990; (Revised edition adds author David MacQueen), MIT Press 1997. ISBN 0-262-63181-4
+* ''Commentary on Standard ML'', Robin Milner, [[Mads Tofte]], MIT Press 1997. ISBN 0-262-63137-7
+* ''ML for the Working Programmer'', L.C. Paulson, Cambridge University Press 1991, 1996, ISBN 0-521-57050-6
+* [http://www.cs.cmu.edu/~rwh/smlbook/online.pdf Robert Harper: "Programming in Standard ML", Carnegie Mellon University, 2005.]
+
+== References ==
+<references/>
+
+==External links==
+* [http://smlnj.sf.net/ Standard ML of New Jersey, another popular implementation]
+* [http://msdn.microsoft.com/en-us/fsharp/default.aspx F#, an ML implementation using the Microsoft .NET framework]
+* [http://mlton.org/ MLton, a whole-program optimizing Standard ML compiler]
+* [http://mythryl.org/ Mythryl, "SML with a Posix face"]
+* [http://successor-ml.org/ sML, Successor ML]
+
+{{DEFAULTSORT:Ml (Programming Language)}}
+[[Category:Functional languages]]
+[[Category:Procedural programming languages]]
+[[Category:ML programming language family]]
+[[Category:Statically typed programming languages]]
+[[Category:Programming languages created in the 1970s]]
+
+[[an:ML]]
+[[ca:ML]]
+[[de:ML (Programmiersprache)]]
+[[el:ML (γλώσσα προγραμματισμού)]]
+[[es:Meta Lenguaje]]
+[[fa:زبان برنامه‌نویسی ام‌ال]]
+[[fr:ML (langage)]]
+[[ko:ML (프로그래밍 언어)]]
+[[hr:ML (programski jezik)]]
+[[it:ML programming language]]
+[[nl:ML (programmeertaal)]]
+[[ja:ML (プログラミング言語)]]
+[[pl:Meta Language]]
+[[pt:ML (linguagem de programação)]]
+[[ru:ML]]
+[[fi:ML (ohjelmointikieli)]]
+[[sv:ML (programspråk)]]
+[[tg:ML]]
+[[zh:ML语言]]</body> </html>

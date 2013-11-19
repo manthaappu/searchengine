@@ -1,0 +1,43 @@
+<html> <head> <title>Texture filtering</title></head><body>{{unref|date=September 2007}}
+
+In [[computer graphics]], '''texture filtering''' is the method used to determine the texture color for a [[Texture mapping|texture mapped]] [[pixel]], using the colors of nearby [[Texel (graphics)|texel]]s (pixels of the texture). In short, it blends the texture pixels together by breaking them up into tinier pixels. Another term for texture filtering is called texture smoothing. There are many methods of texture filtering, which make different trade-offs between [[computation]]al complexity and image quality. Since texture filtering is an attempt to find a value at some point given a set of discrete samples at nearby points, it is a form of [[interpolation]].
+
+==Application==
+Texture filtering is a cheap approximation to [[Anti-aliasing#First-principles approach to anti-aliasing|anti-aliasing]]. Soft textures, especially [[height map]]s, look better when interpolated.
+
+==The need for filtering==
+During the texture mapping process, a 'texture lookup' takes place to find out where on the texture each pixel center falls. Since the textured surface may be at an arbitrary distance and orientation relative to the viewer, one pixel does not usually correspond directly to one texel. Some form of filtering has to be applied to determine the best color for the pixel. Insufficient or incorrect filtering will show up in the image as [[Artifact_(observational)|artifacts]] (errors in the image), such as 'blockiness', [[jaggies]], or shimmering. 
+
+There can be different types of correspondence between a pixel and the texel/texels it represents on the screen. These depend on the position of the textured surface relative to the viewer, and different forms of filtering are needed in each case. Given a square texture mapped on to a square surface in the world, at some viewing distance the size of one screen pixel is exactly the same as one texel. Closer than that, the texels are larger than screen pixels, and need to be scaled up appropriately - a process known as ''texture magnification''. Farther away, each texel is smaller than a pixel, and so one pixel covers multiple texels. In this case an appropriate color has to be picked based on the covered texels, via ''texture minification''. Graphics [[Application programming interface|APIs]] such as [[OpenGL]] allow the programmer to set different choices for minification and magnification filters. 
+
+Note that even in the case where the pixels and texels are exactly the same size, one pixel will not necessarily match up exactly to one texel - it may be misaligned, and cover parts of up to four neighboring texels. Hence some form of filtering is still required.
+
+==Mipmapping==
+[[Mipmap]]ping is a standard technique used to save some of the filtering work needed during texture minification. During texture magnification, the number of texels that need to be looked up for any pixel is always four or fewer; during minification, however, as the textured polygon moves farther away potentially the ''entire texture'' might fall into a single pixel. This would necessitate reading '''all''' of its texels and combining their values to correctly determine the pixel color, a prohibitively expensive operation. Mipmapping avoids this by prefiltering the texture and storing it in smaller sizes down to a single pixel. As the textured surface moves farther away, the texture being applied switches to the prefiltered smaller size. Different sizes of the mipmap are referred to as 'levels', with Level 0 being the largest size (used closest to the viewer), and increasing levels used at increasing distances.
+
+==Filtering methods==
+This section lists the most common texture filtering methods, in increasing order of computational cost and image quality. 
+
+===Nearest-neighbor interpolation===
+[[Nearest-neighbor interpolation]] is the fastest and crudest filtering method &mdash; it simply uses the color of the texel closest to the pixel center for the pixel color. While fast, this results in a large number of artifacts - texture 'blockiness' during magnification, and [[aliasing]] and shimmering during minification.
+
+===Nearest-neighbor with mipmapping===
+This method still uses nearest neighbor interpolation, but adds mipmapping &mdash; first the nearest mipmap level is chosen according to distance, then the nearest texel center is sampled to get the pixel color. This reduces the aliasing and shimmering significantly, but does not help with blockiness. 
+
+===Bilinear filtering===
+[[Bilinear filtering]] is the next step up. In this method the four nearest texels to the pixel center are sampled (at the closest mipmap level), and their colors are combined by [[weighted mean|weighted average]] according to distance. This removes the 'blockiness' seen during magnification, as there is now a smooth gradient of color change from one texel to the next, instead of an abrupt jump as the pixel center crosses the texel boundary. Bilinear filtering is almost invariably used with mipmapping; though it can be used without, it would suffer the same aliasing and shimmering problems as its nearest neighbor.
+
+===Trilinear filtering===
+[[Trilinear filtering]] is a remedy to a common artifact seen in mipmapped bilinearly filtered images: an abrupt and very noticeable change in quality at boundaries where the renderer switches from one mipmap level to the next. Trilinear filtering solves this by doing a texture lookup and bilinear filtering on the ''two'' closest mipmap levels (one higher and one lower quality), and then [[Linear interpolation|linearly interpolating]] the results. This results in a smooth degradation of texture quality as distance from the viewer increases, rather than a series of sudden drops. Of course, closer than Level 0 there is only one mipmap level available, and the algorithm reverts to bilinear filtering.
+
+===Anisotropic filtering===
+[[Anisotropic filtering]] is the highest quality filtering available in current consumer 3D [[graphics processing unit|graphics cards]]. It evolved because both bilinear and trilinear filtering sample a square from the texture, which is only correct if the viewer is looking at the texture head-on. This results in blurriness when the textured surface is at an oblique angle - a very common case is the floor as it recedes into the distance. Anisotropic filtering corrects this by sampling in the correct [[trapezoid]] shape according to view angle. The resulting samples are then trilinearly filtered to generate the final color.
+
+==See also==
+* [[Texture atlas]]
+
+[[Category:Texture filtering| ]]
+
+[[ar:ترشيح (رسوميات حاسوب)]]
+[[lt:Tekstūros filtravimas]]
+[[ja:テクスチャフィルタリング]]</body> </html>

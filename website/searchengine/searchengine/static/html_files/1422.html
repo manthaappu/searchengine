@@ -1,0 +1,57 @@
+<html> <head> <title>Algebraic Petri nets</title></head><body>'''Algebraic Petri Net (APN)''' is an evolution of the well known '''[[Petri net]]''' in which elements of '''User Deﬁned Data Types''' (called '''Algebraic Abstract Data Types (AADT)'''<ref>Ehrig, H. and Mahr, B. 1985 Fundamentals of Algebraic Specification I. Springer-Verlag New York, Inc.</ref>) replace black tokens. This formalism can be compared to Coloured Petri Nets [[CPN]]<ref>K. Jensen. Coloured Petri Nets. Springer, Berlin, 1996. </ref> in many aspects. However, in the APN case, the
+semantics of the data types is given by an axiomatization enabling proofs and computations on it.
+
+'''Algebraic Petri Nets'''<ref>Jacques Vautherin: Parallel systems specifications with [[Coloured Petri nets]] and algebraic specifications. European Workshop on Applications and Theory of Petri Nets 1986: 293-308</ref> were invented by Jacques Vautherin in 85 in is PhD thesis and later improved by Wolfang Reisig<ref>Wolfgang Reisig: Petri Nets and Algebraic Specifications. Theor. Comput. Sci. 80(1): 1-34 (1991)</ref>.
+
+The formalism has two aspects :
+* The control part which is handled by a Petri Net.
+* The data part which is handled by one or many AADTs.
+
+AADT can be themselves split in two part : 
+* The '''signature''' (Sort and Ops in the example below) which gives the valid constants and operations of the [[term algebra]].
+* The '''axiomatization''' (Axioms in the example below) which gives the semantic of the operations described in the signature part.
+
+The following picture describes an Algebraic Petri Net model of the Dining Philosophers problem. There are two '''AADT''' in this model, one for the forks algebra, one for the philosophers algebra. Please note that the philosophers AADT uses the fork AADT. Since all philosophers can take their left fork without taking their right fork, executing this model can result in a '''deadlock'''.
+
+The control part is composed of :
+* '''Places''' contain '''[[Multiset]]''' (bags) of tokens. Those tokens are elements of a [[term algebra]] built upon the signature of the '''AADT'''(in the example, terms that represent either a philosopher or a fork). Each place contains one and only one multiset of terms, the place is typed by its multiset.
+*'''Arcs''' can be labeled with multisets of either closed or free terms. Again terms are built from the AADT signature.
+* '''Transitions''' are events that can be fired whenever there are enough resources (namely enough tokens in the input places to satisfy all the input arcs) and the guard (firing conditions) of the transition holds. Then the produced tokens are put in the target places of the output arcs. Usually Term [[Rewriting]]<ref>Dick, A. J. and Watson, P. 1991. Order-sorted term rewriting. Comput. J. 34, 1 (Feb. 1991), 16-19.</ref> is used for the operational semantics in order to check if conditions hold and to compute output terms.
+
+In the example below only transition '''goEat''' is firable at the beginning. One '''goEat''' has been fired, '''takeL''' and '''takeR''' are also enabled and thus can also be fired.
+<br/>
+[[File:APNDiningPhilo.png‎]]
+
+Algebraic Petri Nets are the basic formalism of more advanced ones such as [[CO-OPN]].
+== References ==
+
+{{reflist|2}}
+
+== Further reading ==
+*{{cite book
+  | last = Vautherin
+  | first = Jacques
+  | authorlink = 
+  | year = 85
+  | title = Un Modele Algebrique, Base sur les Reseaux de Petri, pour l'Etude des Systemes Paralleles.
+  | publisher = These de Docteur Ingenieur, Univ. de Paris-Sud, Centre d'Orsay
+  | isbn = }}
+*{{cite book
+  | last = Jensen
+  | first = Kurt
+  | authorlink = 
+  | year =
+  | title = Coloured Petri Nets
+  | publisher = Springer Verlag
+  | isbn = 3-540-62867-3}}
+
+== External links ==
+* [http://homepages.feis.herts.ac.uk/~comqejb/algspec/pr.html An Introduction to the Algebraic Specification of Abstract Data Types]
+* [http://smv.unige.ch Home of the Software Modeling and Verification Group at the Geneva University]
+* [http://alpina.unige.ch A model checker for Algebraic Petri Nets]
+* [http://smv.unige.ch/teaching/modeling-and-verification/files/Adt.pdf Slides about ADT]
+* [http://smv.unige.ch/teaching/modeling-and-verification/files/APN.pdf Slides about APN]
+
+{{DEFAULTSORT:Algebraic Petri Nets}}
+[[Category:Specification languages]]
+[[Category:Petri nets]]</body> </html>

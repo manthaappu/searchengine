@@ -1,0 +1,98 @@
+<html> <head> <title>HP 3000</title></head><body>{{No footnotes|date=February 2010}}
+The '''HP 3000''' series is a family of [[minicomputers]] released by [[Hewlett-Packard]] in [[1973]]. It was designed to be the first minicomputer delivered with a full featured operating system with time-sharing. The first models were withdrawn from the market until speed improvements could be made. It ultimately became known as a reliable and powerful business system. Early models had large cabinets with front panels, while later models were made that fit into desks using only terminal consoles for diagnostics, with bootstrap routines in ROM. Models ranged from a system sometimes used by a single user, to models that supported over two thousand users.
+
+It was one of the last proprietary minicomputer systems to be retired by its vendor, outlasting the [[PDP-11]]-descended [[Digital Equipment Corporation]] [[VAX]], which was acquired by Compaq and then ultimately by [[Hewlett-Packard]]. After almost 30 years, a five-year phase-out period for the now-named e3000 series servers was announced in November 2001. HP extended this period twice. No more new e3000s are being sold, although used systems continue to be sold for upgrades on a third-party reseller market. Support from the vendor to customers for the HP 3000 continues through Dec. 31, 2010. Many third party firms are supporting the system for customers through the year 2013 and beyond. Some customers continue to use the HP 3000 in companies worldwide, especially in manufacturing and e-commerce industries, while others have migrated to business server systems made by HP and others.
+
+== Classic memory segments and 64K barrier ==
+Code (reentrant) and data reside in separate variable-length segments,
+which are 32,768 "halfwords" (16-bit words) (or, 65,536 bytes).
+The operating system, known as [[HP Multi-Programming Executive|MPE]] (for Multi-Programming Executive), loads code segments from program files and segmented [[Library (computing)#Shared|Library]] (SL) files as needed, up to 256 segments in one process.
+
+There could be as much as 64KB of memory in a code segment, but calling a routine was based on segment number and routine number within a segment, so a program could theoretically have about 32,385 routines. This was compared to most 16 bit computers that had 64KB of address space for everything. The bigger limitation was the data segment and stack segment, which were also 64KB. Shared library routines did not permit cross-process global data since each process had its own data segment. Some procedures worked around this by requiring the caller to pass in an array from their own stack or data segment to hold all state information, similar to modern object oriented languages where methods are applied to objects passed in allocated by the caller.
+
+A process could allocate and use multiple extra data segments (XDS) of up to 64KB each. While the Classic architecture imposed a limit of 65,535 extra data segments system-wide, other limitations would usually
+restrict that to a somewhat smaller limit.
+
+Systems programming was done in SPL (System Programming Language), an [[ALGOL]]-like language, but allowing inline assembler, and other direct access to the [[instruction set|ISA]]. The standard terminals for the HP 3000 were the [[HP 2640]] series, which supported block mode data entry from forms, as well as character mode.
+
+==Classic and PA-RISC XL==
+The HP 3000 family was divided into the "Classic" ([[16-bit]]) and "XL" (later IX - [[32-bit]]) families following the introduction of systems based on HP's [[PA-RISC]] chips in early 1984. These were
+not binary compatible with the Classics, but would transparently run Classic code via an emulator integrated into the MPE XL operating system. (Classic code could optionally be translated to native PA-RISC code via OCTCOMP, the Object Code Translator/COMPiler ... such code ran at native speed, but was still subject to Classic
+stack and memory size limitations). 
+
+The earlier "Classic" machines were based on a custom [[Complex instruction set computer|CISC]] processor. From about [[1988]] HP 3000s using PA-RISC processors began shipping in volume and, by 1995, effectively displaced the older family of machines from use although, as with all technology shifts, there remained a significant residue of older machines in service.
+
+The PA-RISC based HP 3000's operating system was written primarily
+in Modcal, HP's extended version of [[Pascal (programming language)|Pascal]]. Large portions of the earlier MPE V operating system, written in SPL, are still used as part of MPE XL and MPE/iX on PA-RISC. A few subsystems (e.g., TurboIMAGE) are written in PSPL (Portable SPL). A small portion of MPE XL and MPE/iX
+is written in PA-RISC assembly language.
+
+The 3000 series operating system was originally styled the [[Multi-Programming Executive]], MPE (later called MPE XL and then, after [[POSIX]] compliance was added in versions 5.0-5.5, MPE/iX). Early versions had a fairly primitive command line interpreter, with a three-level hierarchical file system, and utilities such as compilers would resemble "run fortran.pub.sys" rather than allowing programs to be run as keyword commands. People who used the HP 3000 would notice that machines were fairly reliable compared to other minicomputers of the time.
+
+Part of the tremendous success of the HP 3000 was due to the provision of, with brief exceptions included as part of the Fundamental Operating System (FOS), a vendor developed shallow network database management system ([[DBMS]]) called IMAGE (now called [[TurboIMAGE]]) that was reputedly inspired by (if not actually based upon) the TOTAL DBMS developed by [[Cincom|Cincom Systems, Inc.]] Including IMAGE with the server created an ecosystem of applications and development utilities that could rely upon IMAGE as a data repository in any HP 3000. Almost uniquely in computer history, it remains a feature of MPE that forward binary compatibility of executable programs is preserved across all systems and all versions of the operating system, regardless of hardware architecture. Programs that ran on the original Series II in 1973 can be reloaded from tape onto the last N-Series machines produced in 2003 and run today without recompiling.
+
+As the enterprise computing market shifted towards standardized [[Unix]] systems, which HP had also been promoting, in November 2001, Hewlett-Packard announced that its [[end-of-life (product)|end-of-life]] for the HP 3000 would be the end of 2006, and that no new systems would be sold after 2003. In early 2006, Hewlett-Packard announced that limited vendor support for the HP 3000 would be extended by two years for certain clients or geographic regions. In September 2007, HP once more extended its support for the systems, offering Mature Product Support without Sustaining Engineering (creation of software patches). This has been one of the longest lifetimes for a proprietary minicomputer system. The computers would outlast the highly regarded [[PDP-11]] and [[VAX]] series, although [[OpenVMS]] operating system is still being offered on [[DEC Alpha|Alpha]]- and [[IA-64]]-based systems as Hewlett Packard products.
+
+== Use of stack instead of registers ==
+Most current computer instruction sets are based on a [[general purpose register]] model. The processor and memory architecture of the classic HP 3000 were based on a [[stack machine]] model, like HP's well-known line of [[Reverse Polish notation|RPN]] calculators. It was said to be inspired by the famous stack-based [[Burroughs large systems]]. Rather than having a small number of registers, for example only an AX and BX register in the case of the [[HP 1000]], operands would be pushed on the same stack used to store local variables and [[return address]]es. So rather than
+
+<pre>LOAD AX, 0X0001
+LOAD BX, 0X0002
+ADD AX, BX</pre>
+
+you would have
+
+<pre>LDI 1
+LDI 2
+ADD</pre>
+
+The 16-bit [[microcode]]d machines (Series I, II, III, 30, 33, 39, 40, 42, 44, 48, 52, 58, 64, 68, 70, 37, ...) implement a [[word-addressable|16-bit word addressed]], [[byte-addressable]], segmented, [[Harvard architecture|Harvard]], [[stack (data structure)|Stack]] [[Instruction Set]] Architecture (ISA). Most of the ~214 instructions are 16 bits wide. Stack operations pack 2 per 16-bit word and the remaining few are 32 bits wide. 
+
+CISC Implementations
+* III: 4 Top of stack registers, 175nS microinstruction cycle time → 5.7 MHz
+* 30, 33: [[Silicon on sapphire]], 2 Top of stack registers, 90nS microinstruction cycle time → 11 MHz, instructions take 3-7 cycles
+* 40, 42, 44, 48: Schottky [[Transistor-transistor logic|TTL]], 4 Top of stack registers, 105nS microinstruction cycle time → 9.5 MHz
+* 64, 68: [[Emitter coupled logic|ECL]], 8 Top of Stack registers, 75nS microinstruction cycle time → 13 MHz, 8KB cache, 60KB [[Microprogram#Writable control stores|WCS]], 2 16-bit ALUs
+* 37: ~8,000-gate [[CMOS]] [[gate array]], 4 Top of Stack registers
+
+Later 32-bit models used HP's PA-RISC general register-based RISC architecture.
+
+PA-RISC Implementations
+* PA-RISC 1.0 Series 925, 930, 935, 949, 950, 955, 960, 980
+* PA-RISC 1.1 Series 917, 920, 922, 927, 937, 947, 948, 957, 958, 967, 977sx, 987, 990, 991, 992, 995, 918, 928, 968, 978, 988
+* PA-RISC 2.0 Series 996, A and N class and the 9x9 series
+
+==See also==
+* [[HP 9000]], [[HP Integrity]], [[HP Superdome]]
+* [[Stromasys]] (plans to develop an HP 3000 emulator)
+
+==References==
+* Hewlett Package: HP3000 Computer Systems: General Information Manual; August 1983; 5953-7553
+
+==External links==
+* Edler, C [http://www.3k.com/index_papers_hp3000_history.html The Rise, Fall and Rise of the HP 3000] - more early history.
+* [http://www.3k.com/twiki/bin/view/TWiki/HP3000FAQ HP3000 FAQ]
+* [http://www.3000newswire.com/blog The 3000 NewsWire news blog for HP3000 news, archives]
+* [http://bitsavers.org/pdf/hp/3000/ Bitsavers] has PDF scans of HP 3000 hardware and software manuals - but use a mirror site.
+* [http://www.hpmuseum.net/exhibit.php?class=3&acc=32 HP Computer Museum] also has PDF scans of manuals.
+* HP 3000 General Information Manual [http://hpmuseum.net/document.php?catfile=408 Sep 79], [http://hpmuseum.net/document.php?catfile=208 Oct 1984]
+* [http://bitsavers.org/pdf/hp/3000/HP_3000_Performance.txt HP 3000 Performance (text file)]
+* [http://aics-research.com/first3k.html "HP SYSTEM/3000 system description" promotional material Nov 1971]
+* [http://www.itjungle.com/tfh/tfh111901.html November 19, 2001: HP Sunsets Its Proprietary e3000 Server Line]
+* [http://news.com.com/Hewlett-Packard+phases+out+server+line/2100-1001_3-275842.html November 14, 2001 Hewlett-Packard phases out server line, the line will be phased out over a five-year period]
+* [http://www.hp.com/products1/evolution/e3000/index.html hp.com: HP is committed to continued support of HP e3000 installations]
+* [http://www.hp.com/products1/evolution/e3000/faq.html HP e3000 transition program FAQ]
+* [http://www.allegro.com/papers/ Classic Genealogy and PA-RISC Systems Performance Spreadsheets]
+
+==Pictures==
+* [http://ed-thelen.org/comp-hist/hp-3000.jpg Picture of HP 3000]
+
+[[Category:Minicomputers]]
+[[Category:Hewlett-Packard products|3000]]
+[[Category:1973 introductions]]
+[[Category:Instruction set architectures]]
+[[Category:Stack machines]]
+
+[[de:Hewlett-Packard 3000 Serie]]
+[[fr:HP 3000]]
+[[ja:HP 3000]]
+[[pl:HP3000]]</body> </html>

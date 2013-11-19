@@ -1,0 +1,162 @@
+<html> <head> <title>Suffix array</title></head><body>In [[computer science]], a '''suffix array''' is an [[array data structure|array]] of integers giving the starting positions of [[suffix (computer science)|suffixes]] of a [[string (computer science)|string]] in [[lexicographical order]].
+
+==Details==
+
+Consider the string 
+
+{| class="wikitable" border="1"
+|-
+!  1
+!  2
+!  3
+!  4
+!  5
+!  6
+!  7
+!  8
+!  9
+! 10
+! 11
+! 12
+|- align=center
+| a
+| b
+| r
+| a
+| c
+| a
+| d
+| a
+| b
+| r
+| a
+| $
+|}
+
+of length 12, that ends with a sentinel letter $, appearing only once, and less (in lexicographical order) than any other letter in the string.
+
+It has twelve suffixes: "abracadabra$", "bracadabra$", "racadabra$", and so on down to "a$" and "$" that can be sorted
+into lexicographical order to obtain:
+
+{| class="wikitable" border="1"
+|-
+! index
+! sorted suffix
+! lcp
+|-
+| 12
+| $
+| 0
+|-
+| 11
+| a$
+| 0
+|-
+| 8
+| abra$
+| 1
+|-
+| 1
+| abracadabra$
+| 4
+|-
+| 4
+| acadabra$
+| 1
+|-
+| 6
+| adabra$
+| 1
+|-
+| 9
+| bra$
+| 0
+|-
+| 2
+| bracadabra$
+| 3
+|-
+| 5
+| cadabra$
+| 0
+|-
+| 7
+| dabra$
+| 0
+|-
+| 10
+| ra$
+| 0
+|-
+| 3
+| racadabra$
+| 2
+|}
+
+If the original string is available, each suffix can be completely specified by the index of its first character. The suffix array is the array of the indices of suffixes sorted in lexicographical order. For the string "abracadabra$", using [[1-based array|one-based]] indexing, the suffix array is {12,11,8,1,4,6,9,2,5,7,10,3}, because the suffix "$" begins at position 12, "a$" begins at position 11, "abra$" begins at position 8, and so forth.
+
+The longest common prefix is also shown above as lcp. This value, stored alongside the list of prefix indices, indicates how many characters a particular suffix has in common with the suffix directly above it, starting at the beginning of both suffixes. The lcp is useful in making some string operations more efficient. For example, it can be used to avoid comparing characters that are already known to be the same when searching through the list of suffixes. The fact that the minimum lcp value belonging to a consecutive set of sorted suffixes gives the longest common prefix among all of those suffixes can also be useful.
+
+==Algorithms==
+
+The easiest way to construct a suffix array is to use an efficient [[comparison sort]] algorithm. This requires <math>O(n \log n)</math> suffix comparisons, but a suffix comparison requires <math>O(n)</math> time, so the overall runtime of this approach is <math>O(n^2 \log n)</math>. More sophisticated algorithms improve this to <math>O(n \log n)</math> by exploiting the results of partial sorts to avoid redundant comparisons. Several <math>\Theta(n)</math> algorithms (of Pang Ko and Srinivas Aluru, Juha Kärkkäinen and Peter Sanders, etc) have also been developed which provide faster construction and have space usage of <math>O(n)</math> with low constants.
+
+Recent work by Salson ''et al.'' proposes an algorithm for updating the suffix array of a text that has been edited instead of rebuilding a new suffix array from scratch. Even if the theoretical worst-case time complexity is <math>O(n \log n)</math>, it appears to perform well in practice: experimental results from the authors showed that their implementation of dynamic suffix arrays is generally more efficient than rebuilding when comparing the insertion of 500 characters into their dynamic array with a complete rebuild of a static suffix array containing the updated text.
+
+==Applications==
+
+The suffix array of a string can be used as an [[index (information technology)|index]] to quickly locate every occurrence of a substring within the string. Finding every occurrence of the substring is equivalent to finding every suffix that begins with the substring. Thanks to the lexicographical ordering, these suffixes will be grouped together in the suffix array, and can be found efficiently with a [[binary search]]. If implemented straightforwardly, this binary search takes <math>O(m \log n)</math> time, where <math>m</math> is the length of the substring W. The following pseudo-code from Manber and Myers shows how to find W (or the suffix lexicographically immediately before W if W is not present) in a suffix array with indices stored in pos.
+
+<pre>
+if W <= suffixAt(pos[0]) then
+  ans = 0
+else if W > suffixAt(pos[m-1]) then
+  ans = m
+else
+{
+  L = 0, R = m-1
+  while R-L > 1 do
+  {
+    M = (L + R)/2
+    if W <= suffixAt(pos[M]) then
+      R = M
+    else
+      L = M
+  }
+  ans = R
+}
+</pre>
+
+To avoid redoing comparisons, extra data structures giving information about the longest common prefixes (LCPs) of suffixes are constructed, giving <math>O(m + \log n)</math> search time.
+
+Suffix sorting algorithms can be used to perform the [[Burrows–Wheeler transform]] (BWT). Technically the BWT requires sorting [[cyclic permutation]]s of a string, not suffixes. We can fix this by appending to the string a special end-of-string character which sorts lexicographically before every other character. Sorting cyclic permutations is then equivalent to sorting suffixes.
+
+Suffix arrays are used to look up substrings in [[Example-Based Machine Translation]], demanding much less storage than a full [[phrase table]] as used in [[Statistical machine translation]].
+
+==History==
+Suffix arrays were originally developed by [[Gene Myers]] and [[Udi Manber]] to reduce memory consumption compared to a [[suffix tree]]. This began the trend towards [[compressed suffix array]]s and [[BWT]]-based compressed full-text indices.
+
+==References==
+* Udi Manber and Gene Myers (1991). "Suffix arrays: a new method for on-line string searches". ''SIAM Journal on Computing'', Volume 22,  Issue 5 (October 1993), pp. 935–948.
+* Pang Ko and Srinivas Aluru (2003).  "Space efficient linear time construction of suffix arrays."  In ''Combinatorial Pattern Matching (CPM 03)''. LNCS 2676, Springer, 2003, pp 203–210.
+* Juha Kärkkäinen and Peter Sanders (2003). "Simple linear work suffix array construction." In ''Proc. 30th International Colloquium on Automata, Languages and Programming (ICALP '03)''. LNCS 2719, Springer, 2003, pp. 943–955.
+* Klaus-Bernd Schürmann and Jens Stoye (2005). "An incomplex algorithm for fast suffix array construction". In ''Proceedings of the 7th Workshop on Algorithm Engineering and Experiments and the 2nd Workshop on Analytic Algorithmics and Combinatorics (ALENEX/ANALCO 2005)'', 2005, pp. 77–85.
+* Mikaël Salson, Martine Léonard, Thierry Lecroq and Laurent Mouchard (2009) "Dynamic Extended Suffix Arrays", [http://dx.doi.org/10.1016/j.jda.2009.02.007 Journal of Discrete Algorithms 2009].
+
+==External links==
+*[http://www.jsuffixarrays.org Various algorithms for constructing Suffix Arrays in Java, with performance tests]
+*[http://code.google.com/p/compression-code/downloads/list Suffix sorting module for BWT in C code]
+*[http://www.codeodor.com/index.cfm/2007/12/24/The-Suffix-Array/1845 Suffix Array Implementation in Ruby]
+*[http://sary.sourceforge.net/index.html.en Suffix array library and tools]
+*[http://duch.mimuw.edu.pl/~abuczyns/kolokacje/index-en.html Project containing Suffix Array Implementation in Java]
+*[http://pizzachili.dcc.uchile.cl/ Project containing various Suffix Array c/c++ Implementations with a unified interface]
+*[http://code.google.com/p/libdivsufsort/ A fast, lightweight, and robust C API library to construct the suffix array]
+
+[[Category:Arrays]]
+[[Category:Algorithms on strings]]
+[[Category:String data structures]]
+
+[[de:Suffixarray]]
+[[ko:접미사 배열]]
+[[ja:接尾辞配列]]
+[[ru:Суффиксный массив]]</body> </html>

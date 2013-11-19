@@ -1,0 +1,125 @@
+<html> <head> <title>MOSIX</title></head><body><!-- Unsourced image removed: [[Image:Mosix.gif|thumb|Mosix Cluster]] -->
+'''MOSIX''' is a [[distributed operating system]].<ref>The MOSIX distributed operating system: Load balancing for UNIX, volume 672 of [[Lecture Notes in Computer Science]]. Springer-Verlag, New York, 1993</ref> Although early versions were based on older [[UNIX]] systems, since 1999 it focuses on [[Linux]] [[Computer_cluster|clusters]] and [[Grid computing|grid]]s. In a MOSIX cluster/grid there is no need to modify or to link applications with any library, to copy files or login to remote nodes, or even to assign processes to different nodes – it is all done automatically, like in an [[Symmetric multiprocessing|SMP]].
+
+== History ==
+
+MOSIX has been researched and developed [http://www.mosix.org/wiki/index.php/History_of_MOSIX since 1977] at The [[Hebrew University of Jerusalem]] by the research team of Prof. Amnon Barak. So far, ten major versions have been developed. The first version, called MOS, for ''Multicomputer OS'', (1981-83) was based on Bell Lab's [[Seventh Edition Unix]] and ran on a cluster of [[PDP-11]] computers. Later versions were based on [[Unix System V]] Release 2 (1987-89) and ran on a cluster of [[VAX]] and [[NS320xx|NS32332]]-based computers, followed by a [[BSD/OS]]-derived version (1991-93) for a cluster of 486/Pentium computers. Since 1999 MOSIX is tuned to [[Linux]] for [[x86]] platforms.
+
+== MOSIX2 ==
+
+The latest version of MOSIX, called MOSIX2, is compatible with Linux-2.6. MOSIX2 is implemented as an OS [[Operating system-level virtualization|virtualization]] layer that provides to users and applications a [[single system image]] with the Linux run-time environment. It allows applications to run in remote nodes as if they run locally. Users run their regular (sequential and parallel) applications while MOSIX transparently and automatically seek resources and migrate processes among nodes to improve the overall performance.
+
+MOSIX2 can manage a [[computer cluster|cluster]] and a multicluster ([[Grid computing|grid]]) as well as workstations and other shared resources. Flexible management of a grid allows owners of clusters to share their computational resources, while still preserving their autonomy over their own clusters and their ability to disconnect their nodes from the grid at any time, without disrupting already running programs.
+
+A MOSIX grid can extend indefinitely as long as there is trust between its cluster owners. This must include guarantees that guest applications will not be modified while running in remote clusters and that no hostile computers can be connected to the local network. Nowadays these requirements are standard within clusters and organizational grids.
+
+MOSIX2 can run in [[native mode]] or in a [[virtual machine]] (VM). In native mode, performance is better, but it requires modifications to the base [[Linux kernel]], whereas a VM can run on top of any unmodified operating system that supports virtualization, including [[Microsoft Windows]], [[Linux]] and [[Mac OS X]].
+
+MOSIX2 is most suitable for running compute intensive applications with low to moderate amount of [[input/output]] (I/O). Tests of MOSIX2 show that the performance of several such applications over a 1 Gb/s campus grid is nearly identical to that of a single cluster.{{Fact|date=November 2007}}
+
+=== Main features ===
+
+* Provides aspects of a single-system image:
+** Users can login on any node and do not need to know where their programs run.
+** No need to modify or link applications with special libraries.
+** No need to copy files to remote nodes.
+* Automatic resource discovery and workload distribution by process migration:
+** [[Load balancing (computing)|Load-balancing]].
+** Migrating processes from slower to faster nodes and from nodes that run out of free memory.
+* Migratable sockets for direct communication between migrated processes.
+* Secure run time environment (sandbox) for guest processes.
+* Live queuing – queued jobs preserve their full generic Linux environment.
+* Batch jobs.
+* Checkpoint and recovery.
+* Tools: automatic installation and configuration scripts, on-line monitors. 
+
+=== MOSIX for HPC ===
+
+MOSIX is most suitable for running HPC applications with low to moderate amount of I/O. Tests of MOSIX show that the performance of several such applications over a 1 Gb/s campus grid is nearly identical to that of a single cluster.{{Fact|date=November 2007}} It is particularly suitable for:
+
+* Efficient utilization of grid-wide resources, by automatic resource discovery and load-balancing.{{Fact|date=November 2007}}
+* Running applications with unpredictable resource requirements or run times.{{Fact|date=November 2007}}
+* Running long processes, which are automatically sent to grid nodes and are migrated back when these nodes are disconnected from the grid.{{Fact|date=November 2007}}
+* Combining nodes of different speeds, by migrating processes among nodes based on their respective speeds, current load, and available memory.{{Fact|date=November 2007}}
+
+A few examples:
+
+* Scientific applications – [[genomic]], [[protein sequence]]s, [[molecular dynamics]], quantum dynamics, [[nano-technology]] and other parallel [[High-performance_computing|HPC]] applications.
+* Engineering applications – CFD, [[weather forecasting]], [[Crash simulation|crash simulations]], oil industry, [[ASIC]] design, pharmaceutical and other HPC applications.
+* [[Financial modeling]], [[Rendering (computer graphics)|rendering]] farms, compilation farms.
+
+== openMosix ==  	 
+
+After MOSIX became [[proprietary software]] in late 2001, [[Moshe Bar]] [[Fork (software development)|forked]] the last [[free software|free]] version and started the [[openMosix]] project on February 10, 2002.<ref>[http://openmosix.sourceforge.net/ the openMosix Project].</ref>
+On July 15, 2007, Bar plans to end the openMosix project effective March 1, 2008, claiming that "the increasing power and availability of low cost multi-core processors is rapidly making single-system image (SSI) clustering less of a factor in computing". These plans were reconfirmed in March 2008.<ref>http://sourceforge.net/projects/openmosix/</ref> The [[LinuxPMI]] project is continuing development of the former openMosix code.
+
+== Further reading ==
+
+=== MOSIX2 for Linux 2.6  ===
+
+* Meiri E. and Barak A., [http://www.cluster2007.org/program.php#TP9A Parallel Compression of Correlated Files], Proc. IEEE Cluster 2007, Austin, Sept. 2007.
+* Amar L., Stosser J., Barak A. and Neumann D., [http://www.grid2007.org/?m_b_c=workshops Economically Enhanced MOSIX for Market-based Scheduling in Grid OS], Workshop on Economic Models and Algorithms for Grid System (EAMGS 2007), 8th IEEE/ACM Int. Conf. on Grid Computing(Grid 2007), Austin, Sept. 2007.
+* Amar L., Barak A., Levy E. and Okun M., [http://csdl2.computer.org/persagen/DLAbsToc.jsp?resourcePath=/dl/proceedings/ccgrid/&toc=comp/proceedings/ccgrid/2007/2833/00/2833toc.xml&DOI=10.1109/CCGRID.2007.22 An On-line Algorithm for Fair-Share Node Allocations in a Cluster]. Proc. 7-th IEEE Int. Symposium on Cluster Computing and the Grid (CCGrid '07), pp. 83-91, Rio de Janeiro, May 2007. 
+* Amar L., Barak A., Drezner Z. and Peer I., Gossip Algorithms for Maintaining a Distributed Bulletin Board with Guaranteed Age Properties. TR, 2006.
+* Barak A., Shiloh A. and Amar L., [http://csdl2.computer.org/persagen/DLAbsToc.jsp?resourcePath=/dl/proceedings/&toc=comp/proceedings/ccgrid/2005/9074/01/9074toc.xml&DOI=10.1109/CCGRID.2005.1558576 An Organizational Grid of Federated MOSIX Clusters]. Proc. 5-th IEEE International Symposium on Cluster Computing and Grid (CCGrid '05), Cardiff, May 2005 .
+* Barak A. and Drezner Z., Gossip-Based Distributed Algorithms for Estimating the Average Load of Scalable Computing Clusters and Grids. Proc. 2004 Int. Conference on Parallel and Distributed Processing Techniques and Applications (PDPTA'04), Las Vegas, NV, June 2004.
+
+=== MOSIX for Linux 2.2 & 2.4 ===
+
+* Okun M. and Barak A., [http://authors.elsevier.com/sd/article/S0167739X03001729 Atomic Writes for Data Integrity and Consistency in Shared Storage Devices for Clusters]. Journal of Future Generation Computer Systems, Vol. 20, No. 4, pp. 539-547, May 2004.
+* Amar L., Barak A. and Shiloh A., [http://www.mosix.org/pub/dfsa.pdf The MOSIX Direct File System Access Method for Supporting Scalable Cluster File Systems]. Cluster Computing, Vol. 7, No. 2, pp. 141-150, April 2004.
+* Keren A. and Barak A., [http://www.mosix.org/pub/ocipc.pdf Opportunity Cost Algorithms for Reduction of I/O and Interprocess Communication Overhead in a Computing Cluster]. IEEE Tran. Parallel and Distributed Systems, Vol. 14, No. 1, pp. 39-50, January 2003. 
+* Amar L., Barak A. and Shiloh A., The MOSIX Parallel I/O System for Scalable I/O Performance. Proc. 14-th IASTED Int. Conference on Parallel and Distributed Computing and Systems (PDCS 2002), pp. 495-500, Cambridge, MA, Nov. 2002.
+* Amir Y., [[Baruch Awerbuch|Awerbuch B.]], Barak A., Borgstrom R.S. and Keren A., [http://www.mosix.org/pub/ocja.pdf An Opportunity Cost Approach for Job Assignment in a Scalable Computing Cluster]. IEEE Tran. on Parallel and Distributed Systems, Vol. 11, No. 7, pp. 760-768, July 2000.
+* McClure S. and Wheeler R., [http://www.mosix.org/pub/usenix.pdf MOSIX: How Linux Clusters Solve Real World Problems]. Proc. 2000 USENIX Annual Tech. Conf., pp. 49-56, San Diego, CA., June 2000.
+* Amar L., Barak A., Eizenberg A. and Shiloh A.,. The MOSIX Scalable Cluster File Systems for LINUX, June 2000.
+* Barak A., La'adan O. and Shiloh A., [http://www.mosix.org/pub/mosix4linux.pdf Scalable Cluster Computing with MOSIX for LINUX]. Proc. 5-th Annual Linux Expo, pp. 95-100, Raleigh, NC, May 1999.
+
+=== MOSIX Version 1 book ===
+
+* Barak A., Guday S. and Wheeler R., The MOSIX Distributed Operating System, Load Balancing for UNIX. Lecture Notes in Computer Science, Vol. 672, Springer-Verlag, May 1993.
+
+=== Other ===
+
+* Barak A. and La'adan O., [http://www.mosix.org/pub/mosixhpcc.pdf The MOSIX Multicomputer Operating System for High Performance Cluster Computing]. Journal of Future Generation Computer Systems, Vol. 13, No. 4-5, pp. 361-372, March 1998.
+* Barak A., Laden O. and Yarom Y., The NOW MOSIX and its Preemptive Process Migration Scheme. IEEE TCOS, Vol. 7, No. 2, pp. 5-11, Summer 1995.
+* Haban D., Wybranietz D. and Barak A., Monitoring and Management-Support of Distributed Systems, Proc. European Workshop on Progress in Distributed operating Systems and Distributed System management, pp. 110-137, Berlin, April 1989.
+* Barak A. and Wheeler R., MOSIX: An Integrated Multiprocessor UNIX. Proc. Winter 1989 USENIX Conf., pp. 101-112, San Diego, CA, Feb. 1989.
+* Barak A., Shiloh A. and Wheeler R., Flood Prevention in the MOSIX Load-Balancing Scheme, IEEE-TCOS Newsletter, Vol. 3, No. 1, pp. 24-27, Winter 1989.
+* Barak A. and Kornatzky Y., Design Principles of Operating Systems for Large Scale Multicomputers, Proc. Int. Workshop on Experience with Distributed Systems, pp. 104-123, Kaiserslautern, Sept. 1987. Also, Report RC 13220, IBM T.J. Watson Research Center, Yorktown Heights, NY, Oct. 1987.
+* Alon N., Barak A. and Manber U., On Disseminating Information Reliably Without Broadcasting, Proc. 7-th Int. Conf. on Distributed Computing Systems (ICDCS-7), pp. 74-81 (best conference paper), Berlin, Sept. 1987.
+* Barel A., NSMOS - MOS Port to the National's 32000 Family Architecture. Proc. 2nd Israel Conf. Computer Systems and Soft. Eng., Tel-Aviv, May 1987.
+* Barak A., Drezner Z. and Gurevich Y., On the Number of Active Nodes in a Multicomputer System, Networks, An Int. Journal, Vol. 16, No. 3, pp. 275-282, Fall 1986.
+* Barak A. and Paradise G. O., MOS - Scaling Up UNIX. Proc. Summer 1986 USENIX Conf., pp. 414-418, Atlanta, GA, June 1986.
+* Barak A. and Paradise G. O., MOS - a Load Balancing UNIX. Proc. Autumn 86 EUUG Conf., pp. 273-280, Manchester, Sept. 1986.
+* Drezner Z. and Barak A., An Asynchronous Algorithm for Scattering Information Between the Active Nodes of a Multicomputer System, Journal of Parallel and Distributed Computing, Vol. 3, No. 3, pp. 344-351, Sept. 1986.
+* Barak A. and Shiloh A., A Distributed Load-balancing Policy for a Multicomputer. Software - Practice & Experience, Vol. 15, No. 9, pp. 901-913, Sept. 1985.
+* Barak A. and Litman A., MOS - A Multicomputer Distributed Operating System. Software - Practice & Experience, Vol. 15, No. 8, pp. 725-737, Aug. 1985.
+* Drezner Z. and Barak A., Efficient Algorithms for Routing Information in a Multicomputer System, Distributed Algorithms on Graphs, Carleton Univ. Press, pp. 41-48, Ottawa, Aug. 1985.
+* Barak A., Dynamic Process Control for Distributed Computing, Proc. 3-rd Int. Conf. on Distributed Computing Systems (ICDCS-3), pp. 36-40, Ft. Lauderdale, FL, Oct. 1982.
+* Barak A., Shapir A., Steinberg G. and Karshmer A.I., A Modular, Distributed UNIX. Proc. 14-th Hawaii Int. Conf. on System Science, pp. 740-747, January 1981.
+* Barak A. and Shapir A., UNIX with satellite Processors. Software - Practice & Experience, Vol. 10, No. 5, pp. 383-392, May 1980.
+
+== See also ==
+* [[LinuxPMI]]
+* [[OpenMOSIX]]
+
+== External links ==
+
+* [http://www.mosix.org/ MOSIX homepage]
+* [http://www.mosix.org/webmon  HUGI Campus Multi-Cluster], a MOSIX grid at Hebrew University
+
+== Notes ==
+
+{{reflist}}
+
+[[Category:Cluster computing]]
+[[Category:Grid computing]]
+[[Category:Network-related software]]
+[[Category:Parallel computing]]
+
+[[fr:MOSIX]]
+[[it:MOSIX]]
+[[pl:MOSIX]]
+[[pt:MOSIX]]
+[[ru:MOSIX]]</body> </html>

@@ -1,0 +1,52 @@
+<html> <head> <title>Service Management Facility</title></head><body>{{Otheruses2|SMF}}
+
+'''Service Management Facility''' ('''SMF''') is a feature of the [[Solaris (operating system)|Solaris operating system]] that creates a supported, unified model for services and [[operating system service management|service management]] on each Solaris system and replaces init.d scripts. SMF introduces:
+
+* ''Dependency order''.  Services sometimes depend on one another for proper operation, and a robust system should know each service's dependencies.  If an underlying service fails, it needs to be corrected before other services that depend upon it are affected.
+* ''Configurable boot verbosity''
+* ''Delegation of tasks to non-root users''.  A service can be configured to run within a limited set of privileges, rather than as the all-powerful root user.  If a service has been compromised, the amount of damage that can be inflicted by the intruder will be minimized if the service's power is constrained to that of a more limited user.
+* ''Parallel starting of services''.  This speeds up the boot process by starting multiple services simultaneously, allowing idle CPU time resulting from a service that is temporarily blocked to be relinquished for use by other services that can start independently of the blocked service.
+* ''Automatic service restart after failure''.  Works in conjunction with the [[Solaris Fault Manager]], allowing software recovery in the event of hardware faults (cpu, memory), admin error such as accidental kills, and software core dumps.
+
+All these capabilities are made possible by treating Services as "first class objects".  That is, they are more than just user-executed software to the OS.  They can be defined to have special states that allow finer control and permit monitoring and probing for diagnosing software failures, rather than having the administrator or dedicated "restarter" modules kill and restart the service as before.
+ 
+== What are services? ==
+
+Services are software objects that provide a set of capabilities to other software.  For example, a webserver provides HTTP service to web browsers.  Other services include [[Network File System (protocol)|NFS]] for sharing files on a network, [[Dynamic Host Configuration Protocol|DHCP]] for dynamic [[IP address]] assignment, and [[Secure Shell]] for remote logins.  Even higher level functions can be services, such as specific databases for e-commerce, finance, manufacturing control, etc.  Typically, services are automatically started at boot up, long-lived, have common states (eg. running, not running), relationship & dependencies (Sendmail service depends on Naming service, which depends on Networking services), and are critical to the dedicated function of the server.
+
+== What it replaces ==
+
+In versions of Solaris prior to Solaris 10, and in UNIX in general, services are configured in text files, with startup files in the /etc/rc.d/ directory trees, and configuration data in files such as /etc/inittab and /etc/inetd.conf.  A typical system could have dozens of configuration files, and configuration could involve various methods, including editing [[shell script]]s.  With SMF, there is one consistent interface to ease administration.
+
+There has been no traditional definition or constraint of what a service is, making administration difficult.  With SMF, each service can have a set of defined states, allowing admins to control services in a consistent way based on their state.
+
+== SMF concepts ==
+
+Instances:  a ''service'' is a collection of configurations.  An ''instance'' is a running execution of a defined service executable.  One can have many instances of a defined service, such as multiple webservers listening on different ports referencing different WWW root directories.
+
+==See also==
+*[[init]]
+*[[Runlevel]]
+*[[systemd]]
+*[[SystemStarter]] and [[launchd]] &ndash; [[Mac OS X]]'s process spawner
+*[[Upstart]]
+*[[Initng]]
+*[[daemontools]]
+*[[Process Supervision]]
+*[[runit]]
+
+== External links ==
+* [http://www.sun.com/bigadmin/content/selfheal/smf-quickstart.html Solaris Service Management Facility - Quickstart Guide]
+* [http://www.sun.com/blueprints/0206/819-5150.pdf SMF Sun BluePrint]
+* [http://docs.sun.com/app/docs/doc/817-1985/6mhm8o5rh?a=view Service Management Facility (SMF) overview]
+* [http://opensolaris.org/os/community/smf OpenSolaris Service Management Facility community]
+* [http://www.oreillynet.com/lpt/a/6542 Using Solaris SMF by Chris Josephes at O'Reilly Network]
+
+{{Solaris}}
+
+[[Category:Sun Microsystems software]]
+[[Category:Process (computing)]]
+[[Category:Unix process and task management-related software]]
+
+[[de:Service Management Facility]]
+[[ru:Service Management Facility]]</body> </html>

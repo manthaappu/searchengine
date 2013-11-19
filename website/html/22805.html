@@ -1,0 +1,154 @@
+<html> <head> <title>M-tree</title></head><body>{{Context|date=June 2010}}
+
+'''M-trees''' are [[tree data structure]]s that are similar to [[R-tree]]s and [[B-tree]]s. It is constructed using a [[Metric (mathematics)|metric]] and relies on the [[triangle inequality]] for efficient range and k-NN queries.
+While M-trees can perform well in many conditions, the tree can also have large overlap and there is no clear strategy on how to best avoid overlap. In addition, it can only be used for [[distance function]]s that satisfy the triangle inequality, while many advanced dissimilarity functions used in [[information retrieval]] do not satisfy this.<ref name="p426">{{cite conference
+ | first = Paulo
+ | last = Ciaccia
+ | authorlink =
+ | coauthors = Patella,Marco Zezula, Pavel
+ | title = M-tree An Efficient Access Method for Similarity Search in Metric Spaces
+ | booktitle = Proceedings of the 23rd VLDB Conference Athens, Greece, 1997
+ | pages = 426-435
+ | publisher = Very Large Databases Endowment Inc.
+ | year = 1997
+ | location = IBM Almaden Research Center
+ | url = http://www.vldb.org/conf/1997/P426.PDF
+ | accessdate = 2010-09-07
+ | id = p426
+}}</ref>
+
+==Overview==
+
+[[File:Mtree-2d.svg|thumb|350px|2D M-Tree visualized using [[Environment for Developing KDD-Applications Supported by Index-Structures|ELKI]]. The tree has a single level of leaf nodes. Due to a suboptimal split heuristic, there is a large overlap.]]
+
+As in any Tree-based data structure, the M-Tree is composed of Nodes and Leafs.  In each node there is a data object that identifies it uniquely and a pointer to a sub-tree where its children reside.  Every leaf has several data objects.  For each node there is a radius '''''r''''' that defines a Ball in the desired metric space. Thus, every node <math>n</math> and leaf <math>l</math> residing in a particular node <math>N</math> is at most distance <math>r</math> from <math>N</math>, and every node ''n'' and leaf ''l'' with node parent ''N'' keep the distance from it.
+
+==M-Tree construction==
+=== Components ===
+An M-Tree has these components and sub-components:
+
+# Root.
+## Routing object ''O''.
+## Radius O<sub>''r''</sub>.
+## A set of Nodes or (exclusive) Leafs.
+# Node.
+## Routing object ''O''<sub>r</sub>.
+## Radius O<sub>''r''</sub>.
+## Distance from this node to its parent ''O''<sub>p</sub>.
+## A set of Nodes or (exclusive) Leafs.
+# Leaf.
+## Routing object ''O''.
+## Radius O<sub>''r''</sub>.
+## Distance from this leaf to its parent ''O''<sub>p</sub>.
+## Objects.
+# Objects.
+## Feature value (usually a ''d''-dimensional vector).
+
+=== Insert ===
+The main idea is first to find a leaf node <math>N</math> where the new object <math>O</math> belongs. If <math>N</math> is not full then just attach it to <math>N</math>. If <math>N</math> is full then invoke a method to split <math>N</math>. The algorithm is as follow:
+
+{{algorithm-begin|name=Insert}}
+   Input: Node <math>N</math>  of M-Tree <math>MT</math>, Entry <math>O_{n}</math>
+   Output: A new instance of <math>MT</math> containing all entries in original <math>MT</math> plus <math>O_{n}</math>
+
+   <math>N_{e}</math> ← Entries of node <math>N</math>
+   '''if''' <math>N</math> is not a leaf '''then'''
+   {
+        /*Look for entries such that the new objects is into*/
+        let be <math>N_{in}</math> entries such that <math>d(O_{r}, O_{n}) <= r(O_{r})</math>
+        '''if''' <math>N_{in}</math> is not empty '''then'''
+        {
+           /*If there are one or more entry, then look for an entry such that is closer to the new object*/
+           let be <math>O_{r}^{*} \in N_{in}</math> such that <math>d(O_{r}^{*}, O_{n})</math> is minimum
+        }
+        '''else'''
+        {
+           /*If there are no such entry, then look for an entry with minimal distance from its edge to the new object*/
+           let be <math>O_{r}^{*} \in N_{in}</math> such that <math>d(O_{r}^{*}, O_{n}) - r(O_{r})</math> is minimum
+           /*Upgrade the new radii of the entry*/
+           <math>r(O_{r}^{*})</math> = <math>d(O_{r}^{*}, O_{n})</math>
+        }
+        /*Continue inserting in the next level*/
+        return insert(<math>T(O_{r}^{*})</math>, <math>O_{n}</math>);
+   '''else'''
+   {
+        /*If the node has capacity then just insert the new object*/
+        '''if''' <math>N</math> is not full '''then'''
+        {  store(<math>N</math>, <math>O_{n}</math>)   }
+        /*The node is at full capacity, then it is needed to do a new split in this level*/
+        '''else'''
+        {  split(<math>N</math>, <math>O_{n}</math>) }
+   }
+{{algorithm-end}}
+
+=== Split ===
+If the split method arrives to the root of the tree, then it choose two routing objects from <math>N</math>, and creates two new nodes containing all the objectos in original <math>N</math>, and store them into the new root. If split methods arrives to a node <math>N</math> that is not the root of the tree, the method choose two new routing objects from <math>N</math>, re-arrange every routing object in <math>N</math> in two new nodes <math>N_{1}</math> and <math>N_{2}</math>, and store this new nodes in the parent node <math>N_{p}</math> of original <math>N</math>.  The split must be repeated if <math>N_{p}</math> has not enough capacity to store <math>N_{2}</math>. The algorithm is as follow:
+
+{{algorithm-begin|name=Split}}
+   Input: Node <math>N</math>  of M-Tree <math>MT</math>, Entry <math>O_{n}</math>
+   Output: A new instance of <math>MT</math> containing a new partition.
+
+   /*The new routing objects are now all those in the node plus the new routing object*/
+   let be <math>NN</math> entries of <math>N \cup O</math>
+   '''if''' <math>N</math> is not the root '''then'''
+   {
+      /*Get the parent node and the parent routing object*/
+      let <math>O_{p}</math> be the parent routing object of <math>N</math>
+      let <math>N_{p}</math> be the parent node of <math>N</math>
+   }
+   /*This node will contain part of the objects of the node to be splitted*/
+   Create a new node <math>N'</math>
+   /*Promote two routing objects from the node to be splitted, to be new routing objects*/
+   Promote(<math>N</math>, <math>O_{p1}</math>, <math>O_{p2}</math>)
+   /*Choose which objects from the node being splited will act as new routing objects*/
+   Partition(<math>N</math>, <math>O_{p1}</math>, <math>O_{p2}</math>, <math>N_{1}</math>, <math>N_{2}</math>)
+   /*Store entries in each new routing object*/
+   Store <math>N_{1}</math>'s entries in <math>N</math> and <math>N_{2}</math>'s entries in <math>N'</math>
+   '''if''' <math>N</math> is the current root '''then'''
+   {
+       /*Create a new node and set it as new root and store the new routing objects*/
+       Create a new root node <math>N_{p}</math>
+       Store <math>O_{p1}</math> and <math>O_{p2}</math> in <math>N_{p}</math>
+   }
+   '''else'''
+   {
+       /*Now use the parent rouing object to store one of the new objects*/
+       Replace entry <math>O_{p}</math> with entry <math>O_{p1}</math> in <math>N_{p}</math>
+       '''if''' <math>N_{p}</math> is no full '''then'''
+       {
+           /*The second routinb object is stored in the parent only if it has free capacity*/
+           Store <math>O_{p2}</math> in <math>N_{p}</math>
+       }
+       '''else'''
+       {
+            /*If there is no free capacity then split the level up*/
+            split(<math>N_{p}</math>, <math>O_{p2}</math>)
+       }
+   }
+{{algorithm-end}}
+
+== M-Tree Queries ==
+=== Range queries ===
+Range queries
+
+=== k-NN queries ===
+{{Empty section|date=January 2011}}
+
+==See also==
+
+* [[Segment tree]]
+* [[Interval tree]] - A degenerate R-Tree  for 1 dimension (usually time).
+* [[Bounding volume hierarchy]]
+* [[Spatial index]]
+* [[GiST]]
+
+==References==
+{{reflist}}
+
+==External links==
+
+{{CS-Trees}}
+
+{{DEFAULTSORT:M-Tree}}
+[[Category:R-tree]]
+[[Category:Database index techniques]]</body> </html>

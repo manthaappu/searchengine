@@ -1,0 +1,212 @@
+<html> <head> <title>Comparison of database access</title></head><body>{{Confusing|date=February 2008}}
+{{ProgLangCompare}}
+This is an article [[Comparability|comparing]] [[database]] [[programming language]]s.
+
+== Database input commands ==
+=== Database and table management ===
+
+{| class="wikitable"
+!Database
+!Create database
+!Delete database
+!List databases
+!Use a db
+!Create table
+!Delete table
+!List tables
+!List table fields
+|-
+| [[MySQL]]
+| create database ''dbname'';
+| drop database ''dbname'';
+| show databases;
+| use ''dbname'';
+| create table ''tbname'';
+| drop table ''tbname'';
+| show tables;
+| describe ''tbname'';
+|-
+| [[PostgreSQL]]
+| 
+| 
+| 
+|
+|
+|
+|
+| 
+|-
+| [[Sqlite]] ver 3
+| ? 
+| ? 
+| ? 
+| $ sqlite3 ''filename''
+| create table ''tbname'' (''field1'' ''value_type1'', ''field2'' ''value_type2'', ... )
+| drop table ''tbname''
+| .tables
+| .schema
+|-
+|}
+
+=== Value types ===
+
+{| class="wikitable"
+! Database
+! Integer
+! Float
+! Text
+! Date
+! Blob
+|-
+| SQLite 3
+| INTEGER 
+| DOUBLE
+| TEXT
+| DATE
+|
+|}
+
+=== Using data in a table ===
+
+{| class="wikitable"
+!Database
+!show all data in all fields
+!show all data in some fields
+!show filtered data in all fields
+|-
+| [[MySQL]]
+| select * from "tbname";
+| select "fields" from "tbname";
+| select * from "tbname" where "filter_expr";
+|}
+
+=== Filtering expressions ===
+{| class="wikitable"
+!Database
+!matching
+!different
+!logical AND
+!logical OR
+|-
+| [[MySQL]]
+| "field" = "value";
+| "field" != "value";
+| "expr1" AND "expr2"
+| "expr1" OR "expr2"
+|}
+
+=== Altering tables ===
+
+{| class="wikitable"
+!Database
+!Add new column
+!Delete column
+!Change column
+!Add element
+!Delete element
+|-
+| [[MySQL]]
+| alter table "tbname" add column "column_name";
+| alter table "tbname" drop column "column_name";
+| alter table "tbname" change "old" "new" "newtype";
+| insert into "tbname" ("fields") values ("values");
+| delete from "tbname" where "expr";
+|}
+
+=== Managing users and permissions ===
+== MySQL databases ==
+{| class="wikitable"
+![[Programming Language|Prog Language]]
+!Access server
+!Use database
+!List databases
+!List tables
+|-
+|raw MySQL access
+|
+|use ''db'';
+|show databases;
+|show tables;
+|-
+|[[PHP]]
+|$db = mysql_access(host, user, password);
+|mysql_select_db(''name'', $db);
+|
+|
+|-
+|[[Python (programming language)|Python]]
+|db = MySQLdb.connect(host = "hostname", user = "username", passwd = "password", db = "dbname", connect_timeout = 5)
+|import MySQLdb
+|c=db.cursor(); c.execute("show databases"); c.fetchall()
+|c.execute("show tables"); c.fetchall()
+|}
+
+=== Reading from tables ===
+{| class="wikitable"
+![[Programming Language|Prog Language]]
+!Describe
+!List table content
+!Search
+|-
+|raw MySQL access
+|describe ''tablename'';
+|select ''field'' from ''tablename'';
+|
+|-
+|[[PHP]]
+|
+|
+|
+|}
+
+== Databases in Object-Relational mapping systems ==
+{{see also|Object-relational mapping}}
+There are ORMs to manage a database:
+* [[django (web framework)]]
+* [[SQLObject]]
+* others
+
+=== Defining the object ===
+==== Django ====
+
+This class represents a row of a table named "Table"
+
+<source lang="python">
+class Table(models.Model):
+     field1_name = models."field_name"()
+     field2_name = models."field_name"()
+
+     # More explicit examples
+     integer_field = models.IntegerField()
+     char_field = models.CharField(max_length=1000)
+</source>
+
+=== Using a table ===
+
+{| class="wikitable"
+!
+! Read value
+! Change value
+! Search
+! Inserting
+|-
+|django 
+| table_var."field_name"
+| table_var."field_name" = "value"
+| table_var = Table.objects.filter( "expr" )
+| table_var = Table() <br /> table_var.save()
+|}
+
+== See also ==
+*[[ODBC]]
+*[[JDBC]]
+*[[MySQL]]
+*[[PostgreSQL]]
+
+{{database-stub}}
+
+[[Category:Application programming interfaces]]
+[[Category:Databases]]
+[[Category:Open source database management systems]]
+[[Category:Programming languages]]
+[[Category:SQL data access]]</body> </html>

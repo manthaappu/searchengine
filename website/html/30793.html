@@ -1,0 +1,404 @@
+<html> <head> <title>Quantum computer</title></head><body>[[Image:Bloch sphere.svg|thumb|The [[Bloch sphere]] is a representation of a [[qubit]], the fundamental building block of quantum computers.]]
+A '''quantum computer''' is a device for [[computation]] that makes direct use of [[quantum mechanical]] [[phenomena]], such as [[quantum superposition|superposition]] and [[quantum entanglement|entanglement]], to perform operations on [[data]]. Quantum computers are different from traditional computers based on [[transistor]]s. The basic principle behind quantum computation is that quantum properties can be used to represent data and perform [[Instruction (computer science)|operation]]s on these data.<ref>"[http://www.media.mit.edu/physics/publications/papers/98.06.sciam/0698gershenfeld.html Quantum Computing with Molecules]" article in [[Scientific American]] by [[Neil Gershenfeld]] and [[Isaac L. Chuang]]</ref> A theoretical model is the [[quantum Turing machine]], also known as the universal quantum computer.
+
+Although quantum computing is still in its infancy, experiments have been carried out in which quantum computational operations were executed on a very small number of [[qubits]] (quantum bits). Both practical and theoretical research continues, and many national government and military funding agencies support quantum computing research to develop quantum [[computer]]s for both civilian and national security purposes, such as [[cryptanalysis]].<ref>[http://qist.lanl.gov/qcomp_map.shtml Quantum Information Science and Technology Roadmap] for a sense of where the research is heading.</ref>
+
+If large-scale quantum computers can be built, they will be able to solve certain problems much faster than any current classical computers (for example [[integer factorization]] using [[Shor's algorithm]]). All problems solvable with a quantum computer can also be solved using a traditional computer given enough time and resources.<ref>Nielsen, p. 202</ref>
+
+==Basis==
+A classical computer has a memory made up of [[bit]]s, where each bit represents either a one or a zero. A quantum computer maintains a sequence of [[qubit]]s. A single qubit can represent a one, a zero, or, crucially, any [[quantum superposition]] of these; moreover, a pair of qubits can be in any quantum superposition of 4 states, and three qubits in any superposition of 8. In general a quantum computer with <math>n</math> qubits can be in an arbitrary superposition of up to <math>2^n</math> different states simultaneously (this compares to a normal computer that can only be in ''one'' of these <math>2^n</math> states at any one time). A quantum computer operates by manipulating those qubits with a fixed sequence of [[quantum gate|quantum logic gate]]s. The sequence of gates to be applied is called a [[quantum algorithm]].
+
+An example of an implementation of qubits for a quantum computer could start with the use of particles with two [[spin (physics)|spin]] states: "down" and "up" (typically written <math>|{\downarrow}\rangle</math> and <math>|{\uparrow}\rangle</math>, or <math>|0{\rangle}</math> and <math>|1{\rangle}</math>). But in fact any system possessing an [[observable]] quantity ''A'' which is ''conserved'' under time evolution and such that ''A'' has at least two discrete and sufficiently spaced consecutive [[eigenvalue]]s, is a suitable candidate for implementing a qubit. This is true because any such system can be mapped onto an effective [[spin-1/2]] system.
+
+==Bits vs. qubits==
+[[Image:Quantum computer.svg|thumb|200px|Qubits are made up of controlled particles and the means of control (e.g. devices that trap particles and switch them from one state to another).<ref>{{Cite book|last = Waldner |first = Jean-Baptiste|title = Nanocomputers and Swarm Intelligence |publisher = [[ISTE]] |place = London |year = 2007 |page = 157 |isbn = 2746215160}}</ref>
+]]
+
+Consider first a classical computer that operates on a three-bit [[Processor register|register]]. The state of the computer at any time is a probability distribution over the <math>2^3=8</math> different three-bit strings <tt>000, 001, 010, 011, 100, 101, 110, 111</tt>. If it is a deterministic computer, then it is in exactly one of these states with probability 1. However, if it is a [[Probabilistic automaton|probabilistic computer]], then there is a possibility of it being in any ''one'' of a number of different states. We can describe this probabilistic state by eight nonnegative numbers ''a'',''b'',''c'',''d'',''e'',''f'',''g'',''h'' (where ''a'' = probability computer is in state <tt>000</tt>, ''b'' = probability computer is in state <tt>001</tt>, etc.). There is a restriction that these probabilities sum to 1.
+
+The state of a three-qubit quantum computer is similarly described by an eight-dimensional vector (''a'',''b'',''c'',''d'',''e'',''f'',''g'',''h''), called a [[Bra-ket notation|ket]]. However, instead of adding to one, the sum of the ''squares'' of the coefficient magnitudes, <math>|a|^2+|b|^2+...+|h|^2</math>, must equal one. Moreover, the coefficients are [[complex number]]s. Since states are represented by complex wavefunctions, two states being added together will undergo [[Interference (wave propagation)|interference]], which is a key difference between quantum computing and probabilistic classical computing.<ref name="DiVincenzo 1995">{{Cite journal| author=David P. DiVincenzo|title=Quantum Computation|journal=Science|year=1995|volume=270|issue=5234|pages=255–261|doi= 10.1126/science.270.5234.255}}</ref>
+
+If you measure the three qubits, you will observe a three-bit string. The probability of measuring a given string is the squared magnitude of that string's coefficient (i.e., the probability of measuring <tt>000</tt> = <math>|a|^2</math>, the probability of measuring <tt>001</tt> = <math>|b|^2</math>, etc..). Thus, measuring a quantum state described by complex coefficients (''a'',''b'',...,''h'') gives the classical probability distribution <math>(|a|^2, |b|^2, ..., |h|^2)</math> and we say that the quantum state "collapses" to a classical state as a result of making the measurement.
+
+Note that an eight-dimensional vector can be specified in many different ways depending on what [[Basis (linear algebra)|basis]] is chosen for the space. The basis of bit strings (e.g., 000, 001, ..., 111) is known as the computational basis. Other possible bases are [[unit vector|unit-length]], [[orthogonal]] vectors and the eigenvectors of the [[Pauli matrices|Pauli-x operator]]. [[Bra-ket notation|Ket notation]] is often used to make the choice of basis explicit. For example, the state (''a'',''b'',''c'',''d'',''e'',''f'',''g'',''h'') in the computational basis can be written as:
+:<math>a\,|000\rangle + b\,|001\rangle + c\,|010\rangle + d\,|011\rangle + e\,|100\rangle + f\,|101\rangle + g\,|110\rangle + h\,|111\rangle</math>
+:where, e.g., <math>|010\rangle = \left(0,0,1,0,0,0,0,0\right)</math>
+
+The computational basis for a single qubit (two dimensions) is <math>|0\rangle = \left(1,0\right)</math> and <math>|1\rangle = \left(0,1\right)</math>.
+
+Using the eigenvectors of the Pauli-x operator, a single qubit is <math>|+\rangle = \tfrac{1}{\sqrt{2}} \left(1,1\right)</math> and <math>|-\rangle = \tfrac{1}{\sqrt{2}} \left(1,-1\right)</math>.
+
+A quantum computer with a given number of qubits is exponentially more complex than a classical computer with the same number of bits because describing the state of ''n'' qubits requires 2<sup>''n''</sup> complex coefficients. Measuring the qubits would produce a classical state of only ''n'' bits, but such an action would also destroy the quantum state. We can think of the system as being exactly one of the ''n''-bit strings—we just don't know which one. For example, a 300-qubit quantum computer has a state described by 2<sup>300</sup> (approximately 10<sup>90</sup>) complex numbers, more than the number of atoms in the [[observable universe]].
+
+==Operation==
+While a classical three-bit state and a quantum three-qubit state are both eight-dimensional [[coordinate vector|vector]]s, they are manipulated quite differently for classical or quantum computation. For computing in either case, the system must be initialized, for example into the all-zeros string, <math>|000\rangle</math>, corresponding to the vector (1,0,0,0,0,0,0,0). In classical randomized computation, the system evolves according to the application of [[Stochastic matrix|stochastic matrices]], which preserve that the probabilities add up to one (i.e., preserve the [[Taxicab geometry|L1 norm]]). In quantum computation, on the other hand, allowed operations are [[unitary matrix|unitary matrices]], which are effectively rotations (they preserve that the sum of the squares add up to one, the [[Euclidean metric|Euclidean or L2 norm]]). (Exactly what unitaries can be applied depend on the physics of the quantum device.) Consequently, since rotations can be undone by rotating backward, quantum computations are [[Reversible computing|reversible]]. (Technically, quantum operations can be probabilistic combinations of unitaries, so quantum computation really does generalize classical computation. See [[quantum circuit]] for a more precise formulation.)
+
+Finally, upon termination of the algorithm, the result needs to be read off. In the case of a classical computer, we ''sample'' from the [[probability distribution]] on the three-bit register to obtain one definite three-bit string, say 000. Quantum mechanically, we ''[[quantum measurement|measure]]'' the three-qubit state, which is equivalent to collapsing the quantum state down to a classical distribution (with the coefficients in the classical state being the squared magnitudes of the coefficients for the quantum state, as described above) followed by sampling from that distribution. Note that this destroys the original quantum state. Many algorithms will only give the correct answer with a certain probability, however by repeatedly initializing, running and measuring the quantum computer, the probability of getting the correct answer can be increased.
+
+For more details on the sequences of operations used for various [[quantum algorithm]]s, see [[universal quantum computer]], [[Shor's algorithm]], [[Grover's algorithm]], [[Deutsch-Jozsa algorithm]], [[amplitude amplification]], [[quantum Fourier transform]], [[quantum gate]], [[Adiabatic quantum computation|quantum adiabatic algorithm]] and [[quantum error correction]].
+
+==Potential==
+[[Integer factorization]] is believed to be computationally infeasible with an ordinary computer for large integers if they are the product of few [[prime number]]s (e.g., products of two 300-digit primes).<ref>[http://modular.fas.harvard.edu/edu/Fall2001/124/misc/arjen_lenstra_factoring.pdf Integer Factoring] By ARJEN K. LENSTRA - Designs, Codes and Cryptography, 19, 101–128 (2000) Kluwer Academic Publishers</ref> By comparison, a quantum computer could efficiently solve this problem using [[Shor's algorithm]] to find its factors. This ability would allow a quantum computer to decrypt many of the [[cryptography|cryptographic]] systems in use today, in the sense that there would be a [[polynomial time]] (in the number of digits of the integer) algorithm for solving the problem. In particular, most of the popular [[Asymmetric Algorithms|public key ciphers]] are based on the difficulty of factoring integers (or the related [[discrete logarithm]] problem which can also be solved by Shor's algorithm), including forms of [[RSA]]. These are used to protect secure Web pages, encrypted email, and many other types of data. Breaking these would have significant ramifications for electronic privacy and security.
+
+However, other existing cryptographic algorithms don't appear to be broken by these algorithms.<ref name="pqcrypto_survey">Daniel J. Bernstein, [http://pqcrypto.org/www.springer.com/cda/content/document/cda_downloaddocument/9783540887010-c1.pdf Introduction to Post-Quantum Cryptography]. Introduction to Daniel J. Bernstein, Johannes Buchmann, Erik Dahmen (editors). Post-quantum cryptography. Springer, Berlin, 2009. ISBN 978-3-540-88701-0</ref><ref>See also [http://pqcrypto.org/ pqcrypto.org], a bibliography maintained by Daniel J. Bernstein and Tanja Lange on cryptography not known to be broken by quantum computing.</ref> Some public-key algorithms are based on problems other than the integer factorization and discrete logarithm problems to which Shor's algorithm applies, like the [[McEliece cryptosystem]] based on a problem in [[coding theory]].<ref name="pqcrypto_survey" /><ref>Robert J. McEliece. "[http://ipnpr.jpl.nasa.gov/progress_report2/42-44/44N.PDF A public-key cryptosystem based on algebraic coding theory]." Jet Propulsion Laboratory DSN Progress Report 42–44, 114–116.</ref> [[Lattice based cryptography|Lattice based cryptosystems]] are also not known to be broken by quantum computers, and finding a polynomial time algorithm for solving the [[dihedral group|dihedral]] [[hidden subgroup problem]], which would break many lattice based cryptosystems, is a well-studied open problem.<ref>{{Cite journal| last1=Kobayashi|first1=H.|last2=Gall|first2=F.L.|title=Dihedral Hidden Subgroup Problem: A Survey|year=2006|journal=Information and Media Technologies|volume=1|issue=1|pages=178–185|url=http://www.jstage.jst.go.jp/article/imt/1/1/1_178/_article}}
+</ref> It has been proven that applying Grover's algorithm to break a [[Symmetric cryptography|symmetric (secret key) algorithm]] by brute force requires roughly 2<sup>n/2</sup> invocations of the underlying cryptographic algorithm, compared with roughly 2<sup>n</sup> in the classical case,<ref name=bennett_1997>Bennett C.H., Bernstein E., Brassard G., Vazirani U., ''[http://www.cs.berkeley.edu/~vazirani/pubs/bbbv.ps The strengths and weaknesses of quantum computation]''. [[SIAM Journal on Computing]] 26(5): 1510-1523 (1997).</ref> meaning that symmetric key lengths are effectively halved: AES-256 would have the same security against an attack using Grover's algorithm that AES-128 has against classical brute-force search (see [[Key_size#Effect_of_quantum_computing_attacks_on_key_strength|Key size]]). [[Quantum cryptography]] could potentially fulfill some of the functions of public key cryptography.
+
+Besides factorization and discrete logarithms, quantum algorithms offering a more than polynomial speedup over the best known classical algorithm have been found for several problems,<ref>[http://www.its.caltech.edu/~sjordan/zoo.html Quantum Algorithm Zoo] - Stephen Jordan's Homepage</ref> including the simulation of quantum physical processes from chemistry and solid state physics, the approximation of [[Jones polynomial]]s, and solving [[Pell's equation]]. No mathematical proof has been found that shows that an equally fast classical algorithm cannot be discovered, although this is considered unlikely. For some problems, quantum computers offer a polynomial speedup. The most well-known example of this is ''quantum database search'', which can be solved by [[Grover's algorithm]] using quadratically fewer queries to the database than are required by classical algorithms. In this case the advantage is provable. Several other examples of provable quantum speedups for query problems have subsequently been discovered, such as for finding collisions in two-to-one functions and evaluating NAND trees.
+
+Consider a problem that has these four properties:
+#The only way to solve it is to guess answers repeatedly and check them,
+#The number of possible answers to check is the same as the number of inputs,
+#Every possible answer takes the same amount of time to check, and
+#There are no clues about which answers might be better: generating possibilities randomly is just as good as checking them in some special order.
+An example of this is a [[Password cracking|password cracker]] that attempts to guess the password for an [[encryption|encrypted]] file (assuming that the password has a maximum possible length).
+
+For problems with all four properties, the time for a quantum computer to solve this will be proportional to the square root of the number of inputs. That can be a very large speedup, reducing some problems from years to seconds. It can be used to attack [[symmetric cipher]]s such as [[Triple DES]] and [[Advanced Encryption Standard|AES]] by attempting to guess the secret key.
+
+[[Grover's algorithm]] can also be used to obtain a quadratic speed-up over a brute-force search for a class of problems known as [[NP-complete]].
+
+Since chemistry and nanotechnology rely on understanding quantum systems, and such systems are impossible to simulate in an efficient manner classically, many believe [[Universal quantum simulator|quantum simulation]] will be one of the most important applications of quantum computing.<ref>[http://www.wired.com/science/discoveries/news/2007/02/72734 The Father of Quantum Computing] By Quinn Norton 02.15.2007, Wired.com</ref>
+
+There are a number of practical difficulties in building a quantum computer, and thus far quantum computers have only solved trivial problems. [[David DiVincenzo]], of IBM, listed the following requirements for a practical quantum computer:<ref>{{Cite web| url=http://arxiv.org/abs/quant-ph/0002077|title=The Physical Implementation of Quantum Computation|accessdate=2006-11-17|author=David P. DiVincenzo, IBM|date=2000-04-13}}</ref>
+*scalable physically to increase the number of qubits;
+*qubits can be initialized to arbitrary values;
+*quantum gates faster than [[decoherence]] time;
+*universal gate set;
+*qubits can be read easily.
+
+===Quantum decoherence===
+One of the greatest challenges is controlling or removing [[quantum decoherence]]. This usually means isolating the system from its environment as the slightest interaction with the external world would cause the system to decohere. This effect is irreversible, as it is non-unitary, and is usually something that should be highly controlled, if not avoided. Decoherence times for candidate systems, in particular the transverse relaxation time T<sub>2</sub> (for [[Nuclear magnetic resonance|NMR]] and [[MRI]] technology, also called the ''dephasing time''), typically range between nanoseconds and seconds at low temperature.<ref name="DiVincenzo 1995" />
+
+These issues are more difficult for optical approaches as the timescales are orders of magnitude shorter and an often-cited approach to overcoming them is optical pulse shaping. Error rates are typically proportional to the ratio of operating time to decoherence time, hence any operation must be completed much more quickly than the decoherence time.
+
+If the error rate is small enough, it is thought to be possible to use quantum error correction, which corrects errors due to decoherence, thereby allowing the total calculation time to be longer than the decoherence time. An often cited figure for required error rate in each gate is 10<sup>−4</sup>. This implies that each gate must be able to perform its task in one 10,000th of the decoherence time of the system.
+
+Meeting this scalability condition is possible for a wide range of systems. However, the use of error correction brings with it the cost of a greatly increased number of required qubits. The number required to factor integers using Shor's algorithm is still polynomial, and thought to be between ''L'' and ''L''<sup>2</sup>, where ''L'' is the number of bits in the number to be factored; error correction algorithms would inflate this figure by an additional factor of ''L''. For a 1000-bit number, this implies a need for about 10<sup>4</sup> qubits without error correction.<ref>{{Cite web| url=http://arxiv.org/abs/quant-ph/0610117|title=Is Fault-Tolerant Quantum Computation Really Possible?|accessdate=2007-02-16|author=M. I. Dyakonov, Université Montpellier|date=2006-10-14}}</ref> With error correction, the figure would rise to about 10<sup>7</sup> qubits. Note that computation time is about <math>L^2</math> or about <math>10^7</math> steps and on 1 M[[Hertz|Hz]], about 10 [[second]]s.
+
+A very different approach to the stability-decoherence problem is to create a [[topological quantum computer]] with [[anyon]]s, quasi-particles used as threads and relying on [[braid theory]] to form stable logic gates.<ref>{{Cite journal
+| title = Topological Quantum Computation
+| journal = Bulletin of the American Mathematical Society
+| volume = 40
+| issue = 1
+| pages = 31–38
+| last = Freedman
+| first = Michael
+| coauthors = Alexei Kitaev, Michael Larsen, Zhenghan Wang
+| date = 2002-10-20
+| doi = 10.1090/S0273-0979-02-00964-3}}</ref><ref>Monroe, Don, [http://www.newscientist.com/channel/fundamentals/mg20026761.700-anyons-the-breakthrough-quantum-computing-needs.html ''Anyons: The breakthrough quantum computing needs?''], [[New Scientist]], 1 October 2008</ref>
+
+==Developments==
+There are a number of quantum computing candidates, among those:
+
+*[[Superconductor]]-based quantum computers (including [[SQUID]]-based quantum computers)<ref name ="ClarkeWilhelm2008">{{Cite journal
+|url = http://www.nature.com/nature/journal/v453/n7198/full/nature07128.html
+|journal = Nature
+|date = June 19, 2008
+|title = Superconducting quantum bits
+|first1 = John
+|last1 = Clarke
+|first2 = Frank
+|last2 = Wilhelm
+|volume = 453
+|pages = 1031–1042
+|doi = 10.1038/nature07128
+|pmid = 18563154
+|issue = 7198
+|issn = 0028-0836
+}}</ref>
+*[[Trapped ion quantum computer]]
+*[[Optical lattice]]s
+*[[Topological quantum computer]]<ref name ="Nayaketal2008">{{Cite journal
+|url = http://arxiv.org/abs/0707.1889
+|journal = Rev Mod Phys
+|year = 2008
+|title = Nonabelian Anyons and Quantum Computation
+|first1 = Chetan
+|first4 = Sankar
+|last1 = Nayak
+|last4 = Das Sarma
+|first2 = Steven
+|last2 = Simon
+|first3 = Ady
+|last3 = Stern
+|volume = 80
+|pages = 1083
+|doi = 10.1103/RevModPhys.80.1083
+}}</ref>
+*[[Quantum dot]] on surface (e.g. the [[Loss-DiVincenzo quantum computer]])
+*[[Nuclear magnetic resonance]] on molecules in solution (liquid NMR)
+*Solid state NMR [[Kane quantum computer]]s
+*Electrons on helium quantum computers
+*[[Cavity quantum electrodynamics]] (CQED)
+*[[Molecular magnet]]
+*[[Fullerene]]-based [[Electron paramagnetic resonance|ESR]] quantum computer
+*Optic-based quantum computers ([[Quantum optics]])
+*[[Diamond-based quantum computer]]<ref name ="Nizovtsevetal2004">{{Cite journal
+|journal = Optics and Spectroscopy
+|year = 2005
+|date = October 19, 2004
+|title = A quantum computer based on NV centers in diamond: Optically detected nutations of single electron and nuclear spins
+|author = Nizovtsev, A. P. ''et al.''
+|volume = 99|issue = 2
+|pages = 248–260
+|doi = 10.1134/1.2034610
+}}</ref><ref>{{Cite web| url=http://www.tgdaily.com/content/view/32306/118/|title=Research indicates diamonds could be key to quantum storage|accessdate=2007-06-04|author=Wolfgang Gruener, TG Daily|date=2007-06-01}}</ref><ref name ="Neumannetal2008">{{Cite journal
+|journal = Science
+|date = June 6, 2008
+|title = Multipartite Entanglement Among Single Spins in Diamond
+|author = Neumann, P. ''et al.''
+|volume = 320
+|issue = 5881
+|pages = 1326–1329
+|doi = 10.1126/science.1157233
+|pmid = 18535240
+}}</ref>
+*[[Bose–Einstein condensate|Bose–Einstein condensate-based quantum computer]]<ref>{{Cite web| url=http://www.itpro.co.uk/news/121086/trapped-atoms-could-advance-quantum-computing.html|title=Trapped atoms could advance quantum computing|accessdate=2007-07-26|author=Rene Millman, IT PRO|date=2007-08-03}}</ref>
+*Transistor-based quantum computer - string quantum computers with entrainment of positive holes using an electrostatic trap
+*[[Spintronics|Spin-based quantum computer]]
+*[[Adiabatic quantum computation]]<ref>{{Cite web| url=http://arxiv.org/pdf/quant-ph/0403090|title=Scalable Superconducting Architecture for Adiabatic Quantum Computation|accessdate=2007-02-19|author=William M Kaminsky, MIT|date=Date Unknown}}</ref>
+*Rare-earth-metal-ion-doped inorganic crystal based quantum computers<ref name ="Ohlsson2002">{{Cite journal
+|journal = Opt. Commun.
+|date = January 1, 2002
+|title = Quantum computer hardware based on rare-earth-ion-doped inorganic crystals
+|first1 = N.
+|last1 = Ohlsson
+|first2 = R. K.
+|last2 = Mohan
+|first3 = S.
+|last3 = Kröll
+|volume = 201
+|issue = 1–3
+|pages = 71–77
+|doi = 10.1016/S0030-4018(01)01666-2
+}}</ref><ref name ="Longdell2004">{{Cite journal
+|journal = Phys. Rev. Lett.
+|date = September 23, 2004
+|title = Demonstration of conditional quantum phase shift between ions in a solid
+|first1 = J. J.
+|last1 = Longdell
+|first2 = M. J.
+|last2 = Sellars
+|first3 = N. B.
+|last3 = Manson
+|volume = 93
+|issue = 13
+|page = 130503
+|doi = 10.1103/PhysRevLett.93.130503
+|pmid = 15524694
+}}</ref>
+
+The large number of candidates demonstrates that the topic, in spite of rapid progress, is still in its infancy. But at the same time there is also a vast amount of flexibility.
+
+In 2005, researchers at the [[University of Michigan]] built a [[semiconductor chip]] which functioned as an [[ion trap]]. Such devices, produced by standard [[lithography]] techniques, may point the way to scalable quantum computing tools.<ref>{{Cite web| url=http://www.umich.edu/news/index.html?Releases/2005/Dec05/r121205b|title= U-M develops scalable and mass-producible quantum computer chip|accessdate=2006-11-17|author=Ann Arbor|date=2005-12-12}}</ref> An improved version was made in 2006.{{Citation needed|date=December 2008}}
+
+In 2009, researchers at [[Yale University]] created the first rudimentary solid-state quantum processor. The two-[[qubit]] superconducting chip was able to run elementary algorithms. Each of the two artificial atoms (or qubits) were made up of a billion [[aluminum]] [[atom]]s but they acted like a single one that could occupy two different energy states.<ref>{{Cite journal| url=http://www.nature.com/nature/journal/vaop/ncurrent/pdf/nature08121.pdf|title= Demonstration of two-qubit algorithms with a superconducting quantum processor|accessdate=2009-07-02|author=L. DiCarlo, J. M. Chow, J. M. Gambetta, Lev S. Bishop, B. R. Johnson, D. I. Schuster, J. Majer, A. Blais, L. Frunzio, S. M. Girvin, R. J. Schoelkopf|date=2009-06-28|journal = [[Nature (journal)|Nature]]| doi=10.1038/nature08121|pmid=19561592|month=Jul|last1=Dicarlo|first1=L|last2=Chow|first2=JM|last3=Gambetta|first3=JM|last4=Bishop|first4=LS|last5=Johnson|first5=BR|last6=Schuster|first6=DI|last7=Majer|first7=J|last8=Blais|first8=A|last9=Frunzio|first9=L|volume=460|issue=7252|pages=240–4|issn=0028-0836}}</ref><ref>{{Cite web| url=http://opa.yale.edu/news/article.aspx?id=6764|title= Scientists Create First Electronic Quantum Processor|accessdate=2009-07-02|date=2009-07-02}}</ref>
+
+Another team, working at the [[University of Bristol]], also created a [[silicon]]-based quantum computing chip, based on [[quantum optics]]. The team was able to run [[Shor's algorithm]] on the chip.<ref>{{Cite web| url=http://www.newscientist.com/article/dn17736-codebreaking-quantum-algorithm-run-on-a-silicon-chip.html|title= Code-breaking quantum algorithm runs on a silicon chip|accessdate=2009-10-14|author=New Scientist|date=2009-09-04}}</ref>
+The latest developments [for 2010] can be found in.<ref>{{Cite web |title= New Trends in Quantum Computation | url=http://insti.physics.sunysb.edu/itp/conf/simons-qcomputation2/program.html}}</ref>
+Springer publish a Journal devoted to the subject [http://www.springer.com/new+%26+forthcoming+titles+%28default%29/journal/11128].
+
+==Relation to computational complexity theory==
+{{Main|Quantum complexity theory}}
+
+[[Image:BQP complexity class diagram.svg|thumb|The suspected relationship of BQP to other problem spaces.<ref>Nielsen, p. 42</ref>]]
+The class of problems that can be efficiently solved by quantum computers is called [[BQP]], for "bounded error, quantum, polynomial time". Quantum computers only run [[Probabilistic algorithm|probabilistic]] algorithms, so BQP on quantum computers is the counterpart of [[BPP]] ("bounded error, probabilistic, polynomial time") on classical computers. It is defined as the set of problems solvable with a polynomial-time algorithm, whose probability of error is bounded away from one half.<ref>Nielsen, p. 41</ref> A quantum computer is said to "solve" a problem if, for every instance, its answer will be right with high probability. If that solution runs in polynomial time, then that problem is in BQP.
+
+BQP is contained in the complexity class ''[[Sharp-P|#P]]'' (or more precisely in the associated class of decision problems ''P<sup>#P</sup>''),<ref name=BernVazi>{{cite journal|last1=Bernstein|first1=Ethan|last2=Vazirani|first2=Umesh|doi=10.1137/S0097539796300921|title=Quantum Complexity Theory|year=1997|pages=1411|volume=26|journal=SIAM Journal on Computing|url=http://www.cs.berkeley.edu/~vazirani/bv.ps}}</ref> which is a subclass of [[PSPACE]].
+
+BQP is suspected to be disjoint from [[NP-complete]] and a strict superset of [[P (complexity)|P]], but that is not known. Both [[integer factorization]] and [[discrete logarithm problem|discrete log]] are in BQP. Both of these problems are NP problems suspected to be outside BPP, and hence outside P. Both are suspected to not be NP-complete. There is a common misconception that quantum computers can solve NP-complete problems in polynomial time. That is not known to be true, and is generally suspected to be false.<ref name=BernVazi/>
+
+Possibilities of the quantum computer to accelerate classical algorithms has rigid limits - lower bounds of quantum computations complexity. The overwhelming part of classical calculations can't be accelerated on the quantum computer.<ref name=Ozhigov1>{{cite journal|last1=Ozhigov|first1=Yuri|title=Quantum Computers Speed Up Classical with Probability Zero |year=1999|pages=1707–1714 |volume=10|journal=Chaos Solitons Fractals|url=http://xxx.lanl.gov/PS_cache/quant-ph/pdf/9803/9803064v1.pdf}}</ref> The similar fact takes place for particular computational tasks, like search problem, for which Grover alrgithm is optimal.<ref name=Ozhigov2>{{cite journal|last1=Ozhigov|first1=Yuri|title=Lower Bounds of Quantum Search for Extreme Point  |year=1999|pages=2165–2172  |volume=A455|journal=Proc.Roy.Soc.Lond.|url=http://xxx.lanl.gov/PS_cache/quant-ph/pdf/9806/9806001v3.pdf}}</ref>
+
+Although quantum computers may be faster than classical computers, those described above can't solve any problems that classical computers can't solve, given enough time and memory (however, those amounts might be practically infeasible). A [[Turing machine]] can simulate <!-- add mention about [[Quantum Virtual Machines]] which can simulate quantum computer on classical one -->these quantum computers, so such a quantum computer could never solve an [[undecidable problem]] like the [[halting problem]]. The existence of "standard" quantum computers does not disprove the [[Church–Turing thesis]].<ref>Nielsen, p. 126</ref> It has been speculated that theories of [[quantum gravity]], such as [[M-theory]] or [[loop quantum gravity]], may allow even faster computers to be built. Currently, it's an open problem to even ''define'' computation in such theories due to the ''problem of time'', i.e. there's no obvious way to describe what it means for an observer to submit input to a computer and later receive output.<ref>[[Scott Aaronson]], ''[http://arxiv.org/abs/quant-ph/0502072 NP-complete Problems and Physical Reality]'', ACM [[SIGACT]] News, Vol. 36, No. 1. (March 2005), pp. 30-52, section 7 "Quantum Gravity": "[...] to anyone who wants
+a test or benchmark for a favorite quantum gravity theory,[author's footnote: That is, one without all the bother of making numerical predictions and comparing them to observation] let me humbly propose the following: ''can you define Quantum Gravity Polynomial-Time?'' [...] until we can say what it means for a ‘user’ to specify an ‘input’ and
+‘later’ receive an ‘output’—''there is no such thing as computation, not even theoretically.''" (emphasis in original)</ref>
+
+==See also==
+{{Commons|Quantum computer}}
+*[[Normal mode]]
+*[[Chemical computer]]
+*[[DNA computer]]
+*[[Photonic computing]]
+*[[Post-quantum cryptography]]
+*[[Quantum bus]]
+*[[Timeline of quantum computing]]
+*[[List of emerging technologies]]
+
+==References==
+{{Reflist|colwidth=30em}}
+
+==Bibliography==
+*{{Cite book| author= [[Michael Nielsen|Nielsen, Michael]] and [[Isaac L. Chuang|Chuang, Isaac]]|title=Quantum Computation and Quantum Information|publisher=Cambridge University Press|location=Cambridge|year=2000|isbn=0-521-63503-9|oclc= 174527496|url=http://books.google.com/books?id=aai-P4V9GJ8C&printsec=frontcover}}
+
+===General references===
+<!-- These need to be inlined -->
+{{Refbegin|colwidth=60em}}
+
+*{{Cite journal| author=[[Derek Abbott]], [[Charles R. Doering]], [[Carlton M. Caves]], [[Daniel Lidar|Daniel M. Lidar]], [[Howard Brandt|Howard E. Brandt]], [[Alexander R. Hamilton]], [[David K. Ferry]], [[Julio Gea-Banacloche]], [[Sergey M. Bezrukov]], and [[Laszlo B. Kish]]|title=Dreams versus Reality: Plenary Debate Session on Quantum Computing|journal=Quantum Information Processing|year=2003|volume=2|issue=6|pages=449–472|doi=10.1023/B:QINP.0000042203.24782.9a}} {{Arxiv|archive=quant-ph|id=0310130}}. [http://hdl.handle.net/2027.42/45526 (Alternative Location (free) at Michigan university's repository Deep Blue])
+*David P. DiVincenzo (2000). "The Physical Implementation of Quantum Computation". ''Experimental Proposals for Quantum Computation''. {{Arxiv|archive=quant-ph|id=0002077}}
+*{{Cite journal| author=David P. DiVincenzo|title=Quantum Computation|journal=Science|year=1995|volume=270|issue=5234|pages=255–261|doi= 10.1126/science.270.5234.255}} Table 1 lists switching and dephasing times for various systems.
+*{{Cite journal| author=[[Richard Feynman]]|title=Simulating physics with computers|journal=International Journal of Theoretical Physics|volume=21|page=467|year=1982 |doi = 10.1007/BF02650179}}
+*{{Cite book| author=Gregg Jaeger|title=Quantum Information: An Overview|publisher=Springer|location=Berlin|year=2006|isbn=0-387-35725-4|oclc=255569451}}
+*{{Cite book| author= Stephanie Frank Singer|title=Linearity, Symmetry, and Prediction in the Hydrogen Atom|publisher=Springer|location=New York|year=2005|isbn=0-387-24637-1|oclc= 253709076}}
+*{{Cite book| author= Giuliano Benenti |title=Principles of Quantum Computation and Information Volume 1| publisher=World Scientific|location=New Jersey|year=2004|isbn=9-812-38830-3|oclc= 179950736}}
+*David P. DiVincenzo (2000). "The Physical Implementation of Quantum Computation". ''Experimental Proposals for Quantum Computation''. {{Arxiv|archive=quant-ph|id=0002077}}.
+*Sam Lomonaco [http://www.csee.umbc.edu/~lomonaco/Lectures.html#OxfordLectures Four Lectures on Quantum Computing given at Oxford University in July 2006]
+*C. Adami, N.J. Cerf. (1998). "Quantum computation with linear optics". {{Arxiv|archive=quant-ph|id=9806048v1}}.
+
+*<cite id=Joachim>{{Cite book
+|author = Joachim Stolze,
+|coauthors = Dieter Suter,
+|year = 2004
+|title = Quantum Computing
+|publisher = Wiley-VCH
+|isbn = 3527404384
+}}</cite>
+
+*<cite id=Ian>{{Cite web
+|author = Ian Mitchell,
+|year = 1998
+|title = Computing Power into the 21st Century: Moore's Law and Beyond
+|url = http://citeseer.ist.psu.edu/mitchell98computing.html
+}}</cite>
+
+*<cite id=Rolf>{{Cite web
+|author = [[Rolf Landauer]],
+|year = 1961
+|title = Irreversibility and heat generation in the computing process
+|url = http://www.research.ibm.com/journal/rd/053/ibmrd0503C.pdf
+}}</cite>
+
+*<cite id=Moore>{{Cite book
+|author = [[Gordon E. Moore]]
+|year = 1965
+|title = Cramming more components onto integrated circuits
+|journal = Electronics Magazine
+}}</cite>
+
+*<cite id=R.w.>{{Cite book
+|author = R.W. Keyes,
+|year = 1988
+|title = Miniaturization of electronics and its limits
+|journal = "IBM Journal of Research and Development"
+}}</cite>
+
+*<cite id=M.>{{Cite web
+|author = [[Michael Nielsen|M. A. Nielsen]],
+|coauthors = E. Knill, ; [[Raymond Laflamme|R. Laflamme]],
+|year =
+|title = Complete Quantum Teleportation By Nuclear Magnetic Resonance
+|url = http://citeseer.ist.psu.edu/595490.html
+}}</cite>
+
+*<cite id=Lieven>{{Cite book
+|author = Lieven M.K. Vandersypen,
+|coauthors = Constantino S. Yannoni, ; Isaac L. Chuang,
+|year = 2000
+|title = Liquid state NMR Quantum Computing
+}}</cite>
+
+*<cite id=Imai>{{Cite book
+|author = Imai Hiroshi,
+|coauthors = Hayashi Masahito,
+|year = 2006
+|title = Quantum Computation and Information
+|publisher = Springer
+|isbn = 3540331328
+|location = Berlin
+}}</cite>
+
+*<cite id=Andre>{{Cite web
+|author = Andre Berthiaume,
+|year = 1997
+|title = Quantum Computation
+|url = http://citeseer.ist.psu.edu/article/berthiaume97quantum.html
+}}</cite>
+
+*<cite id=David>{{Cite web
+|author = Daniel R. Simon,
+|year = 1994
+|title = On the Power of Quantum Computation
+|publisher = Institute of Electrical and Electronic Engineers Computer Society Press
+|url = http://citeseer.ist.psu.edu/simon94power.html
+}}</cite>
+
+*<cite id=rub>{{Cite web
+|title = Seminar Post Quantum Cryptology
+|publisher = Chair for communication security at the Ruhr-University Bochum
+|url = http://www.crypto.rub.de/its_seminar_ss08.html
+}}</cite>
+
+*<cite id=Sanders>{{Cite web
+|author = Laura Sanders,
+|year = 2009
+|title = First programmable quantum computer created
+|url = http://www.sciencenews.org/view/generic/id/49951/title/First_programmable_quantum_computer_created
+}}</cite>
+*<cite id=sb>{{Cite web
+|title = NEW TRENDS IN QUANTUM COMPUTATION
+|url = http://insti.physics.sunysb.edu/itp/conf/simons-qcomputation2/
+}}
+</cite>
+{{Refend}}
+
+==External links==
+*[[Stanford Encyclopedia of Philosophy]]: "[http://plato.stanford.edu/entries/qt-quantcomp/ Quantum Computing]" by Amit Hagar.
+*[http://www.quantiki.org/ Quantiki] - Wiki and portal with free-content related to quantum information science.
+*[http://jquantum.sourceforge.net/jQuantumApplet.html jQuantum: Java quantum circuit simulator]
+*[http://www.phys.cs.is.nagoya-u.ac.jp/~watanabe/qcad/index.html QCAD: Quantum circuit emulator]
+*[http://gna.org/projects/quantumlibrary C++ Quantum Library]
+*[http://hackage.haskell.org/cgi-bin/hackage-scripts/package/quantum-arrow Haskell Library for Quantum computations]
+*[http://www.quiprocone.org/Protected/DD_lectures.htm Video Lectures by David Deutsch]
+*[http://www.quantware.ups-tlse.fr/IHP2006/ Lectures at the Institut Henri Poincaré (slides and videos)]
+*[http://nanohub.org/resources/4778 Online lecture on An Introduction to Quantum Computing, Edward Gerjuoy (2008)]
+*[http://www.wcl.ece.upatras.gr/ai/resources/demo-quantum-simulation Online Web-based Quantum Computer Simulator (University Of Patras, Wire Communications Laboratory)]
+
+{{Quantum computing}}
+
+{{DEFAULTSORT:Quantum Computer}}
+[[Category:Quantum information science| ]]
+[[Category:Computational models]]
+[[Category:Quantum cryptography]]
+[[Category:Information theory]]
+[[Category:Computational complexity theory]]
+[[Category:Classes of computers]]
+[[Category:Theoretical computer science]]
+
+[[als:Quantencomputer]]
+[[ar:حاسوب كمومي]]
+[[bn:কোয়ান্টাম গণনা]]
+[[ca:Computació quàntica]]
+[[cs:Kvantový počítač]]
+[[da:Kvantecomputer]]
+[[de:Quantencomputer]]
+[[et:Kvantarvuti]]
+[[el:Κβαντικός υπολογιστής]]
+[[es:Computación cuántica]]
+[[fa:رایانه کوانتومی]]
+[[fr:Calculateur quantique]]
+[[ko:양자 컴퓨터]]
+[[hi:क्वाण्टम कम्प्यूटर]]
+[[hr:Kvantno računalo]]
+[[id:Komputer kuantum]]
+[[it:Computer quantistico]]
+[[he:מחשב קוונטי]]
+[[ka:კვანტური კომპიუტერი]]
+[[lv:Kvantu dators]]
+[[lt:Kvantinis kompiuteris]]
+[[hu:Kvantumszámítógép]]
+[[nl:Kwantumcomputer]]
+[[ja:量子コンピュータ]]
+[[no:Kvantedatamaskin]]
+[[pl:Komputer kwantowy]]
+[[pt:Computador quântico]]
+[[ru:Квантовый компьютер]]
+[[sq:Kompjuteri kuantik]]
+[[simple:Quantum computer]]
+[[sk:Kvantový počítač]]
+[[sl:Kvantni računalnik]]
+[[fi:Kvanttitietokone]]
+[[sv:Kvantdator]]
+[[tr:Kuantum bilgisayarı]]
+[[uk:Квантовий комп'ютер]]
+[[vi:Máy tính lượng tử]]
+[[zh:量子计算机]]</body> </html>

@@ -1,0 +1,62 @@
+<html> <head> <title>OpenGL Utility Toolkit</title></head><body>The '''OpenGL Utility Toolkit''' ('''GLUT''') is a [[library (computing)|library]] of utilities for [[OpenGL]] programs, which primarily perform system-level [[input/output|I/O]] with the host [[operating system]]. Functions performed include window definition, window control, and monitoring of [[Computer keyboard|keyboard]] and [[Computer mouse|mouse]] input. Routines for drawing a number of geometric primitives (both in solid and wireframe mode) are also provided, including [[cube (geometry)|cubes]], [[sphere]]s, and the [[Utah teapot]]. GLUT even has some limited support for creating pop-up menus.
+
+GLUT was written by [[Mark Kilgard|Mark J. Kilgard]], author of ''OpenGL Programming for the X Window System'' and ''The Cg Tutorial: The Definitive Guide to Programmable Real-Time Graphics'', while he was working for [[Silicon Graphics]] Inc.
+
+The two aims of GLUT are to allow the creation of rather portable code between operating systems (GLUT is [[cross-platform]]) and to make learning OpenGL easier. Getting started with OpenGL programming while using GLUT often takes only a few lines of code and does not require knowledge of operating system–specific windowing [[application programming interface|APIs]].
+
+All GLUT functions start with the <code>glut</code> prefix (for example, <code>glutPostRedisplay</code> marks the current window as needing to be redrawn).
+
+== Implementations ==
+
+The original GLUT library by Mark Kilgard supports the [[X Window System]] ([[GLX]]) and was ported to [[Microsoft Windows]] ([[WGL (software)|WGL]]) by [[Nate Robins]]. Additionally, [[Mac OS X]] ships with a GLUT framework that supports its own NSGL/[[Core OpenGL|CGL]].
+
+Kilgard's GLUT library is no longer maintained, and its license did not permit the redistribution of modified versions of the library. This spurred the need for [[free software]] or [[open source]] reimplementations of the API from scratch. The first such library was [[freeglut]], which aims to be a reasonably close reproduction, though introducing a small number of new functions to deal with GLUT's limitations. [http://sourceforge.net/projects/openglut/ OpenGLUT], a [[fork (software)|fork]] of freeglut, adds a number of new features to the original API, but work on it ceased in May 2005.
+
+== Limitations ==
+
+Some of GLUT's original design decisions made it hard for programmers to perform desired tasks. This led many to create non-canon patches and extensions to GLUT.[http://www.mathies.com/glfaq/GLToolkitFAQ.html#II] Some [[free software]] or [[open source]] reimplementations also include fixes.
+
+Some of the more notable limitations of the original GLUT library include:
+* The library requires programmers to call <code>glutMainLoop()</code>, a function which never returns. This makes it hard for programmers to integrate GLUT into a program or library which wishes to have control of its own event loop. A common patch to fix this is to introduce a new function, often called <code>glutCheckLoop()</code>, which runs only a single iteration of the GLUT event loop. Another common workaround is to run GLUT's event loop in a separate [[thread (computing)|thread]], although this may vary by operating system, and also may introduce [[synchronization (computer science)|synchronization]] issues or other problems: for example, the Mac OS X GLUT implementation requires that <code>glutMainLoop()</code> be run in the main thread.
+* The fact that <code>glutMainLoop()</code> never returns also means that a GLUT program cannot exit the event loop. [[freeglut]] fixes this by introducing a new function, <code>glutLeaveMainLoop()</code>.
+* The library terminates the process when the window is closed; for some applications this may not be desired. Thus, many implementations include an extra callback, such as <code>glutWMCloseFunc()</code>.
+
+Since it is no longer maintained (essentially replaced by the [[OpenSource]] [[freeglut]]) the above design issues are still not resolved in the original GLUT.
+
+== See also ==
+* [[OpenGL Utility Library]] (GLU)
+* [[OpenGL User Interface Library]] (GLUI)
+* [[freeglut]]
+* [[Simple DirectMedia Layer]] (SDL)
+
+== External links ==
+*[http://www.opengl.org/resources/libraries/glut/ GLUT - The OpenGL Utility Toolkit]
+*[http://www.opengl.org/documentation/specs/glut/spec3/spec3.html GLUT documentation]
+*[http://openglut.sourceforge.net/ OpenGLUT]
+*[http://freeglut.sourceforge.net/ FreeGLUT]
+*[http://www.lighthouse3d.com/opengl/glut/index.php?1 GLUT Tutorial for C/C++]
+*[http://nehe.gamedev.net/ Glut tutorial with many lessons (Very in-depth) for C]
+*[http://msdn2.microsoft.com/en-us/library/ms537011.aspx List of OpenGL functions for Windows (GL and GLU, not GLUT)]
+*[http://www.xmission.com/~nate/glut.html GLUT for WIN32] (found from [[ARToolKit]] readme)
+*[http://www.nigels.com/glt/devpak/ GLUT Packages for Dev C++ users]
+*[http://www.paked.net/subject_pages/computer_science/Articles/installing_glut.htm GLUT Installation for Dev C++ ]
+*[http://students.iiit.ac.in/~rajatgoel/stuff.html GLUT Installation for Dev C++ ]
+
+
+[[Category:OpenGL]]
+
+[[bs:GLUT]]
+[[cs:GLUT]]
+[[de:OpenGL Utility Toolkit]]
+[[es:GLUT]]
+[[fr:OpenGL utility toolkit]]
+[[ko:OpenGL 유틸리티 툴킷]]
+[[it:OpenGL Utility Toolkit]]
+[[ja:OpenGL Utility Toolkit]]
+[[pl:GLUT (informatyka)]]
+[[pt:GLUT]]
+[[ru:GLUT]]
+[[fi:GLUT]]
+[[tr:GLUT (yazılım)]]
+[[uk:GLUT]]
+[[zh:GLUT]]</body> </html>

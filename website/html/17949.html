@@ -1,0 +1,138 @@
+<html> <head> <title>Image rectification</title></head><body>'''Image rectification''' is a transformation process used to project two-or-more images onto a common image plane. It corrects image distortion by transforming the image into a standard coordinate system.
+*It is used in [[computer stereo vision]] to simplify the problem of finding matching points between images.
+*It is used in [[geographic information system]]s to merge images taken from multiple perspectives into a common map coordinate system.
+
+== Computer stereo vision ==
+
+[[Image:Image rectification.png|the search space before (1) and after (2) rectification|thumb|300px|right]]
+
+[[Stereo vision]] uses triangulation based on [[epipolar geometry]] to determine distance to an object.
+
+Between two cameras there is a problem of finding a corresponding point viewed by one camera in the image of the other camera (known as the [[correspondence problem]]). In most camera configurations, finding correspondences requires a search in two-dimensions. However, if the two cameras are aligned to be [[coplanar]], the search is simplified to one dimension - a horizontal line parallel to the [[baseline]] between the cameras. Furthermore, if the location of a point in the left image is known, it can be searched for in the right image by searching left of this location along the line, and vice versa (see [[binocular disparity]]). Image rectification is an equivalent (and more often used<ref name="ORAM2001" />) alternative to perfect camera alignment. Image rectification is usually performed regardless of camera precision due to
+* impracticality or impossibility of perfectly aligning cameras
+* perfectly aligned cameras may become misaligned over time
+
+=== Transformation ===
+If the images to be rectified are taken from camera pairs without geometric [[Distortion (optics)|distortion]], this calculation can easily be made with a [[linear transformation]]. X & Y rotation puts the images on the same plane, scaling makes the image frames be the same size and Z rotation & skew adjustments make the image pixel rows directly line up{{Citation needed|date=June 2010}}. The rigid alignment of the cameras needs to be known (by calibration) and the calibration coefficients are used by the transform<ref name="FUSIELLO2000" />. 
+
+In performing the transform, if the cameras themselves are calibrated for internal parameters, an [[essential matrix]] provides the relationship between the cameras. The more general case (without camera calibration) is represented by the [[fundamental matrix (computer vision)|fundamental matrix]].  If the fundamental matrix is not known, it is necessary to find preliminary point correspondences between stereo images to facilitate its extraction<ref name="FUSIELLO2000" />.
+
+Stereo images can also be taken with a single camera in motion. In this case the relationship of the images can have significant forward-motion components, and a linear transformation may produce severely warped images or very large images. Non-linear transformation techniques can be used to manage this difficulty<ref name="POLLEFEYS1999" /><ref name="ORAM2001" /><ref name="LIM2004" />.
+
+=== Algorithms ===
+For examples, see <ref name="LIM2004" /> and <ref name="FUSIELLO2000_2" /><ref name="POLLEFEYS1999" />.
+
+== Geographic information system ==
+Image rectification in [[Geographic information system#Raster-to-vector translation|GIS]] converts images to a standard map coordinate system. This is done by matching ground control points (GCP) in the mapping system to points in the image. These GCPs  calculate necessary image transforms<ref name="FOGEL2008" />.
+
+Primary difficulties in the process occur 
+*when the accuracy of the map points are not well known 
+*when the images lack clearly identifiable points to correspond to the maps.
+
+The maps that are used with rectified images are non-topographical. However, the images to be used may contain distortion from terrain. Image orthorectification additionally removes these effects<ref name="FOGEL2008" />.
+
+Image rectification is a standard feature available with commercial GIS software packages.
+
+==See also==
+*[[Binocular disparity]]
+*[[Correspondence problem]]
+*[[Epipolar geometry]]
+*[[Geographic information system]]
+*[[Stereo camera]]
+*[[Stereo vision]]
+*[[Structure from motion]]
+
+==References==
+<references>
+<ref name="FOGEL2008">{{cite web  |
+first = David|
+last = Fogel |
+title = Image Rectification with Radial Basis Functions |
+url = http://www.ncgia.ucsb.edu/conf/SANTA_FE_CD-ROM/sf_papers/fogel_david/santafe.html |
+accessdate = 2008-06-09 }}</ref>
+
+<ref name="FUSIELLO2000">{{cite web |
+first = Andrea  |
+last = Fusiello  |
+title = Epipolar Rectification |
+date = 2000-03-17 |
+url = http://profs.sci.univr.it/~fusiello/rectif_cvol/rectif_cvol.html |
+accessdate = 2008-06-09}}</ref>
+
+<ref name="ORAM2001">{{ cite web |
+first = Daniel |
+last = Oram |
+title = Rectification for Any Epipolar Geometry |
+year = 2001 |
+url = http://www.bmva.org/bmvc/2001/papers/82/accepted_82.pdf |
+accessdate = 2010-06-08}}</ref>
+
+<ref name="FUSIELLO2000_2">{{cite journal |
+doi = 10.1007/s001380050120 |
+first1 = Andrea | last1 = Fusiello |
+first2 = Emanuele | last2 = Trucco |
+first3 = Alessandro | last3 = Verri |
+title = A compact algorithm for rectification of stereo pairs |
+date = 2000-03-02 |
+journal = Machine Vision and Applications |
+volume = 12 |
+pages = 16–22 |
+publisher = Springer-Verlag |
+url = http://profs.sci.univr.it/~fusiello/papers/00120016.pdf |
+accessdate = 2010-06-08}}</ref>
+
+<ref name="LIM2004">{{ cite journal |
+first1 = Ser-Nam | last1 = Lim |
+first2 = Anurag | last2 = Mittal |
+first3 = Larry | last3 = Davis |
+first4 = Nikos | last4 = Paragios |
+title = Uncalibrated stereo rectification for automatic 3D surveillance |
+journal = International Conference on Image Processing | 
+volume = 2 | 
+page = 1357 |
+url = http://www.umiacs.umd.edu/users/sernam/papers/rect.pdf |
+accessdate = 2010-06-08 }}</ref>
+
+<ref name="POLLEFEYS1999">{{ cite journal |
+first1 = Marc | last1 = Pollefeys |
+first2 = Reinhard | last2 = Koch |
+first3 = Luc | last3 = Van Gool |
+title = A simple and efficient rectification method for general motion |
+journal = Proc. International Conference on Computer Vision |
+page = 496-501 | year = 1999 |
+url = http://www.inf.ethz.ch/personal/pomarc/pubs/PollefeysICCV99.pdf |
+accessdate = 2011-01-019}}</ref>
+</references>
+
+<ol start="7">
+<li>{{cite journal |
+author=R. I. Hartley |
+title=Theory and Practice of Projective Rectification |
+journal=Int. Journal of Computer Vision |
+volume=35 |
+pages=115–127 |
+year=1999 |
+doi=10.1023/A:1008115206617}}</li>
+
+<li>{{cite web |
+first = Marc  |
+last = Pollefeys  |
+title = Polar rectification |
+url = http://www.cs.unc.edu/~marc/tutorial/node99.html |
+accessdate = 2007-06-09}}</li>
+
+<li>{{cite book |
+author = Linda G. Shapiro and George C. Stockman |
+title = Computer Vision |
+publisher = Prentice Hall |
+year = 2001 |
+isbn = 0-13-030796-3 |
+pages = 580 }}</li>
+</ol>
+
+{{DEFAULTSORT:Image Rectification}}
+[[Category:Geographic information systems]]
+[[Category:Geometry in computer vision]]
+[[Category:Image processing]]
+
+[[de:Rektifizierung]]</body> </html>

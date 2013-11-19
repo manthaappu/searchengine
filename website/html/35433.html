@@ -1,0 +1,129 @@
+<html> <head> <title>Spurious trip level</title></head><body>'''Spurious Trip Level''' (STL) is defined as a discrete level for specifying the spurious trip requirements of safety functions to be allocated to safety systems. An STL of 1 means that this safety function has the highest level of spurious trips. The higher the STL level the lower the number of spurious trips caused by the safety system. There is no limit the number of spurious trip levels..
+
+Safety functions and systems are installed to protect people, the environment and for asset protection. A safety function should only activate when a dangerous situation occurs. A safety function that activates without the presence of a dangerous situation (e.g., due to an internal failure) causes economic loss. The spurious trip level concept represents the probability that safety function causes a spurious (unscheduled) trip. 
+
+The STL is a metric that is used to specify the performance level of a safety function in terms of the spurious trips it potentially causes. Typical safety systems that benefit from an STL level are defined in standards like [[IEC 61508]]<ref>IEC 61508: Functional safety of electrical/electronic/programmable electronic safety-related systems, IEC, 1998</ref> [[IEC 61511]]<ref>IEC 61511 - Functional safety - Safety instrumented systems for the process industry sector, IEC, 2003</ref>, IEC 62061<ref>Safety of machinery - Functional safety of safety-related electrical, electronic and programmable electronic control systems, IEC, 2005</ref>, ISA S84<ref>ANSI/ISA-84.00.01-2004 Part 1 (IEC 61511-1 Mod) Functional Safety: Safety Instrumented Systems for the Process Industry Sector</ref>, EN 50204<ref>EN 50204 - Electrical apparatus for the detection and measurement of combustible or toxic gases or vapours or of oxygen. Requirements on the functional safety of fixed gas detection systems</ref> and so on. An STL provides end-users of safety functions with a measurable attribute that helps them define the desired availability of their safety functions. An STL can be specified for a complete safety loop or for individual devices.
+
+For end-users there is always a potential conflict between the cost of safety solutions and the loss of profitability caused by spurious trips of these safety solutions. The STL concept helps the endusers to end this conflict in an a way that safety solutions provide both the desired safety and the desired process availability.
+
+== STL determination ==
+The spurious trip level represents asset loss due to an internal failure of the safety function. The more financial damage the safety function can cause due to a spurious trip the higher the STL level of the safety function should be. Each company needs to decide for themselves which level of financial loss they can or are willing to take. This actually depends on many different factors, like the financial situation of the company, the insurance policy, the cost of process shutdown and startup, and so on. All these factors are unique to each company. The table below shows an example of how a company can calibrate its spurious trip levels{{fact|date=December 2010}}.
+
+{| class="wikitable"
+|-
+! STL
+! Description
+|-
+| 6
+| Spurious trip costs between 10M and 20M EUR
+|-
+| 5
+| Spurious trip costs between 10M and 20M EUR
+|-
+| 4
+| Spurious trip costs between 5M and 10M EUR
+|-
+| 3
+| Spurious trip costs between 1M and 5M EUR
+|-
+| 2
+| Spurious trip costs between 500k and 1M EUR
+|-
+| 1
+| Spurious trip costs between 100k and 500k EUR
+|-
+| None
+| Spurious trip costs between 0 and 100k EUR
+|}
+
+== STL levels ==
+The STL level achieved by a safety function is determined by the probability of fail safe (PFS) of this safety function. The PFS value is determined by internal failures of the safety system that cause the safety function to be executed without a demand from the process. The table below demonstrates the PFS value and spurious trip reduction values of each STL level.
+
+{| class="wikitable"
+|-
+! STL level
+! PFSavg
+! STR
+|-
+| X
+| ≥10<sup>-(X+1)</sup> to <10<sup>-X</sup>
+| 10<sup>X</sup>
+|-
+| ...
+| ...
+| ...
+|-
+| 5
+| ≥10<sup>-6</sup> to <10<sup>-5</sup>
+| 100000
+|-
+| 4
+| ≥10<sup>-5</sup> to <10<sup>-4</sup>
+| 10000
+|-
+| 3
+| ≥10<sup>-4</sup> to <10<sup>-3</sup>
+| 1000
+|-
+| 2
+| ≥10<sup>-3</sup> to <10<sup>-2</sup>
+| 100
+|-
+| 1
+| ≥10<sup>-2</sup> to <10<sup>-1</sup>
+| 10
+|}
+
+== STL vs SIL ==
+Today standards only define the [[safety integrity level]] (SIL) for safety functions. Standards do no define STL levels because they do in first instance not represent safety but economic loss. Despite this the STL is also a safety attribute, specially for safety functions in the process, oil & gas, chemical and nuclear industry. In those industries an undesired shutdown of the process leads to dangerous situation as the plant needs to be started up again. Startup and shutdown of a process plant are considered the two most dangerous operational modes of the plant and should be limited to the absolute minimum.
+
+In practice the STL and SIL concepts complement each other. Both factors are attributes of the same safety function. The STL level is determined by the average PFS value of the safety function. The SIL level is determined by the average probability of failure on demand. PFD value of the safety function. The STL level expresses the probability of spurious trips by the safety function, i.e., the safety function is executed without a demand from the process. The SIL level expresses the probability that the safety function does not work upon demand from the process. Both parameters are important to end-users in order to achieve safety and asset protection.
+
+{| class="wikitable"
+|-
+! Description
+! Spurious Trip Level
+! Safety Integrity Level
+|-
+| Calculated via
+| Average PFS
+| Average PFD
+|-
+| Represents
+| Process availability
+| Safety availability
+|-
+| Expressed as ...
+| STL
+| SIL
+|-
+| Number of levels ...
+| Unlimited
+| 1 through 4
+|}
+
+In order to calculate the PFS or PFD value of a safety loop it is necessary to have a reliability model and reliability data for each component in the safety loop. The best reliability model to use is a Markov model (see [[Andrey Markov]]). Typical data required are:
+* Lambda safe detected
+* Lambda safe undetected
+* Lambda dangerous detected
+* Lambda dangerous undetected
+* Repair rate
+* Proof test coverage
+* Proof test interval
+* Common cause factors
+
+==See also==
+* [[Safety integrity level]]
+==Notes==
+<references/>
+
+==External links==
+*[http://www.iec.ch/functionalsafety IEC Functional safety zone]
+*[http://www.iec.ch/zone/fsafety/pdf_safe/hld.pdf Functional Safety and IEC 61508: A basic guide]
+*[http://www2.theiet.org/oncomms/sector/computing/Articles/Object/58D25FCD-6153-46BD-ADAF910D2C4B69D4 Overview of IEC 61508]
+* [http://www.safetyusersgroup.com Safety Users Group] - Functional Safety-Information Resources
+* [http://www.insidefunctionalsafety.com Inside Functional Safety] - Technical magazine focusing on functional safety
+
+[[Category:Safety]]
+[[Category:Risk]]
+[[Category:Safety engineering]]</body> </html>

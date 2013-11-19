@@ -1,0 +1,100 @@
+<html> <head> <title>FP (programming language)</title></head><body>{{Infobox programming language
+|name = FP
+|logo =
+|paradigm = [[function-level programming|function-level]]
+|year = 1977
+|designer = [[John Backus]]
+|developer =
+|latest release version =
+|latest release date =
+|typing =
+|implementations =
+|dialects =
+|influenced_by = [[APL (programming language)|APL]]
+|influenced = [[FL (programming language)|FL]], [[FPr_(programming_language)|FPr]], [[J (programming language)|J]]
+}}
+
+'''FP''' (short for '''F'''unction '''P'''rogramming) is a [[programming language]] created by [[John Backus]] to support the [[function-level programming]] paradigm. This allows eliminating named variables.
+
+== Overview ==
+
+The '''values''' that FP programs map into one another comprise a [[set (computer science)|set]] which is [[closure (mathematics)|closed]] under '''sequence formation''':
+
+ if '''x'''<sub>1</sub>,...,'''x'''<sub>n</sub> are '''values''', then the '''sequence''' 〈'''x'''<sub>1</sub>,...,'''x'''<sub>n</sub>〉 is also a '''value'''
+
+These values can be built from any set of atoms: booleans, integers, reals, characters, etc.:
+ '''boolean'''   : {'''T''', '''F'''}
+ '''integer'''   : {0,1,2,...,∞}
+ '''character''' : {'a','b','c',...}
+ '''symbol'''    : {'''x''','''y''',...}
+
+'''⊥''' is the '''undefined''' value, or '''bottom'''. Sequences are ''bottom-preserving'':
+
+ 〈'''x'''<sub>1</sub>,...,'''⊥''',...,'''x'''<sub>n</sub>〉  =  '''⊥'''
+
+FP programs are ''functions'' '''f''' that each map a single ''value'' '''x''' into another:
+
+ '''f''':'''x''' represents the '''value''' that results from applying the '''function''' '''f''' 
+     to the '''value''' '''x'''
+
+Functions are either primitive (i.e., provided with the FP environment) or are built from the primitives by '''program-forming operations''' (also called '''functionals''').
+
+An example of primitive function is '''constant''', which transforms a value '''x''' into the constant-valued function '''x̄'''. Functions are [[strict function|strict]]:                      
+ '''f''':'''⊥''' = '''⊥'''
+
+Another example of a primitive function is the '''selector''' function family, denoted by '''1''','''2''',... where:
+ '''1''':〈'''x'''<sub>1</sub>,...,'''x'''<sub>n</sub>〉  =  '''x'''<sub>1</sub>
+ '''''i''''':〈'''x'''<sub>1</sub>,...,'''x'''<sub>n</sub>〉  =  '''x'''<sub>i</sub>  if  0 < '''''i''''' ≤ n
+               =  ⊥   otherwise
+
+==Functionals==
+
+In contrast to primitive functions, functionals operate on other functions.  For example, some functions have a ''unit'' value, such as 0 for ''addition'' and 1 for ''multiplication''. The functional '''unit''' produces such a '''value''' when applied to a '''function f''' that has one:
+ '''unit +'''   =  0
+ '''unit &times;'''   =  1
+ '''unit foo''' =  ⊥
+
+These are the core functionals of FP:
+
+ '''composition'''  '''f'''°'''g'''        where    '''f'''°'''g''':'''x''' = '''f''':('''g''':'''x''')
+
+ '''construction''' ['''f'''<sub>1</sub>,...'''f'''<sub>n</sub>] where   ['''f'''<sub>1</sub>,...'''f'''<sub>n</sub>]:'''x''' =  〈'''f'''<sub>1</sub>:'''x''',...,'''f'''<sub>n</sub>:'''x'''〉
+
+ '''condition''' ('''h''' ⇒ '''f''';'''g''')    where   ('''h''' ⇒ '''f''';'''g'''):'''x'''   =  '''f''':'''x'''   if   '''h''':'''x'''  =  '''T'''
+                                              =  '''g''':'''x'''   if   '''h''':'''x'''  =  '''F'''
+                                              =  '''⊥'''    otherwise
+
+ '''apply-to-all'''  ''α'''''f'''       where   ''α'''''f''':〈'''x'''<sub>1</sub>,...,'''x'''<sub>n</sub>〉  = 〈'''f''':'''x'''<sub>1</sub>,...,'''f''':'''x'''<sub>n</sub>〉
+
+ '''insert-right'''  /'''f'''       where   /'''f''':〈'''x'''〉             =  '''x'''
+                        and     /'''f''':〈'''x'''<sub>1</sub>,'''x'''<sub>2</sub>,...,'''x'''<sub>n</sub>〉  =  '''f''':〈'''x'''<sub>1</sub>,/'''f''':〈'''x'''<sub>2</sub>,...,'''x'''<sub>n</sub>〉〉
+                        and     /'''f''':〈 〉             =  '''unit f'''
+
+ '''insert-left'''  \'''f'''       where   \'''f''':〈'''x'''〉             =  '''x'''
+                       and     \'''f''':〈'''x'''<sub>1</sub>,'''x'''<sub>2</sub>,...,'''x'''<sub>n</sub>〉  =  '''f''':〈\'''f''':〈'''x'''<sub>1</sub>,...,'''x'''<sub>n-1</sub>〉,'''x'''<sub>n</sub>〉
+                       and     \'''f''':〈 〉             =  '''unit f'''
+
+==Equational functions==
+
+In addition to being constructed from primitives by functionals, a function may be defined recursively by an equation, the simplest kind being:
+ '''f''' ≡ ''E'''''f'''
+where ''E''''''f''' is an [[expression (programming)|expression]] built from primitives, other defined functions, and the function symbol '''f''' itself, using functionals.
+
+==See also==
+* [[FL (programming language)|FL]], Backus' FP successor
+* [[Function-level programming]]
+* [[J (programming language)|J]]
+* [[John Backus]]
+* [[FP84]]
+* [[FFP (programming language)|FFP]], Formal Functional Programming
+* [[FPr (programming language)|FPr]], Function-level Programming right-associative
+
+==References==
+*[http://www.stanford.edu/class/cs242/readings/backus.pdf Can Programming Be Liberated from the von Neumann Style?] Backus' Turing award lecture.
+
+[[Category:Function-level languages]]
+
+[[de:FP-System]]
+[[es:FP (lenguaje de programación)]]
+[[fr:Functional Programming]]
+[[pt:FP (linguagem de programação)]]</body> </html>

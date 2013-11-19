@@ -1,0 +1,70 @@
+<html> <head> <title>Protocol stack</title></head><body>{{Unreferenced|date=April 2008}}
+
+A '''protocol stack''' (sometimes '''communications stack''') is a particular software implementation of a [[computer network]]ing ''protocol suite''.  The terms are often used interchangeably.  Strictly speaking, the suite is the definition of the protocols, and the stack is the software implementation of them.
+
+Individual [[network protocol|protocols]] within a suite are often designed with a single purpose in mind. This [[modularity (programming)|modularization]] makes design and evaluation easier. Because each protocol module usually communicates with two others, they are commonly imagined as ''layers'' in a stack of protocols. The lowest protocol always deals with "low-level", physical interaction of the hardware. Every higher layer adds more features. User applications usually deal only with the topmost layers (see also [[OSI model]]).
+
+In practical implementation, protocol stacks are often divided into three major sections: media, transport, and applications.  A particular [[operating system]] or platform will often have two well-defined software interfaces: one between the media and transport layers, and one between the transport layers and applications.
+
+The media-to-transport interface defines how transport protocol software makes use of particular media and hardware types ("card drivers").  For example, this interface level would define how [[Internet protocol suite|TCP/IP]] transport software would talk to [[Ethernet]] hardware.  Examples of these interfaces include [[Open Data-Link Interface|ODI]] and [[Network Driver Interface Specification|NDIS]] in the [[Microsoft Windows]] and [[DOS]] environment.
+
+The application-to-transport interface defines how application programs make use of the transport layers.  For example, this interface level would define how a [[web browser]] program would talk to TCP/IP transport software.  Examples of these interfaces include [[Berkeley sockets]] and System V [[STREAMS]] in the [[Unix]] world, and [[Winsock]] in the Microsoft world.
+
+==General protocol suite description==
+   T ~ ~ ~ T
+  [A]     [B]_____[C]
+
+Imagine three computers: ''A'', ''B'', and ''C''. ''A'' and ''B'' both have radio equipment, and can communicate via the airwaves using a suitable network protocol (such as [[IEEE 802.11]].) ''B'' and ''C'' are connected via a cable, using it to exchange data (again, with the help of a protocol, for example Ethernet). However, neither of these two protocols will be able to transport information from ''A'' to ''C'', because these computers are conceptually on different networks. One, therefore, needs an inter-network protocol to "connect" them.
+
+One could combine the two protocols to form a powerful third, mastering both cable and wireless transmission, but a different super-protocol would be needed for each possible combination of protocols. It is easier to leave the base protocols alone, and design a protocol that can work on top of any of them (the [[Internet Protocol]] is an example.) This will make two stacks of two protocols each. The inter-network protocol will communicate with each of the base protocol in their simpler language; the base protocols will not talk directly to each other.
+
+A request on computer ''A'' to send a chunk of data to ''C'' is taken by the upper protocol, which (through whatever means) knows that ''C'' is reachable through ''B''. It, therefore, instructs the wireless protocol to transmit the data packet to ''B''. On this computer, the lower layer handlers will pass the packet up to the inter-network protocol, which, on recognizing that ''B'' is not the final destination, will again invoke lower-level functions. This time, the cable protocol is used to send the data to ''C''. There, the received packet is again passed to the upper protocol, which (with ''C'' being the destination) will pass it on to a higher protocol or application on ''C''. Often an even higher-level protocol will sit on top, and incur further processing.
+
+An example protocol stack and the corresponding layers:
+
+{|class="wikitable" border="1"
+! Protocol
+! Layer
+|-
+| [[HTTP]]
+| [[Application Layer|Application]]
+|-
+| [[Transmission Control Protocol|TCP]]
+| [[Transport Layer|Transport]]
+|-
+| [[Internet Protocol|IP]]
+| [[Internet Layer|Internet]]
+|-
+| [[Ethernet]]
+| [[Link Layer|Link]]
+|-
+| [[802.3u|IEEE 802.3u]]
+| [[Physical Layer|Physical]]
+|}
+
+==See also==
+*[[Cross-layer optimization]]
+*[[G.hn]]
+*[[Hierarchical internetworking model]]
+*[[Internet protocol suite]]
+*[[Network protocol design principles]]
+*[[OSI protocol suite]]
+*[[Service layer]]
+*[[Solution stack]]
+*[[TCP/IP model]]
+*[[WAP protocol suite]]
+*[[X.25 protocol suite]]
+
+{{DEFAULTSORT:Protocol Stack}}
+[[Category:Network protocols]]
+[[Category:Wikipedia articles with ASCII art]]
+
+[[de:Protokollstapel]]
+[[fr:Pile de protocoles]]
+[[nl:Protocolstack]]
+[[ja:プロトコルスタック]]
+[[ru:Стек протоколов]]
+[[sl:Protokolski sklad]]
+[[th:โพรโทคอลสแตก]]
+[[vi:Chồng giao thức]]
+[[zh:协议栈]]</body> </html>

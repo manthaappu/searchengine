@@ -1,0 +1,121 @@
+<html> <head> <title>Multiversion concurrency control</title></head><body>'''Multiversion concurrency control''' (abbreviated '''MCC''' or '''MVCC'''), in the [[database]] field of [[computer science]], is a [[concurrency control]] method commonly used by [[database management system]]s to provide concurrent access to the database and in programming languages to implement [[transactional memory]]<ref>http://clojure.org/refs</ref>.
+
+For instance, a database will implement updates not by deleting an old piece of data and overwriting it with a new one, but instead by marking the old data as obsolete and adding the newer "version."  Thus there are multiple versions stored, but only one is the latest.  This allows the database to avoid overhead of filling in holes in memory or disk structures but requires (generally) the system to periodically sweep through and delete the old, obsolete data objects.  For a document-oriented database such as [[CouchDB]], [[Riak]] or [[MarkLogic Server]] it also allows the system to optimize documents by writing entire documents onto contiguous sections of disk—when updated, the entire document can be re-written rather than bits and pieces cut out or maintained in a linked, non-contiguous database structure.
+
+MVCC also provides potential "point in time" consistent views.  In fact read transactions under MVCC typically use a timestamp or transaction ID to determine what state of the DB to read, and read these "versions" of the data.  This avoids managing locks for read transactions because writes can be [[Isolation (database systems)|isolated]] by virtue of the old versions being maintained, rather than through a process of locks or mutexes.  Writes affect future "version" but at the transaction ID that the read is working at, everything is guaranteed to be consistent because the writes are occurring at a later transaction ID.
+
+In other words, MVCC provides each user connected to the database with a "snapshot" of the database for that person to work with. Any changes made will not be seen by other users of the database until the transaction has been committed.
+
+==Implementation==
+{{Confusing|section|date=February 2009}}
+MVCC uses [[timestamp]]s or increasing transaction IDs to achieve transactional consistency. MVCC ensures a transaction never has to wait for a database object by maintaining several versions of an object. Each version would have a write timestamp and it would let a transaction (T<sub>i</sub>) read the most recent version of an object which precedes the transaction timestamp (TS(T<sub>i</sub>)).
+
+If a transaction (T<sub>i</sub>) wants to write to an object, and if there is another transaction (T<sub>k</sub>), the timestamp of T<sub>i</sub> must precede the timestamp of T<sub>k</sub> (i.e., TS(T<sub>i</sub>) < TS(T<sub>k</sub>)) for the object write operation to succeed. Which is to say a write cannot complete if there are outstanding transactions with an earlier timestamp.
+
+Every object would also have a read timestamp, and if a transaction T<sub>i</sub> wanted to write to object P, and the timestamp of that transaction is earlier than the object's read timestamp (TS(T<sub>i</sub>) < RTS(P)), the transaction T<sub>i</sub> is aborted and restarted. Otherwise, T<sub>i</sub> creates a new version of P and sets the read/write timestamps of P to the timestamp of the transaction TS(T<sub>i</sub>).
+
+The obvious drawback to this system is the cost of storing multiple versions of objects in the database. On the other hand reads are never blocked, which can be important for workloads mostly involving reading values from the database. MVCC is particularly adept at implementing true [[snapshot isolation]], something which other methods of concurrency control frequently do either incompletely or with high performance costs.
+
+== Example ==
+
+At t1 the state of a DB could be
+
+{| class="wikitable"
+|-
+! Time
+! Object 1
+! Object 2
+|-
+| t1 || "Hello" || "Bar"
+|-
+| t0 || "Foo" || "Bar"
+|}
+
+This indicates that the current set of this database (perhaps a key-value store database) is Object1="Hello", Object2="Bar".  Previously, Object1 was "Foo" but that value has been superseded.  It is not deleted because the database holds "multiple versions" but will be deleted later.
+
+If a long running transaction starts a read operation, it will operate at transaction "t1" and see this state.  If there is a concurrent update (during that long-running read transaction) which deletes Object 2 and adds Object 3 = "foo-bar" the database state will look like:
+
+{| class="wikitable"
+|-
+! Time
+! Object 1
+! Object 2
+! Object 3
+|-
+| t2 || "Hello" || (deleted) || "Foo-Bar"
+|-
+| t1 || "Hello" || "Bar" ||
+|-
+| t0 || "Foo" || "Bar" ||
+|}
+
+Now there is a new version as of transaction ID t2.  Note, critically, that the long-running read transaction *still has access to a coherent snapshot of the system at t1* even though the write transaction added data as of t2, so the read transaction is able to run in isolation from the update transaction that created the t2 values.  This is how MVCC allows isolated, ACID, reads without any locks (the write transaction does need to use locks).
+
+==History==
+Multiversion concurrency control is described in some detail in sections 4.3 and 5.5 of the 1981 paper "Concurrency Control in Distributed Database Systems"
+<ref>{{cite web | author=Bernstein, Philip A. and Goodman, Nathan | title=Concurrency Control in Distributed Database Systems | url=http://portal.acm.org/citation.cfm?id=356842.356846 | year=1981 | work=ACM Computing Surveys | author=Philip Bernstein and Nathan Goodman}}</ref>
+—then employed by the Computer Corporation of America. Bernstein and Goodman's paper cites a 1978 dissertation<ref>{{cite web | author=Reed, D.P. | title=Naming and Synchronization in a Decentralized Computer System | work=MIT dissertation | url=http://www.lcs.mit.edu/publications/specpub.php?id=773 | date=September 21, 1978 }}</ref> by [[David P. Reed]] which quite clearly describes MVCC and claims it as an original work.
+
+==Databases with MVCC==
+* [[Altibase]]
+* [[Berkeley DB]]<ref name="BDB">[http://www.oracle.com/technology/documentation/berkeley-db/db/ref/transapp/read.html Berkeley DB Reference Guide: Degrees of Isolation]</ref>
+* [[Bigdata]]<ref>[http://www.bigdata.com/blog Bigdata Blog]</ref>
+* [[CouchDB]]
+* [[IBM DB2]] since IBM DB2 9.7 LUW ("Cobra") under CS isolation level - in CURRENTLY COMMITTED mode<ref name="cur_commit">DB2 Version 9.7 LUW Information Center, [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.perf.doc/doc/c0053760.html Currently committed semantics improve concurrency]</ref>
+* [[eXtremeDB]]<ref>{{cite web | title=Multi-Core Software: To Gain Speed, Eliminate Resource Contention | url=http://www.rtcmagazine.com/articles/view/101612 | date=May 1, 2010 | work=RTC Magazine | author=Graves, Steve}}</ref>
+* [[Firebird (database server)|Firebird]]<ref>White paper by Roman Rokytsky [http://www.firebirdsql.org/doc/whitepapers/fb_vs_ibm_vs_oracle.htm Firebird and Multi Version Concurrency Control]</ref>
+* [[FLAIM Database Engine|FLAIM]]
+* GE [[Smallworld]] [[VMDS|Version Managed Data Store]]
+* [[H2 (DBMS)|H2 Database Engine]] (experimental since  Version 1.0.57 (2007-08-25)) <ref>[http://www.h2database.com/html/advanced.html#mvcc Multi-Version Concurrency Control in the H2 Database Engine ]</ref>
+* [[HSQLDB]] (starting with version 2.0)
+* [[Ingres (database)|Ingres]]<ref>http://community.ingres.com/wiki/MVCC</ref>
+* [[InterBase]] (all versions)<ref name="IBMVCC">{{cite web
+| last = Todd
+| first = Bill
+| year = 2000
+| url = http://dbginc.com/tech_pprs/IB.html
+| title = InterBase: What Sets It Apart
+| accessdate = 4 May 2006
+|archiveurl = http://web.archive.org/web/20060226083331/http://www.dbginc.com/tech_pprs/IB.html <!-- Bot retrieved archive --> |archivedate = 26 February 2006}}</ref>
+* [[MarkLogic Server]]
+* [[Microsoft SQL Server]] (starting with SQL Server 2005)
+* [[MySQL]] when used with [[InnoDB]]<ref>MySQL 5.1 Reference Manual, [http://dev.mysql.com/doc/refman/5.1/en/innodb-multi-versioning.html Section 14.2.12: Implementation of Multi-Versioning]</ref>, [[Falcon (storage engine)|Falcon]]<ref>or Maria MySQL 5.1 Reference Manual, [http://mysql.org/doc/refman/5.1/en/se-falcon-features.html Section 14.6.1: Falcon Features]</ref>, or  [[MySQL Archive|Archive]] storage engines.
+* [[Netezza]]
+* [[ObjectStore]]
+* [[Oracle database]] all versions since Oracle 3<ref>Oracle Database Concepts: Chapter 13 Data Concurrency and Consistency [http://download-uk.oracle.com/docs/cd/B19306_01/server.102/b14220/consist.htm#i17881 Multiversion Concurency Control]</ref>
+* [[PostgreSQL]]<ref>PostgreSQL 8.4 Documentation, [http://postgresql.org/docs/8.4/static/mvcc.html Chapter 13: Concurrency Control]</ref>
+* [[RDM Embedded]]<ref>RDM Embedded 10 Reference Guide [http://www.raima.com/docs/rdme/10_0/ d_trrobegin]</ref>
+* [[REAL Server]]
+* [[ScimoreDB]]
+* [[sones GraphDB]] <ref>[http://www.sones.com]</ref>
+* [[SQL Anywhere|Sybase SQL Anywhere]]
+* [[Sybase IQ]]
+* [[ThinkSQL]]
+* [[Zope Object Database]]<ref>[http://wiki.zope.org/ZODB/MultiVersionConcurrencyControl Proposal for MVCC in ZODB]</ref>
+
+==Other software with MVCC==
+* JBoss Cache (v. 3.0) [http://jbosscache.blogspot.com/2008/07/mvcc-has-landed.html MVCC has landed]
+* Infinispan <ref>[http://www.jboss.org/infinispan]</ref>
+* [[EHcache]] (v. 1.6.0-beta4) <ref>[http://ehcache.sourceforge.net/ ehcache site]</ref>
+* [[Clojure]] language [[software transactional memory]]
+* [[Subversion (software)|Subversion]] and many other source code repositories.
+
+==See also==
+* [[Timestamp-based concurrency control]]
+* [[Clojure]]
+* [[Read-copy-update]]
+
+==References==
+<references/>
+
+==Further reading==
+* Gerhard Weikum, Gottfried Vossen, ''Transactional information systems: theory, algorithms, and the practice of concurrency control and recovery'', Morgan Kaufmann, 2002, ISBN 1-55860-508-8
+
+{{DEFAULTSORT:Multiversion Concurrency Control}}
+[[Category:Concurrency control]]
+[[Category:Transaction processing]]
+
+[[de:Multiversion Concurrency Control]]
+[[ja:MultiVersion Concurrency Control]]
+[[pl:MVCC]]
+[[ru:MVCC]]</body> </html>

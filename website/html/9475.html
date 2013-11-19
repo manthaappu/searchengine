@@ -1,0 +1,99 @@
+<html> <head> <title>Database schema</title></head><body>[[Image:Mediawiki dbschema.svg|thumb|A depiction of [[MediaWiki]] database schema.]]
+The '''schema''' (pronounced '''''skee'''-ma''{{need-IPA|date=December 2010}}) of a [[database system]] is its structure described in a formal language supported by the [[database management system]] (DBMS). [[Database schema]] refers to the organization of data, to create a blueprint, of how a database will be constructed(divided into database tables). The formal definition of [[database]] schema is a set of formulas (sentences) that specify [[integrity constraints]] imposed on the database. All constraints are expressible in the same language. A database can be seen in terms of logic as a structure in a realization of the [[database language]].<ref name="source1" /> The states of a created [[conceptual schema]] are transformed into an explicit mapping, the [[database schema]]. This describes how real world entities are modeled in the database. A database schema specifies, based on the [[database administrator]]'s knowledge of possible applications, the facts which can enter the database, or those of interest to the possible [[end-user]]s.<ref name="source3" /> The notion of a database schema plays the same role as the notion of theory in [[predicate calculus]]. A model of this “theory” closely corresponds to a database, which can be seen at any instant of time as a [[mathematical object]]. Thus a schema can contain formulas representing integrity constraints specifically for an application and the constraints specifically for a type of database, all expressed in the same database language.<ref name="source1" /> In a [[relational database]], the schema defines the [[Table (database)|tables]], [[Field (computer science)|fields]], [[Relational model|relationship]]s, [[View (database)|view]]s, [[Index (database)|index]]es, [[Software package (installation)|package]]s, [[stored procedure|procedure]]s, [[subroutine|function]]s, [[Queue (data structure)|queue]]s, [[Database trigger|trigger]]s, [[Data type|type]]s, [[sequence]]s, [[materialized view]]s, [[Synonym (database)|synonym]]s, [[database link]]s, [[Directory (file systems)|directories]], [[Java]], [[XML schema]]s, and other elements.
+
+Schemata are generally stored in a [[data dictionary]]. Although a schema is defined in text database language, the term is often used to refer to a graphical depiction of the database structure. In other words, schema is the structure of the database that defines the objects in the database.
+
+In an [[Oracle Database]] system, the term "schema" has a slightly different connotation.  For the interpretation used in an Oracle Database, see [[schema object]].
+
+==Levels of database schema==
+* [[Conceptual schema]], a map of concepts and their relationships.
+* [[Logical schema]], a map of entities and their attributes and relations
+* [[Physical schema]], a particular implementation of a logical schema
+* [[Schema object]], Oracle database object
+
+==Ideal Requirements for Schema Integration==
+
+===== Completeness =====
+All information in the source data should be included in the [[database schema]].<ref name="source2" />
+
+===== Overlap Preservation =====
+Each of the overlapping elements specified in the input mapping is also in a [[database schema]] relation.<ref name="source2" />
+
+===== Extended overlap preservation =====
+Source-specific elements that are associated with a source’s overlapping elements are passed through to the [[database schema]].<ref name="source2" />
+
+===== Normalization =====
+{{main|Database normalization}}
+Independent entities and relationships in the source data should not be grouped together in the same relation in the [[database schema]]. In particular, source specific schema elements should not be grouped with overlapping schema elements if the grouping co-locates independent entities or relationships.<ref name="source2" />
+
+===== Minimality =====
+If any elements of the [[database schema]] are dropped then the database schema is not ideal.<ref name="source2" />
+
+These requirements influence the detailed structure of schemas that are produced. Certain applications will not require that all of these conditions are met, but these five requirements are the most ideal.
+
+==Example of Two Schema Integrations==
+
+'''Example:''' Suppose we want a mediated(database) schema to integrate two travel databases, Go-travel and Ok-travel.
+
+'''''Go-travel'' has three relations:'''
+
+Go-flight(f-num, time, meal)<br />
+Go-price(f-num, date, price)<br />
+Go-airline(airline, phone)<br />
+
+The attribute f-num is the flight number and meal is a boolean. The other attributes are self-explanatory.
+
+'''''Ok-travel'' has just one relation:'''
+
+Ok-flight(f-num, date, time, price, nonstop)
+
+'nonstop' is a boolean.
+
+The overlapping information in Ok-travel’s and Go-travel’s schemas could be represented in a mediated schema:
+
+Flight(f-num, date, time, price)<ref name="source2" />
+
+==See also==
+* [[Core Architecture Data Model]]
+* [[Data Definition Language]]
+* [[Data Design]]
+* [[Data dictionary]]
+* [[Data model]]
+* [[Data modeling]]
+* [[Data mapping]]
+* [[Database]]
+* [[Database integrity]]
+* [[entity-relationship model]]
+* [[Knowledge Representation]]
+* [[Object-Role Modeling]]
+* [[Relational algebra]]
+* [[Schema Matching]]
+* [[SQL]]
+* [[Three schema approach]]
+
+==External Links==
+http://www.databaseanswers.org/data_models/<br />
+http://weblogs.asp.net/scottgu/archive/2006/07/12/Tip_2F00_Trick_3A00_-Online-Database-Schema-Samples-Library.aspx<br />
+http://msdn.microsoft.com/en-us/library/bb187299%28SQL.80%29.aspx<br />
+http://www.ciobriefings.com/Publications/WhitePapers/DesigningtheStarSchemaDatabase/tabid/101/Default.aspx<br />
+
+
+{{DEFAULTSORT:Database Schema}}
+[[Category:Data modeling]]
+[[Category:Data management]]
+
+
+[[es:Database schema]]
+[[it:Schema di database]]
+[[ja:スキーマ (データベース)]]
+[[no:Databaseskjema]]
+[[pt:Esquema de banco de dados]]
+[[ru:Схема базы данных]]
+[[simple:Database schema]]
+
+== References ==
+{{reflist|refs=
+<ref name="source1">Rybinski, H. (1987). On First-Order-Logic Databases. ''ACM Transactions on Database Systems'', 12( 3), 325-349.</ref>
+<ref name="source2">Pottinger P., & Berstein P.(2008). Schema merging and mapping creation for relational sources. ''In Proceedings of the 11th international conference on Extending database technology: Advances in database technology (EDBT '08)''. ACM, New York, NY, USA, 73-84. DOI=10.1145/1353343.1353357 http://doi.acm.org/10.1145/1353343.1353357</ref>
+<ref name="source3">Imielinski T., & Lipski W.(1982). A systematic approach to relational database theory. ''In Proceedings of the 1982 ACM SIGMOD international conference on Management of data (SIGMOD '82)''. ACM, New York, NY, USA, 8-14. DOI=10.1145/582353.582356 http://doi.acm.org/10.1145/582353.582356</ref>
+}}</body> </html>

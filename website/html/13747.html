@@ -1,0 +1,39 @@
+<html> <head> <title>Flashsort</title></head><body>'''Flashsort''' is a [[Sorting algorithm#Distribution sort|distribution sorting]] algorithm showing [[O notation|linear computational complexity <math>O(n)</math>]] for uniformly distributed data sets and relatively little additional memory requirements. The original work was published in 1998 by Karl-Dietrich Neubert.<ref name="neubert_journal">{{cite journal |last=Neubert |first=Karl-Dietrich |year=1998 |month=February |title=The Flashsort Algorithm |journal=Dr. Dobb's Journal |pages=123 |url=http://www.ddj.com/architect/184410496 |accessdate=2007-11-06}}</ref>
+
+== Concept ==
+The basic idea behind flashsort is that in a data set with a uniform distribution, it is easy to immediately estimate where an element should be placed after sorting when the range of the set is known. For example, if given a uniform data set where the minimum is 1 and the maximum is 100 and 50 is an element of the set, it’s reasonable to guess that 50 would be near the middle of the set after it is sorted. This approximate location is called a class. If numbered 1 to <math>m</math>, the class of an item <math>A_i</math> is computed as:
+
+  <math>K(A_i) = 1+\textrm{INT}\left((m-1)\frac{A_i-A_\textrm{min}}{A_\textrm{max}-A_\textrm{min}}\right)</math>
+
+where <math>A</math> is the input set. The range covered by every class is equal, except the last class which includes only the maximum(s). The classification ensures that every element in a class is greater in any element in a lower class. This partially orders the data and reduces the number of inversions. Insertion sort is then applied to the classified set. As long as the data is uniformly distributed, class sizes will be consistent and insertion sort will be computationally efficient.<ref name="neubert_journal" />
+
+== Memory efficient implementation ==
+To execute flashsort with its low memory benefits, the algorithm does not use addition data structures to store the classes. Instead it stores the upper bounds of each class on the input array <math>A</math> in an auxiliary vector <math>L</math>. These upper bounds are obtained by counting the number of elements in each class, and the upper bound of a class is the number of elements in that class and every class before it. These bounds serve as pointers into the classes.
+
+Classification is implemented through a series of cycles, where a cycle-leader is taken from the input array <math>A</math> and its class is calculated. The pointers in vector <math>L</math> are used to insert the cycle-leader into the correct class, and the class’s pointer in <math>L</math> is decremented after each insertion. Inserting the cycle-leader will evict another element from array <math>A</math>, which will be classified and inserted into another location and so on. The cycle terminates when an element is inserted into the cycle-leader’s starting location.
+
+An element is a valid cycle-leader if it has not yet been classified. As the algorithm iterates on array <math>A</math>, previously classified elements are skipped and unclassified elements are used to initiate new cycles. It is possible to discern whether an element has been classified or not without using additional tags: An element has been classified if and only if its index is greater than the class’s pointer value in <math>L</math>. To prove this, consider the current index of array <math>A</math> the algorithm is processing. Let this index be <math>i</math>. Elements <math>A_0</math> through <math>A_\textrm{i-1}</math> have already been classified and inserted into the correct class. Suppose that <math>i</math> is greater than the current pointer to <math>A_i</math>’s class. Now suppose that the <math>A_i</math> is unclassified and could be legally inserted into the index indicated by its class pointer, which would replace a classified element in another class. This is impossible since the initial pointers of each class are their upper bounds, which ensures that the exact needed amount of space is allocated for each class on the array <math>A</math>. Therefore, every element in <math>A_i</math>’s class, including <math>A_i</math> itself, has already been classified. Also, if an element has already been classified, the class’s pointer would have been decremented below the element’s new index.<ref name="neubert_journal" /><ref name="neubert_code">{{cite web |url=http://www.neubert.net/FSOIntro.html |title=The FlashSort Algorithm |accessdate=2007-11-06 |author=Karl-Dietrich Neubert |year=1998}}</ref>
+
+== Performance ==
+The only extra memory requirements are the auxiliary vector <math>L</math> for storing class bounds and the constant number of other variables used.
+
+In the ideal case of a balanced data set, each class will be approximately the same size, and sorting an individual class by itself has complexity <math>O(1)</math>. If the number <math>m</math> of classes is proportional to the input set size <math>n</math>, the running time of the final insertion sort is <math>m * O(1) = O(m) = O(n)</math>. In the worst-case scenarios where almost all the elements are in a few or one class, the complexity of the algorithm as a whole is limited by the performance of the final-step sorting method. For insertion sort, this is <math>O(n^2)</math>. Variations of the algorithm improve worst-case performance by using better-performing sorts such as quicksort or recursive flashsort on classes that exceed a certain size limit.<ref name="neubert_code" /><ref>{{cite web |url=http://jea.acm.org/ARTICLES/Vol5Nbr3/node4.html |title=Cache-Effective Quicksort |accessdate=2007-11-06 |author=Li Xiao, Xiaodong Zhang, Stefan A. Kubricht |work=Improving Memory Performance of Sorting Algorithms |publisher=Department of Computer Science, College of William and Mary, Williamsburg, VA 23187-8795 |archiveurl = http://web.archive.org/web/20071102070431/http://jea.acm.org/ARTICLES/Vol5Nbr3/node4.html <!-- Bot retrieved archive --> |archivedate = 2007-11-02}}</ref>
+
+Choosing a value for <math>m</math>, the number of classes, trades off time spent classifying elements (high <math>m</math>) and time spent in the final insertion sort step (low <math>m</math>). Based on his research, Neubert found <math>m=0.42n</math> to be optimal.
+
+Memory-wise, flashsort avoids the overhead needed to store classes in the very similar bucketsort. For <math>m=0.1n</math> with uniform random data, flashsort is faster than heapsort for all <math>n</math> and faster than quicksort for <math>n>80</math>. It becomes about as twice as fast as quicksort at <math>n=10000</math>.<ref name="neubert_journal" />
+
+Due to the classification process, flashsort is not [[Stable sort#Stability|stable]].
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [http://elliottback.com/wp/archives/2006/01/07/sorting-in-linear-time/ Sorting in Linear time]
+* [http://citeseer.ist.psu.edu/91922.html Implementations of Randomized Sorting on Large Parallel Machines (1992)]
+* [http://stinet.dtic.mil/oai/oai?verb=getRecord&metadataPrefix=html&identifier=ADA253638 Implementation of Parallel Algorithms (1992)]
+* [http://home.westman.wave.ca/~rhenry/sort/#flashsort Visualization of Flashsort]
+
+{{sorting}}
+
+[[Category:Sorting algorithms]]</body> </html>

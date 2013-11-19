@@ -1,0 +1,76 @@
+<html> <head> <title>Interrupt request</title></head><body>{{Redirect|IRQ|the country with the ISO 3166-1 country code|Iraq}}
+The [[computing]] phrase "'''interrupt request'''" (or '''IRQ''') is used to refer to either the act of [[interrupt]]ing the [[Computer bus|bus]] lines used to signal an interrupt, or the interrupt input lines on a [[Programmable Interrupt Controller]] (PIC). The '''interrupt request level''' ('''IRQL''') is the [[scheduling (computing)|priority]] of an interrupt request.
+
+Interrupt lines are often identified by an index with the format of ''IRQ'' followed by a number. For example, on the [[Intel 8259]] family of PICs there are eight interrupt inputs commonly referred to as ''IRQ0'' through ''IRQ7''. In [[x86]] based [[computer system]]s that use two of these PICs, the combined set of lines are referred to as ''IRQ0'' through ''IRQ15''. Technically these lines are named ''IR0'' through ''IR7'', and the lines on the [[Industry Standard Architecture|ISA]] bus to which they were historically attached are named ''IRQ0'' through ''IRQ15''
+
+Newer x86 systems integrate an [[Advanced Programmable Interrupt Controller]] (APIC) that conforms to the [[Intel APIC Architecture]]. These APICs support a programming interface for up to 255 physical hardware IRQ lines per APIC, with a typical system implementing support for only around 24 total hardware lines.
+
+==Overview==
+When working with computer hardware, installing and removing devices, the system relies on interrupt requests. There are default settings that are configured in the system [[BIOS]] and recognized by the operating system. These default settings can be altered by advanced users. Modern [[plug and play]] technology has not only reduced the need for concern for these settings, but has virtually eliminated manual configuration.
+
+==x86 IRQs==
+See [[Intel 8259]] for a common list and discussion of hardware IRQ lines in [[x86]] systems.
+
+Typically, on systems using the [[Intel 8259]], 16 IRQs are used. IRQs 0 to 7 are managed by one Intel 8259 PIC, and IRQs 8 to 15 by a second Intel 8259 PIC.  The first PIC, the master, is the only one that directly signals the CPU.  The second PIC, the slave, instead signals to the master on its IRQ 2 line, and the master passes the signal on to the CPU.  There are therefore only 15 interrupt request lines available for hardware.
+
+On newer systems using the [[Intel APIC Architecture]], typically there are 24 IRQs available, and the extra 8 IRQs are used to route PCI interrupts, avoiding conflict between dynamically configured PCI interrupts and statically configured ISA interrupts. On early APIC systems with only 16 IRQs or with only [[Intel 8259]] interrupt controllers, PCI interrupt lines were routed to the 16 IRQs using a PIR integrated into the southbridge.
+
+The easiest way of viewing this information on [[Microsoft Windows]] is to use [[Device Manager]] or System Information (msinfo32.exe). On [[Linux]], IRQ mappings can be viewed by executing <tt>cat /proc/interrupts</tt> or <tt>procinfo</tt> programs.
+
+===Master PIC===
+* IRQ 0 — system timer<!-- where is the link? --> (cannot be changed);
+* IRQ 1 — [[Computer keyboard|keyboard]] [[keyboard controller (computing)|controller]] (cannot be changed);
+* IRQ 2 — cascaded signals from IRQs 8–15;
+*:<small> — ''any devices configured to use IRQ 2 will actually be using IRQ 9''</small>
+* IRQ 3 — [[serial port]] [[Universal asynchronous receiver/transmitter|controller]] for COM2 (shared with COM4, if present);
+* IRQ 4 — serial port controller for COM1 (shared with COM3, if present);
+* IRQ 5 — [[LPT]] port 2  or  [[sound card]];
+* IRQ 6 — [[floppy disk]] [[floppy disk controller|controller]];
+* IRQ 7 — [[LPT]] port 1  or  sound card (8-bit [[Sound Blaster]] and compatibles).
+
+===Slave PIC===
+* IRQ 9 —  ''open interrupt / available''  or  [[SCSI]] [[host adapter]];
+*:<small> — ''any devices configured to use IRQ 2 will actually be using IRQ 9''</small>
+* IRQ 10 — ''open interrupt / available''  or  SCSI  or  [[Network card|NIC]];
+* IRQ 11 — ''open interrupt / available''  or  SCSI  or  NIC;
+* IRQ 12 — [[mouse (computing)|mouse]] on [[PS/2 connector]];
+* IRQ 13 — math [[co-processor]]  or  integrated [[floating point unit]]  or  [[inter-processor interrupt]] (use depends on OS);
+* IRQ 14 — primary [[Parallel ATA|ATA]] channel;
+* IRQ 15 — secondary [[Parallel ATA|ATA]] channel
+*: ATA interface usually serves [[hard disk]]s and [[CD drive]]s
+
+==More information==
+More information on the Intel 8259 PIC and its IRQ lines can be found in the ''[http://developer.intel.com/design/processor/manuals/253668.pdf IA-32 Intel Architecture Software Developer’s Manual, Volume 3A: System Programming Guide, Part 1]'', freely available on the [[Intel]] website.
+* [http://www.cs.cmu.edu/~ralf/files.html Ralf Brown's Interrupt List]
+
+==See also==
+{{Portal|Computer science}}
+* [[Advanced Programmable Interrupt Controller]] (APIC)
+* [[Programmable Interrupt Controller]] (PIC)
+* [[Intel 8259]]
+* [[Interrupt handler]]
+* [[Input/Output Base Address]]
+* [[Plug and play]]
+* [[Polling (computer science)|Polling]]
+* [[IRQ conflict]]
+
+==References==
+* Gilluwe, Frank van. ''The Undocumented PC, Second Edition'', Addison-Wesley Developers Press, 1997. ISBN 0-201-47950-8
+* Shanley, Tom. ''ISA System Architecture, Third Edition'', Addison-Wesley Publishing Company, 1995. ISBN 0-201-40996-8
+* Solari, Edward. ''PCI & PCI-X Hardware and Software Architecture & Design, Sixth Edition'', Research Tech Inc., 2004. ISBN 0-9760865-0-6
+
+{{DEFAULTSORT:Interrupt Request}}
+[[Category:Interrupts]]
+
+[[af:Onderbrekingsversoek]]
+[[cs:IRQ]]
+[[de:Unterbrechungsanforderung]]
+[[el:Αίτηση διακοπής]]
+[[fr:Interruption matérielle]]
+[[ko:인터럽트 요청]]
+[[id:Interrupt request]]
+[[it:Interrupt request]]
+[[pt:Pedido de interrupção]]
+[[sk:Požiadavka na prerušenie]]
+[[su:IRQ]]
+[[sv:Interrupt request]]</body> </html>

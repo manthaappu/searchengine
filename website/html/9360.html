@@ -1,0 +1,44 @@
+<html> <head> <title>Data differencing</title></head><body>In [[computer science]] and [[information theory]], '''data differencing''' or '''differential compression''' is producing a technical description of the difference between two sets of data – a source and a target. Formally, a data differencing algorithm takes as input source data and target data, and produces difference data such that given the source data and the difference data, one can reconstruct the target data ("[[Patch (computing)|patching]]" the source with the difference to produce the target).
+
+== Examples ==
+One of the best-known examples of data differencing is the [[diff]] utility, which produces line-by-line differences of [[text file]]s (and in some implementations, [[binary file]]s, thus being a general-purpose differencing tool). Differencing of general binary files goes under the rubric of [[delta encoding]], with a widely-used example being the algorithm used in [[rsync]]. A standardized generic differencing format is [[VCDIFF]], implemented in such utilities as [[Xdelta]] version 3. A high-efficiency (small patch files) differencing program is [http://www.daemonology.net/bsdiff/ bsdiff], which is based on [[bzip2]] compression, demonstrating the close connection between differencing and compression.
+
+== Concerns ==
+Main concerns for data differencing are ''usability'' and ''space efficiency'' (patch size). 
+
+If one simply wishes to reconstruct the target given the source and patch, one may simply include the entire target in the patch and "apply" the patch by discarding the source and outputting the target that has been included in the patch; similarly, if the source and target have the same size one may create a simple patch by [[XOR]]ing source and target. In both these cases, the patch will be as large as the target. As these examples show, if the only concern is reconstruction of target, this is easily done, at the expense of a large patch, and the main concern for general-purpose binary differencing is reducing the patch size.
+
+For structured data especially, one has other concerns, which largely fall under "usability" – for example, if one is comparing two documents, one generally wishes to know ''which'' sections have changed, or if some sections have been moved around – one wishes to understand ''how'' the documents differ. For instance "here 'cat' was changed to 'dog', and paragraph 13 was moved to paragraph 14". One may also wish to have ''robust'' differences – for example, if two documents A and B differ in paragraph 13, one may wish to be able to apply this patch even if one has changed paragraph 7 of A. An example of this is in diff, which shows which lines changed, and where the context format allows robustness and improves human readability.
+
+Other concerns include computational efficiency, as for data compression – finding a small patch can be very time and memory intensive.
+
+Best results occur when one has knowledge of the data being compared and other constraints: [[diff]] is designed for line-oriented text files, particularly source code, and works best for these; the [[rsync]] algorithm is used based on source and target being across a network from each other and communication being slow, so it minimizes data that must be transmitted; and the updates for [[Google Chrome]] use an algorithm customized to the archive and executable format of the program's data.<ref>Chromium Blog: [http://blog.chromium.org/2009/07/smaller-is-faster-and-safer-too.html Smaller is Faster (and Safer Too)]</ref><ref>[http://dev.chromium.org/developers/design-documents/software-updates-courgette Software Updates: Courgette (The Chromium Projects)]</ref>
+
+== Connection with data compression ==
+{{main|Data compression}}
+[[Data compression]] can be seen as a special case of data differencing<ref>RFC 3284</ref><ref>{{Citation | first1=D.G. | last1=Korn | first2 = K.P. |last2=Vo |title=Vdelta: Differencing and Compression | series=Practical Reusable Unix Software | editor = B. Krishnamurthy | publisher=[[John Wiley & Sons]] | year = 1995}}</ref> – data differencing consists of producing a ''difference'' given a ''source'' and a ''target'', with patching producing a ''target'' given a ''source'' and a ''difference,'' while data compression consists of producing a compressed file given a target, and decompression consists of producing a target given only a compressed file. Thus, one can consider data compression as data differencing with empty source data, the compressed file corresponding to a "difference from nothing". This is the same as considering absolute [[entropy (information theory)|entropy]] (corresponding to data compression) as a special case of [[relative entropy]] (corresponding to data differencing) with no initial data.
+
+When one wishes to emphasize the connection, one may use the term '''differential compression''' to refer to data differencing.
+
+A dictionary translating between the terminology of the two fields is given as:
+{|
+! compression !! differencing
+|-
+| ''none'' || source
+|-
+| uncompressed || target
+|-
+| compressed || difference, delta
+|-
+| compression || differencing
+|-
+| decompression || patching
+|}
+
+== See also ==
+* [[Delta encoding]]
+
+== References ==
+{{reflist}}
+
+[[Category:Data differencing| ]]</body> </html>

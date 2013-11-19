@@ -1,0 +1,46 @@
+<html> <head> <title>Microsoft CryptoAPI</title></head><body>{{Confusing|date=January 2009}}
+The '''Cryptographic Application Programming Interface''' (also known variously as '''CryptoAPI''', '''Microsoft Cryptography API''', or simply '''CAPI''') is an [[application programming interface]] included with [[Microsoft Windows]] [[operating system]]s that provides services to enable developers to secure Windows-based applications using [[cryptography]]. It is a set of [[Dynamic-link library|dynamically-linked libraries]] that provides an [[abstraction layer]] which isolates programmers from the code used to encrypt the data. The Crypto API was first introduced in Windows NT 4.0 <ref> [http://www.microsoft.com/msj/archive/S413.aspx Poking Around Under the Hood: A Programmer's View of Windows NT 4.0] </ref> and enhanced in subsequent versions.
+
+CryptoAPI supports both [[Public-key cryptography|public-key]] and [[Symmetric key algorithm|symmetric key]] cryptography. It includes functionality for encrypting and decrypting data and for [[authentication]] using [[digital certificate]]s. It also includes a [[cryptographically secure pseudorandom number generator]] function [[CryptGenRandom]].
+
+CryptoAPI works with a number of CSPs ([[Cryptographic Service Provider]]s) installed on the machine. CSPs are the modules that do the actual work of encoding and decoding data by performing the cryptographic functions.
+
+==Cryptography API: Next Generation==
+
+[[Windows Vista]] features an update to the Crypto API known as '''Cryptography API: Next Generation (CNG)'''. It has better API factoring to allow the same functions to work using a wide range of cryptographic algorithms, and the inclusion of a number of newer algorithms that are part of the [[National Security Agency]] (NSA) [http://www.nsa.gov/ia/programs/suiteb_cryptography/index.shtml Suite B]. It is also flexible, featuring support for plugging in custom cryptographic APIs into the CNG runtime. CNG works in both [[user mode|user]] and [[kernel mode]], and also supports all of the algorithms from the CryptoAPI. The Microsoft provider that implements CNG is housed in Bcrypt.dll.
+
+CNG also supports [[elliptic curve cryptography]] which is also secure and uses shorter keys than RSA.<ref>[http://www.nsa.gov/business/programs/elliptic_curve.shtml The Case for Elliptic Curve Cryptography, NSA]</ref> The CNG API integrates with the [[smart card]] subsystem by including a Base Smart Card Cryptographic Service Provider (Base CSP) module which encapsulates the smart card API. Smart card manufacturers just have to make their devices compatible with this, rather than provide a from-scratch solution.
+
+CNG also adds support to Dual_EC_DRBG<ref name="Schneier">{{cite web |url=http://www.schneier.com/blog/archives/2007/12/dual_ec_drbg_ad.html |title=Dual_EC_DRBG Added to Windows Vista |last=Schneier |first=Bruce |authorlink=Bruce Schneier |date=December 17, 2007 |work=Schneier on Security |accessdate=January 13, 2010}}</ref>, a [[pseudorandom number generator]] defined in NIST SP 800-90 that could expose the user to eavesdropping by the [[National Security Agency]] unless the user remembers to generate new random numbers with a different [[cryptographically secure pseudorandom number generator]] or a [[true random number generator]] and then publishing the generated seed in order to make it secure. It is also very slow.<ref name="Schneier2">{{cite web |url=http://www.schneier.com/blog/archives/2007/11/the_strange_sto.html |title=The Strange Story of Dual_EC_DRBG |last=Schneier |first=Bruce |authorlink=Bruce Schneier |date=November 15, 2007 |work=Schneier on Security |accessdate=January 12, 2010}}</ref> It is only used when called for explicitly.
+
+CNG also replaces the default PRNG with CTR_DRBG using AES as the block cipher, because the earlier RNG which is defined in the now superseded FIPS 186-2 is based on either [[DES]] or [[SHA-1]], both which have been broken<ref>{{cite web |url=http://csrc.nist.gov/publications/fips/archive/fips186-2/fips186-2.pdf |title=FIPS PUB 186-2 |publisher=[[National Institute of Standards and Technology]] |work=[[Federal Information Processing Standard]]s |date=January 27, 2000 |accessdate=January 13, 2010}}</ref>. CTR_DRBG is one of the two algorithms in NIST SP 800-90 endorsed by Schneier, the other being Hash_DRBG<ref name="Schneier2" />.
+
+==See also==
+{{Portal|Cryptography}}
+
+* [[CAPICOM]]
+* [[DPAPI]]
+* [[Public-key cryptography]]
+* [[Cryptographic Service Provider]]
+* [[PKCS11|PKCS#11]]
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://msdn2.microsoft.com/en-us/library/aa380256.aspx Cryptography Reference on MSDN]
+* [http://www.cryptodox.com/Microsoft_CAPI Microsoft CAPI] at CryptoDox
+* [http://www.nsa.gov/ia/industry/crypto_elliptic_curve.cfm The Case for Elliptic Curve Cryptography], National Security Agency
+
+{{Microsoft APIs}}
+
+{{DEFAULTSORT:Cryptographic Api}}
+[[Category:Cryptographic software]]
+[[Category:Microsoft application programming interfaces]]
+[[Category:Microsoft Windows security technology]]
+
+[[de:Cryptography API: Next Generation]]
+[[fr:Cryptographic Application Programming Interface]]
+[[ja:Cryptographic API]]
+[[ru:CryptoAPI]]
+[[zh:Cryptographic API]]</body> </html>

@@ -1,0 +1,315 @@
+<html> <head> <title>IDEDOS</title></head><body>'''IDEDOS''' is a [[Read-only memory|ROM]]-based disk operating system written in [[MOS Technology 6502|6502]]/[[65816]] assembly language for the [[Commodore 64]], [[Commodore 128|128]] and [[SuperCPU]]. Its main purpose is to control [[Parallel ATA|ATA(PI)]] devices connected to an [[IDE64]] cartridge and present them like normal Commodore drives. Additionally it supports networked drives (PCLink) and has a built-in [[machine code monitor]] and [[file manager]].
+
+==Architecture==
+The C64 [[KERNAL]] uses a vector table at page 3 to allow redirection of common kernal file handling and basic functions. This feature is used by IDEDOS to hook into the C64 kernal.
+
+The operating system itself is divided into four pages of 16 KiB which are mapped in when required. The mapping is temporarily switched off while interrupts are running for increased compatibility, however this causes a ≈40 μs latency.
+
+Additional RAM memory for buffers and internal data are also mapped in from either the [[IDE64]] cartridge (28 KiB) or the additional RAM of the SuperCPU is used. The standard kernal memory locations at page zero and page two are handled in a kernal-compatible way; temporarily used memory is restored after the routines are finished.
+
+Beyond the kernal table IDEDOS has two new calls for bulk data handling (read/write) which allows much faster data transfer rates than the character-based I/O.
+
+The native file system is non-CBM style at the low level to allow partitions greater than 16 MiB. High-level features like the 16-character filenames or filetypes are retained. Due to complexity and memory requirements, the filesystem creation and consistency check is not part of the operating system, unlike [[Commodore DOS|CBM DOS]] or CMD DOS.
+
+Additional filesystems like [[ISO 9660]] or [[File Allocation Table|FAT]] are abstracted internally and mostly use the same routines for handling, thereby little difference is noticeable to user programs, except if some features are not fully implemented.
+
+The device handling is done by additional device numbers assigned to the new devices. The device numbers for IDEDOS devices are configurable and is normally in the range of 10–14. Over the years many programs assumed that there is only device 8 and don't allow selecting anything else; this can be worked around by temporary changing the used IDEDOS device number to 8.
+
+For standard devices, the original kernal routines are used, while IDEDOS devices use custom routines which closely imitate the results and behavior of kernal calls for floppy devices. Kernal calls not going through the vector table (most notably IEC bus-specific calls) present an incompatibility with those programs using them.
+
+Special features (like CD-ROM audio handling) are implemented by new channel 15 commands, while features not found on floppy drives follow the CMD style commands to allow programs to easily support a wider range of devices.
+
+Unlike intelligent external devices which have a separate processor (like 1541 with CBMDOS), IDEDOS runs on the host computer, thereby all disk routines block until finished. This rules out the use of "IRQ loaders" which are commonly used to speed up operation of serial bus peripherals.
+
+Interrupts are generally allowed while IDEDOS is running (they are disabled on rare time-critical operations), however the system was written to be non-[[Reentrant (subroutine)|reentrant]], just like the original kernal.
+
+==Short history==
+In 1996 IDEDOS was born, as there was a need for a system to run the IDE64 1.1 card. It was created by Josef Souček (main code) and Tomáš Přibyl (File manager, Final cartridge monitor adaptation). Additional code came by Jan Vorlíček (BASIC extension), Jan Hlaváček (Duart PCLink).
+
+In 2000 Kajtár Zsolt added CDROM support, new setup code and lot of fixes. Due to limitations of the design the development of a completely rewritten version (0.90) was started by Kajtár Zsolt, which was not ready for general use before 2005. Meanwhile the old version reached 0.898b in 2004.Jun.
+
+In 2009 the 64 KiB limit for the system started to get tight, and the IDEDOS 0.91 beta was started to refactor the code to gain more space and internal flexibility.
+
+==IDEDOS 0.898b==
+This was the last version of the old IDEDOS series.
+
+'''Device support'''
+* 2 ATA(PI) devices: hard disk, CompactFlash, CDROM, DVD
+* [[Universal asynchronous receiver/transmitter|Duart]] RS-232 card for PCLink
+* [[SuperCPU]] v1/v2
+
+'''Filesystem'''
+* Custom filesystem called OFS 0.02
+* Up to 8 GiB, [[Cylinder-head-sector|CHS]] addressing only, covers the whole disk
+* 16 character filenames.
+* Fixed file types of SEQ, PRG, USR.
+* Directories are supported.
+* Time stamping supported.
+* Files up to 4 GiB, sequential access only
+* [[ISO 9660]] filesystem support
+
+'''Fastload'''
+
+Built in [[fast loader]] supported devices:
+
+* [[Commodore 1541|1541]] as device 8
+
+Fast load can be switched off in setup in case of incompatibility (non-1541 as device 8). Minimum interleave is 7, fast saver is only supported in manager, and uses an interleave of 8. [[PAL]]/[[NTSC]] compatible timing.
+
+'''PCLink'''
+
+Custom protocol, sequential access only. Supported devices:
+
+* PC64 parallel cable
+* Duart RS-232
+
+'''Setup screen'''
+
+Includes clock with calendar, ability to set drive numbers, screen colours, auto boot, floppy fast loader, basic clock (TI$), power management, write retry, read-ahead and write cache drive settings, CDROM slow down option.
+
+'''BASIC extensions'''
+
+The BASIC extension includes disk handling commands (limited to IDEDOS devices), and adds some new error messages. Commands:
+
+* CD - change working directory
+* CDOPEN - open CDROM tray
+* CDCLOSE - close CDROM tray
+* CHANGE - change HDD device number
+* DATE - print date and time
+* DIR - normal directory listing
+* HDINIT - re-detect IDE devices.
+* INIT - initialize memory
+* KILL - disable cartridge
+* LL - long directory listing with timestamps, and file size in bytes.
+* MAN - start file manager
+* MKDIR - create directory
+* RM - remove file or directory
+
+'''File manager'''
+
+It can be used to navigate around directories, start programs, copy/rename/delete files, create directories, and execute plugins to operate on files. Recursive file copy was only added in 0.898b, and in rare cases it does not work.
+
+'''Monitor'''
+The monitor is almost exactly the Final cartridge monitor in IDEDOS 0.89. Only standard 6502 opcodes are available. The commands are:
+
+* A - Assemble instructions
+* B - Bank switch
+* C - Compare memory areas
+* D - Disassemble from address
+* EC - Edit char
+* ES - Edit sprite
+* F - Fill memory area
+* G - Start execution at address
+* H - Search pattern
+* I - PETSCII display from address
+* L - Load memory area
+* M - Memory list
+* O - Bank switch
+* P - Print
+* R - Show registers
+* S - Save memory area
+* T - Transfer memory area
+* X - Exit monitor
+* @ - Disk command
+* # - Convert to hexadecimal
+* $ - Convert to decimal
+* *r - Read block from floppy drive
+* *w - Write block to floppy drive
+
+'''Miscellaneous features'''
+* Auto boot - can load and start a file on reset or power on.
+* Custom screen colours - the default blue screen colours can be changed.
+* Set the TI$ BASIC variable to the correct time on reset.
+* Displays the start and end address for load.
+* Special extension for bulk reading and writing of file data
+
+==IDEDOS 0.90==
+This is the current stable, the latest version is 20100509 (patch 45). Most notable differences to 0.89 are:
+
+* CFS 0.11 filesystem allows seekable and relative files, LBA support and partitioning.
+* CMD compatible syntax for path handling and channel 15 commands
+* Better PCLink protocol to allow the use of ethernet and USB
+* Monitor which works like a freezer and is much faster
+* More powerful file manager supporting CMD devices
+* DOS wedge commands
+* Programmable function keys
+* BASIC extension support for non-IDEDOS devices
+* Additional device support up to 4 ATA(PI) drives, ZIP and LS-120 support
+* Support of V4.1 cartridge, linear read/write transfers for additional speed
+* The battery on the IDE64 cartridge can be replaced with a supercap now.
+
+'''Device support'''
+* 4 ATA(PI) devices: hard disk, CompactFlash, CDROM, DVD, LS-120, ZIP-drive
+* Duart/SwiftLink/Turbo232/SilverSurfer RS-232, RR-Net/ETFE/ETH64 ethernet, FT245 USB cards for PCLink
+* SuperCPU v2
+* Additional support for JiffyDOS/DolphinDOS drives
+
+'''Filesystem'''
+* Custom filesystem called CFS 0.11
+* Up to 128 GiB, CHS/LBA addressing, up to 16 partitions
+* 16 character file names.
+* Customizable 3 character file types.
+* Directories and soft links are supported.
+* Relative files supported.
+* Time stamping supported.
+* Files up to 4 GiB, seekable
+* [[ISO 9660]] filesystem, partial OFS 0.02 support
+* FAT12/16/32 slow read-only short filename support with [[Master boot record|DOS style partition tables]]
+
+'''Fastload'''
+
+Supported devices:
+
+* CBM [[Commodore 1541|1541]]/[[Commodore 1571|1571]]/[[Commodore 1581|1581]]
+* Any drive with JiffyDOS protocol ([[CMD FD series|CMD FD]])
+* Additional support for DolphinDOS
+
+Device support is automatically detected, but can be disabled manually if needed. PAL/NTSC compatible timing. Fast saver only in the file manager.
+
+'''PCLink'''
+
+Custom protocol, sequential access only. Supported devices:
+
+* IEC serial bus
+* PC64 parallel cable
+* Duart, SwiftLink, Turbo232 RS-232
+* RR-Net, ETFE, ETH64 ethernet
+* FT245 USB
+
+'''Setup screen'''
+
+* Clock with calendar
+* Device number configuration and remapping
+* Screen, manager and monitor colours
+* Miscellaneous settings(auto boot, floppy fast loader, basic clock (TI$))
+* ATA(PI) device settings (power management, write retry, read-ahead and write cache, maximal linear read/write)
+
+'''DOS wedge'''
+
+Mostly the well known standard [[DOS Wedge|DOS wedge]] commands.
+
+* @ - DOS command
+* @$ - Directory
+* @# - Select device
+* / - Load BASIC program
+* % - Load assembly program
+* ' - Verify assembly program
+* ↑ - Load BASIC program and execute
+* ← - Save BASIC program
+* £ - Load and execute assembly program
+* . - Change directory
+* # - Execute shell
+
+'''BASIC extensions'''
+
+The [[BASIC extension]] adds disk handling commands, which can be used with any device because they use CMD style commands.
+
+* CD - change working directory
+* CDOPEN - open CDROM tray
+* CDCLOSE - close CDROM tray
+* CHANGE - change device number
+* DATE - print date and time
+* DEF - redefine function keys
+* DIR - normal directory listing
+* HDINIT - re-detect IDE devices.
+* INIT - initialize memory
+* KILL - disable cartridge
+* KILLNEW - re-new
+* LL - long directory listing with timestamps, and file size in bytes.
+* MAN - start file manager
+* MKDIR - create directory
+* RM - remove file
+* RMDIR - remove directory
+
+'''File manager'''
+
+The file managers inspiration comes from 0.89, though it was rewritten from scratch. The goal was to have a file manager which not only supports IDEDOS devices, but also works well with CMD and other drives.
+
+'''Monitor'''
+
+The monitor was rewritten from scratch, the main inspiration was the CCS64 emulator's monitor, but some command ideas came from FC3/AR7/Vice monitors.
+The goal was to have freezer style (all registers including I/O editable) and fast machine code monitor which supports illegal 6502 and SuperCPU emulation mode opcodes.
+
+Commands:
+
+* @ - Disk command, status and directory
+* A - Assemble
+* B - Memory conﬁguration, select RAM/ROM
+* BT - Backtrace
+* C - Compare memory
+* D - Disassemble
+* , - Write hex data to memory and disassemble
+* EC - Edit char (binary)
+* [ - Write binary data to memory
+* ES - Edit sprite (binary)
+* ] - Write binary sprite data to memory
+* F - Fill memory with byte
+* G - Execute at address
+* H - Search hex/any/text
+* I - Dump memory in PETSCII
+* ' - Write PETSCII data to memory
+* IO - Dump I/O registers
+* - - Write hex data to I/O memory
+* IV - Restore I/O vectors
+* J - Dump memory in screen code
+* . - Write screen code data to memory
+* K - Defreeze memory
+* L - Load program
+* LB - Load binary
+* M - Dump memory in hex and PETSCII
+* : - Write hex or PETSCII data to memory
+* N - Number conversion and calculator
+* O - Select work drive
+* R - Show registers
+* ; - Change registers
+* S - Freeze memory/save program
+* SB - Save binary
+* T - Copy memory
+* V - Verify program
+* VB - Verify binary
+* X - Continue program
+* Q - Exit to BASIC warm start
+* ←/↑ - Push and pop address(es) to astack.
+
+'''Miscellaneous features'''
+* Auto boot - can load and start a file on reset or power on.
+* Custom screen, monitor and manager colours - the default colours can be changed.
+* Set the TI$ BASIC variable to the correct time on reset.
+* Displays the start and end address for load/save.
+* Special extension for bulk reading and writing of file data
+* C128 keyboard support in C64 mode
+* Special commands for handling CDROM drives
+* Raw directory read
+* CMD style long directory lists with timestamps
+
+==IDEDOS 0.91 beta==
+This is still in development. Most notable differences to 0.90 are:
+
+* OFS 0.02 support removed
+* Protected BASIC, serial and PCLink routines
+* F-keys work with interrupts
+* Read ($DEF4) works below I/O
+* Auto starting programs work from IEC devices now
+* PCLink load below I/O
+* SilverSurfer PCLink support, PCLink optional
+* FAT filesystem read ($DEF4) and load 
+* Combined CFS and FAT partitions, per partition filesystem support 
+* Partition list for FAT and ISO9660 
+* Dynamic drive ennumeration, PCLink detection
+* Read ($DEF4) and write ($DEF1) support on modifiable files 
+* Timestamp update only if modified 
+* Seeking, modifiable and appendable files on PCLink 
+* PCLink protocol changes 
+* PCLink activity LED
+
+==External links==
+* [http://idedos.ide64.org/ The webpage of IDEDOS]
+* [http://ide64.org/ The webpage of the IDE64 cartridge]
+
+==References==
+* IDEDOS 0.91 beta [http://singularcrew.hu/idedos/beta/ http://singularcrew.hu/idedos/beta/]
+* IDEDOS 0.90 [http://singularcrew.hu/idedos/IDE64_users_guide.pdf http://singularcrew.hu/idedos/IDE64_users_guide.pdf]
+* IDEDOS 0.89 [http://www.volny.cz/dundera/manual.html http://www.volny.cz/dundera/manual.html]
+
+[[Category:Disk operating systems]]
+[[hu:IDEDOS]]</body> </html>

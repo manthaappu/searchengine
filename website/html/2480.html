@@ -1,0 +1,388 @@
+<html> <head> <title>Artificial neuron</title></head><body>An '''artificial neuron''' is a mathematical function conceived as a crude model, or abstraction of biological [[neuron]]s. Artificial neurons are the constitutive units in an [[artificial neural network]].  Depending on the specific model used, it can receive different names, such as '''semi-linear unit''',  '''Nv neuron''', '''binary neuron''', '''linear threshold function''' or '''McCulloch–Pitts neuron'''. The artificial neuron receives one or more inputs (representing the one or more [[dendrite]]s) and sums them to produce an output ([[synapse]]). Usually the sums of each node are weighted, and the sum is passed through a [[non-linear]] function known as an [[activation function]] or [[transfer function]]. The transfer functions usually have a [[sigmoid function|sigmoid shape]], but they may also take the form of other non-linear functions, [[piecewise]] linear functions, or [[#Step function|step functions]]. They are also often  [[Monotonic function|monotonically increasing]], [[Continuous function|continuous]], [[Differentiable function|differentiable]] and [[Bounded function|bounded]].
+
+The artificial neuron transfer function should not be confused with a linear system's [[transfer function]].
+
+== Basic structure ==
+
+For a given artificial neuron, let there be ''m'' + 1 inputs with signals ''x''<sub>0</sub> through ''x''<sub>''m''</sub> and weights ''w''<sub>0</sub> through ''w''<sub>''m''</sub>. Usually, the ''x''<sub>0</sub> input is assigned the value +1, which makes it a ''bias'' input with ''w''<sub>''k''0</sub> = ''b''<sub>''k''</sub>. This leaves only ''m'' actual inputs to the neuron: from ''x''<sub>1</sub> to ''x''<sub>''m''</sub>.
+
+The output of ''k''th neuron is:
+
+:<math>y_k =  \varphi \left( \sum_{j=0}^m w_{kj} x_j \right)</math>
+
+Where <math>\varphi</math> (phi) is the transfer function.
+
+[[Image:artificial neuron.png]]
+
+The output is analogous to the [[axon]] of a biological neuron, and its value propagates to input of the next layer, through a synapse. It may also exit the system, possibly as part of an output vector.
+
+==History==
+
+The first artificial neuron was the Threshold Logic Unit (TLU) first proposed by [[Warren McCulloch]] and [[Walter Pitts]] in 1943. As a transfer function, it employed a threshold, equivalent to using the [[Heaviside step function]]. Initially, only a simple model was considered, with binary inputs and outputs, some restrictions on the possible weights, and a more flexible threshold value. Since the beginning it was already noticed that any boolean function could be implemented by networks of such devices, what is easily seen from the fact that one can implement the AND and OR functions, and use them in the disjunctive or the [[conjunctive normal form]].
+
+Researchers also soon realized that cyclic networks, with [[feedback]]s through neurons, could define dynamical systems with memory, but most of the research concentrated (and still does) on strictly feed-forward networks because of the smaller difficulty they present.
+
+One important and pioneering artificial neural network that used the linear threshold function was the [[perceptron]], developed by [[Frank Rosenblatt]]. This model already considered more flexible weight values in the neurons, and was used in machines with adaptive capabilities. The representation of the threshold values as a bias term was introduced by [[Widrow]] in 1960{{Fact|date=March 2008}}.
+
+In the late 1980s, when research on neural networks regained strength, neurons with more continuous shapes started to be considered. The possibility of differentiating the activation function allows the direct use of the [[gradient descent]] and other optimization algorithms for the adjustment of the weights. Neural networks also started to be used as a general function approximation model.
+
+==Types of transfer functions==
+
+The transfer function of a neuron is chosen to have a number of properties which either enhance or simplify the network containing the neuron.  Crucially, for instance, any [[multilayer perceptron]] using a ''linear'' transfer function has an equivalent single-layer network; a non-linear function is therefore necessary to gain the advantages of a multi-layer network.
+
+Below, ''u'' refers in all cases to the weighted sum of all the inputs to the neuron, i.e. for ''n'' inputs, 
+
+:<math>
+u = \sum_{i = 1}^n w_{i} x_{i}
+</math>
+
+where '''w''' is a vector of ''synaptic weights'' and '''x''' is a vector of inputs.
+
+===Step function===
+
+The output ''y'' of this transfer function is binary, depending on whether the input meets a specified threshold, ''θ''. The "signal" is sent, i.e. the output is set to one, if the activation meets the threshold.
+
+:<math>y = \left\{ \begin{matrix} 1 & \mbox{if }u \ge \theta \\ 0 & \mbox{if }u < \theta \end{matrix} \right.</math>
+
+This function is used in [[perceptron]]s and often shows up in many other models. It performs a division of the [[Vector space|space]] of inputs by a [[hyperplane]]. It is specially useful in the last layer of a network intended to perform binary classification of the inputs. It can be approximated from other sigmoidal functions by assigning large values to the weights.
+
+===Linear combination===
+
+In this case, the output unit is simply the weighted sum of its inputs plus a ''bias'' term. A number of such linear neurons perform a linear transformation of the input vector. This is usually more useful in the first layers of a network. A number of analysis tools exist based on linear models, such as [[harmonic analysis]], and they can all be used in neural networks with this linear neuron. The bias term allows us to make [[homogeneous coordinates|affine transformations]] to the data.
+
+See: [[Linear transformation]], [[Harmonic analysis]], [[Linear filter]], [[Wavelet]], [[Principal component analysis]], [[Independent component analysis]], [[Deconvolution]].
+
+===Sigmoid===
+
+A fairly simple non-linear function, a [[Sigmoid function]] such as the logistic function also has an easily calculated derivative, which can be important when calculating the weight updates in the network. It thus makes the network more easily manipulable mathematically, and was attractive to early computer scientists who needed to minimize the computational load of their simulations. It is commonly seen in [[multilayer perceptron]]s using a [[backpropagation]] algorithm.
+
+<!-- This part of the article needs to be expanded -->
+
+See: [[Sigmoid function]]
+
+==Pseudocode algorithm==
+
+The following is a simple [[pseudocode]] implementation of a single TLU which takes [[Boolean data type|boolean]] inputs (true or false), and returns a single boolean output when activated. An [[object oriented|object-oriented]] model is used. No method of training is defined, since several exist. If a purely functional model were used, the class TLU below would be replaced with a function TLU with input parameters threshold, weights, and inputs that returned a boolean value.
+
+  '''class''' TLU '''defined as:'''
+   '''data member''' threshold ''':''' number
+   '''data member''' weights ''': list of''' numbers '''of size''' X
+   '''function member''' fire( inputs ''': list of''' booleans '''of size''' X ) ''':''' boolean '''defined as:'''
+    '''variable''' T ''':''' number
+    T '''←''' 0
+    '''for each''' i '''in''' 1 '''to''' X ''':'''
+     '''if''' inputs(i) '''is''' true ''':'''
+      T '''←''' T + weights(i)
+     '''end if'''
+    '''end for each'''
+    '''if''' T > threshold ''':'''
+     '''return''' true
+    '''else:'''
+     '''return''' false
+    '''end if'''
+   '''end function'''
+  '''end class'''
+
+== Spreadsheet example ==
+
+{| class="wikitable" <hiddentext>generated with [[:de:Wikipedia:Helferlein/VBA-Macro for EXCEL tableconversion]] V1.7<\hiddentext>
+|- 
+| width="47" height="13"  valign="bottom" |  
+| width="42"  valign="bottom" |  
+| width="37" colspan="3" align="center" valign="bottom" | Input
+| width="21" colspan="2" align="center" valign="bottom" | Initial
+| width="39" colspan="2" align="center" valign="bottom" | Output
+| width="35"  valign="bottom" |  
+| width="64"  valign="bottom" |  
+| width="38"  valign="bottom" |  
+| width="50"  valign="bottom" |  
+| width="41" colspan="2" align="center" valign="bottom" | Final
+|- 
+| height="38"  valign="bottom" | Threshold
+|  valign="bottom" | Learning Rate
+| colspan="2" align="center" valign="bottom" | Sensor values
+|  valign="bottom" | Desired output
+| colspan="2" align="center" valign="bottom" | Weights
+| colspan="2" align="center" valign="bottom" | Calculated
+| align="center" valign="bottom" | Sum
+| align="center" valign="bottom" | Network
+| align="center" valign="bottom" | Error
+| align="center" valign="bottom" | Correction
+| colspan="2" align="center" valign="bottom" | Weights
+|-  align="center" valign="bottom"
+| height="13" | TH
+ | LR
+ | X1
+ | X2
+ | Z
+ | w1
+ | w2
+ | C1
+ | C2
+ | S
+ | N
+ | E
+ | R
+ | W1
+ | W2
+|-  align="center" valign="bottom"
+| height="13" |  
+ |  
+ |  
+ |  
+ |  
+ |  
+ |  
+ | X1 x w1
+ | X2 x w2
+ | C1+C2
+ | IF(S>TH,1,0)
+ | Z-N
+ | LR x E
+ | R+w1
+ | R+w2
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 0
+ | 0
+ | 0.1
+ | 0.3
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0.1
+ | 0.3
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 1
+ | 1
+ | 0.1
+ | 0.3
+ | 0
+ | 0.3
+ | 0.3
+ | 0
+ | 1
+ | 0.2
+ | 0.3
+ | 0.5
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 0
+ | 1
+ | 0.3
+ | 0.5
+ | 0.3
+ | 0
+ | 0.3
+ | 0
+ | 1
+ | 0.2
+ | 0.5
+ | 0.7
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 1
+ | 1
+ | 0.5
+ | 0.7
+ | 0.5
+ | 0.7
+ | 1.2
+ | 1
+ | 0
+ | 0
+ | 0.5
+ | 0.7
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 0
+ | 0
+ | 0.5
+ | 0.7
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0.5
+ | 0.7
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 1
+ | 1
+ | 0.5
+ | 0.7
+ | 0
+ | 0.7
+ | 0.7
+ | 1
+ | 0
+ | 0
+ | 0.5
+ | 0.7
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 0
+ | 1
+ | 0.5
+ | 0.7
+ | 0.5
+ | 0
+ | 0.5
+ | 0
+ | 1
+ | 0.2
+ | 0.7
+ | 0.9
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 1
+ | 1
+ | 0.7
+ | 0.9
+ | 0.7
+ | 0.9
+ | 1.6
+ | 1
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 0
+ | 1
+ | 1
+ | 0.7
+ | 0.9
+ | 0
+ | 0.9
+ | 0.9
+ | 1
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 0
+ | 1
+ | 0.7
+ | 0.9
+ | 0.7
+ | 0
+ | 0.7
+ | 1
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+|-  align="center" valign="bottom"
+| height="13" | 0.5
+ | 0.2
+ | 1
+ | 1
+ | 1
+ | 0.7
+ | 0.9
+ | 0.7
+ | 0.9
+ | 1.6
+ | 1
+ | 0
+ | 0
+ | 0.7
+ | 0.9
+|}
+
+Supervised neural network training for an OR gate.
+
+Note: Initial weight equals final weight of previous iteration.
+
+==Limitations==
+
+Artificial neurons of simple types, such as the McCulloch–Pitts model, are sometimes characterized as "caricature models", in that they are intended to reflect one or more neurophysiological observations, but without regard to realism.<ref>
+{{cite book 
+ | author = F. C. Hoppensteadt and E. M. Izhikevich
+ | title = Weakly connected neural networks
+ | isbn = 9780387949482
+ | publisher = Springer
+ | year = 1997
+ | page = 4
+}}</ref>
+
+== See also ==
+
+*[[Neural network]]
+*[[Perceptron]]
+*[[ADALINE]]
+*[[Biological neuron models]]
+*[[Connectionism]]
+
+== References ==
+
+{{reflist}}
+
+== Further reading ==
+
+{{refbegin}}
+* [[Warren McCulloch|McCulloch, W]]. and [[Walter Pitts|Pitts, W]]. (1943). ''A logical calculus of the ideas immanent in nervous activity.'' Bulletin of Mathematical Biophysics, 7:115 - 133.
+* A.S. Samardak, A. Nogaret, N. B. Janson, A. G. Balanov, I. Farrer and D. A. Ritchie. "Noise-Controlled Signal Transmission in a Multithread Semiconductor Neuron" // Phys.Rev.Lett. 102 (2009) 226802, [http://prl.aps.org/abstract/PRL/v102/i22/e226802]
+{{refend}}
+
+== External links ==
+* [http://www.mind.ilstu.edu/curriculum/modOverview.php?modGUI=212] A good general overview
+
+[[Category:Neural networks]]
+[[Category:American inventions]]
+
+{{Link GA|de}}
+[[de:Künstliches Neuron]]
+[[es:Neurona de McCulloch-Pitts]]
+[[fr:Neurone formel]]
+[[ko:인공 뉴런]]
+[[ja:人工神経]]
+[[pl:Neuron McCullocha-Pittsa]]
+[[pt:Neurônio artificial]]
+[[ru:Искусственный нейрон]]
+[[uk:Штучний нейрон]]</body> </html>

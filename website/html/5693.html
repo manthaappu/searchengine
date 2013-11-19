@@ -1,0 +1,145 @@
+<html> <head> <title>Cell microprocessor implementations</title></head><body>==Implementation==
+{{Cell microprocessor segments}}
+
+===First edition Cell on 90 nm CMOS===
+
+IBM has published information concerning two different versions of Cell in this process, an early engineering sample designated ''DD1'', and an enhanced version designated ''DD2'' intended for production. 
+{| class="wikitable" align="left"
+|+ '''Known Cell Variants in 90 nm Process'''
+! Designation || Die Area || First Disclosed || Enhancement 
+|-
+| DD1 || 221 mm² || ISSCC 2005 || 
+|- 
+| DD2 || 235 mm² || Cool Chips April 2005 || enhanced PPE core 
+|} 
+<br style="clear:both;">
+The main enhancement in DD2 was a small lengthening of the die to accommodate a larger PPE core, which is reported to "contain more SIMD/vector execution resources"{{ref|dtwang3}}.
+Some preliminary information released by IBM references the DD1 variant. As a result some early journalistic accounts of the Cell's capabilities now differ from production hardware. 
+
+====Cell floorplan==== 
+[Powerpoint material accompanying an STI presentation given by Dr Peter Hofstee], includes a photograph of the DD2 Cell die overdrawn with functional unit boundaries which are also captioned by name, which reveals the breakdown of silicon area by function unit as follows: 
+
+<!-- I wasn't able to square-up the image when measuring dimensions off screen, since I only had area, but not W*H so these are a little more approx. than they might have been; I had W*H for the included SPU but the top four SPU measure differently than the bottom four in the way they overdrew the boundaries, leaving me with the same problem --> 
+
+{| class="wikitable" style="margin: 1em auto 1em auto" 
+|+ '''Cell Function Units and Footprint'''
+! Cell function unit || Area (%) || Description 
+|-
+| XDR interface || 5.7 || interface to Rambus system memory 
+|-
+| memory controller || 4.4 || manages external memory and L2 cache 
+|-
+| 512 KiB L2 cache || 10.3 || cache memory for the PPE 
+|-
+| PPE core || 11.1 || PowerPC processor 
+|-
+| test || 2.0 || unspecified "test and decode logic" 
+|-
+| EIB || 3.1 || element interconnect bus linking processors 
+|-
+| SPE (each) x 8 || 6.2 || synergistic coprocessing element 
+|-
+| I/O controller || 6.6 || external I/O logic 
+|-
+| Rambus FlexIO || 5.7 || external signalling for I/O pins 
+|}
+
+<br style="clear:both;">
+
+====SPE floorplan====
+Additional details concerning the internal SPE implementation have been disclosed by IBM engineers, including [[Peter Hofstee]], IBM's chief architect of the synergistic processing element, in a scholarly IEEE publication.{{ref|90nmsoi}}
+
+This document includes a photograph of the 2.54 x 5.81 mm SPE, as implemented in 90-nm [[SOI]]. In this technology, the SPE contains 21 million transistors of which 14 million are contained in arrays (a term presumably designating register files and the local store) and 7 million transistors are logic. This photograph is overdrawn with functional unit boundaries, which are also captioned by name, which reveals the breakdown of silicon area by function unit as follows: 
+
+<!-- if I had found a way I would have made the table smaller than the surrounding text, esp. if the surrounding text is largish, but that's asking a lot -->
+{| class="wikitable" <!-- bad effects at certain Firefox sizings with style="text-align:left" --> style="margin: 1em auto 1em auto" align="right"
+|+ '''SPU Function Units and Footprint'''
+! SPU function unit || Area (%) || Description || Pipe 
+|-
+| single precision || 10.0 || single precision FP execution unit || even 
+|- 
+| double precision || 4.4 || double precision FP execution unit || even 
+|-
+| simple fixed || 3.25 || fixed point execution unit || even 
+|-
+| issue control || 2.5 || feeds execution units
+|- 
+| forward macro || 3.75 || feeds execution units
+|- 
+| GPR || 6.25 || general purpose register file 
+|- 
+| permute || 3.25 || permute execution unit || odd 
+|-
+| branch || 2.5 || branch execution unit || odd 
+|- 
+| channel || 6.75 || channel interface (three discrete blocks) || odd 
+|-
+| LS0-LS3 || 30.0 || four 64 KiB blocks of local store || odd 
+|- 
+| MMU || 4.75 || memory management unit 
+|- 
+| DMA || 7.5 || direct memory access unit
+|-
+| BIU || 9.0 || bus interface unit
+|-
+| RTB || 2.5 || array built-in test block (ABIST) 
+|-
+| ATO || 1.6 || atomic unit for atomic DMA updates
+|-
+| HB || 0.5 || obscure 
+|}
+<!-- OK, I see the method for aligning columns by decimal points in the table help. Not for this chicken. Some diehard can suffer or this can wait until MediaWiki is fixed properly. -->
+
+Understanding the dispatch pipes is important to write efficient code. In the SPU architecture, two instructions can be dispatched (started) in each clock cycle using dispatch pipes designated ''even'' and ''odd''. The two pipes provide different execution units, as shown in the table above. As IBM partitioned this, most of the arithmetic instructions execute on the ''even'' pipe, while most of the memory instructions execute on the ''odd'' pipe. The permute unit is closely associated with memory instructions as it serves to pack and unpack data structures located in memory into the SIMD multiple operand format that the SPU computes on most efficiently. 
+
+Unlike other processor designs providing distinct execution pipes, each SPU instruction can only dispatch on one designated pipe. In competing designs, more than one pipe might be designed to handle extremely common instructions such as ''add'', permitting more two or more of these instructions to be executed concurrently, which can serve to increase efficiency on unbalanced workflows. In keeping with the extremely Spartan design philosophy, for the SPU no execution units are multiply provisioned. 
+
+Understanding the limitations of the restrictive two pipeline design is one of the key concepts a programmer must grasp to write efficient SPU code at the lowest level of abstraction. For programmers working at higher levels of abstraction, a good compiler will automatically balance pipeline concurrency where possible.
+
+====SPE power and performance====
+As tested by IBM under a heavy transformation and lighting workload [average IPC of 1.4], the performance profile of this implementation for a single SPU processor is qualified as follows: 
+
+{| class="wikitable" style="margin: 1em auto 1em auto" align="right"
+|+ '''Relationship of speed to temperature'''
+! Voltage (V) || Frequency (GHz) || Power (W) || Die Temp (C) 
+|-
+| 0.9 || 2.0 || 1 || 25 
+|-
+| 0.9 || 3.0 || 2 || 27 
+|-
+| 1.0 || 3.8 || 3 || 31 
+|-
+| 1.1 || 4.0 || 4 || 38 
+|-
+| 1.2 || 4.4 || 7 || 47 
+|-
+| 1.3 || 5.0 || 11 || 63 
+|}
+
+The entry for 2.0 GHz operation at 0.9 V represents a low power configuration. Other entries show the peak stable operating frequency achieved with each voltage increment. As a general rule in CMOS circuits, power dissipation rises in a rough relationship to V^2 * F, the square of the voltage times the operating frequency.
+
+Though the power measurements provided by the IBM authors lack precision they convey a good sense of the overall trend. These figures show the part is capable of running above 5 GHz under test lab conditions--though at a die temperature too hot for standard commercial configurations. The first Cell processors made commercially available were rated by IBM to run at 3.2 GHz, an operating speed where this chart suggests a SPU die temperature in a comfortable vicinity of 30 degrees.
+
+Note that a single SPU represents 6% of the Cell processor's die area. The power figures given in the table above represent just a small portion of the overall power budget.
+
+IBM has publicly announced their intention to implement Cell on a future technology below the 90 nm node to improve power consumption. Reduced power consumption could ''potentially'' allow the existing design to be boosted to 5 GHz or above without exceeding the thermal constraints of existing products. 
+
+====Cell at 65 nm====
+The first shrink of Cell was at the 65nm node. The reduction to 65 nm reduced the existing 230 mm² die based on the 90 nm process to half its current size, about 120 mm², greatly reducing IBM's manufacturing cost as well. 
+
+On 12th of March 2007, IBM announced that it started producing 65nm Cells in its East Fishkill fab. The chips produced there are apparently only for IBMs own Cell [[Computing blade|blade]] servers, which were the first to get the 65nm Cells. Sony introduced the third generation of the PS3 in November 2007, the 40GB model without PS2-compatibility which was [http://www.engadget.com/2007/10/30/40gb-ps3-features-65nm-chips-lower-power-consumption/ confirmed] to use the 65nm Cell. Thanks to the shrunk Cell, power consumption was reduced from 200W to 135W.
+
+At first it was only known that the 65nm-Cells clock up to 6 GHz and run on 1.3V core voltage, as [http://news.spong.com/article/11413?cb=936 demonstrated] on the [[ISSCC]] 2007. This would have given the chip a theoretical peak performance of 384 GFLOPS in single precision, a significant improvement to the 204.8 GFLOPS peak that a 90nm 3.2 GHz Cell could provide with 8 active SPUs. IBM further announced it implemented new power-saving features and a dual power supply for the SRAM array. This version was not yet the long-rumoured "Cell+" with enhanced Double Precision floating point performance, which first saw the light of day mid 2008 in the [[IBM_Roadrunner|Roadrunner supercomputer]] in the form of [[QS22#Cell_based_Blades|QS22]] PowerXCell blades. Although IBM talked about and even showed higher-clocked Cells before, clock speed has remained constant at 3.2 GHz, even for the double precision enabled "Cell+" of the Roadrunner. By keeping clockspeed constant, IBM has instead opted to reduce power consumption, something they were not shy to point out in the current trend of "Green computing". Among other things this is the reason why Cell-based clusters now, as of late 2008, dominate the [[Green500]], which measures the MegaFLOPS per Watt, with a significant lead of 488 MFLOPS/Watt. PowerXCell clusters even best IBMs Blue Gene clusters (371 MFLOPS/Watt), which are far more power-efficient already than clusters made up of conventional CPUs (265 MFLOPS/Watt and lower).
+
+===Future editions in CMOS===
+====Prospects at 45 nm====
+At ISSCC 2008, IBM [http://arstechnica.com/news.ars/post/20080207-ibm-shrinks-cell-to-45nm-cheaper-ps3s-will-follow.html announced] Cell at the 45nm node. IBM said it would require 40 percent less power at the same clockspeed than its 65nm predecessor and that the die area would shrink by 34 percent. The 45nm Cell requires less cooling and allows for cheaper production, also through the use of a much smaller heatsink. Mass production was initially slotted to begin in late 2008 but was moved to [http://www.engadget.com/2008/09/22/sony-and-toshiba-to-begin-mass-producing-45nm-cell-processor-in/ early 2009].
+
+====Prospects beyond 45 nm====
+Sony, IBM and Toshiba [http://www.theregister.co.uk/2006/01/12/ibm_sony_toshiba_32nm_cell/ already announced] to begin work on a Cell as small as 32nm back in January 2006, but since process shrinks in fabs usually happen on a global and not an individual chip scale, this is to be seen merely as a public commitment to take Cell to 32nm.
+
+IBM could elect to partially redesign the chip to take advantage of additional silicon area in future revisions to make the size small. The Cell architecture already makes explicit provisions for the size of the local store to vary across implementations. A chip-level interface is available to the programmer to determine local store capacity, which is always an exact binary power. 
+
+It would be feasible to double the local store to 512 KiB per SPU leaving the total die area devoted to the SPU processors roughly unchanged. In this scenario, the SPU area devoted to the local store would increase to 60% while other areas shrink by half. Going this route would reduce heat, and increase performance on memory intensive workloads, but without yielding IBM much if any reduction in cost of manufacture.
+
+[[Category:Cell BE architecture]]</body> </html>

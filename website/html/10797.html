@@ -1,0 +1,109 @@
+<html> <head> <title>Distributed lock manager</title></head><body>{{citations missing|datte=October 2010|date=October 2010}}
+A '''distributed lock manager''' (DLM) provides [[distributed programming|distributed]] [[software application]]s with a means to synchronize their accesses to [[shared resource]]s.
+
+DLMs have been used as the foundation for several successful [[clustered file syste]]ms, in which the machines in a [[computer cluster|cluster]] can use each other's storage via a unified [[file system]], with significant advantages for performance and [[high-availability|availability]]. The main performance benefit comes from solving the problem of [[cache coherency|disk cache coherency]] between participating computers. The DLM is used not only for [[file locking]] but also for coordination of all [[disk (storage device)|disk]] access. [[VMScluster]], the first clustering system to come into widespread use, relies on the [[OpenVMS]] DLM in just this way.
+
+==VMS Implementation==
+
+VMS was the first widely-available operating system to implement a DLM. This became available in Version 4, although the user interface was the same as the single-processor lock manager that was first implemented in Version 3.
+
+===Resources===
+
+The DLM uses a generalised concept of a '''resource''', which is some entity to which shared access must be controlled. This can relate to a file, a record, an area of shared memory, or anything else that the [[application software|application]] designer chooses. A hierarchy of resources may be defined, so that a number of levels of locking can be implemented. For instance, a hypothetical [[database]] might define a resource hierarchy as follows:
+
+*Database
+*Table
+*Record
+*Field
+
+A [[process (computing)|process]] can then acquire locks on the database as a whole, and then on particular parts of the database. A lock must be obtained on a parent resource before a subordinate resource can be locked.
+
+===Lock Modes===
+
+A process running within a VMSCluster may obtain a lock on a resource. There are six lock modes that can be granted, and these determine the level of exclusivity of access to the resource. Once a lock has been granted, it is possible to convert the lock to a higher or lower level of lock mode. When all processes have unlocked a resource, the system's information about the resource is destroyed.
+
+*Null Lock (NL). Indicates interest in the resource, but does not prevent other processes from locking it. It has the advantage that the resource and its [[#Lock value block|lock value block]] are preserved, even when no processes are locking it.
+
+*Concurrent Read (CR). Indicates a desire to read (but not update) the resource. It allows other processes to read or update the resource, but prevents others from having exclusive access to it. This is usually employed on high-level resources, in order that more restrictive locks can be obtained on subordinate resources.
+
+*Concurrent Write (CW). Indicates a desire to read and update the resource. It also allows other processes to read or update the resource, but prevents others from having exclusive access to it. This is also usually employed on high-level resources, in order that more restrictive locks can be obtained on subordinate resources.
+
+*Protected Read (PR). This is the traditional ''share lock'', which indicates a desire to read the resource but prevents other from updating it. Others can however also read the resource.
+
+*Protected Write (PW). This is the traditional ''update lock'', which indicates a desire to read and update the resource and prevents others from updating it. Others with Concurrent Read access can however read the resource.
+
+*Exclusive (EX). This is the traditional ''exclusive lock'' which allows read and update access to the resource, and prevents others from having any access to it.
+
+The following [[truth table]] shows the compatibility of each lock mode with the others:
+
+{| class="wikitable"
+|-
+! Mode || NL || CR || CW || PR || PW || EX
+|-
+! NL
+| {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}}
+|-
+! CR
+| {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{Yes}} || {{No}}
+|-
+! CW
+| {{Yes}} || {{Yes}} || {{Yes}} || {{No}} || {{No}} || {{No}}
+|-
+! PR
+| {{Yes}} || {{Yes}} || {{No}} || {{Yes}} || {{No}} || {{No}}
+|-
+! PW
+| {{Yes}} || {{Yes}} || {{No}} || {{No}} || {{No}} || {{No}}
+|-
+! EX
+| {{Yes}} || {{No}} || {{No}} || {{No}} || {{No}} || {{No}}
+|}
+
+===Obtaining a lock===
+
+A process can obtain a lock on a resource by ''enqueueing'' a lock request. This is similar to the [[QIO]] technique that is used to perform I/O. The enqueue lock request can either complete synchronously, in which case the process waits until the lock is granted, or asynchronously, in which case an [[Asynchronous System Trap|AST]] occurs when the lock has been obtained.
+
+It is also possible to establish a ''blocking AST'', which is triggered when a process has obtained a lock that is preventing access to the resource by another process. The original process can then optionally take action to allow the other access (e.g. by demoting or releasing the lock).
+
+===Lock value block===
+
+A lock value block is associated with each resource. This can be read by any process that has obtained a lock on the resource (other than a null lock) and can be updated by a process that has obtained a protected update or exclusive lock on it.
+
+It can be used to hold any information about the resource that the application designer chooses. A typical use is to hold a ''version number'' of the resource. Each time the associated entity (e.g. a database record) is updated, the holder of the lock increments the lock value block. When another process wishes to read the resource, it obtains the appropriate lock and compares the current lock value with the value it had last time the process locked the resource. If the value is the same, the process knows that the associated entity has not been updated since last time it read it, and therefore it is unnecessary to read it again. Hence, this technique can be used to implement various types of [[cache]] in a database or similar application.
+
+===Deadlock detection===
+
+When one or more processes have obtained locks on resources, it is possible to produce a situation where each is preventing another from obtaining a lock, and none of them can proceed. This is known as a ''deadly embrace'' or [[deadlock]].
+
+A simple example is when Process 1 has obtained an exclusive lock on Resource A, and Process 2 has obtained an exclusive lock on Resource B. If Process 1 then tries to lock Resource B, it will have to wait for Process 2 to release it. But if Process 2 then tries to lock Resource A, both processes will wait forever for each other.
+
+The OpenVMS DLM periodically checks for deadlock situations. In the example above, the second lock enqueue request of one of the processes would return with a deadlock status. It would then be up to this process to take action to resolve the deadlock &mdash; in this case by releasing the first lock it obtained.
+
+==Linux clustering==
+
+Both [[Red Hat]] and [[Oracle Corporation|Oracle]] have developed clustering software for [[Linux]].
+
+[[OCFS|OCFS2]], the Oracle Cluster File System was added<ref>http://www.kernel.org/git/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=29552b1462799afbe02af035b243e97579d63350</ref> to the official [[Linux kernel]] with version 2.6.16, in January 2006. The alpha-quality code warning on OCFS2 was removed in 2.6.19.
+
+Red Hat's cluster software, including their DLM and [[Global File System]] was officially added to the Linux kernel <ref>http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=1c1afa3c053d4ccdf44e5a4e159005cdfd48bfc6</ref> with version 2.6.19, in November 2006.
+
+Both systems use a DLM modeled on the venerable VMS DLM.<ref>http://lwn.net/Articles/137278/</ref> Oracle's DLM has a simpler API. (the core function, <code>dlmlock()</code>, has eight parameters, whereas the VMS <small><code>SYS$ENQ</code></small> service and Red Hat's <tt>dlm_lock</tt> both have 11.)
+
+==Google's Chubby lock service==
+[[Google]] has developed ''Chubby'', a lock service for loosely-coupled distributed systems<ref name="chubby">http://labs.google.com/papers/chubby.html</ref>. It is designed for coarse-grained locking and also provides a limited but reliable distributed file system. Key parts of Google's infrastructure, including [[Google File System]], [[BigTable]], and [[MapReduce]], use Chubby to synchronize accesses to shared resources. Though Chubby was designed as a lock service, it is now heavily used inside Google as a [[name server]], supplanting [[Domain name system|DNS]]<ref name="chubby" />.
+
+==SSI Systems==
+
+A DLM is also a key component of more ambitious [[Single-system image|single system image]] projects such as [[OpenSSI]].
+
+==References==
+{{Reflist}}
+{{Refbegin}}
+*[http://h71000.www7.hp.com/doc/82FINAL/4527/4527pro_044.html#jun_227 HP OpenVMS Systems Services Reference Manual &ndash; $ENQ]
+*[http://www.arcs.us ARCS - A Web Service used as a Distributed Lock Manager]
+{{Refend}}
+
+{{DEFAULTSORT:Distributed Lock Manager}}
+[[Category:Distributed computing architecture]]
+
+[[ja:分散ロックマネージャ]]</body> </html>

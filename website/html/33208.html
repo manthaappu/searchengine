@@ -1,0 +1,134 @@
+<html> <head> <title>Satisfiability Modulo Theories</title></head><body>In [[computer science]], the '''Satisfiability Modulo Theories (SMT) problem''' is a [[decision problem]] for logical formulas with respect to combinations of background [[Theory (mathematical logic)|theories]] expressed in classical [[first-order logic]] with equality. Examples of theories typically used in computer science are the theory of [[real numbers]], the theory of [[integers]], and the theories of various [[data structure]]s such as [[List (computing)|list]]s, [[Array data structure|arrays]], [[bit vector]]s and so on.
+
+==Basic terminology==
+Formally speaking, an SMT instance is a [[formula]] in [[first-order logic]], where some function and predicate symbols have additional interpretations, and SMT is the problem of determining whether such a formula is satisfiable. In other words, imagine an instance of the [[Boolean satisfiability problem]] (SAT) in which some of the binary variables are replaced by [[predicate (mathematical logic)|predicate]]s over a suitable set of non-binary variables. A predicate is basically a binary-valued function of non-binary variables. Example predicates include linear [[inequality (mathematics)|inequalities]] (e.g., 
+<math>3x+ 2y - z \geq 4</math>) or equalities involving so-called uninterpreted terms and function symbols (e.g., <math>f(f(u, v), v) = f(u, v)</math> where <math>f</math> is some unspecified function of two unspecified arguments.) These predicates are classified according to the theory they belong to. For instance, linear inequalities over real variables are evaluated using the rules of the theory of linear real [[arithmetic]], whereas predicates involving uninterpreted terms and function symbols are evaluated using the rules of the theory of [[uninterpreted function]]s with equality (sometimes referred to as the empty theory <ref>http://www.csl.sri.com/users/demoura/smt-comp/introduction.shtml</ref>). Other theories include the theories of [[array data structure|arrays]] and [[List (computing)|list]] structures (useful for modeling and verifying [[software program]]s), and the theory of [[bit vectors]] (useful in modeling and verifying 
+[[hardware design]]s). Subtheories are also possible: for example, difference logic is a sub-theory of linear arithmetic in which each inequality is restricted to have the form <math>x - y \leq c</math> for variables <math>x</math> and <math>y</math> and constant <math>c</math>.
+
+Most SMT solvers support only quantifier free fragments of their logics.
+
+==Expressive power of SMT==
+An SMT instance is a generalization of a [[Boolean satisfiability problem|Boolean SAT]] instance in which various sets of variables are replaced by [[predicate (mathematical logic)|predicate]]s from a variety of underlying theories. Obviously, SMT formulas provide a much richer modeling [[language]] than is possible with Boolean SAT formulas. For example, an SMT formula allows us to model the [[datapath]] operations of a [[microprocessor]] at the word rather than the bit level.
+
+==SMT solvers==
+Early attempts for solving SMT instances involved translating them to Boolean SAT instances (e.g., a 32-bit integer variable would be encoded by 32 bit variables with appropriate weights and word-level operations such as 'plus' would be replaced by lower-level logic operations on the bits) and passing this formula to a Boolean SAT solver. This approach, which is referred to as ''the eager approach'', has its merits: by pre-processing the SMT formula into an equivalent Boolean SAT formula we can use existing Boolean SAT solvers "as-is" and leverage their performance and capacity improvements over time. On the other hand, the loss of the high-level semantics of the underlying theories means that the Boolean SAT solver has to work a lot harder than necessary to discover "obvious" facts (such as <math>x + y = y + x</math> for integer addition.) This observation led to the development of a number of SMT solvers that tightly integrate the Boolean reasoning of a [[DPLL algorithm|DPLL]]-style search with theory-specific solvers (''T-solvers'') that handle [[Logical conjunction|conjunctions]] (ANDs) of predicates from a given theory. This approach is referred to as ''the lazy approach''.
+
+Dubbed DPLL(T) {{Harv|Nieuwenhuis|Oliveras|Tinelli|2006}} , this architecture gives the responsibility of Boolean reasoning to the DPLL-based SAT solver which, in turn, interacts with a solver for theory T through a well-defined interface. The theory solver need only worry about checking the feasibility of conjunctions of theory predicates passed on to it from the SAT solver as it explores the Boolean search space of the formula. For this integration to work well, however, the theory solver must be able to participate in propagation and conflict analysis, i.e., it must be able to infer new facts from already established facts, as well as to supply succinct explanations of infeasibility when theory conflicts arise. In other words, the theory solver must be incremental and [[Backtracking|backtrackable]].
+
+CVC (for Cooperating Validity Checker) is an automatic theorem prover for the Satisfiability Modulo Theories problem.
+It was developed originally by the [http://verify.stanford.edu Stanford Verification Group] as a successor to the [http://verify.stanford.edu/SVC/ Stanford Validity Checker], but is now maintained primarily by researchers at [[New York University]] and the [[University of Iowa]]. Its latest release is version 3.0 or CVC3. Previous releases were called CVC Lite (v2.0) and CVC (v1.0).
+
+==SMT for undecidable theories==
+Most of the common SMT approaches support [[Decidability (logic)|decidable]] theories. However, many real-world systems can only be modelled by means of non-linear arithmetic over the real numbers involving [[transcendental function]]s, e.g. an aircraft and its behavior. This fact motivates an extension of the SMT problem to non-linear theories, e.g. determine whether
+
+: <math>
+\begin{align}
+& (\sin(x)^3 = \cos(\log(y)\cdot x) \vee b \vee -x^2 \geq 2.3y) \\
+& \wedge \left(\neg b \vee y < -34.4 \vee \exp(x) > {y \over x}\right)
+\end{align}
+</math>
+
+where
+
+: <math>b \in {\mathbb B}, x,y \in {\mathbb R}</math>
+
+is satisfiable. Then, such problems become [[undecidable problem|undecidable]] in general.  (It is important to note, however, that the theory of [[real closed field]]s, and thus the full first order theory of the [[real number]]s, are [[Decidability (logic)|decidable]] using [[quantifier elimination]].  This is due to [[Alfred Tarski]].)  The first order theory of the [[natural numbers]] with addition (but not multiplication), called [[Presburger arithmetic]], is also decidable.  Since multiplication by constants can be implemented as nested additions, the arithmetic in many computer programs can be expressed using Presburger arithmetic, resulting in decidable formulas.
+
+Examples of SMT solvers addressing Boolean combinations of theory atoms from undecidable arithmetic theories over the reals are ABsolver {{Harv|Bauer|Pister|Tautschnig|2007}}, which employs a classical DPLL(T) architecture with a non-linear optimization packet as (necessarily incomplete) subordinate theory solver, and [[HySAT|HySAT-2]], building on a unification of DPLL SAT-solving and [[Interval arithmetic#Interval arithmetic|interval constraint propagation]] called the iSAT algorithm {{Harv|Fränzle|Herde|Ratschan|Schubert|2007}}.
+
+==External links==
+* [http://smtlib.org/ SMT-LIB: The Satisfiability Modulo Theories Library]
+* [http://www.smtcomp.org SMT-COMP: The Satisfiability Modulo Theories Competition]
+* [http://www.decision-procedures.org: Decision procedures - an algorithmic point of view]
+
+==SMT solvers==
+* [http://absolver.sourceforge.net/ ABsolver]
+* [http://www.lsi.upc.edu/~oliveras/bclt-main.html Barcelogic]
+* [http://uclid.eecs.berkeley.edu/newwiki/beaver/start Beaver]
+* [http://fmv.jku.at/boolector/index.html Boolector]
+* [http://www.cs.nyu.edu/acsys/cvc3/ CVC3]
+* [http://sourceforge.net/projects/dpt The Decision Procedure Toolkit (DPT)]
+* [http://ergo.lri.fr/ Alt-Ergo]
+* [http://hysat.informatik.uni-oldenburg.de/ HySAT]
+* [http://mathsat4.disi.unitn.it/ MathSAT]
+* [http://verify.inf.unisi.ch/opensmt OpenSMT, an Open-source lazy SMT Solver]
+* [http://vlsi.colorado.edu/~hhkim/sateen/ SatEEn]
+* [http://www.informatik.uni-bremen.de/~florian/sonolar/ SONOLAR]
+* [http://www.cs.ubc.ca/~babic/index_spear.htm Spear]
+* [http://sites.google.com/site/stpfastprover/ STP]
+* [http://www.informatik.uni-bremen.de/agra/eng/sword.php SWORD]
+* [http://www.verit-solver.org/ veriT]
+* [http://yices.csl.sri.com/ Yices]
+* [http://research.microsoft.com/projects/z3/ Z3]
+
+==References==
+# {{Citation
+  | first = A.
+  | last = Bauer
+  | authorlink =
+  | first2 = M.
+  | last2 = Pister
+  | first3 = M.
+  | last3 = Tautschnig
+  | contribution = Tool-support for the analysis of hybrid systems and models
+  | title = Proceedings of the 2007 Conference on Design, Automation and Test in Europe (DATE'07)
+  | publisher = IEEE Computer Society
+  | year = 2007
+  | doi = 10.1109/DATE.2007.364411
+  | page = 1
+  }}
+# Vijay Ganesh, [http://people.csail.mit.edu/vganesh/Publications_files/vg2007-PhD-STANFORD.pdf Decision Procedures for Bit-Vectors, Arrays and Integers], Computer Science Department, Stanford University, Stanford, CA, USA, Sept 2007 --[Link is broken]
+# Susmit Jha , Rhishikesh Limaye, and Sanjit A. Seshia. [http://dx.doi.org/10.1007/978-3-642-02658-4_53 Beaver: Engineering an efficient SMT solver for bit-vector arithmetic.] In  Proceedings of 21st International Conference on Computer-Aided Verification , pages 668-674, 2009. 
+# R. E. Bryant, S. M. German, and M. N. Velev, "Microprocessor Verification Using Efficient Decision Procedures for a Logic of Equality with Uninterpreted Functions," in Analytic Tableaux and Related Methods, pp. 1&ndash;13, 1999.
+# M. Davis and H. Putnam, {{doi-inline|10.1145/321033.321034|A Computing Procedure for Quantification Theory}}, Journal of the Association for Computing Machinery, vol. 7, no., pp. 201&ndash;215, 1960.
+# M. Davis, G. Logemann, and D. Loveland, {{doi-inline|10.1145/368273.368557|A Machine Program for Theorem-Proving}}, Communications of the ACM, vol. 5, no. 7, pp. 394&ndash;397, 1962.
+# {{Citation
+    | first = M.
+    | last = Fränzle
+    | first2 = C. 
+    | last2 = Herde
+    | first3 = S.
+    | last3 = Ratschan
+    | first4 =  T.
+    | last4  = Schubert
+    | first5 = T.
+    | last5 = Teige
+    | url = http://jsat.ewi.tudelft.nl/content/volume1/JSAT1_11_Fraenzle.pdf
+    | contribution = Efficient Solving of Large Non-linear Arithmetic Constraint Systems with Complex Boolean Structure
+    | title = JSAT Special Issue on SAT/CP Integration
+    | volume =1
+    | pages = 209&ndash;236
+    | year = 2007 }}
+# D. Kroening and O. Strichman, Decision Procedures &mdash; an algorithmic point of view (2008),  Springer (Theoretical Computer Science series) ISBN 978-3540741046.
+# G.-J. Nam, K. A. Sakallah, and R. Rutenbar, {{doi-inline|10.1109/TCAD.2002.1004311|A New FPGA Detailed Routing Approach via Search-Based Boolean Satisfiability}}, IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 21, no. 6, pp. 674&ndash;684, 2002.
+# {{Citation
+    | first = R.
+    | last = Nieuwenhuis
+    | first2 = A. 
+    | last2 = Oliveras
+    | first3 = C.
+    | last3 = Tinelli
+    | url = ftp://ftp.cs.uiowa.edu/pub/tinelli/papers/NieOT-JACM-06.pdf
+    | contribution = Solving SAT and SAT Modulo Theories: From an Abstract Davis-Putnam-Logemann-Loveland Procedure to DPLL(T)
+    | title = Journal of the ACM
+    | volume = 53
+    | pages = 937&ndash;977.
+    | year = 2006
+| issue=6}}
+
+----
+''This article is adapted from a column in the ACM [http://www.sigda.org SIGDA]  [http://www.sigda.org/newsletter/index.html e-newsletter] by [http://www.eecs.umich.edu/~karem Prof. Karem Sakallah] <br>
+Original text is available here <ref>http://www.sigda.org/newsletter/2006/eNews_061215.html</ref>.''
+
+
+== References ==
+<references />
+[[Category:Logic in computer science]]
+[[Category:Constraint satisfaction]]
+[[Category:NP-complete problems]]
+[[Category:Formal methods]]
+[[Category:Electronic design automation]]
+[[Category:Satisfiability problems]]
+
+[[fr:Satisfiability Modulo Theories (SMT)]]
+[[ru:Satisfiability Modulo Theories]]</body> </html>

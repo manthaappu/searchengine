@@ -1,0 +1,194 @@
+<html> <head> <title>Covariance matrix</title></head><body>[[Image:Gaussian-2d.png|thumb|right|A [[multivariate Gaussian distribution|bivariate Gaussian probability density function]] centered at (0,0), with covariance matrix [ 1.00, .50 ; .50, 1.00 ]. ]]
+In [[probability theory]] and [[statistics]], a '''covariance matrix''' is a [[Matrix (mathematics)|matrix]] whose element in the ''i'', ''j'' position is the [[covariance]] between the ''i'' <sup>th</sup> and ''j'' <sup>th</sup> elements of a [[random vector]] (that is, of a [[Euclidean vector |vector]] of [[random variable]]s).
+
+== Definition ==
+
+If the entries in the [[column vector]]
+
+:<math> \mathbf{X} = \begin{bmatrix}X_1 \\  \vdots \\ X_n \end{bmatrix}</math>
+
+are [[random variable]]s, each with finite variance, then the covariance matrix Σ is the matrix whose (''i'', ''j'') entry is the [[covariance]]
+
+:<math>
+\Sigma_{ij}
+= \mathrm{cov}(X_i, X_j) = \mathrm{E}\begin{bmatrix}
+(X_i - \mu_i)(X_j - \mu_j)
+\end{bmatrix}
+</math>
+
+where 
+
+: <math>
+\mu_i = \mathrm{E}(X_i)\,
+</math>
+
+is the [[expected value]] of the ''i''th entry in the vector ''X''.  In other words, we have
+
+: <math>
+\Sigma
+= \begin{bmatrix}
+ \mathrm{E}[(X_1 - \mu_1)(X_1 - \mu_1)] & \mathrm{E}[(X_1 - \mu_1)(X_2 - \mu_2)] & \cdots & \mathrm{E}[(X_1 - \mu_1)(X_n - \mu_n)] \\ \\
+ \mathrm{E}[(X_2 - \mu_2)(X_1 - \mu_1)] & \mathrm{E}[(X_2 - \mu_2)(X_2 - \mu_2)] & \cdots & \mathrm{E}[(X_2 - \mu_2)(X_n - \mu_n)] \\ \\
+ \vdots & \vdots & \ddots & \vdots \\ \\
+ \mathrm{E}[(X_n - \mu_n)(X_1 - \mu_1)] & \mathrm{E}[(X_n - \mu_n)(X_2 - \mu_2)] & \cdots & \mathrm{E}[(X_n - \mu_n)(X_n - \mu_n)]
+\end{bmatrix}.
+</math>
+
+The inverse of this matrix, <math>\Sigma^{-1}</math>, is the '''inverse covariance matrix''', aka the '''concentration matrix''' or '''precision matrix'''.<ref>{{cite book | title=All of Statistics: A Concise Course in Statistical Inference | first=Larry | last=Wasserman | year=2004}}</ref> The elements of the precision matrix have an interpretation in terms of [[partial correlation]]s and [[partial variance]]s.
+
+=== Generalization of the variance ===
+
+The definition above is equivalent to the matrix equality
+
+:<math>
+\Sigma=\mathrm{E}
+\left[
+ \left(
+ \textbf{X} - \mathrm{E}[\textbf{X}]
+ \right)
+ \left(
+ \textbf{X} - \mathrm{E}[\textbf{X}]
+ \right)^\top
+\right]
+</math>
+
+This form can be seen as a generalization of the scalar-valued [[variance]] to higher dimensions.  Recall that for a scalar-valued random variable ''X''
+
+:<math>
+\sigma^2 = \mathrm{var}(X)
+= \mathrm{E}[(X-\mu)^2], \,
+</math>
+
+where
+
+: <math>\mu = \mathrm{E}(X).\,</math>
+
+==Conflicting nomenclatures and notations==
+Nomenclatures differ. Some statisticians, following the probabilist [[William Feller]], call this matrix the '''variance''' of the random vector <math>X</math>, because it is the natural generalization to higher dimensions of the 1-dimensional variance. Others call it the '''covariance matrix''', because it is the matrix of covariances between the scalar components of the vector <math>X</math>.  Thus
+:<math>
+\operatorname{var}(\textbf{X})
+=
+\operatorname{cov}(\textbf{X})
+=
+\mathrm{E}
+\left[
+ (\textbf{X} - \mathrm{E} [\textbf{X}])
+ (\textbf{X} - \mathrm{E} [\textbf{X}])^\top
+\right].
+</math>
+
+However, the notation for the [[cross-covariance]] ''between'' two vectors is standard:
+:<math>
+\operatorname{cov}(\textbf{X},\textbf{Y})
+=
+\mathrm{E}
+\left[
+ (\textbf{X} - \mathrm{E}[\textbf{X}])
+ (\textbf{Y} - \mathrm{E}[\textbf{Y}])^\top
+\right].
+</math>
+
+The var notation is found in William Feller's two-volume book ''An Introduction to Probability Theory and Its Applications'', but both forms are quite standard and there is no ambiguity between them.
+
+The matrix <math>\Sigma</math> is also often called the variance-covariance matrix since the diagonal terms are in fact variances.
+
+== Properties ==
+For <math>\Sigma=\mathrm{E} \left[ \left( \textbf{X} - \mathrm{E}[\textbf{X}] \right) \left( \textbf{X} - \mathrm{E}[\textbf{X}] \right)^\top \right]</math> and <math> \mu = \mathrm{E}(\textbf{X})</math>, where ''X'' is a random ''p''-dimensional variable and ''Y'' a random  ''q''-dimensional variable, the following basic properties apply:
+# <math> \Sigma = \mathrm{E}(\mathbf{X X^\top}) - \mathbf{\mu}\mathbf{\mu^\top} </math>
+# <math> \Sigma \,</math> is [[Positive-semidefinite matrix|positive-semidefinite]]
+# <math> \operatorname{var}(\mathbf{A X} + \mathbf{a}) = \mathbf{A}\, \operatorname{var}(\mathbf{X})\, \mathbf{A^\top} </math>
+# <math> \operatorname{cov}(\mathbf{X},\mathbf{Y}) = \operatorname{cov}(\mathbf{Y},\mathbf{X})^\top</math>
+# <math> \operatorname{cov}(\mathbf{X}_1 + \mathbf{X}_2,\mathbf{Y}) = \operatorname{cov}(\mathbf{X}_1,\mathbf{Y}) + \operatorname{cov}(\mathbf{X}_2, \mathbf{Y})</math>
+# If ''p'' = ''q'', then <math>\operatorname{var}(\mathbf{X} + \mathbf{Y}) = \operatorname{var}(\mathbf{X}) + \operatorname{cov}(\mathbf{X},\mathbf{Y}) + \operatorname{cov}(\mathbf{Y}, \mathbf{X}) + \operatorname{var}(\mathbf{Y})</math>
+# <math>\operatorname{cov}(\mathbf{AX}, \mathbf{B}^\top\mathbf{Y}) = \mathbf{A}\, \operatorname{cov}(\mathbf{X}, \mathbf{Y}) \,\mathbf{B}</math>
+# If <math>\mathbf{X}</math> and <math>\mathbf{Y}</math> are independent, then <math>\operatorname{cov}(\mathbf{X}, \mathbf{Y}) = 0</math>
+
+where <math>\mathbf{X}, \mathbf{X}_1</math> and <math>\mathbf{X}_2</math> are random ''p''×1 vectors, <math>\mathbf{Y}</math> is a random ''q''×1 vector, <math>\mathbf{a}</math> is ''q''×1 vector, <math>\mathbf{A}</math> and <math>\mathbf{B}</math> are ''q''×''p'' matrices.
+
+This covariance matrix is a useful tool in many different areas. From it a [[transformation matrix]] can be derived that allows one to completely decorrelate the data or, from a different point of view, to find an optimal basis for representing the data in a compact way (see [[Rayleigh quotient]] for a formal proof and additional properties of covariance matrices).
+This is called [[principal components analysis]] (PCA) and [[Karhunen-Loève transform]] (KL-transform).
+
+==As a linear operator==
+Applied to one vector, the covariance matrix maps a linear combination, '''c''', of the random variables, '''X''', onto a vector of covariances with those variables: <math>\mathbf c^\top\Sigma = \operatorname{cov}(\mathbf c^\top\mathbf X,\mathbf X)</math>.  Treated as a [[2-form]], it yields the covariance between the two linear combinations: <math>\mathbf d^\top\Sigma\mathbf c=\operatorname{cov}(\mathbf d^\top\mathbf X,\mathbf c^\top\mathbf X)</math>.  The variance of a linear combination is then <math>\mathbf c^\top\Sigma\mathbf c</math>, its covariance with itself.
+
+Similarly, the (pseudo-)inverse covariance matrix provides an inner product, <math>\langle c-\mu|\Sigma^+|c-\mu\rangle</math> which induces the [[Mahalanobis distance]], a measure of the "unlikelihood" of ''c''.
+
+==Which matrices are covariance matrices?==
+
+From the identity just above (let <math>\mathbf{b}</math> be a <math>(p \times 1)</math> real-valued vector)
+
+:<math>\operatorname{var}(\mathbf{b}^\top\mathbf{X}) = \mathbf{b}^\top \operatorname{var}(\mathbf{X}) \mathbf{b},\,</math>
+
+the fact that the variance of any real-valued random variable is nonnegative, and the symmetry of the covariance matrix's definition it follows that only a [[positive-semidefinite matrix]] can be a covariance matrix.  The answer to the converse question, whether ''every'' positive semi-definite matrix is a covariance matrix, is "yes."  To see this, suppose ''M'' is a ''p''&times;''p'' positive-semidefinite matrix.  From the finite-dimensional case of the [[spectral theorem]], it follows that ''M'' has a nonnegative symmetric square root, which let us call ''M''<sup>1/2</sup>.  Let <math>\mathbf{X}</math> be any ''p''&times;1 column vector-valued random variable whose covariance matrix is the ''p''&times;''p'' identity matrix.  Then
+
+:<math>\operatorname{var}(M^{1/2}\mathbf{X}) = M^{1/2} (\operatorname{var}(\mathbf{X})) M^{1/2} = M.\,</math>
+
+==How to find a valid covariance matrix==
+
+In some applications (e.g. building data models from only partially observed data) one wants to find the “nearest” covariance matrix to a given symmetric matrix (e.g. of observed covariances). In 2002, Higham<ref> {{cite journal|title=Computing the nearest correlation matrix—a problem from finance|journal=IMA Journal of Numerical Analysis|date=|first=Nicholas J.|last=Higham|coauthors=|volume=22|issue=3|pages=329&ndash;343|doi= 10.1093/imanum/22.3.329|url=|format=|accessdate=2009-03-09 }}</ref> formalized the notion of nearness using a weighted [[Frobenius norm]] and provided a method for computing the nearest covariance matrix.
+
+==Complex random vectors==
+The variance of a [[complex number|complex]] scalar-valued random variable with expected value μ is conventionally defined using [[complex conjugation]]:
+
+:<math>
+\operatorname{var}(z)
+=
+\operatorname{E}
+\left[
+ (z-\mu)(z-\mu)^{*}
+\right]
+</math>
+
+where the complex conjugate of a complex number <math>z</math> is denoted <math>z^{*}</math>; thus the variance of a complex number is a real number.
+
+If <math>Z</math> is a column-vector of complex-valued random variables, then we take the [[conjugate transpose]] by ''both'' transposing and conjugating, getting a square matrix:
+
+:<math>
+\operatorname{E}
+\left[
+ (Z-\mu)(Z-\mu)^{H}
+\right]
+</math>
+
+where <math>Z^{H}</math> denotes the conjugate transpose, which is applicable to the scalar case since the transpose of a scalar is still a scalar.  The matrix so obtained will be [[Hermitian matrix|Hermitian]] [[Positive-semidefinite matrix|positive-semidefinite]] <ref>http://www.ee.ic.ac.uk/hp/staff/dmb/matrix/expect.html</ref>, with real numbers in the main diagonal and complex numbers off-diagonal.
+
+==Estimation==
+The derivation of the maximum-likelihood estimator of the covariance matrix of a [[multivariate normal distribution]] is perhaps surprisingly subtle.
+See [[estimation of covariance matrices]].
+
+==Probability density function==
+
+The [[probability density function]] of a set of <math>n</math> correlated random variables, the joint probability function of which is a function of an ''n''-order Gaussian vector, is given on the [[Maximum likelihood]] page.
+
+== See also ==
+*[[Estimation of covariance matrices]]
+*[[Multivariate statistics]]
+*[[Sample mean and covariance|Sample covariance matrix]]
+*[[Gramian matrix]]
+*[[Eigenvalue decomposition]]
+*[[Quadratic form (statistics)]]
+
+== References ==
+<references/>
+* {{mathworld|urlname=CovarianceMatrix|title= Covariance Matrix}}
+* N.G. van Kampen, ''Stochastic processes in physics and chemistry''. New York: North-Holland, 1981.
+
+[[Category:Covariance and correlation]]
+[[Category:Matrices]]
+[[Category:Summary statistics]]
+[[Category:Data analysis]]
+
+[[de:Kovarianzmatrix]]
+[[es:Matriz de covarianza]]
+[[fa:ماتریس کوواریانس]]
+[[fr:Matrice de variance-covariance]]
+[[it:Matrice delle covarianze]]
+[[nl:Covariantiematrix]]
+[[ja:分散共分散行列]]
+[[pl:Macierz kowariancji]]
+[[pt:Matriz de covariância]]
+[[ru:Ковариационная матрица]]
+[[tr:Kovaryans matrisi]]
+[[uk:Коваріаційна матриця]]
+[[vi:Ma trận hiệp phương sai]]
+[[zh:协方差矩阵]]</body> </html>

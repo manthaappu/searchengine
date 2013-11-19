@@ -1,0 +1,153 @@
+<html> <head> <title>Quantum error correction</title></head><body>'''Quantum error correction''' is used in [[Quantum computer|quantum computing]] to protect [[quantum information]] from errors due to [[decoherence]] and other quantum [[noise]].  Quantum error correction is essential if one is to achieve fault-tolerant quantum computation that can deal not only with noise on stored quantum information, but also with faulty quantum gates, faulty quantum preparation, and faulty measurements.
+
+Classical [[error correction]] employs [[Redundancy (information theory)|redundancy]]. The simplest way is to store the information multiple times, and—if these copies are later found to disagree—just take a majority vote; e.g. 
+Suppose we copy a bit three times. Suppose further that a noisy error corrupts the three-bit state so that one bit is equal to zero but the other two are equal to one. We also assume that noisy errors are independent and occur with some probability p. It is most likely that the error is a single-bit error and the transmitted message is three ones. It is possible that a double-bit error occurs and the transmitted message is equal to three zeros, but this outcome is less likely than the above outcome.
+
+Copying quantum information is not possible due to the [[no-cloning theorem]]. This theorem seems to present an obstacle to formulating a theory of quantum error correction. But it is possible to ''spread'' the information of one [[qubit]] onto a highly-entangled state of several (''physical'') qubits. Peter Shor first discovered this method of formulating a ''quantum error correcting code'' by storing the information of one qubit onto a highly-entangled state of nine qubits. A quantum error correcting code protects quantum information against errors of a limited form.
+
+Classical error correcting codes use a ''syndrome measurement'' to diagnose which error corrupts an encoded state. We then reverse an error by applying a corrective operation based on the syndrome. Quantum error correction also employs syndrome measurements. We perform a multi-qubit measurement that does not disturb the quantum information in the encoded state but retrieves information about the error. A syndrome measurement can determine whether a qubit has been corrupted, and if so, which one. What is more, the outcome of this operation (the ''syndrome'') tells us not only which physical qubit was affected, but also, in which of several possible ways it was affected.  The latter is counter-intuitive at first sight: Since noise is arbitrary, how can the effect of noise be one of only few distinct possibilities? In most codes, the effect is either a bit flip, or a sign (of the [[phase (waves)|phase]]) flip, or both (corresponding to the [[Pauli matrices]] ''X'', ''Z'', and ''Y''). The reason is that the measurement of the syndrome has the [[projective]] effect of a [[quantum measurement]]. So even if the error due to the noise was arbitrary, it can be expressed as a [[quantum superposition|superposition]] of [[basis]] operations—the ''error basis'' (which is here given by the Pauli matrices and the [[identity (mathematics)|identity]]).  
+The syndrome measurement "forces" the qubit to "decide" for a certain specific "Pauli error" to "have happened", and the syndrome tells us which, so that we can let the same Pauli operator act again on the corrupted qubit to revert the effect of the error.
+
+The syndrome measurement tells us as much as possible about the error that has happened, but ''nothing'' at all about the ''value'' that is stored in the logical qubit—as otherwise the measurement would destroy any [[quantum superposition]] of this logical qubit with other qubits in the [[quantum computer]].
+
+==The bit flip code==
+
+The repetition code works in a classical channel, because classical bits are easy to measure and to repeat. However, in a quantum channel, it is no longer possible, due to the [[no-cloning theorem]], which forbids the creation of identical copies of an arbitrary unknown quantum state. So a single qubit can not be repeated three times as in the previous example, as any measurement of the qubit will change its [[wave function]]. Nevertheless, in a quantum computer, there is another method, which is called the three qubits bit flip code. It uses entanglement and syndrome measurements, and can perform the similar results to the repetition code.
+
+[[Image:Quantum error correction of bit flip using three qubits.svg‎|350px|thumb|right|[[Quantum circuit]] of the bit flip code]]
+Let <math>|\psi\rangle = \alpha_0|0\rangle + \alpha_1|1\rangle</math> be an arbitrary qubit. The first step of the three qubit bit flip code is to entangle the qubit with two other qubits using two [[Controlled NOT gate|CNOT gates]] with input <math>|0\rangle</math>.<ref>{{cite journal
+  | author = [[Michael A. Nielsen]] and [[Isaac L. Chuang]]
+  | title = Quantum Computation and Quantum Information
+  | journal = Cambridge University Press
+  | year = 2000}}
+</ref> The result will be <math>|\psi'\rangle= \alpha_0 |000\rangle + \alpha_1|111\rangle. </math>
+This is just a tensor product of three qubits, and different from cloning a state.
+
+Now these qubits will be sent through a channel <math>E_{\text{bit}}</math> where we assume that at most one bit flip may occur. For example, in the case where the first qubit were be flipped, the result would be <math>|\psi'_r\rangle=\alpha_0|100\rangle + \alpha_1|011\rangle</math>. To diagnose bit flips in any of the three possible qubits, syndrome diagnosis is needed, which includes four projection operators:
+
+<math>P_0=|000\rangle\langle000|+|111\rangle\langle111|</math>
+
+<math>P_1=|100\rangle\langle100|+|011\rangle\langle011|</math>
+
+<math>P_2=|010\rangle\langle010|+|101\rangle\langle101|</math>
+
+<math>P_3=|001\rangle\langle001|+|110\rangle\langle110|</math>
+
+It can be obtained:
+
+<math>\langle\psi'_r|P_0|\psi'_r\rangle = 0</math>
+
+<math>\langle\psi'_r|P_1|\psi'_r\rangle = 1</math>
+
+<math>\langle\psi'_r|P_2|\psi'_r\rangle = 0</math>
+
+<math>\langle\psi'_r|P_3|\psi'_r\rangle = 0</math>
+
+So it will be known that the error syndrome corresponding to <math>P_1</math>.
+This three qubits bit flip code can correct one error if at most one bit-flip-error occurred in the channel. It is similar to the three bits repetition code in a classical computer.
+
+==The sign flip code==
+[[Image:Quantum error correction of phase flip using three qubits.svg|450px|thumb|right|[[Quantum circuit]] of the phase flip code]]
+Flipped bits are the only kind of error in classical computer, but there is another possibility of an error with quantum computers, the sign flip. Through the transmission in a channel the relative sign between <math>|0\rangle</math> and <math>|1\rangle</math> can become inverted. For instance, a qubit in the state <math>|-\rangle=(|0\rangle-|1\rangle)/\sqrt{2}</math> may have its sign flip to  <math>|+\rangle=(|0\rangle+|1\rangle)/\sqrt{2}.</math>
+
+The original state of the qubit
+
+<math>|\psi\rangle = \alpha_0|+\rangle+\alpha_1|-\rangle</math>
+
+will be changed into the state 
+
+<math>|\psi'\rangle = \alpha_0|+++\rangle+\alpha_1|---\rangle.</math>
+
+In the Hadamard basis, bit flips become sign flips and sign flips become bit flips. Let <math>E_\text{phase}</math> be a quantum channel that can cause a most one phase flip. Then the bit flip code from above can recover <math>|\psi\rangle</math> by transforming into the Hadamard basis before and after transmission through <math>E_\text{phase}</math>.
+
+==The Shor code==
+
+The error channel may induce either a bit flip, a sign flip, or both. It is possible to correct for both types of errors using one code, and the Shor code does just that. In fact, the Shor code corrects arbitrary single-qubit errors.
+
+[[Image:Shore code.svg‎|500px|thumb|right|[[Quantum circuit]] of the Shor code]]
+Let <math>E</math> be a quantum channel that can arbitrarily corrupt a single qubit. The 1st, 4th and 7th qubits are for the sign flip code, while the three group of qubits (1,2,3), (4,5,6), and (7,8,9) are designed for the bit flip code. With the Shor code, a qubit state <math>|\psi\rangle=\alpha_0|0\rangle+\alpha_1|1\rangle</math> will be transformed into the product of 9 qubits <math>|\psi'\rangle=\alpha_0|0_S\rangle+\alpha_1|1_S\rangle</math>, where
+
+: <math>|0_S\rangle=\frac{1}{2\sqrt{2}}(|000\rangle + |111\rangle) \otimes (|000\rangle + |111\rangle) \otimes (|000\rangle + |111\rangle)</math>
+
+: <math>|1_S\rangle=\frac{1}{2\sqrt{2}}(|000\rangle - |111\rangle) \otimes (|000\rangle - |111\rangle) \otimes (|000\rangle - |111\rangle)</math>
+
+If a bit flip error happens to a qubit, the syndrome analysis will be performed on each set of states (1,2,3), (4,5,6), and (7,8,9), then correct the error.
+
+If the three bit flip group (1,2,3), (4,5,6), and (7,8,9) are considered as three inputs, then the Shor code circuit can be reduced as a sign flip code. This means that the Shor code can also repair sign flip error for a single qubit<ref>{{cite journal
+  | last = W.Shor
+  | first = Peter
+  | authorlink = Peter W. Shor
+  | title = Scheme for reducing decoherence in quantum computer memory
+  | journal = AT&T Bell Laboratories
+  | url = http://link.aps.org/abstract/PRA/v52/pR2493
+  | year = 1995 }}
+</ref>.
+
+The Shor code also can correct for any arbitrary errors (both bit flip and sign flip) to a single qubit. If an error is modeled by a unitary transform U, which will act on a qubit <math>|\psi\rangle</math>, then <math>U</math> can be described in the form
+
+: <math>U=c_0I+c_1\sigma_x+c_2\sigma_y+c_3\sigma_z</math>
+
+where <math>c_0</math>,<math>c_1</math>,<math>c_2</math>, and <math>c_3</math> are complex constants, I is the identity, and the [[Pauli matrices]] are given by
+
+: <math>\sigma_x=\biggl( \begin{matrix}
+               0&1\\1&0
+              \end{matrix} \biggr);</math>
+: <math>\sigma_y=\biggl( \begin{matrix}
+               0&-i\\i&0
+              \end{matrix} \biggr);</math>
+: <math>\sigma_z=\biggl( \begin{matrix}
+               1&0\\0&-1
+              \end{matrix} \biggr)</math>
+
+If U is equal to I, then no error occurs. If <math>U=\sigma_x</math>, a bit flip error occurs. If <math>U=\sigma_z</math>, a sign flip error occurs. If <math>U=i\sigma_y</math> then both a bit flip error and a sign flip error occur. Due to linearity, it follows that the Shor code can correct arbitrary 1-qubit errors.
+
+==General codes==
+In general, a ''quantum code'' for a [[quantum channel]] <math>\mathcal{E}</math> is a subspace <math>\mathcal{C} \subseteq \mathcal{H}</math>, where <math>\mathcal{H}</math> is the state Hilbert space, such that there exists another quantum channel <math>\mathcal{R}</math> with
+
+<math>
+  (\mathcal{R} \circ \mathcal{E})(\rho) = \rho \quad \forall \rho = P_{\mathcal{C}}\rho P_{\mathcal{C}},
+</math>
+
+where <math>P_{\mathcal{C}}</math> is the [[orthogonal projection]] onto <math>\mathcal{C}</math>. Here <math>\mathcal{R}</math> is known as the ''correction operation''.
+
+==Models==
+
+Over time, researchers have come up with several codes:
+
+* [[Peter Shor]]'s 9-qubit-code, a.k.a. the [[Shor code]], encodes 1 logical qubit in 9 physical qubits and can correct for arbitrary errors in a single qubit.
+* [[Andrew Steane]] found a code which does the same with 7 instead of 9 qubits, see [[Steane code]].
+* [[Raymond Laflamme]] found a class of 5-qubit codes which do the same, which also have the property of being [[fault-tolerant]].
+* A generalisation of this concept are the [[CSS code]]s, named for their inventors: [[A. R. Calderbank]], [[Peter Shor]] and [[Andrew Steane]]. According to the quantum Hamming bound, encoding a single logical qubit and providing for arbitrary error correction in a single qubit requires a minimum of 5 physical qubits.
+* A more general class of codes (encompassing the former) are the [[stabilizer code]]s discovered by [[Daniel Gottesman]] ([http://arxiv.org/abs/quant-ph/9604038]), and by [[A. R. Calderbank]], [[Eric Rains]], [[Peter Shor]], and [[N. J. A. Sloane]] ([http://arxiv.org/abs/quant-ph/9605005], [http://arxiv.org/abs/quant-ph/9608006]); these are also called [[additive code]]s.
+* A newer idea is [[Alexei Kitaev]]'s [[toric code|topological quantum code]]s and the more general idea of a [[topological quantum computer]].
+* Todd Brun, Igor Devetak, and Min-Hsiu Hsieh also constructed the [[entanglement-assisted stabilizer formalism]] as an extension of the standard [[stabilizer formalism]] that incorporates [[quantum entanglement]] shared between a sender and a receiver.
+
+That these codes allow indeed for quantum computations of arbitrary length is the content of the ''threshold theorem'', found by [[Michael Ben-Or]] and [[Dorit Aharonov]], which asserts that you can correct for all errors if you concatenate quantum codes such as the CSS codes—i.e. re-encode each logical qubit by the same code again, and so on, on logarithmically many levels—''provided'' the error rate of individual [[quantum gate]]s is below a certain threshold; as otherwise, the attempts to measure the syndrome and correct the errors would introduce more new errors than they correct for.
+
+As of late 2004, estimates for this threshold indicate that it could be as high as  1-3% [http://www.arxiv.org/abs/quant-ph/0410199], provided that there are sufficiently many [[qubit]]s available.
+
+==Experimental Realization==
+A team of European researchers have recently reported in a publication in Nature Photonics the successful demonstration of a quantum error correcting code achieved at the scale of quanta that should help paving the way to computers of the future<ref>[http://www.sciencedaily.com/releases/2010/10/101004101638.htm]</ref>.
+
+==Notes==
+{{Reflist}}
+
+==Bibliography==
+*Freedman, Michael H.; Meyer, David A.; Luo, Feng: Z<sub>2</sub>-[[Systolic freedom]] and quantum codes. ''Mathematics of quantum computation'', 287&ndash;320, Comput. Math. Ser., Chapman & Hall/CRC, Boca Raton, FL, 2002.
+
+*Freedman, Michael H.; Meyer, David A.: [[real projective plane|Projective plane]] and planar quantum codes. ''Found. Comput. Math.'' 1 (2001), no. 3, 325&ndash;332.
+
+*Mikael Lassen,   Metin Sabuncu,  Alexander Huck, Julien Niset, Gerd Leuchs, Nicolas J. Cerf, Ulrik L. Andersen, '' Quantum optical coherence can survive photon losses using a continuous-variable quantum erasure-correcting code '', [[Nature Photonics]] '''4''' 10 (2010)([http://www.nature.com/nphoton/journal/v4/n10/full/nphoton.2010.168.html this document online])
+
+==External links==
+* [http://www.arxiv.org/abs/quant-ph/0410199 Prospects]
+* [http://www.newscientisttech.com/article.ns?id=dn9301&feedId=online-news_rss20 Error-check breakthrough in quantum computing]
+*[http://xstructure.inr.ac.ru/x-bin/theme3.py?level=1&index1=362347 Quantum error correction on arxiv.org]
+{{Quantum computing}}
+
+[[Category:Quantum information science]]
+[[Category:Fault-tolerant computer systems]]
+
+[[de:Quantenfehlerkorrektur]]
+[[fr:Code quantique]]
+[[lt:Kvantinė klaidų korekcija]]</body> </html>

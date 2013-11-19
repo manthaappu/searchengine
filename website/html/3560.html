@@ -1,0 +1,164 @@
+<html> <head> <title>Behavior Driven Development</title></head><body>{{Essay-like|date=June 2010}}
+
+'''Behavior driven development''' (or '''BDD''') is an [[agile software development]] technique that encourages collaboration between developers, [[quality assurance|QA]] and non-technical or business participants in a software project. It was originally named in 2003 by Dan North<ref name="origin">D.North, [http://dannorth.net/introducing-bdd Introducing Behaviour Driven Development]</ref> as a response to [[Test Driven Development]], including Acceptance Test or Customer Test Driven Development practices as found in [[Extreme Programming]]. It has evolved over the last few years<ref name="evolution">D.North, comments, [http://forums.pragprog.com/forums/95/topics/3035 The RSpec Book - Question about Chapter 11: Writing software that matters]</ref>.
+
+On the "Agile Specifications, BDD and Testing eXchange" in November 2009 in London, Dan North<ref>Dan North: [http://skillsmatter.com/podcast/java-jee/how-to-sell-bdd-to-the-business How to sell BDD to the business]</ref> gave the following definition of BDD:
+<blockquote>
+BDD is a second-generation, outside-in, pull-based, multiple-stakeholder, multiple-scale, high-automation, agile methodology. It describes a cycle of interactions with well-defined outputs, resulting in the delivery of working, tested software that matters.</blockquote>
+
+BDD focuses on obtaining a clear understanding of desired software behaviour through discussion with stakeholders. It extends [[test-driven development|TDD]] by writing test cases in a natural language that non-programmers can read. Behavior-driven developers use their native language in combination with the ''ubiquitous language'' of [[domain driven design]] to describe the purpose and benefit of their code. This allows the developers to focus on why the code should be created, rather than the technical details, and minimizes translation between the technical language in which the code is written and the domain language spoken by the business, users, stakeholders, project management, etc.
+
+Dan North created the first ever BDD framework, JBehave<ref name="origin" />, followed by a story-level BDD framework for Ruby called RBehave<ref name="rbehave">D.North, [http://dannorth.net/2007/06/introducing-rbehave Introducing RBehave]</ref> which was later integrated into the [[RSpec]] project<ref name="rbehave-integ">S.Miller, [http://www.infoq.com/news/2007/10/RSpec-incorporates-RBehave InfoQ: RSpec incorporates RBehave]</ref>. He also worked with 
+David Chelimsky, Aslak Hellesøy and others to develop RSpec and also to write "The RSpec Book: Behaviour Driven Development with RSpec, Cucumber, and Friends". The first story-based framework in RSpec was later replaced by [http://cukes.info/ Cucumber] mainly developed by Aslak Hellesøy. 
+
+In 2008, Chris Matts, who was involved in the first discussions around BDD, came up with the idea of Feature Injection<ref name="feature-injection">Chris Matts, [http://picasaweb.google.co.uk/chris.matts/FeatureInjection# Feature Injection]</ref>, allowing BDD to cover the analysis space and provide a full treatment of the [[software lifecycle]] from vision through to code and release.
+
+==BDD practices==
+
+The practices of BDD include:
+* Establishing the goals of different stakeholders required for a vision to be implemented
+* Drawing out features which will achieve those goals using [[#Feature_injection|feature injection]]
+* Involving stakeholders in the implementation process through [[outside-in software development]]
+* Using examples to describe the behavior of the application, or of units of code
+* Automating those examples to provide quick feedback and [[regression testing]]
+* Using 'should' when describing the behavior of software to help clarify responsibility and allow the software's functionality to be questioned
+* Using 'ensure' when describing responsibilities of software to differentiate outcomes in the [[Scope (programming)|scope]] of the code in question from side-effects of other elements of code.
+* Using [[Mock object|mocks]] to stand-in for collaborating modules of code which have not yet been written
+
+==Feature injection==
+
+A company may have several visions which will deliver value to the business, usually by making money, saving money or protecting money. Once a vision is identified by a group as being the best vision for the conditions, they will need additional help to make the vision a success.
+
+The primary stakeholders who have identified the vision then bring in incidental stakeholders. Each stakeholder defines the goals they need to achieve in order for the vision to be successful. For example, a legal department might ask for certain regulatory requirements to be met. The head of marketing might want to engage the community who will be using the software. A security expert will make sure that the software won't be vulnerable to [[SQL injection]] attacks.
+
+From these goals, broad themes or feature sets are defined which will achieve them; for instance, "allow users to rank contributions" or "audit transactions".
+
+From these themes, user features and the first details of the user interface can be established.
+
+==Outside-in==
+
+BDD is driven by [[business value]]<ref name="nottdddonewell">E.Keogh, [http://lizkeogh.com/2007/06/13/bdd-tdd-done-well/ BDD - TDD done well?]</ref>; that is, the benefit to the business which accrues once the application is in production. The only way in which this benefit can be realized is through the [[user interface]](s) to the application, usually (but not always) a [[GUI]].
+
+In the same way, each piece of code, starting with the UI, can be considered a stakeholder of the other modules of code which it uses. Each element of code provides some aspect of behavior which, in collaboration with the other elements, provides the application behavior.
+
+The first piece of production code that BDD developers implement is the UI. Developers can then benefit from quick feedback as to whether the UI looks and behaves appropriately. Through code, and using principles of good design and refactoring, developers discover collaborators of the UI, and of every unit of code thereafter. This helps them adhere to the principle of [[YAGNI]], since each piece of production code is required either by the business, or by another piece of code already written.
+
+==Application examples==
+
+The requirements of a retail application might be, "Refunded or replaced items should be returned to stock."
+
+In BDD, a developer or QA engineer might clarify the requirements by breaking this down into specific examples, e.g.
+
+===Scenario 1: Refunded items should be returned to stock===
+* Given a customer previously bought a black sweater from me
+* and I currently have three black sweaters left in stock
+* when he returns the sweater for a refund
+* then I should have four black sweaters in stock
+
+=== Scenario 2: Replaced items should be returned to stock===
+* Given that a customer buys a blue garment
+* and I have two blue garments in stock
+* and three black garments in stock.
+* When he returns the garment for a replacement in black,
+* Then I should have three blue garments in stock
+* and two black garments in stock
+
+Each scenario is an [[exemplar]], designed to illustrate a specific aspect of behavior of the application.
+
+When discussing the scenarios, participants question whether the outcomes described always result from those events occurring in the given context. This can help to uncover further scenarios which clarify the requirements<ref name="whatsinastory">D.North, [http://dannorth.net/whats-in-a-story What's in a Story]</ref>. For instance, a domain expert noticing that refunded items are not always returned to stock might reword the requirements as "Refunded or replaced items should be returned to stock unless faulty."
+
+This in turn helps participants to pin down the scope of requirements, which leads to better estimates of how long those requirements will take to implement.
+
+The words Given, When and Then are often used to help drive out the scenarios, but are not mandated.
+
+These scenarios can also be automated, if an appropriate tool exists to allow automation at the UI level. If no such tool exists then it may be possible to automate at the next level in, i.e.: if an [[Model-view-controller|MVC]] design pattern has been used, the level of the Controller.
+
+==Unit-level examples and behavior==
+
+The same principles of examples, using contexts, events and outcomes are used to drive development at a unit level. For instance, the following examples describe an aspect of behavior of a list:
+
+Example 1: New lists are empty
+* Given a new list
+* Then the list should be empty.
+
+Example 2: Lists with things in them are not empty.
+* Given a new list
+* When we add an object
+* Then the list should not be empty.
+
+Both these examples are required to describe the behavior of the <source lang="java">list.isEmpty()</source> method, and to derive the benefit of the method. These examples are usually automated using TDD frameworks. In BDD these examples are often encapsulated in a single method, with the name of the method being a complete description of the behavior. Both examples are required for the code to be valuable, and encapsulating them in this way makes it easy to question, remove or change the behaviour.
+
+For instance, using [[Java (programming language)|Java]] and [[JUnit]] 4, the above examples might become:
+
+<source lang="java">
+public class ListTest {
+
+   @Test
+   public void shouldKnowWhetherItIsEmpty() {
+      List list1 = new List();
+      assertTrue(list1.isEmpty());
+
+      List list2 = new List();
+      list2.add(new Object());
+      assertFalse(list2.isEmpty());
+   }
+}
+</source>
+
+Other practitioners, particularly in the Ruby community, prefer to split these into two separate examples, based on separate contexts for when the list is empty or has items in. This technique is based on Dave Astels' practice, "One assertion per test<ref name="oneassertion">D. Astels, [http://techblog.daveastels.com/tag/bdd/ One assertion per test]</ref>".
+
+Sometimes the difference between the context, events and outcomes is made more explicit. For instance:
+
+<source lang="java">
+public class WindowControlBehavior {
+
+    @Test
+    public void shouldCloseWindows() {
+        
+        // Given
+        WindowControl control = new WindowControl("My AFrame");
+        AFrame frame = new AFrame();
+        
+        // When
+        control.closeWindow();
+        
+        // Then
+        ensureThat(!frame.isShowing());       
+    }
+}
+</source>
+
+However the example is phrased, the effect describes the behavior of the code in question. For instance, from the examples above one can derive:
+
+* List should know when it is empty
+* WindowControl should close windows
+
+The description is intended to be useful if the test fails, and to provide documentation of the code's behavior. Once the examples have been written they are then run and the code implemented to make them work in the same way as TDD. The examples then become part of the suite of regression tests.
+
+==Using mocks==
+
+BDD proponents claim that the use of "should" and "ensureThat" in BDD examples encourages developers to question whether the responsibilities they're assigning to their classes are appropriate, or whether they can be delegated or moved to another class entirely. Practitioners use an object which is simpler than the collaborating code, and provides the same interface but more predictable behavior. This is [[Dependency Injection|injected]] into the code which needs it, and examples of that code's behavior are written using this object instead of the production version.
+
+These objects can either be created by hand, or created using a mocking framework such as [[Mockito]], [[Moq]], [[NMock]], [[Rhino Mocks]], [[JMock]] or [[EasyMock]].
+
+Questioning responsibilities in this way, and using mocks to fulfill the required roles of collaborating classes, encourages the use of [[Role-based Interfaces]]. It also helps to keep the classes small and loosely coupled.
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://dannorth.net/introducing-bdd Dan North's article introducing BDD]
+*[http://behavior-driven.org/ Introduction to Behavior Driven Development]
+*[http://www.oreillynet.com/pub/a/ruby/2007/08/09/behavior-driven-development-using-ruby-part-1.html Behavior Driven Development Using Ruby (Part 1)]
+*[http://www.oreillynet.com/pub/a/ruby/2007/08/30/behavior-driven-development-using-ruby-part-2.html Behavior-Driven Development Using Ruby (Part 2)]
+*[http://www.ibm.com/developerworks/java/library/j-cq09187/index.html In pursuit of code quality: Adventures in behavior-driven development by Andrew Glover]
+*[http://www.pragprog.com/titles/achbd/the-rspec-book The RSpec Book: Behaviour Driven Development with RSpec, Cucumber, and Friends]
+
+
+[[Category:Software development philosophies]]
+[[Category:Software testing]]
+
+[[fr:Behavior Driven Development]]
+[[ja:ビヘイビア駆動開発]]
+[[pt:Behavior Driven Development]]
+[[zh:行为驱动开发]]</body> </html>

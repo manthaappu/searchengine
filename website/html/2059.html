@@ -1,0 +1,158 @@
+<html> <head> <title>Apache Cassandra</title></head><body>{{Infobox Software
+| name                   = Apache Cassandra
+| logo                   = [[Image:Cassandra logo.png|250px]]
+| screenshot             =
+| caption                =
+| author                 = Avinash Lakshman, Prashant Malik
+| developer              = [[Apache Software Foundation]]
+| released               = 2008
+| status                 = Active
+| latest release version = 0.7.0
+| latest release date    = {{release date|2011|01|09}}
+| latest preview version = none
+| latest preview date    = n/a
+| frequently updated     = yes
+| programming language   = [[Java (programming language)|Java]]
+| operating system       = [[Cross-platform]]
+| language               = English
+| genre                  = [[Column-oriented DBMS]]
+| license                = [[Apache License]] 2
+| website                = http://cassandra.apache.org/
+}}
+'''Cassandra''' is an [[open source software|open source]] distributed [[database management system]]. It is an [[Apache Software Foundation]] top-level project<ref name=GRAD>{{cite web|url=http://www.mail-archive.com/cassandra-dev@incubator.apache.org/msg01518.html |title=Cassandra is an Apache top level project |publisher=Mail-archive.com |date=2010-02-18 |accessdate=2010-03-29}}</ref> designed to handle very large amounts of data spread out across many commodity servers while providing a highly available service with no single point of failure.  It is a [[NoSQL]] solution that was initially developed by [[Facebook]] and powers their Inbox Search feature.<ref name=FBIS>{{cite web|url=http://www.facebook.com/note.php?note_id=24413138919&id=9445547199&index=9 |title=Niet compatibele browser |publisher=Facebook |date= |accessdate=2010-03-29}}</ref> Jeff Hammerbacher, who led the Facebook Data team at the time, has described Cassandra as a [[BigTable]] data model running on an [[Dynamo (storage system)|Amazon Dynamo]]-like infrastructure.<ref name=JH2008>{{cite web
+  |accessdate=2009-06-04
+  |date=July 12, 2008
+  |url=http://perspectives.mvdirona.com/2008/07/12/FacebookReleasesCassandraAsOpenSource.aspx
+  |title=Facebook Releases Cassandra as Open Source
+  |author=James Hamilton
+}}</ref>
+
+Cassandra provides a structured key-value store with [[eventual consistency]].<ref name=LADIS2009>http://www.cs.cornell.edu/projects/ladis2009/papers/lakshman-ladis2009.pdf</ref> Keys map to multiple values, which are grouped into ''column families''. The column families are fixed when a Cassandra database is created, but columns can be added to a family at any time. Furthermore, columns are added only to specified keys, so different keys can have different numbers of columns in any given family.
+
+The values from a column family for each key are stored together, making Cassandra a hybrid between a [[column-oriented DBMS]] and a row-oriented store.{{Citation needed|date=April 2010}}
+
+== History ==
+Cassandra was developed at [[Facebook]] to power their Inbox Search feature by Avinash Lakshman (one of the authors of Amazon's Dynamo) and Prashant Malik.  It was released as open source project on [[Google code]] in July 2008.<ref name=JH2008 />  In March 2009, it became an [[Apache Incubator]] project.<ref>{{cite web|url=http://www.mail-archive.com/cassandra-dev@incubator.apache.org/msg00004.html |title=Is this the new hotness now? |publisher=Mail-archive.com |date=2009-03-02 |accessdate=2010-03-29}}</ref> On February 17, 2010 it graduated to a top-level project.<ref name=GRAD />
+
+== Features ==
+=== Decentralized ===
+Every node in the cluster is identical.  There is no [[single point of failure]].
+
+=== Fault-tolerant ===
+Data is automatically replicated to multiple nodes for fault-tolerance. Replication across multiple data centers is supported. Failed nodes can be replaced with no downtime.
+
+=== Tunable consistency ===
+Writes and reads offer a tunable level of consistency, all the way from "writes never fail" to "block for all replicas to be readable", with the quorum level in the middle.
+
+=== Elasticity ===
+Read and write throughput both increase linearly as new machines are added, with no downtime or interruption to applications.
+
+== Data model ==
+A table in Cassandra is a distributed multidimensional map indexed by a key. The value is an object which is highly structured. The row key in a table is a string with no size restrictions, although typically 16 to 36 bytes long. Every operation under a single row key is atomic per replica no
+matter how many columns are being read or written into. Columns are grouped together into sets called column families very much similar to what happens in the [[BigTable]] system. Cassandra exposes two kinds of column families, Simple and Super column families. Super column families can be visualized as a column family within a column family. The top dimension in Cassandra is called Keyspace.
+
+Therefore Cassandra can handle maps with 4 or 5 dimensions:
+
+Map with 4 dimensions:
+# Keyspace -> Column Family
+# Column Family -> Column Family Row
+# Column Family Row -> Columns
+# Column -> Data value
+
+Map with 5 dimensions:
+# Keyspace -> Super Column Family
+# Super Column Family -> Super Column Family Row
+# Super Column Family Row -> Super Columns
+# Super Column -> Columns
+# Column -> Data value
+
+The first dimension - Keyspace -> (Super) Column Family - is limited to a (small) set of schema-predefined keys. Cassandra documentation mentions similarities of this dimension with the table definition inside a relational database.
+
+Furthermore, applications can specify the sort order of columns within a Super Column or Simple Column family. The system allows columns to be sorted either by time or by name. Time sorting of columns is exploited by applications like [[Facebook]] Inbox Search where the results are always displayed
+in time sorted order. Any column within a column family is accessed using the convention column_family : column
+and any column within a column family that is of type
+super is accessed using the convention column_family :
+super_column : column.
+
+== Prominent users ==
+* [[Facebook]] uses Cassandra to power Inbox Search, with over 200 nodes deployed.<ref name=FBIS />
+* [[Digg]], a large social news website, announced on Sep 9th, 2009 that it is rolling out its use of Cassandra<ref name=NM2009>{{cite web
+  |url=http://blog.digg.com/?p=966
+  |title=Looking to the future with Cassandra
+  |author=Ian Eure
+}}</ref> and confirmed this on March 8, 2010.<ref name=DG2010>{{cite web
+  |url=http://about.digg.com/node/564
+  |title=Saying Yes to NoSQL; Going Steady with Cassandra
+  |author=John Quinn
+}}</ref> [[TechCrunch]] has since linked Cassandra to Digg v4 reliability criticisms and recent company struggles.<ref name=ES2010>{{cite web|url=http://techcrunch.com/2010/09/07/digg-struggles-vp-engineering-door/|title=As Digg Struggles, VP Of Engineering Is Shown The Door|author=Erick Schonfeld}}</ref> Lead engineers at Digg later rebuked these criticisms as red herring and blamed a lack of load testing.<ref name=QU2010>{{cite web|url=http://www.quora.com/Is-Cassandra-to-blame-for-Digg-v4s-technical-failures/|title=Is Cassandra to Blame for Digg v4's Failures?}}</ref>
+* [[Twitter]] announced it is planning to use Cassandra because it can be run on large server clusters and is capable of taking in very large amounts of data at a time.<ref name=TWITTER>{{cite web|last=Popescu |first=Alex |url=http://nosql.mypopescu.com/post/407159447/cassandra-twitter-an-interview-with-ryan-king |title=Cassandra @ Twitter: An Interview with Ryan King |publisher=myNoSQL |date= |accessdate=2010-03-29}}</ref><ref name=TWITTER2>{{cite web|last=Babcock |first=Charles |url=http://www.informationweek.com/news/software/open_source/showArticle.jhtml?articleID=223100894&pgno=1&queryText=&isPrev= |title=Twitter Drops MySQL For Cassandra - Cloud databases |publisher=InformationWeek |date= |accessdate=2010-03-29}}</ref> Twitter continues to use it but not for Tweets themselves.<ref>{{cite web|url=http://engineering.twitter.com/2010/07/cassandra-at-twitter-today.html|title=Cassandra at Twitter Today}}</ref>
+* [[Rackspace]] is known to use Cassandra internally.<ref name=SURVEY>{{cite web|url=http://n2.nabble.com/Cassandra-users-survey-td4040068.html |title=Nabble - cassandra-user@incubator.apache.org - Cassandra users survey |publisher=N2.nabble.com |date= |accessdate=2010-03-29}}</ref>
+* [[Cisco]]'s [[WebEx]] uses Cassandra to store user feed and activity in near real time.<ref name=CISCO>{{cite web|url=http://www.mail-archive.com/cassandra-dev@incubator.apache.org/msg01163.html |title=Re: Cassandra users survey |publisher=Mail-archive.com |date=2009-11-21 |accessdate=2010-03-29}}</ref>
+* [[IBM]] has done research in building a scalable email system based on Cassandra.<ref name=IBM>{{cite web|url=http://docs.google.com/viewer?url=http://ewh.ieee.org/r6/scv/computer//nfic/2009/IBM-Jun-Rao.pdf |title=Powered by Google Docs |publisher=Docs.google.com |date= |accessdate=2010-03-29}}</ref>
+* [[Reddit]] switched to Cassandra from [[memcacheDB]] on March 12, 2010<ref name=REDDIT>{{cite web|author=Posted by david [ketralnis] |url=http://blog.reddit.com/2010/03/she-who-entangles-men.html |title=what's new on reddit: She who entangles men |publisher=blog.reddit |date=2010-03-12 |accessdate=2010-03-29}}</ref> and experienced some problems with overload handling in Cassandra in May.<ref name=REDDIT2>{{cite web|author= Posted by the reddit admins at |url=http://blog.reddit.com/2010/05/reddits-may-2010-state-of-servers.html |title=blog.reddit -- what's new on reddit: reddit's May 2010 "State of the Servers" report |publisher=blog.reddit |date=2010-05-11 |accessdate=2010-05-16}}</ref>
+* [[Cloudkick]] uses Cassandra to store the server metrics of their users.<ref>https://www.cloudkick.com/blog/2010/mar/02/4_months_with_cassandra/</ref>
+* [[Yakaz]] uses Cassandra on a 5 nodes cluster to store millions of images but also its social data.<ref name=Yakaz>{{cite web|url=http://www.yakaz.com/about/technologies.php |title=Yakaz Technologies}}</ref>
+
+== See also ==
+{{Portal|Free software}}
+
+* [[Distributed hash table]] (DHT)
+* [[Distributed database]]
+* [[Dynamo (storage system)]] - Cassandra grabs many elements from Dynamo
+* [[Hypertable]] - [[Hadoop]] based distributed database. Very similar to BigTable
+* [[HBase]] - [[Hadoop]] based distributed database. Very similar to BigTable
+* [[BigTable]] - Original distributed database by Google
+
+==References==
+{{Reflist|2}}
+
+==Bibliography==
+{{refbegin}}
+* {{cite book
+| first1      = Eben
+| last1       = Hewitt
+| date        = December 15, 2010
+| title       = Cassandra: The Definitive Guide
+| publisher   = [[O'Reilly Media]]
+| edition     = 1st
+| pages       = 300
+| isbn        = 9781449390419
+| url         = http://oreilly.com/catalog/0636920010852
+}}
+{{refend}}
+
+==External links==
+* {{cite web
+  |title=Cassandra - A structured storage system on a P2P Network
+  |url=http://www.facebook.com/note.php?note_id=24413138919&id=9445547199&index=9
+  |author=Avinash Lakshman
+  |date=25 August 2008
+  |accessdate=2009-06-04
+  |publisher=Engineering @ Facebook's Notes
+}}
+* [http://cassandra.apache.org/ Project Website]
+* [http://wiki.apache.org/cassandra/ Project Wiki]
+* [http://www.infoq.com/presentations/Adopting-Apache-Cassandra Adopting Apache Cassandra] presented by Eben Hewitt on December 1, 2010
+* [http://www.slideshare.net/jhammerb/data-presentations-cassandra-sigmod/ Presentation on Cassandra at SIGMOD 2008]
+* [http://www.parleys.com/#st=5&id=1866 Introduction to Cassandra at FOSDEM 2010]
+* [http://www.cs.cornell.edu/projects/ladis2009/papers/lakshman-ladis2009.pdf LADIS 2009 WhitePaper by the original contributors Avinash Lakshman & Prashant Malik]
+* [http://www.nosqldatabases.com/main/tag/cassandra Cassandra Articles on NoSQLDatabases.com ]
+* [http://nosql.mypopescu.com/tagged/cassandra Cassandra News and Articles on myNoSQL]
+* [http://nosql.mypopescu.com/post/407159447/cassandra-twitter-an-interview-with-ryan-king Cassandra @ Twitter: an Interview with Ryan King]
+* [http://www.slideshare.net/jbellis/what-every-developer-should-know-about-database-scalability Presentation on RDBMS vs. Dynamo, BigTable, and  Cassandra]
+
+{{apache}}
+{{Facebook navbox}}
+
+{{DEFAULTSORT:Cassandra (Database)}}
+[[Category:BigTable implementations]]
+[[Category:Open source database management systems]]
+[[Category:Structured storage]]
+[[Category:NoSQL]]
+
+[[de:Apache Cassandra]]
+[[fr:Cassandra (base de données)]]
+[[it:Cassandra (database)]]
+[[ja:Apache Cassandra]]
+[[pt:Apache Cassandra]]
+[[zh:Cassandra]]</body> </html>

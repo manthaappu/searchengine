@@ -1,0 +1,188 @@
+<html> <head> <title>Parrot virtual machine</title></head><body>{{primarysources|date=December 2010}}
+{{Infobox software
+| name                   = Parrot virtual machine
+| logo                   = [[Image:Parrot Foundation logo.png|Parrot Foundation logo]]
+| developer              = [[Parrot Foundation]]
+| latest release version = 3.0.0<ref name="Release Note"/>
+| latest release date    = {{release date|2011|01|18}}<ref  name="Release Note" />
+| operating system       = [[Cross-platform]]
+| programming language   = [[C (programming language)|C]]
+| genre                  = [[Virtual machine]]
+| license                = [[Artistic License]] 2.0
+| website                = [http://www.parrot.org/ www.parrot.org]
+}}
+'''Parrot''' is a [[register machine|register-based]] [[Application virtual machine|process virtual machine]] designed to [[abstraction layer|run]] [[dynamic language]]s efficiently. It uses [[just-in-time compilation]] for speed to reduce the interpretation overhead. It is currently possible to compile [[Parrot assembly language]] and [[Parrot intermediate representation|PIR]] (an intermediate language) to Parrot [[bytecode]] and execute it. Parrot is an [[open source]] project<ref name="opensource">{{cite web|url=http://www.parrot.org/files/parrot_cla.pdf|title=Parrot Contributor License Agreement 1.0|format=PDF|publisher=Parrot Foundation|accessdate=2009-03-18}}</ref> distributed with a [[free software licence]], making Parrot [[free software]].
+
+Parrot was started by the [[Perl]] community and is developed with help from the [[free software community|open source and free software communities]]. As a result, it is focused on [[license compatibility]] ([[Artistic License|Artistic License 2.0]]), platform compatibility across a broad array of systems, processor architecture compatibility across most modern processors, speed of execution, small size (around 700k depending on platform), and the flexibility to handle the varying demands of [[Perl 6]], and most, if not all, other modern [[dynamic language]]s. Other goals include improving [[introspection (computer science)|introspection]], [[debugger]] capabilities, and compile-time semantic modulation.{{clarify|date=October 2010}}
+
+Version 1.0, with a stable [[Application programming interface|API]] for development, was released on March 17, 2009.<ref name="version1">{{Cite web
+  | url = https://trac.parrot.org/parrot/report/14
+  | title = Parrot Roadmap
+  | publisher = Parrot Foundation
+  | date = 2008-11-20
+  | accessdate = 2008-11-20
+}}</ref> The current stable production release of Parrot is version 3.0.0, released on January 18, 2011.<ref name="Release Note">{{cite web
+  | url = http://parrot.org/news/2011/Parrot-3.0.0
+  | title = Parrot 3.0.0 "Beef Stew" Released!
+  | publisher = Parrot Foundation
+  | date = 18 January 2011
+  | accessdate = 2011-01-18
+}}</ref>
+
+==History==
+The name ''Parrot'' came from an [[April Fool's]] joke which announced a hypothetical language, named ''Parrot'', that would unify [[Python (programming language)|Python]] and [[Perl]].<ref>http://www.oreilly.com/news/parrotstory_0401.html</ref><ref>http://www.perl.com/pub/a/2001/04/01/parrot.htm</ref> The name was later adopted by this project (initially a part of the Perl 6 development effort) which aims to support Perl 6, Python, and other programming languages. Several languages are being [[Porting|ported]] to run on the Parrot virtual machine.<ref>http://www.parrot.org/languages</ref>
+
+The [[Parrot Foundation]] was created in 2008 to hold the [[copyright]] and [[trademark]]s of the Parrot project, to help drive development of [[Programming language implementation|language implementations]] and the core codebase, to provide a base for growing the Parrot community, and to reach out to other language communities.<ref>http://www.parrotblog.org/2008/06/announcing-parrot-foundation.html</ref>
+
+==Languages==
+The goal of the Parrot virtual machine is to host client languages and allow inter-operation between them. Several hurdles exist in accomplishing this goal, in particular the difficulty of mapping high-level concepts, data, and [[data structure]]s between languages.
+
+===Static and dynamic languages===
+The differing properties of [[Type system#Type checking|statically and dynamically typed]] languages have motivated the design of Parrot. Current popular virtual machines such as the [[Java virtual machine]] and the [[Common Language Runtime]] have been designed for statically typed languages, while the languages targeted by Parrot are dynamically typed.
+
+Virtual machines such as the Java virtual machine and the current Perl 5 virtual machine are also [[Stack machine|stack based]]. Parrot developers see Parrot's inclusion of registers as an advantage, as it therefore more closely resembles a hardware design, allowing the vast literature on [[compiler optimization]] to be used in generating bytecode for the Parrot virtual machine that could run at speeds closer to [[machine code]]. Other register-based virtual machines have inspired parts of Parrot's design, including the [[Lua_(programming_language)#Internals|Lua VM]] and Inferno's [[Dis virtual machine|Dis]].
+
+===Functional concepts===
+Parrot has rich support for several features of [[functional programming]] including [[Closure (computer science)|closures]] and [[continuation]]s, both of which can be particularly difficult to implement correctly and portably, especially in conjunction with [[exception handling]] and [[thread (computer science)|threading]]. Implementing solutions to these problems at the virtual machine level prevents repeated efforts to solve these problems in the individual client languages.
+
+===Compiler tools===
+{{Main|Parser Grammar Engine}} <!-- note: once [[Parrot compiler toolchain]] exists, that should be the main link -->
+
+Parrot provides a suite of [[Parrot compiler toolchain|compiler-writing tools]]<ref>http://docs.parrot.org/parrot/latest/html/docs/book/ch04_compiler_tools.pod.html</ref> which includes the [[Parser Grammar Engine]] (PGE), a hybrid parser-generator that can express a [[recursive descent parser]] as well as a [[operator-precedence parser]], allowing free transition between the two in a single grammar. The PGE feeds into the [[Tree Grammar Engine]] (TGE) which further transforms the parse-tree generated by PGE for optimization and ultimately for code generation.
+
+=== Existing client languages ===
+
+Many languages already have compiler front-ends designed for Parrot; however, many of them are still only partially functional.<ref>https://trac.parrot.org/parrot/wiki/Languages</ref> The languages currently implementable, partially and fully, on Parrot are:<ref>[http://parrot.org/languages Parrot.Org: Languages]</ref>
+
+{{div col|colwidth=30em}}
+* [[Arc (programming language)|Arc]]
+* [[APL (programming language)|APL]]
+* [[bc (Unix)|bc]]
+* [[Befunge]]
+* [[Brainfuck]]
+* [[C99|C]]
+* [[Common Lisp]]
+* [[ECMAScript]] (aka JavaScript)
+* [[Forth (programming language)|Forth]]
+* Generic Imperative Language
+* [[GNU m4]]
+* HQ9 Plus
+* [[Jako (programming language)|Jako]]
+* [[Java (programming language)|Java]]
+* [[Java bytecode]]
+* [[Joy (programming language)|Joy]]
+* [[Lazy K]]
+* [[Lisp (programming language)|Lisp]]
+* [[LOLCODE]]
+* [[Lua (programming language)|Lua]]
+* [[MiniPerl]] (Perl 1.0)
+* [[NQP]] (Not Quite Perl)
+* [[GNU_Octave#Octave.2C_the_language|Octave]]<ref>http://github.com/Whiteknight/Matrixy</ref>
+* [[Ook!]]
+* [[Perl 6|Perl]] (via [[Rakudo]])
+* [[PHP]] (via Pipp)
+* [[Python (programming language)|Python]]
+* [[QuickBASIC]] 4.5
+* [[Ruby (programming language)|Ruby]] (via Cardinal)
+* [[Scheme (programming language)|Scheme]]
+* [[Shakespeare (programming language)|Shakespeare]]
+* [[Smalltalk]] (via Chitchat)
+* the "[http://en.wikibooks.org/wiki/Parrot_Virtual_Machine/Squaak_Tutorial squaak]" tutorial language
+* [[Tcl]] (via [http://code.google.com/p/partcl/ partcl])
+* [[Unlambda]]
+* [[WMLScript]]
+* [[Common Intermediate Language|.NET bytecode]]
+{{div col end}}
+
+==Internals==
+There are three forms of program code for Parrot:
+<ul>
+<li> ''[[Bytecode]]''<ref>http://www.parrotcode.org/docs/parrotbyte.html</ref> is binary and is natively interpreted by Parrot. Bytecode is usually stored in files with the [[filename extension]] ".pbc". </li>
+<li>''[[Parrot Assembly Language]]'' (PASM<ref>http://en.wikibooks.org/wiki/Parrot_Virtual_Machine/PASM_Reference</ref>) is the low level language that [[Compiler | compile]]s down to bytecode. PASM code is usually stored in files with the filename extension ".pasm".
+<li>''[[Parrot intermediate representation|Parrot Intermediate Representation]]'' (PIR<ref>http://docs.parrot.org/parrot/latest/html/docs/book/ch03_pir.pod.html</ref>) is a slightly higher level language than PASM and also compiles down to bytecode. It is the primary target of language implementations.
+PIR transparently manages Parrot's inter-routine calling conventions, provides improved syntax, register allocation, and more. PIR code is usually stored in files with the filename extension ".pir".</li>
+</ul>
+
+==Examples==
+===Registers===
+Parrot is register-based like most hardware [[Central processing unit|CPUs]], unlike most virtual machines, which are stack-based. Parrot provides four types of registers:
+
+* I: native [[integer]] type
+* N: [[floating point|floating-point]] numbers
+* S: advanced [[String (computer science)|string]] registers with [[Unicode]] support
+* P: PMC, or ''Polymorphic Container'' &mdash; Parrot object type
+
+Parrot provides an arbitrary number of registers; this number is fixed at compile time per subroutine.
+
+===Arithmetic operations===
+
+In PASM
+
+    set I1, 4
+    inc I1        # I1 is now 5
+    add I1, 2     # I1 is now 7
+    set N1, 42.0
+    dec N1        # N1 is now 41.0
+    sub N1, 2.0   # N1 is now 39.0
+    print I1
+    print ', '
+    print N1
+    print "\n"
+    end
+
+In PIR
+
+ .sub 'main' :main
+    $I1 = 4
+    inc $I1     # $I1 is now 5
+    $I1 += 2    # $I1 is now 7
+    $N1 = 42.0
+    dec $N1     # $N1 is now 41.0
+    $N1 -= 2.0  # $N1 now 39.0
+    print $I1
+    print ', '
+    print $N1
+    print "\n"
+ .end
+
+==Development==
+
+Until late 2005, [[Dan Sugalski]] was the lead designer and chief architect of Parrot.  [[Chip Salzenberg]], a longtime Perl, Linux kernel, and C++ hacker, took over until mid-2006, when he became the lead developer. [[Allison Randal]], the lead developer of [[Punie]] and chief architect of Parrot's compiler tools, was the chief architect until mid-October 2010 when she stepped down and chose Christoph Otto as the new chief architect.<ref>http://reparrot.blogspot.com/2010/10/parrot-has-new-architect-what-now.html</ref>
+
+Development discussions take place primarily on the #parrot channel on irc.perl.org. In addition, there are weekly moderated meetings for Parrot and language developers hosted in #parrotsketch on the same network. Much discussion also occurs on the parrot-dev mailing list, hosted by parrot.org.
+
+Design discussions exist in the form of Parrot Design Documents, or PDDs, in the Parrot repository [http://docs.parrot.org/parrot/latest/html/pdds.html]. The chief architect or another designated designer produces these documents to explain the philosophy of a feature as well as its interface and design notes. Parrot hackers turn these documents into executable tests, and then existing features.
+
+The Parrot team releases a new stable version of the software on the third Tuesday of every month. Core committers take turns producing releases in a revolving schedule, where no single committer is responsible for multiple releases in a row. This practice has improved the project's velocity and stability.
+
+==License==
+Parrot is a [[free software]] project, distributed under the terms [[Artistic License]] Version 2.0.
+
+==See also==
+{{Portal|Free software}}
+* [[Common Language Runtime]] (CLR)
+* [[Comparison of application virtual machines]]
+* [[mod_parrot]]
+
+==References==
+{{Reflist|2}}
+
+==External links==
+* [http://www.parrot.org/ Parrot homepage]
+* [http://perl6.cz/wiki/Perl_6_and_Parrot_links Perl 6 and Parrot links]
+
+[[Category:Perl]]
+[[Category:Register-based virtual machines]]
+[[Category:Free compilers and interpreters]]
+[[Category:Cross-platform software]]
+[[Category:Free software programmed in C]]
+
+[[de:Parrot]]
+[[es:Máquina virtual Parrot]]
+[[fr:Parrot (machine virtuelle)]]
+[[it:Parrot]]
+[[nl:Parrot virtual machine]]
+[[ja:Parrot]]
+[[pl:Parrot]]
+[[pt:Parrot]]
+[[ru:Parrot]]</body> </html>

@@ -1,0 +1,151 @@
+<html> <head> <title>Unrooted binary tree</title></head><body>[[File:TreeActinobacteria.svg|thumb|360px|A [[cladogram]] in the form of an unrooted binary tree, representing the similarities and evolutionary history among species of [[actinobacteria]].]]
+In mathematics and computer science, an '''unrooted binary tree''' is an [[free tree|unrooted tree]] in which each [[vertex (graph theory)|vertex]] has either one or three neighbors.
+
+==Definitions==
+A [[free tree]] or unrooted tree is a [[connected graph|connected]] [[undirected graph]] with no [[cycle (graph theory)|cycles]]. The vertices with one neighbor are the ''leaves'' of the tree, and the remaining vertices are the ''internal nodes'' of the tree. The [[degree (graph theory)|degree]] of a vertex is its number of neighbors; in a tree with more than one node, the leaves are the vertices of degree one. An unrooted binary tree is a free tree in which all internal nodes have degree exactly three.
+
+In some applications it may make sense to distinguish subtypes of unrooted binary trees: a [[planar graph|planar embedding]] of the tree may be fixed by specifying a cyclic ordering for the edges at each vertex, making it into a [[plane tree]]. In computer science, binary trees are often rooted and ordered when they are used as [[data structure]]s, but in the applications of unrooted binary trees in [[hierarchical clustering]] and [[evolutionary tree]] reconstruction, unordered trees are more common.<ref name="f84"/>
+
+Additionally, one may distinguish between trees in which all vertices have distinct labels, trees in which the leaves only are labeled, and trees in which the nodes are not labeled. In an unrooted binary tree with ''n'' leaves, there will be ''n'' &minus; 1 internal nodes, so the labels may be taken from the set of integers from 1 to 2''n'' &minus; 1 when all nodes are to be labeled, or from the set of integers from 1 to ''n'' when only the leaves are to be labeled.<ref name="f84">{{harvtxt|Furnas|1984}}.</ref>
+
+==Related structures==
+===Rooted binary trees===
+An unrooted binary tree ''T'' may be transformed into a full rooted [[binary tree]] (that is, a rooted tree in which each non-leaf node has exactly two children) by choosing a ''root edge'' ''e'' of ''T'', placing a new root node in the middle of ''e'', and directing every edge of the resulting subdivided tree away from the root node. Conversely, any full rooted binary tree may be transformed into an unrooted binary tree by removing the root node, replacing the path between its two children by a single undirected edge, and suppressing the orientation of the remaining edges in the graph. For this reason, there are exactly 2''n'' &minus;3 times as many full rooted binary trees with ''n'' leaves as there are unrooted binary trees with ''n'' leaves.<ref name="f84"/>
+
+===Hierarchical clustering===
+A [[hierarchical clustering]] of a collection of objects may be formalized as a [[maximal element|maximal]] [[family of sets]] of the objects in which no two sets cross. That is, for every two sets ''S'' and ''T'' in the family, either ''S'' and ''T'' are disjoint or one is a subset of the other, and no more sets can be added to the family while preserving this property. If ''T'' is an unrooted binary tree, it defines a hierarchical clustering of its leaves: for each edge (''u'',''v'') in ''T'' there is a cluster consisting of the leaves that are closer to ''u'' than to ''v'', and these sets together with the empty set and the set of all leaves form a maximal non-crossing family. Conversely, from any maximal non-crossing family of sets over a set of ''n'' elements, one can form a unique unrooted binary tree that has a node for each triple (''A'',''B'',''C'') of disjoint sets in the family that together cover all of the elements.<ref>See e.g. {{harvtxt|Eppstein|2009}} for the same correspondence between clusterings and trees, but using rooted binary trees instead of unrooted trees and therefore including an arbitrary choice of the root node.</ref>
+
+===Evolutionary trees===
+According to simple forms of the [[theory of evolution]], the history of life can be summarized as a [[phylogenetic tree]] in which each node describes a species, the leaves represent the species that exist today, and the edges represent ancestor-descendant relationships between species. This tree has a natural orientation from ancestors to descendants, and a root at the [[common ancestor]] of the species, so it is a rooted tree. However, some methods of reconstructing binary trees can reconstruct only the nodes and the edges of this tree, but not their orientations.
+
+For instance, [[Cladistics|cladistic methods]] such as [[maximum parsimony]] use as data a set of binary attributes describing features of the species. These methods seek a tree with the given species as leaves in which the internal nodes are also labeled with features, and attempt to minimize the number of times some feature is present at only one of the two endpoints of an edge in the tree. Ideally, each feature should only have one edge for which this is the case. Changing the root of a tree does not change this number of edge differences, so methods based on parsimony are not capable of determining the location of the tree root and will produce an unrooted tree, often an unrooted binary tree.<ref>{{harvtxt|Hendy|Penny|1989}}.</ref>
+
+Unrooted binary trees also are produced by methods for inferring evolutionary trees based on quartet data specifying, for each four leaf species, the unrooted binary tree describing the evolution of those four species, and by methods that use [[quartet distance]] to measure the distance between trees.<ref>{{harvtxt|St. John|Warnow|Moret|Vawterd|2003}}.</ref>
+
+===Branch-decomposition===
+Unrooted binary trees are also used to define [[branch-decomposition]]s of graphs, by forming an unrooted binary tree whose leaves represent the edges of the given graph. That is, a branch-decomposition may be viewed as a hierarchical clustering of the edges of the graph. Branch-decompositions and an associated numerical quantity, branch-width, are closely related to [[treewidth]] and form the basis for efficient [[dynamic programming]] algorithms on graphs.<ref name="rs91">{{harvtxt|Robertson|Seymour|1991}}.</ref>
+
+==Enumeration==
+Because of their applications in hierarchical clustering, the most natural [[graph enumeration]] problem on unrooted binary trees is to count the number of trees with ''n'' labeled leaves and unlabeled internal nodes. An unrooted binary tree on ''n'' labeled leaves can be formed by connecting the ''n''th leaf to a new node in the middle of any of the edges of an unrooted binary tree on ''n'' &minus; 1 labeled leaves. There are 2''n'' &minus; 5 edges at which the ''n''th node can be attached; therefore, the number of trees on ''n'' leaves is larger than the number of trees on ''n'' &minus; 1 leaves by a factor of 2''n'' &minus; 5. Thus, the number of trees on ''n'' labeled leaves is the [[double factorial]]
+:<math>(2n-5)!!=\frac{(2n-4)!}{(n-2)!2^{n-2}}.</math><ref>{{harvtxt|Balding|Bishop|Cannings|2007}}.</ref>
+The numbers of trees on 2, 3, 4, 5, ... labeled leaves are
+:1, 1, 3, 15, 105, 945, 10395, 135135, 2027025, 34459425, ... {{OEIS|A001147}}.
+
+==Alternative names==
+Unrooted binary trees have also been called '''free binary trees''',<ref>{{harvtxt|Czumaj|Gibbons|1996}}.</ref> '''cubic trees''',<ref>{{harvtxt|Exoo|1996}}.</ref> '''ternary trees'''<ref name="rs91"/> and '''unrooted ternary trees''',<ref>{{harvtxt|Cilibrasi|Vitanyi|2006}}.</ref>. However, the "free binary tree" name has also been applied to unrooted trees that may have degree-two nodes<ref>{{harvtxt|Harary|Palmer|Robinson|1992}}.</ref> and to rooted binary trees with unordered children,<ref>{{harvtxt|Przytycka|Larmore|1994}}.</ref> and the "ternary tree" name is more frequently used to mean a [[ternary tree|rooted tree with three children per node]].
+
+==Notes==
+{{reflist|2}}
+
+==References==
+*{{citation
+ | last1 = Balding | first1 = D. J.
+ | last2 = Bishop | first2 = Martin J.
+ | last3 = Cannings | first3 = Christopher
+ | edition = 3rd
+ | isbn = 9780470058305
+ | page = 502
+ | publisher = Wiley-Interscience
+ | title = Handbook of Statistical Genetics
+ | volume = 1
+ | year = 2007}}.
+*{{citation
+ | last1 = Cilibrasi | first1 = Rudi
+ | last2 = Vitanyi | first2 = Paul M.B.
+ | id = {{arxiv|cs/0606048}}
+ | title = A new quartet tree heuristic for hierarchical clustering
+ | year = 2006}}.
+*{{citation
+ | last1 = Czumaj | first1 = Artur
+ | last2 = Gibbons | first2 = Alan
+ | doi = 10.1016/0304-3975(95)00126-3
+ | issue = 1
+ | journal = Theoretical Computer Science
+ | pages = 3–22
+ | title = Guthrie's problem: new equivalences and rapid reductions
+ | volume = 154
+ | year = 1996}}.
+*{{citation
+ | last = Eppstein | first = David
+ | doi = 10.1145/1541885.1541890
+ | id = {{arxiv|cs.CG/0604034}}
+ | issue = 3
+ | journal = ACM Transactions on Algorithms
+ | pages = 1–24
+ | title = Squarepants in a tree: Sum of subtree clustering and hyperbolic pants decomposition
+ | volume = 5
+ | year = 2009}}.
+*{{citation
+ | last = Exoo | first = Geoffrey
+ | issue = 1
+ | journal = Electronic Journal of Combinatorics
+ | page = R30
+ | title = A simple method for constructing small cubic graphs of girths 14, 15, and 16
+ | url = http://www.combinatorics.org/Volume_3/PDFFiles/v3i1r30.pdf
+ | volume = 3
+ | year = 1996}}.
+*{{citation
+ | last = Furnas | first = George W.
+ | doi = 10.1007/BF01890123
+ | issue = 1
+ | journal = Journal of Classification
+ | pages = 187–233
+ | title = The generation of random, binary unordered trees
+ | volume = 1
+ | year = 1984}}.
+*{{citation
+ | last1 = Harary | first1 = Frank | author1-link = Frank Harary
+ | last2 = Palmer | first2 = E.M.
+ | last3 = Robinson | first3 = R.W.
+ | journal = Journal of Combinatorics, Information, and System Sciences
+ | pages = 175–181
+ | title = Counting free binary trees admitting a given height
+ | url = http://www.cs.uga.edu/~rwr/publications/binary.pdf
+ | volume = 17
+ | year = 1992}}.
+*{{citation
+ | last1 = Hendy | first1 = Michael D.
+ | last2 = Penny | first2 = David
+ | doi = 10.2307/2992396
+ | issue = 4
+ | journal = Systematic Biology
+ | page = 297–309
+ | title = A framework for the quantitative study of evolutionary trees
+ | url = http://www.jstor.org/stable/2992396
+ | volume = 38
+ | year = 1989}}
+*{{citation
+ | last1 = Przytycka | first1 = Teresa M.
+ | last2 = Larmore | first2 = Lawrence L. | author2-link = Lawrence L. Larmore
+ | contribution = The optimal alphabetic tree problem revisited
+ | doi = 10.1007/3-540-58201-0_73
+ | pages = 251–262
+ | publisher = Springer-Verlag
+ | series = Lecture Notes in Computer Science
+ | title = Proc. 21st International Colloquium on Automata, Languages and Programming (ICALP '94)
+ | volume = 820
+ | year = 1994}}.
+*{{citation
+ | last1 = Robertson | first1 = Neil | author1-link = Neil Robertson (mathematician)
+ | last2 = Seymour | first2 = Paul D. | author2-link = Paul Seymour (mathematician)
+ | doi = 10.1016/0095-8956(91)90061-N
+ | issue = 2
+ | journal = Journal of Combinatorial Theory
+ | pages = 153–190
+ | title = Graph minors. X. Obstructions to tree-decomposition
+ | volume = 52
+ | year = 1991}}.
+*{{citation
+ | last1 = St. John | first1 = Katherine
+ | last2 = Warnow | first2 = Tandy
+ | last3 = Moret | first3 = Bernard M. E.
+ | last4 = Vawterd | first4 = Lisa
+ | doi = 10.1016/S0196-6774(03)00049-X
+ | issue = 1
+ | journal = Journal of Algorithms
+ | page = 173–193
+ | title = Performance study of phylogenetic methods: (unweighted) quartet methods and neighbor-joining
+ | volume = 48
+ | year = 2003}}.
+
+[[Category:Trees (graph theory)]]</body> </html>

@@ -1,0 +1,207 @@
+<html> <head> <title>OpenWebNet</title></head><body>'''OpenWebNet''' is a [[Communications protocol|Communication Protocol]] developed by [[Bticino]] since [[2000]].
+
+OpenWebNet Protocol allow a “high level” interaction between a remote unit and [[Bus SCS]] of MyHome [[domotic]] system.
+
+Latest  protocol evolution has been improved to allow interaction with well known home automation systems like [[KNX (standard)|KNX]] and [[DMX512-A]] system, by using appropriate [[gateways]].
+
+The ''OpenWebNet'' protocol is disclosed on MyOpen community.
+
+==OpenWebNet Protocol==
+The protocol is thought to being independent from the used technology.
+For example it’s possible to use a supervisor software connected via [[Ethernet]], via serial [[RS-232]] or via [[USB]] to a gateway that is directly connected to a domotic system.
+
+Everyone can require protocol message extension. It's enough to propose your own [[Request for Comments|RFC]]. It will be examined and disclosed if it respects  ''OpenWebNet'' syntax.
+
+===Syntax===
+An ''OpenWebNet'' message is structured with variable length fields separated by the special character '*' and closed by '##'.
+
+The characters admitted in the fields are numbers and the character “#”.
+
+The structure of a message is therefore:
+*field1*field2*… *fieldN## 
+
+The following fields are admitted:
+WHO
+WHERE
+WHAT
+DIMENSION
+VALUE
+
+'''WHO'''
+
+It characterizes the domotic system function to which the OpenWebNet message is referred.
+
+For example: WHO = 1, characterizes the messages for lighting system management.
+
+'''WHERE'''
+
+It characterizes the set of objects to which the OpenWebNet message is referred. It can be a single object, a group of objects, a specific environment, the entire system, etc.
+
+For every WHO (and therefore for every function) there is a specified WHERE table.
+
+The tag WHERE can also contain optional parameters: WHERE#PAR1#PAR2… #PARn.
+
+Example of where: all the lights of group 1, sensor 2 of zone 1 of alarm system, etc.
+
+'''WHAT'''
+
+It characterizes an action to do or a status to read. For every WHO (and therefore for every function) there is a specific WHAT table.
+
+The field WHAT can also contain optional parameters: WHAT#PAR1#PAR2… #PARn.
+
+Example of actions: switch ON light, dimmer to 75%, switch DOWN shutter, radio ON, etc. 
+Example of status: light ON, active alarm, battery unload, etc.
+
+'''DIMENSION'''
+
+Is a range of value that characterizes the dimension of the object to which the message is referred. For every WHO (and therefore for every function) there is a specific DIMENSION table.
+
+It’s possible to require/to read/to write the value of one dimension.
+Every dimension has a prefixed number of values, described in VALUE field.
+
+Example of dimension: sensor temperature, loudspeaker volume, firmware version of a device, etc.
+
+'''VALUE'''
+
+It characterizes the read/written value of a written/required/read dimension.
+
+===Message===
+There are 4 types of OpenWebNet Message:
+
+Command / Status Message
+
+Status Request Message
+
+Request/Read/Write Dimension Message
+
+Acknowledge Message
+
+''Command / Status Message''
+ *WHO*WHAT*WHERE##
+
+''Status Request Message''
+ *#WHO*WHERE##
+
+''Request/Read/Write Dimension Message''
+Request:
+ *#WHO*WHERE*DIMENSION##
+Read:
+ *#WHO*WHERE*DIMENSION*VALUE1*...*VALUEn##
+Write:
+ *#WHO*WHERE*#DIMENSION*VALUE1*...*VALUEn##
+
+''Acknowledge Message''
+ACK:
+ *#*1##
+NACK:
+ *#*0##
+
+==Gateway OpenWebNet==
+It's possible to interact with the SCS [[home automation]] bus by using a specific [[Gateway (telecommunications)|gateway]].
+
+There are two typologies of [[gateways]] that allow a connection to the field [[bus]] by using different [[Technical standard|standard]] [[Communications protocol|protocol]]s:
+
+* Gateway [[Ethernet]] ([[Linux]] based)
+* Gateway [[USB]] / [[RS232]]
+
+'''Gateway Ethernet'''
+
+The current implementation by BTicino is also an [[embedded]] [[web server]]. It works as a translator between OpenWebNet messages via TCP/IP and the SCS messages transmitted on the SCS bus.
+
+Actually it is possible to control three different kinds of buses:
+* BUS SCS
+* [[KNX (standard)|KNX]]
+* [[Digital MultipleX|DMX]]
+
+'''Gateway USB / RS232'''
+
+The gateway is an interface that works as a translator between the OpenWebNet messages transmitted on USB or Serial and the SCS messages transmitted on the SCS bus.
+
+==Example==
+OpenWebNet message examples
+
+'''Command Message'''
+
+Switch Off of light 77
+ *1*0*77##
+
+WHO = 1
+WHAT = 0
+WHERE = 77
+
+'''Status Message'''
+
+Scenario 1 of scenario unit 23 activated.
+ *0*1*23##
+
+WHO = 0
+WHAT = 1
+WHERE = 23
+
+'''Request status message'''
+
+Status request of probe 1
+ *#4*1##
+
+WHO = 4
+WHERE = 1
+
+'''Request Dimension Message'''
+
+Request of Temperature Measured, probe 44
+ *#4*44*0##
+
+WHO = 4
+WHERE = 44
+DIMENSION = 0
+
+'''Read Dimension Message'''
+
+Temperature Measured, probe 44
+ *#4*44*0*0251*2##
+
+WHO = 4
+WHERE = 44
+DIMENSION = 0
+VALUE1 = 0251 (T=+25,1°C)
+VALUE2 = 2 (System in "cooling mode")
+
+'''Write Dimension Message'''
+
+Volume set at 50%, environment 2
+ *#16*#2*#1*16*##
+
+WHO = 4
+WHERE = #1
+DIMENSION = 1
+VALUE1 = 16
+
+==See also==
+* [[Home automation]]
+* [[KNX (standard)|KNX]]
+* [[Digital MultipleX|DMX]]
+
+==References==
+* Moneta, D. Mauri, G. Bettoni, C. Meda, R. - Cesi ricerca (Italy) ''http://www.cired.be/CIRED07/pdfs/CIRED2007_0522_paper.pdf Test Facility for the assessment of local energy management systems''; 19th Conference on Electricity Distribution, Vienna (21–24 May 2007).
+
+* Moneta, D. Bisone, L. Mauri, G. Meda, R. - Cesi ricerca (Italy) ''http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?tp=&arnumber=4209527&isnumber=4209049 New interactions between LV customers and the network: further possibilities for home automation functions  ''; IEEE International Conference on Robotics and Automation, Rome (10–14 April 2007).
+
+* Bonino, D. Castellina, E. Corno, F. - Politecnico di Torino (Italy) ''http://www.cad.polito.it/pap/db/ictai08.pdf DOG: an Ontology-Powered OSGi Domotic Gateway''; Torino (September 2008). 
+
+==External links==
+* [http://www.myopen-bticino.it MyOpen Bticino]
+* [http://domoticdog.sourceforge.net DOG] A Domotic OSGi Gateway able to expose different domotic networks as a single, technology neutral, home automation system. It supports OpenWebNet protocol. 
+* [http://www.iana.org/assignments/port-numbers IANA, TCP ports assignment.] OpenWebNet is associated to port 20005 
+* [http://myhomevillage.com MyHomeVillage.com] Description of home automation projects.
+
+[[Category:Computer buses]]
+[[Category:Building automation]]
+[[Category:Home automation]]
+
+[[es:Openwebnet]]
+[[fr:Openwebnet]]
+[[it:OpenWebNet]]
+[[nl:Openwebnet]]
+[[ru:OpenWebNet]]
+[[sl:OpenWebNet]]
+[[th:OpenWebNet]]</body> </html>

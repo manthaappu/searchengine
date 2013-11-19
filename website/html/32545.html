@@ -1,0 +1,93 @@
+<html> <head> <title>RubyCocoa</title></head><body>{{Unreferenced|date=May 2010}}
+{{Portal|Free software}}
+'''RubyCocoa''' is a [[Mac OS X]] [[Software framework|framework]] that provides a bridge between the [[Ruby (programming language)|Ruby]] and the [[Objective-C]] programming languages, allowing the user to manipulate Objective-C [[object (computer science)|object]]s from Ruby, and vice-versa. It makes it possible to write a [[Cocoa (API)|Cocoa]] application completely in Ruby as well as to write an application that mixes Ruby and Objective-C code. As of 2008, an Apple project called [[MacRuby]] is under development to replace RubyCocoa.
+
+Some useful applications of RubyCocoa are exploration of a Cocoa object's features with irb interactively, prototyping of a Cocoa application, writing a Cocoa application that combines the features of Ruby and Objective-C and wrapping Mac OS X's native [[GUI]] for a Ruby script.
+
+RubyCocoa is [[free software]], released under both the [[Ruby License]] and the [[LGPL]].
+
+== History ==
+RubyCocoa was started in 2001 by Hisakuni Fujimoto when he implemented a Ruby extension module to wrap NSObject and NSClassFromString function. Later it was integrated with Project Builder (which later become [[Xcode]]).
+In 2002 the project was registered on [http://www.sourceforge.net SourceForge] and the development team began to grow.
+
+In 2006 the commiters list was first joined by a developer from [[Apple Inc.|Apple]], Laurent Sansonetti, and then a RubyCocoa presentation was made during [[WWDC]]. Apple stated that RubyCocoa will be included and supported in [[Mac OS X v10.5]] “Leopard”.
+
+In August 2008, Sansonetti confirmed that [[MacRuby]] "[http://forums.pragprog.com/forums/76/topics/687#posts-4160 is supposed to replace RubyCocoa.]" in the future.
+
+== How Does the Bridge Work? ==
+RubyCocoa is sometimes interpreted as a set of bindings to the Cocoa frameworks, which is false. RubyCocoa is a real bridge between the Objective-C and Ruby programming languages.
+
+=== Lazy Class Import ===
+RubyCocoa will import the Objective-C classes into the Ruby world on demand. For example, when you access <code>OSX::NSTableView</code> for the very first time in your code, RubyCocoa will retrieve all the necessary information regarding this class from the Objective-C runtime and create a Ruby class of the same name that will act as a proxy. It will also import in the same way all the inherited classes.
+
+=== Forwarding Messages ===
+As stated earlier, RubyCocoa creates special proxy objects. Every time you send a Ruby message to a proxy object, RubyCocoa will try to forward it to the embedded Objective-C instance, by translating the message name to an Objective-C selector and asking the Objective-C runtime to forward it.
+
+If an exception is raised from the Objective-C world, RubyCocoa will convert it to a Ruby exception and forward it to you.
+
+RubyCocoa uses the [[libffi]] library to call the Objective-C methods implementations.
+
+=== Automatic Method Overriding ===
+RubyCocoa makes it easy to override an Objective-C method from Ruby, either in a subclass or directly to the class (as you would do in Objective-C using a category).
+
+Once your method is inserted, RubyCocoa will retrieve the signature of the existing Objective-C method and inject a new one to the Objective-C runtime, of the same signature, but which now points to your code.
+
+To accomplish this, RubyCocoa uses the [[libffi]] library to dynamically create a closure that will call the Ruby method, and just passes a pointer to that new closure to the Objective-C runtime.
+
+=== Accessing the C Bits ===
+Due to the nature of the Objective-C language, you can freely use [[C (programming language)|C]] from Objective-C code. In order to bridge the relevant C parts of an Objective-C framework, such as C structures, functions, enumerations, constants and more, RubyCocoa relies on the [[BridgeSupport]] project.
+
+RubyCocoa will interpret at runtime the BridgeSupport files (using the very fast [[libXML]]2's xmlTextReader) and accordingly handle their content. It will for instance construct the Ruby proxy classes for the C structures and also create the functions.
+
+Note that the costly operations, such as localizing the symbols, are done on demand, and obviously only once.
+
+=== Format Strings ===
+RubyCocoa is able to detect APIs that use format strings, like NSLog or NSString.stringWithFormat, and appropriately convert the variable arguments to the types specified in the format string.
+
+=== Function Pointers ===
+RubyCocoa allows you to pass Ruby <code>Proc</code> objects as function pointer arguments. It will then use the [[libffi]] library to dynamically create a closure and pass it to the underlying function/method.
+
+== How to start a Cocoa application written in Ruby ==
+When you install RubyCocoa, the corresponding [[Xcode]] templates are installed
+automatically. So when you start a new project, select ''Cocoa-Ruby Application '' project type and all necessary files will be generated.
+
+== How to call Objective-C methods from Ruby ==
+To invoke an Objective-C method, you replace each colon in the method name except the last with an underscore. Thus, for example, the NSWindow instance method <code>initWithContentRect:styleMask:backing:defer:</code> becomes <code>initWithContentRect_styleMask_backing_defer</code>.
+
+All Cocoa classes and functions belong to <code>OSX</code> module, so for example, the Objective-C code:
+
+<source lang="objc">
+[[NSWindow alloc] initWithContentRect:frame
+                            styleMask:NSTitledWindowMask
+                              backing:NSBackingStoreBuffered
+                                defer:NO]
+</source>
+
+will become:
+
+<source lang="ruby">
+OSX::NSWindow.alloc.initWithContentRect_styleMask_backing_defer(frame,
+  OSX::NSTitledWindowMask,
+  OSX::NSBackingStoreBuffered,
+  false)
+</source>
+
+As you can see, this decreases the code readability by rendering Objective-C parameter naming useless. So, there is another convenient way to write the method calls — the <code>objc_send</code> method, which accepts Ruby symbols as parameter names. For example, the previous code can also be written as:
+
+<source lang="ruby">
+OSX::NSWindow.alloc.objc_send(:initWithContentRect, frame,
+  :styleMask, OSX::NSTitledWindowMask,
+  :backing, OSX::NSBackingStoreBuffered,
+  :defer, false)
+</source>
+
+== Advantages of RubyCocoa ==
+* As Ruby is an interpreted language, there's no need to recompile the application frequently during development.
+* Some of Ruby's rich features, like built-in [[regular expression]] support, make writing the code faster, and also make RubyCocoa an ideal tool for prototyping.
+
+== Disadvantages ==
+* Ignoring the speed of the Ruby interpreter, RubyCocoa applications will always be slower than Objective-C/Cocoa applications due to the added overhead of object conversion.
+* Because Ruby isn't thread-safe, it isn't possible to dispatch multiple native threads to execute RubyCocoa code. Ruby's emulated threads, however, can be used.
+
+[[Category:Mac OS X software]]
+[[Category:Ruby programming language]]</body> </html>

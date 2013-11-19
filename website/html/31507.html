@@ -1,0 +1,109 @@
+<html> <head> <title>Record linkage</title></head><body>'''Record linkage''' (RL)<!-- <s>also known as '''deduplication'''</s>,--> refers to the task of finding entries that refer to the same [[entity]] in two or more files. Record linkage is an appropriate technique when you have to join data sets that do not have a unique [[Relational model|database key]] in common. A data set that has undergone record linkage is said to be linked.
+
+Record linkage is a useful tool when performing [[data mining]] tasks, where the data originated from different sources or different organizations. Most commonly, performing RL on datasets involves joining records of persons based on name, since no [[National identification number]] or similar is recorded in the data. In mathematical [[graph theory]], record linkage can be seen as a technique of resolving [[bipartite graph]]s.
+
+==Naming conventions==
+Record linkage is the term used by statisticians, epidemiologists and historians among others.  Commercial mail and database applications refer to it as "merge/purge processing" or "list washing". [[computer science|Computer scientists]] often refer to it as "data matching" or as the "object identity problem". Other names used to describe the same concept include "entity resolution", "entity disambiguation", "duplicate detection", "record matching", "instance identification", "deduplication", "coreference resolution", "reference reconciliation" and "database hardening". This confusion of terminology has led to few cross-references between these research communities.<ref>[http://datamining.anu.edu.au/linkage.html Cristen, P & T: Febrl - Freely extensible biomedical record linkage (Manual, release 0.3) p.9]</ref><ref>
+{{cite journal
+ | first = Ahmed  | last = Elmagarmid 
+ | coauthors = Panagiotis G. Ipeirotis, Vassilios Verykios 
+ | title = Duplicate Record Detection: A Survey 
+ | journal = IEEE Transactions on Knowledge and Data Engineering 
+ | year = 2007  | month = January  | volume = 19  | issue = 1  | pages = ''pp.'' 1&ndash;16 
+ | url = http://www.cs.purdue.edu/homes/ake/pub/TKDE-0240-0605-1.pdf | format = PDF  | accessdate = 2009-03-30
+ | doi = 10.1109/TKDE.2007.9
+}}
+</ref>
+
+==Methods==
+There are several approaches to record linkage.  The most straightforward is a ''rules-based'' approach, in which reasonable rules are developed and then refined as common exceptions are found.  The advantage to this approach is that it is possible to get a good deal of accuracy without needing a lot of labeled data to train or test the rules on.  The disadvantage is that to obtain very high accuracy, more and more exceptions and special cases would need to be handled, and eventually the list of rules gets too complex to be built by hand.
+
+A very popular approach has been ''Probabilistic Record Linkage'' (''PRL'').  In this approach, a large set of pairs of records are human-labeled as being matching or differing pairs.  Then statistics are calculated from the agreement of fields on matching and differing records to determine weights on each field.  During execution, the agreement or disagreement weight for each field is added to get a combined score that represents the probability that the records refer to the same entity.  Often there is one threshold above which a pair is considered a match, and another threshold below which it is considered not to be a match.  Between the two thresholds a pair is considered to be "possibly a match", and dealt with accordingly (e.g., human reviewed, linked, or not linked, depending on the application).
+
+In recent years, a variety of machine learning techniques have been used in record linkage.  It has been recognized that Probabilistic Record Linkage is equivalent to the "[[Naive Bayes]]" algorithm in the field of machine learning, and suffers from the same assumption of the independence of its features, which is typically not true.  Higher accuracy can often be achieved by using various other machine learning techniques, including a single-layer [[Perceptron]].  
+
+Regardless of whether rule-based, PRL or machine learning techniques are used, ''normalization'' of the data is very important.  Names are often spelled differently in different sources (e.g., "Wm. Smith", "William Smith", "William J. Smith", "Bill Smith", etc.), dates can be recorded various ways ("1/2/73", "1973.1.2", "Jan 2, 1973"), and places can be recorded differently as well ("Berkeley, CA", "Berkeley, Alameda, California, USA", etc.).  By normalizing these into a common format and using comparison techniques that handle additional variation, much more consistency can be achieved, resulting in higher accuracy in any record linkage technique.
+
+Record linkage typically involves two main steps: ''blocking'' and ''scoring''.  The ''blocking'' phase attempts to find groups of records that are similar in some way.  For example, a query might select all individuals with the same surname and zip code.  Of course many of these individuals would not be the same real person (false positives), and some records for the same individual might have different values for the surname (due to typos, married name, etc.) or zipcode (e.g., because they moved).  Thus robust systems often use multiple blocking passes to group data in various ways in order to come up with groups of records that should be compared to each other.
+
+Once a set of potential matches is identified, a ''scoring'' algorithm is used to calculate a score indicating how likely the two records are to really represent the same real entity.  By using labeled test data, score thresholds can be selected that yield a desired trade-off between ''recall'' and ''precision''.  (''Recall''  is the percent of true matching pairs that get a score above a given threshold, and ''precision'' is the percent of pairs with a score above a given threshold that are really a match).
+
+==History of RL theory== 
+The initial idea goes back to [[Halbert L. Dunn]] in 1946<ref>{{cite journal | first = Halbert L. | last = Dunn | authorlink = Halbert L. Dunn | title = Record Linkage | journal = [[American Journal of Public Health]] | year = 1946 | month = December | volume = 36
+ | issue = 12 | pages = ''pp.'' 1412&ndash;1416 | url = http://www.ajph.org/cgi/reprint/36/12/1412 | format = PDF | accessdate = 2008-05-31 | doi = 10.2105/AJPH.36.12.1412}}</ref>. In the 1950s, Howard Borden Newcombe laid the probabilistic foundations of modern record linkage theory.
+
+In 1969, [[Ivan Fellegi]] and Alan Sunter formalized these ideas and proved that the probabilistic decision rule they described was optimal when the comparison attributes are conditionally independent. Their pioneering work "A Theory For Record Linkage"<ref>{{cite journal 
+ | first = Ivan  | last = Fellegi | authorlink = Ivan Fellegi 
+ | coauthors = Sunter, Alan 
+ | title = A Theory for Record Linkage 
+ | journal = [[Journal of the American Statistical Association]] 
+ | year = 1969 | month = December | volume = 64 | issue = 328 | pages = ''pp.'' 1183&ndash;1210  
+ | id = {{JSTOR|2286061}}. 
+ | doi = 10.2307/2286061 
+ | url = http://jstor.org/stable/2286061
+}}</ref> is, still today, the mathematical tool for many record linkage applications.
+
+Since the late 1990s, various machine learning techniques have been developed that can, under favorable conditions, be used to estimate the conditional probabilities required by the Fellegi-Sunter (FS) theory.  Several researchers have reported that the conditional independence assumption of the FS algorithm is often violated in practice; however, published efforts to explicitly model the conditional dependencies among the comparison attributes have not resulted in an improvement in record linkage quality.
+{{Fact|date=May 2007}}
+
+==Mathematical model==
+In an application with two files, A and B, denote the rows (''records'') by <math>\alpha (a)</math> in file A and <math>\beta (b)</math> in file B. Assign <math>K</math> ''characteristics'' to each record. The set of records that represent identical entities is defined by
+
+<math> M = \left\{ (a,b); a=b; a \in A; b \in B \right\} </math>
+
+and the complement of set <math>M</math>, namely set <math>U</math> representing different entities is defined as
+
+<math> U = \{ (a,b); a \neq b; a \in A, b \in B \} </math>.
+
+A vector, <math>\gamma</math> is defined, that contains the coded agreements and disagreements on each characteristic:
+
+<math> \gamma \left[ \alpha ( a ), \beta ( b ) \right] = \{ \gamma^{1} \left[ \alpha ( a ) , \beta ( b ) \right] ,...,	\gamma^{K} \left[ \alpha ( a ), \beta ( b ) \right] \} </math>
+
+where <math>K</math> is a subscript for the characteristics (sex, age, marital status, etc.) in the files. The conditional probabilities of observing a specific vector <math>\gamma</math> given <math>(a, b) \in M</math>, <math>(a, b) \in U</math> are defined as
+
+<math>
+ m(\gamma) = P \left\{ \gamma \left[ \alpha (a), \beta (b) \right] | (a,b) \in M \right\} =
+ \sum_{(a, b) \in M} P \left\{\gamma\left[ \alpha(a), \beta(b) \right] \right\} \cdot
+                 P \left[ (a, b) | M\right]
+</math>
+
+and
+
+<math>
+ u(\gamma) = P \left\{ \gamma \left[ \alpha (a), \beta (b) \right] | (a,b) \in U \right\} =
+ \sum_{(a, b) \in U} P \left\{\gamma\left[ \alpha(a), \beta(b) \right] \right\} \cdot
+                 P \left[ (a, b) | U\right],
+</math>
+respectively.
+
+===Applications in historical research===
+Record linkage is important to social history research since most data sets, such as [[census|census records]] and parish registers were recorded long before the invention of [[National identification number]]s. When old sources are digitized, linking of data sets is a prerequisite for [[longitudinal study]]. This process is often further complicated by lack of standard spelling of names, family names that change according to place of dwelling, changing of administrative boundaries and problems of checking the data against other sources. Record Linkage was among the most prominent themes in the [[History and computing]] field in the 1980s, but has since been subject to less attention in research.
+
+===Applications in medical practice and research=== 
+<!-- any experts out there? -->
+Record linkage is an important tool in creating data required for examining the health of the public and of the health care system itself. It can be used to improve data holdings, data collection, quality assessment, and the dissemination of information. Data sources can be examined to eliminate duplicate records, to identify underreporting and missing cases (e.g., census population counts), to create person-oriented health statistics, and to generate disease registries and health surveillance systems. Some cancer registries link various data sources (e.g., hospital admissions, pathology and clinical reports, and death registrations) to generate their registries. Record linkage is also used to create health indicators. For example, fetal and infant mortality is a general indicator of a country's socioeconomic development, public health, and maternal and child services. If infant death records are matched to birth records, it is possible to use birth variables, such as birth weight and gestational age, along with mortality data, such as cause of death, in analyzing the data.  Linkages can help in follow-up studies of cohorts or other groups to determine factors such as vital status, residential status, or health outcomes. Tracing is often needed for follow-up of industrial cohorts, clinical trials, and longitudinal surveys to obtain the cause of death and/or cancer.
+
+==References==
+{{reflist}}
+
+==External links==
+* [http://www.semaphorecorp.com/mpdd/mpdd.html Discussion of record linkage strategy and tactics]
+* [http://www.stats.govt.nz/about_us/policies-and-guidelines/data-integration/further-technical-information.aspx Statistics New Zealand Data Integration Manual]
+* [http://pike.psu.edu/linkage/ Data Linkage Project at Penn State, USA]
+
+===Software implementations===
+*[http://oscmt.sourceforge.net Open Source ChoiceMaker Technology] - released by ChoiceMaker Technologies
+*[http://datamining.anu.edu.au/projects/linkage.html#project_description Febrl - Open source software application for RL] - by the [[Australian National University]]. 
+*[http://www.cdc.gov/cancer/npcr/tools/registryplus/lp_tech_info.htm Link Plus Probabilistic record linkage program] - developed at the US [[Centers For Disease Control and Prevention]]
+*[http://www.mathcs.emory.edu/Research/Area/datainfo/FRIL/ FRIL - Fine-Grained Record Integration and Linkage Tool] - developed at the [[Emory University]] and US [[Centers For Disease Control and Prevention]]
+*[http://sourceforge.net/projects/simmetrics/ SimMetrics Open source library of String Similarity techniques] - by Sam Chapman at the [[University of Sheffield]]
+*[http://www.the-link-king.com The Link King - SAS System application] - developed at Washington State's Division of Alcohol and Substance Abuse (DASA) by Kevin M. Campbell
+*[http://www.cs.umd.edu/projects/linqs/ddupe/ Data Deduplication and Integration] - developed by the CS department at [[University of Maryland]]
+*[http://www.dataqualitysolution.com/data-matching/massively-scalable-matching OpenDQ Massively scalable record linkage / Data Matching] - by Infosolve Technologies
+*[http://www.uni-due.de/soziologie/schnell_downloads.php MTB - Merge ToolBox] - by the [[University of Duisburg-Essen]]
+*[http://datacleaner.eobjects.org  DataCleaner] - by eobjects.org
+*[http://www.sparsity-technologies.com/daurum.php  Daurum] - Deduplication and Integration tool & services - by Sparsity Technologies
+[[Category:Computer algebra]]
+[[Category:Data management]]
+
+[[de:Duplikaterkennung]]</body> </html>

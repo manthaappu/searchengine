@@ -1,0 +1,31 @@
+<html> <head> <title>Finite pointset method</title></head><body>{{Unreferenced|date=November 2010}}
+In [[applied mathematics]], the '''Finite Pointset Method (FPM)''' is a method for the solution of the equations governing [[viscosity|viscous]] [[fluid flow]]s, including the effects of [[heat transfer|heat]] and [[mass transfer]].  FPM models problems in [[continuum mechanics]].  The method solves not only fluid flows, but also problems with [[elastic deformation|elastic]] or [[plastic deformation]]s. More generally spoken, FPM considers all the viscous as well as elastic/plastic [[stress tensor]]s, and any mixture of it.
+
+==Description==
+FPM is a [[meshfree method]].  The basis of the computations is a [[point cloud]], which represents the continuum or in other words a continuum domain (fluid or solid) is replaced by a discrete number of points, which are referred to as finite points. Each finite point carries all fluid information, like density, velocity, pressure, temperature. Finite points can move with fluid velocity (Lagrangian approach) or the flow information runs through the finite points if they are located constant in space (Eulerian approach). Also a mixture approach (Arbitrary Lagrangian Eulerian ALE) is possible. This is useful in case of using the Eulerian approach in combination with free surfaces or moving parts. Therefore, finite points themselves can be considered as geometrical grids of the fluid domain.
+
+The finite point density is prescribed by a smoothing length defined locally. FPM does not use a rigid neighbourhood list for a certain finite point as it is required in a mesh based method. All neighbours are allowed to move and the neighbourhood list is re-computed each time step. Thus the simple idea of FPM is to use a dynamical discretization method, but the finite points itself are carrying all fluid information.
+
+This method has various advantages over grid-based techniques; for example, it can handle fluid domains, which change naturally, whereas grid based techniques require additional computational effort. The finite points have to completely cover the whole flow domain, i.e. the point cloud has to fulfill certain quality criteria (finite points are not allowed to form “holes” which means finite points have to find sufficiently numerous neighbours; also, finite points are not allowed to cluster; etc.).
+
+The finite point cloud is a geometrical basis, which allows for a numerical formulation making FPM a general finite difference idea applied to continuum mechanics. That especially means, if the point cloud would reduce to a regular cubic point grid, then FPM would reduce to a classical finite difference method. The idea of general finite differences also means that FPM is not based on a weak formulation like Galerkin’s approach. Rather, FPM is a strong formulation which models differential equations by direct approximation of the occurring differential operators. The method used is a moving least squares idea which was especially developed for FPM.
+
+==History==
+
+In order to overcome the disadvantages of the classical methods many approaches have been developed to simulate such flows (Hansbo 92, [[Francis H. Harlow|Harlow]] et al. 1965, Hirt et al. 1981, Kelecy et al. 1997, Kothe at el. 1992, Maronnier et al. 1999, Tiwari et al. 2000). A classical grid free Lagrangian method is Smoothed Particle Hydrodynamics (SPH), which was originally introduced to solve problems in astrophysics (Lucy 1977, Gingold et al. 1977).
+
+It has since been extended to simulate the compressible Euler equations in fluid dynamics and applied to a wide range of problems, see (Monaghan 92, Monaghan et al. 1983, Morris et al. 1997). The method has also been extended to simulate inviscid incompressible free surface flows (Monaghan 94). The implementation of the boundary conditions is the main problem of the SPH method.
+
+Another approach for solving fluid dynamic equations in a grid free framework is the moving least squares or least squares method (Belytschko et al. 1996, Dilts 1996, Kuhnert 99, Kuhnert 2000, Tiwari et al. 2001 and 2000). With this approach boundary conditions can be implemented in a natural way just by placing the finite points on boundaries and prescribing boundary conditions on them (Kuhnert 99). The robustness of this method is shown by the simulation results in the field of airbag deployment in car industry. Here, the membrane (or boundary) of the airbag changes very rapidly in time and takes a quite complicated shape (Kuhnert et al. 2000).
+
+In (Tiwari et al. 2000) we have performed simulations of incompressible flows as the limit of the compressible [[Navier–Stokes equations]] with some stiff equation of state. This approach was first used in (Monaghan 92) to simulate incompressible free surface flows by SPH. The incompressible limit is obtained by choosing a very large speed of sound in the equation of state such that the Mach number becomes small. However the large value of the speed of sound restricts the time step to be very small due to the [[Courant–Friedrichs–Lewy condition|CFL-condition]].
+
+The [[Projection method (fluid dynamics)|projection method]] of [[Alexandre Chorin|Chorin]] (Chorin 68) is a widely used approach to solve problems governed by the incompressible Navier–Stokes equation in a grid based structure. In (Tiwari et al. 2001), this method has been applied to a grid free framework with the help of the weighted least squares method. The scheme gives accurate results for the incompressible [[Navier–Stokes equations]]. The occurring Poisson equation for the pressure field is solved by a grid free method. In (Tiwari et al. 2001), it has been shown that the Poisson equation can be solved accurately by this approach for any boundary conditions. The Poisson solver can be adapted to the weighted least squares approximation procedure with the condition that the Poisson equation and the boundary condition must be satisfied on each finite point. This is a local iteration procedure.
+
+==External links==
+* [http://www.nogrid.com/ The first available commercial meshfree CFD code]
+
+{{DEFAULTSORT:Finite Pointset Method}}
+[[Category:Numerical analysis]]
+[[Category:Numerical differential equations]]
+[[Category:Computational fluid dynamics]]</body> </html>

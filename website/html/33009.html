@@ -1,0 +1,38 @@
+<html> <head> <title>ST200 family</title></head><body>The '''ST200''' is a family of [[very long instruction word]] (VLIW) processor cores based on technology jointly developed by [[Hewlett-Packard]] Laboratories and [[STMicroelectronics]] under the name '''Lx'''. The main application of the ST200 family is embedded media processing.
+
+== Lx architecture ==
+
+The Lx architecture is closer to the original VLIW architecture defined by the Trace processor series from [[Multiflow]] than to the [[Explicitly parallel instruction computing|EPIC]] architectures exemplified by the [[IA-64]]. Precisely, the Lx is a symmetric clustered architecture, where clusters communicate through explicit send and receive instructions. Each cluster executes up to 4 instructions per cycle with a maximum of one control instruction (goto, jump, call, return), one memory instruction (load, store, pre-fetch), and two multiply instructions per cycle. All arithmetic instructions operate on integer values with operands belonging either to the general register file (64 x 32-bit) or to the branch register file (8 x 1-bit). General register $r0 always reads as zero, while general register $r63 is the link register. In order to eliminate some conditional branches, the Lx architecture also provides partial predication support in the form of conditional selection instructions. There is no division instruction, but a divide step instruction is provided. All instructions are fully pipelined. The [[Hazard (computer architecture)#Read After Write .28RAW.29|RAW]] latencies are single-cycle except for the load, multiply, compare to branch RAW latencies. The WAR latencies are zero cycles and the WAW latencies are single cycle.
+
+The principal architects for the ST200 Lx implementation <ref>Paolo Faraboschi, Geoffrey Brown, Joseph A. Fisher,
+Giuseppe Desoli, Fred (Mark Owen) Homewood, Lx: A Technology Platform for Customizable
+VLIW Embedded Processing, in Proc. 27th Annu. Int. Symp. Computer Architecture, June 2000, pp. 203–213.</ref>
+were Paolo Faraboschi (HPL, architecture) and Fred Homewood (STM, microarchitecture). Key members of the architecture and microarchitecture team included Geoffrey Brown (HPL co-lead), Giuseppe Desoli (HP), Gary Vondran (HP), Trefor Southwell (ST), Tony Jarvis (ST), and Alex Starr (ST).
+
+The architecture was really a true cross company development, co-sited for the early duration of the project, lasting some two years.
+
+== ST200 cores ==
+
+The ST200 VLIW family currently comprises the ST210, ST220, ST231 cores, which are single-cluster implementations of the Lx architecture. The differences among these cores are minimal:
+
+* The ST210 was the first STMicroelectronics product based on the Lx technology.
+
+* The ST220 improved the frequency of the ST210 by adding one execute stage, which had the effect of increasing the maximum latency to 3 cycles from 2.
+
+* The ST231 improved the ST220 architecture with register scoreboarding and 32-bit x 32-bit multiplies for integer and fractional data representations. A [[Memory management unit|MMU]] was also added so the ST231 can be used as a host processor.
+
+In digital video, STM reported in 2009 that it had shipped over 40 million [[System-on-a-chip|systems-on-chip]] (SoCs) containing a VLIW processor from the ST200 family. Since many of these SoCs contain multiple ST200s (the STi7200 contains four ST231s), they actually shipped in excess of 70 million of these VLIW processors.<ref>Fisher, Faraboschi, and Young. VLIW Processors: From Blue Sky to Best Buy, "IEEE SOLID-STATE CIRCUITS MAGAZINE", June 2009, 10-17.</ref>
+
+== Compiling tools ==
+
+The first ST210 compiler was the HP Lx compiler developed at HP Labs Cambridge, itself a descendant of the [[Multiflow]] [[Trace scheduling]] compiler and heavily modified by HP to target the embedded domain. Starting with the ST220, STMicroelectronics introduced compilers based on the [[Open64]] technology. In these compilers, the [[Open64]] release has been improved by upgrading its [[GNU Compiler Collection|GCC]] C and C++ front-end from 2.96 to 2.x and later 3.x, in order to achieve full C++ compliance. The GNU C extensions have been fully implemented in the [[Open64]], including the '''asm''' statements. As a result, the GNU-[[Linux]] kernel can be compiled for the ST200.
+
+The other ST200 compilation tools are straightforward ports of GNU as, GNU ld, and [[GDB]].
+
+==References==
+{{reflist}}
+
+{{DEFAULTSORT:St200 Family}}
+[[Category:Instruction processing]]
+
+[[it:ST200]]</body> </html>

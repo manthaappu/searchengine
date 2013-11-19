@@ -1,0 +1,62 @@
+<html> <head> <title>Probabilistically checkable proof</title></head><body>In [[computational complexity theory]], a '''probabilistically checkable proof (PCP)''' is a type of proof that can be checked by a [[randomized algorithm]] using a bounded amount of randomness and reading a bounded number of bits of the proof. The algorithm is then required to accept correct proofs and reject incorrect proofs with very high probability. A standard proof (or [[Certificate (complexity)|certificate]]), as used in the verifier-based definition of the [[complexity class]] [[NP (complexity)|NP]], also satisfies these requirements, since the checking procedure deterministically reads the whole proof, always accepts correct proofs and rejects incorrect proofs. However, what makes them interesting is the existence of probabilistically checkable proofs that can be checked by reading only a few bits of the proof using randomness in an essential way.
+
+Probabilistically checkable proofs give rise to many complexity classes depending on the number of queries required and the amount of randomness used. The class '''PCP'''[''r''(''n''),''q''(''n'')] refers to the set of [[decision problem]]s that have probabilistically checkable proofs that can be verified in polynomial time using at most ''r''(''n'') random bits and by reading at most ''q''(''n'') bits of the proof. Unless specified otherwise, correct proofs should always be accepted, and incorrect proofs should be rejected with probability greater than 1/2. The [[PCP theorem]], a major result in computational complexity theory, states that '''PCP'''[O(log ''n''),O(1)] = '''NP'''.
+
+The [[complexity class]] '''PCP''' is the class of [[computational problem|decision problems]] that have probabilistically checkable proofs with completeness 1, soundness α < 1, randomness complexity O(log ''n'') and query complexity O(1).{{Citation needed|date=February 2010}}
+
+== Definition ==
+
+A '''probabilistically checkable proof system''' with  completeness ''c''(''n'') and soundness ''s''(''n'') over alphabet Σ for a [[computational problem|decision problem]] ''L'', where 0 ≤ ''s''(''n'') ≤ ''c''(''n'') ≤ 1, is a randomized [[oracle machine|oracle Turing Machine]] ''V'' (the ''verifier'') that, on input ''x'' and oracle access to a string π ∈ Σ<sup>*</sup> (the ''proof''), satisfies the following properties:
+* '''Completeness''': If ''x'' ∈ ''L'' then for some π, ''V''<sup>''π''</sup>(''x'') accepts with probability at least ''c''(''n''),
+* '''Soundness''': If ''x'' ∉ ''L'' then for every π, ''V''<sup>''π''</sup>(''x'') accepts with probability at most ''s''(''n'').
+
+The ''randomness complexity'' ''r''(''n'') of the verifier is the maximum number of random bits that ''V'' uses over all ''x'' of length ''n''.
+
+The ''query complexity'' ''q''(''n'') of the verifier is the maximum number of queries that ''V'' makes to π over all ''x'' of length ''n''.
+
+The verifier is said to be ''non-adaptive'' if it makes all its queries before it receives any of the answers to previous queries.
+
+The complexity class '''PCP'''<sub>''c''(''n''), ''s''(''n'')</sub>[''r''(''n''), ''q''(''n'')] is the class of all decision problems having probabilistically checkable proof systems over binary alphabet of completeness ''c''(''n'') and soundness ''s''(''n''), where the verifier is nonadaptive, and it has randomness complexity ''r''(''n'') and query complexity ''q''(''n'').
+
+The shorthand notation '''PCP'''[''r''(''n''), ''q''(''n'')] is sometimes used for '''PCP'''<sub>1, ½</sub>[''r''(''n''), ''q''(''n'')].  The complexity class '''PCP''' is defined as '''PCP'''<sub>1, ½</sub>[O(log''n''), O(1)].
+
+== History and significance ==
+
+The theory of probabilistically checkable proofs studies the power of probabilistically checkable proof systems under various restrictions of the parameters (completeness, soundness, randomness complexity, query complexity, and alphabet size).  It has applications to [[computational complexity]] (in particular [[hardness of approximation]]) and [[cryptography]].
+
+The definition of a probabilistically checkable proof was explicitly introduced by Arora and Safra in 1992, although their properties were studied earlier.  In 1990 Babai, Fortnow, and Lund proved that '''PCP'''[poly(''n''), poly(''n'')] = '''[[NEXP]]''', providing the first nontrivial equivalence between standard proofs ('''NEXP''') and probabilistically checkable proofs.  The [[PCP theorem]] proved in 1992 states that '''PCP'''[O(log ''n''),O(1)] = '''NP'''.
+
+The theory of [[hardness of approximation]] requires a detailed understanding of the role of completeness, soundness, alphabet size, and query complexity in probabilistically checkable proofs.
+
+==Properties==
+
+For extreme settings of the parameters, the definition of probabilistically checkable proofs is easily seen to be equivalent to standard [[complexity classes]].  For example, we have the following:
+*'''PCP'''[0, 0] = [[P (complexity)|'''P''']] ('''P''' is defined to have no randomness and no access to a proof.)
+*'''PCP'''[O(log(''n'')), 0] = '''P''' (A logarithmic number of random bits doesn't help a polynomial time Turing machine, since it could try all possibly random strings of logarithmic length in polynomial time.)
+*'''PCP'''[0,O(log(''n''))] = '''P''' (Without randomness, the proof can be thought of as a fixed logarithmic sized string. A polynomial time machine could try all possible logarithmic sized proofs in polynomial time.)
+*'''PCP'''[poly(''n''), 0] = [[RP (complexity)|'''coRP''']] (By definition of '''coRP'''.)
+*'''PCP'''[0, poly(''n'')] = [[NP (complexity)|'''NP''']] (By the verifier-based definition of NP.)
+
+The PCP theorem and [[Interactive_proof_system#MIP|MIP]] = NEXP can be characterized as follows:
+*'''PCP'''[O(log ''n''),O(1)] = '''NP''' (the PCP theorem)
+*'''PCP'''[poly(''n''),poly(''n'')] = '''NEXP''' (MIP = NEXP)
+
+It is also known that '''PCP'''[''r''(''n''), ''q''(''n'')] ⊆ [[NTIME]](2<sup>O(''r''(''n''))</sup>''q''(''n'')+poly(''n'')), if the verifier is constrained to be non-adaptive. For adaptive verifiers, '''PCP'''[''r''(''n''), ''q''(''n'')] ⊆ [[NTIME]](2<sup>O(''r''(''n'')+''q''(''n''))</sup>+poly(''n'')).  On the other hand, if '''NP''' ⊆ '''PCP'''[o(log ''n''),o(log ''n'')] then [[P = NP]].{{Citation needed|date=May 2010}}
+
+==References==
+* [[Sanjeev Arora]] and [[Shmuel Safra]]. Probabilistic checking of proofs: A new characterization of NP. ''Journal of the ACM'', 45(1):70&ndash;122, 1998.
+* Oded Goldreich. ''Computational Complexity: A Conceptual Perspective''. [[Cambridge University Press]] (2008), ISBN 978-0-521-88473-0.
+* Ryan O'Donnell and Venkatesan Guruswami. [http://www.cs.washington.edu/education/courses/533/05au/pcp-history.pdf A history of the PCP theorem]. Course notes, University of Washington, 2005.
+* {{ComplexityZoo|PCP|P#pcp}}
+
+==External links==
+* [[Subhash Khot]]. [http://www.cs.nyu.edu/~khot/pcp-course.html PCP course notes]. New York University, 2008.
+* Ryan O'Donnell and Venkatesan Guruswami. [http://www.cs.washington.edu/education/courses/533/05au/ PCP course notes]. University of Washington, 2005.
+
+{{ComplexityClasses}}
+
+[[Category:Proofs]]
+[[Category:Probabilistic complexity theory]]
+
+[[ko:PCP (복잡도)]]
+[[ja:PCP (計算複雑性理論)]]</body> </html>

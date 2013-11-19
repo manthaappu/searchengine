@@ -1,0 +1,138 @@
+<html> <head> <title>NetCDF</title></head><body>{{Infobox file format
+| name         = Network Common Data Form
+| icon         = 
+| extension    = .nc<br/>.cdf
+| mime         = application/netcdf<br/>application/x-netcdf
+| owner        = [[University Corporation for Atmospheric Research|UCAR]]
+| typecode     = 
+| magic        = CDF\001
+| genre        = scientific binary data
+| containerfor = 
+| containedby  = 
+| extendedfrom = [[Common Data Format|CDF]]
+| extendedto   = 
+| standard     =
+}}
+'''NetCDF''' ('''Network Common Data Form''') is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. The project homepage is hosted by the Unidata program at the [[University Corporation for Atmospheric Research]] (UCAR). They are also the chief source of netCDF software, standards development, updates etc.  The format is an [[open standard]].
+
+The project is actively supported by UCAR. The recently released (2008) version 4.0 greatly enhances the data model by allowing the use of the [[HDF5]] data file format.  Version 4.1 adds support for C and Fortran client access to specified subsets of remote data via [[OPeNDAP]].
+
+The format was originally based on the conceptual model of the [[NASA]] [[Common Data Format|CDF]] but has since diverged and is not compatible with it.
+
+==Format description==
+
+The netCDF libraries support 3 different binary formats for netCDF files:
+* The classic format was used in the first netCDF release, and is still the default format for file creation.
+* The 64-bit offset format was introduced in version 3.6.0, and it supports larger variable and file sizes.
+* The netCDF-4/HDF5 format was introduced in version 4.0; it is the HDF5 data format, with some restrictions.
+
+All formats are "[[Metadata|self-describing]]". This means that there is a [[header (information technology)|header]] which describes the layout of the rest of the file, in particular the data [[array]]s, as well as arbitrary file metadata in the form of name/value [[Attribute (computing)|attributes]].  The format is [[platform independent]], with issues such as [[endianness]] being addressed in the [[software libraries]]. The data are stored in a fashion that allows efficient subsetting.
+
+Starting with version 4.0 of the netCDF API<ref>[http://www.unidata.ucar.edu/software/netcdf/netcdf-4/ Version 4.0 of the netCDF API]</ref> allows the use of the [[HDF5]] data format. NetCDF users can create HDF5 files with benefits not available with the netCDF format, such as much larger files and multiple unlimited dimensions. 
+
+Full backward compatibility in accessing old netCDF files and using previous versions of the C and Fortran APIs is supported.
+
+==Software==
+===Access libraries===
+
+The software libraries supplied by UCAR provide read-write access to netCDF files, encoding and decoding the necessary arrays and metadata.  The core library is written in [[C (programming language)|C]], and provides an [[application programming interface|API]] for C, [[C++]] and two APIs for [[Fortran]] applications, one for Fortran 77, and one for Fortran 90.  An independent implementation, also developed and maintained by Unidata, is written in 100% [[Java (programming language)|Java]], which extends the core data model and adds additional functionality.  Interfaces to netCDF based on the C library are also available in other languages including [[R programming language|R]] (''ncdf''<ref>[http://cirrus.ucsd.edu/~pierce/ncdf/ ncdf]</ref> and ''ncvar'' packages), [[Perl Data Language|Perl]], [[Python (programming language)|Python]], [[Ruby programming language|Ruby]], [[Matlab]], [[Interactive Data Language|IDL]], and [[GNU Octave|Octave]].  The specification of the API calls is very similar across the different languages, apart from inevitable differences of syntax.  The API calls for version 2 were rather different from those in version 3, but are also supported by versions 3 and 4 for backward compatibility.  Application programmers using supported languages need not normally be concerned with the file structure itself, even though it is available as open formats.
+
+===Applications===
+
+A wide range of application software has been written which makes use of netCDF files.  These range from [[command line]] utilities to graphical [[Information graphics|visualization]] packages.  A number are listed below, and a longer list<ref>[http://www.unidata.ucar.edu/software/netcdf/software.html List of software utilities using netCDF files.]</ref> is on the UCAR website.
+* A commonly used set of [[Unix]] command line utilities for netCDF files is the [[NetCDF Operators]] (NCO) suite, which provide a range of commands for manipulation and analysis of netCDF files including basic record [[concatenate|concatenating]], [[slicing]] and [[average|averaging]].
+* ncBrowse<ref>[http://www.epic.noaa.gov/java/ncBrowse/ ncBrowse]</ref> is a generic netCDF file viewer that includes Java graphics, animations and 3D visualizations for a wide range of netCDF file conventions.
+* ncview<ref>[http://meteora.ucsd.edu/~pierce/ncview_home_page.html ncview]</ref> is a visual browser for netCDF format files. This program is a simple, fast, GUI-based tool for visualising fields in a netCDF file. One can browse through the various dimensions of a data array, taking a look at the raw data values. It is also possible to change color maps, invert the data, etc. 
+* Panoply<ref>[http://www.giss.nasa.gov/tools/panoply/ Panoply]</ref> is a netCDF file viewer developed at the NASA [[Goddard Institute for Space Studies]] which focuses on presentation of geo-gridded data. It is written in [[Java (programming language)|Java]] and thus platform independent. Although its feature set overlaps with ncBrowse and ncview, Panoply is distinguished by offering a wide variety of map projections and ability to work with different scale color tables.
+* The [[NCAR Command Language]] is used to analyze and visualize data in netCDF files (among other formats).
+* PyNIO<ref>[http://www.pyngl.ucar.edu/Nio.shtml PyNIO]</ref> is a [[Python (programming language)|Python]] programming language module that allows read and/or write access to a variety of data formats, including netCDF.
+* [[Ferret Data Visualization and Analysis|Ferret]] is an interactive computer visualization and analysis environment designed to meet the needs of oceanographers and meteorologists analyzing large and complex gridded data sets. Ferret offers a Mathematica-like approach to analysis; new variables may be defined interactively as mathematical expressions involving data set variables. Calculations may be applied over arbitrarily shaped regions. Fully documented graphics are produced with a single command.
+* nCDF_Browser<ref>[http://www.dfanning.com/programs/ncdf_browser.zip nCDF_Browser software] in a zip file.</ref> is a visual nCDF browser, written in the [[Interactive Data Language|IDL]] programming language. Variables, attributes, and dimensions can be immediately downloaded to the IDL command line for further processing. All the Coyote Library<ref>[http://www.dfanning.com/documents/programs.html Coyote Library]</ref> files necessary to run nCDF_Browser are available in the zip file.
+* ArcGIS versions after 9.2<ref>[http://www.esri.com/software/arcgis/ ArcGIS version 9.2]</ref> support netCDF files that follow the [[Climate and Forecast Metadata Conventions]] and contain rectilinear grids with equally-spaced coordinates.  The Multidimensional Tools toolbox can be used to create raster layers, feature layers, and table views from netCDF data in ArcMap, or convert feature, raster, and table data to netCDF.
+* [[Origin (software)|Origin 8]] software imports netCDF files as matrix books where each book can hold a 4D array. Users can select a subset of the imported data to make surface, controur or image plots.
+* The [[GDAL|Geospatial Data Abstraction Library]] provides support<ref>[http://www.gdal.org/frmt_netcdf.html GDAL support for netCDF], Geospatial Data Abstraction Library</ref> for read and write access to netCDF data.
+
+==Common uses==
+It is commonly used in [[climatology]], [[meteorology]] and [[oceanography]] applications (e.g., [[weather forecasting]], [[climate change]]) and [[Geographic information system|GIS]] applications.
+
+It is an input/output format for many GIS applications, and for general scientific data exchange. To quote from their site "NetCDF (network Common Data Form) is an interface for array-oriented data access and a library that provides an implementation of the interface. The netCDF library also defines a machine-independent format for representing scientific data."{{Citation needed|date=November 2009}}
+
+==Conventions==
+{{Main|Climate and Forecast Metadata Conventions}}
+The Climate and Forecast (CF) conventions are metadata conventions for earth science data, intended to promote the processing and sharing of files created with the NetCDF Application Programmer Interface (API).  The conventions define metadata that are included in the same file as the data (thus making the file "self-describing"), that provide a definitive description of what the data in each variable represents, and of the spatial and temporal properties of the data (including information about grids, such as grid cell bounds and cell averaging methods). This enables users of data from different sources to decide which data are comparable, and allows building applications with powerful extraction, regridding, and display capabilities. 
+
+==Parallel-NetCDF==
+An extension of netCDF for [[parallel computing]] called '''Parallel-NetCDF''' (or PnetCDF) has been developed by [[Argonne National Laboratory]] and [[Northwestern University]].<ref> [http://www.mcs.anl.gov/parallel-netcdf/ Parallel-NetCDF] (or PnetCDF)</ref> This is built upon [[MPI-IO]], the [[Input/output|I/O]] extension to [[Message Passing Interface|MPI]] communications. Using the high-level netCDF data structures, the Parallel-NetCDF libraries can make use of optimizations to efficiently distribute the file read and write applications between multiple processors. The Parallel-NetCDF package can read/write only classic and 64-bit offset formats. Parallel-NetCDF cannot read or write the HDF5-based format available with netCDF-4.0. The Parallel-NetCDF package uses different, but similar APIs in Fortran and C.
+
+Parallel I/O in the Unidata netCDF library has been supported since release 4.0, for HDF5 data files. Since version 4.1.1 the Unidata NetCDF C library supports parallel I/O to classic and 64-bit offset files using the Parallel-NetCDF library, but with the NetCDF API. 
+
+==Interoperability of C/Fortran/C++ Libraries with Other Formats==
+
+The netCDF C library, and the libraries based on it (Fortran 77 and Fortran 90, C++, and all third-party libraries) can, starting with version 4.1.1, read some data in other data formats. Data in the [[HDF5]] format can be read, with some restrictions. Data in the [[HDF4]] format can be read by the netCDF C library if created using the HDF4 Scientific Data (SD) API.
+
+==NetCDF-Java Common Data Model==
+The NetCDF-Java library currently reads the following file formats and remote access protocols:
+* [[BUFR]] Format Documentation<ref>[[BUFR]] [http://dss.ucar.edu/docs/formats/bufr/ Format Documentation]</ref> (ongoing development)
+* CINRAD level II<ref>[http://www.unidata.ucar.edu/software/netcdf-java/v2.2.20/javadocAll/ucar/nc2/iosp/cinrad/package-summary.html CINRAD level II]</ref> (Chinese Radar format) 
+* DMSP<ref>[http://dmsp.ngdc.noaa.gov/ DMSP] ([[Defense Meteorological Satellite Program]])</ref> ([[Defense Meteorological Satellite Program]])
+* DORADE<ref>[http://www.atd.ucar.edu/rsf/UserGuides/ELDORA/DataAnalysis/DataAnalysis.html#DORADE DORADE] radar file format</ref> radar file format
+* GINI<ref>[http://weather.unisys.com/wxp/Appendices/Formats/GINI.html GINI] ([[GOES]] Ingest and [[NOAA]]PORT Interface) image format</ref> ([[GOES]] Ingest and [[NOAA]]PORT Interface) image format
+* GEMPAK<ref>[http://www.unidata.ucar.edu/software/gempak/ GEMPAK] gridded data</ref> gridded data
+* [[GRIB]] version 1 and version 2 (ongoing work on tables)
+* GTOPO<ref>[http://edc.usgs.gov/products/elevation/gtopo30/gtopo30.html GTOPO] 30-sec elevation dataset ([[USGS]])</ref> 30-sec elevation dataset ([[USGS]])
+* [[Hierarchical Data Format]] (HDF4, HDF-EOS, HDF5, HDF5-EOS)
+* NetCDF<ref>[http://www.unidata.ucar.edu/software/netcdf/index.html NetCDF]</ref> (classic and large format)
+* NetCDF-4<ref>[http://www.unidata.ucar.edu/software/netcdf/netcdf-4/ NetCDF-4]</ref> (built on [[HDF5]]) 
+* NEXRAD Radar<ref>[http://www.ncdc.noaa.gov/oa/radar/radarresources.html NEXRAD Radar] level 2 and level 3.</ref> level 2 and level 3.
+
+There are a number of other formats in development. Since each of these is accessed transparently through the NetCDF API, the NetCDF-Java library is said to implement a ''Common Data Model'' for scientific datasets. 
+
+The Common Data Model has three layers, which build on top of each other to add successively richer semantics:
+# The ''data access'' layer, also known as the syntactic layer, handles data reading.
+# The ''coordinate system'' layer identifies the coordinates of the data arrays. Coordinates are a completely general concept for scientific data; specialized [[Georeference|georeferencing]] coordinate systems, important to the Earth Science community, are specially annotated.
+# The ''scientific data type'' layer identifies specific types of data, such as grids, images, and point data, and adds specialized methods for each kind of data.
+
+The [[Data model]] of the data access layer is a generalization of the NetCDF-3 data model, and substantially the same as the NetCDF-4 data model. The coordinate system layer implements and extends the concepts in the [[Climate and Forecast Metadata Conventions]]. The scientific data type layer allows data to be manipulated in coordinate space, analogous to the [[Open Geospatial Consortium]] specifications. The identification of coordinate systems and data typing is ongoing, but users can plug in their own classes at runtime for specialized processing.
+
+==See also==
+* [[Common Data Format]] (CDF)
+* [[CGNS]] ([[Computational fluid dynamics|CFD]] General Notation System)
+* [[EAS3]] (Ein-Ausgabe-System)
+* [[FITS]] (Flexible Image Transport System)
+* [[GRIB]] (GRIdded Binary)
+* [[Hierarchical Data Format]] (HDF)
+<!-- * [[NetCDF]] (Network Common Data Form) -->
+* [[OPeNDAP]] client-server protocols
+* [[Tecplot]] binary files
+* [[XMDF]] (eXtensible Model Data Format)
+
+==References==
+{{Reflist}}
+
+==External links==
+* [http://www.unidata.ucar.edu/software/netcdf/ netCDF project] at the University Corporation for Atmospheric Research (UCAR)
+* [http://www.unidata.ucar.edu/software/netcdf-java/ netCDF-Java project] at UCAR
+* [http://www.unidata.ucar.edu/software/netcdf/netcdf-4/index.html netCDF4 project] at UCAR
+* [http://www.epic.noaa.gov/java/ncBrowse/ ncBrowse] - generic netCDF file viewer - includes Java graphics, animations and 3D visualizations for wide range of netCDF file conventions
+* [http://www.xi-advies.nl/downloads/AnIntroductionToDistributedVisualization.pdf "An Introduction to Distributed Visualization"]; section 4.2 contains a comparison of CDF, HDF, and netCDF.
+* [http://nco.sourceforge.net NCO], a suite of programs known as operators, which facilitate manipulation and analysis of netCDF files
+* [http://www.epic.noaa.gov/epic/software/dapper/ dapper] data server and [http://www.epic.noaa.gov/epic/software/dchart/ DChart] web client for [[OPeNDAP]] in-situ data in netCDF format
+* [http://www.crwr.utexas.edu/gis/gishydro06/SpaceAndTime/NetCDF/Animating%20netCDF%20Data%20in%20ArcMap.htm Animating NetCDF Data in ArcMap]
+* [http://ncwms.sf.net ncWMS], a [[Web Map Service]] and dynamic web application for visualizing NetCDF data ([http://www.reading.ac.uk/godiva2 demo site])
+* [http://cf-pcmdi.llnl.gov/documents CF Conventions documents]
+* [http://cf-pcmdi.llnl.gov/ CF home page]
+* [http://cf-pcmdi.llnl.gov/documents/other/cf_overview_article.pdf Overview of CF]
+* [http://cf-pcmdi.llnl.gov/projects-and-groups-adopting-the-cf-conventions-as-their-standard Projects and Groups using CF (partial)]
+* [http://www.unidata.ucar.edu/software/netcdf/software.html List of software utilities using netCDF files]
+
+{{FOLDOC}}
+
+[[Category:Meteorological data and networks]]
+[[Category:Computer file formats]]
+[[Category:Earth sciences graphics software]]
+[[Category:Earth sciences data formats]]
+
+[[de:NetCDF]]
+[[fr:NetCDF]]
+[[pl:NetCDF]]
+[[ru:NetCDF]]</body> </html>

@@ -1,0 +1,49 @@
+<html> <head> <title>Ntoskrnl.exe</title></head><body>{{refimprove|date=December 2010}}
+{{lowercase|ntoskrnl.exe}}
+'''ntoskrnl.exe''' (and '''ntkrnlpa.exe''' on systems with [[Physical Address Extension]] support) is the [[Kernel (computer science)|kernel]] image for the family of [[Microsoft]] [[Windows NT]] operating systems. It provides the Kernel and Executive layers of the Windows NT kernel space, and is responsible for various system services such as hardware virtualization, process and memory management, etc., thus making it a fundamental part of the system. It contains the Cache Manager, the Executive, the Kernel, the Security Reference Monitor, the Memory Manager, and the Scheduler, among other things.<ref name="sysinternals">Russinovich, M: [http://web.archive.org/web/20080408141752/http://technet.microsoft.com/en-us/sysinternals/bb897446.aspx Systems Internals Tips and Trivia], ''SysInternals Information''</ref>
+
+== Startup ==
+This system binary is not a [[Windows_library_files#Ntdll.dll|Native Application]] (in that it is not linked against '''ntdll.dll'''), instead containing a standard '''main''' entry point, a stub that calls the kernel initialization function but is unused as the [[Windows_NT_startup_process#Boot_loader_phase|OS loader]] (internal symbol OSLOADER) calls KiSystemStartup directly.
+
+<source lang="c">
+//
+// NTOSKRNL main
+//
+int __cdecl main(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
+{
+  //
+  // Fire up NT!
+  //
+  KiSystemStartup(LoaderBlock);
+  return 0;
+}
+</source>
+
+While ntoskrnl.exe is not linked against ntdll.dll, it is linked against bootvid.dll, [[hal.dll]] and kdcom.dll. Because it requires a static copy of C Runtime objects it depends on, the *.exe is usually about 2MB in size.
+
+== Names of kernel ==
+* ''NTOSKRNL.EXE'' : 1 CPU
+* ''NTKRNLMP.EXE'' : N CPU [[Symmetric multiprocessing|SMP]]
+* ''NTKRNLPA.EXE'' : 1 CPU, [[Physical Address Extension|PAE]]
+* ''NTKRPAMP.EXE'' : N CPU [[Symmetric multiprocessing|SMP]], [[Physical Address Extension|PAE]]
+
+== Notes ==
+
+<div class="references-small"><references/></div>
+
+== See also ==
+* [[Architecture of Windows NT]]
+* [[Windows NT Startup Process]]
+* [http://www.microsoft.com/technet/technetmag/issues/2007/02/VistaKernel/default.aspx?pf=true Inside the Windows Vista Kernel (TechNet Magazine)]
+
+{{Windows Components}}
+
+{{Windows-stub}}
+
+[[Category:Windows NT kernel]]
+[[Category:Microkernels]]
+
+[[es:Ntoskrnl.exe]]
+[[fr:Noyau Windows NT]]
+[[ru:Ntoskrnl]]
+[[vi:Ntoskrnl.exe]]</body> </html>

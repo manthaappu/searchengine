@@ -1,0 +1,58 @@
+<html> <head> <title>Rank (J programming language)</title></head><body>'''Rank''' in the '''[[J programming language]]''' has several different meanings.
+
+; Noun rank : The rank of a noun is a non-negative [[integer]].
+; Verb rank : The rank of a verb is a list of three integers.  
+; The rank conjunction : The rank conjunction (<tt>'''"'''</tt>) is used to derive a verb with a specific rank.
+
+== Noun rank ==
+Nouns, in J, are [[array data type|arrays]].  The rank of a noun is the number of dimensions of that array.  The derived verb <tt>#@$</tt> determines the rank of a noun.
+
+== Verb rank ==
+
+Verbs, in J, are functions which take noun arguments and produce noun results.  The rank of a verb controls how the verb is applied to nouns with ranks greater than 0.  This verb rank is expressed as three numbers:
+
+# Rank for the monad case  (-y is an example of using - as a monad)
+# Rank for the left argument for the dyad case (x-y is an example of using - as a dyad)
+# Rank for the right argument for the dyad case
+
+In all cases, there is some underlying verb definition which applies to '''cells''' -- which is to say, sub-arrays of the indicated rank.  Or, if the argument doesn't have that many dimensions, the entire argument.
+
+In verbs, negative rank is interpreted as the rank of the noun supplied for that argument less the indicated value.  (But never less than zero.)
+
+: For example, a verb with monadic rank of negative one when given an argument of rank 3, breaks the argument down into a list of rank 2 arrays.  The verb's body is applied once to each of these 2-dimensional sub-arrays.
+
+In the context of a specific verb and a specific noun, the dimensions of that noun are divided into a set of prefix dimensions, called the '''frame''', and a set of suffix dimensions, called the '''cells'''.  Positive verb ranks indicate the number of cell dimensions, negative verb ranks indicate the number of frame dimensions.
+
+In the dyadic case, there are two frames -- one for the left argument, and one for the right argument.  These frames must agree.  Which is to say if the frames are not identical, one must be a prefix of the other.  The result of evaluating this verb will have the dimensions of the longest frame as the prefix dimensions of its result.  (Trailing result dimensions, if any, would come from the verb's body.)  In degenerate cases, where the arguments do not have sufficient dimensions, the rank of the verb is effectively reduced (which would influence its result).
+
+For example
+
+   10 + 4 5 6
+ 14 15 16
+
+Here, the verb '''+''' has a rank of 0 0 0, the left argument has a rank of 0, and the right argument has a rank of 1 (with a dimension of 3).  Thus, the left argument has a rank 0 frame and the right argument has a rank 1 frame (with a dimension 3).  The left argument's (empty) frame is a valid suffix for the right argument's frame, so this is a valid operation.  The result has a rank of 1 and a dimension of 3.
+
+== The rank conjunction ==
+
+The rank conjunction takes a verb left argument and creates a new verb using that as the body of the verb.  The right argument specifies the rank of this derived verb.
+
+If the right argument is only two numbers, they are taken as the ranks for the dyadic case, and the second number is used for the monadic case.
+
+If the right argument is only one number, it is taken as the rank for all three cases.
+
+If the right argument is a verb, its rank is used.
+
+: For example, these all derive the same verb:
+* +"0 0 0
+* +"0 0
+* +"0
+* +"+
+
+If the left argument to the rank conjunction is a noun, a constant verb is created.  The body of this verb ignores the values of any arguments and always produces a result which is that noun.
+
+== External links ==
+*[http://jsoftware.com/help/dictionary/intro20.htm J Dictionary entry for "rank"]
+*[http://jsoftware.com/help/learning/07.htm Rank in "Learning J"]
+
+
+[[Category:APL programming language family]]</body> </html>

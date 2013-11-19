@@ -1,0 +1,150 @@
+<html> <head> <title>IEEE 1284</title></head><body>{{For|a history of the Centronics interface|Centronics}}
+
+'''IEEE 1284''' is a standard that defines bi-directional [[parallel communications]] between computers and other devices.
+
+[[Image:IEEE 1284 36pin plughead.jpg|thumb|right|An IEEE 1284 36 pin male [[Micro ribbon|Centronics]] printer cable connection.]]
+
+==History==
+[[Image:Centronics-36F.jpg|thumb|right|An IEEE 1284 36 pin female on a circuitboard]]
+
+In the 1970s, [[Centronics]] developed the now-familiar printer [[parallel port]] that soon became a [[de facto]] standard.  The original standard became non-standard itself as enhanced versions of the interface were developed, such as the [[Hewlett-Packard|HP]] Bitronics implementation released in 1992.  In 1991 the [[Printer Working Group|Network Printing Alliance]] was formed to develop a new standard.  In March 1994, the IEEE 1284 specification was released.
+
+==Overview==
+[[Image:IEEE1284PrinterCable Nov-11-2004.jpg|thumb|right|An IEEE 1284 compliant printer cable, with both [[D-subminiature|DB-25]] and 36 pin [[Micro ribbon|Centronics]] connectors.]]
+
+The IEEE 1284 standard allows for faster throughput and bidirectional data flow with a theoretical maximum throughput of 4 [[megabyte]]s per second; actual throughput is around 2 megabytes, depending on hardware.  In the printer venue, this allows for faster printing and back-channel status and management.  Since the new standard allowed the peripheral to send large amounts of data back to the host, devices that had previously used [[SCSI]] interfaces could be produced at a much lower cost.  This included [[Image scanner|scanners]], [[tape drive]]s, [[hard disk]]s, computer networks connected directly via parallel interface, network adapters and other devices.  No longer was the consumer required to purchase an expensive SCSI card&mdash;they could simply use their built-in parallel interface.  These low-cost devices provided a platform to leapfrog the faster [[USB]] interface into its present popularity, displacing the parallel devices.  However, the parallel interface remains highly popular in the printer industry, with displacement by USB only in consumer models.
+
+==Specifications==
+IEEE 1284 can operate in five modes:
+
+*Compatibility Mode, also known as Centronics, standard or SPP, is a uni-directional implementation with only a few differences from the original Centronics design. This mode is almost exclusively used for printers. The only signals that the printer can send back to the host are some fixed-meaning status lines that signal common error conditions, such as the printer running out of paper.
+*[[Nibble]] Mode is an interface that allows the device to transmit data four bits at a time, (re)using four of the status lines of Compatibility Mode for data.  This is the Bi-tronics mode introduced by [[Hewlett-Packard|HP]] and is generally used for enhanced printer status.  Although never officially supported with these, Nibble Mode works with most of the pre-IEEE-1284 Centronics interfaces as well.
+*Byte Mode, also known as "Bi-Directional" (although all modes except Compatibility Mode are in fact bi-directional), is a half-duplex mode that allows the device to transmit eight bits at a time using the same data lines that are used for the other direction. This mode is supported on a minority of pre-IEEE-1284 interfaces as well, such as those built into the [[IBM PS/2]] computers; because of this, it is sometimes unofficially called the PS/2 mode.
+*Enhanced Parallel Port (EPP) is a half-duplex bi-directional interface designed to allow devices like printers, scanners, or storage devices to transmit large amounts of data while quickly being able to switch channel direction. EPP can provide up to 2 MByte/s bandwidth, approximately 15 times the speed achieved with normal parallel-port communication with far less CPU overhead.<ref>{{patent|EP|0640229|Buxton, C.L. / Kohtz, R.A. / Zenith Data Systems Corp.: ''Enhanced parallel port.'' filing date May 15, 1992}}</ref>
+*Extended Capability Port (ECP) is a half-duplex bi-directional interface similar to EPP, except that PC implementations use [[direct memory access]] (usually ISA DMA on channel 3) to provide even faster data transfer than EPP by having the ISA DMA hardware and the parallel port interface hardware handle the work of transferring the data instead of letting the CPU do this work. Many devices that interface using this mode support [[Run-length encoding|RLE]] compression. ECP can provide up to 2.5 MByte/s of bandwidth, which is the natural limit of 8-bit ISA DMA. [http://www.nor-tech.com/solutions/dox/ieee1284_parallel_ports.pdf]. An ECP interface on a PC can improve transfers to pre-IEEE-1284 printers as well, by reducing the CPU load during the transfer through the use of the PC's ISA DMA engine. However, reversing channel direction is not quick, so it is unsuitable for devices that frequently switch directions like network adapters and storage adapters.
+
+Most recent computers that include a parallel port can operate the port in ECP or EPP mode, or both simultaneously. IEEE-1284 requires that bi-directional device communication is always initiated in Nibble Mode. If the host receives no reply in this mode, it will assume that the device is a legacy printer, and enter Compatibility Mode. Otherwise, the best mode that is supported on both sides of the connection is negotiated between the host and client devices by exchanging standardized Nibble Mode messages.
+
+An IEEE-compliant cable must meet several standards of wiring and quality.  Three types of connectors are defined:
+
+*[[D-subminiature|DB-25]] (type A) for the host connection.
+*[[Micro ribbon|Centronics]] (officially called "Micro Ribbon", type B) 36 pin for the printer or device connection.
+*[[Mini-Centronics]] (type C, MDR36) 36 pin, a smaller alternative for the device connection that has not proven popular.
+
+An IEEE 1284-I device uses IEEE 1284-A and IEEE 1284-B connectors, while an IEEE 1284-II device uses IEEE 1284-C connectors.
+
+In IEEE 1284 Daisy Chain Specification, up to 8 devices can be connected to a single parallel port.
+
+All modes use [[Transistor–transistor_logic|TTL]] voltage [[logic level]]s, which limits the possible cable length to a few meters unless expensive special cables are used.
+<ref>
+http://massmind.org/techref/io/parallel/faq0994.htm
+</ref>
+
+For detailed specifications, including pinouts, refer to the links below.
+
+==IEEE 1284 standards==
+*IEEE 1284-1994: Standard Signaling Method for a Bi-directional Parallel Peripheral Interface for Personal Computers
+*IEEE 1284.1-1997: Transport Independent Printer/System Interface- a protocol for returning printer configuration and status
+*IEEE 1284.2: Standard for Test, Measurement and Conformance to IEEE 1284 (not approved)
+*IEEE 1284.3-2000: Interface and Protocol Extensions to IEEE 1284-Compliant Peripherals and Host Adapters- a protocol to allow sharing of the parallel port by multiple peripherals (daisy chaining)
+*IEEE 1284.4-2000: Data Delivery and Logical Channels for IEEE 1284 Interfaces- allows a device to carry on multiple, concurrent exchanges of data
+
+==IEEE 1284 typical color codes==
+Here are is the typical colors found on 25-pin IEEE 1284 cable leads.
+
+{| class="wikitable"
+|-
+! Pin !! Color !! Alt Color
+|-
+| 1 || red || 
+|-
+| 2 || pink/red || 
+|-
+| 3 || brown ||  
+|-
+| 4 || orange ||  
+|-
+| 5 || light-blue/yellow || 
+|-
+| 6 || light-blue/red || 
+|-
+| 7 || light-blue || 
+|-
+| 8 || blue || 
+|-
+| 9 || light-blue/black || green/blue
+|-
+| 10 || green || 
+|-
+| 11 || yellow || 
+|-
+| 12 || pink/orange || 
+|-
+| 13 || gray ||
+|-
+| 14 || gray/green || 
+|-
+| 15 || pink/blue || orange/white
+|-
+| 16 || pink/black || brown/white
+|-
+| 17 || light blue/blue || light blue/green
+|-
+| 18 || blue-white || 
+|-
+| 19 || green/black || green/red
+|-
+| 20 || pink/white || yellow/black
+|-
+| 21 || gray/black || 
+|-
+| 22 || white/black || gray/yellow
+|-
+| 23 || purple || 
+|-
+| 24 || pink || 
+|-
+| 25 || white || 
+|-
+| NC || white/yellow || white/green
+|-
+| All || white/purple || red/black
+|}
+
+==See also==
+* [[LPT]]
+* [[IFSP]]
+* [[Parallel port]]
+* [[FireWire]] (IEEE 1394)
+* [[Universal Serial Bus]]
+* [[List of device bandwidths]]
+
+==References==
+{{reflist}}
+
+==External links==
+*[http://www.fapo.com/1284int.htm Warp Nine Engineering's introduction to the IEEE 1284-1994 standard]
+*[http://www.beyondlogic.org/epp/epp.htm Interfacing to the Enhanced Parallel Port]
+*[http://www.undocprint.org/formats/communication_protocols/ieee_1284 Undocumented Printing Wiki - IEEE 1284 Standards]
+*[http://zone.ni.com/devzone/cda/tut/p/id/3466 IEEE 1284 - Updating the PC Parallel Port]
+*[http://ckp.made-it.com/ieee1284.html IEEE 1284 summary]
+*[http://pinouts.ru/ParallelPorts/ParallelECP_pinout.shtml IEEE 1284 ports pinouts]
+*[http://www.theiling.de/parport/ Signal Diagrams for IEEE 1284 Protocol]
+
+{{Computer-bus}}
+{{IEEE standards}}
+
+[[Category:Computer buses]]
+[[Category:IEEE standards]]
+
+[[ca:IEEE 1284]]
+[[da:IEEE 1284]]
+[[de:IEEE 1284]]
+[[es:IEEE 1284]]
+[[eo:IEEE 1284]]
+[[fr:IEEE 1284]]
+[[ja:IEEE 1284]]
+[[pl:IEEE 1284]]
+[[pt:IEEE 1284]]
+[[ru:IEEE 1284]]
+[[uk:IEEE 1284]]</body> </html>

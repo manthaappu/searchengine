@@ -1,0 +1,110 @@
+<html> <head> <title>Prenex normal form</title></head><body>A [[formula (mathematical logic)|formula]] of the [[predicate calculus]] is in '''prenex<ref>The term 'prenex' comes from the [[Latin]] ''praenexus'' "tied or bound up in front", past participle of ''praenectere'' [http://cs.nyu.edu/pipermail/fom/2007-November/012328.html].</ref> [[normal form]]''' if it is written as a string of [[quantifier]]s followed by a quantifier-free part (referred to as the '''matrix'''). 
+
+Every formula is equivalent in [[classical logic]] to a formula in prenex normal form. For example, if <math>\phi(y)</math>, <math>\psi(z)</math>, and <math>\rho(x)</math> are quantifier-free formulas with the free variables shown then
+:<math>\forall x \exists y \exists z (\phi(y) \lor (\psi(z) \rightarrow \rho(x)))</math>
+is in prenex normal form with matrix <math>\phi(y) \lor (\psi(z) \rightarrow \rho(x))</math>, while
+:<math>\forall x ((\exists y \phi(y)) \lor ((\exists z \psi(z) ) \rightarrow \rho(x)))</math>
+is logically equivalent but not in prenex normal form.
+
+== Conversion to prenex form ==
+
+Every [[first-order predicate calculus|first-order]] formula is [[logically equivalent]] (in classical logic) to some formula in prenex normal form.  There are several conversion rules that can be recursively applied to convert a formula to prenex normal form.  The rules depend on which [[logical connective]]s appear in the formula. 
+
+=== Conjunction and disjunction ===
+
+The rules for conjunction and disjunction say that
+:<math>(\forall x \phi) \land \psi</math> is equivalent to <math>\forall x ( \phi \land \psi)</math>,
+:<math>(\forall x \phi) \lor \psi</math> is equivalent to <math>\forall x ( \phi \lor \psi)</math>;
+and 
+:<math>(\exists x \phi) \land \psi</math> is equivalent to <math>\exists x (\phi \land \psi)</math>,
+:<math>(\exists x \phi) \lor \psi</math> is equivalent to <math>\exists x (\phi \lor \psi)</math>.
+The equivalences are valid when ''x'' does not appear as a [[free variable]] of ψ; if ''x'' does appear free in ψ, it must be replaced with another free variable.
+
+For example, in the language of [[ring (mathematics)|rings]],
+:<math>(\exists x (x^2 = 1)) \land (0 = y)</math> is equivalent to  <math>\exists x ( x^2 = 1 \land 0 = y)</math>,
+but
+:<math>(\exists x (x^2 = 1)) \land (0 = x)</math> is not equivalent to <math>\exists x ( x^2 = 1 \land 0 = x)</math>
+because the formula on the left is true in any ring when the free variable ''x'' is equal to 0, while the formula on the right has no free variables and is false in any nontrivial ring.
+
+=== Negation ===
+
+The rules for negation say that 
+:<math>\lnot \exists x \phi</math> is equivalent to <math>\forall x \lnot \phi</math> 
+and 
+:<math>\lnot \forall x \phi</math> is equivalent to <math>\exists x \lnot \phi</math>.
+
+=== Implication ===
+
+There are four rules for implication: two that remove quantifiers from the antecedent and two that remove quantifiers from the consequent. These rules can be derived by rewriting the implication
+<math>\phi \rightarrow \psi</math> as <math>\lnot \phi \lor \psi</math> and applying the rules for disjunction above.  As with the rules for disjunction, these rules require that the variable quantified in one subformula does not appear free in the other subformula. 
+
+The rules for removing quantifiers from the antecedent are:
+:<math>(\forall x \phi ) \rightarrow \psi</math> is equivalent to <math>\exists x (\phi \rightarrow \psi)</math>,
+:<math>(\exists x \phi ) \rightarrow \psi</math> is equivalent to <math>\forall x (\phi \rightarrow \psi)</math>.
+The rules for removing quantifiers from the consequent are:
+:<math>\phi \rightarrow (\exists x \psi)</math> is equivalent to <math>\exists x (\phi \rightarrow \psi)</math>,
+:<math>\phi \rightarrow (\forall x \psi)</math> is equivalent to <math>\forall x (\phi \rightarrow \psi)</math>.
+
+=== Example ===
+
+Suppose that <math>\phi</math>, <math>\psi</math>, and <math>\rho</math> are quantifier-free formulas and no two of these formulas share any free variable.   Consider the formula
+:<math> (\phi \lor \exists x \psi) \rightarrow \forall z \rho</math>.
+By recursively applying the rules starting at the innermost subformulas, the following sequence of logically equivalent formulas can be obtained:
+:<math> ( \exists x (\phi \lor \psi) ) \rightarrow \forall z \rho</math>,
+:<math> \forall x ( ( \phi \lor \psi) \rightarrow \forall z \rho )</math>,
+:<math> \forall x ( \forall z ( \phi \lor \psi) \rightarrow \rho )</math>,
+:<math> \forall x \forall z ( ( \phi \lor \psi) \rightarrow \rho )</math>.
+This is not the only prenex form equivalent to the original formula.  For example, by dealing with the consequent before the antecedent in the example above, the prenex form
+:<math>\forall z \forall x ( ( \phi \lor \psi) \rightarrow \rho)</math>
+can be obtained: 
+:<math> \forall z (  (\phi \lor \exists x \psi) \rightarrow \rho )</math>
+:<math> \forall z (  (\exists x (\phi \lor \psi) ) \rightarrow \rho )</math>,
+:<math> \forall z (  \forall x ( (\phi \lor \psi) \rightarrow \rho ) )</math>,
+:<math> \forall z \forall x ( (\phi \lor \psi) \rightarrow \rho )</math>.
+
+=== Intuitionistic logic ===
+
+The rules for converting a formula to prenex form make heavy use of classical logic.  In [[intuitionistic logic]], it is not true that every formula is logically equivalent to a prenex formula.  The negation connective is one obstacle, but not the only one.  The implication operator is also treated differently in intuitionistic logic than classical logic; in intuitionistic logic, it is not definable using disjunction and negation.  
+
+The [[BHK interpretation]] illustrates why some formulas have no intuitionistically-equivalent prenex form. In this interpretation, a proof of 
+:<math>(\exists x \phi) \rightarrow \exists y \psi \qquad (1)</math>
+is a function which, given a concrete ''x'' and a proof of φ(''x''), produces a concrete ''y'' and a proof of ψ(''y'').  In this case it is allowable for the value of ''y'' to be computed from the given value of ''x''.  A proof of 
+:<math>\exists y ( \exists x \phi \rightarrow \psi), \qquad  (2)</math>
+on the other hand, produces a single concrete value of ''y'' and a function that converts any proof of <math>\exists x \phi</math> into a proof of ψ(''y'').   If each ''x''  satisfying φ can be used to construct a ''y'' satisfying ψ but no such ''y'' can be constructed without knowledge of such an ''x'' then formula (1) will not be equivalent to formula (2).
+
+The rules for converting a formula to prenex form that do ''fail'' in intuitionistic logic are:
+:(1) <math>\forall x (\phi \lor \psi)</math> implies <math>(\forall x \phi) \lor \psi</math>,
+:(2) <math>\forall x (\phi \lor \psi)</math> implies <math>\phi \lor (\forall x \psi)</math>,
+:(3) <math>(\forall x \phi) \rightarrow \psi</math> implies <math>\exists x (\phi \rightarrow \psi)</math>,
+:(4) <math>\phi \rightarrow (\exists x \psi)</math> implies <math>\exists x (\phi \rightarrow \psi)</math>,
+:(5) <math>\lnot \forall x \phi</math> implies <math>\exists x \lnot \phi</math>,
+(''x'' does not appear as a free variable of <math>\,\psi</math> in (1) and (3); ''x'' does not appear as a free variable of <math>\,\phi</math> in (2) and (4)).
+
+== Use of prenex form ==
+
+Some [[proof calculus|proof calculi]] will only deal with a theory whose formulae are written in prenex normal form. The concept is essential for developing the [[arithmetical hierarchy]] and the [[analytical hierarchy]].
+
+[[Gödel]]'s proof of his [[Gödel's completeness theorem|completeness theorem]] for [[first-order logic]] presupposes that all formulae have been recast in prenex normal form.
+
+==See also==
+*[[Herbrandization]]
+*[[Skolemization]]
+*[[Arithmetical hierarchy]]
+
+==Notes==
+{{reflist}}
+
+==References==
+* {{Citation | last1=Hinman | first1=P. | title=Fundamentals of Mathematical Logic | publisher=[[A K Peters]] | isbn=978-1-56881-262-5 | year=2005}}
+
+[[Category:Normal forms (logic)]]
+
+[[de:Pränexform]]
+[[fr:Forme prénexe]]
+[[it:Forma prenessa]]
+[[hu:Prenex-formula]]
+[[nl:Prenex-normaalvorm]]
+[[ja:冠頭標準形]]
+[[pl:Forma preneksowa]]
+[[pt:Forma normal prenex]]
+[[zh:前束范式]]</body> </html>

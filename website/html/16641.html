@@ -1,0 +1,43 @@
+<html> <head> <title>Hierarchical RBF</title></head><body>{{Context|date=October 2009}}
+
+A '''hierarchical RBF''' is an [[interpolation]] method based on [[Radial basis function|RBF]].  
+
+[[Interpolation]] based on [[Radial basis function|RBF]] used for the construction of shape models in [[3d computer graphics|3D computer graphics]] (see [[Stanford Bunny]] on picture), treatment of results from a [[3D scanner]], terrain reconstruction and others. 
+
+[[Image:MyBunny.gif]]
+
+This problem often named "large scattered data point set interpolation".
+
+The idea of method (for example in 3D) consists of the following: 
+* let the scattered points be presented a set <math>\mathbf{P}=\{\mathbf{c}_i=(\mathbf{x}_i,\mathbf{y}_i,\mathbf{z}_i)\vert^{N}_{i=0} \subset \mathbb{R}^3\}</math>
+* let the exist a set of values of some function in scattered points <math>\mathbf{H}=\{\mathbf{h}_i \vert^{N}_{i=0}\subset \mathbb{R}\}</math>
+* find a function <math>\mathbf{f}(\mathbf{x})</math> which will meet next condition: <math>\mathbf{f}(\mathbf{x})=1</math> for points lies on shape and <math>\mathbf{f}(\mathbf{x})\neq1</math> for points not lies on shape
+* as J. C. Carr et al. showed <ref>Carr, J.C.; Beatson, R.K.; Cherrie, J.B.; Mitchell, T.J.; Fright, W.R.; McCallum B.C.; Evans, T.R. (2001),  “Reconstruction and Representation of 3D Objects with Radial Basis Functions” ACM SIGGRAPH 2001, Los Angeles, CA, P. 67–76.</ref> this function looks like <math>\mathbf{f}(\mathbf{x})=\sum_{i=1}^N \lambda_i \varphi(\mathbf{x},\mathbf{c}_i)</math> where:
+<math>\varphi</math> &mdash; it is [[Radial basis function|RBF]];
+<math>\lambda</math> &mdash; it is coefficients which are the solution of the [[Linear system of equations|system]] show on picture:
+
+[[Image:System.gif]]
+
+for determination of surface it is necessary to estimate the value of function <math>\mathbf{f}(\mathbf{x})</math> in interesting  points ''x''.
+A lack of such method is considerable complication <ref>Bashkov, E.A.; Babkov, V.S. (2008) “Research of RBF-algorithm and his modifications apply
+possibilities for the construction of shape computer models in medical practic”. Proc Int.
+Conference "Simulation-2008", Pukhov Institute for Modelling in Energy Engineering, [http://babkov.name/article/2008-09.pdf] (in Russian)</ref> <math>\mathbf{O}(\mathbf{n}^2)</math> for calculate [[Radial basis function|RBF]], solve [[Linear system of equations|system]] and determine surface.
+
+==Other similar methods==
+* Reduce interpolation centres (<math>\mathbf{O}(\mathbf{n}^2)</math> for calculate [[Radial basis function|RBF]] and solve [[Linear system of equations|system]], <math>\mathbf{O}(\mathbf{m}\mathbf{n})</math> for determine surface)
+* Compactly supported [[Radial basis function|RBF]] (<math>\mathbf{O}(\mathbf{n}\log{\mathbf{n}})</math> for calculate [[Radial basis function|RBF]], <math>\mathbf{O}(\mathbf{n}^{1.2..1.5})</math> for solve [[Linear system of equations|system]], <math>\mathbf{O}(\mathbf{m}\log{\mathbf{n}})</math> for determine surface)
+* [[Fast multipole method|FMM]]  (<math>\mathbf{O}(\mathbf{n}^2)</math> for calculate [[Radial basis function|RBF]], <math>\mathbf{O}(\mathbf{n}\log{\mathbf{n}})</math> for solve [[Linear system of equations|system]], <math>\mathbf{O}(\mathbf{m}+\mathbf{n}\log{\mathbf{n}})</math> for determine surface)
+
+==Hierarchical algorithm==
+An idea of [[hierarchical]] [[Algorythm|algorithm]] is an acceleration of calculations due to [[Decomposition (computer science)|decomposition]] of intricate problem on the great number of simple (see picture). [[Image:Sxema.gif]]
+
+In this case [[hierarchical]] division of space containing points on elementary parts, the [[Linear system of equations|system]] of small dimension solves in each of which. The calculation of surface in this case is taken to the [[hierarchical]] (on the basis of [[Tree (data structure)|tree-structure]]) calculation of interpolant. A method for a [[2D computer graphics|2D]] case is offered Pouderox J. et al.<ref>Pouderox, J. et al. (2004), “Adaptive hierarchical RBF interpolation for creating smooth digital elevathion models”, Proc. 12-th ACM Int. Symp. Advances in Geographical information Systems 2004, ACP Press, P. 232&ndash;240</ref> For a [[3D computer graphics|3D]] case a method is used in the tasks of [[3D computer graphics|3D graphics]] by W. Qiang et al.<ref>Qiang, W.; Pan, Z.; Chun, C.; Jiajun, B. (2007), “Surface rendering for parallel slice of contours from medical imaging”, Computing in science & engineering, 9(1), January&ndash;February 2007, P 32&ndash;37</ref> and modified by Babkov V.<ref>Babkov, V.S. (2008) “Modification of hierarchical RBF method for 3D-modelling based on laser scan result”. Proc. Int. Conference “Modern problems and achievement of radio, communication
+and informatics”, Zaporizhzhya National Technical University, [http://babkov.name/article/2008-08.pdf] (in Ukrainian)</ref>
+
+==References==
+{{reflist}}
+
+{{DEFAULTSORT:Hierarchical Rbf}}
+[[Category:Geometric algorithms]]
+[[Category:Computer graphics]]
+[[Category:Interpolation]]</body> </html>

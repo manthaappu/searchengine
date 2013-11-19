@@ -1,0 +1,69 @@
+<html> <head> <title>Hardware register</title></head><body>{{Unreferenced|date = October 2007}}
+
+In [[digital electronics]], especially [[computing]], a '''hardware register''' stores bits of information, in a way that all the bits can be written to or read out simultaneously.
+The hardware registers inside a [[central processing unit]] (CPU) are called [[processor register]]s.
+Signals from a [[state machine]] to the register control when registers transmit to or accept information from other registers.
+Sometimes the state machine routes information from one register through a functional transform, such as an [[Adder (electronics)|adder unit]], and then to another register that stores the results.
+
+Typical uses of hardware registers include ''configuration'' and start-up of certain features, especially during initialization, ''buffer storage'' e.g. video memory for [[graphics card]]s, [[input/output]] (I/O) of different kinds, and ''status reporting'' such as whether a certain event has occurred in the hardware unit.
+
+Reading a hardware register in "peripheral units" -- [[computer hardware]] outside the CPU -- involves accessing its [[memory-mapped I/O]] address or [[port-mapped I/O]] address with a "load" or "store" instruction, issued by the processor. Hardware registers are addressed in words, but sometimes only use a few [[bit]]s of the word read in to, or written out to the register.
+
+'''Strobe registers''' have the same interface as normal hardware registers, but instead of storing data, they trigger an action each time they are written to (or, in rare cases, read from). They are a means of [[signaling (telecommunication)|signaling]].
+
+Registers are normally measured by the number of [[bit]]s they can hold, for example, an "[[8-bit]] register" or a "[[32-bit]] register".
+Registers can be implemented in a wide variety of ways, including [[register file]]s, standard [[Static random access memory|SRAM]], individual [[flip-flop (electronics)|flip-flop]]s, or high speed [[core memory]].
+
+In addition to the "programmer-visible" registers that can be read and written with software, many chips have internal registers that are used for [[state machines]] and [[pipelining]]; for example, [[registered memory]].
+
+
+Commercial design tools such as Socrates Bitwise by Duolog Technologies<ref>
+[http://www.duolog.com/products/bitwise-register-management  Duolog Bitwise Register and Memory Management and Automation product]
+</ref>, simplify and automate memory-mapped register specification and code generation for [[Hardware_description_language|hardware]], [[firmware]], [[Hardware_Verification_Language|hardware verification]], testing and documentation.<ref>
+[http://www.denali.com/en/products/blueprint.jsp Denali Blueprint register automation product]
+</ref>, <ref>
+[http://productive-eda.com/register-management PDTi SpectaReg register management product]
+</ref>, <ref> [http://www.idesignspec.com A Register Management Tool] from [[Agnisys]] </ref>
+
+Using IP-XACT IEEE 1685, commercial design tools, such as MRV Magillem Register View by MAGILLEM, provide a real synchronization between the register description and the RTL hardware platform description, then collaborative work in the design flow can be addressed.
+[http://www.magillem.com/eda/index.php?option=com_content&view=article&id=75&Itemid=90]
+This hardware registers alignment becomes critical when multiple levels of abstraction are used when switching from TLM to RTL during IP integration.
+[http://www.design-reuse.com/articles/18558/ip-xact-rtl-tlm-switching.html]
+
+SPIRIT IP-XACT and DITA SIDSC XML define standard XML formats for memory-mapped registers.<ref>
+[http://www.registerbits.com/hardwaresoftware-register-specification-code-generation-0 blog entry on IP-XACT format ]
+</ref>, <ref>
+[http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.5 IP-XACT Schema... see component XSD]
+</ref>, <ref>
+[http://wiki.oasis-open.org/dita/RegisterSpecialization DITA Semiconductor register spec]
+</ref>
+
+Because [[write-only memory | write-only registers]] make debugging almost impossible<ref>
+[http://www.microsoft.com/whdc/resources/MVP/xtremeMVP_hw.mspx#ETB Microsoft MVP: If every hardware engineer just understood that... …write-only registers make debugging almost impossible]
+</ref>,
+lead to the [[read-modify-write]] problem,
+and also make it unnecessarily difficult for the [[Advanced Configuration and Power Interface]] to determine the device's state when entering [[sleep mode]] in order to restore that state when exiting sleep mode<ref>,
+[http://www.microsoft.com/whdc/archive/SpecGuide.mspx Microsoft "Guidelines for Bus and Device Specifications"]
+</ref>,
+many programmers tell hardware designers to make sure that all writable registers are also readable.  However, there are some cases when reading certain types of hardware registers is useless.  For example, a strobe register bit that generates a one cycle pulse into specialized hardware will always read logic 0.
+
+== See also ==
+* [[Register Transfer Language]]
+* [[Input/Output Base Address]]
+
+{{reflist}}
+
+[[Category:Control flow]]
+[[Category:Central processing unit]]
+[[Category:Digital registers]]
+{{computer-hardware-stub}}
+{{comp-sci-stub}}
+
+[[es:Registro]]
+[[fi:Rekisteri (tietokonetekniikka)]]
+[[gl:Record]]
+[[pl:Rejestr (elektronika)]]
+[[pt:Registro]]
+[[ru:Регистр (цифровая техника)]]
+[[zh:硬體暫存器]]
+[[uk:Регістр (цифрова техніка)]]</body> </html>

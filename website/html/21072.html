@@ -1,0 +1,465 @@
+<html> <head> <title>Lagrange multiplier</title></head><body>[[Image:LagrangeMultipliers3D.png|right|thumb|300px|Figure 1: Find ''x'' and ''y'' to maximize <math>f(x,y)</math> subject to a constraint (shown in red) <math>g(x,y)=c</math>.]]
+[[Image:LagrangeMultipliers2D.svg|thumb|right|300px|Figure 2: Contour map of Figure 1. The red line shows the constraint <math>g(x,y)=c</math>. The blue lines are contours of <math>f(x,y)</math>. The point where the red line tangentially touches a blue contour is our solution.]]
+
+In mathematical [[optimization (mathematics)|optimization]], the method of '''Lagrange multipliers''' (named after [[Joseph Louis Lagrange]]) provides a strategy for finding the maxima and minima of a [[function (mathematics)|function]] subject to [[constraint (mathematics)|constraints]].
+
+For instance (see Figure 1 on the right), consider the optimization problem
+
+:maximize <math>f(x, y) \,</math>
+:subject to <math>g(x, y) = c.\, </math>
+
+We introduce a new variable (<math>\lambda</math>) called a Lagrange multiplier, and study the Lagrange function defined by
+
+:<math> \Lambda(x,y,\lambda) = f(x,y) + \lambda \cdot \Big(g(x,y)-c\Big).</math>
+
+(the <math>\lambda</math> term may be either added or subtracted.) If <math>(x, y)</math> is a maximum for the original constrained problem, then there exists a ''λ'' such that <math>(x,y,\lambda)</math> is a [[stationary point]] for the Lagrange function (stationary points are those points where the partial derivatives of Λ are zero). However, not all stationary points yield a solution of the original problem. Thus, the method of Lagrange multipliers yields a [[necessary condition]] for optimality in constrained problems.<ref> {{cite book
+  | last = Bertsekas
+  | first = Dimitri P.
+  | authorlink = Dimitri P. Bertsekas
+  | title = Nonlinear Programming
+  | edition = Second
+  | publisher = Athena Scientific
+  | date = 1999
+  | location = Cambridge, MA.
+  | isbn = 1-886529-00-0 
+}}</ref><ref>{{springer | id=L/l057190 | title=Lagrange multipliers| first=I.B. | last=Vapnyarskii }}.</ref><ref>
+* {{cite book|last=Lasdon|first=Leon S.|title=Optimization theory for large systems|publisher=The Macmillan Company|series=Macmillan series in operations research|location=New York|year=1970|pages=xi+523|id={{MR|337317}}|}}
+* {{cite book|last=Lasdon|first=Leon S.|title=Optimization theory for large systems|publisher=Dover Publications, Inc.|location=Mineola, New York|year=2002|edition=reprint of the 1970 Macmillan|pages=xiii+523|id={{MR|1888251}}|}}</ref><ref>
+{{cite book|last1=Hiriart-Urruty|first1=Jean-Baptiste|last2=Lemaréchal|first2=Claude|chapter=XII Abstract duality for practitioners|title=Convex analysis and minimization algorithms, Volume II: Advanced theory and bundle methods|series=Grundlehren der Mathematischen Wissenschaften [Fundamental Principles of Mathematical Sciences]|volume=306|publisher=Springer-Verlag|location=Berlin|year=1993|pages=136–193 (and Bibliographical comments on pp. 334–335)|isbn=3-540-56852-2|{{MR|1295240}}|authorlink2=Claude Lemaréchal|}}</ref><ref>{{cite book|last=Lemaréchal|first=Claude
+|chapter=Lagrangian relaxation|pages=112–156|doi=10.1007/3-540-45586-8_4|title=Computational combinatorial optimization: Papers from the Spring School held in Schloß Dagstuhl, May 15–19, 2000|editor=Michael Jünger and Denis Naddef|series=Lecture Notes in Computer Science|volume=2241|publisher=Springer-Verlag|location=Berlin|year=2001|isbn=3-540-42877-1|id={{MR|1900016}}.{{doi|10.1007/3-540-45586-8_4}}|authorlink=Claude Lemaréchal|}}</ref>
+
+==Introduction==
+
+Consider the two-dimensional problem introduced above:
+
+:maximize <math>f(x, y) \,</math>
+:subject to <math>g(x, y) = c. \,</math>
+
+We can visualize [[Contour line|contour]]s of ''f'' given by
+
+:<math>f(x, y)=d \,</math>
+
+for various values of <math> d </math>, and the contour of <math> g </math> given by <math> g ( x, y ) = c </math>.
+
+Suppose we walk along the contour line with <math> g = c </math>. In general the contour lines of <math> f </math> and <math> g </math> may be distinct, so following the contour line for <math> g = c </math> one could intersect with or cross the contour lines of <math> f </math>. This is equivalent to saying that while moving along the contour line for <math> g = c </math> the value of <math>f </math> can vary. Only when the contour line for <math> g = c </math> meets contour lines of <math> f </math> [[contact (mathematics)| tangentially]], we do not increase or decrease the value of <math> f </math> — that is, when the contour lines touch but do not cross.
+
+The contour lines of ''f'' and ''g'' touch when the [[tangent vector]]s of the contour lines are parallel. Since the [[gradient]] of a function is perpendicular to the contour lines, this is the same as saying that the gradients of ''f'' and ''g'' are parallel. Thus we want points <math>(x,y)</math> where <math>g(x,y) = c</math> and
+:<math>\nabla_{x,y} f = - \lambda \nabla_{x,y} g</math>,
+where
+:<math> \nabla_{x,y} f= \left( \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right) </math>
+and
+:<math> \nabla_{x,y} g= \left( \frac{\partial g}{\partial x}, \frac{\partial g}{\partial y} \right) </math>
+are the respective gradients. The constant <math>\lambda</math> is required because although the two gradient vectors are parallel, the magnitudes of the gradient vectors are generally not equal.
+
+To incorporate these conditions into one equation, we introduce an auxiliary function
+:<math> \Lambda(x,y,\lambda) = f(x,y) + \lambda \cdot \Big(g(x,y)-c\Big), </math>
+and solve
+:<math> \nabla_{x,y,\lambda} \Lambda(x , y, \lambda)=0. </math>
+This is the method of Lagrange multipliers. Note that <math>\nabla_{\lambda} \Lambda(x , y, \lambda)=0</math> implies <math> g(x,y)=c</math>.
+
+=== Not extrema ===
+The solutions are the ''[[Critical point (mathematics)|critical points]]'' of the Lagrangian <math>\Lambda</math>; they are not necessarily ''extrema'' of  <math>\Lambda</math>. In fact, the function <math>\Lambda</math> is unbounded: given a point <math>(x,y)</math> that does not lie on the constraint, letting <math>\lambda \to \pm \infty</math> makes <math>\Lambda</math> arbitrarily large or small.
+
+One may [[Hamiltonian mechanics#As a reformulation of Lagrangian mechanics|reformulate the Lagrangian]] as a [[Hamiltonian mechanics|Hamiltonian]], in which case the solutions are local minima for the Hamiltonian. This is done in [[optimal control]] theory, in the form of [[Pontryagin's minimum principle]].
+
+The fact that solutions of the Lagrangian are not extrema also poses difficulties for numerical optimization. This can be addressed by computing the ''magnitude'' of the gradient, as the zeros of the magnitude are necessarily local minima, and is illustrated in [[#Example: numerical optimization|the numerical optimization example]].
+
+== Handling multiple constraints ==
+
+[[Image:As_wiki_lgm_parab.png|thumb|right|300px|A paraboloid, some of its level sets (aka contour lines) and 2 line constraints.]]
+[[Image:As_wiki_lgm_levelsets.png|thumb|right|300px|Zooming in on the levels sets and constraints, we see that the
+two constraint lines intersect to form a "joint" constraint that is a point.  Since there is only one point to analyze, the corresponding point
+on the paraboloid is automatically a minimum and maximum.  Yet the simplified reasoning presented in sections above seems
+to fail because the level set definitely appears to "cross" the point and at the same time its gradient is not parallel to the gradients of
+either constraint.  This shows we must refine our explanation of the method to handle the kinds of constraints that are formed when we have
+more than one constraint acting at once.]]
+The method of ''Lagrange multipliers'' can also accommodate multiple constraints.  To see how this is done, we need to reexamine the problem in a
+slightly different manner because the concept of “crossing” discussed above becomes rapidly unclear when we consider the types of constraints
+that are created when we have more than one constraint acting together.
+
+As an example, consider a [[paraboloid]] with a constraint that is a single point (as might be created if we had 2 line constraints
+that intersect).  The [[level set]] (i.e. contour line) clearly appears to “cross” that point and its [[gradient]] is clearly not parallel
+to the gradients of either of the two line constraints.  Yet, it is obviously a maximum *and* a minimum because there is only one point
+on the paraboloid that meets the constraint.
+
+While this example seems a bit odd, it is easy to understand and is representative of the sort of  “effective” constraint that appears
+quite often when we deal with multiple constraints intersecting.  Thus, we take a slightly different approach below to explain and derive
+the Lagrange Multipliers method with any number of constraints.
+
+Throughout this section, the independent variables will be denoted by <math>x_1,x_2,\ldots ,x_N</math> and, as a group,
+we will denote them as <math>p=\left( x_1,x_2,\ldots ,x_N \right)</math>.  Also, the function being analyzed will be denoted
+by <math>f\left( p \right)</math> and the constraints will be represented by the equations <math>g_{1}\left( p \right) = 0,g_{2}\left( p \right) = 0,\,\,\ldots ,g_{M}\left( p \right) = 0</math>.
+
+The basic idea remains essentially the same:  if we consider only the points that satisfy the constraints (i.e. are ''in'' the constraints),
+then a point <math>\left( p,f\left( p \right) \right)</math> is a stationary point (i.e. a point in a “flat” region) of ''f'' if
+and only if the constraints at that point do not allow movement in a direction where ''f'' changes value.  It is intuitive that
+this is true because if the constraints allowed us to travel from this point to a (infinitesimally) near point with a ''different'' value,
+then we would ''not'' be in a “flat” region (i.e. a stationary point).
+
+Once we have located the stationary points, we need to do further tests to see if we have found a minimum, a maximum or just a stationary
+point that is neither.
+
+We start by considering the level set of ''f'' at <math>\left( p,f\left( p \right) \right)</math>.  The set of vectors
+<math>\left\{ v_{L} \right\}</math> containing the directions in which we can move and still remain in the same level set are the
+directions where the value of ''f'' does not change (i.e. the change equals zero).  Thus, for every vector
+''v'' in <math>\left\{ v_{L} \right\}</math> , the following relation must hold:
+
+: <math>\Delta f=\frac{df}{dx_{1}}v_{x_{1}}+\frac{df}{dx_{2}}v_{x_{2}}+\,\,\,\cdots \,\,\,+\frac{df}{dx_{N}}v_{x_{N}}=0</math>
+
+where the  notation <math>v_{x_{K}}</math> above means the <math>x_{K}</math>-component of the vector ''v''.
+The equation above can be rewritten in a more compact geometric form that helps our intuition:
+
+: <math>\begin{matrix}
+   \underbrace{\begin{matrix}
+   \left[ \begin{matrix}
+   \frac{df}{dx_{1}}  \\
+   \frac{df}{dx_{2}}  \\
+   \vdots   \\
+   \frac{df}{dx_{N}}  \\
+\end{matrix} \right]  \\
+   {}  \\
+\end{matrix}}_{\nabla f} & \centerdot  & \underbrace{\begin{matrix}
+   \left[ \begin{matrix}
+   v_{x_{1}}  \\
+   v_{x_{2}}  \\
+   \vdots   \\
+   v_{x_{N}}  \\
+\end{matrix} \right]  \\
+   {}  \\
+\end{matrix}}_{v} & =\,\,0  \\
+\end{matrix}\,\,\,\,\,\,\,\,\,\,\,\,\Rightarrow \,\,\,\,\,\,\,\,\nabla f\,\,\,\centerdot \,\,\,\,v\,\,=\,\,\,0</math>
+
+This makes it clear that if we are at ''p'' , then ''all'' directions from this point that do ''not'' change the value of
+''f'' ''must be perpendicular'' to <math>\nabla f\left( p \right)</math> (the gradient of ''f'' at ''p'').
+
+Now let us consider the effect of the constraints.  Each constraint limits the directions that we can move from a particular point
+and still satisfy the constraint.  We can use the same procedure, to look for the set of vectors <math>\left\{ v_{C} \right\}</math>
+containing the directions in which we can move and still satisfy the constraint.  As above,  for every vector
+''v'' in <math>\left\{ v_{C} \right\}</math>, the following relation must hold:
+
+: <math>\Delta g=\frac{dg}{dx_{1}}v_{x_{1}}+\frac{dg}{dx_{2}}v_{x_{2}}+\,\,\,\cdots \,\,\,+\frac{dg}{dx_{N}}v_{x_{N}}=0\,\,\,\,\,\,\,\,\,\,\,\,\,\Rightarrow \,\,\,\,\,\,\,\,\,\,\,\nabla g\,\,\centerdot \,\,\,v\,\,=\,\,\,0</math>
+
+From this, we see that at point ''p'',  all directions from this point that will still satisfy this constraint must be
+perpendicular to <math>\nabla g\left( p \right)</math> .
+
+Now we are ready to refine our idea further and complete the method:  ''a point on'' ''f'' ''is a constrained stationary point if and only if the direction that changes'' ''f'' ''violates at least one of the constraints''.  (We can see that this is true because if a
+direction that changes ''f'' did ''not'' violate any constraints, then there would a “legal” point nearby with a higher or lower
+value for ''f'' and the current point would then not be a stationary point.)
+
+=== Single constraint revisited ===
+
+For a single constraint, we use the statement above to say that at stationary points the direction that changes ''f'' is in the same direction
+that violates the constraint.  To determine if two vectors are in the same direction, we note that if two vectors start from the same
+point and are “in the same direction”, then one vector can always “reach” the other by changing its length and/or flipping to point the
+opposite way along the same direction line.  In this way, we can succinctly state that two vectors point in the same direction if and
+only if one of them can be multiplied by some real number such that they become equal to the other.  So, for our purposes, we require that:
+
+: <math>\nabla f\left( p \right)=\lambda \, \nabla g\left( p \right) \qquad \Rightarrow \qquad \nabla f\left( p \right)-\lambda \, \nabla g\left( p \right)\,\,=\,\,0</math>
+
+If we now add another simultaneous equation to guarantee that we only perform this test when we are at a point that satisfies the
+constraint, we end up with 2 simultaneous equations that when solved, identify all constrained stationary points:
+
+: <math>\begin{cases}
+   g\left( p \right)=0 & \text{means point satisfies constraint}  \\
+   \nabla f\left( p \right)-\lambda \, \nabla g\left( p \right) = 0 & \text{means point is a stationary point}
+\end{cases}
+</math>
+
+Note that the above is a succinct way of writing the equations.  Fully expanded, there are
+<math>\text{N}+\text{1}</math>
+simultaneous equations that need to be
+solved for the
+<math>\text{N}+\text{1}</math>
+variables which are <math>\lambda </math> and <math>x_1,\ x_2, \ldots, x_N</math>:
+
+: <math>\begin{align}
+g\left( x_1, x_2, \ldots , x_N \right) & =0 \\
+\frac{df}{dx_1}\left( x_1, x_2, \ldots, x_N \right) - \lambda \frac{dg}{dx_1}\left( x_1, x_2,\ldots , x_N \right) & = 0 \\
+\frac{df}{dx_2}\left( x_1, x_2, \ldots , x_N \right) - \lambda \frac{dg}{dx_2}\left( x_1, x_2, \ldots, x_N \right) & = 0 \\
+ & {}\ \  \vdots  \\
+\frac{df}{dx_N}\left( x_1, x_2, \ldots  x_N \right) - \lambda \frac{dg}{dx_N}\left( x_1, x_2, \ldots, x_N \right) & = 0
+\end{align}
+</math>
+
+=== Multiple constraints ===
+
+For more than one constraint, the same reasoning applies.  If there is more than one constraint active together, each constraint
+contributes a direction that will violate it.  Together, these “violation directions” form a “violation space”, where infinitesimal
+movement in any direction within the space will violate one or more constraints.  Thus, to satisfy multiple constraints we can state
+(using this new terminology) that at the stationary points, the direction that changes ''f'' is in the “violation space” created by the
+constraints acting jointly.
+
+The ''violation space'' created by the constraints consists of all points that can be reached by adding any combination of scaled
+and/or flipped versions of the individual violation direction vectors.  In other words, all the points that are “reachable” when
+we use the individual violation directions as the basis of the space.  Thus, we can succinctly state that ''v'' is in the space defined
+by <math>b_1, b_2, \ldots ,b_M</math> if and only if there exists a set of “multipliers” <math>\lambda_1, \lambda_2, \ldots , \lambda_M</math> such that:
+
+: <math>\sum\limits_{k=1}^M \lambda_k b_k = v</math>
+
+which for our purposes, translates to stating that the direction that changes ''f'' at ''p'' is in the “violation space” defined by the
+constraints <math>g_1,g_2, \ldots, g_M</math> if and only if:
+
+: <math>\sum_{k=1}^M  \lambda_k \nabla g_k (p) = \nabla f(p) \quad \Rightarrow \quad \nabla f(p) -  \sum_{k=1}^M {\lambda_k \nabla g_k (p)} = 0</math>
+
+As before, we now add simultaneous equation to guarantee that we only perform this test when we are at a point that satisfies every
+constraint, we end up with simultaneous equations that when solved, identify all constrained stationary points:
+
+: <math>\begin{matrix}
+   \begin{align}
+g_1(p) & = 0  \\
+g_2(p)& =0 \\
+& \ \ \vdots  \\
+g_M(p) &= 0 \\
+ &  \\
+\nabla f(p) - \sum_{k=1}^M {\lambda_k \, \nabla g_k (p)} & = 0 \\
+\end{align} & \begin{align}
+  & \text{these mean the point satisfies all constraints} \\
+ &  \\
+ &  \\
+ &  \\
+ &  \\
+ & \text{this means the point is a stationary point} \\
+\end{align}  \\
+\end{matrix}</math>
+
+The method is complete now (from the standpoint of solving the problem of finding stationary points) but as mathematicians delight in
+doing, these equations can be further condensed into an even more elegant and succinct form.  Lagrange must have cleverly noticed that
+the equations above look like partial derivatives of some larger scalar function ''L'' that takes all the
+<math>x_1, x_2, \ldots, x_N</math>
+and all the <math>\lambda _1, \lambda_2, \ldots, \lambda _M</math>
+as inputs.  Next, he might then have noticed that setting every equation equal to zero is exactly what one would have to do to solve for the ''unconstrained''
+stationary points of that larger function.  Finally, he showed that a larger function ''L'' with partial derivatives that are exactly the ones we require can be constructed very simply as below:
+
+: <math>
+\begin{align}
+& {} \quad L\left( x_1, x_2, \ldots , x_N, \lambda_1, \lambda_2, \ldots, \lambda _M \right) \\
+& = f\left( x_1, x_2, \ldots, x_N \right) - \sum\limits_{k=1}^M {\lambda_k g_k\left( x_1, x_2, \ldots , x_N \right)}
+\end{align}
+</math>
+
+Solving the equation above for its ''unconstrained'' stationary points generates exactly the same stationary points as solving for the
+''constrained'' stationary  points of ''f'' under the constraints <math>g_1,g_2, \ldots, g_M</math>.
+
+In Lagrange’s honor, the function above is called  a ''Lagrangian'', the scalars
+<math>\lambda_1, \lambda_2, \ldots, \lambda_M</math> are called ''Lagrange Multipliers'' and this optimization method itself is called ''The Method of Lagrange Multipliers''.
+
+The method of Lagrange multipliers is generalized by the [[Karush–Kuhn–Tucker conditions]], which can also take into account inequality constraints of the form ''h''('''x''') ≤ ''c''.
+
+==Interpretation of the Lagrange multipliers==
+Often the Lagrange multipliers have an interpretation as some quantity of interest.  To see why
+this might be the case, observe that:
+
+:<math>\frac{\partial \Lambda}{\partial {g_k}} = \lambda_k.</math>
+
+So, ''λ''<sub>''k''</sub> is the rate of change of the quantity being optimized as a function of the constraint variable.
+As examples, in [[Lagrangian mechanics]] the equations of motion are derived by finding stationary points of the [[Action (physics)|action]], the time integral of the difference between kinetic and potential energy.  Thus, the force on a particle due to a scalar potential, <math>F=-\nabla V</math>, can be interpreted as a Lagrange multiplier determining the change in action (transfer of potential to kinetic energy) following a variation in the particle's constrained trajectory.  In economics, the optimal profit to a player is calculated subject to a constrained space of actions, where a Lagrange multiplier is the increase in the value of the objective function due to the relaxation of a given constraint (e.g. through an increase in income or bribery or other means) – the [[marginal cost]] of a constraint, called the [[shadow price]].
+
+In control theory this is formulated instead as [[costate equations]].
+
+== Examples ==
+=== Very simple example ===
+[[Image:Lagrange very simple.jpg|thumb|right|300px|Fig. 3. Illustration of the constrained optimization problem]]
+
+Suppose you wish to maximize <math>f(x,y)=x+y</math> subject to the constraint <math>x^2+y^2=1</math>. The constraint is the unit circle, and the [[level set]]s of ''f'' are diagonal lines (with slope -1), so one can see graphically that the maximum occurs at
+<math>(\sqrt{2}/2,\sqrt{2}/2)</math> (and the minimum occurs at <math>(-\sqrt{2}/2,-\sqrt{2}/2)</math>)
+
+Formally, set <math>g(x,y)-c=x^2+y^2-1</math>, and
+:<math>\Lambda(x, y, \lambda) = f(x,y) + \lambda(g(x,y)-c) = x+y +  \lambda (x^2 + y^2 - 1)</math>
+
+Set the derivative <math>d\Lambda=0</math>, which yields the system of equations:
+
+:<math>\begin{align}
+\frac{\partial \Lambda}{\partial x}       &= 1 + 2 \lambda x &&= 0, \qquad \text{(i)} \\
+\frac{\partial \Lambda}{\partial y}       &= 1 + 2 \lambda y &&= 0, \qquad \text{(ii)} \\
+\frac{\partial \Lambda}{\partial \lambda} &= x^2 + y^2 - 1   &&= 0, \qquad \text{(iii)}
+\end{align}</math>
+As always, the <math>\partial \lambda</math> equation ((iii) here) is the original constraint.
+
+Combining the first two equations yields <math>x=y</math> (explicitly, <math>\lambda \neq 0</math>, otherwise (i) yields 1 = 0, so one has <math>x=-1/(2\lambda)=y</math>).
+
+Substituting into (iii) yields <math>2x^2=1</math>, so <math>x=y=\pm \sqrt{2}/2</math> and <math>\lambda = \mp \sqrt{2}/2</math>, showing the stationary points are <math>(\sqrt{2}/2,\sqrt{2}/2)</math> and <math>(-\sqrt{2}/2,-\sqrt{2}/2)</math>. Evaluating the objective function ''f'' on these yields
+
+:<math>f(\sqrt{2}/2,\sqrt{2}/2)=\sqrt{2}\mbox{ and } f(-\sqrt{2}/2, -\sqrt{2}/2)=-\sqrt{2},</math>
+
+thus the maximum is <math>\sqrt{2}</math>, which is attained at <math>(\sqrt{2}/2,\sqrt{2}/2)</math> and the minimum is <math>-\sqrt{2}</math>, which is attained at <math>(-\sqrt{2}/2,-\sqrt{2}/2)</math>.
+
+=== Simple example ===
+
+[[Image:Lagrange simple.jpg|thumb|right|300px|Fig. 4. Illustration of the constrained optimization problem]]
+
+Suppose you want to find the maximum values for
+
+:<math> f(x, y) = x^2 y \, </math>
+
+with the condition that the ''x'' and ''y'' coordinates lie on the circle around the origin with radius √3, that is,
+
+:<math> g(x,y) = x^2 + y^2 = 3. \, </math>
+
+As there is just a single condition, we will use only one multiplier, say λ.
+
+The constraint ''g''(''x'', ''y'')-3 is identically zero on the circle of radius √3. So any multiple of ''g''(''x'', ''y'')-3 may be added to ''f''(''x'', ''y'') leaving ''f''(''x'', ''y'') unchanged in the region of interest (above the circle where our original constraint is satisfied).  Let
+
+:<math>\Lambda(x, y, \lambda) = f(x,y) + \lambda (g(x, y)-3) = x^2y +  \lambda (x^2 + y^2 - 3). \, </math>
+
+The critical values of <math>\Lambda</math> occur when its gradient is zero. The partial derivatives are
+
+:<math>\begin{align}
+\frac{\partial \Lambda}{\partial x}       &= 2 x y + 2 \lambda x &&= 0, \qquad \text{(i)} \\
+\frac{\partial \Lambda}{\partial y}       &= x^2 + 2 \lambda y   &&= 0, \qquad \text{(ii)} \\
+\frac{\partial \Lambda}{\partial \lambda} &= x^2 + y^2 - 3       &&= 0. \qquad \text{(iii)}
+\end{align}</math>
+
+Equation (iii) is just the original constraint. Equation (i) implies <math> x = 0 </math> ''or'' λ = &minus;''y''. In the first case, if ''x'' = 0 then we must have <math>y = \pm \sqrt{3}</math> by (iii) and then by (ii) λ = 0. In the second case, if λ = &minus;''y'' and substituting into equation (ii) we have that,
+
+:<math>x^2 - 2y^2 = 0. \, </math>
+
+Then ''x''<sup>2</sup> = 2''y''<sup>2</sup>.  Substituting into equation  (iii) and solving for ''y'' gives this value of ''y'':
+
+:<math>y = \pm 1. \, </math>
+
+Thus there are six critical points:
+
+:<math> (\sqrt{2},1); \quad (-\sqrt{2},1); \quad (\sqrt{2},-1); \quad (-\sqrt{2},-1); \quad (0,\sqrt{3}); \quad (0,-\sqrt{3}). </math>
+
+Evaluating the objective at these points, we find
+
+:<math> f(\pm\sqrt{2},1) = 2; \quad f(\pm\sqrt{2},-1) = -2; \quad f(0,\pm \sqrt{3})=0. </math>
+
+Therefore, the objective function attains a [[global maximum]] (with respect to the constraints) at <math>(\pm\sqrt{2},1)</math> and a [[global minimum]] at <math>(\pm\sqrt{2},-1).</math> The point <math>(0,\sqrt{3})</math> is a [[local minimum]] and <math>(0,-\sqrt{3})</math> is a [[local maximum]], as may be determined by consideration of the [[Hessian (mathematics)#Bordered_Hessian| Hessian matrix]] of <math>\Lambda</math>.
+
+=== Example: entropy ===
+Suppose we wish to find the finite [[probability distribution]] ([[Without loss of generality]], say on the points <math>\{1, 2, \cdots, n\}</math>) with maximal [[information entropy]]. Then
+
+:<math>f(p_1,p_2,\ldots,p_n) = -\sum_{k=1}^n p_k\log_2 p_k.</math>
+
+Of course, the sum of these probabilities equals 1, so our constraint is ''g''('''p''') = 1 with
+
+:<math>g(p_1,p_2,\ldots,p_n)=\sum_{k=1}^n p_k.</math>
+
+We can use Lagrange multipliers to find the point of maximum entropy (depending on the probabilities). For all ''k'' from 1 to ''n'', we require that
+
+:<math>\frac{\partial}{\partial p_k}(f+\lambda (g-1))=0,</math>
+
+which gives
+
+:<math>\frac{\partial}{\partial p_k}\left(-\sum_{k=1}^n p_k \log_2 p_k + \lambda \left(\sum_{k=1}^n p_k - 1\right) \right) = 0.</math>
+
+Carrying out the differentiation of these ''n'' equations, we get
+
+:<math>-\left(\frac{1}{\ln 2}+\log_2 p_k \right)  + \lambda = 0.</math>
+
+This shows that all ''p''<sub>''k''</sub> are equal (because they depend on λ only).
+By using the constraint ∑<sub>''k''</sub> ''p''<sub>''k''</sub> = 1, we find
+
+:<math>p_k = \frac{1}{n}.</math>
+
+Hence, the uniform distribution is the distribution with the greatest entropy, among distributions on ''n'' points.
+
+=== Example: numerical optimization ===
+
+[[Image:lagnum1.png|thumb|right|300px|Lagrange multipliers cause the critical points to occur at saddle points.]]
+
+[[Image:lagnum2.png|thumb|right|300px|The magnitude of the gradient can be used to force the critical points to occur at local minima.]]
+
+With Lagrange multipliers, the critical points occur at [[saddle point]]s, rather than at local maxima (or minima). Unfortunately, many numerical optimization techniques, such as [[hill climbing]], [[gradient descent]], some of the [[quasi-Newton method]]s, among others, are designed to find local maxima (or minima) and not saddle points. For this reason, one must either modify the formulation to ensure that it's a minimization problem (for example, by extremizing the square of the [[gradient]] of the Lagrangian as below), or else use an optimization technique that finds [[stationary points]] (such as [[Newton's method in optimization|Newton's method]] without an extremum seeking [[line search]]) and not necessarily extrema.
+
+As a simple example, consider the problem of finding the value of ''x'' that minimizes <math>f(x)=x^2</math>, constrained such that <math>x^2=1</math>. (This problem is somewhat pathological because there are only two values that satisfy this constraint, but it is useful for illustration purposes because the corresponding unconstrained function can be visualized in three dimensions.)
+
+Using Lagrange multipliers, this problem can be converted into an unconstrained optimization problem:
+
+:<math>\Lambda(x,\lambda)=x^2+\lambda(x^2-1)</math>
+
+The two critical points occur at saddle points where <math>x=1</math> and <math>x=-1</math>.
+
+In order to solve this problem with a numerical optimization technique, we must first transform this problem such that the critical points occur at local minima. This is done by computing the magnitude of the gradient of the unconstrained optimization problem.
+
+First, we compute the partial derivative of the unconstrained problem with respect to each variable:
+:<math>\frac{\partial \Lambda}{\partial x}=2x+2x\lambda</math>
+
+:<math>\frac{\partial \Lambda}{\partial \lambda}=x^2-1</math>
+
+If the target function is not easily differentiable, the differential with respect to each variable can be measured empirically:
+
+:<math>\frac{\partial \Lambda}{\partial x}\approx\frac{\Lambda(x+\epsilon,\lambda)-\Lambda(x,\lambda)}{\epsilon}</math>
+
+:<math>\frac{\partial \Lambda}{\partial \lambda}\approx\frac{\Lambda(x,\lambda+\epsilon)-\Lambda(x,\lambda)}{\epsilon}</math>
+
+where <math>\epsilon</math> is a small value.
+
+Next, we compute the magnitude of the gradient, which is the square root of the sum of the squares of the partial derivatives:
+:<math>h(x,\lambda)=\sqrt{(2x+2x\lambda)^2+(x^2-1)^2}\approx\sqrt{\left(\frac{\Lambda(x+\epsilon,\lambda)-\Lambda(x,\lambda)}{\epsilon}\right)^2+\left(\frac{\Lambda(x,\lambda+\epsilon)-\Lambda(x,\lambda)}{\epsilon}\right)^2}</math>
+Alternatively, one may use the magnitude squared, which is the sum of the squares of the partials, without taking a square root – this has the advantage of being smooth if the partials are, while the square root may not be differentiable at the zeros.
+
+The critical points of ''h'' occur at <math>x=1</math> and <math>x=-1</math>, just as in <math>\Lambda</math>. Unlike the critical points in <math>\Lambda</math>, however, the critical points in ''h'' occur at local minima, so numerical optimization techniques can be used to find them.
+
+==Applications==
+===Economics===
+Constrained optimization plays a central role in [[economics]]. For example, the choice problem for a [[consumer theory|consumer]] is represented as one of maximizing a [[utility function]] subject to a [[budget constraint]]. The Lagrange multiplier has an economic interpretation as the [[shadow price]] associated with the constraint, in this example the [[marginal utility]] of [[income]].
+
+===Control theory===
+In [[optimal control]] theory, the Lagrange multipliers are interpreted as [[costate]] variables, and Lagrange multipliers are reformulated as the minimization of the [[Hamiltonian mechanics|Hamiltonian]], in [[Pontryagin's minimum principle]].
+
+==The strong Lagrangian principle: Lagrange duality==
+{{anchor|Lagrange duality}}
+<!-- linked from redirect [[Lagrange duality]] -->
+
+Given a [[convex optimization]] problem in standard form
+
+:<math>\begin{align}
+\text{minimize }    &f_0(x) \\
+\text{subject to } &f_i(x) \leq 0,\ i \in \left \{1,\dots,m \right \} \\
+                    &h_i(x) = 0,\ i \in \left \{1,\dots,p \right \}
+\end{align}</math>
+
+with the domain <math>\mathcal{D} \subset \mathbb{R}^n</math> having non-empty interior, the '''Lagrangian function''' <math>\Lambda: \mathbb{R}^n \times \mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R} </math> is defined as
+
+: <math>\Lambda(x,\lambda,\nu) = f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{i=1}^p \nu_i h_i(x).</math>
+
+The vectors <math>\lambda</math> and <math>\nu</math> are called the ''dual variables'' or ''Lagrange multiplier vectors'' associated with the problem.  The '''Lagrange dual function''' <math>g:\mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R} </math> is defined as
+
+: <math>g(\lambda,\nu) = \inf_{x\in\mathcal{D}} \Lambda(x,\lambda,\nu) = \inf_{x\in\mathcal{D}} \left ( f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{i=1}^p \nu_i h_i(x) \right ).</math>
+
+The dual function ''g'' is concave, even when the initial problem is not convex.  The dual function yields lower bounds on the optimal value <math>p^*</math> of the initial problem; for any <math>\lambda \geq 0 </math> and any <math>\nu</math> we have <math>g(\lambda,\nu) \leq p^* </math>.  If a [[constraint qualification]] such as [[Slater's condition]] holds and the original problem is convex, then we have strong duality, i.e. <math>d^* = \max_{\lambda \ge 0, \nu} g(\lambda,\nu) = \inf f_0 = p^*</math>.
+
+==See also==
+{{wikibooks|Calculus optimization methods|Lagrange multipliers}}
+* [[Karush–Kuhn–Tucker conditions]]: generalization of the method of Lagrange multipliers.
+* [[Lagrange multipliers on Banach spaces]]: another generalization of the method of Lagrange multipliers.
+
+== References ==
+<references/>
+
+==External links==
+Exposition
+*[http://www.slimy.com/~steuard/teaching/tutorials/Lagrange.html Conceptual introduction] (plus a brief discussion of Lagrange multipliers in the [[calculus of variations]] as used in physics)
+
+For additional text and interactive applets
+*[http://www.umiacs.umd.edu/~resnik/ling848_fa2004/lagrange.html Simple explanation with an example of governments using taxes as Lagrange multipliers]
+*[http://ocw.mit.edu/ans7870/18/18.02/f07/tools/LagrangeMultipliersTwoVariables.html Applet]
+*[http://www.math.gatech.edu/~carlen/2507/notes/lagMultipliers.html Tutorial and applet]
+*[http://midnighttutor.com/Lagrange_multiplier.html Video Lecture of Lagrange Multipliers]
+*[http://www.athenasc.com/NLP_Slides.pdf Slides accompanying Bertsekas's nonlinear optimization text], with details on Lagrange multipliers (lectures 11 and 12)
+*http://eom.springer.de/L/l057190.htm
+
+
+[[Category:Multivariable calculus]]
+[[Category:Mathematical optimization]]
+[[Category:Mathematical and quantitative methods (economics)]]
+
+[[ca:Multiplicadors de Lagrange]]
+[[de:Lagrange-Multiplikator]]
+[[es:Multiplicadores de Lagrange]]
+[[fr:Multiplicateur de Lagrange]]
+[[is:Lagrange-margfaldarar]]
+[[it:Metodo dei moltiplicatori di Lagrange]]
+[[he:כופלי לגראנז']]
+[[nl:Lagrange-multiplicator]]
+[[ja:ラグランジュの未定乗数法]]
+[[pl:Mnożniki Lagrange'a]]
+[[pt:Multiplicadores de Lagrange]]
+[[ro:Multiplicatorul Lagrange]]
+[[ru:Метод множителей Лагранжа]]
+[[fi:Lagrangen kertoimet]]
+[[sv:Lagrangemultiplikator]]
+[[uk:Метод невизначених множників]]
+[[zh:拉格朗日乘数]]</body> </html>

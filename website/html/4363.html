@@ -1,0 +1,44 @@
+<html> <head> <title>Bounce address</title></head><body>A '''bounce address''' is an [[e-mail address]] to which [[bounce message]]s are delivered.  There are many variants of the name, none of them used universally, including '''return path''', '''reverse path''', '''envelope from''', '''envelope sender''', '''MAIL FROM''', '''2821-FROM''', '''return address''', '''From_''', '''Errors-to''', etc.  It is not uncommon for a single document to use several of these names.
+
+All of these names refer to the e-mail address found by the <tt>MAIL FROM</tt> command.
+
+==Background information==
+
+Ordinarily, the bounce address is not seen by e-mail users and, without standardization of the name, it may cause confusion.  An e-mail message can be thought of as resembling a [[Letter (message)|letter]] in an envelope.  It will contain "header fields", such as <tt>To:</tt>, <tt>From:</tt>, and <tt>Subject:</tt>, along with the body of the message.  These are analogous to the letterhead and body of a letter.  The "to" and "from" information is usually copied to the envelope, and used to deliver the message. 
+
+While it is most common for the To and From information in the letter to be the same as on the envelope, such is not always the case.  For example, on [[electronic mailing list]]s, the information seen in the "From:" header will come from the person who sent the e-mail to the list, while the bounce address will be set to that of the mailing list software, so problems delivering the mailing list messages can be handled correctly. 
+
+When e-mail is transported using the [[Simple Mail Transfer Protocol]] (SMTP), the most common method on the internet, only the envelope information is looked at to figure out where the e-mail should go; the body of the e-mail is not examined.  [[Mail Transfer Agent]]s (MTA) using the SMTP protocol use the <tt>RCPT TO</tt> command to determine where the e-mail should go, and the <tt>MAIL FROM</tt> command to indicate where it came from.
+
+==Usage==
+While its original usage was to provide information about how to return bounce messages, since the late 1990s, other uses have come about.  These typically take advantage of properties of the bounce address, such as:
+*It is given early in the [[SMTP]] session, so a message can be rejected without receiving its body.
+*It is typically not seen by users so it can be altered to include additional information without confusing them.
+*It is a required part of [[Mail Transfer Agent]] software, so it is easy for other programs to use.  In contrast, the "from" address in the body of the mail can be on several different headers (e.g. the <tt>From:</tt>, <tt>Sender:</tt>, <tt>Resent-from:</tt>, etc.) or be missing entirely.
+
+Extended uses include mailing list handling in [[Variable envelope return path]] (VERP), [[e-mail authentication]], [[spam filtering]], and [[backscatter (e-mail)|backscatter]] reduction in [[Bounce Address Tag Validation]].
+
+==Terminology==
+The various terms have different origins and sometimes different meanings, although these differences have often become moot on the modern internet. 
+
+* '''bounce address''' - When an e-mail can not be delivered, the MTA will create a [[bounce message]] and send it to the address given by the <tt>MAIL FROM</tt> command. Used in RFC 4406.
+* '''return path''' - When the e-mail is put in the recipient's [[mailbox (e-mail)|mailbox]], a new [[E-mail#Header|mail header]] is created with the name "Return-Path:" containing the address on the <tt>MAIL FROM</tt> command.  Earlier forms of e-mail (such as [[UUCP]]) would require information about each "hop" along the path that the e-mail traveled to reach the destination, hence the "path" part of the name. Used in RFC 2821, RFC 3834, RFC 4409.
+* '''reverse path''' - the argument of the SMTP <tt>MAIL FROM</tt> command, whose content is supposed to consist of the envelope sender address. Used in RFC 5321, RFC 3464, RFC 3834, Internet Mail Architecture.
+* '''envelope from''' - information that the SMTP protocol uses analogous to the envelope of a letter.  Used in RFC 5230, RFC 5233.
+* '''envelope sender address''' - the mailbox address in a non-empty reverse path excluding any (deprecated) reverse routing info. Used in RFC 2821, RFC 3461, RFC 3464, RFC 3798, RFC 5228.
+* '''envelope return address''' - similar to envelope sender address, used in RFC 3461, RFC 3464, RFC 3834, RFC 4952.
+* '''MAIL FROM''' - This variation comes directly from the SMTP <tt>MAIL FROM</tt> command name. Used in RFC 5321, RFC 3464, RFC 3834, RFC 4408, RFC 4409, RFC 4952.
+* '''2821-FROM''' - Until October, 2008, SMTP was defined in RFC 2821, while the body of the e-mail was defined in RFC 2822.  The term "2821-FROM" makes it clear that the address referred to is the <tt>MAIL FROM</tt> information, while "2822-From:" refers to the address in the "From:" header seen by end users. Used in RFC 5598.
+* '''5321-FROM''' - Evolution of 2821-FROM as from October, 2008, SMTP has been defined in RFC 5321.
+* '''return address''' - Another term that comes from the latter analogy for e-mail. used in RFC 5321, RFC 3834.
+* '''From_''' - When an e-mail gets delivered to the user's [[mailbox (e-mail)|mailbox]], one file format that may be used is the [[mbox]] format.  In this format, the e-mail address from the <tt>MAIL FROM</tt> command was placed on a line beginning with "From" followed by a single space, the "From_" term uses an underscore to represent the space to distinguish it from the "From:" mail header.   In this mailbox format, lines in the actual e-mail that begin with a "From " have to be escaped and changed into lines that begin with ">From ".
+
+==See also==
+* [[Bounce message]]
+* [[Email forwarding]]
+
+[[Category:Email]]
+[[Category:Email authentication]]
+
+[[de:Envelope Sender]]
+[[fr:Bounce address]]</body> </html>

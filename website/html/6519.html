@@ -1,0 +1,175 @@
+<html> <head> <title>Clone (Java method)</title></head><body>{{lowercase}}
+{{inline|date=August 2010}}
+'''<code>clone()</code>''' is a [[Method (computer science)|method]] in the [[Java (programming language)|Java programming language]] for [[Object copy|object duplication]]. In Java, objects are manipulated through reference variables, and there is no operator for ''copying'' an object—the assignment operator duplicates the reference, not the object. The clone() method provides this functionality.
+
+== Overview ==
+
+Classes that want copying functionality must implement some method to do so.  To a certain extent that function is provided by "<code>clone()</code>".  
+
+<code>clone()</code> acts like a constructor.  Typically it calls the <code>clone()</code> method of its superclass to obtain the copy, etc. until it eventually reaches <code>Object</code>'s <code>clone()</code> method. The special <code>clone()</code> method in the [[Superclass (computer science)|base class]] <code>Object</code> provides a standard mechanism for duplicating objects.
+
+The [[class (computer science)|class]] <code>Object</code>'s <code>clone()</code> method creates and returns a copy of the object, with the same class and with all the fields having the same values.  However, <code>clone()</code> throws a <code>CloneNotSupportedException</code> unless the class you are trying to use it on implements the [[marker interface pattern|marker interface]] <code>Cloneable</code>.
+
+The default implementation of <code>Object.clone()</code> performs a [[shallow copy]]. When a class desires a [[deep copy]] or some other custom behavior, they must perform that in their own <code>clone()</code> method after they obtain the copy from the superclass.
+
+The syntax for calling <code>clone</code> in Java is:
+<source lang="java">
+Object copy = obj.clone();
+</source>
+or commonly
+<source lang="java">
+MyClass copy = (MyClass) obj.clone();
+</source>
+which provides the [[typecast]]ing needed to assign the generic <code>Object</code> reference returned from <code>clone</code> to a reference to a <code>MyClass</code> object.
+
+One disadvantage with the design of the <code>clone()</code> method is that the return type of <code>clone()</code> is <code>Object</code>, and needs to be explicitly cast back into the appropriate type. However, overriding <code>clone()</code> to return the appropriate type is preferable and eliminates the need for casting in the client (using [[covariant return type]]s, since J2SE 5.0).
+
+Another disadvantage is that one often cannot access the <code>clone()</code> method on an abstract type. Most interfaces and abstract classes in Java do not specify a public <code>clone()</code> method. As a result, often the only way to use the <code>clone()</code> method is if you know the actual class of an object; which is contrary to the abstraction principle of using the most generic type possible. For example, if one has a <code>List</code> reference in Java, one cannot invoke <code>clone()</code> on that reference because <code>List</code> specifies no public <code>clone()</code> method. Actual implementations of <code>List</code> like <code>ArrayList</code> and <code>LinkedList</code> all generally have <code>clone()</code> methods themselves, but it is inconvenient and bad abstraction to carry around the actual class type of an object.
+
+==Alternatives==
+There are alternatives to <code>clone()</code>, notably the use of a [[copy constructor]] - a constructor that accepts as a parameter another instance of the same class - or a [[Factory method pattern|factory method]]. These methods are not always adequate when the concrete type of the cloned object is not known in advance. (However, <code>clone()</code> is often not adequate either for the same reason, as most abstract classes do not implement a public <code>clone()</code> method.)
+
+Also the use of serialization and deserialization is another alternative to using clone.
+
+==<code>clone()</code> and the Singleton pattern==
+
+When writing a class using the [[Singleton pattern]], only one instance of that class can exist at a time.  As a result, the class must not be allowed to make a clone.  To prevent this, override the <code>clone()</code> method using the following code:
+<source lang="java">
+public Object clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException(); 
+}
+</source>
+(Note: This is only necessary if a superclass implements a public <code>clone()</code> method, or to prevent a subclass from using this class's <code>clone()</code> method to obtain a copy. Since classes don't usually inherit a public <code>clone()</code> method (<code>Object</code> doesn't have a public <code>clone()</code> method), it is usually unnecessary to explicitly implement a non-functional <code>clone()</code> method.
+
+==<code>clone()</code> and class hierarchy==
+{{examplefarm|section|date=August 2010}}
+When working with the clone() in a hierarchy of classes, there are several things that must be handled properly.
+
+1) Every type reference that needs to call the clone function must have a clone() method in its own class or a publicly accessible clone() method in its parent classes.  
+That means that if you want to clone a reference to an abstract base class, either the base class must have a clone() method, or one of its parents must have a publicly accessible clone() method.
+
+Example
+ - since varY1 is of type Y, then Y must have clone(), or a parent of Y must have clone()
+
+<source lang="java">
+abstract public class X implements Cloneable {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+abstract public class Y extends X { }
+
+public class Z extends Y { }
+
+public class test1 {
+        public void function() throws CloneNotSupportedException {
+                Y varY1 = new Z();
+                Y varY2 = (Y) varY1.clone();
+        }
+}
+</source>
+
+2) Every class that has any data other than primitives that has to be cloned must contain a clone() function that handles it.
+This includes all objects and all primitives that are allocated with the 'new' command such as variable length arrays.
+(This assumes that the programmer wants the objects to be cloned (deep copy) and not just have their reference copied (shallow copy).)
+
+Example
+ - since class Z has a reference to an object of another class, there needs to be specific code to clone that object.
+
+<source lang="java">
+abstract public class X implements Cloneable {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+abstract public class Y extends X { }
+
+public class ObjectABC implements Cloneable {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+public class Z extends Y {
+        private ObjectABC someABC;
+
+        public Object clone() throws CloneNotSupportedException {
+                Z newZ = (Z) super.clone();
+                newZ.someABC = (ObjectABC) someABC.clone();
+
+                return newZ;
+        }
+}
+
+public class test1 {
+        public void function() throws CloneNotSupportedException {
+                Y varY1 = new Z();
+                Y varY2 = (Y) varY1.clone();
+        }
+}
+</source>
+
+Easy Solution
+
+The easiest solution to this is to make the base class "implements Cloneable" and have the base class and all sub-classes contain the clone() method.
+When a class has data in it that must be cloned, adding a line or two to the clone() method is straight forward.
+
+Example
+
+<source lang="java">
+abstract public class X implements Cloneable {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+abstract public class Y extends X {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+public class Z extends Y {
+        public Object clone() throws CloneNotSupportedException {
+                return super.clone();
+        }
+}
+
+public class test1 {
+        public void function() throws CloneNotSupportedException {
+                Y varY1 = new Z();
+                Y varY2 = (Y) varY1.clone();
+        }
+}
+</source>
+
+Downsides
+
+If every class in your hierarchy has a clone() method, then when the actual class is cloned all of these functions will be called, adding some overhead.  Over many calls this could be significant.
+
+With complex object graphs deep copying can become problematic, with recursive references.  Once one object is cloneable, others tend to follow until the entire graph attempts to implement Cloneable. Sooner or later you run into a class that you can't make Cloneable.
+
+It is not always appropriate to have multiple copies of the same object floating around.  Besides, using clone() tends to defeat the "single object, multiple references" paradigm.
+
+==<code>clone()</code> and <code>final</code> fields==
+
+Generally, <code>clone()</code> is incompatible with <code>final</code> fields.  Because <code>clone()</code> is essentially a default constructor (one that has no arguments) it is impossible to assign a <code>final</code> field within a <code>clone()</code> method; a compiler error is the result.  Where the value of the field is an immutable object this is okay; just let the 'constructor' copy the reference and both the original and its clone will share the same object. 
+
+But where the value is a mutable object it must be deep copied.  The only solution is to remove the <code>final</code> modifier from the field, giving up the benefits the modifier conferred.
+
+For this reason, some programmers suggest to make the objects in the hierarchy [[Serialization#Java|Serializable]], and create copies by serializing the old object and then creating a new object from the resulting [[bitstream]], which handles final data members correctly, but is significantly slower.<ref>[http://www.javaworld.com/javaworld/javatips/jw-javatip76.html Java Tip 76: An alternative to the deep copy technique], [[JavaWorld]]</ref>
+
+==External links==
+* {{cite web|url=http://weblogs.java.net/blog/2007/04/04/cloning-java-objects-using-serialization|title=Cloning Java objects using serialization|last=McManus|first=Eamonn|date=April 4, 2007|work=Eamonn McManus's Blog|publisher=java.net|accessdate=2010-11-16}}
+* {{cite book|last=Bloch|first=Joshua|title=Effective Java: A Programming Language Guide|publisher=Addison-Wesley|year=2008|edition=2nd|series=The Java Series|isbn=0321356683}}
+* {{cite web|url=http://www.javapractices.com/topic/TopicAction.do?Id=71|title=Avoid clone|year=2009|work=Collected Java Practices|publisher=Hirondelle Systems|accessdate=2009-07-31}}
+* {{cite web|url=http://java.sun.com/javase/6/docs/api/java/lang/Object.html#clone()|title=Object (Java Platform SE 6)|year=2008|work=Java Platform Standard Ed. 6|publisher=Sun Microsystems, Inc.|accessdate=2009-07-31}}
+* Roulo, Mark. (01/01/99) [http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=2 How to avoid traps and correctly override methods from java.lang.Object] JavaWorld.com - Covers the basics of implementing the clone method.
+
+== References ==
+<references/>
+
+{{DEFAULTSORT:Clone (Java Method)}}
+[[Category:Java programming language]]</body> </html>

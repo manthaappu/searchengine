@@ -1,0 +1,327 @@
+<html> <head> <title>Modal logic</title></head><body>{{Refimprove|date=August 2008}}
+'''Modal logic''' is a type of [[mathematical logic#Formal logic|formal logic]] that extends the standards of formal logic to include the elements of [[Linguistic modality|modality]] (for example, [[Logical possibility|possibility]] and [[Necessary_and_sufficient_conditions#Necessary_conditions|necessity]]). Modals qualify the truth of a judgment. For example, if it is true that "John is happy," we  might qualify this statement by saying that "John is ''usually'' happy," in which case the term "usually" would be a modality. Traditionally, there are three "modes" or "moods" or "modalities" represented in modal logic, namely, ''[[Logical possibility|possibility]]'', ''[[probability]]'', and ''[[Necessary_and_sufficient_conditions#Necessary_conditions|necessity]]''.
+
+A formal modal logic represents modalities using [[modal operator]]s. For example, "It might rain today" and "It is possible that rain will fall today" both contain the notion of possibility. In a modal logic this is represented as an operator, ''Possibly'', attached to the sentence ''It will rain today''.
+
+The basic [[Unary operation|unary]] (1-place) modal operators are usually written <math>\Box</math> for ''Necessarily'' and <math>\Diamond</math> for ''Possibly''. In a [[classical modal logic]], each can be expressed by the other with [[negation]]:
+
+:<math>\Diamond P \leftrightarrow \lnot \Box \lnot P;</math>
+:<math>\Box P \leftrightarrow \lnot \Diamond \lnot P.</math>
+
+Thus it is ''possible'' that it will rain today if and only if it is ''not necessary'' that it will ''not'' rain today;<br />
+and it is ''necessary'' that it will rain today if and only if it is ''not possible'' that it will ''not'' rain today.
+
+==Development of modal logic ==
+Although [[Aristotle]]'s logic is almost entirely concerned with the theory of the [[categorical syllogism]], there are passages in his work, such as the famous [[problem of future contingents|sea-battle argument]] in ''[[De Interpretatione]]'' § 9, that are now seen as anticipations of modal logic and its connection with potentiality and time. Modal logic as a self-aware subject owes much to the writings of the [[Scholastics]], in particular [[William of Ockham]] and [[John Duns Scotus]], who reasoned informally in a modal manner, mainly to analyze statements about [[essence]] and [[accident (philosophy)|accident]].
+
+[[C. I. Lewis]] founded modern modal logic in his 1910 Harvard thesis and in a series of scholarly articles beginning in 1912. This work culminated in his 1932 book ''Symbolic Logic'' (with C. H. Langford), which introduced the five systems ''S1'' through ''S5''.
+
+Ruth C. Barcan (later Ruth Barcan Marcus) developed the first axiomatic systems of quantified modal logic &mdash; first and second order extensions of Lewis's "S2", "S4", and "S5".
+
+The contemporary era in modal semantics began in 1959, when [[Saul Kripke]] (then only a 19 year old [[Harvard University]] undergraduate) introduced the now-standard [[Kripke semantics]] for modal logics. These are commonly referred to as "possible worlds" semantics. Kripke and [[A. N. Prior]] had previously corresponded at some length.
+
+[[A. N. Prior]] created modern [[temporal logic]], closely related to modal logic, in 1957 by adding modal operators [F] and [P] meaning "henceforth" and "hitherto". [[Vaughan Pratt]] introduced [[dynamic logic (modal logic)|dynamic logic]] in 1976. In 1977, [[Amir Pnueli]] proposed using temporal logic to formalise the behaviour of continually operating concurrent programs. Flavors of temporal logic include propositional dynamic logic (PDL), propositional linear temporal logic (PLTL), [[linear temporal logic]] (LTL), [[computational tree logic]] (CTL), [[Hennessy-Milner logic|Hennessy&ndash;Milner logic]], and ''T''.
+
+The mathematical structure of modal logic, namely [[Boolean algebra (structure)|Boolean algebra]]s augmented with [[unary operation]]s (often called "modal algebras"), began to emerge with J. C. C. McKinsey's 1941 proof that ''S2'' and ''S4'' are decidable, and reached full flower in the work of [[Alfred Tarski]] and his student [[Bjarni Jonsson]] (Jonsson and Tarski 1951&ndash;52). This work revealed that ''S4'' and ''S5'' are models of [[interior algebra]], a proper extension of Boolean algebra originally designed to capture the properties of the [[interior operator|interior]] and [[closure operator]]s of [[topology]]. Texts on modal logic typically do little more than mention its connections with the study of [[Boolean algebra (structure)|Boolean algebra]]s and [[topology]]. For a thorough survey of the history of formal modal logic and of the associated mathematics, see [http://www.mcs.vuw.ac.nz/~rob/papers/modalhist.pdf Goldblatt (2006).]
+
+==Formalizations==
+===Semantics===
+The semantics for modal logic are usually given like so:<ref>Fitting and Mendelsohn. ''First-Order Modal Logic''. Kluwer Academic Publishers, 1998. Section 1.6</ref>
+First we define a ''frame'', which consists of a non-empty set, ''G'', whose members are generally called possible worlds, and a binary relation, ''R'', that holds (or not) between the possible worlds of ''G''. This binary relation is called the ''[[accessibility relation]]''.  For example, ''w'' ''R'' ''v'' means that the  world ''v'' is accessible from world ''w''. That is to say, the state of affairs known as ''v'' is a live possibility for ''w''. This gives a pair, <''G'', ''R''>.
+
+Next, the ''frame'' is extended to a ''model'' by specifying the [[truth-value]]s of all propositions at each of the worlds in ''G''. We do so by defining a relation ⊨ between possible worlds and propositional letters. If there is a world ''w'' such that ''w'' ⊨ P, then P is true at ''w''. A model is thus an ordered triple, <''G'', ''R'', ⊨>.
+
+Then we define ''truth in a model'':
+
+* ''w'' ⊨ ¬P if and only if ¬(''w'' ⊨ P)
+* ''w'' ⊨ (P & Q) if and only if ''w'' ⊨ P and ''w'' ⊨ Q
+* ''w'' ⊨ <math>\Box</math>P if and only if for every element ''v'' of ''G'', if ''w'' ''R'' ''v'' then ''v'' ⊨ P
+* ''w'' ⊨ <math>\Diamond</math>P if and only if for some element ''v'' of ''G'', it holds that ''w'' ''R'' ''v'' and ''v'' ⊨ P
+
+According to these semantics, a truth is ''necessary'' with respect to a possible world ''w'' if it is true at every world that is accessible to ''w'', and ''possible'' if it is true at some world that is accessible to ''w''. Possibility thereby depends upon the accessibility relation ''R'', which allows us to express the relative nature of possibility. For example, we might say that given our laws of physics it is not possible for humans to travel faster than the speed of light, but that given other circumstances it could have been possible to do so. Using the accessibility relation we can translate this scenario as follows: At all of the worlds accessible to our own world, it is not the case that humans can travel faster than the speed of light, but at one of these accessible worlds there is ''another'' world accessible from ''those'' worlds but not accessible from our own at which humans can travel faster than the speed of light.
+
+It should also be noted that the definition of <math>\Box</math> makes vacuously true certain sentences, since when it speaks of  "every world that is accesible to w" it takes for granted the usual mathematical interpretation of the word "every" (see [[vacuous truth]]).  Hence, if a world w doesn't have any accesible worlds, any sentence beginning with <math>\Box</math> is true. 
+
+The different systems of modal logic are distinguished by the properties of their corresponding accessibility relations. There are several systems that have been espoused (often called ''frame conditions''). An accessibility relation is:
+
+* ''reflexive'' iff ''w'' ''R'' ''w'', for every ''w'' in ''G''
+* ''symmetric'' iff ''w'' ''R'' ''v'' implies ''v'' ''R'' ''w'', for all ''w'' and ''v'' in ''G''
+* ''transitive'' iff ''w'' ''R'' ''v'' and ''v'' ''R'' ''q'' together imply ''w'' ''R'' ''q'', for all ''w'', ''v'', ''q'' in ''G''.
+* ''serial'' iff, for each ''w'' in ''G'' there is some ''v'' in ''G'' such that ''w'' ''R'' ''v''.
+* ''euclidean'' iff, for every ''u'',''v'' and ''w'', ''u'' ''R'' ''w'' and ''v'' ''R'' ''w'' implies ''u'' ''R'' ''v''
+
+The logics that stem from these frame conditions are:
+*''K'' := no conditions
+*''D'' := serial
+*''T'' := reflexive
+*''S4'' := reflexive and transitive
+*''S5'' := reflexive, symmetric, transitive and Euclidean
+
+S5 models are reflexive transitive and euclidean. The accessibility relation R is an equivalence relation. The relation ''R'' is reflexive, symmetric and transitive. It is interesting to note how the euclidean property along with reflexivity yields symmetry and transitivity. We can prove that these frames produce the same set of valid sentences as do any frames where all worlds can see all other worlds of ''W''(i.e., where ''R'' is a "total" relation). This gives the corresponding ''modal graph'' which is total complete (i.e, no more edge (relation) can be added).   
+
+For example, in S4:
+:: ''w'' ⊨ <math>\Diamond</math>P if and only if for some element ''v'' of ''G'', it holds that ''v'' ⊨ P and ''w'' ''R'' ''v''.
+However, in S5, we can just say that
+:: ''w'' ⊨ <math>\Diamond</math>P if and only if for some element ''v'' of ''G'', it holds that ''v'' ⊨ P.
+We can drop the accessibility clause from the latter stipulation because it is trivially true of all S5 frames that ''w'' ''R'' ''v''.
+
+All of these logical systems can also be defined axiomatically, as is shown in the next section. For example, in S5, the axioms P → <math>\Box</math><math>\Diamond</math>P, <math>\Box</math>P → <math>\Box</math><math>\Box</math>P, and <math>\Box</math>P → P (corresponding to ''symmetry'', ''transitivity'' and ''reflexivity'', respectively) hold, whereas at least one of these axioms does not hold in each of the other, weaker logics.
+
+===Axiomatic systems===
+The first formalizations of modal logic were axiomatic. Numerous variations with very different properties have been proposed since [[C. I. Lewis]] began working in the area in 1910. Hughes and Cresswell (1996), for example, describe 42 normal and 25 non-normal modal logics. Zeman (1973) describes some systems Hughes and Cresswell omit.
+
+Modern treatments of modal logic begin by augmenting the [[propositional calculus]] with two unary operations, one denoting "necessity" and the other "possibility". The notation of [[Clarence Irving Lewis|Lewis]], much employed since, denotes "necessarily ''p''" by a prefixed "box" (<!--'''[]p'''--> <math>\Box p </math>) whose scope is established by parentheses. Likewise, a prefixed "diamond" (<!--'''<>p'''--><math>\Diamond p</math>) denotes "possibly ''p''". Regardless of notation, each of these operators is definable in terms of the other:
+* <!--[]p--><math>\Box p</math> (necessarily ''p'') is equivalent to <!-- ~<>~p --><math>\neg \Diamond \neg p </math> ("not possible that not-''p''")
+* <!-- <>p --> <math>\Diamond p </math> (possibly ''p'') is equivalent to <!-- ~[]~p --> <math>\neg \Box \neg p </math> ("not necessarily not-''p''")
+Hence <math>\Box</math> and <math>\Diamond</math> form a [[duality (mathematics)#Duality in logic and set theory|dual pair]] of operators.
+
+In many modal logics, the necessity and possibility operators satisfy the following analogs of [[de Morgan's laws]] from [[Boolean algebra (logic)|Boolean algebra]]:
+
+:"It is '''not necessary that'''  ''X''" is [[Logical equivalence|logically equivalent]] to "It is '''possible that not'''  ''X''".
+
+:"It is '''not possible that'''  ''X''" is logically equivalent to "It is '''necessary that not'''  ''X''".
+
+Precisely what axioms and rules must be added to the [[propositional calculus]] to create a usable system of modal logic is a matter of philosophical opinion, often driven by the theorems one wishes to prove; or, in computer science, it is a matter of what sort of computational or deductive system one wishes to model.  Many modal logics, known collectively as [[normal modal logic]]s, include the following rule and axiom:
+* '''N''', ''Necessitation Rule'': If ''p'' is a [[theorem]] (of any system invoking '''N'''), then <math>\Box p</math> is likewise a theorem.
+* '''K''', ''Distribution Axiom'': <!--[](''p'' → ''q'') → ([]p → []q)--> <math> \Box (p \rightarrow q)  \rightarrow (\Box p \rightarrow \Box q)</math>.
+
+The weakest [[normal modal logic]], named ''K'' in honor of [[Saul Kripke]], is simply the [[propositional calculus]] augmented by <math>\Box</math>, the rule '''N''', and the axiom '''K'''. ''K'' is weak in that it fails to determine whether a proposition can be necessary but only contingently necessary. That is, it is not a theorem of ''K'' that if <!-- []p --> <math> \Box p </math> is true then <!-- [][]p --> <math> \Box \Box p </math> is true, i.e., that necessary truths are "necessarily necessary". If such perplexities are deemed forced and artificial, this defect of ''K'' is not a great one. In any case, different answers to such questions yield different systems of modal logic.
+
+Adding axioms to ''K'' gives rise to other well-known modal systems. One cannot prove in ''K'' that if "''p'' is necessary" then ''p'' is true. The axiom '''T''' remedies this defect:
+*'''T''', ''Reflexivity Axiom'': <!-- []p → p --> <math> \Box p \rightarrow p </math> (If ''p'' is necessary, then ''p'' is the case.) '''T''' holds in most but not all modal logics. Zeman (1973) describes a few exceptions, such as ''S1<sup>0</sup>''.
+Other well-known elementary axioms are:
+*'''4''': <math> \Box p \rightarrow \Box \Box p</math>
+*'''B''': <math> p \rightarrow \Box \Diamond p</math>
+*'''D''': <math> \Box p \rightarrow \Diamond p</math>
+*'''5''': <math> \Diamond p \rightarrow \Box \Diamond p </math>
+
+These yield the systems (axioms in bold):
+*''K'' := '''K''' + '''N'''
+*''T'' := ''K'' + '''T'''
+*''S4'' := ''T'' + '''4'''
+*''S5'' :=  ''S4'' + '''5'''
+*''D'' := ''K'' + '''D'''.
+''K'' through ''S5'' form a nested hierarchy of systems, making up the core of [[normal modal logic]]. But specific rules or sets of rules may be appropriate for specific systems. For example, in deontic logic, <math> \Box p \rightarrow \Diamond p</math> (If it ought to be that ''p'', then it is permitted that ''p'') seems appropriate, but we should probably not include that <math> p \rightarrow \Box \Diamond p</math>. In fact, to do so is to commit the [[naturalistic fallacy]]. 
+
+The commonly employed system ''S5'' simply makes all modal truths necessary. For example, if ''p'' is possible, then it is "necessary" that ''p'' is possible. Also, if ''p'' is necessary, then it is necessary that ''p'' is necessary. Other systems of modal logic have been formulated, in part because ''S5'' does not describe every kind of modality of interest.
+
+==Alethic logic==
+Modalities of necessity and possibility are called ''alethic'' modalities.  They are also sometimes called ''special'' modalities, from the [[Latin]] ''species''. Modal logic was first developed to deal with these concepts, and only afterward was extended to others.  For this reason, or perhaps for their familiarity and simplicity, necessity and possibility are often casually treated as ''the'' subject matter of modal logic. Moreover it is easier to make sense of relativizing necessity, e.g. to legal, physical, nomological, epistemic, and so on, than it is to make sense of relativizing other notions.
+
+In [[classical modal logic]], a proposition is said to be
+*'''possible''' if and only if it is ''not necessarily false'' (regardless of whether it is actually true or actually false);
+*'''necessary''' if and only if it is ''not possibly false''; and
+*'''contingent''' if and only if it is ''not necessarily false'' and ''not necessarily true'' (i.e. possible but not necessarily true).
+
+In classical modal logic, therefore, either the notion of possibility or necessity may be taken to be basic, where these other notions are defined in terms of it in the manner of [[De Morgan duality]].  [[Intuitionistic modal logic]] treats possibility and necessity as not perfectly symmetric.
+
+For those with difficulty with the concept of something being possible but not true, the meaning of these terms may be made more comprehensible by thinking of multiple "possible worlds" (in the sense of [[Leibniz]]) or "alternate universes"; something "necessary" is true in all possible worlds, something "possible" is true in at least one possible world.  These "possible world semantics" are formalized with [[Kripke semantics]].
+
+===Physical possibility===
+
+Something is physically possible if it is permitted by the [[physical law|laws of physics]]. For example, current theory allows for there to be an [[atom]] with an [[atomic number]] of 150, though there may not in fact be any such atoms in existence.  Similarly, while it is logically possible to accelerate beyond the [[speed of light]], modern science stipulates that it is not physically possible for material particles or information.
+
+===Metaphysical possibility===
+
+[[Philosophers]] ponder the properties that objects have independently of those dictated by scientific laws. For example, it might be metaphysically necessary, as some have thought, that all thinking beings have bodies and can experience the passage of [[time]], or that [[God]] exists (or does not). [[Saul Kripke]] has argued that every person necessarily has the parents they do have: anyone with different parents would not be the same person.<ref>Saul Kripke. ''Naming and Necessity''. Harvard University Press, 1980. pg 113</ref>
+
+Metaphysical possibility is generally thought to be more restricting than bare logical possibility (i.e., fewer things are metaphysically possible than are logically possible). Its exact relation to physical possibility is a matter of some dispute. Philosophers also disagree over whether metaphysical truths are necessary merely "by definition", or whether they reflect some underlying deep facts about the world, or something else entirely.
+
+===Confusion with epistemic modalities===
+
+Alethic modalities and epistemic modalities (see below) are often expressed in English using the same words. "It is possible that bigfoot exists" can mean either "Bigfoot ''could'' exist, whether or not bigfoot does in fact exist" (alethic), or more likely, "For all I know, bigfoot exists" (epistemic).
+
+==Epistemic logic==
+{{Main|Epistemic logic}}
+
+'''Epistemic modalities''' (from the Greek ''episteme'', knowledge), deal with the ''certainty'' of sentences.  The <math> \Box </math> operator is translated as  "x knows that…", and the <math> \Diamond </math> operator is translated as "For all x knows, it may be true that…"  In ordinary speech both metaphysical and epistemic modalities are often expressed in similar words; the following contrasts may help:
+
+A person, Jones, might reasonably say ''both'': (1) "No, it is ''not'' possible that [[Bigfoot]] exists; I am quite certain of that"; ''and'', (2) "Sure, Bigfoot possibly ''could'' exist". What Jones means by (1) is that given all the available information, there is no question remaining as to whether Bigfoot exists.  This is an epistemic claim. By (2) he makes the ''metaphysical'' claim that it is ''possible for'' Bigfoot to exist, ''even though he does not'' (which is not equivalent to "it is ''possible that'' Bigfoot exists – for all I know", which contradicts (1)).
+
+From the other direction, Jones might say, (3) "It is ''possible'' that [[Goldbach's conjecture]] is true; but also ''possible'' that it is false", and ''also'' (4) "if it ''is'' true, then it is necessarily true, and not possibly false". Here Jones means that it is ''epistemically possible'' that it is true or false, for all he knows (Goldbach's conjecture has not been proven either true or false), but if there ''is'' a proof (heretofore undiscovered), then it would show that it is not ''logically'' possible for Goldbach's conjecture to be false—there could be no set of numbers that violated it. Logical possibility is a form of ''alethic'' possibility; (4) makes a claim about whether it is possible (i.e., logically speaking) that a mathematical truth to have been false, but (3) only makes a claim about whether it is possible, for all Jones knows, (i.e., speaking of certitude) that the mathematical claim is specifically either true or false, and so again Jones does not contradict himself.  It is worthwhile to observe that Jones is not necessarily correct: It is possible (epistemically) that Goldbach's conjecture is both true and unprovable.<ref>See [[Goldbach's_conjecture#Origins|Goldbach's conjecture > Origins]]</ref>
+
+Epistemic possibilities also bear on the actual world in a way that metaphysical possibilities do not. Metaphysical possibilities bear on ways the world ''might have been,'' but epistemic possibilities bear on the way the world ''may be'' (for all we know). Suppose, for example, that I want to know whether or not to take an umbrella before I leave. If you tell me "it is ''possible that'' it is raining outside" – in the sense of epistemic possibility – then that would weigh on whether or not I take the umbrella. But if you just tell me that "it is ''possible for'' it to rain outside" – in the sense of ''metaphysical possibility'' – then I am no better off for this bit of modal enlightenment.
+
+Some features of epistemic modal logic are in debate. For example, if ''x'' knows that ''p'', does ''x'' know that it knows that ''p''? That is to say, should <math>\Box P \rightarrow \Box \Box P</math> be an axiom in these systems? While the answer to this question is unclear, there is at least one axiom that ''must'' be included in epistemic modal logic, because it is minimally true of all modal logics (see [[Modal_logic#Axiomatic_systems|the section on axiomatic systems]]):
+* '''K''', ''Distribution Axiom'': <!--[](''p'' → ''q'') → ([]p → []q)--> <math> \Box (p \rightarrow q)  \rightarrow (\Box p \rightarrow \Box q)</math>.
+
+But this is disconcerting, because with '''K''', we can prove that we know all the logical consequences of our beliefs: If ''q'' is a logical consequence of ''p'', then <math> \Box (p \rightarrow q)</math>. And if so, then we can deduce that <math>(\Box p \rightarrow \Box q)</math> using '''K'''. When we translate this into epistemic terms, this says that if ''q'' is a logical consequence of ''p'', then we know that it is, and if we know ''p'', we know ''q''. That is to say, we know all the logical consequences of our beliefs. This must be true for all possible [[Kripke semantics|Kripkean]] modal interpretations of epistemic cases where <math>\Box</math> is translated as "knows that". But then, for example, if ''x'' knows that prime numbers are divisible only by themselves and the number one, then ''x'' knows that 8683317618811886495518194401279999999 is prime (since this number is only divisible by itself and the number one). That is to say, under the modal interpretation of knowledge, anyone who knows the definition of a prime number knows that this number is prime. This shows that epistemic modal logic is an idealized account of knowledge, and explains objective, rather than subjective knowledge (if anything).
+
+==Temporal logic==
+{{Main|Temporal logic}}
+
+Temporal logic is an approach to the semantics of expressions with [[Grammatical tense|tense]], that is, expressions with qualifications of when.  Some expressions, such as  '2 + 2 = 4', are true at all times, while tensed expressions such as 'John is happy' are only true sometimes.
+
+In temporal logic, tense constructions are treated in terms of modalities, where a standard method for formalizing talk of time is to use ''two'' pairs of operators, one for the past and one for the future (P will just mean 'it is presently the case that P'). For example:
+
+:'''F'''''P'' : It will sometimes be the case that ''P''
+:'''G'''''P'' : It will always be the case that ''P''
+:'''P'''''P'' : It was sometime the case that ''P''
+:'''H'''''P'' : It has always been the case that ''P''
+
+There are then at least three modal logics that we can develop. For example, we can stipulate that,
+
+:<math> \Diamond P </math> = ''P'' is the case at some time ''t''
+:<math> \Box P </math> = ''P'' is the case at every time ''t''
+
+Or we can trade these operators to deal only with the future (or past). For example,
+
+:<math> \Diamond_1 P </math> = '''F'''''P''
+:<math> \Box_1 P </math> = '''G'''''P''
+
+or,
+
+:<math> \Diamond_2 P</math> = ''P'' and/or '''F'''''P''
+:<math> \Box_2 P </math> = ''P'' and '''G'''''P''
+
+The operators '''F''' and '''G''' may seem initially foreign, but they create [[normal modal logic|normal modal systems]]. Note that '''F'''''P'' is the same as ¬'''G'''¬''P''. We can combine the above operators to form complex statements. For example, '''P'''''P'' → <math> \Box </math>'''P'''''P'' says (effectively), ''Everything that is past and true is necessary''.
+
+It seems reasonable to say that possibly it will rain tomorrow, and possibly it won't; on the other hand, seeing as how we can't change the past, if it is true that it rained yesterday, it probably isn't true that it may not have rained yesterday.  It seems the past is "fixed", or necessary, in a way the future is not. This is sometimes referred to as [[accidental necessity]]. But if the past is "fixed", and everything that is in the future will eventually be in the past, then it seems plausible to say that future events are necessary too.
+
+Similarly, the [[problem of future contingents]] considers the semantics of assertions about the future: is either of the propositions 'There will be a sea battle tomorrow', or 'There will not be a sea battle tomorrow' now true?  Considering this thesis led [[Aristotle]] to reject the [[principle of bivalence]] for assertions concerning the future.
+
+Additional binary operators are also relevant to temporal logics, ''q.v.'' [[Linear Temporal Logic]].
+
+Versions of temporal logic can be used in [[computer science]] to model computer operations and prove theorems about them.  In one version, <math>\Diamond P</math> means "at a future time in the computation it is possible that the computer state will be such that P is true"; <math>\Box P</math> means "at all future times in the computation P will be true".  In another version, <math>\Diamond P</math> means "at the immediate next state of the computation, P might be true"; <math>\Box P</math> means "at the immediate next state of the computation, P will be true".   These differ in the choice of [[Accessibility relation]].  (P always means "P is true at the current computer state".)  These two examples involve nondeterministic or not-fully-understood computations; there are many other modal logics specialized to different types of program analysis.  Each one naturally leads to slightly different axioms.
+
+==Deontic logic==
+
+{{Main|Deontic logic}}
+
+Likewise talk of morality, or of [[obligation]] and [[norm (philosophy)|norms]] generally, seems to have a modal structure.  The difference between "You must do this" and "You may do this" looks a lot like the difference between "This is necessary" and "This is possible".  Such logics are called ''[[deontic logic|deontic]]'', from the Greek for "duty".
+
+Deontic logics commonly lack the axiom '''T''' semantically corresponding to the reflexivity of the accessibility relation in [[Kripke semantics]]: in symbols, <math>\Box\phi\to\phi</math>. Interpreting <math>\Box</math> as "it is obligatory that", '''T''' informally says that every obligation is true. For example, if it is obligatory not to kill others (i.e. killing is morally forbidden), then '''T''' implies that people actually do not kill others. The consequent is obviously false.
+
+Instead, using [[Kripke semantics]], we say that though our own world does not realize all obligations, the worlds accessible to it do (i.e., '''T''' holds at these worlds). These worlds are called idealized worlds. ''P'' is obligatory with respect to our own world if at all idealized worlds accessible to our world, ''P'' holds. Though this was one of the first interpretations of the formal semantics, it has recently come under criticism.<ref>See, e.g., Sven Hansson, "Ideal Worlds&mdash;Wishful Thinking in Deontic Logic", Studia Logica, Vol. 82 (3), pp. 329&ndash;336, 2006.</ref>
+
+One other principle that is often (at least traditionally) accepted as a deontic principle is ''D'', <math>\Box\phi\to\Diamond\phi</math>, which corresponds to the seriality (or extendability or unboundedness) of the accessibility relation. It is an embodiment of the Kantian idea that "ought implies can". (Clearly the "can" can be interpreted in various senses, e.g. in a moral or alethic sense.)
+
+===Intuitive problems with deontic logic===
+When we try and formalize ethics with standard modal logic, we run into some problems. Suppose that we have a proposition ''K'': you have killed the victim, and another, ''Q'': you have killed the victim quickly. Now suppose we want to express the thought that "if you have killed the victim, it ought to be the case that you have killed him quickly". There are two likely candidates,
+: (1) <math>(K \rightarrow \Box Q)</math>
+: (2) <math>\Box (K \rightarrow Q)</math>
+
+But (1) says that if you have killed the victim, then it ought to be the case that you have killed him quickly. This surely isn't right, because you ought not to have killed him at all. And (2) doesn't work either. If the right representation of "if you have killed the victim then you ought to have killed him quickly" is (2), then the right representation of (3) "if you have killed the victim then you ought to have killed him slowly" is <math>\Box (K \rightarrow \lnot Q)</math>. Now suppose (as seems reasonable) that you should not have killed the victim, or <math>\Box \lnot K</math>. But then we can deduce <math>\Box (K \rightarrow \lnot Q)</math>, which would express sentence (3). So if you should not have killed the victim, then if you did kill him, you should have killed him slowly. But that can't be right, and is not right when we use natural language. Telling someone they should not kill the victim certainly does not imply that they should kill the victim slowly if they do kill him.<ref>Ted Sider's ''Logic for Philosophy'', unknown page. <!-- http://homepages.nyu.edu/~ts65/books/lfp/lfp.html Link is dead as of Dec 20, 2010 --> </ref>
+
+== Doxastic logic ==
+
+{{Main|Doxastic logic}}
+
+''Doxastic logic'' concerns the logic of belief (of some set of agents). The term doxastic is derived from the [[ancient Greek]] ''doxa'' which means "belief". Typically, a doxastic logic uses <math>\Box</math>, often written "B", to mean "It is believed that", or when relativized to a particular agent s, "It is believed by s that".
+
+==Other modal logics==
+{{See also|Intensional logic}}
+Significantly, modal logics can be developed to accommodate most of these idioms; it is the fact of their common logical structure (the use of "intensional" sentential operators) that make them all varieties of the same thing.
+
+== The ontology of possibility ==
+
+{{See| Accessibility relation|Possible worlds}}
+In the most common interpretation of modal logic, one considers "[[logically possible]] worlds". If a statement is true in all [[possible worlds]], then it is a necessary truth. If a statement happens to be true in our world, but is not true in all possible worlds, then it is a contingent truth. A statement that is true in some possible world (not necessarily our own) is called a possible truth.
+
+Under this "possible worlds idiom," to maintain that Bigfoot's existence is possible but not actual, one says, "There is some possible world in which Bigfoot exists; but in the actual world, Bigfoot does not exist". However, it is unclear what this claim commits us to. Are we really alleging the existence of possible worlds, every bit as real as our actual world, just not actual? [[Saul Kripke]] believes that 'possible world' is something of a misnomer &ndash; that the term 'possible world' is just a useful way of visualizing the concept of possibility.<ref>Kripke, Saul. ''Naming and Necessity''. (1980; Harvard UP), pp. 43&ndash;5.</ref> For him, the sentences "you could have rolled a 4 instead of a 6" and "there is a possible world where you rolled a 4, but you rolled a 6 in the actual world" are not significantly different statements, and neither commit us to the existence of a possible world.<ref>Kripke, Saul. ''Naming and Necessity''. (1980; Harvard UP), pp. 15&ndash;6.</ref> [[David Lewis (philosopher)|David Lewis]], on the other hand, made himself notorious by biting the bullet, asserting that all merely possible worlds are as real as our own, and that what distinguishes our world as ''actual'' is simply that it is indeed our world – ''[[Indexicality|this]]'' world.<ref>David Lewis, ''On the Plurality of Worlds'' (1986; Blackwell)</ref> That position is a major tenet of "[[modal realism]]". Some philosophers decline to endorse any version of modal realism, considering it ontologically extravagant, and prefer to seek various ways to paraphrase away these ontological commitments. [[Robert Merrihew Adams|Robert Adams]] holds that 'possible worlds' are better thought of as 'world-stories', or consistent sets of propositions. Thus, it is possible that you rolled a 4 if such a state of affairs can be described coherently.<ref>Adams, Robert M. [http://www.jstor.org/stable/2214751 ''Theories of Actuality'']. Noûs, Vol. 8, No. 3 (Sep., 1974), particularly pp. 225&ndash;31.</ref>
+
+Computer scientists will generally pick a highly specific interpretation of the modal operators specialized to the particular sort of computation being analysed.  In place of "all worlds", you may have "all possible next states of the computer", or "all possible future states of the computer".
+
+==See also==
+{{Col-begin}}
+{{Col-1-of-4}}
+*[[Accessibility relation]]
+*[[Counterpart theory]]
+*[[David Kellogg Lewis]]
+*[[De dicto and de re]]
+*[[Description logic]]
+*[[Doxastic logic]]
+{{Col-2-of-4}}
+*[[Dynamic logic (modal logic)|Dynamic logic]]
+*[[Epistemic logic]]
+*[[Hybrid logic]]
+*[[Interior algebra]]
+*[[Interpretability logic]]
+*[[Kripke semantics]]
+{{Col-3-of-4}}
+*[[Possible worlds]]
+*[[Provability logic]]
+*[[Regular modal logic]]
+*[[Two dimensionalism]]
+*[[Modal verb]]
+{{Col-4-of-4}}
+{{Portal box|Logic|Thinking}}
+{{Col-end}}
+
+==Notes==
+{{Reflist}}
+
+==References==
+*''This article includes material from the'' [[Free On-line Dictionary of Computing]], ''used with [[Wikipedia:Foldoc license|permission]] under the'' [[GFDL]].
+*Blackburn, Patrick; de Rijke, Maarten; and Venema, Yde (2001) ''Modal Logic''. Cambridge University Press. ISBN 0-521-80200-8
+*Blackburn, P.; [[Johan van Benthem (logician)|van Benthem, J.]]; and Wolter, Frank; Eds. (2006) ''[http://www.csc.liv.ac.uk/~frank/MLHandbook/ Handbook of Modal Logic]''. North Holland.
+*Chagrov, Aleksandr; and Zakharyaschev, Michael (1997) ''Modal Logic''. Oxford University Press. ISBN 0-19-853779-4
+*Chellas, B. F. (1980) ''Modal Logic: An Introduction''. Cambridge University Press. ISBN 0-521-22476-4
+*[[Max Cresswell|Cresswell, M. J.]] (2001) "Modal Logic" in Goble, Lou; Ed., ''The Blackwell Guide to Philosophical Logic''. Basil Blackwell: 136&ndash;58. ISBN 0-631-20693-0
+*Fitting, Melvin; and Mendelsohn, R. L. (1998) ''First Order Modal Logic''. Kluwer. ISBN 0-7923-5335-8
+*Garson, James W. (2006) ''Modal Logic for Philosophers''. Cambridge University Press. ISBN 0-521-68229-0. A thorough introduction to modal logic, with coverage of various derivation systems and a distinctive approach to the use of diagrams in aiding comprehension.
+*Girle, Rod (2000) ''Modal Logics and Philosophy''. Acumen (UK). ISBN 0-7735-2139-9. Proof by [[analytic tableau|refutation trees]]. A good introduction to the varied interpretations of modal logic.
+*[http://www.mcs.vuw.ac.nz/~rob/ Goldblatt, Robert] (1992) "Logics of Time and Computation", 2nd ed., CSLI Lecture Notes No. 7. University of Chicago Press.
+*—— (1993) ''Mathematics of Modality'', CSLI Lecture Notes No. 43. University of Chicago Press.
+*—— (2006) "[http://www.mcs.vuw.ac.nz/~rob/papers/modalhist.pdf Mathematical Modal Logic: a View of its Evolution]", in Gabbay, D. M.; and Woods, John; Eds., ''Handbook of the History of Logic, Vol. 6''. Elsevier BV.
+*Goré, Rajeev (1999) "Tableau Methods for Modal and Temporal Logics" in D'Agostino, M.; Gabbay, Dov; Haehnle, R.; and Posegga, J.; Eds., ''Handbook of Tableau Methods''. Kluwer: 297&ndash;396.
+*Hughes, G. E., and Cresswell, M. J. (1996) ''A New Introduction to Modal Logic''. Routledge. ISBN 0-415-12599-5
+*[[Bjarni Jónsson|Jónsson, B.]] and [[Alfred Tarski|Tarski, A.]], 1951&ndash;52, "Boolean Algebra with Operators I and II", ''American Journal of Mathematics 73'': 891-939 and ''74'': 129&ndash;62.
+*Kracht, Marcus (1999) ''Tools and Techniques in Modal Logic'', Studies in Logic and the Foundations of Mathematics No. 142. North Holland.
+*[[John Lemmon|Lemmon, E. J.]] (with [[Dana Scott|Scott, D.]]) (1977) ''An Introduction to Modal Logic'', American Philosophical Quarterly Monograph Series, no. 11 (Krister Segerberg, series ed.). Basil Blackwell.
+*[[Clarence Irving Lewis|Lewis, C. I.]] (with [[Cooper H. Langford|Langford, C. H.]]) (1932). ''Symbolic Logic''. Dover reprint, 1959.
+*Ruh Barcan Marcus JSL 11 (1946) and JSL 112 (1947) and "Modalities" , OUP, 1993, 1995
+*[[Arthur Prior|Prior, A. N.]] (1957) ''Time and Modality''. Oxford University Press.
+*Zeman, J. J. (1973) ''[http://www.clas.ufl.edu/users/jzeman/modallogic/ Modal Logic.]'' Reidel. Employs [[Polish notation]].
+
+==Further reading==
+*[[Dov M. Gabbay]], ''Many-dimensional modal logics: theory and applications'', Gulf Professional Publishing, 2003, ISBN 0-444-50826-0. Covers many varieties of modal logic, e.g. temporal, epistemic, dynamic, description, spatial from a unified perspective with emphasis on computer science aspects, e.g. decidability and complexity.
+
+==External links==
+*[[Stanford Encyclopedia of Philosophy]]:
+**"[http://plato.stanford.edu/entries/logic-modal Modal logic]" – by James Garson.
+**"[http://plato.stanford.edu/entries/logic-provability/ Provability Logic]" – by Rineke Verbrugge.
+*[[Edward N. Zalta]], 1995, "[http://mally.stanford.edu/notes.pdf Basic Concepts in Modal Logic.]"
+*[[John McCarthy (computer scientist)|John McCarthy]], 1996, "[http://www-formal.stanford.edu/jmc/mcchay69/node22.html Modal Logic.]"
+*[http://molle.sourceforge.net/ Molle] a Java prover for experimenting with modal logics
+*Suber, Peter, 2002, "[http://www.earlham.edu/~peters/courses/logsys/nonstbib.htm#modal Bibliography of Modal Logic.]"
+*Marcus, Ruth Barcan, "Modalities" OUP 1993, 1995
+*[http://www.cc.utah.edu/~nahaj/logic/structures/systems/index.html List of Logic Systems] List of many modal logics with sources, by John Halleck.
+*[http://aiml.net/ Advances in Modal Logic.] Biannual international conference and book series in modal logic.
+*[http://teachinglogic.imag.fr/TableauxS4 S4prover] A tableaux prover for S4 logic
+
+{{Logic}}
+
+{{DEFAULTSORT:Modal Logic}}
+[[Category:Non-classical logic]]
+[[Category:Modal logic| ]]
+[[Category:Philosophical logic]]
+
+{{Link GA|de}}
+{{Link FA|hu}}
+[[ar:منطق طوري]]
+[[ca:Lògica modal]]
+[[cs:Modální logika]]
+[[da:Modallogik]]
+[[de:Modallogik]]
+[[es:Lógica modal]]
+[[fa:منطق موجهات]]
+[[fr:Logique modale]]
+[[ko:양상논리학]]
+[[io:Modala logiko]]
+[[is:Háttarökfræði]]
+[[it:Logica modale]]
+[[he:לוגיקה מודלית]]
+[[hu:Modális logika]]
+[[nl:Modale logica]]
+[[ja:様相論理学]]
+[[no:Modallogikk]]
+[[nn:Modallogikk]]
+[[pl:Logika modalna]]
+[[pt:Lógica modal]]
+[[ru:Модальная логика]]
+[[sk:Modálna logika]]
+[[fi:Modaalilogiikka]]
+[[sv:Modallogik]]
+[[uk:Модальна логіка]]
+[[zh:模态逻辑]]</body> </html>

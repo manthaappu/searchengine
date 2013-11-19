@@ -1,0 +1,77 @@
+<html> <head> <title>BFGS method</title></head><body>In [[numerical analysis|numerical]] [[optimization (mathematics)|optimization]], the '''Broyden–Fletcher–Goldfarb–Shanno''' ('''BFGS''') '''method''' is a [[iterative method|method]] for solving [[nonlinear optimization]] problems (which lack constraints).
+
+The BFGS method [[approximation theory|approximates]] [[Newton's method in optimization|Newton's method]], a class of [[hill climbing|hill-climbing optimization]] techniques that seeks a [[stationary point]] of a (twice continuously differentiable) function: For such problems, a [[Kuhn–Tucker conditions|necessary condition for optimality]] is that the [[gradient]] be zero. 
+Newton's method and the BFGS methods need not converge unless the function has a quadratic [[Taylor expansion]] near an optimum. These methods use the first and second derivatives. 
+ 
+In [[quasi-Newton methods]], the [[Hessian matrix]] of second [[derivative]]s need not be evaluated directly. Instead, the Hessian matrix is approximated using rank-one updates specified by gradient evaluations (or approximate gradient evaluations). [[Quasi-Newton methods]] are a generalization of the [[secant method]] to find the root of the first derivative 
+for multidimensional problems.  In multi-dimensions the secant equation does not specify a unique solution, and quasi-Newton methods differ in how they constrain the solution. The BFGS method is one of the most popular members of this class.<ref>{{harvtxt|Nocedal|Wright|2006}}, page 24</ref> Also in common use is [[L-BFGS]], which is a limited-memory version of BFGS that is particularly suited to problems with very large numbers of variables.
+
+==Rationale==
+
+The search direction '''p'''<sub>'''''k'''''</sub> at stage ''k'' is given by the solution of the analogue of the Newton equation
+
+:<math> B_k \mathbf{p}_k = - \nabla f(\mathbf{x}_k)</math>
+
+where <math>B_k</math> is an approximation to the [[Hessian matrix]] which is updated iteratively at each stage, and  <math>\nabla f(\mathbf{x}_k)</math> is the gradient of the function evaluated at '''x'''<sub>'''k'''</sub>.  A [[line search]] in the direction '''p'''<sub>'''''k'''''</sub> is then used to find the next point '''x'''<sub>'''k+1'''</sub>.  Instead of requiring the full Hessian matrix at the point '''x'''<sub>'''k+1'''</sub> to be computed as ''B<sub>k+1</sub>'', the approximate Hessian at stage ''k'' is updated by the addition of two matrices. 
+
+:<math>B_{k+1}=B_k+U_k+V_k\,\!</math>
+
+Both ''U<sub>k</sub>'' and ''V<sub>k</sub>'' are symmetric rank-one matrices but have different bases. The symmetric rank one assumption here means that we may write
+
+:<math>C=\mathbf{a}\mathbf{b}^\mathrm{T}</math>
+
+So equivalently, ''U<sub>k</sub>'' and ''V<sub>k</sub>'' construct a rank-two update matrix which is robust against the scale problem often suffered in the [[gradient descent]] searching (''e.g.'', in [[Broyden's method]]).
+
+The quasi-Newton condition imposed on this update is
+
+:<math>B_{k+1} (\mathbf{x}_{k+1}-\mathbf{x}_k ) = \nabla f(\mathbf{x}_{k+1}) -\nabla f(\mathbf{x}_k ).</math>
+
+==Algorithm==
+
+From an initial guess <math>\mathbf{x}_0</math> and an approximate Hessian matrix <math>B_0</math> the following steps are repeated until <math>x</math> converges to the solution.
+
+# Obtain a direction <math>\mathbf{p}_k</math> by solving: <math>B_k \mathbf{p}_k = -\nabla f(\mathbf{x}_k).</math>
+# Perform a [[line search]] to find an acceptable stepsize <math>\alpha_k</math> in the direction found in the first step, then update <math>\mathbf{x}_{k+1} = \mathbf{x}_k + \alpha_k\mathbf{p}_k.</math>
+# Set <math> \mathbf{s}_k=\alpha_k \mathbf{p}_k.</math>
+# <math>\mathbf{y}_k = {\nabla f(\mathbf{x}_{k+1}) - \nabla f(\mathbf{x}_k)}.</math>
+# <math>B_{k+1} = B_k + \frac{\mathbf{y}_k \mathbf{y}_k^{\mathrm{T}}}{\mathbf{y}_k^{\mathrm{T}} \mathbf{s}_k} - \frac{B_k \mathbf{s}_k (B_k \mathbf{s}_k)^{\mathrm{T}}}{\mathbf{s}_k^{\mathrm{T}} B_k \mathbf{s}_k}.</math>
+
+<math>f(\mathbf{x})</math> denotes the objective function to be minimized. Convergence can be checked by observing the norm of the gradient, <math>\left|\nabla f(\mathbf{x}_k)\right|</math>. Practically, <math>B_0</math> can be initialized with <math>B_0 = I</math>, so that the first step will be equivalent to a [[gradient descent]], but further steps are more and more refined by <math>B_{k}</math>, the approximation to the Hessian.
+
+The first step of the algorithm is carried out using an approximate inverse of the matrix <math>B_k</math>, which is usually obtained efficiently by applying the [[Sherman–Morrison formula]] to the fifth line of the algorithm, giving 
+
+: <math>B_{k+1}^{-1} = B_k^{-1} + \frac{(\mathbf{s}_k^{\mathrm{T}}\mathbf{y}_k+\mathbf{y}_k^{\mathrm{T}} B_k^{-1} \mathbf{y}_k)(\mathbf{s}_k \mathbf{s}_k^{\mathrm{T}})}{(\mathbf{s}_k^{\mathrm{T}} \mathbf{y}_k)^2} - \frac{B_k^{-1} \mathbf{y}_k \mathbf{s}_k^{\mathrm{T}} + \mathbf{s}_k \mathbf{y}_k^{\mathrm{T}}B_k^{-1}}{\mathbf{s}_k^{\mathrm{T}} \mathbf{y}_k}.</math>
+
+In statistical estimation problems (such as maximum likelihood or Bayesian inference), [[credible interval]]s or [[confidence interval]]s for the solution can be obtained from the [[matrix inverse|inverse]] of the final Hessian matrix.
+
+== Implementations ==
+In the [[Matlab]] Optimization Toolbox, the [http://www.mathworks.com/help/toolbox/optim/ug/fminunc.html fminunc] function uses BFGS with cubic [[line search]] when the problem size is set to [http://www.mathworks.com/help/toolbox/optim/ug/brnoxr7-1.html#brnpcye "medium scale."]
+The [[GSL]] implements BFGS as [http://www.gnu.org/software/gsl/manual/html_node/Multimin-Algorithms-with-Derivatives.html gsl_multimin_fdfminimizer_vector_bfgs2].
+In [[SciPy]], the [http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin_bfgs.html#scipy.optimize.fmin_bfgs scipy.optimize.fmin_bfg] function implements BFGS.
+It is also be possible to run BFGS using any of the [[L-BFGS]] algorithms by setting the parameter L to a very large number.
+
+==See also==
+* [[Davidon–Fletcher–Powell formula]]
+
+==Notes==
+<references/>
+
+==Bibliography==
+* Avriel, Mordecai '''2003'''. ''Nonlinear Programming: Analysis and Methods.'' Dover Publishing. ISBN 0-486-43227-0.
+* {{Citation|last1=Bonnans|first1=J. Frédéric|last2=Gilbert|first2=J. Charles|last3=Lemaréchal|first3=Claude| authorlink3=Claude Lemaréchal|last4=Sagastizábal|first4=Claudia A.|title=Numerical optimization: Theoretical and practical aspects|url=http://www.springer.com/mathematics/applications/book/978-3-540-35445-1|edition=Second revised ed. of  translation of 1997 <!-- ''Optimisation numérique: Aspects théoriques et pratiques'' --> French| series=Universitext|publisher=Springer-Verlag|location=Berlin|year=2006|pages=xiv+490|isbn=3-540-35445-X|doi=10.1007/978-3-540-35447-5|id={{MR|2265882}}|}}
+* Broyden, C. G., ''The Convergence of a Class of Double-rank Minimization Algorithms'', ''Journal of the Institute of Mathematics and Its Applications'' '''1970''', ''6'', 76–90, [http://dx.doi.org/10.1093/imamat/6.1.76 DOI:10.1093/imamat/6.1.76]
+* Fletcher, R., '' A New Approach to Variable Metric Algorithms'', ''Computer Journal'' '''1970''', ''13'', 317–322.
+* {{Citation | last1=Fletcher | first1=Roger | title=Practical methods of optimization | publisher=[[John Wiley & Sons]] | location=New York | edition=2nd | isbn=978-0-471-91547-8 | year=1987}}. 
+* Goldfarb, D., ''A Family of Variable Metric Updates Derived by Variational Means'', ''Mathematics of Computation'' '''1970''', ''24'', 23-26
+* {{Citation|last1=Luenberger|first1=David G.|authorlink1=David G. Luenberger|last2=Ye|first2=Yinyu|authorlink2=Yinyu Ye|title=Linear and nonlinear programming|edition=Third|series=International Series in Operations Research & Management Science|volume=116|publisher=Springer|location=New York|year=2008|pages=xiv+546|isbn=978-0-387-74502-2}} {{MR|2423726}}
+* {{Citation | last1=Nocedal | first1=Jorge | last2=Wright | first2=Stephen J. | title=Numerical Optimization | publisher=[[Springer-Verlag]] | location=Berlin, New York | edition=2nd | isbn=978-0-387-30303-1 | year=2006}}
+* Shanno, David F., ''Conditioning of quasi-Newton methods for function minimization'', '''July 1970''', ''Math. Comput.'' ''24'', 647–656.  '''MR''' 42 #8905 
+* Shanno, David F. and Paul C. Kettler, ''Optimal conditioning of quasi-Newton methods'', '''July 1970''', ''Math. Comput.'' ''24'', 657–664.  '''MR''' 42 #8906 
+
+
+
+[[Category:Optimization methods]]
+
+[[fr:BFGS]]
+
+{{Optimization algorithms}}</body> </html>

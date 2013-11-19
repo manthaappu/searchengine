@@ -1,0 +1,42 @@
+<html> <head> <title>BassOmatic</title></head><body>{{About|the cipher|the band|Bassomatic (band)}}
+
+{{Infobox block cipher
+| name          = BassOmatic
+| image         =
+| caption       =
+| designers     = [[Phil Zimmermann]]
+| publish date  = 1991
+| derived from  =
+| derived to    =
+| related to    =
+| key size      = 8 to 2048 bits
+| block size    = 2048 bits
+| structure     =
+| rounds        = 1&ndash;8
+| cryptanalysis =
+}}
+
+In [[cryptography]], '''BassOmatic''' was the [[symmetric-key cipher]] designed by [[Phil Zimmermann]] as part of his email encryption software, [[Pretty Good Privacy|PGP]] (in the first release, version 1.0). Comments in the [[source code]] indicate that he had been designing the cipher since as early as 1988, but it was not publicly released until 1991. After [[Eli Biham]] pointed out to him several serious weaknesses in the BassOmatic algorithm over lunch at the 1991 [[CRYPTO]] conference,<ref>{{cite book | last = Garfinkel | first = Simson | authorlink = Simson Garfinkel | title = PGP: Pretty Good Privacy | publisher = [[O'Reilly Media]] | date = December 1, 1994 | location = | pages = 101&ndash;102 | isbn = 978-1565920989}}</ref> Zimmermann replaced it with [[International Data Encryption Algorithm|IDEA]] in subsequent versions of PGP.
+
+The name is explained in this comment from the source code: "BassOmatic gets its name from an old [[Dan Aykroyd]] [[Saturday Night Live]] skit involving a blender and a whole fish. The BassOmatic algorithm does to data what the original BassOmatic did to the fish."
+
+==Algorithm==
+The algorithm operates on blocks of 256 bytes (or 2048 bits). The actual [[key size]] can be anywhere from 8 to 2048 bits. The 6 least-significant bits of the [[key (cryptography)|key]] are ''control bits'', used to choose between several possible variations. The number of rounds is 1 to 8, depending on the 3 lowest control bits. Bit 4 selects between two possible [[key schedule]]s: one using the key to seed a [[pseudorandom number generator]], the other using BassOmatic itself. Making such variations key-dependent means some keys must be [[weak key|weaker]] than others; the [[key space]] is not ''flat''.
+
+The chosen key schedule produces a total of 8 ''permutation tables'', each a [[permutation]] of the numbers 0 to 255. Each round consists of 4 operations: [[XOR]]ing the block with one of the permutation tables, ''shredding'' or permuting individual bits throughout the block, an unkeyed [[confusion and diffusion|diffusion]] called ''raking'', and a substitution step using the permutation tables as [[substitution box|S-box]]es. The shredding step can either permute all 8 [[bit-plane]]s  independently, or in groups of 4, depending on control bit 3. The permutation tables stay the same through all rounds of encryption on a given block, but if control bit 5 is set, then the tables are regenerated after each block.
+
+==References==
+<references/>
+
+==External links==
+* [http://www.pgpkeys.org/software.html PGPkeys.org] - downloads of older PGP software, including version 1.0 source
+
+{{Crypto navbox | block}}
+
+[[Category:Broken block ciphers]]
+
+
+{{crypto-stub}}
+
+[[it:BassOmatic]]
+[[ru:BassOmatic]]</body> </html>

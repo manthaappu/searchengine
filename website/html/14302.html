@@ -1,0 +1,24 @@
+<html> <head> <title>Frontal solver</title></head><body>A '''frontal solver''', due to [[Bruce Irons (engineer)|Irons]]<ref>Irons, B. M., 1970. A frontal solution scheme for finite element analysis. Int. J. Numer. Methods Eng. 2, 5--32</ref> is an approach to solving [[sparse matrix|sparse linear systems]] which is used extensively in [[finite element analysis]].<ref>Renaud Sizaire, keyFE2 User Manual, 2005, Sec. I.4.2 Solving_linear_system [http://users.skynet.be/keyFE2/manual/I_4_2_Solving_linear_system.html online]</ref> It is a variant of [[Gauss elimination]] that automatically avoids a large number of operations involving zero terms.<ref>Hayrettin Kardestuncer, Ed. ''Finite Element Handbook''.</ref>
+
+A frontal solver builds a [[LU decomposition|LU]] or [[Cholesky decomposition]] of a sparse matrix given as the assembly of element matrices by assembling the matrix and eliminating equations only on a subset of elements at a time. This subset is called the front and it is essentially the transition region between the part of the system already finished and the part not touched yet. The whole sparse matrix is never created explicitly. Only parts of the matrix are assembled as they enter the front. Processing the front involves [[dense matrix]] operations, which use the CPU efficiently. In a typical implementation, only the front is in [[computer memory|memory]], while the factors in the decomposition are written into [[computer file|files]]. The element matrices are read from files or created as needed and discarded.
+
+A '''multifrontal solver''' of [[Iain S. Duff|Duff]] and [[John K. Reid|Reid]]<ref>I. S. Duff , J. K. Reid, The Multifrontal Solution of Indefinite Sparse Symmetric Linear, ACM Transactions on Mathematical Software (TOMS), v.9 n.3, p.302-325, Sept. 1983  [http://dx.doi.org/10.1145/356044.356047 DOI 10.1145/356044.356047]</ref> is an improvement of the frontal solver that uses several independent fronts at the same time. The fronts can be worked on by different [[CPU|processors]], which enables [[parallel computing]]. 
+
+See <ref> Iain S Duff , Albert M Erisman , John K Reid, Direct methods for sparse matrices, Oxford University Press, Inc., New York, NY, 1986</ref> for a monograph exposition.
+
+==See also==
+*[[MUMPS (software)|MUMPS]]
+*[[Skyline matrix]]
+*[[Banded matrix]]
+
+==References==
+<references/>
+
+{{Numerical linear algebra}}
+
+[[Category:Numerical linear algebra]]
+[[Category:Numerical software]]
+
+{{engineering-stub}}
+{{science-software-stub}}
+{{math-stub}}</body> </html>

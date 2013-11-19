@@ -1,0 +1,150 @@
+<html> <head> <title>Harmony search</title></head><body>In [[computer science]] and [[operations research]], '''harmony search''' (HS) is a phenomenon-mimicking algorithm (also known as [[metaheuristic]] [[algorithm]], [[soft computing]] algorithm or [[evolutionary algorithm]]) inspired by the improvisation process of musicians. In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
+The Harmony Search algorithm has the following merits:
+
+* HS does not require differential gradients, thus it can consider discontinuous functions as well as continuous functions.
+* HS can handle [http://sim.sagepub.com/cgi/content/abstract/76/2/60 discrete variables] as well as [http://dx.doi.org/10.1016/j.cma.2004.09.007 continuous variables].
+* HS does not require initial value setting for the variables.
+* HS is free from divergence.
+* HS may escape local optima.
+* HS may overcome the drawback of GA's [[Genetic_algorithms#The building_block_hypothesis|building block theory]] which works well only if the relationship among variables in a chromosome is carefully considered. If neighbor variables in a chromosome have weaker relationship than remote variables, building block theory may not work well because of crossover operation. However, HS explicitly considers the relationship using [http://dx.doi.org/10.1007/11892960_11 ensemble operation].
+* HS has a novel [http://dx.doi.org/10.1016/j.amc.2007.09.049 stochastic derivative] applied to discrete variables, which uses musician's experiences as a searching direction.
+* Certain HS variants do not require algorithm parameters such as HMCR and PAR, thus novice users can easily use the algorithm.
+
+==Basic Harmony Search Algorithm==
+
+Harmony search tries to find a vector <math>\mathbf{x}</math> that optimizes (minimizes or maximizes) a certain objective function.
+
+The algorithm has the following steps:
+
+Step 1: Generate random vectors (<math>\mathbf{x}^1 \ldots \mathbf{x}^{hms}</math>) as many as <math>hms</math> (harmony memory size), then store them in harmony memory (HM)
+:<math>
+\mathbf{HM} =
+\begin{bmatrix}
+x^1_1 & \cdots & x^1_n & | & f(\mathbf{x}^1)\\
+\vdots & \ddots & \vdots & | & \vdots\\
+x^{hms}_1 & \cdots & x^{hms}_n & | & f(\mathbf{x}^{hms})\\
+\end{bmatrix}.
+</math>
+
+Step 2: Generate a new vector <math>\mathbf{x}'</math>. For each component <math>x^'_i</math>,
+
+* with probability <math>hmcr</math> (harmony memory considering rate), pick the stored value from HM, <math>x^'_i \leftarrow x^{int(rand(0, 1)*hms)+1}_i</math>
+* with probability <math>1-hmcr</math>, pick a random value within the allowed range.
+
+Step 3: Perform additional work if the value in Step 2 came from HM
+
+* with probability <math>par</math> (pitch adjusting rate), change <math>x^'_i</math> by a small amount: <math>x^'_i \leftarrow x^'_i \pm \delta</math> for discrete variable; or <math>x^'_i \leftarrow x^'_i \pm fw \cdot rand(0, 1)</math> for continuous variable.
+* with probability <math>1-par</math>, do nothing.
+
+Step 4: If <math>\mathbf{x}^'</math> is better than the worst vector <math>\mathbf{x}^{Worst}</math> in HM, replace <math>\mathbf{x}^{Worst}</math> with <math>\mathbf{x}'</math>.
+
+Step 5: Repeat from Step 2 to Step 4 until termination criterion (e.g. maximum iterations) is satisfied.
+
+The parameters of the algorithm are
+* <math>hms</math> = the size of the harmony memory. A typical value ranges from 1 to 100.
+* <math>hmcr</math> = the rate of choosing a value from the harmony memory. Typical value ranges from 0.7 to 0.99.
+* <math>par</math> = the rate of choosing a neighboring value. Typical value ranges from 0.1 to 0.5.
+* <math>\delta</math> = the amount between two neighboring values in discrete candidate set.
+* <math>fw</math> (fret width, formerly bandwidth) = the amount of maximum change in pitch adjustment.
+
+It is possible to vary the parameter values as the search progresses, which gives an effect similar to [[simulated annealing]].
+
+Parameter-setting-free researches have been also performed. In the researches, algorithm users do not need tedious parameter setting process.
+
+==Other Related Algorithms==
+* [[Genetic algorithms]]
+* [[Simulated annealing]]
+* [[Cross-entropy method]]
+* [[Tabu search]]
+* [[Ant colony optimization]]
+* [[Particle swarm optimization]]
+*[[Intelligent Water Drops]]
+
+==References==
+
+===General Information===
+
+*Algorithm Website: [http://www.hydroteq.com Harmony Search Algorithm] 
+* Book 1 [http://www.springer.com/engineering/book/978-3-642-00184-0 Music-Inspired Harmony Search Algorithm, Springer 2009]
+* Book 2 [http://www.springer.com/engineering/book/978-3-642-04316-1 Recent Advances in Harmony Search Algorithm, Springer 2010]
+* Book 3 [http://www.springer.com/engineering/book/978-3-642-03449-7 Harmony Search Algorithms for Structural Design Optimization, Springer 2009]
+* Book 4 [http://www.amazon.com/gp/product/3838305833 Optimal Design of Water Distribution Networks Using Harmony Search, LAP 2009]
+
+===Theory of Harmony Search===
+
+*Original Harmony Search: Geem, Z. W., Kim, J. H., and Loganathan, G. V. [http://sim.sagepub.com/cgi/content/abstract/76/2/60 A New Heuristic Optimization Algorithm: Harmony Search], Simulation, 2001.
+
+*Stochastic Partial Derivative: Geem, Z. W. [http://dx.doi.org/10.1016/j.amc.2007.09.049 Novel Derivative of Harmony Search Algorithm for Discrete Design Variables], Applied Mathematics and Computation, In Press.
+
+*Continuous Harmony Search: Lee, K. S. and Geem, Z. W. [http://dx.doi.org/10.1016/j.cma.2004.09.007 A New Meta-Heuristic Algorithm for Continuous Engineering Optimization: Harmony Search Theory and Practice], Computer Methods in Applied Mechanics and Engineering, 2005.
+
+*Ensembled Harmony Search: Geem, Z. W. [http://www.springerlink.com/content/b382536117777v22/ Improved Harmony Search from Ensemble of Music Players], Lecture Notes in Artificial Intelligence, 2006.
+
+*Improved Harmony Search: Mahdavi, M., Fesanghary, M., and Damangir, E. [http://dx.doi.org/10.1016/j.amc.2006.11.033 An Improved Harmony Search Algorithm for Solving Optimization Problems], Applied Mathematics and Computation, 2007.
+
+*Particle-Swarm Harmony Search: Omran, M.G.H. and Mahdavi, M. [http://dx.doi.org/10.1016/j.amc.2007.09.004 Global-Best Harmony Search], Applied Mathematics and Computation, In Press.
+
+*Hybrid Harmony Search: Fesanghary, M., Mahdavi, M., Minary-Jolandan M., and Alizadeh, Y. [http://dx.doi.org/10.1016/j.cma.2008.02.006 Hybridizing Harmony Search Algorithm with Sequential Quadratic Programming for Engineering Optimization Problems], Computer Methods in Applied Mechanics and Engineering, 2008.
+
+===Applications in Computer Science===
+
+*Music Composition: Geem, Z. W. and Choi, J. Y. [http://www.springerlink.com/content/8395xp88473826p0/?p=9a58d87e926f47fc9782388b495670a8&pi=3 Music Composition Using Harmony Search Algorithm], Lecture Notes in Computer Science, 2007.
+
+*Sudoku Puzzle: Geem, Z. W. [http://www.springerlink.com/content/488571w6036764v0/?p=336060128e684defa2d88b3522bdbe27&pi=0 Harmony Search Algorithm for Solving Sudoku], Lecture Notes in Artificial Intelligence, 2007.
+
+*Tour Planning: Geem, Z. W., Tseng, C. -L., and Park, Y. [http://www.springerlink.com/content/6jadggrn5v7bvtye/ Harmony Search for Generalized Orienteering Problem: Best Touring in China], Lecture Notes in Computer Science, 2005.
+
+*Visual Tracking: J. Fourie, S. Mills and R. Green [http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=4762068 Visual tracking using the harmony search algorithm], Image and Vision Computing New Zealand, 2008. 23rd International Conference
+
+*Visual Tracking: Jaco Fourie, Steven Mills, Richard Green, [http://www.sciencedirect.com/science/article/B6V09-506W6M2-3/2/ab66f3c49ca2ebc18600db52b421d9d5 Harmony Filter: A Robust Visual Tracking System Using the Improved Harmony Search Algorithm], Image and Vision Computing (2010), doi:10.1016/j.imavis.2010.05.006
+
+*Visual Correspondence: J. Fourie, S. Mills and R. Green [http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5378431&isnumber=5378349 Directed correspondence search: Finding feature correspondences in images using the Harmony Search algorithm], Image and Vision Computing New Zealand, 23-25 Nov. 2009. 24rd International Conference
+
+===Applications in Engineering===
+
+*Structural Design: Lee, K. S. and Geem, Z. W. [http://dx.doi.org/10.1016/j.compstruc.2004.01.002 A New Structural Optimization Method Based on the Harmony Search Algorithm], Computers & Structures, 2004.
+
+*Structural Design: Saka, M. P. [http://dx.doi.org/10.1260/136943307783571445 Optimum Geometry Design of Geodesic Domes Using Harmony Search Algorithm], Advances in Structural Engineering, 2007.
+
+*Water Network Design: Geem, Z. W. [http://dx.doi.org/10.1080/03052150500467430 Optimal Cost Design of Water Distribution Networks using Harmony Search], Engineering Optimization, 2006.
+
+*Vehicle Routing: Geem, Z. W., Lee, K. S., and Park, Y. [http://www.doaj.org/doaj?func=abstract&id=175458&toc=y Application of Harmony Search to Vehicle Routing], American Journal of Applied Sciences, 2005.
+
+*Ground Water Modeling: Ayvaz, M. T. [http://dx.doi.org/10.1016/j.advwatres.2007.05.009 Simultaneous Determination of Aquifer Parameters and Zone Structures with Fuzzy C-Means Clustering and Meta-Heuristic Harmony Search Algorithm], Advances in Water Resources, 2007.
+
+*Soil Stability Analysis: Cheng, Y. M., Li, L., Lansivaara, T., Chi, S. C. and Sun, Y. J. [http://dx.doi.org/10.1080/03052150701618153 An Improved Harmony Search Minimization Algorithm Using Different Slip Surface Generation Methods for Slope Stability Analysis], Engineering Optimization, 2008.
+
+*Energy System Dispatch: Vasebi, A., Fesanghary, M., and Bathaeea, S.M.T. [http://dx.doi.org/10.1016/j.ijepes.2007.06.006 Combined Heat and Power Economic Dispatch by Harmony Search Algorithm], International Journal of Electrical Power & Energy Systems, 2007.
+
+*Offshore Structure Mooring: Ryu, S., Duggal, A.S., Heyl, C. N., and Geem, Z. W. [http://store.asme.org/product.asp?catalog%5Fname=Conference+Papers&category%5Fname=&product%5Fid=OMAE2007%2D29334 Mooring Cost Optimization via Harmony Search], Proceedings of the 26th International Conference on Offshore Mechanics and Arctic Engineering (OMAE 2007), ASME, San Diego, CA, USA, June 10-15 2007.
+
+*Hydrologic Parameter Calibration: Kim, J. H., Geem, Z. W., and Kim, E. S. [http://www.blackwell-synergy.com/doi/abs/10.1111/j.1752-1688.2001.tb03627.x Parameter Estimation of the Nonlinear Muskingum Model using Harmony Search], Journal of the American Water Resources Association, 2001.
+
+*Satellite Heat Pipe Design: Geem, Z. W. and Hwangbo, H. [http://www.hydroteq.com/c_2006_ukc_ast.pdf Application of Harmony Search to Multi-Objective Optimization for Satellite Heat Pipe Design], Proceedings of US-Korea Conference on Science, Technology, & Entrepreneurship (UKC 2006), CD-ROM, Teaneck, NJ, USA, Aug. 10-13 2006.
+
+*Dam Scheduling: Geem, Z. W. [http://www.springerlink.com/content/x1q6618054866162/?p=3fb93efd6f4a460ea92a62a59fce6c3e&pi=38 Optimal Scheduling of Multiple Dam System Using Harmony Search Algorithm], Lecture Notes in Computer Science, 2007.
+
+*Ecological Conservation: Geem, Z. W. and Williams, J. C. [http://www.naun.org/journals/energyenvironment/ee-26.pdf Ecological Optimization Using Harmony Search], Proceedings of American Conference on Applied Mathematics, Harvard University, Cambridge, MA, USA, March 24-26, 2008.
+
+*Heat exchanger design: Fesanghary, M., Damangir, E. and Soleimani, I. [http://dx.doi.org/10.1016/j.applthermaleng.2008.05.018 Design optimization of shell and tube heat exchangers using global sensitivity analysis and harmony search], Applied Thermal Engineering, In press.
+
+*Heat exchanger design: Doodman, A., Fesanghary, M. and Hosseini, R. [http://dx.doi.org/10.1016/j.apenergy.2008.08.021 A robust stochastic approach for design optimization of air cooled heat exchangers], Applied Energy, In press.
+
+*Heat exchanger network design: Khorasani, R.M., Fesanghary, M. [http://dx.doi.org/10.1016/j.compchemeng.2008.12.004 A novel approach for synthesis of cost-optimal heat exchanger networks], Computers and Chemical Engineering, In press.
+
+*Face milling: Zarei, O., Fesanghary, M., Farshi, B.,  Jalili Saffar, R. and Razfar, M.R.  [http://dx.doi.org/10.1016/j.jmatprotec.2008.05.029 Optimization of multi-pass face-milling via harmony search algorithm], Journal of Materials Processing Technology, In press.
+
+*Document Clustering: ,Mahdavi., M., Chehreghania, H., Abolhassania, H., Forsati, R. [http://dx.doi.org/10.1016/j.amc.2007.12.058 Novel meta-heuristic algorithms for document clustering], AMC Journal
+
+*Multicast Routing: Forsat, R., Haghighat, M., Mahdavi, M.,[http://dx.doi.org/10.1016/j.comcom.2008.03.019 Harmony search based algorithms for bandwidth-delay-constrained least-cost multicast routing], Computer Communications, Elsevier
+
+==Source Codes==
+* Improved Harmony Search (MATLAB)  [https://sites.google.com/site/fesangharyweb/downloads]
+* Hybrid HS-SQP (Visual C++) [https://sites.google.com/site/fesangharyweb/downloads]
+* Other HS Variants [http://sites.google.com/a/hydroteq.com/www/]
+
+[[Category:Optimization algorithms]]
+[[Category:Combinatorial optimization]]
+[[Category:Evolutionary algorithms]]
+
+{{Optimization algorithms}}</body> </html>

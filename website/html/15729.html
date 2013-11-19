@@ -1,0 +1,78 @@
+<html> <head> <title>Graphical models for protein structure</title></head><body>{{No footnotes|date=June 2010}}
+[[Graphical model]]s have become powerful frameworks for [[protein structure prediction]], [[protein–protein interaction]] and [[free energy]] calculations for protein structures. Using a graphical model to represent the protein structure allows the solution of many problems including secondary structure prediction, protein protein interactions, protein-drug interaction, and free energy calculations.
+
+There are two main approaches to use graphical models in protein structure modeling. The first approach uses [[discrete]] variables for representing coordinates or [[dihedral angle]]s of the protein structure. The variables are originally all continuous values and, to transform them into discrete values, a discretization process is typically applied. The second approach uses [[continuous]] variables for the coordinates or dihedral angles.
+
+==Discrete graphical models for protein structure==
+[[Markov random field]]s, also known as undirected graphical models are common representations for this problem. Given an [[undirected graph]] ''G'' = (''V'', ''E''), a set of [[random variable]]s ''X'' = (''X''<sub>''v''</sub>)<sub>''v'' ∈ ''V''</sub> indexed by ''V'', form a Markov random field with respect to ''G'' if they satisfy the pairwise Markov property:
+
+*any two non-adjacent variables are [[conditional independence|conditionally independent]] given all other variables:
+
+:<math>X_u \perp\!\!\!\perp X_v | X_{V \setminus \{u,v\}} \quad \text{if } \{u,v\} \notin E.</math>
+
+In the discrete model, the continuous variables are discretized into a set of favorable discrete values. If the variables of choice are [[dihedral angle]]s, the discretization is typically done by mapping each value to the corresponding [[Rotamer]] conformation.
+
+===Model===
+Let ''X'' = {''X''<sub>''b''</sub>, ''X''<sub>''s''</sub>} be the random variables representing the entire protein structure. ''X''<sub>''b''</sub> can be represented by a set of 3-d coordinates of the [[backbone]] atoms, or equivalently, by a sequence of [[bond length]]s and [[dihedral angle]]s. The probability of a particular [[Protein structure|conformation]] ''x'' can then be written as:
+
+:<math>p(X = x|\Theta) = p(X_b = x_b)p(X_s = x_s|X_b,\Theta), \,</math>
+
+where <math>\Theta</math> represents any parameters used to describe this model, including sequence information, temperature etc. Frequently the backbone is assumed to be rigid with a known conformation, and the problem is then transformed to a side-chain placement problem. The structure of the graph is also encoded in <math>\Theta</math>. This structure shows which two variables are conditionally independent. As an example, side chain angles of two residues far apart can be independent given all other angles in the protein. To extract this structure, researchers use a distance threshold, and only pair of residues which are within that threshold are considered connected (i.e. have an edge between them).
+
+Given this representation, the probability of a particular side chain conformation ''x''<sub>''s''</sub> given the backbone conformation ''x''<sub>''b''</sub> can be expressed as
+
+:<math>p(X_s = x_s|X_b = x_b) = \frac{1}{Z} \prod_{c\in C(G)}\Phi_c (x_s^c,x_b^c)</math>
+
+where ''C''(''G'') is the set of all cliques in ''G'', <math>\Phi</math> is a [[potential function]] defined over the variables, and ''Z'' is the [[partition function]].
+
+To completely characterize the MRF, it is necessary to define the potential function <math>\Phi</math>. To simplify, the cliques of a graph are usually restricted to only the cliques of size 2, which means the potential function is only defined over pairs of variables. In [[Goblin System]], this pairwise functions are defined as
+
+:<math>\Phi(x_s^{i_p},x_b^{j_q}) = \exp ( -E(x_s^{i_p},x_b^{j_q})/K_BT)</math>
+
+where <math>E(x_s^{i_p},x_b^{j_q})</math> is the energy of interaction between rotamer state p of residue <math>X_i^s</math> and rotamer state q of residue <math>X_j^s</math> and <math>k_B</math> is the [[Boltzmann constant]].
+
+Using a PDB file, this model can be built over the protein structure. From this model free energy can be calculated.
+
+===Free energy calculation: belief propagation===
+It has been shown that the free energy of a system is calculated as
+
+:<math>G=E-TS</math>
+
+where E is the enthalpy of the system, T the temperature and S, the entropy. Now if we associate a probability with each state of the system, (p(x) for each conformation value, x), G can be rewritten as
+
+:<math>G=\sum_{x}p(x)E(x)-T\sum_xp(x)\ln(p(x)) \,</math>
+
+Calculating p(x) on discrete graphs is done by the [[generalized belief propagation]] algorithm. This algorithm calculates an [[approximation]] to the probabilities, and it is not guaranteed to converge to a final value set. However, in practice, it has been shown to converge successfully in many cases.
+
+==Continuous graphical models for protein structures==
+Graphical models can still be used when the variables of choice are continuous. In these cases, the probability distribution is represented as a [[multivariate probability distribution]] over continuous variables. Each family of distribution will then impose certain properties on the graphical model. [[Multivariate Gaussian distribution]] is one of the most convenient distributions in this problem. The simple form of the probability, and the direct relation with the corresponding graphical model makes it a popular choice among researchers.
+
+===Gaussian graphical models of protein structures===
+Gaussian graphical models are multivariate probability distributions encoding a network of dependencies among variables. Let <math>\Theta=[\theta_1, \theta_2, \dots, \theta_n]</math> be a set of <math>n</math> variables, such as <math>n</math> [[dihedral angles]], and let <math>f(\Theta=D)</math> be the value of the [[probability density function]] at a particular value ''D''. A multivariate Gaussian graphical model defines this probability as follows:
+
+:<math>f(\Theta=D) = \frac{1}{Z} \exp\left\{-\frac{1}{2}(D-\mu)^T\Sigma^{-1}(D-\mu)\right\}</math>
+
+Where <math>Z = (2\pi)^{n/2}|\Sigma|^{1/2}</math> is the closed form for the [[Partition function (mathematics)|partition function]]. The parameters of this distribution are <math>\mu</math> and <math>\Sigma</math>. <math>\mu</math> is the vector of [[mean values]] of each variable, and <math>\Sigma^{-1}</math>, the inverse of the [[covariance matrix]], also known as the [[precision matrix]]. Precision matrix contains the pairwise dependencies between the variables. A zero value in <math>\Sigma^{-1}</math> means that conditioned on the values of the other variables, the two corresponding variable are independent of each other.
+
+To learn the graph structure as a multivariate Gaussian graphical model, we can use either [[L-1 regularization]], or [[neghborhood selection]] algorithms. These algorithms simultaneously learn a graph structure and the edge strength of the connected nodes. An edge strength corresponds to the potential function defined on the corresponding two-node [[clique]]. We use a training set of a number of PDB structures to learn the <math>\mu</math> and <math>\Sigma^{-1}</math>.
+
+Once the model is learned, we can repeat the same step as in the discrete case, to get the density functions at each node, and use analytical form to calculate the free energy. Here, the [[Partition function (mathematics)|partition function]] already has a [[closed form]], so the [[inference]], at least for the Gaussian graphical models is trivial. If the analytical form of the partition function is not available, [[particle filtering]] or [[expectation propagation]] can be used to approximate ''Z'', and then perform the inference and calculate free energy.
+
+{{No footnotes|date=August 2010}}
+
+==References==
+<!--- See http://en.wikipedia.org/wiki/Wikipedia:Footnotes on how to create references using <ref></ref> tags which will then appear here automatically -->
+
+* Time Varying Undirected Graphs, Shuheng Zhou and John D. Lafferty and Larry A. Wasserman, COLT 2008
+* Free Energy Estimates of All-atom Protein Structures Using Generalized Belief Propagation, Hetunandan Kamisetty Eric P. Xing Christopher J. Langmead, RECOMB 2008
+
+==External links==
+* http://www.liebertonline.com/doi/pdf/10.1089/cmb.2007.0131
+* http://www.learningtheory.org/colt2008/81-Zhou.pdf
+
+<!--- Categories --->
+
+{{DEFAULTSORT:Graphical Models For Protein Structure}}
+[[Category:Graphical models]]
+[[Category:Protein methods]]
+[[Category:Computational chemistry]]</body> </html>

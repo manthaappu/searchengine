@@ -1,0 +1,25 @@
+<html> <head> <title>DCEThreads</title></head><body>{{Unreferenced stub|auto=yes|date=December 2009}}
+{{Inappropriate tone|date=December 2007}}
+
+'''DCEThreads''' is an implementation of [[POSIX]] Draft 4 threads. 
+
+==History==
+[[DCE/RPC]] was under development, but the POSIX committee had not finalised POSIX threads at the time. [[The Open Group]] had to make a decision about what to stick with, and unfortunately the final POSIX threads were different from their selection. 
+
+POSIX Draft 4 threads were limited to begin with (the final standard fixed these). Microsoft adopted DCE/RPC wholesale in Windows NT as [[MSRPC]] and also in [[Distributed Component Object Model|DCOM]]. Most of the stability and reliability problems that programmers associate with DCOM services - especially [[memory leak]]s, exception handling problems and thread cancellation stability issues - can be traced back to the use of POSIX Draft 4 threads.
+
+DCE/RPC is sufficiently complex that the issue of updating it to solve and modernise the POSIX Draft 4 threading problem requires highly skilled and highly specific programming knowledge. Consequently, for all that it can accomplish, the reference implementation of DCE/RPC languishes due to a lack of information and resources.
+
+The key difference between POSIX Draft 4 threads and the final POSIX threads specification, aside from a number of functions being interruptible where others are not, is thread cancellation.  DCE/RPC utilises thread cancellation to propagate signals across the "Remote" of RPC, such that for example a client application terminating a thread results in its corresponding thread on the server also being terminated in the same way.  Unfortunately, the final POSIX specification does not include such sophisticated cancellation methodology, and, given the difficulties that the Unix vendors had in correctly implementing the POSIX threads specification, it is not surprising that it was removed.
+
+==Recent developments==
+Linux, since the introduction of NPTL and the Linux 2.6 kernel, has proper support for thread cancellation.
+
+==Current use==
+DCEThreads now only realistically exists as an emulation layer.
+
+{{DEFAULTSORT:Dcethreads}}
+[[Category:POSIX standards]]
+
+
+{{Compu-network-stub}}</body> </html>

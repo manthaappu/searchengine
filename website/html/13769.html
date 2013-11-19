@@ -1,0 +1,117 @@
+<html> <head> <title>FlexRAID</title></head><body>{{multiple issues|advert=April 2010|cleanup=April 2010|confusing=April 2010|context=April 2010|primarysources=September 2010}}
+{{moreref|date=July 2010}}
+{{Infobox software
+| name = FlexRAID
+| developer = Brahim
+| author = Smurf-IV
+| programming language = [[C++]], Java (Native)
+| latest_release_version = 1.2
+| latest_release_date = 2009-08-13
+| latest_preview_version = Basic 1.4 beta
+| latest_preview_date = 2010-03-29
+| operating_system = Windows & Linux
+| genre = Parity Protection
+| website = [http://www.openegg.org | www.openegg.org]
+}}
+'''FlexRAID''' is a current ambition to create a smart [[RAID]] system that focuses on protecting data rather than protecting basic block device clusters.
+
+Instead of sitting between the physical devices and the overlaying [[file systems]], FlexRAID sits on top of any existing file-system.
+
+Initially, FlexRAID wanted to function in a similar fashion to [[RAID-Z#RAID-Z|RAID-Z]].
+
+The intent was to build FlexRAID using the [[ZFS]] for Linux port project.<ref>[http://zfs-fuse.net ZFS-fuse.net]</ref>
+However, it made more sense to strive at embracing any existing file-system than writing another proprietary one.
+
+This also allowed for FlexRAID to be supported on the [[Microsoft Windows]] platform in addition to [[Linux]].
+
+FlexRAID does not mandate its own file-system; instead, it allows users to use any file-system, which it builds its own lightweight file-system on top of.
+
+RAID-Z combines both the file management aspect with the RAID system. FlexRAID takes a different approach as it leaves the file management aspect to the underlying file-system but keeps a copy of relevant file-system information.
+
+In its current released implementation, FlexRAID is a [[Snapshot (computer storage)|snapshot]] RAID.
+
+A real-time version of FlexRAID is in the works and is anticipated to be released soon. Even more interesting, FlexRAID was originally designed to only work in real-time mode. However, difficulties in implementation led the developers to fall back to a snapshot mode of operation until the real-time mode issues were fully addressed.
+
+FlexRAID is in essence a new breed of smarter RAID systems. It is very easy to implement traditional RAID systems that work at the disk block level since the blocks are continuous and easy to manage.Nevertheless, that simplicity comes at the cost of the RAID system being unaware of the logical aspect of the data it is hosting.
+
+Smart RAID systems are very difficult to implement as they function on a different set of rules than basic block alignments.
+
+The benefits for this trade off are significant.
+
+A smart RAID system will:
+
+* RAID only meaningful data (as opposed to RAID'ing every block on the physical devices)
+* Support the addition of devices that contain existing data
+* Support data health monitoring (and often self-healing features)
+* Provide the greatest data safety possible and the lowest risk of data lost
+* Provide energy saving features
+
+With traditional RAID systems, if you add a device to the RAID, that device will be erased and all existing data would be lost.
+Even pseudo systems like [[Windows home server|Windows Home Server (WHS)]] don't support adding drives with existing data to the array. Note that FlexRAID can be installed on WHS and configured to protect the data through parity rather than duplication.
+
+Moreover, with traditional RAID systems, if you lose more disks than can be tolerated by the RAID system, you lose ALL of your data! Even a traditional RAID 4 system shares that vulnerability as if you lose the disk that also contains the file-system information, none of the other disks will be readable. Not only does FlexRAID support multiple RAID engines and multiple parity (tolerance) levels, the only way to lose all of your data with FlexRAID is to lose every single one of your data devices.<br />
+Every surviving device under FlexRAID is accessible and readable.
+
+Most people chant of the fact that RAID is not a substitute for [[backup]]s.
+
+# You really need a backup with traditional RAID systems because you are at risk of losing ALL of your data
+# To backup a 10TB RAID array, you need another 10TB RAID array to back it up to.
+
+This is not only costly, but both primary and backup RAID systems could fail causing you to lose ALL of your data. The idea of compromising all of your data for the protection against a single device failure is a hard one to buy into. It is like having a comprehensive insurance policy that tells you "if you have more than one claim, you lose every single one of your possessions that are covered" (so, buy two of everything just in case?).
+
+Backing up your RAID is less important when using FlexRAID for the following reasons:
+* Each device can be configured as an independent unit of risk (UoR). As such, the failure of one device does not affect any other device in the array.
+* If you lose more devices than the RAID engine you've selected can support, you only lose those devices that have failed. All your remaining devices will be healthy, and the data on them will be fully readable.
+
+== Features ==
+'''FlexRAID''' is:
+* Data centric, not Drive/Device centric (any data, any size, anywhere)
+** Can protect local disk data
+** Can protect data off removable media
+** Can protect data visible over a network and the internet
+** Any data that is visible to the OS can be added to the array (e.g., loading [[NTFS]] drives in [[Linux]] or [[Ext3]] drives in [[Windows]])
+::Therefore, if a supported operating system can load a device and "see" its data content, then it is possible to add that data to the RAID array.
+* Offline protection when used in snapshot mode (i.e., not running all the time taking valuable CPU and I/O resources)
+** When used in snapshot mode, RAID update operations can be scheduled or run manually at one's convenience
+** Data that needs real-time synchronization should not be included in a snapshot RAID
+
+== Snapshot RAID ==
+'''Motivations'''
+
+As explained in the introduction, the snapshot feature of FlexRAID is a by-product of the challenges faced during development of the real-time feature.
+
+Nevertheless, the snapshot aspect is proving to be an invaluable feature for the following reasons:
+* Most user data is static or semi-static.
+** Only data such as database data, operating system data, and certain non-static critical application data really require real-time synchronization.
+** It is very inefficient to monitor and synchronize data that is infrequently changing.
+** More than 90% of the data in most RAID scenarios is static or semi-static data.
+*** As such, it can be more efficient to mirror the 10% that is very dynamic and protect the 90% that is semi-static through snapshot RAID.
+* Movies, music, photos, documents, TV recordings, downloads, backups, etc. are all types of static and semi-static data best suited to be protected through snapshot RAID.
+
+== UoR ==
+'''U'''nit '''o'''f '''R'''isk:
+
+In a traditional RAID sense, a UoR is a physical hard disk. In FlexRAID, a UoR is typically a physical hard disk, but it can also be other data sources.
+
+A Unit of Risk (UoR) is any unit whose failure can be recovered from. That unit can be a file, a folder, a partition, a drive, a media disc, a standard RAID volume, a network share, a [[Logical Unit Number|LUN]], or a set or combination of them.
+
+Put another way, a UoR is anything that contains data that one wants failure protection from.
+
+== DRU ==
+'''D'''ata '''R'''isk '''U'''nit:
+
+A DRU is a UoR that contains user data.
+
+== PPU ==
+'''P'''arity '''P'''rotection '''U'''nit:
+
+A PPU is a UoR that contains parity data computed from the DRU(s).
+
+== For developers ==
+For a developers take (insight) on what and how to use Flex''RAID'', go to flexraid.wikkii.com.<ref>[http://flexraid.wikkii.com/wiki/Main_Page Flexraid.wikkii.com]</ref>
+
+== References ==
+{{Reflist}}
+
+{{DEFAULTSORT:Flexraid}}
+[[Category:RAID]]</body> </html>

@@ -1,0 +1,120 @@
+<html> <head> <title>Transaction Processing Facility</title></head><body>{{Infobox OS
+| name                   = z/TPF
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| developer              = [[IBM]]
+| source_model           = [[Closed source]] (Source code is available to licenced users with restrictions)
+| kernel_type            = [[Real-time operating system|Real-time]]
+| supported_platforms    = ?
+| ui                     = ?
+| family                 = z/Architecture assembly language (z/TPF), ESA/390 assembly language (TPF4)
+| released               = 
+| latest_release_version = V1R1
+| latest_release_date    = December, 2005
+| latest_test_version    = 
+| latest_test_date       = 
+| marketing_target       = 
+| programmed_in          = Basic Assembly Language sks s/390 assembly C C++
+| prog_language          = 
+| language               = 
+| updatemodel            = 
+| package_manager        = 
+| working_state          = Current
+| license                = [[Proprietary software|Proprietary]] monthly license charge (MLC)
+| website                = [http://www.ibm.com/software/htp/tpf/ IBM: z/TPF operating system]
+}}
+{{History of IBM mainframe operating systems}}
+'''TPF''' is an [[International Business Machines|IBM]] [[real-time operating system]] for [[IBM mainframe|mainframes]] descended from the IBM [[System/360]] family, including [[zSeries]] and [[ZSeries|System z9]].  The name is an [[initialism]] for '''Transaction Processing Facility'''.
+
+TPF evolved from the [[Airlines Control Program]] (ACP), a free package developed in the mid-1960s by [[International Business Machines|IBM]] in association with major North American and European airlines.  In 1979, IBM introduced TPF as a replacement for ACP &mdash; and as a priced software product. The new name suggests its greater scope and evolution into non-airline related entities. 
+
+Current users include [[Sabre (computer system)|Sabre]] (reservations), [[Amadeus (computer system)|Amadeus]] (reservations), [[VISA (credit card)|VISA Inc]] (authorizations), [[American Express]] (authorizations), [[HP Enterprise Services|EDS]] SHARES (reservations), [[Holiday Inn]] (central reservations), [[CBOE]] (order routing), [[Singapore Airlines]], [[KLM]], [[Qantas]], [[Amtrak]], [[Marriott International]], [[Travelport]] and the [[NYPD]] (911 system).
+
+TPF delivers fast, high-volume, high-throughput transaction processing, handling large, continuous loads of essentially simple transactions across large, geographically dispersed networks. The world's largest TPF-based systems are easily capable of processing tens of thousands of transactions per second. TPF is also designed for highly reliable, continuous (24x7) operation. It is not uncommon for TPF customers to have continuous online availability of a decade or more, even with system and software upgrades.  This is due in part to the multi-mainframe operating capability and environment. 
+
+While there are other industrial-strength [[transaction processing system]]s, notably IBM's own [[CICS]] and [[Information Management System|IMS]], TPF's ''raison d'être'' is extreme volume, large numbers of concurrent users and very fast response times, for example [[VISA (credit card)|VISA credit card]] transaction processing during the peak holiday shopping season.
+
+TPF implements an application known as [[Programmed Airline Reservations System|PARS]]. Many airlines use this passenger reservation application or its international version IPARS. TPF was traditionally a 370 [[assembly language]] environment for performance reasons, and many TPF assembler applications persist. However, more recent versions of TPF encourage the use of [[C (programming language)|C]]. Another [[programming language]] called [[SabreTalk]] was born and died on TPF. One of TPF's major components is a high performance, specialized database facility called TPFDF.
+
+It is common for TPF sites to also use other IBM mainframe operating systems, such as [[z/OS]] and [[z/VM]], for offline and complementary processing. It is also possible to run a close cousin of TPF, called [[ALCS transaction monitor|ALCS]], atop z/OS rather than as a separate operating system. All these operating systems usually coexist on the same physical hardware since IBM mainframes feature multiple ways of partitioning, to handle mixed workloads.
+
+IBM announced the delivery of the next release of TPF, dubbed z/TPF V1.1, in September 2005. Most significantly, z/TPF adds 64-bit addressing and mandates use of the 64-bit [[GNU]] development tools.  The [[GNU Compiler Collection|GCC compiler]] and the DIGNUS Systems/C++ and Systems/C are the only supported compilers for z/TPF. The Dignus compilers offer reduced source code changes when moving from TPF 4.1 to z/TPF.  Japan Airlines has publicly acknowledged they are running z/TPF.<ref>http://www-03.ibm.com/press/us/en/pressrelease/23914.wss</ref>
+
+==Operating environment==
+===Tightly coupled===
+TPF is capable of running on a [[Multiprocessing|multiprocessor]], that is, on mainframe systems in which there is more than one CPU.  Within the community, the CPUs are referred to as '''Instruction Streams''' or simply '''I-streams'''.  On a mainframe or in a logical partition (LPAR) of a mainframe with more than one I-stream, TPF is said to be running '''tightly-coupled'''.
+
+Due to the [[reentrant (subroutine)|reentrant]] nature of TPF programs and the control program, this is made possible as no active piece of work modifies any program.  The default is to run on the ''main I-stream'' which is given as the lowest numbered I-stream found during IPL.  However users and/or programs can initiate work on other I-streams via internal mechanisms in the API which let the caller dictate which I-stream to initiate the work on.  In the new ''z/TPF'', the system itself will try to load balance by routing any application that does not request a preference or ''affinity'' to I-streams with less work than others.
+
+In the TPF architecture, each I-stream shares common core, except for a 4Kb in size prefix area for each I-stream.  In other instances where core data must or should be kept separate, the application designer typically carves up reserved storage areas into a number of sections equal to the number of I-streams.  A good example of the TPF system doing this can be found with TPFs support of ''I-stream unique globals''.  Proper access to these carved sections of core are made by taking the base address of the area, and adding to it the product of the I-stream relative number times the size of each area.
+
+===Loosely coupled===
+TPF is capable of supporting multiple mainframes (of any size themselves - be it single I-stream to multiple I-stream) connecting to and operating on a common database.  Currently, 32 IBM mainframes may share the TPF database; if such a system were in operation, it would be called '''32-way loosely coupled'''.  The simplest [[loose coupling|loosely coupled]] system would be two IBM mainframes sharing one '''DASD''' ([[Direct Access Storage Device]]).  In this case the control program would be equally loaded into core and each program or record on DASD could be potentially accessed by either mainframe.
+
+In order to serialize accesses between data records on a loosely coupled system, a practice known as [[Record locking]] must be used.  This means that when one mainframe processor obtains a '''hold''' on a record, the mechanism must prevent all other processors from obtaining the same hold and communicate to the requesting processors that they are waiting.  Within any tightly coupled system this is easy to manage between I-streams via the use of the '''Record Hold Table'''.  However when the lock is obtained offboard of the TPF processor in the DASD control unit, an external process must be used.  Historically the record locking was accomplished in the DASD control unit via an '''RPQ''' known as '''LLF''' (Limited Locking Facility) and later '''ELLF''' (extended).  LLF and ELLF were both replaced by the Multipathing Lock Facility (MPLF).  To run clustered (loosely-coupled) zTPF requires either MPLF in all disk control units or an alternative locking device called a Coupling Facility. [http://publib.boulder.ibm.com/infocenter/zvm/v5r4/index.jsp?topic=/com.ibm.zvm.v54.hcpf2/hcsf9b3153.htm] [http://www-01.ibm.com/support/docview.wss?uid=swg27007957]
+
+=====Processor shared records=====
+Records that absolutely must be managed by a [[record locking]] process are those which are processor shared.  In TPF most record accesses are done by using '''record type''' and '''ordinal'''.  So if you had defined a record type in the TPF system of 'FRED' and gave it 100 records or ordinals, then in a processor shared scheme record type 'FRED' ordinal '5' would resolve to exactly the same file address on DASD - clearly necessitating the use of a record locking mechanism.
+
+All processor shared records on a TPF system will be accessed via exactly the same file address which will resolve to exactly the same location.
+
+=====Processor unique records=====
+A processor unique record is one that is defined such that each processor expected to be in the loosely coupled complex has a record type of 'FRED' and perhaps 100 ordinals.  However, if a user on any 2 or more processors examines the file address that record type 'FRED', ordinal '5' resolves to, they will note a different physical address is used.
+
+==TPF attributes==
+===What TPF is not===
+TPF has no graphical user interface ([[GUI]]).  TPF's built-in user interface is line driven with simple text screens that scroll upwards.  There are no mice, windows, or icons on a TPF '''Prime CRAS'''.  All work is accomplished via the use of typed one or two line commands, similar to early versions of [[UNIX]] before [[X Window System|X]].
+
+TPF also does not include a compiler/assembler, text editor, or the concept of a desktop.  TPF application source code is typically kept in [[Partitioned dataset|PDSs]] on a z/OS system.  However, some previous installations of TPF kept source code in [[z/VM]]-based<!-- needs cite.  Have any shops used boris/carloff, sourcebank, tsmlib-style SCM tools on z/VM or are they all off vm? --> files and used the CMS update facility to handle versioning.  Currently the z/OS compiler/assembler is used to build TPF code into object modules, producing load files that the TPF "online system" can accept.  Starting with z/TPF 1.1, [[Linux]] will be the build platform.
+
+Using TPF requires an intimate knowledge of the Operations Guide since there is no shipped support for any type of online command "directory" that you might find on other platforms. Commands created by IBM and shipped by IBM for the running and administration of TPF are referred to as "Z-messages" as they are all prefixed with the letter "Z."  Other letters are reserved so that customers may write their own commands.
+
+TPF has extremely limited capability to debug itself. Typically third party software packages such as [[IBM]]'s '''TPF Tool Kit''' or '''Step by Step Trace''' from [http://www.bedford.com/ Bedford Associates] or '''CMSTPF,TPF/GI,zTPF/GI''' from [http://www.tpfsoftware.com/ TPF Software Inc.] are employed to aid in the tracing and tracking of errant TPF code.  Since TPF can run as a second level guest under IBM's z/VM, a user can employ the VM trace facility to closely follow the execution of code.  TPF will allow certain types of function traces to operate and dump their data to a tape, typically through '''user exits''' that present parameters to a called function or perhaps the contents of a block of storage.  There are some other types of trace information that TPF can collect in core while running, and this information gets "dumped" whenever the system encounters a severe error.
+
+===What TPF is===
+TPF is highly optimized to permit messages from the supported network to either be switched out to another location, routed to an application (specific set of programs) or to permit extremely efficient accesses to database records.
+
+=====Data records=====
+Historically all data on the TPF system had to fit in fixed record (and core block) sizes of 381, 1055 and 4K bytes.  This was due in part to the physical record sizes of blocks located on DASD.  Much overhead was saved by freeing up any part of the operating system from breaking large data entities into smaller ones during file operations, and reassembling same during read operations.  Since IBM hardware does I/O via the use of '''channels''' and '''channel programs''', TPF would generate very small and efficient channel programs to do its I/O - all in the name of speed.  Since the early days also placed a premium on the size of storage media - be it memory or disk, TPF applications evolved into doing very powerful things while using very little resource.
+
+Today, much of these limitations are removed.  In fact, only because of legacy support are smaller than 4K DASD records still used.  With the advances made in DASD technology, a read/write of a 4K record is just as efficient as a 1055 byte record.  The same advances have increased the capacity of each device so that there is no longer a premium placed on the ability to pack data into the smallest model as possible.
+
+=====Programs and residency=====
+TPF also had its programs allocated as 381, 1055 and 4K bytes in size and each program consisted of a single record (aka ''segment'').  Therefore a comprehensive application needed many segments.  With the advent of C-support, application programs were no longer limited to 4K sizes, much larger C programs could be created, loaded to the TPF system as multiple 4K records and read into memory during a fetch operation and correctly reassembled.  Since in the past core memory was at a premium, only highly used programs ran 100% of the time as '''core resident''', most ran as '''file resident'''.  Given the limitations of older hardware, and even today's relative limitations, a fetch of a program, be it a single 4K record or many, is expensive.  Since core memory is monetarily cheap and physically much much larger, greater numbers of programs could be allocated to reside in core.  With the advent of z/TPF, all programs will reside in core - eventually - the only question is when they get fetched the first time.
+
+Before z/TPF, all assembler language programs were limited to 4K in size.  Assembler is a more space-efficient language to program in so a lot of function can be packed into relatively few 4K segments of assembler code compared to C in 4K segments.  However, C language programming is much easier to obtain skilled people in, so most if not all new development is done in C.  Since z/TPF allows assembler programs to be repackaged into 1 logical file, critical legacy applications can be maintained and actually improve efficiency - the cost of entering one of these programs will now come at the initial enter when the entire program is fetched into core and logical flow through the program is accomplished via simple branch instructions, instead of a dozen or so IBM instructions previously needed to perform what is known as 'core resident enter/back'.
+
+=====Core usage=====
+Historically and in step with the previous, core blocks - memory - were also 381, 1055 and 4K bytes in size.  Since '''ALL''' memory blocks had to be of this size, most of the overhead for obtaining memory found in other systems was discarded.  The programmer merely needed to decide what size block would fit the need and ask for it.  TPF would maintain a list of blocks in use and simply hand the first block on the available list.
+
+Physical memory was carved into sections reserved for each size so a 1055 byte block always came from a section and returned there, the only overhead needed was to add its address to the physical block table's proper list.  No compaction or data collection was required.
+
+As applications got more advanced demands for more core increased and once C became available, memory chunks of indeterminate or large size were required.  This gave rise to the use of heap storage and of course some memory management routines.  To ease the overhead, TPF memory was broken into frames - 4K in size (and now 1Mb in size with z/TPF).  If an application needed a certain number of bytes, the number of contiguous frames required to fill that need were granted.
+
+==References==
+{{Reflist}}
+
+==External links==
+*[http://publib.boulder.ibm.com/infocenter/tpfhelp/current/index.jsp TPF Information Center] (IBM)
+*[http://www.ibm.com/tpf z/TPF] (IBM)
+*[http://www.tpfug.org TPF User Group] (TPF User Group)
+*[http://www.blackbeard.com/tpf/ Blackbeard] (Alternative TPF Homepage)
+*[http://www.bedford.com/ Bedford Associates] (Suppliers of step by step trace and TPF Consultancy Services)
+*[http://tech.groups.yahoo.com/group/tpffers/ TPFfers] (Single largest online community of TPF programmers)
+*[http://www.pcs-training.co.uk PCS Training] (Independent training company specialising in TPF)
+*[http://jobs.tpfwork.com TPFWork.com] (Job board specialising in TPF and ALCS)
+*[http://www.tpfsoftware.com TPFSOFTWARE] (Provides products & Services in TPF & Allied technologies for Airline, Banking & Hospitality)
+*[http://www.vsoftsys.com Virtual Software Systems] (Provides software to allow concurrent testing of TPF programs by several programmers under VM)
+
+{{IBM operating systems}}
+{{Real-time operating systems}}
+
+[[Category:Real-time operating systems]]
+[[Category:IBM Mainframe computer operating systems]]
+[[Category:Transaction processing|Transaction processing facility]]
+
+[[de:Transaction Processing Facility]]
+[[fr:Transaction processing facility]]
+[[nl:Transaction Processing Facility]]
+[[ja:Transaction Processing Facility]]</body> </html>

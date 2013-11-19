@@ -1,0 +1,81 @@
+<html> <head> <title>Foreign function interface</title></head><body>A '''foreign function interface''' (or FFI) is a mechanism by which a program written in one [[programming language]] can call routines or make use of services written in another.  The term comes from the specification for [[Common Lisp]], which explicitly refers to the language features for inter-language calls as such; the term is also used officially by the [[Haskell (programming language)|Haskell programming language]].  Other languages use other terminology (the [[Ada programming language]] talks about "language bindings", while [[Java (programming language)|Java]] refers to its FFI as the [[Java Native Interface]], or JNI).  Foreign function interface has become generic terminology for mechanisms which provide such services.
+
+Despite the name, FFIs are not necessarily restricted to [[function call]]s; many FFIs permit [[method call]]s on objects; and some even permit migration of non-trivial datatypes and/or objects across the language boundary. 
+
+The term foreign function interface is generally not used to describe multi-lingual runtimes such as the Microsoft [[Common Language Runtime]], where a common "substrate" is provided which enables any CLR-compliant language to use services defined in any other.  (However, in this case the CLR does include an FFI, [[P/Invoke]], to call outside the runtime.)  In addition, many distributed computing architectures such as the [[Java remote method invocation]] (RMI), RPC, [[CORBA]], [[SOAP]] and [[D-Bus]] permit different services to be written in different languages; such architectures are generally not considered FFIs.
+
+In most cases, a FFI is defined by a "higher-level" language, so that it may employ services defined and implemented in a lower level language, typically a systems language like [[C (programming language)|C]] or [[C++]].  This is typically done to either access OS services in the language in which the OS' API is defined, or for performance considerations.
+
+Many FFIs also provide the means for the called language to invoke services in the host language as well.
+
+==Operation of an FFI==
+
+The primary function of a FFI is to mate the semantics and [[calling convention]]s of one programming language (the ''host'' language, or the language which defines the FFI), with the semantics and conventions of another (the ''guest'' language).  This process must also take into consideration the [[runtime environment]]s and/or [[application binary interface]]s of both.   This can be done in several ways:
+
+* Requiring that guest-language functions which are to be host-language callable be specified or implemented in a particular way; often using a compatibility library of some sort.  
+* Use of a tool to automatically "wrap" guest-language functions with appropriate [[glue code]], which performs any necessary translation.
+* Use of [[Wrapper library|wrapper libraries]]
+* Restricting the set of host language capabilities which can be used cross-language.  For example, C++ functions called from C may not (in general) include reference parameters or throw exceptions.
+
+FFIs may be complicated by the following considerations:
+
+* If one language supports [[Garbage collection (computer science)|garbage collection]] (GC) and the other does not; care must be taken that the non-GC language code doesn't do something to cause the GC to fail.  In JNI, for example, C code which "holds on to" object references passed from Java must "register" this fact with the Java runtime; otherwise the referred-to objects may be garbage-collected if no more valid references to the object(s) exist within the Java environment.  (The C code must likewise release such references manually when the corresponding object is no longer needed).
+* Complicated or non-trivial objects or datatype may be difficult to map from one environment to another.
+* It may not be possible for both languages to maintain references to the same instance of a mutable object, due to the mapping issue above.
+* One or both languages may be running on a [[virtual machine]] (including different VMs).
+* Cross language [[inheritance (computer science)|inheritance]] or other forms of type or object composition may be especially difficult.
+
+== Examples ==
+
+Examples of FFIs include:
+* [[Ada (programming language)|Ada]] language bindings, allowing not only to call foreign functions but also to export its functions and methods to be called from non-Ada code.[http://www.adaic.org/standards/05aarm/html/AA-B.html]
+* [[C++]] has a trivial FFI with [[C programming language|C]], as the languages share a significant common subset.  The primary effect of the <tt>[[extern "C"]]</tt> declaration in C++ is to disable [[name mangling]].
+* [[Java Native Interface|JNI]], which provides an interface between [[Java (programming language)|Java]] and C/C++, the preferred systems language on most systems where Java is deployed. [[Java Native Access|JNA]] provide an interface with native libraries without having to write [[Glue code]].
+* [[Compiled Native Interface|CNI]], alternative to JNI used in the GNU compiler environment.
+* The {{abbr|FFIs}} of [[Common Lisp]] and [[Haskell (programming language)|Haskell]]
+* The major [[dynamic language]]s, such as [[Python (programming language)|Python]], [[Perl]], [[Tcl]], and [[Ruby programming language|Ruby]], all provide easy access to native code written in C/C++ (or any other language obeying C/C++ calling conventions).
+** Python additionally provides the Ctypes module [http://www.python.org/doc/2.5/lib/module-ctypes.html], which can load C functions from [[shared library|shared libraries]]/[[Dynamic-link library|DLL]]s on-the-fly and translate simple data types automatically between Python and C semantics.  For example:
+<source lang="python">
+import ctypes
+libc = ctypes.CDLL( '/lib/libc.so.6' )   # under Linux/Unix
+t = libc.time(None)                      # equivalent C code: t = time(NULL)
+print t
+</source>
+* [[P/Invoke]], which provides an interface between the Microsoft [[Common Language Runtime]] and native code.
+* [[Racket (programming_language)|Racket]] (formerly PLT Scheme) has a native FFI based heavily on macros that enables importing arbitrary shared libraries dynamically.[http://download.plt-scheme.org/doc/372/html/foreign/]
+* [[Factor_(programming_language)|Factor]] has FFI for C[http://fun-factor.blogspot.com/2007/10/getting-started-with-factor-easy-ffi.html], Fortran[http://article.gmane.org/gmane.comp.lang.factor.general/2790], Objective-C[http://docs.factorcode.org/content/vocab-cocoa.html], and Windows COM[http://docs.factorcode.org/content/vocab-windows.com.html]; all of these enable importing and calling arbitrary shared libraries dynamically.
+* [[Visual Basic]] has a declarative syntax that allows it to call non-unicode C functions.
+* One of the bases of the [[Component Object Model]] is a common interface format, which natively uses the same types as Visual Basic for strings and arrays.
+* [[Google Web Toolkit|GWT]], in which java is compiled to javascript, has a FFI called JSNI which allows java source to call arbitrary Javascript functions, and for Javascript to call back into java.
+
+In addition, many FFIs can be generated automatically: for example, [[SWIG]].
+
+==See also==
+* [[Language binding]]
+* [[Calling convention]]
+* [[Name mangling]]
+* [[Application programming interface]] - API
+* [[Application Binary Interface]] - ABI
+* [[Comparison of application virtual machines]]
+* [[SWIG]] - opensource interfaces bindings generator from many languages to many languages
+
+== External links ==
+
+*[http://www.c2.com/cgi/wiki?ForeignFunctionInterface c2.com: Foreign function interface]
+*[http://www.cse.unsw.edu.au/~chak/haskell/ffi/ Haskell 98 Foreign Function Interface]
+*[http://www.franz.com/support/documentation/6.2/doc/foreign-functions.htm  Allegro Common Lisp {{abbr|FFI}}]
+*[http://www.cs.kent.ac.uk/pubs/2005/2254/ A Foreign Function Interface generator for occam-pi]
+*[http://uffi.b9.com/ UFFI: Lisp Universal Foreign Function Interface]
+*[http://common-lisp.net/project/cffi/ CFFI: Common Foreign Function Interface, for Common Lisp]
+*[http://java.sun.com/docs/books/jni/ Java Native Interface: Programmer's Guide and Specification]
+*{{Javadoc:SE-guide|jni/spec/jniTOC.html|The JNI Specification}}
+*[http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.JavaScriptNativeInterface.html JSNI (JavaScript Native Interface)]
+*[http://dyncall.org/ dyncall library using assembly call kernels for a variety of processors,OS and calling conventions]
+*[http://www.gnu.org/software/libffcall/ FFCALL]
+*[http://www.nongnu.org/cinvoke/ C/Invoke]
+*[http://sourceware.org/libffi/ libffi]
+
+[[Category:Application programming interfaces]]
+[[Category:Subroutines]]
+
+[[es:Foreign function interface]]</body> </html>

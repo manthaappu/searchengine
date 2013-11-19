@@ -1,0 +1,33 @@
+<html> <head> <title>Shred (Unix)</title></head><body>{{lowercase|title=shred (Unix)}}
+<tt>'''shred'''</tt> is a [[Unix]] command that can be used to [[Data remanence|securely delete]] files and devices so that they can be recovered only with great difficulty with specialised hardware, if at all{{ref|1|1}}. It is a part of [[GNU Core Utilities]].
+
+==Background==
+For efficiency, erasing a file usually only erases the file system entry and keeps the content of the file intact. This frequently allows the file to be recovered using commonly available software. Even if the file is overwritten, residual magnetic fields may allow data recovery using specialist hardware equipment{{Citation needed|date=September 2010}}. To prevent this, shred overwrites the file multiple times using patterns chosen to maximize destruction of the residual data. The articles ''[[data erasure]]'' and ''[[data remanence]]'' have additional information.
+
+==Features==
+<tt>shred</tt> can be invoked either on ordinary files or on devices (such as hard disk partitions), which are represented as files in Unix. By default, shred overwrites the file 25 times with multiple patterns, but the number is user configurable. Shred has an option to do an additional final overwrite with zeroes, which may help to hide the fact that shred was used.
+
+By default, shred also shreds ''[[Fragmentation_(computer)#Internal_fragmentation|file slack]]'' (unused space in file allocations). For example, a 5 KB file on a file system with 4 KB clusters actually requires 8 KB of storage. Shred has an option to overwrite only the file itself, as well as an option to delete the file after it has completed operation.
+
+==Limitations==
+A limitation of shred is that it only overwrites the data in place without overwriting other copies of the file. Copies can manifest themselves in a variety of ways, such as through manual and automatic backups, file system snapshots, copy-on-write filesystems, [[wear leveling]] on [[Solid-state drive|flash drive]]s, caching such as [[Network file system|NFS]] caching, and [[Journaling file system|journaling]]. Some of these limitations can be overcome by shredding the entire device instead of specific files.
+
+==See also==
+* [[GNU]]
+* [[Free software]]
+==References==
+* [http://www.gnu.org/software/coreutils/manual/html_node/shred-invocation.html shred invocation], GNU Coreutils. Accessed February 3, 2009.
+* [http://www.freesoftwaremagazine.com/columns/shred_and_secure_delete_tools_wiping_files_partitions_and_disks_gnu_linux Shred and secure-delete], Free Software Magazine. November 29, 2008. Accessed February 3, 2009.
+==Notes==
+:1.{{note|1}}The [[data remanence]] article provides citations to publications that investigate the security of shredding.
+
+{{Data_Erasure}}
+
+[[Category:Unix file system-related software]]
+[[Category:Unix security-related software]]
+[[Category:Free software]]
+[[Category:GNU Project software]]
+
+[[de:Shred]]
+[[fr:Shred (commande unix)]]
+[[it:Shred (Unix)]]</body> </html>

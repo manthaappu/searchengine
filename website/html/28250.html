@@ -1,0 +1,25 @@
+<html> <head> <title>PackBits</title></head><body>'''PackBits''' is a fast, simple [[Lossless data compression|lossless compression]] scheme for [[run-length encoding]] of data.
+
+[[Apple Inc.|Apple]] introduced the PackBits format with the release of [[MacPaint]] on the [[Apple Macintosh|Macintosh]] computer. This compression scheme is one of the types of compression that can be used in [[TIFF]]-files, [[TGA]]-files also use this RLE compression scheme, but treats data stream as pixels instead of bytes.
+
+A PackBits data stream consists of packets with a one-byte header followed by data. The header is a signed byte; the data can be signed, unsigned, or packed (such as <nowiki>MacPaint</nowiki> pixels).
+
+In the following table, ''n'' is the value of the header byte as a signed integer.
+
+{| class="wikitable"
+|-
+| '''Header byte''' || '''Data following the header byte'''
+|-
+| 0 to 127 || (1 + ''n'') [[literal]] bytes of data
+|-
+| -1 to -127 || One byte of data, repeated (1 &ndash; ''n'') times in the decompressed output
+|-
+| -128 || No operation (skip and treat next byte as a header byte)
+|-
+|}
+Note that interpreting 0 as positive or negative makes no difference in the output. Runs of two bytes adjacent to non-runs are typically written as literal data.  It should also be noted that there is no way based on the PackBits data to determine the end of the data stream; that is to say, one must already know the size of the compressed or uncompressed data before reading a PackBits data stream to know where it ends.
+
+== External links==
+*[http://developer.apple.com/technotes/tn/tn1023.html Apple webpage describing the PackBits format]
+
+[[Category:Lossless compression algorithms]]</body> </html>

@@ -1,0 +1,70 @@
+<html> <head> <title>XCore XS1-L1</title></head><body>{{Infobox CPU
+| name        = XS1-L1
+| image       = XCore XS1-L1 64QFP.png
+| caption     = An [[XMOS]] Xcore-L processor, 64 [[QFP|LQFP]] package, 10x10 mm.
+| produced-start = 2009
+| produced-end = 
+| slowest     = | slow-unit     = MHz
+| fastest     =  500 | fast-unit     = MHz 
+| manuf1      =
+| arch        = [[XCore XS1]]
+| pack1       = 64 [[QFP|LQFP-EP]]
+| pack2       = 128 [[QFP|TQFP-EP]]
+| pack3       = 124 dual row [[QFN]]
+| numcores = 1 or 2
+}}
+The '''XS1-L1''' 
+<ref>{{cite web
+|url=https://www.xmos.com/download/public/XM-000305-DS-2.pdf
+|title=XCore XS1-L1 datasheet
+|accessdate=2009-06-24
+|work = [[XMOS]] web site
+}}</ref>
+is a [[Microprocessor|processor]] designed by [[XMOS]]. It is a 32-bit processor, that runs up to 8 concurrent threads. It was available as of June 2009 running at 400 MHz. As of April 2010 500 Mhz versions are available.  Each thread can run at up to 125 MHz; four threads follow each other through the [[Instruction pipeline|pipeline]], resulting in a top speed of 500 MIPS if at least four threads are active. The 500 MIPS of each core is equally distributed over all active threads. This allows the use of extra threads in order to hide latency.
+
+== Description ==
+
+The XS1-L1 comprises a single core processor and a switch. The execution core has a data path, a memory, and register banks for eight threads. The switches of two or more XS1-L1 processors can be connected using a link, whereupon threads can communicate with each other by exchanging messages through the switches. The switching mechanism is abstracted by means of a [[channel (programming)|channel]], a virtual connection between two threads.
+
+The XS1-L1 is an [[Event (computing)|event driven processor]] which enables the processor to stop a thread and restart it when an event is ready. In addition, a thread may be [[interrupts|interrupted]] in order to deal with some external events.
+
+The switch has eight external links, permitting a maximum throughput of 3.2 GBits/s to other cores.
+
+==Instruction Set Architecture==
+
+{{main|XCore XS1}}
+
+Each thread has access to 12 general purpose registers, and a standard [[Instruction_set#Number_of_operands|3-operand instruction set]] is used for programming the thread<ref>{{cite web
+|url=https://www.xmos.com/download/public/XM-000324-RF-1.pdf
+|title=XMOS XS1 Instruction Set Architecture
+|accessdate=2009-01-19
+|work = [[XMOS]] web site
+}}</ref> . The instruction set is encoded densely, encoding most instructions in 16 bits, where 11 bits are used for specifying 3 operands, and 5 bits are used to encode the opcode. Less frequently used instructions are encoded in 32 bits.
+The instruction set is a [[Load-store architecture|load-store]] instruction set.
+All instructions execute in a single cycle. If an instruction does not need data from memory (for example, arithmetic operations), the instruction will prefetch a word of instructions.This acts like a very small [[instruction cache]], but its behaviour can be predicted at [[compile time]], making timing behaviour as predictable as functional behaviour.
+
+==Concurrency==
+
+The core runs eight threads concurrently. These threads can communicate and synchronise using memory, registers, channels, locks, or synchronisers. 
+
+* Each thread has single-cycle access to memory; and as such the single core can be viewed as an 8-processor [[Symmetric_multiprocessing|SMP]].
+
+* Threads can use [[Semaphore_(programming)|locks]] in order to guarantee mutual access. Access to locks is via single instructions.
+
+* Threads can also use [[Channel_(programming)|Channels]] to communicate and synchronise allowing a [[Communicating_sequential_processes|CSP]] style of programming. Channels can be operated on using single cycle instructions.
+
+* Finally a [[Barrier_(computer_science)|Barrier]] can be used; a barrier is entered using a single instruction, and when all threads that want to synchronise have reached the barrier they are all released within a single thread-cycle.
+
+==Switch==
+
+The XS1-L has a [[XSwitch]] that enables the core to communicate with other cores. The switch has four internal links into the core, and eight external links, four of whom are available on I/O pins.
+
+== References ==
+{{reflist|2}}
+
+== External links ==
+* [https://www.xmos.com/download/public/XM-000324-RF-1.pdf XMOS XCore Architecture]
+
+[[Category:Instruction processing]]
+[[Category:Digital signal processors]]
+[[Category:Parallel computing]]</body> </html>

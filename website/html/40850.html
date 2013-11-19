@@ -1,0 +1,84 @@
+<html> <head> <title>Yadis</title></head><body>[[Image:Yadis-logo-1 0.jpg|right|thumb|150px|Yadis logo]]
+
+'''Yadis''' is a [[communications protocol]] for discovery of services such as [[OpenID]], [[OAuth]], and [[XDI]] connected to a Yadis ID. While intended to discover [[digital identity]] services, Yadis is not restricted to those. Other services can easily be included.
+
+A Yadis ID can either be a traditional [[Uniform Resource Locator|URL]] or a newer [[XRI]] [[i-name]], where the i-name must resolve to a URL. The so called Yadis URL either equals the Yadis ID (if this is a URL) or the resolved URL of the XRI i-name.
+
+Furthermore, Yadis specifies how to use the Yadis URL to retrieve a service descriptor called ''Yadis Resource Descriptor''. This descriptor follows the [[XRDS]] format and connects several services, like authentication or authorization to the Yadis URL. Each service description can have further parameters.
+
+== Modular architecture ==
+
+Yadis follows the [[Representational State Transfer|REST]]-ful, "small pieces loosely joined" paradigm that has proven to be successful in the development of the web.
+
+The basic assumption is that identities can be addressed with URLs or with other identifiers (such as [[XRI]] [[i-name]]s) that can be resolved to URLs. Yadis then associates an [[XRDS]] document (an XML-based capability file) with each URL that expresses the associated capabilities or services.
+
+The owner of a Yadis identifier can choose which services he wishes to use in his [[XRDS]] document. After retrieving this document, a relying party such as a website accepting Yadis identifiers can select an appropriate services of the XRDS document, e.g. a protocol to use for authentication. This can allow existing web sites, like blogs, to easily implement basic Yadis functionality (for instance, redirecting users who arrive at a blog to relevant information about the person the blog belongs to) while also making it possible to build more advanced applications (for example, allowing complex queries of a site-owner's information to be submitted directly to the Yadis site).
+
+== Discovery of the Yadis Resource Descriptor ==
+
+The capability document associated with an identity URL is found either:
+# By following a custom HTTP response header called <code>X-XRDS-Location</code>,
+# By an equivalent entry in the HTML HEAD section, called<br><code><nowiki><meta http-equiv="X-XRDS-Location" content="http://example.com/yadis.xml"></nowiki></code>, or
+# By requesting a special mime type called <code>application/xrds+xml</code> when performing an HTTP GET on the identity URL.
+
+Developers can choose which of the alternatives to implement, based on factors such as whether they can run software at the identity URL or not.
+
+== XRDS documents ==
+
+Here is an example [[XRDS]] capability document:
+<source lang="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)"
+xmlns:openid="http://openid.net/xmlns/1.0">
+  <XRD>
+    <Service priority="50">
+      <Type>http://openid.net/signon/1.0</Type>
+      <URI>http://www.myopenid.com/server</URI>
+      <openid:Delegate>http://smoker.myopenid.com/</openid:Delegate>
+    </Service>
+    <Service priority="10">
+      <Type>http://openid.net/signon/1.0</Type>
+      <URI>http://www.livejournal.com/openid/server.bml</URI>
+      <openid:Delegate>http://www.livejournal.com/users/frank/</openid:Delegate>
+    </Service>
+    <Service priority="20">
+      <Type>http://lid.netmesh.org/sso/2.0</Type>
+      <URI>http://mylid.net/liddemouser</URI>
+    </Service>
+    <Service>
+      <Type>http://lid.netmesh.org/sso/1.0</Type>
+    </Service>
+  </XRD>
+</xrds:XRDS>
+</source>
+
+If this [[XRDS]] document was returned, using one of the listed mechanisms, for a URL, it would express the following information:
+* The URL is a Yadis identity URL.
+* This URL supports the [[OpenID]] protocol, through two servers and two delegates.
+* This URL supports version 1.0 and version 2.0 of the [[Light-Weight Identity|LID]] protocol, with a delegate.
+* The owner of this identity URL prefers to sign-on using their LiveJournal account and the [[OpenID]] protocol (priority 10). If that is not possible (e.g. because a relying party does not support OpenID, or because the LiveJournal server is unavailable), the owner would like to use the [[Light-Weight Identity|LID]] URL <nowiki>http://mylid.net/liddemouser</nowiki> (priority 20), followed by the MyOpenID service (priority 50).
+
+== LID, OpenID and the developer community ==
+Yadis was initiated by developers of the [[Light-Weight Identity|Light-Weight Identity (LID)]] and [[OpenID]] protocols. This collaboration was then joined by members of the [[OASIS (organization)|OASIS]] [[XRI]] Technical Committee, particularly those working on [[i-name]]s.
+
+However, Yadis is an open initiative, so other developers will start using [[XRDS]] lightweight capabilities description, making possible a "mix and match" approach to building Yadis-enabled applications, enabling application developers to choose their own balance between ease of implementation on one hand, and range of features on the other.
+
+== See also ==
+*[[XRDS]]
+*[[Liberty Alliance]]
+*[[InfoCard]]
+*[[OpenID]]
+*[[Light-Weight Identity]] (LID)
+*[[i-name]]
+*[[XRI]]
+
+==External links==
+*[http://yadis.org/wiki/Main_Page The Yadis Project]
+*[http://yadis.org/wiki/Yadis_Implementations Yadis implementations]
+*[http://www.openidenabled.com/yadis/creating-a-yadis-services-document The Yadis section of OpenIDEnabled.com]
+
+[[Category:Identity management systems]]
+
+[[de:Yadis]]
+[[nl:Yadis]]
+[[ru:Yadis]]</body> </html>

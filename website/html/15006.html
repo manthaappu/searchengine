@@ -1,0 +1,44 @@
+<html> <head> <title>Generative topographic map</title></head><body>'''Generative topographic map (GTM)''' is a [[machine learning]] method that is a probabilistic counterpart of the [[self-organizing map]] (SOM), is provably convergent and does not require a shrinking [[Neighbourhood (mathematics)| neighborhood]] or a decreasing step size. It is a [[generative model]]: the data is assumed to arise by first probabilistically picking a point in a low-dimensional space, mapping the point to the observed high-dimensional input space (via a smooth function), then adding noise in that space. The parameters of the low-dimensional probability distribution, the smooth map and the noise are all learned from the training data using the [[expectation-maximization]] (EM) algorithm.  GTM was introduced in 1996 in a paper by [[Christopher M. Bishop]], Markus Svensen, and Christopher K. I. Williams.
+
+== Details of the algorithm ==
+
+The approach is strongly related to [[density networks]] which use [[importance sampling]] and a [[multi-layer perceptron]] to form a non-linear [[latent variable model]]. In the GTM the latent space is a discrete grid of points which is assumed to be non-linearly projected into data space. A [[Gaussian noise]] assumption is then made in data space so that the model becomes a constrained [[Gaussian_mixture_model|mixture of Gaussians]]. Then the model's likelihood can be maximized by EM. 
+
+In theory, an arbitrary nonlinear parametric deformation could be used.  The optimal parameters could be found by gradient descent etc.
+
+The suggested approach to the nonlinear mapping is to use a [[radial basis function network]] (RBF) to create a nonlinear mapping between the latent space and the data space. The nodes of the  
+RBF network then form a feature space and the nonlinear mapping can then be taken as a [[linear transform]] of this feature space.  This approach has the advantage over the suggested density network approach that it can be optimised analytically.
+
+== Uses ==
+
+In data analysis, GTMs are like a nonlinear version of [[principal components analysis]], which allows high dimensional data to be modelled as resulting from Gaussian noise added to sources in lower-dimensional latent space.  For example, to locate stocks in plottable 2D space based on their hi-D time-series shapes.  Other applications may want to have fewer sources than data points, for example mixture models.
+
+In generative [[deformational modelling]], the latent and data spaces have the same dimensions, for example, 2D images or 1 audio sound waves.  Extra 'empty' dimensions are added to the source (known as the 'template' in this form of modelling), for example locating the 1D sound wave in 2D space.  Further nonlinear dimensions are then added, produced by combining the original dimensions.  The enlarged latent space is then projected back into the 1D data space.  The probability of a given projection is, as before, given by the product of the likelihood of the data under the Gaussian noise model with the prior on the deformation parameter.  Unlike conventional spring-based deformation modelling, this has the advantage of being analytically optimizable.  The disadvantage is that it is a 'data-mining' approach, ie. the shape of the deformation prior is unlikely to be meaningful as an explanation of the possible deformations, as it is based on a very high, artificial- and arbitrarily constructed nonlinear latent space.  For this reason the prior is learned from data rather than created by a human expert, as is possible for spring-based models.
+
+== Comparison with Kohonen's self-organizing maps ==
+
+While nodes in the [[Self-organizing_map|self-organizing map (SOM)]] can wander around at will, GTM nodes are constrained by the allowable transformations and their probabilities.  If the deformations are well-behaved the topology of the latent space is preserved.
+ 
+The SOM was created as a biological model of neurons and is a heuristic algorithm. By contrast, the GTM has nothing to do with neuroscience or cognition and is a probabilistically principled model. Thus, it has a number of advantages over SOM, namely:
+* it explicitly formulates a density model over the data.
+* it uses a cost function that quantifies how well the map is trained.
+* it uses a sound optimization procedure ([[Expectation_maximization|EM]] algorithm).
+
+GTM was introduced by Bishop, Svensen and Williams in their Technical Report in 1997 (Technical Report NCRG/96/015, Aston University, UK) published later in Neural Computation. It was also described in [[PhD]] thesis of Markus Svensen (Aston, 1998).
+
+== See also ==
+* [[Self-organizing_map|Self-organizing map (SOM)]]
+* [[Artificial Neural Network]]
+* [[Connectionism]]
+* [[Data mining]]
+* [[Machine learning]]
+* [[Nonlinear dimensionality reduction]]
+* [[Neural network software]]
+* [[Pattern recognition]]
+
+== External links ==
+* [http://research.microsoft.com/~cmbishop/downloads/Bishop-GTM-Ncomp-98.pdf Bishop, Svensen and Williams Generative Topographic Mapping paper]
+* [http://www.ncrg.aston.ac.uk/GTM/ Generative topographic mapping] developed at the Neural Computing Research Group os Aston University (UK). ( Matlab toolbox )
+
+
+[[Category:Machine learning]]</body> </html>

@@ -1,0 +1,23 @@
+<html> <head> <title>Semantic security</title></head><body>'''Semantic security''' is a widely-used definition for security in an [[asymmetric key encryption algorithm]].  For a cryptosystem to be semantically secure, it must be infeasible for a [[computational complexity|computationally-bounded]] [[Adversary (cryptography)|adversary]] to derive significant information about a message (plaintext) when given only its [[ciphertext]] and the corresponding public encryption key.  Semantic security considers only the case of a "passive" attacker, i.e., one who generates and observes ciphertexts using the public key and plaintexts of her choice.  Unlike other security definitions, semantic security does not consider the case of [[chosen ciphertext attack]] ([[CCA]]), where an attacker is able to request the decryption of chosen ciphertexts, and many semantically-secure encryption schemes are demonstrably insecure against chosen ciphertext attack.  Consequently, semantic security is now considered an insufficient condition for securing a general-purpose encryption scheme.
+
+The notion of semantic security was first put forward by [[Shafi Goldwasser|Goldwasser]] and [[Silvio Micali|Micali]] in 1982.<ref name="goldwasser-micali 1982">[[Shafi Goldwasser|S. Goldwasser]] and [[Silvio Micali|S. Micali]], [http://portal.acm.org/citation.cfm?id=802212 Probabilistic encryption & how to play mental poker keeping secret all partial information], Annual ACM Symposium on Theory of Computing, 1982.</ref>  However, the definition they initially proposed offered no straightforward means to prove the security of practical cryptosystems.  Goldwasser/Micali subsequently demonstrated that semantic security is equivalent to the another definition of security called [[ciphertext indistinguishability]].<ref name="goldwasser-micali 1984">[[Shafi Goldwasser|S. Goldwasser]] and [[Silvio Micali|S. Micali]], [http://dx.doi.org/10.1016/0022-0000(84)90070-9 Probabilistic encryption]. Journal of Computer and System Sciences, 28:270-299, 1984.</ref>  This later definition is more common than the original definition of semantic security because it better facilitates proving the security of practical cryptosystems.
+
+Indistinguishability under [[chosen plaintext attack|Chosen Plaintext Attack]] ([[IND-CPA]]) is commonly defined by the following [[game]]:
+
+# A probabilistic polynomial time-bounded adversary is given a public key, which it may use to generate any number of ciphertexts (within polynomial bounds).
+# The adversary generates two equal-length messages <math>m_0</math> and <math>m_1</math>, and transmits them to a challenge oracle along with the public key.  
+# The challenge oracle selects one of the messages by flipping a fair coin, encrypts the message under the public key, and returns the resulting ciphertext <math>c</math> to the adversary.
+
+The underlying [[cryptosystem]] is IND-CPA (and thus semantically secure under chosen plaintext attack) if the adversary cannot determine which of the two messages was chosen by the oracle, with probability significantly greater than <math>1/2</math> (the success rate of random guessing).  Variants of this definition define indistinguishability under [[chosen ciphertext attack]] and [[adaptive chosen ciphertext attack]] ([[IND-CCA]], [[IND-CCA2]]).
+
+Because the adversary possesses the public encryption key in the above game, a semantically secure encryption scheme must by definition be [[probabilistic encryption|probabilistic]], possessing a component of [[randomness]]; if this were not the case, the adversary could simply compute the deterministic encryption of <math>m_0</math> and <math>m_1</math> and compare these encryptions with the returned ciphertext <math>c</math> to successfully guess the oracle's choice.
+
+Semantically secure encryption algorithms include [[Goldwasser-Micali cryptosystem|Goldwasser-Micali]], [[El Gamal]] and [[Paillier]].  These schemes are considered [[provable security|provably secure]], as their semantic security can be reduced to solving some hard mathematical problem (e.g., [[Decisional Diffie-Hellman assumption|Decisional Diffie-Hellman]] or the [[Quadratic Residuosity Problem]]).  Other, non-semantically-secure algorithms such as [[RSA]], can be made semantically secure (under stronger assumptions) through the use of random encryption padding schemes such as [[Optimal Asymmetric Encryption Padding]] (OAEP).
+
+==References==  
+<references />
+[[Category:Theory of cryptography]]
+
+[[fr:Sécurité sémantique]]
+[[it:Sicurezza semantica]]
+[[tr:Anlamsal güvenlik]]</body> </html>

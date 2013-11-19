@@ -1,0 +1,58 @@
+<html> <head> <title>Register window</title></head><body>{{Unreferenced|date=March 2008}}
+[[File:Register window.png|thumb|Example of a 4-window register window system]]
+In [[computer engineering]], the use of '''register windows''' is a technique to improve the performance of a particularly common operation, the [[procedure call]]. This was one of the main design features of the original [[Berkeley RISC]] design, which would later be commercialized as the [[SPARC]], [[AMD 29000]], and [[Intel i960]].
+
+Most [[Central processing unit|CPU]] designs include a small amount of very high-speed memory known as [[processor register|registers]]. Registers are used by the CPU in order to hold temporary values while working on longer strings of instructions. Considerable performance can be added to a design with more registers, however, since the registers are a visible piece of the CPU's [[instruction set]], the number cannot typically be changed after the design has been released.
+
+While registers are almost a universal solution to performance, they do have a drawback. Different parts of a computer program all use their own temporary values, and therefore compete for the use of the registers. Since a good understanding of the nature of program flow at [[Run time (computing)|runtime]] is very difficult, there is no easy way for the developer to know in advance how many registers they should use, and how many to leave aside for other parts of the program. In general these sorts of considerations are ignored, and the developers, and more likely, the [[compiler]]s they use, attempt to use all the registers visible to them.  (In the case of processors with very few registers to begin with, this is also the only reasonable course of action.)
+
+This is where register windows become useful. Since every part of a program wants registers for its own use, it makes sense to provide several sets of registers for the different parts of the program. Of course if these registers were visible, there would simply be more registers to compete over, the "trick" is to make them invisible. This is actually somewhat simpler than it might sound; the movement from one part of the program to another during a procedure call is easily "seen", it is accomplished by one of a small number of instructions and ends with one of a similarly small set. In the Berkeley design, these calls would cause a new set of registers to be "swapped in" at that point, or marked as "dead" (or "reusable") when the call ends.
+
+In the Berkeley RISC design, only eight registers were visible to the programs, out of a total of 64. The complete set of registers was known as the [[register file]], and any particular set of eight as a '''window'''. The file allowed up to eight procedure calls to have their own register sets. As long as the program did not call down chains longer than eight calls deep, the registers never had to be ''spilled'' (saved out to main memory or cache), a terribly slow process compared to register access. For many programs a chain of six is as deep as the program will go.
+
+By comparison the [[Sun Microsystems]] [[SPARC]] architecture provides simultaneous visibility into four sets of eight registers each. Three sets of eight registers each are "windowed". Eight registers (i0 through i7) form the input registers to the current procedure level. Eight registers (L0 through L7) are local to the current procedure level, and eight registers (o0 through o7) are the outputs from the current procedure level to the next level called. When a procedure is called, the register window shifts by sixteen registers, hiding the old input registers and old local registers and making the old output registers the new input registers.
+The common registers (old output registers and new input registers) are used for parameter passing. Finally, eight registers (g0 through g7) are globally visible to all procedure levels.
+
+The AMD 29000 improved the design by allowing the windows to be of variable size, which helps utilization in the common case where fewer than eight registers are needed for a call. It also separated the registers into a global set of 64, and an additional 128 for the windows.
+
+Register windows also provide an easy upgrade path. Since the additional registers are invisible to the programs, additional windows can be added at any time. For instance, the use of [[object-oriented programming]] often results in a greater number of "smaller" calls, which can be accommodated by increasing the windows from eight to sixteen for instance. This was the approach used in the SPARC, which has included more register windows with newer generations of the architecture. The end result is fewer slow register window ''spill'' and ''fill'' operations because the register windows overflow less often.
+
+Register windows are not the only way to improve register performance. The group at [[Stanford University]] designing the [[MIPS architecture]] saw the Berkeley work and decided that the problem was not a shortage of registers, but poor utilization of the existing ones. They instead invested more time in their [[compiler]]'s [[register allocation]], making sure it wisely used the larger set available in the MIPS [[instruction set]]. This resulted in reduced complexity of the chip, with one half the total number of registers, while offering potentially higher performance in those cases where a single procedure could make use of the larger visible register space. In the end, with modern compilers, the MIPS design makes better use of its register space even during procedure calls.{{Fact|date=December 2008}}
+
+==See also==
+* [[Register renaming]]
+
+== References ==
+* {{Cite conference
+  | first1 = Mike
+  | last1 = Frantzen
+  | first2 = Mike
+  | last2 = Shuey
+  | title = StackGhost: Hardware Facilitated Stack Protection
+  | booktitle = Proceedings of the 10th Usenix Security Symposium
+  | pages = 55–66
+  | publisher = [[USENIX]]
+  | date = 2001
+  | url = http://www.usenix.org/events/sec01/full_papers/frantzen/frantzen_html/node5.html
+  | accessdate = 27 August 2010 }}
+* {{Cite web
+  | last = Magnusson
+  | first = Peter
+  | authorlink =
+  | title = Understanding stacks and registers in the Sparc architecture(s)
+  | date = April 1997
+  | url = http://www.sics.se/~psm/sparcstack.html
+  | format = 
+  | doi = 
+  | accessdate = 27 August 2010 }}
+
+
+
+{{DEFAULTSORT:Register Window}}
+[[Category:Digital registers]]
+[[Category:Instruction processing]]
+
+[[de:Registerfenster]]
+[[fr:Fenêtre de registres]]
+[[it:Register window]]
+[[ja:レジスタ・ウィンドウ]]</body> </html>

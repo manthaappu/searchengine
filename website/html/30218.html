@@ -1,0 +1,54 @@
+<html> <head> <title>Programming by permutation</title></head><body>'''Programming by permutation''' is an approach to software development wherein a programming problem is solved by iteratively making small changes ([[permutations]]) and testing each change to see if it behaves as expected. This approach sometimes seems attractive when the programmer does not fully understand the code and believes that one or more small modifications may result in code that is correct.
+
+This tactic is rarely productive because:
+* a series of small modifications can easily introduce bugs into the code, leading to a "solution" that is even less correct than the starting point
+* many false starts and corrections usually occur before a satisfactory endpoint is reached
+* it is rarely possible to measure, by empirical testing, whether the solution will work for all cases
+* in the worst case, with poor code management, the original state of the code may be irretrievably lost
+
+Programming by permutation gives little or no assurance about the quality of the code produced -- it is the polar opposite of [[Formal verification]].
+
+Programmers are often compelled to program by permutation when an [[API]] is insufficiently documented. This lack of clarity drives others to [[Copy_and_paste_programming|copy and paste]] from reference code which is assumed to be correct, but was itself written as a result of programming by permutation.
+
+In some cases where the programmer can logically explain that exactly one out of a small set of variations must work, programming by permutation leads to correct code (which then can be verified) and makes it unnecessary to think about the other (wrong) variations.
+
+== Example ==
+For example, the following code sample in [[C (programming language)|C]] (intended to find and copy a series of digits from a larger string) has several problems:
+
+<source lang="c">
+char* buffer = "123abc";
+char destination[10];
+                                                                                
+int i = 0;
+int j = 0;
+int l = strlen(buffer);
+
+while (i < l)
+{
+    if (isdigit(buffer[i])) destination[j++] = buffer[i++];
+    i++;
+}
+
+destination[j] = '\0';
+printf("%s\n", destination);
+</source>
+
+First of all, it doesn't give the right answer. With the given starting string, it produces the output "13", when the correct answer is "123". A programmer who does not recognize the structural problems may seize on one statement, saying "ah, there's an extra increment". The line "i++" is removed; but testing the code results in an infinite loop. "Oops, wrong increment." The former statement is added back, and the line above it is changed to remove the post-increment of variable i:
+
+<source lang="c">
+    if (isdigit(buffer[i])) destination[j++] = buffer[i];
+</source>
+
+Testing the code now produces the correct answer, "123". The programmer sighs in contentment: "There, that did it. All finished now." Additional testing with various other input strings bears out this conclusion.
+
+Of course, other problems remain. Because the programmer does not take the trouble to fully understand the code, they go unrecognized:
+* If the input contains several numbers separated by non-digit characters, such as "123ab456", the destination receives all the digits, concatenated together
+* If the input string is larger than the destination array, a buffer overflow will occur
+* If the input string is longer than INT_MAX, the behaviour is undefined as strlen() returns a value of type size_t which is an unsigned integer and may be wider than int.
+* If char is a signed type and the input string contains characters that are not in the range of 0..UCHAR_MAX after integer promotion, the call to isdigit() has undefined behaviour.
+
+While the solution is correct for a limited set of input strings, it is not fully correct, and since the programmer did not bother to understand the code, the errors will not be discovered until a later testing stage, if at all.
+
+Also known as "Trial and Error", "Generate and Test", "Poke and Hope" [http://www.galactic-guide.com/articles/2U22.html], "The Birdshot Method" and the "Million Monkeys Programming Style".
+
+[[Category:Anti-patterns]]</body> </html>

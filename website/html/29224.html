@@ -1,0 +1,143 @@
+<html> <head> <title>Pick operating system</title></head><body>{{Infobox OS
+| name                   = Pick operating system
+| logo                   = 
+| screenshot             = 
+| caption                = 
+| developer              = Don Nelson, Dick Pick, [[TRW]]
+| source_model           = 
+| kernel_type            = [[monolithic kernel|Monolithic]] (or none for [[operating environment]] implementations)
+| supported_platforms    = [[Linux]], [[AIX]], [[Windows Server]] (2000 and up)
+| ui                     = [[text-based (computing)|Text-based]]
+| family                 = 
+| released               = 1965 ([[GIRLS]]), 1973 (Reality Operating System)
+| latest_release_version = 
+| latest_release_date    = 
+| latest_test_version    = 
+| latest_test_date       = 
+| marketing_target       = Business [[data processing]]
+| programmed_in          = [[Assembly language]]
+| prog_language          = Data/BASIC ([[BASIC]]-like), [[PROC procedure language]], [[ENGLISH (programming language)|ENGLISH]]
+| language               = [[English language|English]]
+| updatemodel            = 
+| package_manager        = 
+| working_state          = 
+| license                = ?
+| website                = 
+}}
+The '''Pick operating system''' (often called just "the '''Pick system'''" or simply "Pick") is a [[demand paging|demand-paged]], multiuser, [[virtual memory]], [[time-sharing]] [[operating system]] based around a unique [[MultiValue|"multivalued" database]]. Pick is used primarily for business [[data processing]].
+
+The term "Pick system" has also come to be used as the general name of all [[operating environment]]s which employ this multivalued database and have some implementation of Pick/BASIC and [[ENGLISH (programming language)|ENGLISH]]/[[Access query language|Access]] queries. Although Pick started on a variety of [[minicomputer]]s, the system and its various implementations eventually spread to a large assortment of [[microcomputer]]s and [[mainframe computer]]s and is still in use today.
+
+==Overview==
+The Pick database is a '[[hash table|hash-file]]' data management system.  A hash-file system is a collection of dynamic [[associative array]]s which are organized altogether and linked and controlled using associative files as a database management system.  Being hash-file oriented, Pick provides efficiency in data access time.  All data structures in Pick are hash-files (at the lowest level) meaning records are stored as associated couplets of a primary key to a set of values.
+
+A Pick database is divided into one or more accounts, master dictionaries, dictionaries, files and sub-files, each of which is a hash-table oriented file.  These files contain records made up of fields, sub-fields and sub-sub-fields.  In Pick, records are called items, fields are called attributes, and sub-fields are called values or sub-values (hence the present-day label "multivalued database").  All elements are variable-length, with field and values marked off by special delimiters, so that any file, record, or field may contain any number of entries of the lower level of entity.  As a result, a Pick item (record) can be one complete entity (one entire invoice, purchase order, sales order, etc.), or is like a file on most conventional systems.  Entities that are stored as 'files' in other common-place systems (i.e. source programs and text documents) must be stored as records within files on Pick.
+
+The file hierarchy is roughly equivalent to the common [[Unix-like]] hierarchy of directories, sub-directories, and files.  The master dictionary is similar to a directory in that it stores pointers to other dictionaries, files and executable programs.  The master dictionary also contain the command-line language.
+
+All files (accounts, dictionaries, files, sub-files) are organized identically as are all records.  This uniformity is exploited throughout the system, both by system functions, and by the system administration commands.  For example, the 'find' command will find and report the occurrence of a word or phrase in a file, and can operate on any account, dictionary, file or sub-file.
+
+Each record must have a unique, primary key which determines where in a file that record is stored.  To retrieve a record, its key is [[hash function|hashed]] and the resultant value specifies which of a set of discrete "buckets" (called "groups") to look in for the record. (Within a bucket, records are scanned sequentially.)  Therefore, most records (i.e. a complete document) can be read-up using one single disk-read operation.  This same method is used to write the record back to its correct "bucket".
+
+In its initial implementation, Pick records were limited to 32K bytes in total (when a 10MB hard disk cost [[United States dollar|US$]]5000), although this limit was removed in the 1980s.  Files can retain an unlimited number of records, but retrieval efficiency is determined by the number of records relative to the number of buckets allocated to the file.  Each file may be initially allocated as many buckets as required, although changing this extent later may (for some filetypes) require the file to be quiescent. All modern multi-value databases have a special file-type which changes extent dynamically as the file is used. These use a technique called linear hashing, whose cost is proportional to the change in file size, not (as in typical hashed files) the file size itself.  All files start as a contiguous group of disk pages, and grow by linking additional "overflow" pages from unused disk space.
+
+Initial Pick implementations had no index structures as they were not deemed necessary.  Around 1990, a [[B-tree]] indexing feature was added.  This feature makes secondary key look-ups operate much like keyed inquiries of any other database system: requiring at least two disk reads (a key read then a data-record read).
+
+Files include a "dictionary" fork, and the items in the dictionary fork serve as definitions for the names and structure of the items in the data fork.  The dictionary is optional, the system does not use the contents of the dictionary to ensure the integrity of the file as some other DBMS file-systems do;  rather it is used only for the reporting tool.  A Pick database has no [[data typing]] since all data is stored as characters, including numbers (which are stored as character decimal digits).  Data [[integrity]], rather than being controlled by the system, is controlled by the applications and the discipline of the programmers.  But, because a logical document in Pick is not fragmented (as it would be in SQL) intra-record integrity is automatic. 
+
+In contrast to many [[SQL]] [[database system]]s, Pick allows for multiple, pre-computed field aliases.  For example, a date field may have an alias definition for the format 12 Oct 1999, and another alias formatting that same date field like 10/12/99.  File cross-connects or joins are handled as a synonym definition of the foreign key.  A customer's data, such as name and address, are 'joined' from the customer file into the invoice file via a synonym definition of customer number in the invoice dictionary.
+
+Pick record structure favors a "denormalized" decomposition, where all of the data for an entity is stored in a single record, obviating the need to perform [[join]]s.  Managing large, sparse data sets in this way can result in efficient use of storage space.
+
+==History==
+Pick was originally implemented as the [[Generalized Information Retrieval Language System]] (GIRLS) on an [[IBM System/360]] in 1965 by Don Nelson and Dick Pick at [[TRW]] for use by the [[U.S. Army]] to control the inventory of [[Lockheed AH-56 Cheyenne|Cheyenne helicopter]] parts.  Pick was subsequently commercially released in 1973 by [[Microdata Corporation]] (and their British distributor CMC) as the Reality Operating System now supplied by [[Northgate Information Solutions]].  
+
+Originally on the Microdata implementation, and subsequently implemented on all Pick systems, a [[BASIC]]-like language called Data/BASIC with numerous syntax extensions for [[computer terminal#Dumb terminal|smart terminal interface]] and database operations was the primary programming language for applications.  A [[PROC procedure language]] was provided for executing [[scripting language|scripts]].  A [[SQL]]-style language called [[ENGLISH (programming language)|ENGLISH]] allowed database retrieval and reporting, but not updates (although later, the English command "REFORMAT" allowed updates on a batch basis).  ENGLISH did not fully allow manipulating the 3-dimensional multivalued structure of data records. Nor did it directly provide common [[relational]] capabilities such as [[join (SQL)|join]]s. This was because powerful [[data dictionary]] redefinitions for a field allowed [[join (SQL)|join]]s via the execution of a calculated lookup in another file.  The system included a [[spooler]].  A simple [[text editor]] for file-system records was provided, but the editor was only suitable for system maintenance, and could not lock records, so most applications were written with the other tools such as Batch, RPL, or the BASIC language so as to ensure data validation and allow [[record locking]].
+
+Dick Pick had founded Pick & Associates, later renamed Pick Systems then Raining Data and currently called TigerLogic, and licensed what was now called "Pick" to a large variety of manufacturers and vendors who have produced different "flavors" of Pick.  The database flavors sold by TigerLogic is now known as D3, mvBase, and mvEnterprise. Those sold by [[IBM]] under the "[[IBM U2|U2]]" umbrella are known as UniData and UniVerse. Dick Pick died of stroke complications in October 1994.
+
+Pick Systems was often tangled in licensing litigation, and relatively little effort was devoted to marketing and improving the software.  Subsequent ports of Pick to other platforms generally offered the same tools and capabilities for many years, usually with relatively minor improvements and simply renamed (for example, Data/BASIC became Pick/BASIC and ENGLISH became [[Access query language|ACCESS]]).  Licensees often developed proprietary variations and enhancements (for example, Microdata created their own input processor called ScreenPro). <!-- Major corporations using Pick in its various flavors include:
+* [[Standard & Poor's]], a division of The McGraw-Hill Companies
+* Blue Cross, RC Willey, EastAlco Aluminum, Norm Thompson, Takagi Tools, Stash Tea Company, Optiva, Sony, Johnson Controls, Adobe, Ball, CNN, Polynesian Cultural Ctr., PetCo, UCLA, Marriott International, Salant, Brooks Brothers, NSA, Nuskin, McGraw-Hill, NYC Public Library, Jayhawk Acceptance, Saul Ewing Remick, Federal Reserve Board, Lettuce Entertain You, HoneyBaked Ham, Eastex Crude, Snap-On Tools, Hughes Supply, Rooms to Go, L.A. Unified School Dist., Perrier, U.C. Berkeley, TMP Worldwide,  Aeroflex Laboratories, Norcold, Florida Hospital, eBAY, Foster Farms, Rally Mfg., Honeywell, Maines Paper, Prudential, First American Title, CSC Healthcare, NeighborCare, Yokohama Tire, ADP (Dealer Services), Reynolds and Reynolds, Xerox, Sprint, 24 Hour Fitness, Keane, Alltel, Walt Disney Studios, CIGNA Health, Rand McNally, Dacor, Ford Modeling Agency, 800 Call-KC, [[Wilmar]]/[[InterLine Brands]] -- unsourced, unverifiable -->
+
+==Derivative and related products==
+{{Cleanup|section|date=February 2009}}
+What most characterizes Pick is the design and features of the database and the associated retrieval language.  The Pick database was licensed to roughly three dozen licensees between 1978 and 1984, some of which are included in this list. Application-compatible implementations evolved into derivatives and also inspired similar systems, of which a few examples are:
+
+; Reality : The first implementation of the Pick database was on a Microdata platform and called [[Northgate Information Solutions|Reality]].  The first commercial release was in 1973.  The Microdata implementations ran in [[firmware]], so each upgrade had to be accompanied by a new chip.  Microdata itself was eventually bought by McDonnell-Douglas Information Systems.  Pick and Microdata sued each other for the right to market the database, the final judgment being that they both had the right.  In addition to the [[Northgate Information Solutions|Reality]] series of computers, Microdata sold the Sequel series which was a much larger class able to handle up to 200 simultaneous users.  The modern version of this original Pick implementation is owned and distributed by [http://www.northgate-is.com/reality Northgate Information Solutions Reality].
+; Ultimate : The second implementation of the Pick database was developed in about 1978 by a [[New Jersey]] company called The Ultimate Corp, run by [[Ted Sabarese]].  Like the earlier Microdata port, this was a firmware implementation, with the Pick monitor in firmware and the OS in software, on a Honeywell Level 6 machine. Later versions of the Ultimate systems used separate processors installed in the cabinet. Processor boards were built from bit slice processors and microcoded with the Pick assembler instruction set. One version of this was installed in a Honeywell Level 6 machine and was known as a "7X" system as it was seven times faster than the firmware system. The Honeywell processor acted as in input/output processor to the 7X board. Two 7X boards installed in a chassis formed the "15X" machine. Another version used a DEC [[LSI-11]] for the IOP and a 7X board. Ultimate enjoyed moderate success during the 1980s, and even included an implementation running as a layer on top of DEC VAX systems, the 750, 780, 785 and later the [[MicroVAX]]. Ultimate also had versions of the Ultimate Operating System running on IBM 370 series systems (under VM and native) and also the 9370 series computers.  Ultimate was renamed Allerion, Inc., before liquidation of its assets.  Most assets were acquired by Bull, and consisted of mostly maintaining extant hardware.  Bull had its own problems and in approximately 1994 the US maintenance operation was sold to Wang.
+; Prime INFORMATION : Devcom, a Microdata reseller, wrote a Pick-style database system called INFORMATION in [[FORTRAN]] and assembler in 1979 to run on [[Prime Computer]] 50-series systems. It was then sold to [[Prime Computer]] and renamed Prime INFORMATION. It was subsequently sold to Vmark Software. INFO/BASIC, a variant of [[Dartmouth BASIC]], was used for database applications.
+; PI/open : [[Prime Computer]] rewrote Prime INFORMATION in C for the [[Unix]]-based systems it was selling, calling it PI+. It was then ported to other Unix systems offered by other hardware vendors and renamed PI/open.
+; ADDS : ([[Applied Digital Data Systems]]) This was the first implementation to be done in software only, so upgrades were accomplished by a tape load, rather than a new chip. The "Mentor" line was initially based on the Zilog Z-8000 chipset and this port set off a flurry of other "''software implementations''" across a wide array of processors with a large emphasis on the Motorola 68000.
+; Fujitsu : Another software implementation, existing in the 1980s
+; Pyramid : Another software implementation, existing in the 1980s
+; General Automation "Zebra" : Another software implementation, existing in the 1980s
+; Sequoia : Another software implementation, existing from 1987.  Sequoia was most well-known for its fault-tolerant multi-processor model,<ref>[http://portal.acm.org/citation.cfm?id=327010.327218]</ref><ref>[http://books.google.com/books?id=KaoKOvqhe2YC&lpg=PA217&dq=sequoia%20fault-tolerant&pg=PA217#v=onepage&q=sequoia%20fault-tolerant&f=false]</ref> which would automatically call tech support if a part was failing.  The Enterprise Systems business unit (which was the unit that sold Pick), was sold to General Automation in 1996/1997.<ref>[http://www.highbeam.com/doc/1G1-19052836.html]</ref>
+; UniVerse : Another implementation of the system called [[Rocket U2|UniVerse]] was by VMark Software.  This was the first one to incorporate the ability to emulate other implementations of the system, such as Microdata's [[Northgate Information Solutions|Reality]] Operating System, and Prime INFORMATION. Originally running on [[Unix]], it was later also made available for [[Microsoft Windows|Windows]]. It now is owned by Rocket Software. (The systems developed by [[Prime Computer]] and VMark are now owned by [[Rocket Software]] and referred to as "U2".)
+; UniData : Very similar to UniVerse.  [[Rocket U2|UniData]] is a multivalued Pick-style database.  It is also owned and distributed by Rocket Software.
+; Revelation : In 1984, Cosmos released a Pick-style database called Revelation, later Advanced Revelation, for [[DOS]] on the [[IBM PC]].  Advanced Revelation is now owned by Revelation Technologies, which publishes a GUI-enabled version called [[OpenInsight]].
+; jBASE : [[jBASE]] was released in 1991 by a small company of the same name located in Hemel Hempstead. Written by former Microdata engineers, [[jBASE]] emulates all implementations of the system to some degree. [[jBASE]] is unique in that it compiles applications to native machine code form, rather than to an intermediate byte code.
+; UniVision : [[UniVision OS|UniVision]] was a Pick-style database, designed as a replacement for the Mentor version but with extended features, released in 1992 by [http://www.edp.co.uk/solutions/sol_univision.html EDP] located in Sheffield.
+; OpenQM : [[OpenQM]] is the only multi-value database product available both as a fully supported non-open source commercial product and in open source form under the General Public Licence ([http://gpl.openqm.com OpenQM Community Project]). It is available from [http://openqm.com/ OpenQM] and from [http://www.openqm.com02.net OpenQM in French].
+; Caché : In 2005 [[InterSystems]], the maker of [[Caché (software)|Caché]] database, announced support for a broad set of multi-value extensions in Caché. [http://www.intersystems.com/mv/index.html Caché for MultiValue].
+; Onware : ONware ends isolation of MultiValue applications. ONware equips these applications with the ability to use the common databases, such as Oracle and SQL Server. Using ONware you can integrate MultiValue applications with Relational, Object and Object-Relational applications.
+
+Through the implementations above, and others, Pick-like systems became available as database/programming/emulation environments running under many variants of [[Unix]] and [[Microsoft Windows]].
+
+Over the years, many important and widely used applications have been written using Pick or one of the derivative implementations. In general, the end users of these applications are unaware of the underlying Pick implementation. 
+
+The Pick OS invites comparison with [[MUMPS]], which evolved into [[Caché (software)|Caché]]. Similarities include:
+
+*Both systems are built on the efficient implementation of large, sparse, string-indexed arrays;
+*Both comingle the language and the OS;
+*Both have a similar domain of applicability.
+
+==Bibliography==
+* ''The REALITY Pocket Guide'' ; Jonathan E. Sisk ; Irvine, CA ; JES & Associates, Inc. ; 1981  {{OCLC|216178915}}
+* ''Exploring The Pick Operating System'' ; Jonathan E. Sisk ; Steve VanArsdale ; Hasbrouck Heights, N.J. ; Hayden Book Co. 1985. {{OCLC|12967951}}
+* ''The Pick Pocket Guide'' ; Jonathan E. Sisk ; Desk reference ed ; Hasbrouck Heights, N.J. ; Hayden Book Co. 1985. {{OCLC|18872552}}
+* ''The Pick Perspective'' ; Ian Jeffrey Sandler ; Blue Ridge Summit, PA ; TAB Professional and Reference Books;  1989. {{OCLC|18521562}}
+* ''Pick for professionals : advanced methods and techniques'' ; Harvey Rodstein ; Blue Ridge Summit, PA ; TAB Professional and Reference Books;  1990. {{OCLC|20452708}}
+* Encyclopedia PICK (EPICK) ; Jonathan E. Sisk ; Irvine, CA ; Pick Systems ; 1992 {{OCLC|28725247}}
+*''Le Système d'exploitation PICK'' ; Malcolm Bull ; Paris: Masson, 1989. {{OCLC|21247561}}
+*''The Pick operating system'' ; Joseph St John Bate;  Mike Wyatt; New York : Van Nostrand Reinhold, 1986. {{OCLC|14904780}}
+*''The Pick operating system'' ; Malcolm Bull ; London ; New York : Chapman and Hall, 1987. {{OCLC|13666782}}
+*''Systeme pick'' ; Patrick Roussel, Pierre Redoin, Michel Martin ; Paris: CEdi Test, 1988. {{OCLC|19546897}}
+*''Advanced PICK et UNIX : la nouvelle norme informatique'' ; Bruno Beninca; Aulnay-sous-Bois, Seine-Saint-Denis ; Relais Informatique International, 1990. {{OCLC|23242884}}
+*''Le systeme PICK : mode d'emploi d'un nouveau standard informatique'' ; Michel Lallement, Jeanne-Françoise Beltzer; Aulnay-sous-Bois, Seine-Saint-Denis ; Relais Informatique International, 1987. {{OCLC|20877971}}
+*''The Pick operating system : a practical guide'' ; Roger J Bourdon; Wokingham, England ; Reading, Mass. : Addison-Wesley, 1987. {{OCLC|	13945808}}
+*''Le Système d'éxploitation : réalités et perspectives'' ; Bernard de Coux; Paris : Afnor, 1988. {{OCLC|20078135}}
+*''Pick BASIC : a programmer's guide'' ; Jonathan E Sisk;Blue Ridge Summit, PA : TAB Professional and Reference Books, 1987. {{OCLC|16355134}}
+*''Pick BASIC : a reference guide'' ; Linda Mui; Sebastopol, CA : O'Reilly & Associates, 1990. {{OCLC|22147353}}
+*''Programming with IBM PC Basic and the Pick database system'' ; Blue Ridge Summit, PA : TAB Books, 1990. {{OCLC|19723037}}
+*''An overview of PICK system'' ;Shailesh Kamat; 1993. {{OCLC|29287280}}
+*''Pick: A Multilingual Operating System'' ; Charles M. Somerville; Computer Language Magazine, May 1987, p. 34.
+
+==References==
+Content relating to dates before 1987 being verified against paper.<ref>
+{{cite journal  | author = Dick Elleray
+  | title = Project Management Bulletin 1986/09 - "The Reality Operating System Revealed
+  | version = 1986/09
+  | publisher = Project Management Group, McDonnell Douglas Informations Systems Group
+  | date =  16 July 1986
+  | url =
+  | format = paper original
+  | accessdate =  2007-01-12
+}}</ref>
+{{reflist}}
+
+==External links==
+*[http://jes.com/gfx/people/csn_1983_11_28_antigrav_dick_001.jpg Photo of Dick Pick in his anti-gravity boots on the cover of Computer Systems News, 1983.]
+*[http://www.jes.com/pb/index.html Pick/BASIC: A Programmer's Guide] - the full text of the first and most widely-read textbook by Pick educator and author Jonathan E. Sisk.
+*[http://www.microdata-alumni.org/historical.htm#history_of_pick A Short History of the Pick Operating System]
+*[http://www.microdata-alumni.org/images/PICK_ImplementationHistory.pdf PICK Operating System - Implementation History]
+*[http://www.pickwiki.com/ PickWiki - Wiki about Pick database system and MultiValued Databases]
+*[http://www.semaphorecorp.com/btp/btp.html B-tree source code for the Pick operating system]
+*[http://www.mannyneira.com/universe Life the Universe and Everything]: introduction to and online training course in Universe developed by Pick software engineer Manny Neira.
+*[http://www.d3ref.com D3 Reference]: PICK/BASIC and D3 Command Line help files built upon the original EPick database developed for Pick Systems by Jonathan E. Sisk.
+
+{{DEFAULTSORT:Pick Operating System}}
+[[Category:Time-sharing operating systems]]
+[[Category:Legacy systems]]
+
+[[fr:Pick (système d'exploitation)]]</body> </html>

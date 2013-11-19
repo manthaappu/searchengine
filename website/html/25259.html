@@ -1,0 +1,73 @@
+<html> <head> <title>Multi-master replication</title></head><body>'''Multi-master replication''' is a method of database [[replication (computer science)|replication]] which allows data to be stored by a group of computers, and updated by any member of the group. The multi-master replication system is responsible for propagating the data modifications made by each member to the rest of the group, and resolving any conflicts that might arise between concurrent changes made by different members. Multi-master replication can be contrasted with [[Master-slave_(computers)|master-slave]] replication, in which a single member of the group is designated as the "master" for a given piece of data and is the only node allowed to modify that data item. Other members wishing to modify the data item must first contact the master node. Allowing only a single master makes it easier to achieve consistency among the members of the group, but is less flexible than multi-master replication.
+
+==Advantages==
+* If one master fails, other masters will continue to update the [[database]]. 
+* Masters can be located in several physical sites i.e. distributed across the network.
+
+==Disadvantages==
+* Most multi-master replication systems are only loosely consistent, i.e. lazy and asynchronous, violating [[ACID]] properties.
+* Eager replication systems are complex and introduce some communication latency.
+* Issues such as conflict resolution can become intractable as the number of nodes involved rises and the required latency decreases.
+
+==Methods==
+
+===Log-Based===
+
+A [[database transaction]] log is referenced to capture changes made to the database. For log-based transaction capturing, database changes can only be distributed [[asynchronous]]ly.
+
+===Trigger-Based===
+Triggers at the subscriber capture changes made to the database and submit them to the publisher. With trigger-based transaction capturing, database changes can be distributed either [[Synchronization (computer science)|synchronously]] or [[asynchronous]]ly.
+
+==Implementations==
+
+Many directory servers based on [[Lightweight Directory Access Protocol|LDAP]] implement multi-master replication.
+
+===Active Directory===
+One of the more prevalent of multi-master replication implementations in directory servers is [[Microsoft]]'s [[Active Directory]]. Within Active Directory, objects that are updated on one [[Domain Controller]] are then replicated to other domain controllers through multi-master replication. It is not required for all domain controllers to replicate with each other's domain controller as this would cause excessive network traffic in large Active Directory implementations. Instead, domain controllers have a complex update pattern that ensures that all servers are updated in a timely fashion without excessive replication traffic. Some Active Directory needs are better served by [[Flexible single master operation]].
+
+===CA Directory===
+[[CA Directory]] supports multi-master replication.
+
+===OpenDS===
+[[OpenDS]] implements multi-master replication since its version 1.0.
+The OpenDS multi-master replication is asynchronous, it uses a log with a publish-subscribe mechanism that allows scaling to a large number of writable copies. OpenDS replication does conflict resolution at the entry and attribute level. OpenDS replication can be used over Wide Area Network.
+
+===OpenLDAP===
+The widely used open source LDAP server implements multi-master replication since its version 2.4 (October 2007) [http://www.openldap.org/software/roadmap.html].
+
+===Oracle===
+[[Oracle database]] [[Computer cluster|clusters]] implement multi-master replication using one of two methods. [[Asynchronous]] multi-master replication commits data changes to a [[deferred transaction queue]] which is periodically processed on all databases in the cluster. [[Synchronization (computer science)|Synchronous]] multi-master replication uses Oracle's two phase commit functionality to ensure that all databases with the cluster have a consistent [[dataset]].
+
+===MySQL===
+[[MySQL]] ships with replication support. It is possible to achieve a multi-master replication scheme beginning from MySQL version 3.23.
+
+===PostgreSQL===
+[[PostgreSQL]], beginning from version 9.0, includes built-in binary replication, based on shipping the changes made to all database blocks to other systems asynchronously after commit. PostgreSQL also has the ability to run read-only queries against these replicated slaves. This allows splitting read traffic among multiple nodes efficiently. 
+
+PostgreSQL offers multiple solutions for multi-master replication, including solutions based on two phase commit. There's [http://bucardo.org/wiki/Bucardo  Bucardo], [http://www.rubyrep.org rubyrep], [http://pgpool.projects.postgresql.org/ PgPool and PgPool-II], [http://pgcluster.projects.postgresql.org/ PgCluster] and [http://www.continuent.com/community/lab-projects/sequoia Sequoia] as well as some proprietary solutions. Another promising approach, implementing eager (synchronous) replication is [http://www.postgres-r.org Postgres-R], however it is still in development.  Yet another project, implementing synchronous replication is [http://sourceforge.net/projects/postgres-xc/ Postgres-XC].  Postgres-XC also is still under development.
+
+===Ingres===
+Within [[Ingres (database)|Ingres]]  Replicator, objects that are updated on one Ingres server can then replicated to other servers whether local or remote through multi-master replication. If one server fails, client connections can be re-directed to another server.  It is not required for all Ingres servers in an environment to replicate with each other as this could cause excessive network traffic in large implementations. Instead, Ingres Replicator provides an elegant and sophisticated design that allows the appropriate data to be replicated to the appropriate servers without excessive replication traffic.  This means that some servers in the environment can serve as failover candidates while other servers can meet other requirements such as managing a subset of columns or tables for a departmental solution, a subset of rows for a geographical region or one-way replication for a reporting server. In the event of a source, target, or network failure, data integrity is enforced through this two-phase commit protocol by ensuring that either the whole transaction is replicated, or none of it is. In addition, Ingres Replicator can operate over RDBMS’s from multiple vendors to connect them.
+
+==See also==
+* [[Flexible single master operation]]
+* [[Active Directory]]
+* [[Distributed database management system]]
+* [[DNS zone transfer]]
+* [[Optimistic_replication|Optimistic Replication]]
+
+==References==
+{{reflist|2}}
+
+* [http://www.dbspecialists.com/presentations/mm_replication.html Challenges Involved in Multimaster Replication]
+* [http://www.microsoft.com/resources/documentation/Windows/2000/server/reskit/en-us/Default.asp?url=/resources/documentation/Windows/2000/server/reskit/en-us/distrib/dsbh_rep_fgtk.asp Active Directory Replication Model]
+* [http://www.postgres-r.org/documentation/terms Terms and Definitions for Database Replication]
+* [http://dbreplicator.org DBReplicator Project Page]
+* [http://www.dmoz.org/Computers/Software/Databases/Replication/ DMOZ Open Directory Project - Database Replication Page]
+
+
+[[Category:Computer storage]]
+[[Category:Identity management]]
+[[Category:Distributed computing architecture]]
+
+{{compu-storage-stub}}</body> </html>

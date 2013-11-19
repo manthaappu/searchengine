@@ -1,0 +1,64 @@
+<html> <head> <title>Compile time function execution</title></head><body>'''Compile time function execution''' (or '''compile-time function evaluation''', '''CTFE''') is the ability of a [[compiler]], that would normally compile a function to machine code and execute it at [[Run time (computing)|run time]], to execute the function at [[compile time]]. This is possible if the arguments to the function are known at compile time, and the function does not make any reference to or attempt to modify any global state (is a [[pure function]]).
+
+Even if the value of only some of the arguments are known, the compiler may still be able to perform some level of compile time function execution ([[partial evaluation]]), possibly producing more optimized code than if no arguments were known.
+
+==Example==
+
+In [[C++]], [[template metaprogramming]] is often used to compute values at compile time, such as:
+
+<source lang="CPP">
+template <int N> struct Factorial {
+    enum {
+        value = N * Factorial<N - 1>::value
+    };
+};
+
+template <> struct Factorial<0> {
+    enum { value = 1 };
+};
+
+// Factorial<4>::value == 24
+// Factorial<0>::value == 1
+void foo() {
+    int x = Factorial<0>::value; // == 1
+    int y = Factorial<4>::value; // == 24
+}
+</source>
+
+But with compile time function evaluation the code used to compute the factorial would be exactly the same as what one would write for run time evaluation (this example code is in the [[D programming language]]<ref>[http://www.digitalmars.com/d/1.0/function.html#interpretation D 1.0 language specification: Functions]</ref>):
+
+<source lang="D">
+int factorial(int n) {
+    if (n == 0)
+       return 1;
+    return n * factorial(n - 1);
+}
+
+// computed at compile time
+const int y = factorial(0); // == 1
+const int x = factorial(4); // == 24
+</source>
+
+The use of <code>const</code> tells the compiler that the initializer for the variables must be computed at compile time<ref>[http://www.digitalmars.com/d/1.0/attribute.html#const D 1.0 language specification: Attributes]</ref>.
+
+CTFE can be used to populate simple data structures at compile-time in a simple way (D version 2) (this is a function template):
+
+<source lang="D">int[N] genFactorials(int N)() {
+    int[N] result;
+    result[0] = 1;
+    foreach (i; 1 .. N)
+        result[i] = result[i - 1] * i;
+    return result;
+}
+
+enum auto factorials = genFactorials!(13)();
+
+// Now 'factorials' contains at compile-time:
+// [1, 1, 2, 6, 24, 120, 720, 5_040, 40_320, 362_880, 3_628_800,
+//  39_916_800, 479_001_600]
+</source>
+
+== References ==
+<references/>
+
+[[Category:Compiler theory]]</body> </html>
